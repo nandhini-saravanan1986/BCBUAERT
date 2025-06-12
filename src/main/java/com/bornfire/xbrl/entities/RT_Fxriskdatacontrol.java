@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "BCBUAE_NOSTRO_ACC_BAL_DATACONTROL")
 
-public class BcbuaeFxriskdatacontrol {
+public class RT_Fxriskdatacontrol {
 	
 
     @Id
@@ -263,7 +263,7 @@ public class BcbuaeFxriskdatacontrol {
 		this.delFlg = delFlg;
 	}
 
-	public BcbuaeFxriskdatacontrol(Date portfolioDate, String submittingInstitution, String contactEmployee1Name1,
+	public RT_Fxriskdatacontrol(Date portfolioDate, String submittingInstitution, String contactEmployee1Name1,
 			String contactEmployee1Title1, String contactEmployee1Email1, String contactEmployee2Name2,
 			String contactEmployee2Title2, String contactEmployee2Email2, String signOffCroName, String signOffCroEmail,
 			String signOffCfoName, String signOffCfoEmail, String signOffHeadOfTreasuryName,
@@ -294,7 +294,7 @@ public class BcbuaeFxriskdatacontrol {
 		this.delFlg = delFlg;
 	}
 
-	public BcbuaeFxriskdatacontrol() {
+	public RT_Fxriskdatacontrol() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

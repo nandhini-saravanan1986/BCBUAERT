@@ -1,8 +1,8 @@
 // Package as per your structure
 package com.bornfire.xbrl.services;
 
-import com.bornfire.xbrl.entities.BcbuaeFxRiskDataRepository;
-import com.bornfire.xbrl.entities.BcbuaeFxriskdata;
+import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,14 +20,14 @@ import java.util.List;
 public class BCBUAE_NostroExcelDownload {
 
 	@Autowired
-	BcbuaeFxRiskDataRepository friskdataRepo;
+	RT_FxRiskDataRepository friskdataRepo;
 
 	@Autowired
 	
 	
     public byte[] generateFxRiskDataExcel() throws IOException {
 
-        List<BcbuaeFxriskdata> fxriskdataEntity = friskdataRepo.getfxriskdatalistdata();
+        List<RT_Fxriskdata> fxriskdataEntity = friskdataRepo.getfxriskdatalistdata();
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Fx Risk Data");
@@ -67,7 +67,7 @@ public class BCBUAE_NostroExcelDownload {
 
         // Fill data rows
         int rowIndex = 1;
-        for (BcbuaeFxriskdata friskdata : fxriskdataEntity) {
+        for (RT_Fxriskdata friskdata : fxriskdataEntity) {
             Row row = sheet.createRow(rowIndex++);
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

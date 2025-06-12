@@ -20,27 +20,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.bornfire.xbrl.entities.BcbuaeFxRiskDataRepository;
-import com.bornfire.xbrl.entities.BcbuaeFxriskdata;
+import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 
 @Service
-public class BCBUAE_FxriskdataService {
+public class RT_FxriskdataService {
 
 	@Autowired
 	private Environment env;
 
 	@Autowired
-	private BcbuaeFxRiskDataRepository friskdataRepo;
+	private RT_FxRiskDataRepository friskdataRepo;
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public boolean updateFxriskdata(BcbuaeFxriskdata updatedData) {
-		Optional<BcbuaeFxriskdata> existingOpt = friskdataRepo.findById(updatedData.getBank_date()); // or your correct
+	public boolean updateFxriskdata(RT_Fxriskdata updatedData) {
+		Optional<RT_Fxriskdata> existingOpt = friskdataRepo.findById(updatedData.getBank_date()); // or your correct
 																										// @Id field
 
 		if (existingOpt.isPresent()) {
-			BcbuaeFxriskdata existing = existingOpt.get();
+			RT_Fxriskdata existing = existingOpt.get();
 
 			// Only update fields that should be updated:
 			existing.setBank_name(null);

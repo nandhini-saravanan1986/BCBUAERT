@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "BCBUAE_FX_RISK_DATA")
 
-public class BcbuaeFxriskdata {
+public class RT_Fxriskdata {
 
 	@Id
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
@@ -251,7 +251,7 @@ public class BcbuaeFxriskdata {
 		this.del_flg = del_flg;
 	}
 
-	public BcbuaeFxriskdata(Date bank_date, String bank_name, String bank_symbol, String conventional_islamic,
+	public RT_Fxriskdata(Date bank_date, String bank_name, String bank_symbol, String conventional_islamic,
 			String local_foreign, String cbuae_tiering, String currency, BigDecimal fx_net_openposition,
 			BigDecimal off_balance_sheet_position, BigDecimal on_balance_sheet_position,
 			BigDecimal fx_net_openposition_foreign_currency, BigDecimal internal_long_limit,
@@ -289,7 +289,7 @@ public class BcbuaeFxriskdata {
 		this.del_flg = del_flg;
 	}
 
-	public BcbuaeFxriskdata() {
+	public RT_Fxriskdata() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

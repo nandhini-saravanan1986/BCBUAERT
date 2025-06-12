@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BcbuaeFxRiskDataRepository extends JpaRepository<BcbuaeFxriskdata, Date> {
+public interface RT_FxRiskDataRepository extends JpaRepository<RT_Fxriskdata, Date> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_FX_RISK_DATA where DEL_FLG != 'Y' ", nativeQuery = true)
-	List<BcbuaeFxriskdata> getlist();
+	@Query(value = "select * from BCBUAE_FX_RISK_DATA  ", nativeQuery = true)
+	List<RT_Fxriskdata> getlist();
 
 	@Query(value = "SELECT * FROM BCBUAE_FX_RISK_DATA ", nativeQuery = true)
-	List<BcbuaeFxriskdata> getfxriskdatalistdata();
+	List<RT_Fxriskdata> getfxriskdatalistdata();
 
 	@Query(value = "SELECT * FROM BCBUAE_FX_RISK_DATA ", nativeQuery = true)
 	List<Object[]> getfxriskdatalistdata1();

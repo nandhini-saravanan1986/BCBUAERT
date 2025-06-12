@@ -34,17 +34,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
-import com.bornfire.xbrl.entities.BcbuaeFxRiskDataRepository;
-import com.bornfire.xbrl.entities.BcbuaeFxriskdata;
+import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.BcbuaeNostroAccBalDatacontrolRepository;
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.NostroAccBalData;
 import com.bornfire.xbrl.entities.NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_DataControl;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
-import com.bornfire.xbrl.services.BCBUAE_FxriskdataService;
+import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.BCBUAE_NostroDataControlService;
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
 import com.bornfire.xbrl.services.LoginServices;
@@ -57,7 +58,7 @@ public class XBRLNavigationController {
 	private static final Logger logger = LoggerFactory.getLogger(XBRLNavigationController.class);
 
 	@Autowired
-	private BCBUAE_FxriskdataService fxriskdataService;
+	private RT_FxriskdataService fxriskdataService;
 
 	@Autowired
 	LoginServices loginServices;
@@ -84,7 +85,7 @@ public class XBRLNavigationController {
 	BcbuaeNostroAccBalDatacontrolRepository nostroAccBalDCRepo;
 
 	@Autowired
-	BcbuaeFxRiskDataRepository friskdataRepo;
+	RT_FxRiskDataRepository friskdataRepo;
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -313,7 +314,7 @@ public class XBRLNavigationController {
 	 * return ResponseEntity.ok().headers(headers).body(excelData); }
 	 */
 	@PostMapping("/updateFxriskdata")
-	public String updateFxriskdata(@ModelAttribute BcbuaeFxriskdata fxriskData, Model model) {
+	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData, Model model) {
 
 		boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
 
@@ -335,39 +336,40 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "Fx_Risk_Data", method = RequestMethod.GET)
-	public String Fxriskdata(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String bank_date, Model md, HttpServletRequest req) {
+	public String Fxriskdata(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) String bank_date,
+	        Model md, HttpServletRequest req) {
 
-		if ("edit".equalsIgnoreCase(formmode) && bank_date != null && !bank_date.isEmpty()) {
-			try {
-				// Assuming your DB stores Date without time (java.sql.Date or java.util.Date)
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Adjust pattern if needed
-				Date bankDateValue = sdf.parse(bank_date);
+	    if ("edit".equalsIgnoreCase(formmode) && bank_date != null && !bank_date.isEmpty()) {
+	        try {
+	            // Assuming your DB stores Date without time (java.sql.Date or java.util.Date)
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Adjust pattern if needed
+	            Date bankDateValue = sdf.parse(bank_date);
 
-				BcbuaeFxriskdata data = friskdataRepo.findById(bankDateValue).orElse(null);
-				md.addAttribute("fxriskData", data);
-				System.out.println("edit is formmode");
-				md.addAttribute("formmode", "edit");
-			} catch (ParseException e) {
-				e.printStackTrace();
-				md.addAttribute("fxriskData", null);
-				md.addAttribute("formmode", "error"); // Optionally show an error mode
-			}
+	            RT_Fxriskdata data = friskdataRepo.findById(bankDateValue).orElse(null);
+	            md.addAttribute("fxriskData", data);
+	            System.out.println("edit is formmode");
+	            md.addAttribute("formmode", "edit");
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	            md.addAttribute("fxriskData", null);
+	            md.addAttribute("formmode", "error");  // Optionally show an error mode
+	        }
 
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", friskdataRepo.getlist());
-			System.out.println("list is formmode");
-			md.addAttribute("formmode", "list");
+	    } else if ("list".equalsIgnoreCase(formmode)) {
+	        md.addAttribute("branchList", friskdataRepo.getlist());
+	        System.out.println("list is formmode");
+	        md.addAttribute("formmode", "list");
 
-		} else {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
+	    } else {
+	        md.addAttribute("formmode", "add");
+	        md.addAttribute("formmode", "null");
 
-			// You had md.addAttribute("formmode", "null"); — removed this line because it
-			// would overwrite the previous one
-		}
+	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
+	    }
 
-		return "Fx_Risk_Data";
+	    return "Fx_Risk_Data";
 	}
 
 	// For download excel for fxriskdata
