@@ -9,7 +9,7 @@ import java.util.Date;
 
 
 @Repository
-public interface BcbuaeNostroAccBalDatacontrolRepository extends JpaRepository<RT_DataControl, Date> {
+public interface RT_DatacontrolRepository extends JpaRepository<RT_DataControl, Date> {
     
     // You can define custom queries here if needed, for example:
     // List<BcbuaeNostroAccBalDatacontrol> findByEntityFlg(String entityFlg);

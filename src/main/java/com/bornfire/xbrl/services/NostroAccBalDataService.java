@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.services;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
@@ -19,23 +20,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.bornfire.xbrl.entities.NostroAccBalData;
-import com.bornfire.xbrl.entities.NostroAccBalDataRepository;
+import com.bornfire.xbrl.entities.RT_NostroAccBalData;
+import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 
 @Service
 public class NostroAccBalDataService {
 
 	@Autowired
-	NostroAccBalDataRepository nostroAccBalRepo;
+	RT_NostroAccBalDataRepository nostroAccBalRepo;
 
 	@Autowired
 	private Environment env;
 
-	public boolean updateNostro(NostroAccBalData updatedData) {
-		Optional<NostroAccBalData> existingOpt = nostroAccBalRepo.findById(updatedData.getAccountNo());
+	public boolean updateNostro(RT_NostroAccBalData updatedData) {
+		Optional<RT_NostroAccBalData> existingOpt = nostroAccBalRepo.findById(updatedData.getAccountNo());
 
 		if (existingOpt.isPresent()) {
-			NostroAccBalData existing = existingOpt.get();
+			RT_NostroAccBalData existing = existingOpt.get();
 
 			// Only update fields expected from the form
 			existing.setBankName(updatedData.getBankName());

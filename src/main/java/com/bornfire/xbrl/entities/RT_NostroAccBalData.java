@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "BCBUAE_NOSTRO_ACC_BAL_DATA")
-public class NostroAccBalData {
+public class RT_NostroAccBalData {
 
 	@Id
 	@Column(name = "ACCOUNT_NO")
@@ -358,7 +358,7 @@ public class NostroAccBalData {
 				+ delFlg + ", reportFromDate=" + reportFromDate + ", reportToDate=" + reportToDate + "]";
 	}
 
-	public NostroAccBalData(String accountNo, Date dataDate, String bankName, String headOfficeSubsidiary,
+	public RT_NostroAccBalData(String accountNo, Date dataDate, String bankName, String headOfficeSubsidiary,
 			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
 			String counterpartyNostroAccount, String finalRatingBanks, String finalRatingCbuae, String countryOfRisk,
 			String cbuaeGeographicalZone, String currency, Date counterpartySettlementDate,
@@ -397,7 +397,7 @@ public class NostroAccBalData {
 		this.reportToDate = reportToDate;
 	}
 
-	public NostroAccBalData() {
+	public RT_NostroAccBalData() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

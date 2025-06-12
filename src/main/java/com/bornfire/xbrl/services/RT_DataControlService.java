@@ -2,20 +2,21 @@ package com.bornfire.xbrl.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bornfire.xbrl.entities.RT_DataControl;
-import com.bornfire.xbrl.entities.BcbuaeNostroAccBalDatacontrolRepository;
+import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
 
 
 
 @Service
-public class BCBUAE_NostroDataControlService {
+public class RT_DataControlService {
 	
 	@Autowired
-	BcbuaeNostroAccBalDatacontrolRepository nostroAccBalDCRepo;
+	RT_DatacontrolRepository RT_DatacontrolRepository;
 
 	
 	public String createOrUpdate(RT_DataControl dto, String formmode,String report_name) {
@@ -38,7 +39,7 @@ public class BCBUAE_NostroDataControlService {
 	            
 	        }
 
-	        nostroAccBalDCRepo.save(dto);
+	        RT_DatacontrolRepository.save(dto);
 	        return "Saved successfully.";
 	    } catch (Exception e) {
 	        e.printStackTrace();

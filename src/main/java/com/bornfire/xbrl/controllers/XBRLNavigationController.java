@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.controllers;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,19 +35,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
+
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
-import com.bornfire.xbrl.entities.BcbuaeNostroAccBalDatacontrolRepository;
+
+import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
+
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskDataRepository;
-import com.bornfire.xbrl.entities.NostroAccBalData;
-import com.bornfire.xbrl.entities.NostroAccBalDataRepository;
+import com.bornfire.xbrl.entities.RT_NostroAccBalData;
+import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_DataControl;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
+
 import com.bornfire.xbrl.services.RT_FxriskdataService;
-import com.bornfire.xbrl.services.BCBUAE_NostroDataControlService;
+
+import com.bornfire.xbrl.services.RT_DataControlService;
+
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.NostroAccBalDataService;
@@ -70,7 +77,7 @@ public class XBRLNavigationController {
 	AccessandRolesRepository accessandrolesrepository;
 
 	@Autowired
-	NostroAccBalDataRepository nostroAccBalRepo;
+	RT_NostroAccBalDataRepository nostroAccBalRepo;
 
 	@Autowired
 	NostroAccBalDataService nostroService;
@@ -79,10 +86,10 @@ public class XBRLNavigationController {
 	BCBUAE_NostroExcelDownload bcbuaeNostroExcelDownload;
 
 	@Autowired
-	BCBUAE_NostroDataControlService nostroDCService;
+	RT_DataControlService RT_DataControlService;
 
 	@Autowired
-	BcbuaeNostroAccBalDatacontrolRepository nostroAccBalDCRepo;
+	RT_DatacontrolRepository RT_DatacontrolRepository;
 
 	@Autowired
 	RT_FxRiskDataRepository friskdataRepo;
@@ -259,7 +266,7 @@ public class XBRLNavigationController {
 			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && accountNo != null && !accountNo.isEmpty()) {
-			NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
+			RT_NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
 			md.addAttribute("nostroData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -275,19 +282,19 @@ public class XBRLNavigationController {
 		return "Nostro_Account_Bal";
 	}
 
-	@PostMapping("/createNostroData")
+	@PostMapping("/createDataControl")
 	@ResponseBody
-	public String createOrUpdateNostro(
+	public String createDataControl(
 			@RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
 			@RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
 			@ModelAttribute RT_DataControl dto) {
 		System.out.println("Controller: createOrUpdateNostro() called");
 		System.out.println("report name is: " + report_name);
-		return nostroDCService.createOrUpdate(dto, formmode, report_name);
+		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
 
 	@PostMapping("/updateNostro")
-	public String updateNostro(@ModelAttribute NostroAccBalData nostroData, Model model) {
+	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, Model model) {
 
 		boolean updated = nostroService.updateNostro(nostroData);
 

@@ -255,7 +255,8 @@ td {
     background: white;
     color: black;
     font-weight: 600;
-    border: 2px solid rgb(0,164,166);
+   border: 1px solid rgb(120, 0, 0);
+
     padding: 8px 20px;
     margin-right: 10px;
     border-radius: 30px;
@@ -264,12 +265,12 @@ td {
   }
 
   .custom-tab-btn:hover {
-    background-color: rgb(0,164,166);
+    background-color: rgb(166,0,0);
     color: white;
   }
 
   .custom-tab-btn.active {
-    background-color: rgb(0,164,166);
+    background-color: rgb(166,0,0);
     color: white;
   }
   .custom-tab-btn:focus {
@@ -375,7 +376,7 @@ td {
 	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
 	        $("#loader1").modal("toggle");
 
-	        var url = "./createNostroData?report_name=" + report_name;
+	        var url = "./createDataControl?report_name=" + report_name;
 
 	        $("#nostroForm").attr('action', url);
 
@@ -536,7 +537,7 @@ td {
 		
 	<div th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div class="card-header" style="background-color: rgb(0,164,166);">
+		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(166,0,0); ">
 					<div class="float-left" style="color: black;">
 						<h5 
 							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
@@ -556,7 +557,7 @@ td {
   <button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
   <button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
   <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
-    	<div class="float-right" style="margin-left:57%">
+    	<div class="float-right" style="margin-left:61%">
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
@@ -870,7 +871,7 @@ td {
  
 <div class="row">
 		<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="Nostro">
-    	<div class="card" style="margin-left: 26px;">
+    	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 						<div class="card-header"style="background-color: rgb(0,164,166);">
 							<div class="float-left">
 								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 24px; font-weight: bold; ">Nostro Account Balance- Edit</h3>
@@ -1017,8 +1018,8 @@ td {
     <!-- Submit -->
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="btn btn-success" onclick="updateform()">Update</button>
-      <a th:href="@{/Nostro_Account_Bal}" class="btn btn-secondary ml-2">Cancel</a>
+   <button type="submit" class="custom-tab-btn" onclick="updateform()">Update</button>
+      <a th:href="@{/Nostro_Account_Bal}" class="custom-tab-btn">Cancel</a>
     </div>
     
     </div>

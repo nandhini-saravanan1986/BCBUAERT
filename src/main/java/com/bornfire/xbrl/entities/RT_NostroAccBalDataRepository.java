@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NostroAccBalDataRepository extends JpaRepository<NostroAccBalData, String> {
+public interface RT_NostroAccBalDataRepository extends JpaRepository<RT_NostroAccBalData, String> {
 	// Add custom queries if needed
 
 	@Query(value = "select * from BCBUAE_NOSTRO_ACC_BAL_DATA where DEL_FLG != 'Y'", nativeQuery = true)
-	List<NostroAccBalData> getlist();
+	List<RT_NostroAccBalData> getlist();
 
 
 	@Query(value = "SELECT " + "DATA_DATE, BANK_NAME, HEAD_OFFICE_SUBSIDIARY, SUBSIDIARY, "
