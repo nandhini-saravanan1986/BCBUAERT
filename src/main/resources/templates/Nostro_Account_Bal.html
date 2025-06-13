@@ -47,6 +47,7 @@ PURPOSE		: Nostra Account balance Report
 	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
 <style>
 .btns {
@@ -92,82 +93,11 @@ PURPOSE		: Nostra Account balance Report
 	padding: 0px;
 }
 </style>
-<style>
-        .valids { color: green; }
-        .invalids { color: red; }
-    </style>
-    <style>
-  /* Tab container */
-  .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
-    background-color: #e9ecf0;
-    padding: 4px 10px;
-    border-radius: 0.25rem 0.25rem 0 0;
-  }
-
-  /* Tab buttons */
-  .nav-tabs .nav-link {
-    border: 1px solid #dee2e6;
-    border-bottom: none;
-    background-color: #f1f1f1;
-    color: #376275;
-    font-weight: 600;
-   
-    margin-right: 4px;
-    border-radius: 5px 5px 0 0;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  /* On hover */
-  .nav-tabs .nav-link:hover {
-    background-color: #d6e0e7;
-    color: #2c4c63;
-  }
-
-  /* Active tab */
-  .nav-tabs .nav-link.active {
-    background-color: #376275;
-    color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-  }
-
-  /* Tab content area */
-  .tab-content {
-    border: 1px solid #dee2e6;
-    border-top: none;
-    
-    background-color: #ffffff;
-    border-radius: 0 0 0.25rem 0.25rem;
-    font-family: Verdana, sans-serif;
-    color: #333;
-  }
- </style>
-  <style>
-  table {
-    font-size: 12px;
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
-
-  
-</style>
-  <style>
-  thead {
-    background-color: #e9ecf0 !important;
-  }
-
-  tbody tr {
-    background-color: #ffffff;
-  }
-
  
-</style>
-  <style>
+  
+ 
+ 
+ <style>
   .card {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -242,43 +172,7 @@ td {
 }
 
 </style>
-  <style>
-  .button-tab-group {
-    background-color: white;
-    padding: 4px 10px;
-    border-radius: 0.25rem;
-    display: flex;
-    gap: 10px;
-  }
-
-  .custom-tab-btn {
-    background: white;
-    color: black;
-    font-weight: 600;
-   border: 1px solid rgb(120, 0, 0);
-
-    padding: 8px 20px;
-    margin-right: 10px;
-    border-radius: 30px;
-    transition: 0.3s;
-    cursor: pointer;
-  }
-
-  .custom-tab-btn:hover {
-    background-color: rgb(166,0,0);
-    color: white;
-  }
-
-  .custom-tab-btn.active {
-    background-color: rgb(166,0,0);
-    color: white;
-  }
-  .custom-tab-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-  
-</style>
+ 
 
 <style>
         .form-group {
@@ -538,7 +432,7 @@ td {
 	<div th:insert="XBRLHeaderMenu :: header"></div>
 
 		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(166,0,0); ">
-					<div class="float-left" style="color: black;">
+					<div class="float-left">
 						<h5 
 							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
 					</div>
@@ -753,10 +647,19 @@ td {
 							</div>
 							</div></div>
 									
+<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
+
+<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
   <div class="tab-pane fade" id="template" role="tabpanel">
     <p>Templates tabs</p>
   </div>
+ 
+ <!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
+  
+  
+  
+  <!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
   <div class="tab-pane fade" id="data" role="tabpanel">
     <!-- Move your existing table content here -->
 
@@ -764,6 +667,10 @@ td {
 				<div class="col-sm-12">
 					<div class="container-fluid">
    -->
+   
+   
+   
+   
   <div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
     <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
   
@@ -866,15 +773,16 @@ td {
 
 				</div>
 			
+<!------------------ edit starts-------------------------------------------------------------->
 		
 <div th:if="${formmode}=='edit'" style="align-items:center">
  
 <div class="row">
 		<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="Nostro">
     	<div class="card" style="margin-left: 15px;margin-right: 15px;">
-						<div class="card-header"style="background-color: rgb(0,164,166);">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 24px; font-weight: bold; ">Nostro Account Balance- Edit</h3>
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Nostro Account Balance- Edit</h3>
 							</div>
 							
 						</div>
