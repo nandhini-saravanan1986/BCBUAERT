@@ -17,82 +17,28 @@
 
 	<style>
 		body {
-			font-family: 'Nunito', sans-serif;
-			font-size: 16px;
-			font-weight: 400;
+   font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
 
-		}
 
-		/* Style for the loading modal */
-		#loadingModal {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: none;
-			/* Semi-transparent background */
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 9999;
-			/* Make sure it's on top */
-			backdrop-filter: blur(5px);
-			/* Apply background blur */
-		}
-
-		#loadingContent {
-			text-align: center;
-			background-color: none;
-			/* White background for loading content */
-			z-index: 10000;
-			/* Ensure loading content stays above blur */
-		}
-
-		#loadingContent img {
-			width: 100px;
-			/* Adjust size as needed */
-			height: 100px;
-			/* Adjust size as needed */
-			margin-bottom: 10px;
-		}
-	</style>
+			</style>
 
 
 
 	<style>
-		.header1 {
-			background-color: #83b5ec;
-		}
-
-
-		.error {
-			color: red;
-			padding-left: 10px;
-		}
+		
 
 
 
-		#userdtl,
-		#dropico {
-			float: right;
-		}
+		
 
 		nav {
 			background-color: #fafafa;
 		}
 
-		#pagetitle {
-			top: 114%;
-			left: 50%;
-			height: 50px;
-			color: #e80909;
-			position: absolute;
-			text-align: center;
-			margin: -25px 0 0 -31px;
-		}
-
-		#logoutmenu {
+			#logoutmenu {
 			display: none;
 			position: absolute;
 			z-index: 1031;
@@ -693,7 +639,7 @@ h3 {
 
 .logo-img {
   transform: skew(20deg);   /* Re-skew the image to appear normal */
-  height:120px;            /* Adjust height as needed */
+  height:100px;            /* Adjust height as needed */
   width: auto;
   padding:10px
 }
@@ -757,84 +703,71 @@ color:white;
 </head>
 
 <body>
-	<nav class="navbar full-navbar">
-  <!-- Main container with flex -->
-  <div class="navbar-container d-flex" style="width:100%">
-    
-    <!-- Logo -->
-   <!-- Logo -->
-<div class="logo-container">
-  <img th:src="@{/images/bob.png}" alt="Bornfire" class="logo-img">
-</div>
-
-
-    <!-- Right content -->
-    <div class="right-content flex-grow-1"  >
-      <!-- Top row: Title + user info -->
-    <div class="top-row d-flex justify-content-end align-items-center px-3 py-2 position-relative"
-     th:style="'background-image: url(' + @{/images/abcd.jpg} + '); background-size: cover; background-position: center; min-height: 60px;'">
-
-  <!-- Centered Title -->
-  <h3 class="company-title position-absolute translate-middle-x"
-      style="top: 50%; left: 40%; font-weight: bold; font-family: 'Monotype Corsiva', cursive;">
-    BCBUAE
-  </h3>
-
-  <!-- Right-aligned company name, username, and logout -->
-  <div class="user-section d-flex flex-column align-items-end ms-auto" style="width: fit-content;">
-    <!-- First line: Company name -->
-    <div class="company-small-title text-end" style="font-size: 0.95rem; font-weight: 600; color: #000; margin-right:50px;">
-      Bornfire Innovations Pvt Ltd
-    </div>
-
-    <!-- Second line: Username + Logout button -->
-    <div class="d-flex align-items-center gap-2" style="font-size: 0.9rem;">
-      <div class="user-details text-end">
-        <strong>&nbsp;</strong> <span th:text="${session.USERNAME}"></span>
+  <nav class="navbar full-navbar">
+    <div class="navbar-container d-flex" style="width:100%">
+      
+      <!-- Logo -->
+      <div class="logo-container">
+        <img th:src="@{/images/bob.png}" alt="Bornfire" class="logo-img">
       </div>
-      <form th:action="@{/logout}" method="post" class="logout-btn m-0">
-        <button class="custom-tab-btn btn-outline-danger py-1 px-2" type="submit">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
 
+      <!-- Right content -->
+      <div class="right-content flex-grow-1">
+        <!-- Top row -->
+        <div class="top-row d-flex justify-content-end align-items-center px-3 py-1 position-relative"
+          th:style="'background-image: url(' + @{/images/rtbg.jpg} + '); background-size: cover; background-position: center; min-height: 45px;'">
 
-      <!-- Bottom row: Menu -->
-      <div class="bottom-row px-3 py-2" style="height:50px">
-        <ul class="nav-links d-flex gap-4">
-         <li class="nav-item">
-  <a class="nav-link" th:href="@{/Dashboard}" style="width:110px; text-align:center; color:black;">Home</a>
-</li>
- <li class="nav-item dropdown">
-            <a href="#" class="dropdown-toggle"  style="width:110px; text-align:center;">Admin</a>
-            <ul class="dropdown-menu">
-              <li><a class="nav-link" th:href="@{/UserProfile}">User Profile</a></li>
-              <li><a class="nav-link" th:href="@{/AccessandRoles}">Access And Roles</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown"  style="width:110px; text-align:center;">
-            <a href="#" class="dropdown-toggle">RT Reports</a>
-            <ul class="dropdown-menu">
-              <li><a class="nav-link" th:href="@{/Nostro_Account_Bal}">Nostro Account Balance</a></li>
-              <li><a class="nav-link" th:href="@{/Fx_Risk_Data}">Fx Risk Data</a></li>
-              <li class="nav-item"><a class="nav-link" id="Trade_Market_Risk"
-								th:href="@{/Trade_Market_Risk}">Trade Market Risk</a>
-            </ul>
-          </li>
-        </ul>
+          <!-- Centered Title -->
+          <h3 class="company-title position-absolute translate-middle-x"
+            style="top: 50%; left: 40%; font-weight: bold; font-family: 'Monotype Corsiva', cursive; font-size: 1.4rem;">
+            BCBUAE
+          </h3>
+
+          <!-- User info -->
+          <div class="user-section d-flex flex-column align-items-end ms-auto" style="width: fit-content;">
+            <div class="company-small-title text-end" style="font-size: 0.85rem; font-weight: 600; color: #000; margin-right:50px;">
+              Bornfire Innovations Pvt Ltd
+            </div>
+            <div class="d-flex align-items-center gap-2" style="font-size: 0.85rem;">
+              <div class="user-details text-end">
+                <strong>&nbsp;</strong> <span th:text="${session.USERNAME}"></span>
+              </div>
+              <form th:action="@{/logout}" method="post" class="logout-btn m-0">
+                <button class="custom-tab-btn btn-outline-danger py-1 px-2" type="submit">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row: Menu -->
+        <div class="bottom-row px-3 py-1" style="height:40px">
+          <ul class="nav-links d-flex gap-4">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/Dashboard}" style="width:110px; text-align:center; color:black;">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="dropdown-toggle" style="width:110px; text-align:center;">Admin</a>
+              <ul class="dropdown-menu">
+                <li><a class="nav-link" th:href="@{/UserProfile}">User Profile</a></li>
+                <li><a class="nav-link" th:href="@{/AccessandRoles}">Access And Roles</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown" style="width:110px; text-align:center;">
+              <a href="#" class="dropdown-toggle">RT Reports</a>
+              <ul class="dropdown-menu">
+                <li><a class="nav-link" th:href="@{/Nostro_Account_Bal}">Nostro Account Balance</a></li>
+                <li><a class="nav-link" th:href="@{/Fx_Risk_Data}">Fx Risk Data</a></li>
+                <li><a class="nav-link" th:href="@{/Trade_Market_Risk}">Trade Market Risk</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    
-  </div>
-</nav>
-
-
-
-
-
+  </nav>
 </body>
+
 
 </html>

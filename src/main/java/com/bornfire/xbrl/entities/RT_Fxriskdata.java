@@ -15,6 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class RT_Fxriskdata {
 
 	@Id
+	private String SI_NO;
+	
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date bank_date;
 	private String bank_name;
@@ -42,6 +44,14 @@ public class RT_Fxriskdata {
 	private String entity_flg;
 	private String modify_flg;
 	private String del_flg;
+
+	public String getSI_NO() {
+		return SI_NO;
+	}
+
+	public void setSI_NO(String sI_NO) {
+		SI_NO = sI_NO;
+	}
 
 	public Date getBank_date() {
 		return bank_date;
@@ -251,9 +261,11 @@ public class RT_Fxriskdata {
 		this.del_flg = del_flg;
 	}
 
-	public RT_Fxriskdata(Date bank_date, String bank_name, String bank_symbol, String conventional_islamic,
-			String local_foreign, String cbuae_tiering, String currency, BigDecimal fx_net_openposition,
-			BigDecimal off_balance_sheet_position, BigDecimal on_balance_sheet_position,
+	
+
+	public RT_Fxriskdata(String sI_NO, Date bank_date, String bank_name, String bank_symbol,
+			String conventional_islamic, String local_foreign, String cbuae_tiering, String currency,
+			BigDecimal fx_net_openposition, BigDecimal off_balance_sheet_position, BigDecimal on_balance_sheet_position,
 			BigDecimal fx_net_openposition_foreign_currency, BigDecimal internal_long_limit,
 			String internal_long_limit_trigger_status, BigDecimal internal_short_limit,
 			BigDecimal internal_short_limit_trigger_status, BigDecimal bank_core_tier1_capital,
@@ -261,6 +273,7 @@ public class RT_Fxriskdata {
 			BigDecimal bank_core_tier1_capital_aed, Date report_submit_date, Date report_from_date, Date report_to_date,
 			Date report_date, String entity_flg, String modify_flg, String del_flg) {
 		super();
+		SI_NO = sI_NO;
 		this.bank_date = bank_date;
 		this.bank_name = bank_name;
 		this.bank_symbol = bank_symbol;

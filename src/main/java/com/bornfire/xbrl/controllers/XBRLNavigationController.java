@@ -20,6 +20,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
@@ -294,45 +296,32 @@ public class XBRLNavigationController {
 	}
 
 	@PostMapping("/updateNostro")
-	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, Model model) {
-
-		boolean updated = nostroService.updateNostro(nostroData);
-
-		if (updated) {
-			model.addAttribute("msg", "Update successful");
-		} else {
-			model.addAttribute("msg", "Record not found for update");
-		}
-
-		return "Nostro_Account_Bal"; // your view
-
+	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, Model model, RedirectAttributes redirectAttributes) {
+	    
+	    boolean updated = nostroService.updateNostro(nostroData);
+	    System.out.println("msg is : " + updated);
+	    
+	    if (updated) {
+	        System.out.println("Update successful");
+	        redirectAttributes.addFlashAttribute("msg", "Update successful");
+	    } else {
+	        System.out.println("Update Record not found for update");
+	        redirectAttributes.addFlashAttribute("msg", "Record not found for update");
+	    }
+	    
+	    return "redirect:Nostro_Account_Bal?formmode=list";
 	}
 
-	/*
-	 * @RequestMapping(value = "/downloadNostroExcel", method = RequestMethod.GET)
-	 * public ResponseEntity<byte[]> downloadNostroExcel() throws IOException {
-	 * byte[] excelData = bcbuaeNostroExcelDownload.generateNostroExcel();
-	 * 
-	 * HttpHeaders headers = new HttpHeaders();
-	 * headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	 * headers.setContentDispositionFormData("attachment",
-	 * "NostroAccBalReport.xlsx");
-	 * 
-	 * return ResponseEntity.ok().headers(headers).body(excelData); }
-	 */
 	@PostMapping("/updateFxriskdata")
-	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData, Model model) {
-
-		boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
-
-		if (updated) {
-			model.addAttribute("msg", "Update successful");
-		} else {
-			model.addAttribute("msg", "Record not found for update");
-		}
-
-		return "Fx_Risk_Data"; // your view
-
+	@ResponseBody
+	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {
+	    boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
+	    
+	    if (updated) {
+	        return "Update successful";
+	    } else {
+	        return "Record not found for update";
+	    }
 	}
 
 	@InitBinder
@@ -345,24 +334,14 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "Fx_Risk_Data", method = RequestMethod.GET)
 	public String Fxriskdata(
 	        @RequestParam(required = false) String formmode,
-	        @RequestParam(required = false) String bank_date,
+	        @RequestParam(required = false) String SI_NO,
 	        Model md, HttpServletRequest req) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && bank_date != null && !bank_date.isEmpty()) {
-	        try {
-	            // Assuming your DB stores Date without time (java.sql.Date or java.util.Date)
-	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Adjust pattern if needed
-	            Date bankDateValue = sdf.parse(bank_date);
-
-	            RT_Fxriskdata data = friskdataRepo.findById(bankDateValue).orElse(null);
-	            md.addAttribute("fxriskData", data);
-	            System.out.println("edit is formmode");
-	            md.addAttribute("formmode", "edit");
-	        } catch (ParseException e) {
-	            e.printStackTrace();
-	            md.addAttribute("fxriskData", null);
-	            md.addAttribute("formmode", "error");  // Optionally show an error mode
-	        }
+	    if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+	        RT_Fxriskdata data = friskdataRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("fxriskData", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
 
 	    } else if ("list".equalsIgnoreCase(formmode)) {
 	        md.addAttribute("branchList", friskdataRepo.getlist());

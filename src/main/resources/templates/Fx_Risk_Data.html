@@ -47,6 +47,8 @@ PURPOSE		: Nostra Account balance Report
 	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+
 
 <style>
 .btns {
@@ -242,42 +244,7 @@ td {
 }
 
 </style>
-  <style>
-  .button-tab-group {
-    background-color: white;
-    padding: 4px 10px;
-    border-radius: 0.25rem;
-    display: flex;
-    gap: 10px;
-  }
-
-  .custom-tab-btn {
-    background: white;
-    color: black;
-    font-weight: 600;
-    border: 2px solid rgb(0,164,166);
-    padding: 8px 20px;
-    margin-right: 10px;
-    border-radius: 30px;
-    transition: 0.3s;
-    cursor: pointer;
-  }
-
-  .custom-tab-btn:hover {
-    background-color: rgb(0,164,166);
-    color: white;
-  }
-
-  .custom-tab-btn.active {
-    background-color: rgb(0,164,166);
-    color: white;
-  }
-  .custom-tab-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-  
-</style>
+ 
 
 <style>
         .form-group {
@@ -399,60 +366,81 @@ td {
 	        }
 	    }
 	};
-
+	
 	function updateform() {
-
-			$('#Fxriskdata').validate({
-				rules: {
-					
-					bank_date: {required: true},
-					bank_name: {required: true, minlength: 2},
-					
-				},
-				messages: {
-					bank_date: "Please provide Data Date",
-				    bank_name: {required: "Please provide Bank Name", minlength: "Bank Name must be at least 2 characters"},
-
-					
-				}
-			});
-
-			if ($("#Fxriskdata").valid()) {
-				$("#loader1").modal("show");
-
-				var url = "./updateFxriskdata";
-				$("#Fxriskdata").attr('action', url);
-
-				var options = {
-					success: function (responseText, statusText, xhr, $form) {
-						$("#loader1").modal("hide");
-
-						// Show modal alert
-						$("#alertmsg").text("Updated Success fully");
-
-						$('#alert').modal("toggle");
-
-						// Redirect after short delay
-
-						window.location.href = "Fx_Risk_Data";
-
-					},
-					error: function (xhr, status, error) {
-						$("#loader1").modal("hide");
-						$("#alertmsg").text("Error: " + error);
-
-						$('#alert').modal("toggle");
-					}
-				};
-
-				$("#Fxriskdata").ajaxSubmit(options);
-			} else {
-				$("#alertmsg").text("Please fix validation errors.");
-				$('#alert').modal("show");
-			}
-		}
-
-
+	    console.log("updateform function called"); // Debug log
+	    
+	    // Retrieve form and field values
+	    var bankDate = document.getElementById('bank_date').value.trim();
+	    var bankName = document.getElementById('bank_name').value.trim();
+	    
+	    var isValid = true;
+	    var mandatoryMessage = "Please fill the required field(s)";
+	    
+	    // Validate each field and highlight if empty
+	    function validateField(fieldSelector, errorMessage) {
+	        var field = $(fieldSelector);
+	        if (!field.val().trim()) {
+	            field.css("border-color", "red").attr("title", errorMessage);
+	            isValid = false;
+	        } else {
+	            field.css("border-color", "").attr("title", ""); // Reset styles
+	        }
+	    }
+	    
+	    // Validate required fields
+	    validateField('#bank_date', "Please provide Data Date");
+	    validateField('#bank_name', "Please provide Bank Name");
+	    
+	    // Additional validation for bank name length
+	    if (bankName && bankName.length < 2) {
+	        $('#bank_name').css("border-color", "red").attr("title", "Bank Name must be at least 2 characters");
+	        isValid = false;
+	    }
+	    
+	    // If validation fails, show alert and stop form submission
+	    if (!isValid) {
+	        $("#alertmsg").text(mandatoryMessage);
+	        $("#alert").modal("show");
+	        return;
+	    }
+	    
+	    console.log("Validation passed, submitting form"); // Debug log
+	    
+	    // Show loader and submit form traditionally
+	    $("#loader1").modal("show");
+	    
+	    // Use jQuery form plugin for traditional submit with callback
+	    var options = {
+	        url: './updateFxriskdata',
+	        type: 'POST',
+	        beforeSubmit: function() {
+	            console.log("Form being submitted");
+	            return true;
+	        },
+	        success: function(responseText, statusText, xhr, $form) {
+	            console.log("Form submitted successfully");
+	            $("#loader1").modal("hide");
+	            
+	            // Show success message
+	            $("#alertmsg").text("Updated Successfully");
+	            $("#alert").modal("show");
+	            
+	            // Redirect after showing message
+	            setTimeout(function() {
+	                window.location.href = "./Fx_Risk_Data?formmode=list";
+	            }, 1500);
+	        },
+	        error: function(xhr, status, error) {
+	            console.log("Form submission error:", error);
+	            $("#loader1").modal("hide");
+	            $("#alertmsg").text("Error: " + error);
+	            $("#alert").modal("show");
+	        }
+	    };
+	    
+	    $("#Fxriskdata").ajaxSubmit(options);
+	}
 	</script>
   
 </head>
@@ -463,7 +451,7 @@ td {
    if (tabId === 'data') {
 			window.location.href = 'Fx_Risk_Data?formmode=list';
     } else if (tabId === 'datacontrols') {
-      window.location.href = 'Nostro_Account_Bal?formmode=add';
+      window.location.href = 'Fx_Risk_Data?formmode=add';
     }
   }
 
@@ -791,7 +779,7 @@ td {
         <!-- Loop to render data dynamically -->
         <tr th:each="data : ${branchList}">
 <td>
-									<a th:href="@{'/Fx_Risk_Data?formmode=edit&bank_date=' + ${data.bank_date}}">
+									<a th:href="@{'/Fx_Risk_Data?formmode=edit&SI_NO=' + ${data.SI_NO}}">
 										<i class="fa fa-edit" style="color: #007bff;"></i>
 									</a>
 								</td>
@@ -852,7 +840,8 @@ td {
 <div th:if="${formmode}=='edit'" style="align-items:center">
  
 <div class="row">
-				<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}" method="post" id="Nostro">
+	
+<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}" method="post" id="Fxriskdata">
     	<div class="card" style="margin-left: 26px;">
 						<div class="card-header"style="background-color: rgb(0,164,166);">
 							<div class="float-left">
@@ -863,6 +852,7 @@ td {
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
  
+  <input type="hidden" th:field="*{SI_NO}" />
   
     <!--<input type="hidden" th:field="*{accountNo}" />-->
     
@@ -982,8 +972,8 @@ td {
     <!-- Submit -->
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="btn btn-success" onclick="updateform()">Update</button>
-      <a th:href="@{/Nostro_Account_Bal}" class="btn btn-secondary ml-2">Cancel</a>
+   <button type="submit" class="custom-tab-btn" onclick="updateform()">Update</button>
+      <a th:href="@{/Nostro_Account_Bal}" class="custom-tab-btn">Cancel</a>
     </div>
     
     </div>

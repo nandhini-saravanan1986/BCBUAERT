@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.services;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
@@ -36,22 +37,48 @@ public class RT_FxriskdataService {
 	private SessionFactory sessionFactory;
 
 	public boolean updateFxriskdata(RT_Fxriskdata updatedData) {
-		Optional<RT_Fxriskdata> existingOpt = friskdataRepo.findById(updatedData.getBank_date()); // or your correct
-																										// @Id field
+	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
-		if (existingOpt.isPresent()) {
-			RT_Fxriskdata existing = existingOpt.get();
+	    RT_Fxriskdata existing = friskdataRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
 
-			// Only update fields that should be updated:
-			existing.setBank_name(null);
+	    if (existing != null) {
+	        // Update fields
+	        existing.setBank_date(updatedData.getBank_date());
+	        existing.setBank_name(updatedData.getBank_name());
+	        existing.setBank_symbol(updatedData.getBank_symbol());
+	        existing.setConventional_islamic(updatedData.getConventional_islamic());
+	        existing.setLocal_foreign(updatedData.getLocal_foreign());
+	        existing.setCbuae_tiering(updatedData.getCbuae_tiering());
+	        existing.setCurrency(updatedData.getCurrency());
+	        existing.setFx_net_openposition(updatedData.getFx_net_openposition());
+	        existing.setOff_balance_sheet_position(updatedData.getOff_balance_sheet_position());
+	        existing.setOn_balance_sheet_position(updatedData.getOn_balance_sheet_position());
+	        existing.setFx_net_openposition_foreign_currency(updatedData.getFx_net_openposition_foreign_currency());
+	        existing.setInternal_long_limit(updatedData.getInternal_long_limit());
+	        existing.setInternal_long_limit_trigger_status(updatedData.getInternal_long_limit_trigger_status());
+	        existing.setInternal_short_limit(updatedData.getInternal_short_limit());
+	        existing.setInternal_short_limit_trigger_status(updatedData.getInternal_short_limit_trigger_status());
+	        existing.setBank_core_tier1_capital(updatedData.getBank_core_tier1_capital());
+	        existing.setBank_core_tier1_capital_lc(updatedData.getBank_core_tier1_capital_lc());
+	        existing.setPercent_of_group_capital(updatedData.getPercent_of_group_capital());
+	        existing.setBank_core_tier1_capital_aed(updatedData.getBank_core_tier1_capital_aed());
+	        existing.setReport_submit_date(updatedData.getReport_submit_date());
+	        existing.setReport_from_date(updatedData.getReport_from_date());
+	        existing.setReport_to_date(updatedData.getReport_to_date());
+	        existing.setReport_date(updatedData.getReport_date());
+	        existing.setEntity_flg(updatedData.getEntity_flg());
+	        existing.setModify_flg(updatedData.getModify_flg());
+	        existing.setDel_flg(updatedData.getDel_flg());
 
-			// Save updated entity
-			friskdataRepo.save(existing);
-			return true;
-		} else {
-			return false; // record not found
-		}
+	        friskdataRepo.save(existing);
+	        return true;
+	    } else {
+	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());
+	        return false;
+	    }
 	}
+
+
 
 	public File generateFxRiskExcel() {
 		File outputFile = null;

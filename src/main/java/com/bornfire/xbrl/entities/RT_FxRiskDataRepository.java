@@ -19,5 +19,9 @@ public interface RT_FxRiskDataRepository extends JpaRepository<RT_Fxriskdata, Da
 
 	@Query(value = "SELECT * FROM BCBUAE_FX_RISK_DATA ", nativeQuery = true)
 	List<Object[]> getfxriskdatalistdata1();
-
+	
+	
+	@Query(value = "SELECT * FROM BCBUAE_FX_RISK_DATA where SI_NO =?1 ", nativeQuery = true)
+	RT_Fxriskdata getParticularDataBySI_NO(String SI_NO);
+	
 }
