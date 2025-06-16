@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +49,8 @@ import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
 
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskDataRepository;
+import com.bornfire.xbrl.entities.RT_BankNameMaster;
+import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_DataControl;
@@ -97,6 +102,9 @@ public class XBRLNavigationController {
 	@Autowired
 	RT_FxRiskDataRepository friskdataRepo;
 
+	@Autowired
+	RT_BankNameMasterRepository bankRepo;
+	
 	@Autowired
 	SessionFactory sessionFactory;
 
@@ -281,9 +289,30 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "add");
 			md.addAttribute("formmode", "null");
 		}
-
+		
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		md.addAttribute("bankList", bankList);
 		return "Nostro_Account_Bal";
 	}
+
+	@RequestMapping(value = "getBankDetails", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
+      
+		RT_BankNameMaster bank = bankRepo.findByBankName(bankName);
+		System.out.println("came to controller with bank name ");
+        if (bank == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Map<String, String> bankDetails = new HashMap<>();
+        bankDetails.put("bankSymbol", bank.getBankSymbol());
+        bankDetails.put("conventionalIslamic", bank.getConventionalIslamic());
+        bankDetails.put("localForeign", bank.getLocalForeign());
+        bankDetails.put("cbuaeTiering", bank.getCbuaeTiering());
+
+        return ResponseEntity.ok(bankDetails);
+    }
+
 
 	@PostMapping("/createDataControl")
 	@ResponseBody
