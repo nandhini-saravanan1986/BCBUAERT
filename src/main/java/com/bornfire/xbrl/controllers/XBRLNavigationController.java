@@ -51,6 +51,8 @@ import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
+import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
+import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_DataControl;
@@ -104,6 +106,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_BankNameMasterRepository bankRepo;
+	
+	@Autowired
+	RT_CountryRiskDropdownRepo countryRepo;
 	
 	@Autowired
 	SessionFactory sessionFactory;
@@ -291,7 +296,11 @@ public class XBRLNavigationController {
 		}
 		
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		md.addAttribute("bankList", bankList);
+	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
+	    
 		return "Nostro_Account_Bal";
 	}
 
@@ -312,6 +321,21 @@ public class XBRLNavigationController {
 
         return ResponseEntity.ok(bankDetails);
     }
+	
+	@RequestMapping(value = "getCountryDetails", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, String>> getCountryDetails(@RequestParam String countryName) {
+	    RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
+	    System.out.println("Fetched country details for: " + countryName);
+
+	    if (country == null) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    Map<String, String> response = new HashMap<>();
+	    response.put("cbuaeGeographicalZone", country.getCbuaeGeographicalZone());
+
+	    return ResponseEntity.ok(response);
+	}
 
 
 	@PostMapping("/createDataControl")
@@ -351,7 +375,7 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 	    
 	    if (updated) {
 	        System.out.println("Update successful");
-	        return "Update successful";
+	        return "Updated successful";
 	    } else {
 	        System.out.println("Update Record not found for update");
 	        return "Record not found for update";

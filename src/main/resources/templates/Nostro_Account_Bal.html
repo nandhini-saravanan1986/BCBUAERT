@@ -282,7 +282,7 @@ $(document).ready(function () {
         const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
         const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
         const formData = $("#nostroForm").serialize();
-
+	
         $.ajax({
             url: submitUrl,
             type: "POST",
@@ -295,6 +295,8 @@ $(document).ready(function () {
                 //location.href = 'Nostro_Account_Bal';
             },
             error: function (xhr, status, error) {
+        	    $("#loader").modal("hide");
+
                 console.error("Error:", error);
                 alert("Error occurred: " + error);
             }
@@ -411,6 +413,8 @@ $(document).ready(function () {
 	     },
 	     error: function(xhr, status, error) {
 	         console.error("Error in modify:", error);
+	 	    $("#loader").modal("hide");
+
 	         alert("Failed to modify. Please try again.");
 	     }
 	 });
@@ -967,20 +971,20 @@ $(document).ready(function () {
       </div>
 </div>   
  <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Country Of Risk</label>
-      <div class="col-sm-4">
-        <select class="form-control" th:field="*{countryOfRisk}" id="countryOfRisk" onchange="handleCountryChange(this)">
-  <option value="">-- Select Country --</option>
-  <option value="United Arab Emirates">United Arab Emirates</option>
-  <!-- Add more countries as needed -->
-</select>
-      </div>
+  <label class="col-sm-2 col-form-label">Country Of Risk</label>
+  <div class="col-sm-4">
+    <select class="form-control" th:field="*{countryOfRisk}" id="countryOfRisk" onchange="handleCountryChange(this)">
+      <option value="">-- Select Country --</option>
+      <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+    </select>
+  </div>
 
-      <label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-      <div class="col-sm-4">
-<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly/>
- </div>
-</div>   
+  <label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly/>
+  </div>
+</div>
+
  <div class="form-group row">
       <label class="col-sm-2 col-form-label">currency</label>
       <div class="col-sm-4">
@@ -1218,7 +1222,7 @@ function handleBankChange(select) {
     }
 
     $.ajax({
-    	url: '/BRBS/getBankDetails',
+    	url: '/BCDRS/getBankDetails',
         type: 'GET',
         data: { bankName: selectedBank },
         success: function(data) {
@@ -1235,26 +1239,36 @@ function handleBankChange(select) {
 }
 </script>
 <script>
-  function handleCountryChange(select) {
+function handleCountryChange(select) {
     const selectedCountry = select.value;
-    const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
 
-    if (selectedCountry === "United Arab Emirates") {
-      geoZoneInput.value = "GCC";
-      geoZoneInput.readOnly = true;
-    } else {
-      geoZoneInput.value = "";
-      geoZoneInput.readOnly = false;
+    if (!selectedCountry) {
+        $('#cbuaeGeographicalZone').val('');
+        return;
     }
-  }
 
-  // Run on page load (for edit mode pre-filled forms)
-  window.onload = function() {
+    $.ajax({
+        url: '/BCDRS/getCountryDetails',
+        type: 'GET',
+        data: { countryName: selectedCountry },
+        success: function(data) {
+            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            alert('Failed to fetch geographical zone.');
+        }
+    });
+}
+
+// Run on page load (for edit mode)
+window.onload = function() {
     const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect) {
-      handleCountryChange(countrySelect);
+    if (countrySelect && countrySelect.value) {
+        handleCountryChange(countrySelect);
     }
-  };
+};
 </script>
+
 
 </html>
