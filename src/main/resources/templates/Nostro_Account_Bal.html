@@ -4,50 +4,47 @@
 CREATED BY	: KRISHNAPANDI MG 
 CREATED ON	: 04.06.2025
 PURPOSE		: Nostra Account balance Report
- -->
- 
+-->
+
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+	  xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
+	
 
+	<!-- ✅ Your manually placed jQuery validation
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	 <script th:src="/jquery/jquery.validate.min.js"></script>
+	 -->
+	
+	<!-- jQuery (required first) -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
 	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
-<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
 <style>
 .btns {
@@ -231,24 +228,103 @@ td {
             color: #aaa; /* Normal label color */
         }
     </style>
+   
+    <style>
+/* Red border for invalid inputs */
+input.error, select.error {
+  border: 2px solid red !important;
+}
+
+/* Error message style */
+label.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: block;
+}
+</style>
+    <script>
+$(document).ready(function () {
+    $("#nostroForm").validate({
+        errorClass: "error", // use 'error' class for styling
+        errorElement: "label", // wrap error messages in <label>
+
+        // Place the error after the input field
+        errorPlacement: function (error, element) {
+            if (element.parent('.form-group').length) {
+                error.insertAfter(element); // default
+            } else {
+                error.insertAfter(element);
+            }
+        },
+
+        // Highlight and unhighlight fields
+        highlight: function (element) {
+            $(element).addClass("error");
+        },
+        unhighlight: function (element) {
+            $(element).removeClass("error");
+        },
+
+        // On successful validation, run this
+        submitHandler: function (form) {
+            submitForm(); // your custom submit function
+        }
+    });
+});
+</script>
+    
+    <script>
+
+    function submitForm() {
+		$("#loader").modal("toggle");
+
+        const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
+        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+        const formData = $("#nostroForm").serialize();
+
+        $.ajax({
+            url: submitUrl,
+            type: "POST",
+            data: formData,
+            success: function (response) {
+        		$("#loader").modal("hide");
+
+            	$("#alertmsg1").text(response);
+                $("#alert1").modal("toggle");
+                //location.href = 'Nostro_Account_Bal';
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("Error occurred: " + error);
+            }
+        });
+    }
+
+
+</script>
+
 <script th:inline="javascript">
 	
 
 	function home() {
-        $("#loader1").modal("toggle");
+        $("#loader").modal("toggle");
 		location.href = 'Dashboard'
 	}
 
 	function back() {
-        $("#loader1").modal("toggle");
+        $("#loader").modal("toggle");
 
 		window.history.back();
 	}
 
 	function list() {
-		location.href = 'Nostro_Account_Bal';
+		location.href = 'Nostro_Account_Bal?formmode=list';
 	}
 	
+	function nostro() {
+		location.href = 'Nostro_Account_Bal';
+	}
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
@@ -256,46 +332,8 @@ td {
 	    });
 	});
 
-	function submitForm() {
-		$('#nostroForm').validate({
-	        messages: {
-	            portfolioDate: "Please provide Portfolio Date",
-	            submittingInstitution: "Please provide Submitting Institution"
-	        }
-	    });
 
-	    if ($("#nostroForm").valid()) {
-	    	var formmode = /*[[${formmode}]]*/null;
-
-	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
-	        $("#loader1").modal("toggle");
-
-	        var url = "./createDataControl?report_name=" + report_name;
-
-	        $("#nostroForm").attr('action', url);
-
-	        var options = {
-	            success: showResponse,
-	            error: function (xhr, status, error) {
-	                console.log("Error occurred: ", error);
-	                console.log(xhr.responseText); // for debugging
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Something went wrong while submitting the form.");
-	                $('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#nostroForm").ajaxSubmit(options);
-
-	        function showResponse(responseText, statusText, xhr, $form) {
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text(responseText);
-	            $('#alert').modal("toggle");
-	        }
-	    }
-	};
-
-	function updateform() {
+	/*function updateform() {
 		
 	    $('#Nostro').validate({
 	        rules: {
@@ -329,9 +367,9 @@ td {
 	                $("#loader1").modal("hide");
 
 	                // Show modal alert
-	                $("#alertmsg").text("Updated Success fully");
+	               // $("#alertmsg").text("Updated Success fully");
 
-					$('#alert').modal("toggle");
+					//$('#alert').modal("toggle");
 
 	                // Redirect after short delay
 	               
@@ -351,8 +389,33 @@ td {
 	        $("#alertmsg").text("Please fix validation errors.");
 	        $('#alert').modal("show");
 	    }
-	}
+	}*/
+	
+	
+	function updateform(event) {
+		
+		event.preventDefault();	
+		$("#loader").modal("toggle");
 
+		$.ajax({
+	     url: `./updateNostro`,
+	     type: 'POST',
+	     data: $('#nostroData').serialize(),
+	     success: function(response) {
+	    $("#loader").modal("hide");
+
+	      
+	      $("#alertmsg").text(response);
+         $("#alert").modal("toggle");
+	      
+	     },
+	     error: function(xhr, status, error) {
+	         console.error("Error in modify:", error);
+	         alert("Failed to modify. Please try again.");
+	     }
+	 });
+	
+	}
 	
     </script>
   
@@ -365,6 +428,7 @@ td {
       window.location.href = 'Nostro_Account_Bal?formmode=list';
     } else if (tabId === 'datacontrols') {
       window.location.href = 'Nostro_Account_Bal?formmode=add';
+      
     }
   }
 
@@ -474,6 +538,7 @@ td {
           method="post"
           autocomplete="off" > 
 				<div class="card-body" style="max-height:450px; overflow-y:auto">
+
 
 							<input autocomplete="false" name="hidden" type="text"
 								style="display: none;">
@@ -645,14 +710,52 @@ td {
 							</form>
 							</div>
 							</div>
+							<div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
 							</div></div>
 									
 <!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
 <!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-  <div class="tab-pane fade" id="template" role="tabpanel">
+  <div class="tab-pane fade" id="template" role="tabpanel"  th:if="${formmode == 'null'}">
     <p>Templates tabs</p>
+    <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
   </div>
  
  <!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
@@ -745,7 +848,7 @@ td {
       </tbody>
     </table>
   </div>
-</div>
+
 
 <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
@@ -767,7 +870,7 @@ td {
 
 </div>
 
-
+</div>
 
 
 
@@ -778,7 +881,7 @@ td {
 <div th:if="${formmode}=='edit'" style="align-items:center">
  
 <div class="row">
-		<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="Nostro">
+		<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="nostroData">
     	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
@@ -795,11 +898,71 @@ td {
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Bank Name</label>
       <div class="col-sm-4">
-       <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
+ <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
   <option value="">-- Select Bank --</option>
+  <option value="Abu Dhabi Commercial Bank">Abu Dhabi Commercial Bank</option>
+  <option value="Abu Dhabi Islamic Bank">Abu Dhabi Islamic Bank</option>
+  <option value="Agricultural Bank of China">Agricultural Bank of China</option>
+  <option value="Ajman Bank">Ajman Bank</option>
+  <option value="Al Ahli Bank Of Kuwait K.S.C.">Al Ahli Bank Of Kuwait K.S.C.</option>
+  <option value="Al Hilal Bank">Al Hilal Bank</option>
+  <option value="Al Khaliji France S.A.">Al Khaliji France S.A.</option>
+  <option value="Al Maryah Community Bank">Al Maryah Community Bank</option>
+  <option value="Al Masraf">Al Masraf</option>
+  <option value="Arab African International Bank">Arab African International Bank</option>
+  <option value="Arab Bank">Arab Bank</option>
+  <option value="Bank Alfalah Limited">Bank Alfalah Limited</option>
   <option value="Bank of Baroda">Bank of Baroda</option>
-  <!-- Add more banks if needed -->
+  <option value="Bank Of China">Bank Of China</option>
+  <option value="Bank Of Melli">Bank Of Melli</option>
+  <option value="Bank of Sharjah">Bank of Sharjah</option>
+  <option value="Bank Saderat Iran">Bank Saderat Iran</option>
+  <option value="Banque Banorient France (previously Blom Bank France)">Banque Banorient France (previously Blom Bank France)</option>
+  <option value="BANQUE MISR">BANQUE MISR</option>
+  <option value="BARCLAYS">BARCLAYS</option>
+  <option value="BNP PARIBAS">BNP PARIBAS</option>
+  <option value="BOK International Bank">BOK International Bank</option>
+  <option value="Citibank NA">Citibank NA</option>
+  <option value="Commercial Bank International PSC">Commercial Bank International PSC</option>
+  <option value="Credit Agricole Corporate and Investment Bank">Credit Agricole Corporate and Investment Bank</option>
+  <option value="Deutsche Bank">Deutsche Bank</option>
+  <option value="Doha Bank">Doha Bank</option>
+  <option value="Dubai Islamic Bank">Dubai Islamic Bank</option>
+  <option value="El Nilein Bank">El Nilein Bank</option>
+  <option value="Emirates Investment Bank">Emirates Investment Bank</option>
+  <option value="Emirates Islamic Bank PJSC">Emirates Islamic Bank PJSC</option>
+  <option value="Emirates NBD Bank PJSC">Emirates NBD Bank PJSC</option>
+  <option value="First Abu Dhabi Bank">First Abu Dhabi Bank</option>
+  <option value="Habib Bank AG Zurich">Habib Bank AG Zurich</option>
+  <option value="Habib Bank Limited">Habib Bank Limited</option>
+  <option value="HSBC Bank Middle East">HSBC Bank Middle East</option>
+  <option value="Industrial and Commercial Bank of China">Industrial and Commercial Bank of China</option>
+  <option value="International Development Bank">International Development Bank</option>
+  <option value="INTESA SANPAOLO">INTESA SANPAOLO</option>
+  <option value="Investbank PSC">Investbank PSC</option>
+  <option value="Janata Bank">Janata Bank</option>
+  <option value="MCB BANK LTD">MCB BANK LTD</option>
+  <option value="MUFG Bank, Ltd.">MUFG Bank, Ltd.</option>
+  <option value="National Bank of Bahrain">National Bank of Bahrain</option>
+  <option value="National Bank Of Fujairah">National Bank Of Fujairah</option>
+  <option value="National Bank Of Kuwait">National Bank Of Kuwait</option>
+  <option value="National Bank of Oman">National Bank of Oman</option>
+  <option value="National Bank of Ras Al-Khaimah">National Bank of Ras Al-Khaimah</option>
+  <option value="National Bank Of Umm Al Qaiwain">National Bank Of Umm Al Qaiwain</option>
+  <option value="Rafidain Bank">Rafidain Bank</option>
+  <option value="Ruya Community Islamic Bank LLC">Ruya Community Islamic Bank LLC</option>
+  <option value="Sharjah Islamic Bank">Sharjah Islamic Bank</option>
+  <option value="Standard Chartered Bank">Standard Chartered Bank</option>
+  <option value="The Saudi National Bank (previously Samba Financial Group)">The Saudi National Bank (previously Samba Financial Group)</option>
+  <option value="Union National Bank">Union National Bank</option>
+  <option value="United Arab Bank">United Arab Bank</option>
+  <option value="United Bank Ltd.">United Bank Ltd.</option>
+  <option value="Wio Bank">Wio Bank</option>
+  <option value="Zanda Bank">Zanda Bank</option>
+  <option value="Other">Other</option>
 </select>
+  <!-- Add more banks if needed -->
+
 
       </div>
 
@@ -926,7 +1089,7 @@ td {
     <!-- Submit -->
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="custom-tab-btn" onclick="updateform()">Update</button>
+   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
       <a th:href="@{/Nostro_Account_Bal}" class="custom-tab-btn">Cancel</a>
     </div>
     
@@ -978,19 +1141,34 @@ td {
 			<div class="modal-content">
 			<div class="menu-title-header">
 					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;background-color: rgb(0,164,166);">BANK OF BARODA</div>
+						style="text-align: center; color: white;">BANK OF BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="btn btn-primary" onclick="list()"
-						data-dismiss="modal" style="background-color: rgb(0,164,166);">Close</button>
+					<button type="button" class="custom-tab-btn" onclick="list()"
+						data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-
-	<div class="modal fade" id="loader1" data-backdrop="static"
+<div class="modal fade" id="alert1">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="custom-tab-btn" onclick="nostro()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="loader" data-backdrop="static"
 			data-keyboard="false">
 			<div
 				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1029,6 +1207,23 @@ td {
 <!-- Include this after your DataTable initialization script -->
 
 <style>
+/* Remove top margin/padding from DataTables parent containers */
+#data {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.table-responsive {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure DataTables filter (search box) doesn't have spacing above it */
+div.dataTables_filter {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
   /* FIX: Make search label and box inline */
   div.dataTables_filter label {
     display: flex !important;
@@ -1063,8 +1258,11 @@ td {
   }
 </style>
 
+
+
 <script>
-  function handleBankChange(select) {
+// fields changing by banks..
+function handleBankChange(select) {
     const selectedBank = select.value;
 
     const bankSymbol = document.getElementById("bankSymbol");
@@ -1072,40 +1270,396 @@ td {
     const localForeign = document.getElementById("localForeign");
     const tiering = document.getElementById("cbuaeTiering");
 
-    if (selectedBank === "Bank of Baroda") {
-      bankSymbol.value = "BARODA";
-      bankSymbol.readOnly = true;
+    // Reset all fields first
+    bankSymbol.readOnly = false;
+    bankSymbol.value = "";
+    conventional.readOnly = false;
+    conventional.value = "";
+    localForeign.readOnly = false;
+    localForeign.value = "";
+    tiering.readOnly = false;
+    tiering.value = "";
 
-      conventional.value = "Conventional";
-      conventional.readOnly = true;
-
-      localForeign.value = "Foreign";
-      localForeign.readOnly = true;
-
-      tiering.value = "Tier 3";
-      tiering.readOnly = true;
-    } else {
-      bankSymbol.readOnly = false;
-      bankSymbol.value = "";
-
-      conventional.readOnly = false;
-      conventional.value = "";
-
-      localForeign.readOnly = false;
-      localForeign.value = "";
-
-      tiering.readOnly = false;
-      tiering.value = "";
+    // Set values based on selected bank
+    switch(selectedBank) {
+        case "Bank of Baroda":
+            bankSymbol.value = "BARODA";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Abu Dhabi Commercial Bank":
+            bankSymbol.value = "ADCB";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 1";
+            break;
+        case "Abu Dhabi Islamic Bank":
+            bankSymbol.value = "ADIB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 1";
+            break;
+        case "Agricultural Bank of China":
+            bankSymbol.value = "ABC";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Ajman Bank":
+            bankSymbol.value = "AJMB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Al Ahli Bank Of Kuwait K.S.C.":
+            bankSymbol.value = "AHILI";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Al Hilal Bank":
+            bankSymbol.value = "AHB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Al Khaliji France S.A.":
+            bankSymbol.value = "KHALIJI";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Al Maryah Community Bank":
+            bankSymbol.value = "MARYAH";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Al Masraf":
+            bankSymbol.value = "ARBIFT";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Arab African International Bank":
+            bankSymbol.value = "AAFRICAN";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Arab Bank":
+            bankSymbol.value = "ARAB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Bank Alfalah Limited":
+            bankSymbol.value = "ALFALA";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Bank Of China":
+            bankSymbol.value = "BOC";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Bank Of Melli":
+            bankSymbol.value = "MELLI";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Bank of Sharjah":
+            bankSymbol.value = "BOS";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Banque Banorient France (previously Blom Bank France)":
+            bankSymbol.value = "BLOM";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "BANQUE MISR":
+            bankSymbol.value = "BANQU";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Bank Saderat Iran":
+            bankSymbol.value = "SEDEART";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "BNP PARIBAS":
+            bankSymbol.value = "BANQU";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "BARCLAYS":
+            bankSymbol.value = "BARC";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "BOK International Bank":
+            bankSymbol.value = "BOK";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Credit Agricole Corporate and Investment Bank":
+            bankSymbol.value = "CACIB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Citibank NA":
+            bankSymbol.value = "CITI";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 2";
+            break;
+        case "Commercial Bank International PSC":
+            bankSymbol.value = "CBI";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Deutsche Bank":
+            bankSymbol.value = "DEU";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Doha Bank":
+            bankSymbol.value = "DOHA";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Dubai Islamic Bank":
+            bankSymbol.value = "DIB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 1";
+            break;
+        case "El Nilein Bank":
+            bankSymbol.value = "ELNILEIN";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Emirates Investment Bank":
+            bankSymbol.value = "AEIB";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Emirates Islamic Bank PJSC":
+            bankSymbol.value = "EIB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 2";
+            break;
+        case "Emirates NBD Bank PJSC":
+            bankSymbol.value = "ENBD";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 1";
+            break;
+        case "First Abu Dhabi Bank":
+            bankSymbol.value = "FAB";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 1";
+            break;
+        case "Habib Bank AG Zurich":
+            bankSymbol.value = "HABAG";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Habib Bank Limited":
+            bankSymbol.value = "HBL";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "HSBC Bank Middle East":
+            bankSymbol.value = "HSBC";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 1";
+            break;
+        case "Industrial and Commercial Bank of China":
+            bankSymbol.value = "ICBC";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "International Development Bank":
+            bankSymbol.value = "IDB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "INTESA SANPAOLO":
+            bankSymbol.value = "INTESA";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Investbank PSC":
+            bankSymbol.value = "INVEST";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Janata Bank":
+            bankSymbol.value = "JANATA";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "MCB BANK LTD":
+            bankSymbol.value = "MCB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "MUFG Bank, Ltd.":
+            bankSymbol.value = "MUFG";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "National Bank of Bahrain":
+            bankSymbol.value = "NBB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "National Bank Of Fujairah":
+            bankSymbol.value = "NBF";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 2";
+            break;
+        case "National Bank Of Kuwait":
+            bankSymbol.value = "NBK";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "National Bank of Oman":
+            bankSymbol.value = "NBO";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "National Bank of Ras Al-Khaimah":
+            bankSymbol.value = "RAK";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 2";
+            break;
+        case "National Bank Of Umm Al Qaiwain":
+            bankSymbol.value = "UAQ";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Rafidain Bank":
+            bankSymbol.value = "RAFIDAIN";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Ruya Community Islamic Bank LLC":
+            bankSymbol.value = "RUYA";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Sharjah Islamic Bank":
+            bankSymbol.value = "SIB";
+            conventional.value = "Islamic Bank";
+            localForeign.value = "Local";
+            tiering.value = "Tier 2";
+            break;
+        case "Standard Chartered Bank":
+            bankSymbol.value = "SCB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 2";
+            break;
+        case "The Saudi National Bank (previously Samba Financial Group)":
+            bankSymbol.value = "SAMBA";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Union National Bank":
+            bankSymbol.value = "UNB";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "United Arab Bank":
+            bankSymbol.value = "UAB";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "United Bank Ltd.":
+            bankSymbol.value = "UBL";
+            conventional.value = "Conventional";
+            localForeign.value = "Foreign";
+            tiering.value = "Tier 3";
+            break;
+        case "Wio Bank":
+            bankSymbol.value = "WIO";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Zanda Bank":
+            bankSymbol.value = "ZAND";
+            conventional.value = "Conventional";
+            localForeign.value = "Local";
+            tiering.value = "Tier 3";
+            break;
+        case "Other":
+            bankSymbol.value = "OTH";
+            conventional.value = "Other";
+            localForeign.value = "Other";
+            tiering.value = "Other";
+            break;
     }
-  }
 
-  // Run on page load in case form is already pre-filled (like in edit mode)
-  window.onload = function() {
+    // If a bank was selected (not empty or default), make fields read-only
+    if (selectedBank && selectedBank !== "") {
+        bankSymbol.readOnly = true;
+        conventional.readOnly = true;
+        localForeign.readOnly = true;
+        tiering.readOnly = true;
+    }
+}
+
+// Run on page load in case form is already pre-filled (like in edit mode)
+window.onload = function() {
     const bankSelect = document.querySelector("select[th\\:field='*{bankName}']");
     if (bankSelect) {
-      handleBankChange(bankSelect);
+        handleBankChange(bankSelect);
     }
-  };
+};
 </script>
 <script>
   function handleCountryChange(select) {
@@ -1129,6 +1683,5 @@ td {
     }
   };
 </script>
-
 
 </html>

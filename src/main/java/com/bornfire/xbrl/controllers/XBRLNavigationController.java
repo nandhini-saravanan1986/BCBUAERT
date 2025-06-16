@@ -2,6 +2,7 @@ package com.bornfire.xbrl.controllers;
 
 import java.io.File;
 
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -295,7 +296,7 @@ public class XBRLNavigationController {
 		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
 
-	@PostMapping("/updateNostro")
+	/*@PostMapping("/updateNostro")
 	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, Model model, RedirectAttributes redirectAttributes) {
 	    
 	    boolean updated = nostroService.updateNostro(nostroData);
@@ -311,7 +312,25 @@ public class XBRLNavigationController {
 	    
 	    return "redirect:Nostro_Account_Bal?formmode=list";
 	}
-
+*/
+	@RequestMapping("/updateNostro")
+	@ResponseBody
+public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpServletRequest req) {
+	    
+	    boolean updated = nostroService.updateNostro(nostroData);
+	    System.out.println("msg is : " + updated);
+	    
+	    if (updated) {
+	        System.out.println("Update successful");
+	        return "Update successful";
+	    } else {
+	        System.out.println("Update Record not found for update");
+	        return "Record not found for update";
+	    }
+	    
+	    
+	}
+	
 	@PostMapping("/updateFxriskdata")
 	@ResponseBody
 	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {
