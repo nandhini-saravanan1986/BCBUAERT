@@ -1,53 +1,49 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 
 <!-- 
-CREATED BY	: KRISHNAPANDI MG 
+CREATED BY	: SUJIDHARSHINI V
 CREATED ON	: 04.06.2025
-PURPOSE		: Nostra Account balance Report
- -->
- 
+PURPOSE		: F Risk Data Report
+-->
+
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+	  xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
+	
 
+	<!-- ✅ Your manually placed jQuery validation
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	 <script th:src="/jquery/jquery.validate.min.js"></script>
+	 -->
+	
+	<!-- jQuery (required first) -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
 	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
-<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
 
 <style>
@@ -94,82 +90,11 @@ PURPOSE		: Nostra Account balance Report
 	padding: 0px;
 }
 </style>
-<style>
-        .valids { color: green; }
-        .invalids { color: red; }
-    </style>
-    <style>
-  /* Tab container */
-  .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
-    background-color: #e9ecf0;
-    padding: 4px 10px;
-    border-radius: 0.25rem 0.25rem 0 0;
-  }
-
-  /* Tab buttons */
-  .nav-tabs .nav-link {
-    border: 1px solid #dee2e6;
-    border-bottom: none;
-    background-color: #f1f1f1;
-    color: #376275;
-    font-weight: 600;
-   
-    margin-right: 4px;
-    border-radius: 5px 5px 0 0;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  /* On hover */
-  .nav-tabs .nav-link:hover {
-    background-color: #d6e0e7;
-    color: #2c4c63;
-  }
-
-  /* Active tab */
-  .nav-tabs .nav-link.active {
-    background-color: #376275;
-    color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-  }
-
-  /* Tab content area */
-  .tab-content {
-    border: 1px solid #dee2e6;
-    border-top: none;
-    
-    background-color: #ffffff;
-    border-radius: 0 0 0.25rem 0.25rem;
-    font-family: Verdana, sans-serif;
-    color: #333;
-  }
- </style>
-  <style>
-  table {
-    font-size: 12px;
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
-
-  
-</style>
-  <style>
-  thead {
-    background-color: #e9ecf0 !important;
-  }
-
-  tbody tr {
-    background-color: #ffffff;
-  }
-
  
-</style>
-  <style>
+  
+ 
+ 
+ <style>
   .card {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -303,7 +228,22 @@ td {
             color: #aaa; /* Normal label color */
         }
     </style>
-<script th:inline="javascript">
+   
+    <style>
+/* Red border for invalid inputs */
+input.error, select.error {
+  border: 2px solid red !important;
+}
+
+/* Error message style */
+label.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: block;
+}
+</style>
+    <script th:inline="javascript">
 	
 
 	function home() {
@@ -324,7 +264,7 @@ td {
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Nostro_Account_Bal';
+	        window.location.href = './Fx_Risk_Data';
 	    });
 	});
 
@@ -366,8 +306,7 @@ td {
 	        }
 	    }
 	};
-	
-	function updateform() {
+	/*	function updateform() {
 	    console.log("updateform function called"); // Debug log
 	    
 	    // Retrieve form and field values
@@ -440,7 +379,47 @@ td {
 	    };
 	    
 	    $("#Fxriskdata").ajaxSubmit(options);
-	}
+	}*/
+	
+	function updateform(event) {
+    event.preventDefault();
+    
+    console.log("updateform function called");
+
+    // Show loader
+    $("#loader").modal("toggle");
+
+    // Check if SI_NO is present before sending
+    var formData = $('#Fxriskdata').serialize(); // Make sure this ID is correct (capital F)
+
+    console.log("Serialized Data:", formData); // Debug
+
+    $.ajax({
+        url: './updateFxriskdata',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            console.log("Server response:", response);
+            $("#loader").modal("hide");
+
+            $("#alertmsg").text(response);
+            $("#alert").modal("toggle");
+
+            if (response.includes("successful")) {
+                setTimeout(function() {
+                    window.location.href = "./Fx_Risk_Data?formmode=list";
+                }, 1500);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error in modify:", error);
+            $("#loader").modal("hide");
+            $("#alertmsg").text("Error: " + error);
+            $("#alert").modal("show");
+        }
+    });
+}
+
 	</script>
   
 </head>
@@ -512,14 +491,14 @@ td {
 		}
 	</script>
 <title>BCDRS</title>
-<body>
+<body> 
 <div class="container-fluid" style="padding-left:0px; padding-right:0px;">
 		<div class="row">
 		
 	<div th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div class="card-header" style="background-color: rgb(0,164,166);">
-					<div class="float-left" style="color: black;">
+		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(107, 122, 143) ; ">
+					<div class="float-left">
 						<h5 
 							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">FX RISK DATA</h5>
 					</div>
@@ -538,7 +517,7 @@ td {
   <button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
   <button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
   <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
-    	<div class="float-right" style="margin-left:57%">
+    	<div class="float-right" style="margin-left:61%">
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
@@ -561,6 +540,7 @@ td {
           method="post"
           autocomplete="off" > 
 				<div class="card-body" style="max-height:450px; overflow-y:auto">
+
 
 							<input autocomplete="false" name="hidden" type="text"
 								style="display: none;">
@@ -732,12 +712,59 @@ td {
 							</form>
 							</div>
 							</div>
+							<div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
 							</div></div>
 									
+<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
-  <div class="tab-pane fade" id="template" role="tabpanel">
+<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+
+  <div class="tab-pane fade" id="template" role="tabpanel"  th:if="${formmode == 'null'}">
     <p>Templates tabs</p>
+    <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
   </div>
+ 
+ <!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
+  
+  
+  
+  <!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
   <div class="tab-pane fade" id="data" role="tabpanel">
     <!-- Move your existing table content here -->
 
@@ -745,6 +772,10 @@ td {
 				<div class="col-sm-12">
 					<div class="container-fluid">
    -->
+   
+   
+   
+   
   <div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
     <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
   
@@ -805,10 +836,11 @@ td {
 
 
 							</tr>
+							
       </tbody>
     </table>
   </div>
-</div>
+
 
 <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
@@ -830,150 +862,151 @@ td {
 
 </div>
 
-
+</div>
 
 
 
 				</div>
 			
+<!------------------ edit starts-------------------------------------------------------------->
 		
 <div th:if="${formmode}=='edit'" style="align-items:center">
  
 <div class="row">
-	
-<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}" method="post" id="Fxriskdata">
-    	<div class="card" style="margin-left: 26px;">
-						<div class="card-header"style="background-color: rgb(0,164,166);">
+<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}" method="post" id="Fxriskdata">    	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 24px; font-weight: bold; ">Fx Risk Data- Edit</h3>
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Fx Risk Data - Edit</h3>
 							</div>
 							
 						</div>
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
  
-  <input type="hidden" th:field="*{SI_NO}" />
   
-    <!--<input type="hidden" th:field="*{accountNo}" />-->
-    
-   <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bank Date</label>
-   <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{bank_date}" />
-    </div>
+   <input type="hidden" th:field="*{SI_NO}" />
 
-    <label class="col-sm-2 col-form-label">Bank Name</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bank_name}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bank Date</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" th:field="*{bank_date}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bank Symbol</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bank_symbol}" readonly />
-    </div>
+            <label class="col-sm-2 col-form-label">Bank Name</label>
+            <div class="col-sm-4">
+              <select class="form-control" th:field="*{bank_name}" onchange="handleBankChange(this)">
+                <option value="">-- Select Bank --</option>
+                <option th:each="bank : ${bankList}"
+                        th:value="${bank.bankName}"
+                        th:text="${bank.bankName}">
+                </option>
+              </select>
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">Conventional Islamic</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{conventional_islamic}" readonly />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bank Symbol</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{bank_symbol}" readonly />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Local Foreign</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{local_foreign}" readonly />
-    </div>
+            <label class="col-sm-2 col-form-label">Conventional Islamic</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{conventional_islamic}" readonly />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuae_tiering}" readonly />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Local Foreign</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{local_foreign}" readonly />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Currency</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{currency}" />
-    </div>
+            <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{cbuae_tiering}" readonly />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">FX Net Open Position</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{fx_net_openposition}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Currency</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{currency}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Off Balance Sheet Position</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{off_balance_sheet_position}" />
-    </div>
+            <label class="col-sm-2 col-form-label">FX Net Open Position</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{fx_net_openposition}" />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">On Balance Sheet Position</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{on_balance_sheet_position}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Off Balance Sheet Position</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{off_balance_sheet_position}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">FX Net Open Position Foreign Currency</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{fx_net_openposition_foreign_currency}" />
-    </div>
+            <label class="col-sm-2 col-form-label">On Balance Sheet Position</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{on_balance_sheet_position}" />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">Internal Long Limit</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{internal_long_limit}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">FX Net Open Position (Foreign Currency)</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{fx_net_openposition_foreign_currency}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Internal Long Limit Trigger Status</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{internal_long_limit_trigger_status}" />
-    </div>
+            <label class="col-sm-2 col-form-label">Internal Long Limit</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{internal_long_limit}" />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">Internal Short Limit</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{internal_short_limit}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Internal Long Limit Trigger Status</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{internal_long_limit_trigger_status}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Internal Short Limit Trigger Status</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{internal_short_limit_trigger_status}" />
-    </div>
+            <label class="col-sm-2 col-form-label">Internal Short Limit</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{internal_short_limit}" />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bank_core_tier1_capital}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Internal Short Limit Trigger Status</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{internal_short_limit_trigger_status}" />
+            </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital LC</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bank_core_tier1_capital_lc}" />
-    </div>
+            <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital}" />
+            </div>
+          </div>
 
-    <label class="col-sm-2 col-form-label">Percent Of Group Capital</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{percent_of_group_capital}" />
-    </div>
-</div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital LC</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital_lc}" />
+            </div>
 
-
-
-    
+            <label class="col-sm-2 col-form-label">Percent Of Group Capital</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:field="*{percent_of_group_capital}" />
+            </div>
+          </div>
+        </div>
 
 
     <!-- Submit -->
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="custom-tab-btn" onclick="updateform()">Update</button>
-      <a th:href="@{/Nostro_Account_Bal}" class="custom-tab-btn">Cancel</a>
+   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+      <a th:href="@{/Fx_Risk_Data}" class="custom-tab-btn">Cancel</a>
     </div>
     
     </div>
@@ -1024,19 +1057,34 @@ td {
 			<div class="modal-content">
 			<div class="menu-title-header">
 					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;background-color: rgb(0,164,166);">BANK OF BARODA</div>
+						style="text-align: center; color: white;">BANK OF BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="btn btn-primary" onclick="list()"
-						data-dismiss="modal" style="background-color: rgb(0,164,166);">Close</button>
+					<button type="button" class="custom-tab-btn" onclick="list()"
+						data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-
-	<div class="modal fade" id="loader1" data-backdrop="static"
+<div class="modal fade" id="alert1">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="custom-tab-btn" onclick="nostro()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="loader" data-backdrop="static"
 			data-keyboard="false">
 			<div
 				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1075,6 +1123,23 @@ td {
 <!-- Include this after your DataTable initialization script -->
 
 <style>
+/* Remove top margin/padding from DataTables parent containers */
+#data {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.table-responsive {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure DataTables filter (search box) doesn't have spacing above it */
+div.dataTables_filter {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
   /* FIX: Make search label and box inline */
   div.dataTables_filter label {
     display: flex !important;
@@ -1109,49 +1174,36 @@ td {
   }
 </style>
 
+
 <script>
-  function handleBankChange(select) {
+function handleBankChange(select) {
     const selectedBank = select.value;
 
-    const bankSymbol = document.getElementById("bankSymbol");
-    const conventional = document.getElementById("conventionalIslamic");
-    const localForeign = document.getElementById("localForeign");
-    const tiering = document.getElementById("cbuaeTiering");
-
-    if (selectedBank === "Bank of Baroda") {
-      bankSymbol.value = "BARODA";
-      bankSymbol.readOnly = true;
-
-      conventional.value = "Conventional";
-      conventional.readOnly = true;
-
-      localForeign.value = "Foreign";
-      localForeign.readOnly = true;
-
-      tiering.value = "Tier 3";
-      tiering.readOnly = true;
-    } else {
-      bankSymbol.readOnly = false;
-      bankSymbol.value = "";
-
-      conventional.readOnly = false;
-      conventional.value = "";
-
-      localForeign.readOnly = false;
-      localForeign.value = "";
-
-      tiering.readOnly = false;
-      tiering.value = "";
+    if (!selectedBank) {
+        // Clear the fields
+        $('#bankSymbol').val('');
+        $('#conventionalIslamic').val('');
+        $('#localForeign').val('');
+        $('#cbuaeTiering').val('');
+        return;
     }
-  }
 
-  // Run on page load in case form is already pre-filled (like in edit mode)
-  window.onload = function() {
-    const bankSelect = document.querySelector("select[th\\:field='*{bankName}']");
-    if (bankSelect) {
-      handleBankChange(bankSelect);
-    }
-  };
+    $.ajax({
+    	url: '/BRBS/getBankDetails',
+        type: 'GET',
+        data: { bankName: selectedBank },
+        success: function(data) {
+            $('#bankSymbol').val(data.bankSymbol || '');
+            $('#conventionalIslamic').val(data.conventionalIslamic || '');
+            $('#localForeign').val(data.localForeign || '');
+            $('#cbuaeTiering').val(data.cbuaeTiering || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+          //  alert('Failed to fetch bank details.');
+        }
+    });
+}
 </script>
 <script>
   function handleCountryChange(select) {
@@ -1175,6 +1227,5 @@ td {
     }
   };
 </script>
-
 
 </html>

@@ -10,7 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "BCBUAE_NOSTRO_ACC_BAL_DATACONTROL")
+@Table(name = "BCBUAE_DATACONTROL")
 
 public class RT_Fxriskdatacontrol {
 	

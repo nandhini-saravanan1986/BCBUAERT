@@ -426,6 +426,9 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 
 	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
 	    }
+	    
+	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		md.addAttribute("bankList", bankList);
 
 	    return "Fx_Risk_Data";
 	}
