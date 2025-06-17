@@ -267,8 +267,20 @@ label.error {
 	        window.location.href = './Fx_Risk_Data';
 	    });
 	});
+	
+	function fxrisk() {
+		location.href = 'Fx_Risk_Data';
+	}
+	$(document).ready(function () {
+	    // On modal close, redirect to your controller method path
+	    $('#alert').on('hidden.bs.modal', function () {
+	        window.location.href = './Fx_Risk_Data';
+	    });
+	});
+	
+	
 
-	function submitForm() {
+	function submitForm1() {
 		$('#nostroForm').validate({
 	        messages: {
 	            portfolioDate: "Please provide Portfolio Date",
@@ -490,6 +502,38 @@ label.error {
 			});
 		}
 	</script>
+	
+	<script>
+
+    function submitForm() {
+		$("#loader").modal("toggle");
+
+        const reportName = 'CBUAE_Fx_Risk_Data_Template';
+        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+        const formData = $("#fxriskForm").serialize();
+	
+        $.ajax({
+            url: submitUrl,
+            type: "POST",
+            data: formData,
+            success: function (response) {
+        		$("#loader").modal("hide");
+
+            	$("#alertmsg1").text(response);
+                $("#alert1").modal("toggle");
+                //location.href = 'Nostro_Account_Bal';
+            },
+            error: function (xhr, status, error) {
+        	    $("#loader").modal("hide");
+
+                console.error("Error:", error);
+                alert("Error occurred: " + error);
+            }
+        });
+    }
+
+
+</script>
 <title>BCDRS</title>
 <body> 
 <div class="container-fluid" style="padding-left:0px; padding-right:0px;">
@@ -536,7 +580,7 @@ label.error {
    
 		<div class="row">
 			<div class="col-sm-12 finuserapply" >
-			<form id="nostroForm"        
+			<form id="fxriskForm"        
           method="post"
           autocomplete="off" > 
 				<div class="card-body" style="max-height:450px; overflow-y:auto">
@@ -720,7 +764,7 @@ label.error {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
                   onclick="submitForm()">Save</button>
        
 
@@ -1078,7 +1122,7 @@ label.error {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="custom-tab-btn" onclick="nostro()"
+					<button type="button" class="custom-tab-btn" onclick="fxrisk()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
