@@ -44,7 +44,7 @@ import com.bornfire.xbrl.entities.AccessandRolesRepository;
 
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
-
+import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
 
 import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
@@ -61,6 +61,8 @@ import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 
 import com.bornfire.xbrl.services.RT_FxriskdataService;
+import com.bornfire.xbrl.services.RT_MmdataService;
+import com.bornfire.xbrl.entities.RT_MmData;
 
 import com.bornfire.xbrl.services.RT_DataControlService;
 
@@ -109,6 +111,13 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	RT_CountryRiskDropdownRepo countryRepo;
+	
+	@Autowired
+	RT_MmDataRepository mmdataRepo;
+	
+	
+	@Autowired
+	private RT_MmdataService mmdataService;
 	
 	@Autowired
 	SessionFactory sessionFactory;
@@ -490,5 +499,57 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 
 		return "Trade_Market_Risk"; // Thymeleaf template name: Trade_Market_Risk.html
 	}
+	
+	@RequestMapping(value = "Mm_Data", method = RequestMethod.GET)
+	public String Mmdata(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) String bank_date,
+	        Model md, HttpServletRequest req) {
+
+	    if ("edit".equalsIgnoreCase(formmode) && bank_date != null && !bank_date.isEmpty()) {
+	        try {
+	            // Assuming your DB stores Date without time (java.sql.Date or java.util.Date)
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Adjust pattern if needed
+	            Date bankDateValue = sdf.parse(bank_date);
+
+	            RT_MmData data = mmdataRepo.findById(bankDateValue).orElse(null);
+	            md.addAttribute("fxriskData", data);
+	            System.out.println("edit is formmode");
+	            md.addAttribute("formmode", "edit");
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	            md.addAttribute("mmData", null);
+	            md.addAttribute("formmode", "error");  // Optionally show an error mode
+	        }
+
+	    } else if ("list".equalsIgnoreCase(formmode)) {
+	        md.addAttribute("branchList", mmdataRepo.getlist());
+	        System.out.println("list is formmode");
+	        md.addAttribute("formmode", "list");
+
+	    } else {
+	        md.addAttribute("formmode", "add");
+	        md.addAttribute("formmode", "null");
+
+	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
+	    }
+
+	    return "Mm_Data";
+	}
+	
+	@RequestMapping(value = "downloadMmExcel", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadMmExcel() throws IOException {
+		System.out.println("Entered controller downloadMmExcel");
+
+		File excelFile = mmdataService.generateMmExcel();
+		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+		HttpHeaders headersResponse = new HttpHeaders();
+		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headersResponse.setContentDispositionFormData("attachment", "Mmdata.xls");
+
+		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	}
+	
 
 }
