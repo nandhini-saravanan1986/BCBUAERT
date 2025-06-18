@@ -21,5 +21,11 @@ public interface RT_MmDataRepository extends JpaRepository<RT_MmData, Date> {
 
 	@Query(value = "SELECT * FROM BCBUAE_MM_DATA ", nativeQuery = true)
 	List<Object[]> getmmdatalistdata1();
+	
+	
+	@Query(value = "SELECT * FROM BCBUAE_MM_DATA where SI_NO =?1 ", nativeQuery = true)
+	RT_MmData getParticularDataBySI_NO(String SI_NO);
+	
+	
 
 }

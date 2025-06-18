@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
+import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 
 @Service
@@ -26,6 +28,51 @@ public class RT_MmdataService {
 
     @Autowired
     private SessionFactory sessionFactory;
+    
+    public boolean updateMmdata(RT_MmData updatedData) {
+	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
+
+	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+
+	    if (existing != null) {
+	        // Update fields
+	       
+	    	existing.setBank_name(updatedData.getBank_name());
+	    	existing.setHead_office_subsidiary(updatedData.getHead_office_subsidiary());
+	    	existing.setSubsidiary(updatedData.getSubsidiary());
+	    	existing.setBank_symbol(updatedData.getBank_symbol());
+	    	existing.setConventional_islamic(updatedData.getConventional_islamic());
+	    	existing.setLocal_foreign(updatedData.getLocal_foreign());
+	    	existing.setCbuae_tiering(updatedData.getCbuae_tiering());
+	    	existing.setDeal_no(updatedData.getDeal_no());
+	    	existing.setCustomer_id(updatedData.getCustomer_id());
+	    	existing.setCounterparty_name(updatedData.getCounterparty_name());
+	    	existing.setFinal_rating_banks(updatedData.getFinal_rating_banks());
+	    	existing.setFinal_rating_cbuae(updatedData.getFinal_rating_cbuae());
+	    	existing.setCountry_of_risk(updatedData.getCountry_of_risk());
+	    	existing.setCbuae_geographical_zone(updatedData.getCbuae_geographical_zone());
+	    	existing.setDeal_type(updatedData.getDeal_type());
+	    	existing.setValue_date(updatedData.getValue_date());
+	    	existing.setMaturity_date(updatedData.getMaturity_date());
+	    	existing.setInitial_maturity(updatedData.getInitial_maturity());
+	    	existing.setInitial_maturity_rounded(updatedData.getInitial_maturity_rounded());
+	    	existing.setInitial_maturity_period(updatedData.getInitial_maturity_period());
+	    	existing.setResidual_maturity(updatedData.getResidual_maturity());
+	    	existing.setResidual_maturity_rounded(updatedData.getResidual_maturity_rounded());
+	    	existing.setMaturity_period(updatedData.getMaturity_period());
+	    	existing.setCurrency(updatedData.getCurrency());
+	    	existing.setPrincipal(updatedData.getPrincipal());
+	    	existing.setPrincipal_aed(updatedData.getPrincipal_aed());
+	    	existing.setInterest_profit_rate(updatedData.getInterest_profit_rate());
+
+
+	        mmdataRepo.save(existing);
+	        return true;
+	    } else {
+	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());
+	        return false;
+	    }
+	}
     
     
 

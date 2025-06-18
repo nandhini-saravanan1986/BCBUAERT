@@ -404,6 +404,19 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 	        return "Record not found for update";
 	    }
 	}
+	
+	
+	@PostMapping("/updateMmdata")
+	@ResponseBody
+	public String updateMmdata(@ModelAttribute RT_MmData mmData) {
+	    boolean updated = mmdataService.updateMmdata(mmData);
+	    
+	    if (updated) {
+	        return "Update successful";
+	    } else {
+	        return "Record not found for update";
+	    }
+	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -502,25 +515,15 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 	
 	@RequestMapping(value = "Mm_Data", method = RequestMethod.GET)
 	public String Mmdata(
-	        @RequestParam(required = false) String formmode,
-	        @RequestParam(required = false) String bank_date,
+			@RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) String SI_NO,
 	        Model md, HttpServletRequest req) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && bank_date != null && !bank_date.isEmpty()) {
-	        try {
-	            // Assuming your DB stores Date without time (java.sql.Date or java.util.Date)
-	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Adjust pattern if needed
-	            Date bankDateValue = sdf.parse(bank_date);
-
-	            RT_MmData data = mmdataRepo.findById(bankDateValue).orElse(null);
-	            md.addAttribute("fxriskData", data);
-	            System.out.println("edit is formmode");
-	            md.addAttribute("formmode", "edit");
-	        } catch (ParseException e) {
-	            e.printStackTrace();
-	            md.addAttribute("mmData", null);
-	            md.addAttribute("formmode", "error");  // Optionally show an error mode
-	        }
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+	        RT_MmData data = mmdataRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("mmData", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
 
 	    } else if ("list".equalsIgnoreCase(formmode)) {
 	        md.addAttribute("branchList", mmdataRepo.getlist());
@@ -533,6 +536,9 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 
 	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
 	    }
+		
+		   List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+			md.addAttribute("bankList", bankList);
 
 	    return "Mm_Data";
 	}

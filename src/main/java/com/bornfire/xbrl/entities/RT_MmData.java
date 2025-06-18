@@ -14,7 +14,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class RT_MmData {
 	
 	@Id
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+	private String SI_NO;
+	
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date bank_date;
 
     private String bank_name;
@@ -53,6 +55,12 @@ public class RT_MmData {
     private String entity_flg;
     private String modify_flg;
     private String del_flg;
+	public String getSI_NO() {
+		return SI_NO;
+	}
+	public void setSI_NO(String sI_NO) {
+		SI_NO = sI_NO;
+	}
 	public Date getBank_date() {
 		return bank_date;
 	}
@@ -263,7 +271,7 @@ public class RT_MmData {
 	public void setDel_flg(String del_flg) {
 		this.del_flg = del_flg;
 	}
-	public RT_MmData(Date bank_date, String bank_name, String head_office_subsidiary, String subsidiary,
+	public RT_MmData(String sI_NO, Date bank_date, String bank_name, String head_office_subsidiary, String subsidiary,
 			String bank_symbol, String conventional_islamic, String local_foreign, String cbuae_tiering,
 			BigDecimal deal_no, String customer_id, String counterparty_name, String final_rating_banks,
 			String final_rating_cbuae, String country_of_risk, String cbuae_geographical_zone, String deal_type,
@@ -273,6 +281,7 @@ public class RT_MmData {
 			String interest_profit_rate, Date report_submit_date, Date report_from_date, Date report_to_date,
 			Date report_date, String entity_flg, String modify_flg, String del_flg) {
 		super();
+		SI_NO = sI_NO;
 		this.bank_date = bank_date;
 		this.bank_name = bank_name;
 		this.head_office_subsidiary = head_office_subsidiary;
@@ -313,6 +322,7 @@ public class RT_MmData {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 
     
      
