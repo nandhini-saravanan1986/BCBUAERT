@@ -951,24 +951,24 @@ label.error {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Bank Symbol</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{bank_symbol}" readonly />
+              <input type="text" class="form-control" th:field="*{bank_symbol}" id="bankSymbol"  readonly />
             </div>
 
             <label class="col-sm-2 col-form-label">Conventional Islamic</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{conventional_islamic}" readonly />
+              <input type="text" class="form-control" th:field="*{conventional_islamic}" id="conventionalIslamic" readonly />
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Local Foreign</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{local_foreign}" readonly />
+              <input type="text" class="form-control" th:field="*{local_foreign}"  id="localForeign" readonly />
             </div>
 
             <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{cbuae_tiering}" readonly />
+              <input type="text" class="form-control" th:field="*{cbuae_tiering}" id="cbuaeTiering" readonly />
             </div>
           </div>
 
@@ -1233,7 +1233,7 @@ function handleBankChange(select) {
     }
 
     $.ajax({
-    	url: '/BRBS/getBankDetails',
+    	url: '/BCDRS/getBankDetails',
         type: 'GET',
         data: { bankName: selectedBank },
         success: function(data) {
