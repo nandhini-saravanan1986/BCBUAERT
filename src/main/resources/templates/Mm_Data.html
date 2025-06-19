@@ -907,10 +907,15 @@ function mmdata() {
 
     <!-- Row -->
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{head_office_subsidiary}" />
-        </div>
+       <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{head_office_subsidiary}">
+        <option value="">-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
+
 
         <label class="col-sm-2 col-form-label">Subsidiary</label>
         <div class="col-sm-4">
@@ -977,23 +982,39 @@ function mmdata() {
             <input type="text" class="form-control" th:field="*{final_rating_cbuae}" />
         </div>
 
-        <label class="col-sm-2 col-form-label">Country of Risk</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{country_of_risk}" />
-        </div>
-    </div>
+        <label class="col-sm-2 col-form-label">Country Of Risk</label>
+  <div class="col-sm-4">
+    <select class="form-control" th:field="*{country_of_risk}" id="countryOfRisk" onchange="handleCountryChange(this)">
+      <option value="">-- Select Country --</option>
+      <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+    </select>
+  </div>
+  </div>
+
 
     <!-- Row -->
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Geographical Zone</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{cbuae_geographical_zone}" />
+            <input type="text" class="form-control" th:field="*{cbuae_geographical_zone}" id="cbuaeGeographicalZone" readonly/ />
         </div>
 
         <label class="col-sm-2 col-form-label">Deal Type</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{deal_type}" />
-        </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{deal_type}">
+        <option value="">-- Select --</option>
+        <option value="Asset-backed commercial paper">Asset-backed commercial paper</option>
+        <option value="Banker acceptances">Banker acceptances</option>
+        <option value="Bills of exchange">Bills of exchange</option>
+        <option value="Commercial paper">Commercial paper</option>
+        <option value="Interbank Placement">Interbank Placement</option>
+        <option value="Certificate of deposit">Certificate of deposit</option>
+        <option value="Mbills">Mbills</option>
+        <option value="Reverse Repo">Reverse Repo</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
     </div>
 
     <!-- Row -->
@@ -1279,26 +1300,35 @@ function handleBankChange(select) {
 }
 </script>
 <script>
-  function handleCountryChange(select) {
+function handleCountryChange(select) {
     const selectedCountry = select.value;
-    const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
 
-    if (selectedCountry === "United Arab Emirates") {
-      geoZoneInput.value = "GCC";
-      geoZoneInput.readOnly = true;
-    } else {
-      geoZoneInput.value = "";
-      geoZoneInput.readOnly = false;
+    if (!selectedCountry) {
+        $('#cbuaeGeographicalZone').val('');
+        return;
     }
-  }
 
-  // Run on page load (for edit mode pre-filled forms)
-  window.onload = function() {
+    $.ajax({
+        url: '/BCDRS/getCountryDetails',
+        type: 'GET',
+        data: { countryName: selectedCountry },
+        success: function(data) {
+            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            alert('Failed to fetch geographical zone.');
+        }
+    });
+}
+
+// Run on page load (for edit mode)
+window.onload = function() {
     const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect) {
-      handleCountryChange(countrySelect);
+    if (countrySelect && countrySelect.value) {
+        handleCountryChange(countrySelect);
     }
-  };
+};
 </script>
 
 </html>

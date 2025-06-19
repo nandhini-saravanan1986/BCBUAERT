@@ -540,7 +540,9 @@ public class XBRLNavigationController {
 	    }
 		
 		   List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		   List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 			md.addAttribute("bankList", bankList);
+			md.addAttribute("countryList", countryList);
 
 	    return "Mm_Data";
 	}
