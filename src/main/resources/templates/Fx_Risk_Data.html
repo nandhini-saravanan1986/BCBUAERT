@@ -258,8 +258,9 @@ label.error {
 	}
 
 	function list() {
-		location.href = 'Fx_Risk_Data';
+		location.href = 'Fx_Risk_Data?formmode=list';
 	}
+
 	
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
@@ -439,11 +440,14 @@ label.error {
  
 <script>
   function navigateToTab(tabId) {
-   if (tabId === 'data') {
+	  		$("#loader").modal("toggle");
+if (tabId === 'data') {
 			window.location.href = 'Fx_Risk_Data?formmode=list';
-    } else if (tabId === 'datacontrols') {
+					$("#loader").modal("hide");
+  } else if (tabId === 'datacontrols') {
       window.location.href = 'Fx_Risk_Data?formmode=add';
-    }
+      		$("#loader").modal("hide");
+ }
   }
 
   function handleClick(tabId) {
@@ -473,36 +477,55 @@ label.error {
 
 
      <script>
-		function downloadFxrisk() {
-		$('#downloadProcessingModal').modal('show');
+    function downloadFxrisk() {
+        // Show loading modal
+        $('#downloadProcessingModal').modal('show');
 
-			$.ajax({
-				url: './downloadFxriskExcel', // This URL should match the @RequestMapping value
-				type: 'GET', // Ensure the request method is GET
-				xhrFields: {
-					responseType: 'blob'
-				},
-				success: function (data) {
-					$('#downloadProcessingModal').modal('hide');
+        $.ajax({
+            url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data) {
+                $('#downloadProcessingModal').modal('hide');
+                $("#loader").modal("hide");
 
-					// Handle file download
-					var blob = new Blob([data], {type: 'application/octet-stream'});
-					var url = window.URL.createObjectURL(blob);
-					var a = document.createElement('a');
-					a.href = url;
-					a.download = 'FxRiskData.xls';
-					document.body.appendChild(a);
-					a.click();
-					window.URL.revokeObjectURL(url);
+                if (data && data.size > 0) {
+                    var blob = new Blob([data], { type: 'application/octet-stream' });
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'FxRiskData.xls';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
 
-					// Display success message
-					$('#customAlertBody').text('Downloaded FxRiskData.xls');
-					$('#customAlertModal').modal('show');
-				}
-			});
-		}
-	</script>
-	
+                    $('#customAlertBody').text('Downloaded FxRiskData.xls');
+                } else {
+                    $('#customAlertBody').text('No data available to download.');
+                }
+
+                $('#customAlertModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                $('#downloadProcessingModal').modal('hide');
+                $("#loader").modal("hide");
+
+                console.error("Download failed:", error);
+                $('#customAlertBody').text('Failed to download FxRiskData.xls');
+                $('#customAlertModal').modal('show');
+            }
+        });
+
+        // Fallback in case AJAX fails silently
+        setTimeout(function () {
+            $("#loader").modal("hide");
+        }, 10000);
+    }
+</script>
+
 	<script>
 
     function submitForm() {
@@ -1144,6 +1167,33 @@ label.error {
 				</div>
 			</div>
 		</div>
+		
+		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
 		
 </body>
 <script>
