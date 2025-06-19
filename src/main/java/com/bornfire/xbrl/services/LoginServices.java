@@ -201,11 +201,21 @@ public class LoginServices {
 			logger.info(up.getEntity_flg());
 			return up;
 		} else {
-			return new UserProfile();
+			UserProfile UserProfile = new UserProfile();
+			UserProfile.setLogin_low("09:00");
+			UserProfile.setLogin_high("19:00");
+			return  UserProfile;
 		}
 
 	};
 
+public List<UserProfile> getFinUsersList() {
+		
+		Session hs = sessionFactory.getCurrentSession();
+		return hs.createQuery("from UserProfile ", UserProfile.class).getResultList();		
+
+	}
+	
 	
 	public String addUser(UserProfile userProfile, String formmode, String inputUser,String username,String mob,String role) {
 

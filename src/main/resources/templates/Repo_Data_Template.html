@@ -2,8 +2,8 @@
 
 <!-- 
 CREATED BY	: KRISHNAPANDI MG 
-CREATED ON	: 04.06.2025
-PURPOSE		: Nostra Account balance Report
+CREATED ON	: 18.06.2025(Started)
+PURPOSE		: Repo Data Template Report
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -428,16 +428,10 @@ $(document).ready(function () {
  
 <script>
   function navigateToTab(tabId) {
-		$("#loader").modal("toggle");
-
     if (tabId === 'data') {
-    	window.location.href = 'Nostro_Account_Bal?formmode=list';
-		$("#loader").modal("hide");
-
+      window.location.href = 'Repo_Data_Template?formmode=list';
     } else if (tabId === 'datacontrols') {
-      window.location.href = 'Nostro_Account_Bal?formmode=add';
-		$("#loader").modal("hide");
-
+      window.location.href = 'Repo_Data_Template?formmode=add';
       
     }
   }
@@ -470,53 +464,32 @@ $(document).ready(function () {
 
      <script>
      
-     function downloadNostro() {
-    	    $('#downloadProcessingModal').modal('show');
+ 	function downloadNostro() {
+ 		$('#downloadProcessingModal').modal('show');
 
-    	    $.ajax({
-    	        url: './downloadNostroExcel',
-    	        type: 'GET',
-    	        xhrFields: {
-    	            responseType: 'blob'
-    	        },
-    	        success: function (data) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
+ 		$.ajax({
+ 			url: './downloadNostroExcel',
+ 			type: 'GET',
+ 			xhrFields: {
+ 				responseType: 'blob'
+ 			},
+ 			success: function (data) {
+ 				$('#downloadProcessingModal').modal('hide');
 
-    	            if (data && data.size > 0) {
-    	                var blob = new Blob([data], { type: 'application/octet-stream' });
-    	                var url = window.URL.createObjectURL(blob);
-    	                var a = document.createElement('a');
-    	                a.href = url;
-    	                a.download = 'NostroAccBalance.xls';
-    	                document.body.appendChild(a);
-    	                a.click();
-    	                window.URL.revokeObjectURL(url);
-    	                document.body.removeChild(a);
+ 				var blob = new Blob([data], {type: 'application/octet-stream'});
+ 				var url = window.URL.createObjectURL(blob);
+ 				var a = document.createElement('a');
+ 				a.href = url;
+ 				a.download = 'NostroAccBalance.xls';
+ 				document.body.appendChild(a);
+ 				a.click();
+ 				window.URL.revokeObjectURL(url);
 
-    	                $('#customAlertBody').text('Downloaded NostroAccBalance.xls');
-    	            } else {
-    	                $('#customAlertBody').text('No data available to download.');
-    	            }
-
-    	            $('#customAlertModal').modal('show');
-    	        },
-    	        error: function (xhr, status, error) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
-
-    	            console.error("Download failed:", error);
-    	            $('#customAlertBody').text('Failed to download NostroAccBalance.xls');
-    	            $('#customAlertModal').modal('show');
-    	        }
-    	    });
-
-    	    // Fallback hide in case AJAX fails silently
-    	    setTimeout(function () {
-    	        $("#loader").modal("hide");
-    	    }, 10000);
-    	}
-
+ 				$('#customAlertBody').text('Downloaded NostroAccBalance.xls');
+ 				$('#customAlertModal').modal('show');
+ 			}
+ 		});
+ 	}
 
 </script>
 <title>BCDRS</title>
@@ -529,7 +502,7 @@ $(document).ready(function () {
 		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(107, 122, 143) ; ">
 					<div class="float-left">
 						<h5 
-							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
+							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">REPO DATA TEMPLATE</h5>
 					</div>
 
 					
@@ -916,7 +889,7 @@ $(document).ready(function () {
     	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Nostro Account Balance- Edit</h3>
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Repo Data Template- Edit</h3>
 							</div>
 							
 						</div>
@@ -1160,32 +1133,6 @@ $(document).ready(function () {
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
-						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
-						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
-										Processing...</h5>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Download Message -->
-					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
-						aria-labelledby="customAlertModalLabel" aria-hidden="true">
-						<div class="modal-dialog modal-dialog-centered" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
-								</div>
-								<div class="modal-body" id="customAlertBody"></div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
-								</div>
-							</div>
-						</div>
-					</div>
 		</div>
 </body>
 <script>

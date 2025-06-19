@@ -50,71 +50,65 @@ public class AccessAndRolesServices {
 	}
 
 	public String addPARAMETER(AccessAndRoles alertparam, String formmode,
-			String adminValue, String BRF_ReportsValue,
-			String Basel_ReportsValue, String ArchivalValue, String Audit_InquiriesValue, String RBR_ReportsValue,String VAT_LedgerValue,
-			String Invoice_DataValue,String finalString,
-			String USERID) {
+	        String adminValue, String RT_ReportsValue, String finalString,
+	        String USERID) {
 
-		String msg = "";
+	    String msg = "";
 
-		if (formmode.equals("add")) {
-			AccessAndRoles up = alertparam;
-			up.setDel_flg("N");
-			up.setModify_flg("N");
-			up.setEntity_flg("N");
-			up.setAdmin(adminValue);
-			up.setEntry_user(USERID);
-			up.setEntry_time(new Date());
-			up.setAuditInquiries(Audit_InquiriesValue);
-			up.setBrfReports(BRF_ReportsValue);
-			up.setBaselReports(Basel_ReportsValue);
-			up.setArchivals(ArchivalValue);
-			up.setRbrReports(RBR_ReportsValue);
-			up.setVatLedger(VAT_LedgerValue);
-			up.setInvoiceData(Invoice_DataValue);
-			up.setMenulist(finalString);
-			
-			accessandrolesrepository.save(up);
-			msg = "Role Created Successfully";
-			
-		} else if (formmode.equals("edit")) {
-			AccessAndRoles up = alertparam;
-			Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
-			AccessAndRoles user1 = user.get();
-			up.setAdmin(adminValue);
-			if (!finalString.equals("")) {
-				up.setMenulist(finalString);
-			} else {
-				up.setMenulist(user.get().getMenulist());
-			}
-			up.setDel_flg("N");
-			up.setModify_flg("Y");
-			up.setEntity_flg("N");
-			up.setEntry_user(user1.getEntry_user());
-			up.setEntry_time(user1.getEntry_time());
-			up.setModify_user(USERID);
-			up.setModify_time(new Date());
-			accessandrolesrepository.save(up);
-			msg = "Role Edited Successfully";
-		} else if (formmode.equals("delete")) {
-			Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
-			AccessAndRoles accessRole = user.get();
-			accessRole.setDel_flg("Y");
-			accessRole.setEntity_flg("N");
-			accessandrolesrepository.save(accessRole);
-			msg = "Role Deleted Successfully";
-		} else if (formmode.equals("verify")) {
-			Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
-			AccessAndRoles user1 = user.get();
-			user1.setDel_flg("N");
-			user1.setModify_flg("N");
-			user1.setEntity_flg("Y");
-			user1.setAuth_user(USERID);
-			user1.setAuth_time(new Date());
-			accessandrolesrepository.save(user1);
-			msg = "Role Verified Successfully";
-		}
-		return msg;
+	    if (formmode.equals("add")) {
+	        AccessAndRoles up = alertparam;
+	        up.setDel_flg("N");
+	        up.setModify_flg("N");
+	        up.setEntity_flg("N");
+	        up.setAdmin(adminValue);
+	        up.setRTReports(RT_ReportsValue);
+	        up.setEntry_user(USERID);
+	        up.setEntry_time(new Date());
+	        up.setMenulist(finalString);
+	        
+	        accessandrolesrepository.save(up);
+	        msg = "Role Created Successfully";
+	        
+	    } else if (formmode.equals("edit")) {
+	        System.out.println("came to services for edit the role");
+	        AccessAndRoles up = alertparam;
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        AccessAndRoles user1 = user.get();
+	        up.setAdmin(adminValue);
+	        up.setRTReports(RT_ReportsValue);
+	        if (!finalString.equals("")) {
+	            up.setMenulist(finalString);
+	        } else {
+	            up.setMenulist(user.get().getMenulist());
+	        }
+	        up.setDel_flg("N");
+	        up.setModify_flg("Y");
+	        up.setEntity_flg("N");
+	        up.setEntry_user(user1.getEntry_user());
+	        up.setEntry_time(user1.getEntry_time());
+	        up.setModify_user(USERID);
+	        up.setModify_time(new Date());
+	        accessandrolesrepository.save(up);
+	        msg = "Role Edited Successfully";
+	    } else if (formmode.equals("delete")) {
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        AccessAndRoles accessRole = user.get();
+	        accessRole.setDel_flg("Y");
+	        accessRole.setEntity_flg("N");
+	        accessandrolesrepository.save(accessRole);
+	        msg = "Role Deleted Successfully";
+	    } else if (formmode.equals("verify")) {
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        AccessAndRoles user1 = user.get();
+	        user1.setDel_flg("N");
+	        user1.setModify_flg("N");
+	        user1.setEntity_flg("Y");
+	        user1.setAuth_user(USERID);
+	        user1.setAuth_time(new Date());
+	        accessandrolesrepository.save(user1);
+	        msg = "Role Verified Successfully";
+	    }
+	    return msg;
 	}
 
 	public AccessAndRoles getRoleId(String id) {

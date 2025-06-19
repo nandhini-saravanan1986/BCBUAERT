@@ -54,6 +54,9 @@ public class AccessAndRoles {
 	@Column(name = "Invoice_Data")
 	private String invoiceData;
 
+	 @Column(name = "RT_REPORTS")
+	 private String RTReports;
+	 
 	public String getRole_id() {
 		return role_id;
 	}
@@ -226,6 +229,14 @@ public class AccessAndRoles {
 	public void setInvoiceData(String invoiceData) {
 		this.invoiceData = invoiceData;
 	}
+	public String getRTReports() {
+		return RTReports;
+	}
+	public void setRTReports(String rTReports) {
+		RTReports = rTReports;
+	}
+	
+	
 	public AccessAndRoles() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -236,7 +247,7 @@ public class AccessAndRoles {
 			String entry_user, String modify_user, String auth_user, Date entry_time, Date modify_time, Date auth_time,
 			String audit_operations, String ips_operations, String monitoring, String myt_registration,
 			String brfReports, String baselReports, String archivals, String auditInquiries, String rbrReports,
-			String vatLedger, String invoiceData) {
+			String vatLedger, String invoiceData, String rTReports) {
 		super();
 		this.role_id = role_id;
 		this.role_desc = role_desc;
@@ -266,6 +277,7 @@ public class AccessAndRoles {
 		this.rbrReports = rbrReports;
 		this.vatLedger = vatLedger;
 		this.invoiceData = invoiceData;
+		RTReports = rTReports;
 	}
 	@Override
 	public int hashCode() {

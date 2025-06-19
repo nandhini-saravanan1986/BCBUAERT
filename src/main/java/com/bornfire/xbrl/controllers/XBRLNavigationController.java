@@ -156,6 +156,7 @@ public class XBRLNavigationController {
 			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		System.out.println("role id is : "+roleId);
 		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
 		if (formmode == null || formmode.equals("list")) {
@@ -191,34 +192,27 @@ public class XBRLNavigationController {
 
 		return "AccessandRoles";
 	}
-
+	
+	
 	@RequestMapping(value = "createAccessRole", method = RequestMethod.POST)
 	@ResponseBody
 	public String createAccessRoleEn(@RequestParam("formmode") String formmode,
-			@RequestParam(value = "adminValue", required = false) String adminValue,
-			@RequestParam(value = "BRF_ReportsValue", required = false) String BRF_ReportsValue,
-			@RequestParam(value = "Basel_ReportsValue", required = false) String Basel_ReportsValue,
-			@RequestParam(value = "ArchivalValue", required = false) String ArchivalValue,
-			@RequestParam(value = "Audit_InquiriesValue", required = false) String Audit_InquiriesValue,
-			@RequestParam(value = "RBR_ReportsValue", required = false) String RBR_ReportsValue,
-			@RequestParam(value = "VAT_LedgerValue", required = false) String VAT_LedgerValue,
-			@RequestParam(value = "Invoice_DataValue", required = false) String Invoice_DataValue,
-			@RequestParam(value = "finalString", required = false) String finalString,
+	        @RequestParam(value = "adminValue", required = false) String adminValue,
+	        @RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
+	        @RequestParam(value = "finalString", required = false) String finalString,
+	        @ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
+	    
+	    System.out.println("came to controller");
+	    String userid = (String) rq.getSession().getAttribute("USERID");
+	    String roleId = (String) rq.getSession().getAttribute("ROLEID");
+	    md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
-			@ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
+	    String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, 
+	            RT_ReportsValue, finalString, userid);
 
-		String userid = (String) rq.getSession().getAttribute("USERID");
-		String roleId = (String) rq.getSession().getAttribute("ROLEID");
-		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
-
-		String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, BRF_ReportsValue,
-				Basel_ReportsValue, ArchivalValue, Audit_InquiriesValue, RBR_ReportsValue, VAT_LedgerValue,
-				Invoice_DataValue, finalString, userid);
-
-		return msg;
-
+	    return msg;
 	}
-
+	
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String userid,
@@ -232,8 +226,8 @@ public class XBRLNavigationController {
 		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
 		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
 		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
-
-		System.out.println("work class is : " + WORKCLASSAC);
+		
+		System.out.println("work class is : "+ WORKCLASSAC);
 		// Logging Navigation
 		loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(),
 				"ACTIVE");
@@ -256,7 +250,10 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
 
-		} else if (formmode.equals("verify")) {
+		} else if (formmode.equals("add")) {
+		    md.addAttribute("formmode", formmode);
+		       md.addAttribute("userProfile", loginServices.getUser(""));
+		}else if (formmode.equals("verify")) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
@@ -264,28 +261,16 @@ public class XBRLNavigationController {
 		} else {
 
 			md.addAttribute("formmode", formmode);
-
+			md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
 			md.addAttribute("userProfile", loginServices.getUser(""));
 
 		}
 
 		return "XBRLUserprofile";
 	}
-
-	@RequestMapping(value = "createUser", method = RequestMethod.POST)
-	@ResponseBody
-	public String createUser(@RequestParam("formmode") String formmode, @ModelAttribute UserProfile userprofile,
-			Model md, HttpServletRequest rq) {
-		String MOB = (String) rq.getSession().getAttribute("MOBILENUMBER");
-		String ROLE = (String) rq.getSession().getAttribute("ROLEDESC");
-		String userid = (String) rq.getSession().getAttribute("USERID");
-		String username = (String) rq.getSession().getAttribute("USERNAME");
-		String msg = loginServices.addUser(userprofile, formmode, userid, username, MOB, ROLE);
-
-		return msg;
-
-	}
-
+	
+	
+	//Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
 	public String NostroAccountBal(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
@@ -313,6 +298,8 @@ public class XBRLNavigationController {
 		return "Nostro_Account_Bal";
 	}
 
+	
+//In Modify section If we select the Bank name other details are fetching code
 	@RequestMapping(value = "getBankDetails", method = RequestMethod.GET)
     public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
       
@@ -331,6 +318,7 @@ public class XBRLNavigationController {
         return ResponseEntity.ok(bankDetails);
     }
 	
+//In Modify section If we select the Country of Risk, cbuaeGeographicalZone fetching code
 	@RequestMapping(value = "getCountryDetails", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, String>> getCountryDetails(@RequestParam String countryName) {
 	    RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
@@ -346,7 +334,7 @@ public class XBRLNavigationController {
 	    return ResponseEntity.ok(response);
 	}
 
-
+//Creating Data Control
 	@PostMapping("/createDataControl")
 	@ResponseBody
 	public String createDataControl(
@@ -358,26 +346,11 @@ public class XBRLNavigationController {
 		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
 
-	/*@PostMapping("/updateNostro")
-	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, Model model, RedirectAttributes redirectAttributes) {
-	    
-	    boolean updated = nostroService.updateNostro(nostroData);
-	    System.out.println("msg is : " + updated);
-	    
-	    if (updated) {
-	        System.out.println("Update successful");
-	        redirectAttributes.addFlashAttribute("msg", "Update successful");
-	    } else {
-	        System.out.println("Update Record not found for update");
-	        redirectAttributes.addFlashAttribute("msg", "Record not found for update");
-	    }
-	    
-	    return "redirect:Nostro_Account_Bal?formmode=list";
-	}
-*/
+	
+	//Update Submit code in nostro
 	@RequestMapping("/updateNostro")
 	@ResponseBody
-public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpServletRequest req) {
+	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpServletRequest req) {
 	    
 	    boolean updated = nostroService.updateNostro(nostroData);
 	    System.out.println("msg is : " + updated);
@@ -391,6 +364,35 @@ public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpSe
 	    }
 	    
 	    
+	}
+	
+	
+// Repo Report code
+	@RequestMapping(value = "Repo_Data_Template", method = RequestMethod.GET)
+	public String RepoDataTemplate(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
+
+		if ("edit".equalsIgnoreCase(formmode) && accountNo != null && !accountNo.isEmpty()) {
+			RT_NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
+			md.addAttribute("nostroData", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", nostroAccBalRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
+		}
+		
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
+	    
+		return "Repo_Data_Template";
 	}
 	
 	@PostMapping("/updateFxriskdata")
