@@ -9,11 +9,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "BCBUAE_TRADE_MARKET_RISK_DATA")
-public class BcbuaeTradeMarketriskData {
+public class RT_TradeMarketRiskData {
 
 	@Id
 	@Column(name = "REPORT_DATE")
-	@DateTimeFormat(pattern = "dd-MM-yyyy")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date reportDate;
 
 	@Column(name = "BANK_NAME")
@@ -1158,7 +1158,7 @@ public class BcbuaeTradeMarketriskData {
 		this.verifyTime = verifyTime;
 	}
 
-	public BcbuaeTradeMarketriskData(Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
+	public RT_TradeMarketRiskData(Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
 			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
 			String tradingBookDesks, String cbuaeInternalDeskReference, BigDecimal annualBudgetAed,
 			BigDecimal tradingDeskBookSizeMarketValueAed,
@@ -1295,7 +1295,7 @@ public class BcbuaeTradeMarketriskData {
 		this.verifyTime = verifyTime;
 	}
 
-	public BcbuaeTradeMarketriskData() {
+	public RT_TradeMarketRiskData() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
