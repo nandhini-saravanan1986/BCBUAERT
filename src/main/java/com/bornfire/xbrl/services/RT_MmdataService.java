@@ -93,7 +93,7 @@ public class RT_MmdataService {
             CellStyle dateStyle = workbook.createCellStyle();
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
 
-            int startRow = 2; // Assuming data starts from row index 2 (3rd row)
+            int startRow = 3; // Assuming data starts from row index 3 (4rd row)
 
             if (!mmDataList.isEmpty()) {
                 for (int i = 0; i < mmDataList.size(); i++) {
@@ -268,7 +268,7 @@ public class RT_MmdataService {
                 outputFile = new File(env.getProperty("output.exportpathfinal") + "MmData.xls");
                 try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                     workbook.write(fos);
-                    System.out.println("FxRisk Excel generated: " + outputFile.getAbsolutePath());
+                    System.out.println("Mmdata Excel generated: " + outputFile.getAbsolutePath());
                 }
 
                 workbook.close();
