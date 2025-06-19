@@ -1,10 +1,7 @@
 package com.bornfire.xbrl.controllers;
 
 import java.io.File;
-
-
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,13 +20,11 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,38 +32,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
-
-import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
-import com.bornfire.xbrl.entities.RT_MmDataRepository;
-import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
-
-import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskData;
-import com.bornfire.xbrl.entities.BcbuaeTradeMarketriskDataRepository;
+import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
+import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
 import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
 import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
+import com.bornfire.xbrl.entities.RT_DataControl;
+import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
+import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
+import com.bornfire.xbrl.entities.RT_MmData;
+import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
-import com.bornfire.xbrl.entities.RT_DataControl;
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
-
-import com.bornfire.xbrl.services.RT_FxriskdataService;
-import com.bornfire.xbrl.services.RT_MmdataService;
-import com.bornfire.xbrl.entities.RT_MmData;
-
-import com.bornfire.xbrl.services.RT_DataControlService;
-
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.NostroAccBalDataService;
+import com.bornfire.xbrl.services.RT_DataControlService;
+import com.bornfire.xbrl.services.RT_FxriskdataService;
+import com.bornfire.xbrl.services.RT_MmdataService;
+import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 
 @Controller
 @ConfigurationProperties("default")
@@ -108,17 +97,16 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_BankNameMasterRepository bankRepo;
-	
+
 	@Autowired
 	RT_CountryRiskDropdownRepo countryRepo;
-	
+
 	@Autowired
 	RT_MmDataRepository mmdataRepo;
-	
-	
+
 	@Autowired
 	private RT_MmdataService mmdataService;
-	
+
 	@Autowired
 	SessionFactory sessionFactory;
 
@@ -156,7 +144,7 @@ public class XBRLNavigationController {
 			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
-		System.out.println("role id is : "+roleId);
+		System.out.println("role id is : " + roleId);
 		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
 		if (formmode == null || formmode.equals("list")) {
@@ -192,27 +180,26 @@ public class XBRLNavigationController {
 
 		return "AccessandRoles";
 	}
-	
-	
+
 	@RequestMapping(value = "createAccessRole", method = RequestMethod.POST)
 	@ResponseBody
 	public String createAccessRoleEn(@RequestParam("formmode") String formmode,
-	        @RequestParam(value = "adminValue", required = false) String adminValue,
-	        @RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
-	        @RequestParam(value = "finalString", required = false) String finalString,
-	        @ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
-	    
-	    System.out.println("came to controller");
-	    String userid = (String) rq.getSession().getAttribute("USERID");
-	    String roleId = (String) rq.getSession().getAttribute("ROLEID");
-	    md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
+			@RequestParam(value = "adminValue", required = false) String adminValue,
+			@RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
+			@RequestParam(value = "finalString", required = false) String finalString,
+			@ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
 
-	    String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, 
-	            RT_ReportsValue, finalString, userid);
+		System.out.println("came to controller");
+		String userid = (String) rq.getSession().getAttribute("USERID");
+		String roleId = (String) rq.getSession().getAttribute("ROLEID");
+		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
-	    return msg;
+		String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, RT_ReportsValue, finalString,
+				userid);
+
+		return msg;
 	}
-	
+
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String userid,
@@ -226,8 +213,8 @@ public class XBRLNavigationController {
 		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
 		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
 		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
-		
-		System.out.println("work class is : "+ WORKCLASSAC);
+
+		System.out.println("work class is : " + WORKCLASSAC);
 		// Logging Navigation
 		loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(),
 				"ACTIVE");
@@ -251,9 +238,9 @@ public class XBRLNavigationController {
 			md.addAttribute("userProfile", loginServices.getUser(userid));
 
 		} else if (formmode.equals("add")) {
-		    md.addAttribute("formmode", formmode);
-		       md.addAttribute("userProfile", loginServices.getUser(""));
-		}else if (formmode.equals("verify")) {
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("userProfile", loginServices.getUser(""));
+		} else if (formmode.equals("verify")) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
@@ -268,9 +255,8 @@ public class XBRLNavigationController {
 
 		return "XBRLUserprofile";
 	}
-	
-	
-	//Nostro Report Codes Given Below
+
+	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
 	public String NostroAccountBal(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
@@ -288,50 +274,49 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "add");
 			md.addAttribute("formmode", "null");
 		}
-		
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 
-	    md.addAttribute("bankList", bankList);
-	    md.addAttribute("countryList", countryList);
-	    
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
+
 		return "Nostro_Account_Bal";
 	}
 
-	
 //In Modify section If we select the Bank name other details are fetching code
 	@RequestMapping(value = "getBankDetails", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
-      
+	public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
+
 		RT_BankNameMaster bank = bankRepo.findByBankName(bankName);
 		System.out.println("came to controller with bank name ");
-        if (bank == null) {
-            return ResponseEntity.notFound().build();
-        }
+		if (bank == null) {
+			return ResponseEntity.notFound().build();
+		}
 
-        Map<String, String> bankDetails = new HashMap<>();
-        bankDetails.put("bankSymbol", bank.getBankSymbol());
-        bankDetails.put("conventionalIslamic", bank.getConventionalIslamic());
-        bankDetails.put("localForeign", bank.getLocalForeign());
-        bankDetails.put("cbuaeTiering", bank.getCbuaeTiering());
+		Map<String, String> bankDetails = new HashMap<>();
+		bankDetails.put("bankSymbol", bank.getBankSymbol());
+		bankDetails.put("conventionalIslamic", bank.getConventionalIslamic());
+		bankDetails.put("localForeign", bank.getLocalForeign());
+		bankDetails.put("cbuaeTiering", bank.getCbuaeTiering());
 
-        return ResponseEntity.ok(bankDetails);
-    }
-	
+		return ResponseEntity.ok(bankDetails);
+	}
+
 //In Modify section If we select the Country of Risk, cbuaeGeographicalZone fetching code
 	@RequestMapping(value = "getCountryDetails", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, String>> getCountryDetails(@RequestParam String countryName) {
-	    RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
-	    System.out.println("Fetched country details for: " + countryName);
+		RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
+		System.out.println("Fetched country details for: " + countryName);
 
-	    if (country == null) {
-	        return ResponseEntity.notFound().build();
-	    }
+		if (country == null) {
+			return ResponseEntity.notFound().build();
+		}
 
-	    Map<String, String> response = new HashMap<>();
-	    response.put("cbuaeGeographicalZone", country.getCbuaeGeographicalZone());
+		Map<String, String> response = new HashMap<>();
+		response.put("cbuaeGeographicalZone", country.getCbuaeGeographicalZone());
 
-	    return ResponseEntity.ok(response);
+		return ResponseEntity.ok(response);
 	}
 
 //Creating Data Control
@@ -346,27 +331,24 @@ public class XBRLNavigationController {
 		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
 
-	
-	//Update Submit code in nostro
+	// Update Submit code in nostro
 	@RequestMapping("/updateNostro")
 	@ResponseBody
-	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData,HttpServletRequest req) {
-	    
-	    boolean updated = nostroService.updateNostro(nostroData);
-	    System.out.println("msg is : " + updated);
-	    
-	    if (updated) {
-	        System.out.println("Update successful");
-	        return "Updated successful";
-	    } else {
-	        System.out.println("Update Record not found for update");
-	        return "Record not found for update";
-	    }
-	    
-	    
+	public String updateNostro(@ModelAttribute RT_NostroAccBalData nostroData, HttpServletRequest req) {
+
+		boolean updated = nostroService.updateNostro(nostroData);
+		System.out.println("msg is : " + updated);
+
+		if (updated) {
+			System.out.println("Update successful");
+			return "Updated successful";
+		} else {
+			System.out.println("Update Record not found for update");
+			return "Record not found for update";
+		}
+
 	}
-	
-	
+
 // Repo Report code
 	@RequestMapping(value = "Repo_Data_Template", method = RequestMethod.GET)
 	public String RepoDataTemplate(@RequestParam(required = false) String formmode,
@@ -385,39 +367,38 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "add");
 			md.addAttribute("formmode", "null");
 		}
-		
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 
-	    md.addAttribute("bankList", bankList);
-	    md.addAttribute("countryList", countryList);
-	    
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
+
 		return "Repo_Data_Template";
 	}
-	
+
 	@PostMapping("/updateFxriskdata")
 	@ResponseBody
 	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {
-	    boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
-	    
-	    if (updated) {
-	        return "Update successful";
-	    } else {
-	        return "Record not found for update";
-	    }
+		boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
+
+		if (updated) {
+			return "Update successful";
+		} else {
+			return "Record not found for update";
+		}
 	}
-	
-	
+
 	@PostMapping("/updateMmdata")
 	@ResponseBody
 	public String updateMmdata(@ModelAttribute RT_MmData mmData) {
-	    boolean updated = mmdataService.updateMmdata(mmData);
-	    
-	    if (updated) {
-	        return "Update successful";
-	    } else {
-	        return "Record not found for update";
-	    }
+		boolean updated = mmdataService.updateMmdata(mmData);
+
+		if (updated) {
+			return "Update successful";
+		} else {
+			return "Record not found for update";
+		}
 	}
 
 	@InitBinder
@@ -428,33 +409,32 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "Fx_Risk_Data", method = RequestMethod.GET)
-	public String Fxriskdata(
-	        @RequestParam(required = false) String formmode,
-	        @RequestParam(required = false) String SI_NO,
-	        Model md, HttpServletRequest req) {
+	public String Fxriskdata(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-	        RT_Fxriskdata data = friskdataRepo.getParticularDataBySI_NO(SI_NO);
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_Fxriskdata data = friskdataRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("fxriskData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 
-	    } else if ("list".equalsIgnoreCase(formmode)) {
-	        md.addAttribute("branchList", friskdataRepo.getlist());
-	        System.out.println("list is formmode");
-	        md.addAttribute("formmode", "list");
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", friskdataRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
 
-	    } else {
-	        md.addAttribute("formmode", "add");
-	        md.addAttribute("formmode", "null");
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
 
-	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
-	    }
-	    
-	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+			// You had md.addAttribute("formmode", "null"); — removed this line because it
+			// would overwrite the previous one
+		}
+
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
 		md.addAttribute("bankList", bankList);
 
-	    return "Fx_Risk_Data";
+		return "Fx_Risk_Data";
 	}
 
 	// For download excel for fxriskdata
@@ -489,7 +469,7 @@ public class XBRLNavigationController {
 	}
 
 	@Autowired
-	private BcbuaeTradeMarketriskDataRepository trade_market_risk_repo;
+	private RT_TradeMarketriskDataRepository trade_market_risk_repo;
 
 	@RequestMapping(value = "/Trade_Market_Risk", method = RequestMethod.GET)
 	public String tradeMarketRisk(@RequestParam(required = false) String formmode,
@@ -497,56 +477,129 @@ public class XBRLNavigationController {
 			HttpServletRequest request) {
 
 		if ("edit".equalsIgnoreCase(formmode) && reportDate != null) {
-			BcbuaeTradeMarketriskData data = trade_market_risk_repo.findById(reportDate).orElse(null);
+			RT_TradeMarketRiskData data = trade_market_risk_repo.findById(reportDate).orElse(null);
 			model.addAttribute("data", data);
 			model.addAttribute("formmode", "edit");
 			System.out.println("Edit mode activated");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<BcbuaeTradeMarketriskData> list = trade_market_risk_repo.findAll();
+			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.findAll();
 			model.addAttribute("dataList", list);
 			model.addAttribute("formmode", "list");
 			System.out.println("List mode activated");
 		} else {
-			model.addAttribute("data", new BcbuaeTradeMarketriskData());
+			model.addAttribute("data", new RT_TradeMarketRiskData());
 			model.addAttribute("formmode", "add");
+			model.addAttribute("formmode", "null");
 			System.out.println("Add mode activated");
 		}
 
 		return "Trade_Market_Risk"; // Thymeleaf template name: Trade_Market_Risk.html
 	}
-	
+
+	@RequestMapping(value = "updateTradeMarketRisk", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateTradeMarketRisk(@ModelAttribute RT_TradeMarketRiskData data, HttpServletRequest request) {
+
+		// Log the action with minimal but useful debug info
+		System.out.println("User [" + request.getSession().getAttribute("USERID")
+				+ "] requested update for Report Date: " + data.getReportDate());
+
+		String userid = (String) request.getSession().getAttribute("USERID");
+
+		try {
+			if (data.getReportDate() == null) {
+				return "Error: Report Date (ID) is missing.";
+			}
+
+			if (!trade_market_risk_repo.existsById(data.getReportDate())) {
+				return "Error: Record not found for update.";
+			}
+
+			data.setModifyFlg("Y");
+			data.setEntityFlg("Y");
+			data.setDelFlg("N");
+			data.setModifyUser(userid);
+
+			trade_market_risk_repo.save(data);
+
+			return "Updated successfully";
+		} catch (Exception e) {
+			return "Error while updating: " + e.getMessage();
+		}
+	}
+
+	@Autowired
+	private RT_TradeMarketRiskService rtTradeMarketRiskService;
+
+	@RequestMapping(value = "/downloadTradeMarketRiskExcel", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadTradeMarketRiskExcel() {
+		System.out.println("Controller: Starting Trade Market Risk Excel download process.");
+
+		try {
+			// Step 1: Call the service to generate the specific Excel file.
+			File excelFile = rtTradeMarketRiskService.generateTradeMarketRiskExcel();
+
+			// Step 2: Check if the file was created successfully.
+			if (excelFile == null || !excelFile.exists()) {
+				System.err.println("Error: Excel file generation failed or file not found.");
+				// Return a "Not Found" response if the file couldn't be created.
+				return ResponseEntity.notFound().build();
+			}
+
+			// Step 3: Read the file into a byte array.
+			byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+			// Step 4: Set up HTTP headers for the file download.
+			HttpHeaders headersResponse = new HttpHeaders();
+			headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+			// This is the filename the user will see when downloading.
+			headersResponse.setContentDispositionFormData("attachment", "TradeMarketRiskData.xls");
+
+			System.out.println("Controller: Sending file 'TradeMarketRiskData.xls' to client.");
+
+			// Step 5: Return the file bytes as the response body.
+			return ResponseEntity.ok().headers(headersResponse).body(excelData);
+
+		} catch (IOException e) {
+			System.err.println("Error reading the generated Excel file: " + e.getMessage());
+			e.printStackTrace();
+			// Return a server error response.
+			return ResponseEntity.status(500).build();
+		}
+	}
+
 	@RequestMapping(value = "Mm_Data", method = RequestMethod.GET)
-	public String Mmdata(
-			@RequestParam(required = false) String formmode,
-	        @RequestParam(required = false) String SI_NO,
-	        Model md, HttpServletRequest req) {
+	public String Mmdata(@RequestParam(required = false) String formmode, @RequestParam(required = false) String SI_NO,
+			Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-	        RT_MmData data = mmdataRepo.getParticularDataBySI_NO(SI_NO);
+			RT_MmData data = mmdataRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("mmData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 
-	    } else if ("list".equalsIgnoreCase(formmode)) {
-	        md.addAttribute("branchList", mmdataRepo.getlist());
-	        System.out.println("list is formmode");
-	        md.addAttribute("formmode", "list");
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", mmdataRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
 
-	    } else {
-	        md.addAttribute("formmode", "add");
-	        md.addAttribute("formmode", "null");
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
 
-	        // You had md.addAttribute("formmode", "null"); — removed this line because it would overwrite the previous one
-	    }
-		
-		   List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		   List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
-			md.addAttribute("bankList", bankList);
-			md.addAttribute("countryList", countryList);
+			// You had md.addAttribute("formmode", "null"); — removed this line because it
+			// would overwrite the previous one
+		}
 
-	    return "Mm_Data";
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
+
+		return "Mm_Data";
 	}
-	
+
 	@RequestMapping(value = "downloadMmExcel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadMmExcel() throws IOException {
 		System.out.println("Entered controller downloadMmExcel");
@@ -560,6 +613,5 @@ public class XBRLNavigationController {
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
-	
 
 }

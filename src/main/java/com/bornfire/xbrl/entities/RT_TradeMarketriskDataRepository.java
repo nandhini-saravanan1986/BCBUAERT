@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BcbuaeTradeMarketriskDataRepository extends JpaRepository<BcbuaeTradeMarketriskData, Date> {
+public interface RT_TradeMarketriskDataRepository extends JpaRepository<RT_TradeMarketRiskData, Date> {
 
 	@Query(value = "select * from BCBUAE_TRADE_MARKET_RISK_DATA where DEL_FLG != 'Y'", nativeQuery = true)
-	List<BcbuaeTradeMarketriskData> getlist();
+	List<RT_TradeMarketRiskData> getlist();
 
 }

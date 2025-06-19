@@ -1,1225 +1,1702 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 
 <!-- 
-CREATED BY	: KRISHNAPANDI MG 
-CREATED ON	: 04.06.2025
-PURPOSE		: Nostra Account balance Report
- -->
- 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+CREATED BY	: Gowtham R
+CREATED ON	: 16.06.2025
+PURPOSE		:  Trade Market Risk Report
+-->
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<!-- ✅ CSS Libraries -->
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
+	<link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
+	<link rel="stylesheet" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<!-- ✅ JavaScript Libraries (in correct order) -->
 
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- jQuery core (must be loaded first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- jQuery Plugins -->
+	<script th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<!-- Bootstrap and dependencies -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+	<!-- DataTables -->
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+</head>
+
+<style>
+	.btns {
+		float: right;
+		margin: 5px;
+	}
+
+	.col-sm-5 {
+		padding-bottom: 15px;
+	}
+
+	.list-body {
+		padding: 0px;
+	}
+
+	.error {
+		color: red;
+		padding-left: 10px;
+	}
+
+	.formline {
+		padding-bottom: 15px;
+	}
+
+	.btn-primary {
+		background-color: #E77400;
+		border-color: #0c0c0c;
+	}
+
+	.btn-primary:not (:disabled):not (.disabled).active,
+	.btn-primary:not (:disabled):not (.disabled):active,
+	.show>.btn-primary.dropdown-toggle {
+		color: #fff;
+		background-color: #cc000000;
+		border-color: #161617;
+	}
+
+	#finusertb {
+		width: 460px;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		padding: 0px;
+	}
+</style>
+
+
 
 
 <style>
-.btns {
-	float: right;
-	margin: 5px;
-}
+	.card {
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		border-radius: 8px;
+	}
 
-.col-sm-5 {
-	padding-bottom: 15px;
-}
+	.card-header h5 {
+		font-size: 22px;
+		color: #fff;
+		font-weight: 600;
+	}
 
-.list-body {
-	padding: 0px;
-}
+	.nav-tabs .nav-link {
+		font-weight: 500;
+		border: 1px solid #dee2e6;
+		border-bottom: none;
+		border-radius: 4px 4px 0 0;
+		background-color: #f1f1f1;
+		margin-right: 5px;
+	}
 
-.error {
-	color: red;
-	padding-left: 10px;
-}
+	.nav-tabs .nav-link.active {
+		background-color: #ffffff;
+		border-color: #dee2e6 #dee2e6 #ffffff;
+	}
 
-.formline {
-	padding-bottom: 15px;
-}
+	.table-responsive {
+		border: 1px solid #dee2e6;
+		border-radius: 4px;
+	}
 
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
+	.table-hover tbody tr:hover {
+		background-color: #f3f6f9;
+	}
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
-}
+	thead th {
+		position: sticky;
+		top: 0;
+		background-color: #e9ecf0;
+		z-index: 1;
+	}
 
-#finusertb {
-	width: 460px;
-}
+	.card-footer {
+		padding: 10px;
+		border-top: 1px solid #ccc;
+	}
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
+	.btn-xs {
+		padding: 4px 12px;
+		font-size: 14px;
+		border-radius: 4px;
+	}
+
+	#usertable th,
+	#usertable td {
+		vertical-align: middle;
+		text-align: left;
+		font-size: 17px;
+		font-family: Verdana, sans-serif;
+	}
+
+	.fa-edit:hover {
+		color: #28a745;
+		transform: scale(1.1);
+	}
+
+
+
+	td {
+		border: 1px solid rgb(0, 164, 166);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
 </style>
+
+
 <style>
-        .valids { color: green; }
-        .invalids { color: red; }
-    </style>
-    <style>
-  /* Tab container */
-  .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
-    background-color: #e9ecf0;
-    padding: 4px 10px;
-    border-radius: 0.25rem 0.25rem 0 0;
-  }
+	.form-group {
+		position: relative;
+		margin-bottom: 1.5rem;
+	}
 
-  /* Tab buttons */
-  .nav-tabs .nav-link {
-    border: 1px solid #dee2e6;
-    border-bottom: none;
-    background-color: #f1f1f1;
-    color: #376275;
-    font-weight: 600;
-   
-    margin-right: 4px;
-    border-radius: 5px 5px 0 0;
-    transition: background-color 0.3s, color 0.3s;
-  }
+	.form-control {
+		width: 100%;
+		border: 2px solid #ccc;
+		border-radius: 8px;
+		font-size: 1rem;
+		outline: none;
+		background: transparent;
+		transition: border-color 0.3s ease, padding-top 0.3s ease;
+	}
 
-  /* On hover */
-  .nav-tabs .nav-link:hover {
-    background-color: #d6e0e7;
-    color: #2c4c63;
-  }
-
-  /* Active tab */
-  .nav-tabs .nav-link.active {
-    background-color: #376275;
-    color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-  }
-
-  /* Tab content area */
-  .tab-content {
-    border: 1px solid #dee2e6;
-    border-top: none;
-    
-    background-color: #ffffff;
-    border-radius: 0 0 0.25rem 0.25rem;
-    font-family: Verdana, sans-serif;
-    color: #333;
-  }
- </style>
-  <style>
-  table {
-    font-size: 12px;
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
-
-  
-</style>
-  <style>
-  thead {
-    background-color: #e9ecf0 !important;
-  }
-
-  tbody tr {
-    background-color: #ffffff;
-  }
-
- 
-</style>
-  <style>
-  .card {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 8px;
-  }
-
-  .card-header h5 {
-    font-size: 22px;
-    color: #fff;
-    font-weight: 600;
-  }
-
-  .nav-tabs .nav-link {
-    font-weight: 500;
-    border: 1px solid #dee2e6;
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
-    background-color: #f1f1f1;
-    margin-right: 5px;
-  }
-
-  .nav-tabs .nav-link.active {
-    background-color: #ffffff;
-    border-color: #dee2e6 #dee2e6 #ffffff;
-  }
-
-  .table-responsive {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-  }
-
-  .table-hover tbody tr:hover {
-    background-color: #f3f6f9;
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
-
-  .card-footer {
-    padding: 10px;
-    border-top: 1px solid #ccc;
-  }
-
-  .btn-xs {
-    padding: 4px 12px;
-    font-size: 14px;
-    border-radius: 4px;
-  }
-
-  #usertable th, #usertable td {
-    vertical-align: middle;
-    text-align: left;
-    font-size: 17px;
-    font-family: Verdana, sans-serif;
-  }
-
-  .fa-edit:hover {
-    color: #28a745;
-    transform: scale(1.1);
-  }
+	.error {
+		color: red;
+		padding-top: 15px;
+	}
 
 
 
-td {
-  border: 1px solid rgb(0,164,166);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+	.form-control:focus {
+		border-color: #007bff;
+	}
 
-</style>
-  <style>
-  .button-tab-group {
-    background-color: white;
-    padding: 4px 10px;
-    border-radius: 0.25rem;
-    display: flex;
-    gap: 10px;
-  }
+	.form-legend {
+		position: absolute;
+		top: 50%;
+		left: 15px;
+		transform: translateY(-50%);
+		font-size: 1rem;
+		color: #aaa;
+		background: white;
+		padding: 0 5px;
+		pointer-events: none;
+		transition: 0.3s ease;
+	}
 
-  .custom-tab-btn {
-    background: white;
-    color: black;
-    font-weight: 600;
-    border: 2px solid rgb(0,164,166);
-    padding: 8px 20px;
-    margin-right: 10px;
-    border-radius: 30px;
-    transition: 0.3s;
-    cursor: pointer;
-  }
+	/* When input or select is focused or has a value, move the label up */
+	.form-control:focus~.form-legend,
+	.form-control:not(:placeholder-shown)~.form-legend {
+		top: -8px;
+		font-size: 1rem;
+		color: #007bff;
+	}
 
-  .custom-tab-btn:hover {
-    background-color: rgb(0,164,166);
-    color: white;
-  }
+	/* Hover effect when the input/select is focused */
+	.form-control:focus:hover~.form-legend {
+		color: #0056b3;
+		/* Darker shade of blue on hover */
+	}
 
-  .custom-tab-btn.active {
-    background-color: rgb(0,164,166);
-    color: white;
-  }
-  .custom-tab-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-  
+	/* Ensure the label returns to the normal color after focus or hover is removed */
+	.form-control:not(:focus)~.form-legend {
+		color: #aaa;
+		/* Normal label color */
+	}
 </style>
 
 <style>
-        .form-group {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
+	/* Red border for invalid inputs */
+	input.error,
+	select.error {
+		border: 2px solid red !important;
+	}
 
-        .form-control {
-            width: 100%;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            background: transparent;
-            transition: border-color 0.3s ease, padding-top 0.3s ease;
-        }
-        .error {
-    		color: red;
-    		padding-top: 15px;
+	/* Error message style */
+	label.error {
+		color: red;
+		font-size: 0.85em;
+		margin-top: 5px;
+		display: block;
+	}
+
+	.section-header {
+		font-weight: bold;
+	}
+</style>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$("#nostroForm").validate({
+			errorClass: "error", // use 'error' class for styling
+			errorElement: "label", // wrap error messages in <label>
+
+			rules: {
+				submittingInstitution: {required: true},
+				portfolioDate: {required: true},
+				contactEmployee1Name1: {required: true},
+				contactEmployee1Title1: {required: true},
+				contactEmployee1Email1: {required: true, email: true},
+				contactEmployee2Name2: {required: true},
+				contactEmployee2Title2: {required: true},
+				contactEmployee2Email2: {required: true, email: true},
+				signOffCroName: {required: true},
+				signOffCroEmail: {required: true, email: true},
+				signOffCfoName: {required: true},
+				signOffCfoEmail: {required: true, email: true},
+				signOffHeadOfTreasuryName: {required: true},
+				signOffHeadOfTreasuryEmail: {required: true, email: true}
+			},
+			messages: {
+				submittingInstitution: {required: "Please select an institution"},
+				portfolioDate: {required: "Please select a portfolio date"},
+				contactEmployee1Name1: {required: "Please enter a name"},
+				contactEmployee1Title1: {required: "Please enter a title"},
+				contactEmployee1Email1: {required: "Please enter an email", email: "Please enter a valid email address"},
+				contactEmployee2Name2: {required: "Please enter a name"},
+				contactEmployee2Title2: {required: "Please enter a title"},
+				contactEmployee2Email2: {required: "Please enter an email", email: "Please enter a valid email address"},
+				signOffCroName: {required: "Please enter CRO name"},
+				signOffCroEmail: {required: "Please enter CRO email", email: "Please enter a valid email address"},
+				signOffCfoName: {required: "Please enter CFO name"},
+				signOffCfoEmail: {required: "Please enter CFO email", email: "Please enter a valid email address"},
+				signOffHeadOfTreasuryName: {required: "Please enter Head of Treasury name"},
+				signOffHeadOfTreasuryEmail: {required: "Please enter Head of Treasury email", email: "Please enter a valid email address"}
+			},
+
+			// Place the error after the input field
+			errorPlacement: function (error, element) {
+				if (element.parent('.form-group').length) {
+					error.insertAfter(element); // default
+				} else {
+					error.insertAfter(element);
+				}
+			},
+
+			// Highlight and unhighlight fields
+			highlight: function (element) {
+				$(element).addClass("error");
+			},
+			unhighlight: function (element) {
+				$(element).removeClass("error");
+			},
+
+			// On successful validation, run this
+			submitHandler: function (form) {
+				submitForm(); // your custom submit function
 			}
-        
-        
+		});
+	});
+</script>
 
-        .form-control:focus {
-            border-color: #007bff;
-        }
+<script>
 
-        .form-legend {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            color: #aaa;
-            background: white;
-            padding: 0 5px;
-            pointer-events: none;
-            transition: 0.3s ease;
-        }
+	function submitForm() {
+		// First, check if the form is valid
+		if (!$("#nostroForm").valid()) {
+			return; // If not valid, stop the submission
+		}
 
-        /* When input or select is focused or has a value, move the label up */
-        .form-control:focus ~ .form-legend,
-        .form-control:not(:placeholder-shown) ~ .form-legend {
-            top: -8px;
-            font-size: 1rem;
-            color: #007bff;
-        }
+		$("#loader").modal("toggle");
 
-        /* Hover effect when the input/select is focused */
-        .form-control:focus:hover ~ .form-legend {
-            color: #0056b3; /* Darker shade of blue on hover */
-        }
+		const reportName = 'CBUAE_Trade_Market_Risk_Data_Template';
+		const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+		const formData = $("#nostroForm").serialize();
 
-        /* Ensure the label returns to the normal color after focus or hover is removed */
-        .form-control:not(:focus) ~ .form-legend {
-            color: #aaa; /* Normal label color */
-        }
-    </style>
+		$.ajax({
+			url: submitUrl,
+			type: "POST",
+			data: formData,
+			success: function (response) {
+				$("#loader").modal("hide");
+				$("#alertmsg1").text(response);
+				$("#alert1").modal("toggle");
+			},
+			error: function (xhr, status, error) {
+				$("#loader").modal("hide");
+				console.error("Error:", error);
+				alert("Error occurred: " + error);
+			}
+		});
+	}
+
+
+</script>
+
 <script th:inline="javascript">
-	
+
 
 	function home() {
-        $("#loader1").modal("toggle");
+		$("#loader").modal("toggle");
 		location.href = 'Dashboard'
 	}
 
 	function back() {
-        $("#loader1").modal("toggle");
-
+		$("#loader").modal("toggle");
 		window.history.back();
 	}
 
 	function list() {
-		location.href = 'Nostro_Account_Bal';
+		location.href = 'Trade_Market_Risk?formmode=list';
 	}
-	
+
+	function trade() {
+		location.href = 'Trade_Market_Risk';
+	}
+
 	$(document).ready(function () {
-	    // On modal close, redirect to your controller method path
-	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Nostro_Account_Bal';
-	    });
+		// On modal close, redirect to the list view
+		$('#alert').on('hidden.bs.modal', function () {
+			window.location.href = './Trade_Market_Risk?formmode=list';
+		});
 	});
 
-	function submitForm() {
-		$('#nostroForm').validate({
-	        messages: {
-	            portfolioDate: "Please provide Portfolio Date",
-	            submittingInstitution: "Please provide Submitting Institution"
-	        }
-	    });
+	// This function handles the submission of the edit form.
+	function updateform(event) {
+		event.preventDefault(); // Prevent the default form submission
+		$("#loader").modal("show");
 
-	    if ($("#nostroForm").valid()) {
-	    	var formmode = /*[[${formmode}]]*/null;
-
-	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
-	        $("#loader1").modal("toggle");
-
-	        var url = "./createNostroData?report_name=" + report_name;
-
-	        $("#nostroForm").attr('action', url);
-
-	        var options = {
-	            success: showResponse,
-	            error: function (xhr, status, error) {
-	                console.log("Error occurred: ", error);
-	                console.log(xhr.responseText); // for debugging
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Something went wrong while submitting the form.");
-	                $('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#nostroForm").ajaxSubmit(options);
-
-	        function showResponse(responseText, statusText, xhr, $form) {
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text(responseText);
-	            $('#alert').modal("toggle");
-	        }
-	    }
-	};
-
-	function updateform() {
-		
-	    $('#Nostro').validate({
-	        rules: {
-	            bankName: { required: true },
-	            dataDate: { required: true },
-	            counterpartyBalance: { number: true },
-	            bankBalance: { number: true },
-	            counterpartyBalanceAed: { number: true },
-	            bankBalanceAed: { number: true },
-	            gap: { number: true }
-	        },
-	        messages: {
-	            bankName: { required: "Please provide Bank Name", minlength: "Bank Name must be at least 2 characters" },
-	            dataDate: "Please provide Data Date",
-	            counterpartyBalance: "Enter valid number",
-	            bankBalance: "Enter valid number",
-	            counterpartyBalanceAed: "Enter valid number",
-	            bankBalanceAed: "Enter valid number",
-	            gap: "Enter valid number"
-	        }
-	    });
-
-	    if ($("#Nostro").valid()) {
-	        $("#loader1").modal("show");
-
-	        var url = "./updateNostro";
-	        $("#Nostro").attr('action', url);
-
-	        var options = {
-	            success: function (responseText, statusText, xhr, $form) {
-	                $("#loader1").modal("hide");
-
-	                // Show modal alert
-	                $("#alertmsg").text("Updated Success fully");
-
-					$('#alert').modal("toggle");
-
-	                // Redirect after short delay
-	               
-	                    window.location.href = "Nostro_Account_Bal";
-	                
-	            },
-	            error: function (xhr, status, error) {
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Error: " + error);
-	               
-					$('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#Nostro").ajaxSubmit(options);
-	    } else {
-	        $("#alertmsg").text("Please fix validation errors.");
-	        $('#alert').modal("show");
-	    }
+		$.ajax({
+			url: './updateTradeMarketRisk',
+			type: 'POST',
+			data: $('#tradeMarketRiskEditForm').serialize(),
+			success: function (response) {
+				$("#loader").modal("hide");
+				$("#alertmsg").text(response);
+				$("#alert").modal("show");
+			},
+			error: function (xhr, status, error) {
+				console.error("Error in modify:", error);
+				$("#loader").modal("hide");
+				alert("Failed to modify. Please try again.");
+			}
+		});
 	}
 
-	
-    </script>
-  
-</head>
-
- 
-<script>
-  function navigateToTab(tabId) {
-    if (tabId === 'data') {
-      window.location.href = 'Nostro_Account_Bal?formmode=list';
-    } else if (tabId === 'datacontrols') {
-      window.location.href = 'Nostro_Account_Bal?formmode=add';
-    }
-  }
-
-  function handleClick(tabId) {
-    // Remove active class from all buttons
-    document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tabId + '-btn').classList.add('active');
-
-    // Hide all panes
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
-    document.getElementById(tabId).classList.add('show', 'active');
-  }
-
-  // On page load, detect formmode and show corresponding tab
-  window.addEventListener('DOMContentLoaded', function () {
-    const params = new URLSearchParams(window.location.search);
-    const formmode = params.get('formmode');
-
-    if (formmode === 'list') {
-      handleClick('data');
-    } else {
-      handleClick('datacontrols'); // default or formmode=add
-    }
-  });
 </script>
 
+<script>
+	function navigateToTab(tabId) {
+		if (tabId === 'data') {
+			window.location.href = 'Trade_Market_Risk?formmode=list';
+		} else if (tabId === 'datacontrols') {
+			window.location.href = 'Trade_Market_Risk?formmode=add';
 
+		}
+	}
 
+	function handleClick(tabId) {
+		// Remove active class from all buttons
+		document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
+		document.getElementById(tabId + '-btn').classList.add('active');
 
-     <script>
-     
- 	function downloadNostro() {
- 		$('#downloadProcessingModal').modal('show');
+		// Hide all panes
+		document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+		document.getElementById(tabId).classList.add('show', 'active');
+	}
 
- 		$.ajax({
- 			url: './downloadNostroExcel',
- 			type: 'GET',
- 			xhrFields: {
- 				responseType: 'blob'
- 			},
- 			success: function (data) {
- 				$('#downloadProcessingModal').modal('hide');
+	// On page load, detect formmode and show corresponding tab
+	window.addEventListener('DOMContentLoaded', function () {
+		const params = new URLSearchParams(window.location.search);
+		const formmode = params.get('formmode');
 
- 				var blob = new Blob([data], {type: 'application/octet-stream'});
- 				var url = window.URL.createObjectURL(blob);
- 				var a = document.createElement('a');
- 				a.href = url;
- 				a.download = 'NostroAccBalance.xls';
- 				document.body.appendChild(a);
- 				a.click();
- 				window.URL.revokeObjectURL(url);
+		if (formmode === 'list') {
+			handleClick('data');
+		} else if (formmode !== 'edit') { // Do not trigger for edit mode
+			handleClick('datacontrols'); // default or formmode=add
+		}
+	});
+</script>
 
- 				$('#customAlertBody').text('Downloaded NostroAccBalance.xls');
- 				$('#customAlertModal').modal('show');
- 			}
- 		});
- 	}
+<script>
+	/**
+	 * Shows a custom styled modal with a title and message.
+	 * @param {string} title - The title for the modal header.
+	 * @param {string} message - The message for the modal body.
+	 */
+	function showResultModal(title, message) {
+		// Set the text for the modal elements
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+
+		// Show the modal
+		$('#resultModal').modal('show');
+	}
+
+	/**
+	 * Initiates the download for the Trade Market Risk report.
+	 */
+	function downloadTradeMarketRisk() {
+		// 1. Show the loader
+		$('#loader').modal('show');
+
+		$.ajax({
+			url: './downloadTradeMarketRiskExcel',
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob' // Essential for file downloads
+			},
+			success: function (data) {
+				// 2a. Hide loader on success
+				$('#loader').modal('hide');
+
+				// Check if the server returned any data to download
+				if (data && data.size > 100) { // A small threshold to ensure the file isn't empty
+					// Create a temporary link to trigger the download
+					const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.style.display = 'none';
+					a.href = url;
+					a.download = 'TradeMarketRiskData.xls';
+					document.body.appendChild(a);
+
+					a.click();
+
+					// Clean up the temporary link and URL
+					window.URL.revokeObjectURL(url);
+					document.body.removeChild(a);
+
+					// Show success message in your custom modal
+					showResultModal('Success', 'The file has been downloaded successfully.');
+
+				} else {
+					// Handle case where the server responds but there's no data
+					showResultModal('Information', 'No data was available to create a download.');
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				// 2b. Hide loader on error
+				$('#loader').modal('hide');
+
+				console.error("Download failed:", textStatus, errorThrown);
+
+				// Show error message in your custom modal
+				showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+			}
+		});
+	}
+
 
 </script>
 <title>BCDRS</title>
-<body>
-<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
-		<div class="row">
-		
-	<div th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div class="card-header" style="background-color: rgb(0,164,166);">
-					<div class="float-left" style="color: black;">
-						<h5 
-							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
+<body>
+	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
+		<div class="row">
+
+			<div th:insert="XBRLHeaderMenu :: header"></div>
+
+			<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"
+				style="background-color: rgb(107, 122, 143) ; ">
+				<div class="float-left">
+					<h5
+						style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
+						TRADE MARKET RISK REPORT</h5>
+				</div>
+
+
+			</div>
+			<!-- -------------------User List Starts----------------------------------------------------- -->
+			<div style="padding-right: 10px;padding-left: 20px;"
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+
+
+
+
+
+				<!-- Tabs -->
+				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
+					<button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+						Controls</button>
+					<button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template
+						Instructions</button>
+					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
+					<div class="float-right" style="margin-left:61%">
+
+						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
+							onclick="downloadTradeMarketRisk();">
+							<i class="fa fa-download"></i> Download
+						</button>
+
+					</div>
+				</div>
+
+
+
+
+
+
+				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
+					th:if="${formmode} =='null' or formmode == 'add'">
+					<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+
+						<div class="row">
+							<div class="col-sm-12 finuserapply">
+								<form id="nostroForm" method="post" autocomplete="off">
+									<div class="card-body" style="max-height:450px; overflow-y:auto">
+
+
+										<input autocomplete="false" name="hidden" type="text" style="display: none;">
+										<div class="form-group" style="border:none">
+											<div class="row formline">
+												<div class="col-sm-1"></div>
+												<div class="form-group col-md-4">
+													<select id="submittingInstitution" name="submittingInstitution"
+														class="form-control" required>
+														<option value="">-- Select Institution --</option>
+														<option value="Bank of Baroda">Bank of Baroda</option>
+													</select>
+													<label for="submittingInstitution" class="form-legend">Submitting
+														Institution</label>
+												</div>
+
+
+												<div class="col-sm-1"></div>
+
+												<div class="form-group col-md-4">
+													<input type="date" id="portfolioDate" name="portfolioDate"
+														class="form-control" placeholder=" " required />
+													<label for="portfolioDate" class="form-legend">Portfolio
+														date</label>
+												</div>
+											</div>
+
+											<!-- Contact Employee 1 Name / Title -->
+											<!-- Contact Employee 1 Group -->
+											<div class="form-group"
+												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+												<div class="row formline">
+													<div class="col-sm-12">
+														<label style="font-weight: bold; color: #007B8A;">Contact
+															Details(Employee 1)</label>
+													</div>
+												</div>
+												<div class="row formline">
+													<div class="form-group col-md-4">
+														<input type="text" id="contactEmployee1Name1"
+															name="contactEmployee1Name1" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee1Name1"
+															class="form-legend">Name</label>
+													</div>
+
+
+													<div class="form-group col-md-4">
+														<input type="text" id="contactEmployee1Title1"
+															name="contactEmployee1Title1" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee1Title1"
+															class="form-legend">Title</label>
+													</div>
+
+
+
+													<div class="form-group col-md-4">
+														<input type="email" id="contactEmployee1Email1"
+															name="contactEmployee1Email1" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee1Email1"
+															class="form-legend">Email</label>
+													</div>
+													<div class="col-sm-3">
+													</div>
+
+												</div>
+											</div>
+											<div class="form-group"
+												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+												<div class="row formline">
+													<div class="col-sm-12">
+														<label style="font-weight: bold; color: #007B8A;">Contact
+															Details(Employee 2)</label>
+													</div>
+												</div>
+												<div class="row formline">
+													<div class="form-group col-md-4">
+														<input type="text" id="contactEmployee2Name2"
+															name="contactEmployee2Name2" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee2Name2"
+															class="form-legend">Name</label>
+													</div>
+
+
+													<div class="form-group col-md-4">
+														<input type="text" id="contactEmployee2Title2"
+															name="contactEmployee2Title2" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee2Title2"
+															class="form-legend">Title</label>
+													</div>
+
+
+
+													<div class="form-group col-md-4">
+														<input type="email" id="contactEmployee2Email2"
+															name="contactEmployee2Email2" class="form-control"
+															placeholder=" " required />
+														<label for="contactEmployee2Email2"
+															class="form-legend">Email</label>
+													</div>
+													<div class="col-sm-3">
+													</div>
+
+												</div>
+												<!-- Contact Employee 2 Group -->
+											</div>
+											<div class="form-group"
+												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+												<div class="row formline">
+													<div class="col-sm-12">
+														<label style="font-weight: bold; color: #007B8A;">Sign
+															Off</label>
+													</div>
+												</div>
+
+												<!-- Sign-off CRO Name / Email -->
+												<div class="row formline">
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="text" id="signOffCroName" name="signOffCroName"
+															class="form-control" placeholder=" " required />
+														<label for="signOffCroName" class="form-legend">CRO Name</label>
+													</div>
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="email" id="signOffCroEmail" name="signOffCroEmail"
+															class="form-control" placeholder=" " required />
+														<label for="signOffCroEmail" class="form-legend">CRO
+															Email</label>
+													</div>
+
+												</div>
+
+												<!-- Sign-off CFO Name / Email -->
+												<div class="row formline">
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="text" id="signOffCfoName" name="signOffCfoName"
+															class="form-control" placeholder=" " required />
+														<label for="signOffCfoName" class="form-legend">CFO Name</label>
+													</div>
+
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
+															class="form-control" placeholder=" " required />
+														<label for="signOffCfoEmail" class="form-legend">CFO
+															Email</label>
+													</div>
+
+												</div>
+
+												<!-- Sign-off Head of Treasury Name / Email -->
+												<div class="row formline">
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="text" id="signOffHeadOfTreasuryName"
+															name="signOffHeadOfTreasuryName" class="form-control"
+															placeholder=" " required />
+														<label for="signOffHeadOfTreasuryName" class="form-legend">Head
+															of Treasury Name</label>
+													</div>
+
+													<div class="col-sm-1"></div>
+													<div class="form-group col-md-4">
+														<input type="email" id="signOffHeadOfTreasuryEmail"
+															name="signOffHeadOfTreasuryEmail" class="form-control"
+															placeholder=" " required />
+														<label for="signOffHeadOfTreasuryEmail" class="form-legend">Head
+															of Treasury Email</label>
+													</div>
+												</div>
+											</div>
+
+										</div>
+
+
+								</form>
+							</div>
+						</div>
+						<div class="card-footer text-center"
+							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+							<button type="button" class="custom-tab-btn" onclick="home();">
+								<i class="fa fa-home"></i> Home
+							</button>
+
+
+							<button th:if="${formmode == 'null' or formmode == 'add'}" type="button"
+								class="custom-tab-btn" onclick="submitForm()">Save</button>
+
+
+							<button type="button" class="custom-tab-btn" onclick="back();">
+								<i class="fa fa-arrow-left"></i> Back
+							</button>
+
+						</div>
+					</div>
+				</div>
+
+				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
+
+				<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+
+				<div class="tab-pane fade" id="template" role="tabpanel"
+					th:if="${formmode == 'null' or formmode == 'add'}">
+					<p>Templates tabs</p>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<button type="button" class="custom-tab-btn" onclick="home();">
+							<i class="fa fa-home"></i> Home
+						</button>
+
+
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+							onclick="submitForm()">Save</button>
+
+
+						<button type="button" class="custom-tab-btn" onclick="back();">
+							<i class="fa fa-arrow-left"></i> Back
+						</button>
+
+					</div>
+				</div>
+
+				<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
+
+
+
+				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
+				<div class="tab-pane fade" id="data" role="tabpanel">
+
+					<div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
+						<table id="usertable" class="table table-bordered table-striped table-hover"
+							style="min-width: 2000px; font-family:calibri;">
+
+							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+
+								<tr>
+									<th style="width: 40px;">Edit</th>
+									<th>Report Date</th>
+									<th>Bank Name</th>
+									<th>Group/HO/Subsidiary</th>
+									<th>Subsidiary</th>
+									<th>Bank Symbol</th>
+									<th>Conventional/Islamic</th>
+									<th>Local/Foreign</th>
+									<th>CBUAE Tiering</th>
+									<th>Trading Book Desks</th>
+									<th>CBUAE Desk Reference</th>
+									<th>Annual Budget (AED)</th>
+									<th>Book Size (Market Value AED)</th>
+									<th>Relative Size (%)</th>
+									<th>YTD P&L (AED)</th>
+									<th>Max Loss (AED)</th>
+									<th>Confidence Interval</th>
+									<th>Holding Period</th>
+									<th>VaR Exposure (AED)</th>
+									<th>VaR Limit (AED)</th>
+									<th>Status</th>
+									<th>Expected Shortfall (AED)</th>
+									<th>Expected Shortfall Limit (AED)</th>
+									<th>Status</th>
+									<th>Modified Duration</th>
+									<th>IR Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>DV01</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>DV01 Tenor <3Yr< /th>
+									<th>DV01 Tenor >3Yr</th>
+									<th>Credit Spread CS01</th>
+									<th>Credit Spread Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>CS01 Investment Grade</th>
+									<th>CS01 Sub-Investment</th>
+									<th>CS01 Unrated</th>
+									<th>Beta Equity</th>
+									<th>Equity Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>BR01</th>
+									<th>IR Diff. Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Delta</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Gamma</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Vega</th>
+									<th>Implied Volatility Type</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Theta</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Rho</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Vanna</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Dollar Volga</th>
+									<th>Shock (bps)</th>
+									<th>Limit</th>
+									<th>Status</th>
+									<th>Credit Spread (AED)</th>
+									<th>Credit Sensitive Impact (%)</th>
+									<th>Interest Rate in Trading Book (AED)</th>
+									<th>Rate Sensitive Impact (%)</th>
+									<th>Foreign Exchange (AED)</th>
+									<th>FX Sensitive Impact (%)</th>
+									<th>Equity (AED)</th>
+									<th>Equity Sensitive Impact (%)</th>
+									<th>Commodities (AED)</th>
+									<th>Commodity Sensitive Impact (%)</th>
+									<th>Credit Derivatives (AED)</th>
+									<th>Relative Impact (%)</th>
+									<th>Jump-to-Default Loss (AED)</th>
+									<th>JTD Relative Impact (%)</th>
+									<th>Overall Impact (AED)</th>
+									<th>Overall Relative Impact (%)</th>
+								</tr>
+
+							</thead>
+
+							<tbody style="font-size: 9px;">
+
+								<!-- Loop to render data dynamically -->
+								<tr th:each="data : ${dataList}">
+									<td>
+										<a
+											th:href="@{/Trade_Market_Risk(formmode='edit', reportDate=${#dates.format(data.reportDate, 'yyyy-MM-dd')})}">
+											<i class="fa fa-edit" style="color: #007bff; font-size: 16px;"></i>
+										</a>
+									</td>
+									<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
+									<td th:text="${data.bankName}"></td>
+									<td th:text="${data.groupHeadOfficeSubsidiary}"></td>
+									<td th:text="${data.subsidiary}"></td>
+									<td th:text="${data.bankSymbol}"></td>
+									<td th:text="${data.conventionalIslamic}"></td>
+									<td th:text="${data.localForeign}"></td>
+									<td th:text="${data.cbuaeTiering}"></td>
+									<td th:text="${data.tradingBookDesks}"></td>
+									<td th:text="${data.cbuaeInternalDeskReference}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.annualBudgetAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.tradingDeskBookSizeMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.relativeSizePercentTotalAssetsOrPercentTotalTradingBook, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.ytdPandLAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.maximumLossOverThePeriodAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${data.confidenceInterval}"></td>
+									<td th:text="${data.holdingPeriod}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.varExposureAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${data.status}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.expectedShortfallAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.expectedShortfallLimitAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${data.status2}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.modifiedDuration, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.interestRateShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit1, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status3}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dv01, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${#numbers.formatDecimal(data.limit2, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status4}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.dv01TenorGapsLt3Yr, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.dv01TenorGapsGt3Yr, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadCs01, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit3, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status5}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadCs01InvestmentGrade, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadCs01SubInvestment, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadCs01Unrated, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.betaEquity, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.equityShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit4, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status6}"></td>
+									<td th:text="${#numbers.formatDecimal(data.br01, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.interestRateDifferentialShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit5, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status7}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarDelta, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps1, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit6, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status8}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarGamma, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps2, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit7, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status9}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarVega, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${data.impliedVolatilityType}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps3, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit8, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status10}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarTheta, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit9, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status11}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarRho, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps4, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit10, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status12}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarVanna, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps5, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit11, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status13}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dollarVolga, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.shockAppliedBps6, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.limit12, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${data.status14}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSpreadAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.interestRateInTheTradingBookAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.rateSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.foreignExchangeAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.fxSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.equityAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.equitySensitiveRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.commoditiesAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.commoditySensitiveRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.creditDerivativesAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.relativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.jumpToDefaultLossAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.jtdRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.overallImpactAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.overallRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<button type="button" class="custom-tab-btn" onclick="home();">
+							<i class="fa fa-home"></i> Home
+						</button>
+
+
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+							onclick="submitForm()">Save</button>
+
+
+						<button type="button" class="custom-tab-btn" onclick="back();">
+							<i class="fa fa-arrow-left"></i> Back
+						</button>
+
 					</div>
 
-					
 				</div>
-	<!-- -------------------User List Starts----------------------------------------------------- -->
-	<div  style="padding-right: 10px;padding-left: 20px;" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
 
-			
-				
-			
+			</div>
+		</div>
 
-<!-- Tabs -->
-<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
-  <button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
-  <button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
-  <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
-    	<div class="float-right" style="margin-left:57%">
-    		<button th:if="${formmode} =='list'" type="button"
-  class="custom-tab-btn"
- 
-  onclick="downloadNostro();">
-  <i class="fa fa-download"></i> Download
-</button></div>
-</div>
+		<!------------------ edit starts-------------------------------------------------------------->
 
+		<div th:if="${formmode}=='edit'" style="width:100%;">
 
-
-
-
-
-<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
-  <div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
-   
-		<div class="row">
-			<div class="col-sm-12 finuserapply" >
-			<form id="nostroForm"        
-          method="post"
-          autocomplete="off" > 
-				<div class="card-body" style="max-height:450px; overflow-y:auto">
-
-							<input autocomplete="false" name="hidden" type="text"
-								style="display: none;">
-							 <div class="form-group" style="border:none">
-          <div class="row formline">
-            <div class="col-sm-1"></div>
-           <div class="form-group col-md-4">
-  <select id="submittingInstitution" name="submittingInstitution" class="form-control" required>
-    <option value="">-- Select Institution --</option>
-    <option value="Bank of Baroda">Bank of Baroda</option>
-  </select>
-  <label for="submittingInstitution" class="form-legend">Submitting Institution</label>
-</div>
-
-
-            <div class="col-sm-1"></div>
-            
-            <div class="form-group col-md-4">
-              <input type="date"
-                     id="portfolioDate"
-                     name="portfolioDate"
-                     class="form-control" placeholder=" "
-                     required />
-                <label for="portfolioDate" class="form-legend">Portfolio date</label>
-            </div>
-          </div>
-
-          <!-- Contact Employee 1 Name / Title -->
-          <!-- Contact Employee 1 Group -->
-<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-  <div class="row formline">
-    <div class="col-sm-12">
-      <label style="font-weight: bold; color: #007B8A;">Contact Details(Employee 1)</label>
-    </div>
-  </div>
-  <div class="row formline">
-     <div class="form-group col-md-4">
-     <input type="text" id="contactEmployee1Name1" name="contactEmployee1Name1" class="form-control" placeholder=" " required />
-      <label for="contactEmployee1Name1" class="form-legend">Name</label>
-    </div>
-    
-    
-   <div class="form-group col-md-4">
-   <input type="text" id="contactEmployee1Title1" name="contactEmployee1Title1" class="form-control" placeholder=" " required />
-      <label for="contactEmployee1Title1" class="form-legend">Title</label>
-    </div>
-   
-
-  
-    <div class="form-group col-md-4">
-       <input type="email" id="contactEmployee1Email1" name="contactEmployee1Email1" class="form-control" placeholder=" " required />
-      <label for="contactEmployee1Email1" class="form-legend">Email</label>
-    </div>
-    <div class="col-sm-3">
-    </div>
- 
-</div>
-</div>
-<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-  <div class="row formline">
-    <div class="col-sm-12">
-      <label style="font-weight: bold; color: #007B8A;">Contact Details(Employee 2)</label>
-    </div>
-  </div>
-  <div class="row formline">
-     <div class="form-group col-md-4">
-     <input type="text" id="contactEmployee2Name2" name="contactEmployee2Name2" class="form-control" placeholder=" " required />
-      <label for="contactEmployee2Name2" class="form-legend">Name</label>
-    </div>
-    
-    
-   <div class="form-group col-md-4">
-   <input type="text" id="contactEmployee2Title2" name="contactEmployee2Title2" class="form-control" placeholder=" " required />
-      <label for="contactEmployee2Title2" class="form-legend">Title</label>
-    </div>
-   
-
-  
-    <div class="form-group col-md-4">
-       <input type="email" id="contactEmployee2Email2" name="contactEmployee2Email2" class="form-control" placeholder=" " required />
-      <label for="contactEmployee2Email2" class="form-legend">Email</label>
-    </div>
-    <div class="col-sm-3">
-    </div>
- 
-</div>
-<!-- Contact Employee 2 Group -->
-</div>
-<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-  <div class="row formline">
-    <div class="col-sm-12">
-      <label style="font-weight: bold; color: #007B8A;">Sign Off</label>
-    </div>
-  </div>
-
-          <!-- Sign-off CRO Name / Email -->
-          <div class="row formline">
-           <div class="col-sm-1"></div>
-           <div class="form-group col-md-4">
-            <input type="text"
-                     id="signOffCroName"
-                     name="signOffCroName" class="form-control" placeholder=" "
-                     required />
-              <label for="signOffCroName" class="form-legend">CRO Name</label>
-            </div>
-             <div class="col-sm-1"></div>
-            <div class="form-group col-md-4">
-             <input type="email"
-                     id="signOffCroEmail"
-                     name="signOffCroEmail"
-                     class="form-control" placeholder=" "
-                     required />
-              <label for="signOffCroEmail" class="form-legend">CRO Email</label>
-            </div>
-            
-          </div>
-
-          <!-- Sign-off CFO Name / Email -->
-          <div class="row formline">
-          <div class="col-sm-1"></div>
-           <div class="form-group col-md-4">
-           <input type="text"
-                     id="signOffCfoName"
-                     name="signOffCfoName"
-                     class="form-control" placeholder=" "
-                     required />
-              <label for="signOffCfoName" class="form-legend">CFO Name</label>
-            </div>
-            
-            <div class="col-sm-1"></div>
-             <div class="form-group col-md-4">
-              <input type="email"
-                     id="signOffCfoEmail"
-                     name="signOffCfoEmail"
-                     class="form-control" placeholder=" "
-                     required />
-              <label for="signOffCfoEmail" class="form-legend">CFO Email</label>
-            </div>
-           
-          </div>
-
-          <!-- Sign-off Head of Treasury Name / Email -->
-          <div class="row formline">
-            <div class="col-sm-1"></div>
-           <div class="form-group col-md-4">
-            <input type="text"
-                     id="signOffHeadOfTreasuryName"
-                     name="signOffHeadOfTreasuryName"
-                    class="form-control" placeholder=" "
-                     required />
-              <label for="signOffHeadOfTreasuryName" class="form-legend">Head of Treasury Name</label>
-            </div>
-            
-            <div class="col-sm-1"></div>
-            <div class="form-group col-md-4">
-             <input type="email"
-                     id="signOffHeadOfTreasuryEmail"
-                     name="signOffHeadOfTreasuryEmail"
-                     class="form-control" placeholder=" "
-                     required />
-              <label for="signOffHeadOfTreasuryEmail" class="form-legend">Head of Treasury Email</label>
-            </div>
-                      </div>
-							</div>
-							
-							</div>
-							
-							
-							</form>
-							</div>
-							</div>
-							</div></div>
-									
-
-  <div class="tab-pane fade" id="template" role="tabpanel">
-    <p>Templates tabs</p>
-  </div>
-  <div class="tab-pane fade" id="data" role="tabpanel">
-    <!-- Move your existing table content here -->
-
-		<!-- 	<div class="row">
-				<div class="col-sm-12">
-					<div class="container-fluid">
-   -->
-  <div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
-    <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
-  
-      <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
-      
-        <tr>
-        <th style="width: 40px;"></th>
-        
-          <th style="min-width:100px">Data Date</th>
-          <th>Bank Name</th>
-          <th>Head Office/Subsidiary</th>
-          <th>Subsidiary</th>
-          <th>Bank Symbol</th>
-          <th>Conventional/Islamic</th>
-          <th>Local/Foreign</th>
-          <th>CBUAE Tiering</th>
-          <th>Counterparty Nostro Account</th>
-          <th>Final Rating (Banks)</th>
-          <th>Final Rating (CBUAE)</th>
-          <th>Country of Risk</th>
-          <th>CBUAE Geographical Zone</th>
-          <th>Currency</th>
-          <th style="min-width:130px">Counterparty Settlement Date</th>
-          <th>Counterparty Balance</th>
-          <th>Counterparty Balance (AED)</th>
-          <th style="min-width:130px">Bank Internal Settlement Date</th>
-          <th>Bank Balance</th>
-          <th>Bank Balance (AED)</th>
-          <th>Account No</th>
-          <th>Gap</th>
-         <th style="min-width:130px">Report Date</th>
-         
-         
-        </tr>
-      </thead>
-      <tbody style="font-size: 9px;">
-      
-        <!-- Loop to render data dynamically -->
-        <tr th:each="data : ${branchList}">
-<td>
-  <a th:href="@{'/Nostro_Account_Bal?formmode=edit&accountNo=' + ${data.accountNo}}">
-    <i class="fa fa-edit" style="color: #007bff;"></i>
-  </a>
-</td>
-
-          <td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.bankName}"></td>
-          <td th:text="${data.headOfficeSubsidiary}"></td>
-          <td th:text="${data.subsidiary}"></td>
-          <td th:text="${data.bankSymbol}"></td>
-          <td th:text="${data.conventionalIslamic}"></td>
-          <td th:text="${data.localForeign}"></td>
-          <td th:text="${data.cbuaeTiering}"></td>
-          <td th:text="${data.counterpartyNostroAccount}"></td>
-          <td th:text="${data.finalRatingBanks}"></td>
-          <td th:text="${data.finalRatingCbuae}"></td>
-          <td th:text="${data.countryOfRisk}"></td>
-          <td th:text="${data.cbuaeGeographicalZone}"></td>
-          <td th:text="${data.currency}"></td>
-          <td th:text="${#dates.format(data.counterpartySettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.counterpartyBalance}"></td>
-          <td th:text="${data.counterpartyBalanceAed}"></td>
-          <td th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.bankBalance}"></td>
-          <td th:text="${data.bankBalanceAed}"></td>
-          <td th:text="${data.accountNo}"></td>
-          <td th:text="${data.gap}"></td>
-          <td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
-          
-          
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-  <button type="button" class="custom-tab-btn"        
-        onclick="home();">
-  <i class="fa fa-home"></i> Home
-</button>
-
-
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
-       
-
-<button type="button" class="custom-tab-btn"
-        
-        onclick="back();">
-  <i class="fa fa-arrow-left"></i> Back
-</button>
-
-</div>
-
-
-
-
-
-				</div>
-			
-		
-<div th:if="${formmode}=='edit'" style="align-items:center">
- 
-<div class="row">
-		<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="Nostro">
-    	<div class="card" style="margin-left: 26px;">
-						<div class="card-header"style="background-color: rgb(0,164,166);">
+			<div class="row" style="margin: 0;">
+				<form th:action="@{/updateTradeMarketRisk}" th:object="${data}" method="post"
+					id="tradeMarketRiskEditForm" style="width: 100%;">
+					<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header" style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 24px; font-weight: bold; ">Nostro Account Balance- Edit</h3>
+								<h3
+									style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">
+									Trade Market Risk - Edit</h3>
 							</div>
-							
+
 						</div>
-<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+							<!-- Hidden field for the ID -->
+							<input type="hidden" th:field="*{reportDate}" />
 
- 
-  
-    <input type="hidden" th:field="*{accountNo}" />
-    
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Bank Name</label>
-      <div class="col-sm-4">
-       <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
-  <option value="">-- Select Bank --</option>
-  <option value="Bank of Baroda">Bank of Baroda</option>
-  <!-- Add more banks if needed -->
-</select>
+							<!-- SECTION: General Information -->
+							<h4 class="section-header">Financial Institution information</h4>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Report Date</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"
+										th:value="${#dates.format(data.reportDate, 'dd-MM-yyyy')}" readonly />
+								</div>
+								<label class="col-sm-2 col-form-label">Bank Name</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bankName}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Group/HO/Subsidiary</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Subsidiary</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{subsidiary}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bank Symbol</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bankSymbol}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{conventionalIslamic}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Local/Foreign</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{localForeign}" />
+								</div>
+								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}" />
+								</div>
+							</div>
 
-      </div>
+							<!-- SECTION: Book Size & P&L -->
+							<h4 class="section-header">Trading Book/Desks</h4>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Trading Book Desks</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{tradingBookDesks}" />
+								</div>
+								<label class="col-sm-2 col-form-label">CBUAE Desk Reference</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeInternalDeskReference}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Annual Budget (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{annualBudgetAed}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Book Size (Market Value AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"
+										th:field="*{tradingDeskBookSizeMarketValueAed}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Relative Size (%)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"
+										th:field="*{relativeSizePercentTotalAssetsOrPercentTotalTradingBook}" />
+								</div>
+								<label class="col-sm-2 col-form-label">YTD P&L (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{ytdPandLAed}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Max Loss (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{maximumLossOverThePeriodAed}" />
+								</div>
+							</div>
 
-      <label class="col-sm-2 col-form-label">Bank Symbol</label>
-      <div class="col-sm-4">
-       <input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly/>
+							<!-- SECTION: VaR & Expected Shortfall -->
+							<h4 class="section-header">Value-at-Risk/Expected Shortfall</h4>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Confidence Interval</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{confidenceInterval}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Holding Period</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{holdingPeriod}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">VaR Exposure (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{varExposureAed}" />
+								</div>
+								<label class="col-sm-2 col-form-label">VaR Limit (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{varLimitAed}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Status (VaR)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{status}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Expected Shortfall (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{expectedShortfallAed}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Expected Shortfall Limit (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{expectedShortfallLimitAed}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Status (ES)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{status2}" />
+								</div>
+							</div>
 
-      </div>
-    </div>
-
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
-      <div class="col-sm-4">
-          <select class="form-control" th:field="*{headOfficeSubsidiary}">
-  <option value="">-- Select --</option>
-  <option value="Head Office">Head Office</option>
-   <option value="Subsidiary">Subsidiary</option>
-      </select>
-      </div>
-
-      <label class="col-sm-2 col-form-label">Subsidiary</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{subsidiary}" />
-      </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Conventional Islamic</label>
-      <div class="col-sm-4">
-       <input type="text" class="form-control" th:field="*{conventionalIslamic}" id="conventionalIslamic" readonly/>
-</div>
-
-      <label class="col-sm-2 col-form-label">Local Foreign</label>
-      <div class="col-sm-4">
-      <input type="text" class="form-control" th:field="*{localForeign}" id="localForeign" readonly/>
-</div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-      <div class="col-sm-4">
-       <input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly/>
-</div>
-
-      <label class="col-sm-2 col-form-label">counter party Nostro Account</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyNostroAccount}" />
-      </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
-      </div>
-
-      <label class="col-sm-2 col-form-label">final Rating CBUAE</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
-      </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Country Of Risk</label>
-      <div class="col-sm-4">
-        <select class="form-control" th:field="*{countryOfRisk}" id="countryOfRisk" onchange="handleCountryChange(this)">
-  <option value="">-- Select Country --</option>
-  <option value="United Arab Emirates">United Arab Emirates</option>
-  <!-- Add more countries as needed -->
-</select>
-      </div>
-
-      <label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-      <div class="col-sm-4">
-<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly/>
- </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">currency</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{currency}" />
-      </div>
-
-      <label class="col-sm-2 col-form-label">Counter Party Settlement Date</label>
-      <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{counterpartySettlementDate}" />
-      </div>
-</div>   
-
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Counter Party Balance</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyBalance}" />
-      </div>
-
-      <label class="col-sm-2 col-form-label">Counter Party Balance Aed</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyBalanceAed}" />
-      </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Bank Internal Settlement Date</label>
-      <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{bankInternalSettlementDate}" />
-      </div>
-
-      <label class="col-sm-2 col-form-label">Bank Balance</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankBalance}" />
-      </div>
-</div>   
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Bank Balance Aed</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankBalanceAed}" />
-      </div>
-
-      <label class="col-sm-2 col-form-label">Gap</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{gap}" />
-      </div>
-</div>   
- </div>
-
-    
+							<!-- SECTION: Sensitivity Analysis -->
+							<h4 class="section-header">Sensitivity Metrics</h4>
+							<!-- ... Continue with the rest of the fields, grouped logically ... -->
+							<!-- Example for DV01 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Modified Duration</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{modifiedDuration}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Interest Rate Shock (BPS)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{interestRateShockAppliedBps}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Limit (Modified Duration)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{limit1}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Status (Modified Duration)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{status3}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">DV01</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dv01}" />
+								</div>
+								<label class="col-sm-2 col-form-label">DV01 Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit2}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">DV01 Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status4}" />
+								</div>
+								<label class="col-sm-2 col-form-label">DV01 Tenor <3Yr< /label>
+										<div class="col-sm-4"><input type="text" class="form-control"
+												th:field="*{dv01TenorGapsLt3Yr}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">DV01 Tenor >3Yr</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dv01TenorGapsGt3Yr}" /></div>
+							</div>
 
 
-    <!-- Submit -->
-   <div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="btn btn-success" onclick="updateform()">Update</button>
-      <a th:href="@{/Nostro_Account_Bal}" class="btn btn-secondary ml-2">Cancel</a>
-    </div>
-    
-    </div>
-  </form>
-</div>
-</div>
-</div>
-	
+							<!-- Sub-section: Credit Spread (CS01) -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Credit Spread CS01</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadCs01}" /></div>
+								<label class="col-sm-2 col-form-label">Credit Spread Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadShockAppliedBps}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CS01 Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit3}" />
+								</div>
+								<label class="col-sm-2 col-form-label">CS01 Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status5}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CS01 Investment Grade</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadCs01InvestmentGrade}" /></div>
+								<label class="col-sm-2 col-form-label">CS01 Sub-Investment</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadCs01SubInvestment}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CS01 Unrated</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadCs01Unrated}" /></div>
+							</div>
 
-	<div class="modal fade" id="datadelete">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: #f15362;">
-					<button type="button" class="close" data-dismiss="modal">×</button>
-					Are you Sure want to delete?
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-				</div>
+							<!-- Sub-section: Equity -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Beta Equity</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{betaEquity}" /></div>
+								<label class="col-sm-2 col-form-label">Equity Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{equityShockAppliedBps}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Equity Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit4}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Equity Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status6}" />
+								</div>
+							</div>
+
+							<!-- Sub-section: Basis Risk (BR01) -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">BR01</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{br01}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Interest Rate Diff Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{interestRateDifferentialShockAppliedBps}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">BR01 Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit5}" />
+								</div>
+								<label class="col-sm-2 col-form-label">BR01 Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status7}" />
+								</div>
+							</div>
+
+							<!-- Sub-section: Greeks -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Delta</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarDelta}" /></div>
+								<label class="col-sm-2 col-form-label">Delta Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps1}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Delta Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit6}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Delta Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status8}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Gamma</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarGamma}" /></div>
+								<label class="col-sm-2 col-form-label">Gamma Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps2}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Gamma Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit7}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Gamma Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status9}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Vega</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarVega}" /></div>
+								<label class="col-sm-2 col-form-label">Vega Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps3}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Vega Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit8}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Vega Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status10}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Implied Volatility Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{impliedVolatilityType}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Theta</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarTheta}" /></div>
+								<label class="col-sm-2 col-form-label">Theta Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit9}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Theta Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status11}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Rho</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollarRho}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Rho Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps4}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Rho Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit10}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Rho Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status12}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Vanna</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarVanna}" /></div>
+								<label class="col-sm-2 col-form-label">Vanna Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps5}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Vanna Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit11}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Vanna Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status13}" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Dollar Volga</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{dollarVolga}" /></div>
+								<label class="col-sm-2 col-form-label">Volga Shock (BPS)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{shockAppliedBps6}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Volga Limit</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit12}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Volga Status</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status14}" />
+								</div>
+							</div>
+
+							<!-- Sub-section: SVaR Breakdown -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Credit Spread (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSpreadAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR Credit Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditSensitiveImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Interest Rate (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{interestRateInTheTradingBookAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR Rate Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{rateSensitiveImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Foreign Exchange (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{foreignExchangeAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR FX Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{fxSensitiveImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Equity (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{equityAed}" />
+								</div>
+								<label class="col-sm-2 col-form-label">SVaR Equity Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{equitySensitiveRelativeImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Commodities (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{commoditiesAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR Commodity Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{commoditySensitiveRelativeImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Credit Derivatives (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{creditDerivativesAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR CD Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{relativeImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Jump-to-Default (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{jumpToDefaultLossAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR JTD Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{jtdRelativeImpactPercent}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">SVaR Overall Impact (AED)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{overallImpactAed}" /></div>
+								<label class="col-sm-2 col-form-label">SVaR Overall Impact (%)</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{overallRelativeImpactPercent}" /></div>
+							</div>
+
+						</div>
+
+						<!-- Submit -->
+						<div class="card-footer text-center"
+							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+							<button type="button" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Trade_Market_Risk(formmode='list')}" class="custom-tab-btn">Cancel</a>
+						</div>
+
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="formmsg">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: aliceblue;">
-					<button type="button" class="close" data-dismiss="modal">×</button>
-					<a th:value="${msg}"></a>
-				</div>
-				<div class="modal-footer" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="alert">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-			<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;background-color: rgb(0,164,166);">BANK OF BARODA</div>
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="btn btn-primary" onclick="list()"
-						data-dismiss="modal" style="background-color: rgb(0,164,166);">Close</button>
+					<button type="button" class="custom-tab-btn" onclick="list()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
 
-	<div class="modal fade" id="loader1" data-backdrop="static"
-			data-keyboard="false">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content" style="background: transparent;">
-					<div class="modal-body" style="text-align: center">
-						<div>
-							<img th:src=@{/images/loader.gif} id="bfirelogo"
-								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-								border-color: transparent;"
-								alt="Bornfire">
-						</div>
-					</div>
+	<div class="modal fade" id="alert1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="custom-tab-btn" onclick="trade()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
-		
+	</div>
+	<!-- Loader Modal (Using your existing loader image) -->
+	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="background: transparent; border: none;">
+				<div class="modal-body text-center">
+					<img th:src="@{/images/loader.gif}" style="width: 150px; height: auto;" alt="Processing...">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Custom Alert/Result Modal (Matches your existing style) -->
+	<div class="modal fade" id="resultModal">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<!-- Your custom styled header -->
+				<div class="menu-title-header">
+					<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
+						<!-- Title will be set by JavaScript -->
+					</div>
+				</div>
+				<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
+					<p id="resultModalBody"></p>
+					<!-- Your custom styled button -->
+					<button type="button" class="custom-tab-btn" onclick="list()" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 <script>
-  $(document).ready(function () {
-    $('#usertable').DataTable({
-      "paging": true,
-      "pageLength": 10,
-      "lengthChange": false,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "language": {
-        "search": "Search:"
-      }
-    });
-  });
+	$(document).ready(function () {
+		$('#usertable').DataTable({
+			"paging": true,
+			"pageLength": 10,
+			"lengthChange": false,
+			"searching": true,
+			"ordering": true,
+			"info": true,
+			"autoWidth": false,
+			"language": {
+				"search": "Search:"
+			}
+		});
+	});
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-  /* FIX: Make search label and box inline */
-  div.dataTables_filter label {
-    display: flex !important;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-  }
+	/* Remove top margin/padding from DataTables parent containers */
+	#data {
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
 
-  /* Style pagination buttons */
-  .dataTables_wrapper .dataTables_paginate .paginate_button {
-    background-color: white;
-    border: 1px solid rgb(0,164,166);
-    color: rgb(0,164,166) !important;
-    padding: 5px 10px;
-    margin: 2px;
-    border-radius: 6px;
-    transition: 0.3s;
-    font-weight: 600;
-  }
+	.table-responsive {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-  .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: rgb(0,164,166) !important;
-    color: white !important;
-  }
+	/* Ensure DataTables filter (search box) doesn't have spacing above it */
+	div.dataTables_filter {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-  /* Optional: Style the search input */
-  .dataTables_filter input {
-    border: 1px solid rgb(0,164,166);
-    border-radius: 4px;
-    padding: 4px 8px;
-  }
+	/* FIX: Make search label and box inline */
+	div.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		white-space: nowrap;
+	}
+
+	/* Style pagination buttons */
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		background-color: white;
+		border: 1px solid rgb(0, 164, 166);
+		color: rgb(0, 164, 166) !important;
+		padding: 5px 10px;
+		margin: 2px;
+		border-radius: 6px;
+		transition: 0.3s;
+		font-weight: 600;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+	.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+		background-color: rgb(0, 164, 166) !important;
+		color: white !important;
+	}
+
+	/* Optional: Style the search input */
+	.dataTables_filter input {
+		border: 1px solid rgb(0, 164, 166);
+		border-radius: 4px;
+		padding: 4px 8px;
+	}
 </style>
-
-<script>
-  function handleBankChange(select) {
-    const selectedBank = select.value;
-
-    const bankSymbol = document.getElementById("bankSymbol");
-    const conventional = document.getElementById("conventionalIslamic");
-    const localForeign = document.getElementById("localForeign");
-    const tiering = document.getElementById("cbuaeTiering");
-
-    if (selectedBank === "Bank of Baroda") {
-      bankSymbol.value = "BARODA";
-      bankSymbol.readOnly = true;
-
-      conventional.value = "Conventional";
-      conventional.readOnly = true;
-
-      localForeign.value = "Foreign";
-      localForeign.readOnly = true;
-
-      tiering.value = "Tier 3";
-      tiering.readOnly = true;
-    } else {
-      bankSymbol.readOnly = false;
-      bankSymbol.value = "";
-
-      conventional.readOnly = false;
-      conventional.value = "";
-
-      localForeign.readOnly = false;
-      localForeign.value = "";
-
-      tiering.readOnly = false;
-      tiering.value = "";
-    }
-  }
-
-  // Run on page load in case form is already pre-filled (like in edit mode)
-  window.onload = function() {
-    const bankSelect = document.querySelector("select[th\\:field='*{bankName}']");
-    if (bankSelect) {
-      handleBankChange(bankSelect);
-    }
-  };
-</script>
-<script>
-  function handleCountryChange(select) {
-    const selectedCountry = select.value;
-    const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
-
-    if (selectedCountry === "United Arab Emirates") {
-      geoZoneInput.value = "GCC";
-      geoZoneInput.readOnly = true;
-    } else {
-      geoZoneInput.value = "";
-      geoZoneInput.readOnly = false;
-    }
-  }
-
-  // Run on page load (for edit mode pre-filled forms)
-  window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect) {
-      handleCountryChange(countrySelect);
-    }
-  };
-</script>
-
 
 </html>
