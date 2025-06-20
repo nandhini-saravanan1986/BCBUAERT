@@ -49,6 +49,11 @@ import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
+
+import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
+import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
+import com.bornfire.xbrl.entities.RT_DataControl;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
@@ -108,6 +113,9 @@ public class XBRLNavigationController {
 	private RT_MmdataService mmdataService;
 
 	@Autowired
+	RT_RepoDataTemplateRepository repoRepo;
+	
+	 @Autowired
 	SessionFactory sessionFactory;
 
 	private String pagesize;
@@ -275,13 +283,14 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "null");
 		}
 
+
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
 		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 
-		md.addAttribute("bankList", bankList);
-		md.addAttribute("countryList", countryList);
-
-		return "Nostro_Account_Bal";
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
+	    
+		return "RT/Nostro_Account_Bal";
 	}
 
 //In Modify section If we select the Bank name other details are fetching code
@@ -351,32 +360,36 @@ public class XBRLNavigationController {
 
 // Repo Report code
 	@RequestMapping(value = "Repo_Data_Template", method = RequestMethod.GET)
-	public String RepoDataTemplate(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
+	public String RepoDataTemplate(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) Long slNo,  // changed from accountNo to slNo
+	        Model md,
+	        HttpServletRequest req) {
 
-		if ("edit".equalsIgnoreCase(formmode) && accountNo != null && !accountNo.isEmpty()) {
-			RT_NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
-			md.addAttribute("nostroData", data);
-			System.out.println("edit is formmode");
-			md.addAttribute("formmode", "edit");
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", nostroAccBalRepo.getlist());
-			System.out.println("list is formmode");
-			md.addAttribute("formmode", "list");
-		} else {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
-		}
+		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+	        RT_RepoDataTemplate data = repoRepo.findById(slNo).orElse(null);  // make sure entity class matches
+	        md.addAttribute("repoData", data);
+	        System.out.println("edit is formmode");
+	        md.addAttribute("formmode", "edit");
+	    } else if ("list".equalsIgnoreCase(formmode)) {
+	        md.addAttribute("repoList", repoRepo.getlist());
+	        System.out.println("list is formmode");
+	        md.addAttribute("formmode", "list");
+	    } else {
+	        md.addAttribute("formmode", "add");
+	        md.addAttribute("formmode", "null");
+	    }
 
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 
-		md.addAttribute("bankList", bankList);
-		md.addAttribute("countryList", countryList);
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
 
-		return "Repo_Data_Template";
+	    return "RT/Repo_Data_Template";
 	}
 
+	
 	@PostMapping("/updateFxriskdata")
 	@ResponseBody
 	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {
