@@ -187,7 +187,7 @@ font-family: verdana;
 		if(WORKCLASS != "C" ){
 			alert('You do not have Modification access.');
 		}else{
-			location.href = 'Userprofile?formmode=edit&userid=' + userid
+			location.href = 'UserProfile?formmode=edit&userid=' + userid
 		}
 	}
 	
@@ -241,7 +241,7 @@ font-family: verdana;
 	    $.ajax({
 	        url: './verifyUser',
 	        type: 'POST',
-	        data: $('#Userprofile').serialize(), // serialize form data
+	        data: $('#userProfile').serialize(), // serialize form data
 	        success: function(response) {
 	            $('#loader1').modal("hide");
 	            $("#alertmsg").text(response);
@@ -264,7 +264,7 @@ font-family: verdana;
 
 	        // Prepare data
 	        var url = './defaultpasswordReset';
-	        var formData = $('#Userprofile').serialize(); // Serialize form fields
+	        var formData = $('#userProfile').serialize(); // Serialize form fields
 
 	        // Send AJAX request
 	        $.ajax({
@@ -288,34 +288,38 @@ font-family: verdana;
 
 
 	function roledesc() {
+	    var roleId = $("#roleId").val();
+	    
 
-		var roleid = $("#roleId").find(':selected').val();
+	    if (roleId) {
+	        $.ajax({
+	            url: "/BCDRS/getRoleDetails",
+	            type: "GET",
+	            data: { roleId: roleId },
+	            success: function(data) {
+	                if (data) {
+	                    $("#roleDesc").val(data.role_desc || "");
+	                    $("#workClass").val(data.work_class || "");
+	                    $("#domainId").val(data.menulist || ""); // assuming you're using menulist as domain info
 
-		if (roleid == 'ADM') {
-			$("#roleDesc").val("Admin");
-		} else if (roleid == 'ADT') {
-			$("#roleDesc").val("Audit");
-		} else if (roleid == 'GEN') {
-			$("#roleDesc").val("General User");
-		} else if (roleid == 'RECONADM') {
-			$("#roleDesc").val("Admin");
-		} else if (roleid == 'RECONGEN') {
-			$("#roleDesc").val("General User");
-		}else if (roleid == 'RBR') {
-			$("#roleDesc").val("RBR ADMIN ACCESS");
-		}else if (roleid == 'RBR_BRANCH') {
-			$("#roleDesc").val("RBR BRANCH ACCESS");
-		}else if (roleid == 'BRC') {
-			$("#roleDesc").val("BRECON");
-		}else if (roleid == 'DCD_BRANCH') {
-			$("#roleDesc").val("Due Dilligience Branch");
-		}else if (roleid == 'DCD_ADM') {
-			$("#roleDesc").val("Due Dilligience Admin");
-		}
-		
-		$(this).find(':selected').text();
+	                    // Check if menulist includes 'BRF_Reports'
+	                    if ((data.menulist || "").includes("BRF_Reports")) {
+	                        $("#acctAccessContainer").show();
+	                    } else {
+	                        $("#acctAccessContainer").hide();
+	                    }
 
+	                    $("#permission").val(data.permissions || "");
+	                }
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("Error fetching role details:", error);
+	            }
+	        });
+	    }
 	}
+
+	
 	function Branchcodeval() {
 
 		
@@ -364,11 +368,11 @@ font-family: verdana;
 		  var formmode = 'add'; // or get dynamically
 		  var url = "./createUser?formmode=" + formmode;
 
-		  // Use jQuery AJAX instead of ajaxSubmit
+		  // Use jQuery AJAX `instead of ajaxSubmit
 		  $.ajax({
 		    url: url,
 		    type: 'POST',
-		    data: $("#Userprofile").serialize(),
+		    data: $("#userProfile").serialize(),
 		    success: function(response) {
 		      $("#loader1").modal("hide");
 		      $("#alertmsg").text(response);
@@ -385,7 +389,7 @@ font-family: verdana;
 </script>
 <script>
 	function submitdata() {
-		var domainids = [];
+		var domainids = []; 
 		$.each($("input[name='dom']:checked"), function() {
 			domainids.push($(this).val());
 		});
@@ -628,12 +632,12 @@ function cancelpop() {
 					<div class="card" style="margin-left: -26px;">
 						<div class="card-header"style="background-color: #376275;">
 							<div class="float-left">
-								<h3 th:if="${formmode}=='add'" style="font-family: verdana;color: white !important; font-size: 30px; font-weight: bold; padding-top: 10px;">USER PROFILE - ADD</h3>
-								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 30px; font-weight: bold; padding-top: 10px;">USER PROFILE</h3>
+								<h3 th:if="${formmode}=='add'" style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - ADD</h3>
+								<h3 th:if="${formmode}=='edit'" style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - EDIT</h3>
 							</div>
-							<div class="custom-tab-btn-group nav-buttons float-right">
-								<button type="button" class="custom-tab-btn"
-									id="custom-tab-btnInq" onclick="list();">List</button>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn btn-xs btn-primary btns"
+									id="btnInq" onclick="list();">List</button>
 							</div>
 						</div>
 						<div class="card-body" style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
@@ -645,7 +649,7 @@ function cancelpop() {
 									<div class="col-sm-2">
 										<label for="userId">User Id <b style="color:red;">*</b></label>
 									</div>
-									<div class="col-sm-3" th:if="${formmode}=='edit'">
+									<div class="col-sm-3">
 										<input type="text" th:field="*{userid}" th:value="${userid}"
 											id="userId" class="form-control form-control-sm" placeholder="Log in User id"
 											name="userid" autocomplete="off" onchange="validateUserId()"
@@ -653,16 +657,11 @@ function cancelpop() {
 											maxlength="8"  required />
 											<span id="feedbackuser"></span>
 									</div>
-									<div class="col-sm-3" th:if="${formmode}=='add'">
-										<input type="text" th:field="*{userid}" th:value="${userid}"
-											id="userId" class="form-control form-control-sm" placeholder="Log in User id"
-											name="userid" autocomplete="off" onchange="validateUserId()"
-											onkeyup="this.value = this.value.toUpperCase();"
-											maxlength="8"  required />
-											<span id="feedbackuser"></span>
-									</div>
+									
 									<div class="col-sm-1">
-										
+										<!-- <a th:if="${formmode}=='add'" href="#"><i
+											class="fas fa-search searchico" data-toggle="modal"
+											data-target="#finusers" id="iconacc"></i></a> -->
 									</div>
 									<div class="col-sm-2">
 										<label for="userName">User Name<b style="color:red;">*</b></label>
@@ -756,7 +755,12 @@ function cancelpop() {
 									<div class="col-sm-1"></div>
 
 
-								
+									<!-- <label class="col-sm-2">Employee Name</label>
+									<div class="col-sm-3">
+										<input type="text" th:field="*{emp_name}"
+											th:value="${emp_name}" id="empName" value=""
+											class="form-control form-control-sm" required />
+									</div> -->
 									<div class="col-sm-1"></div>
 								</div>
 
@@ -786,21 +790,24 @@ function cancelpop() {
 									<div class="col-sm-1"></div>
 								</div>
 
+
+
+
+
 								<div class="row formline">
 
 
 									<label class="col-sm-2">Password <b style="color:red;">*</b></label>
 									<div class="col-sm-3" th:if="${formmode}=='add'">
-										<input type="password"
-												id="pass" value="" name="password" oninput="validatePassword()"
-												class="form-control form-control-sm" autocomplete="off"
-												required />
-												<span id="feedback"></span>
-									</div>
+    <input type="password"
+            id="password" name="password" oninput="validatePassword()"
+            class="form-control form-control-sm" autocomplete="off"
+            required />
+    <span id="feedback"></span>
+</div>
 									
 									<div class="col-sm-3" th:if="${formmode}=='edit'">
-										<input type="text" value = "**********"
-												id="password"  name="password" readonly="readonly"
+										<input type="text" placeholder="********" id="password"  name="password" readonly='readonly'
 												class="form-control form-control-sm" autocomplete="new-password"
 												required />
 												
@@ -855,6 +862,14 @@ function cancelpop() {
 								</div>
 								<div class="row formline">
 
+									<!-- <label class="col-sm-2">Account Expiry Date</label>
+									<div class="col-sm-3">
+										<input type="text" th:field="*{acc_exp_date}"
+											style="background-color: White;" readonly='true'
+											th:value="${acc_exp_date}" id="expiryDate" value=""
+											class="form-control form-control-sm"/>
+									</div>
+									<div class="col-sm-1"></div> -->
 									<label class="col-sm-2">Remarks</label>
 									<div class="col-sm-3">
 										<input type="text" style="background-color: White;"
@@ -866,7 +881,7 @@ function cancelpop() {
 
 								
 								<div class="row"
-										style="background-color: #6B7A8F; color: white; height: 44px; border-radius: .20rem; padding: 11px 10px; top: 10px;">
+										style="background-color: #376275; color: white; height: 44px; border-radius: .20rem; padding: 11px 10px; top: 10px;">
 										<h4 style="color: white;">Role and Rights</h4>
 									</div>
 									<br>
@@ -876,6 +891,16 @@ function cancelpop() {
 
 									<label class="col-sm-2">Role Id <b style="color:red;">*</b></label>
 									<div class="col-sm-3">
+									<!-- 	<select th:field="*{role_id}" th:value="${role_id}"
+											id="roleId" class="form-control form-control-sm"
+											onchange="roledesc();" autocomplete="off" required>
+											<option value="">SELECT</option>
+												<option id="role_id"
+													th:each="monitoringparam : ${RuleIDType}"
+													th:value="${monitoringparam}" th:text="${monitoringparam}"></option>
+										</select>
+									
+									 -->
 									<select th:field="*{role_id}" th:value="${role_id}"
 	id="roleId" class="form-control form-control-sm"
 	onchange="roledesc();" autocomplete="off" required>
@@ -903,6 +928,13 @@ function cancelpop() {
 								<div class="row formline">
 								<label class="col-sm-2">Work Class <b style="color:red;">*</b></label>
 									<div class="col-sm-3">
+									<!-- 	<select th:field="*{work_class}" th:value="${work_class}"
+											id="roleId" class="form-control form-control-sm"
+											onchange="roledesc();" autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="M">Maker</option>
+											<option value="C">Checker</option>
+										</select> -->
 										<select th:field="*{work_class}" th:value="${work_class}"
 	id="workClass" class="form-control form-control-sm"
 	onchange="roledesc();" autocomplete="off" required readonly>
@@ -944,7 +976,7 @@ function cancelpop() {
 
     <!-- HIDDEN BY DEFAULT: Acct Access Code Section -->
     <div class="col-sm-5" id="acctAccessContainer" style="display: none;">
-        <div class="row">
+        <!-- <div class="row">
             <label class="col-sm-5" style="white-space: nowrap;">Acct Access Code <br><b style="color:red;">Only For BRF181</b></label>
             <div class="col-sm-7">
                 <select th:field="*{acct_access_code}"
@@ -964,37 +996,38 @@ function cancelpop() {
                     <option value="AML">AML</option>
                 </select>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="col-sm-1"></div>
 </div>
 
 						<div class="card-footer text-center"style="background-color: #376275;">
-									<button type="button" class="custom-tab-btn"
-										id="custom-tab-btnHome" onclick="home();">Home</button>
+									<button type="button" class="btn btn-xs btn-primary"
+										id="btnHome" onclick="home();">Home</button>
 									<button type="button" th:if="${formmode}=='edit'"
-										class="custom-tab-btn" onclick="deleteuser();"
+										class="btn btn-xs btn-primary" onclick="deleteuser();"
 										th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},
 										data-modify_user=${userProfile.modify_user},data-userid=${userProfile.userid}"
 										id="delete">Delete User</button>
 									<button
 										th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
-										type="button" class="custom-tab-btn" id="custom-tab-btnpassrst"
+										type="button" class="btn btn-xs btn-primary" id="btnpassrst"
 										onclick="passwordReset();">PasswordReset</button>
 								<!-- th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null" -->	
 								<button
-										type="button" class="custom-tab-btn"
-										form="userProfile" id="custom-tab-btnSubmit" onclick="submitform();"
+										type="button" class="btn btn-xs btn-primary"
+										form="userProfile" id="btnSubmit" onclick="submitform();"
 										th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
 
-									<button type="button" class="custom-tab-btn "
-										id="custom-tab-btnBack" onclick="back();">Back</button>
+									<button type="button" class="btn btn-xs btn-primary"
+										id="btnBack" onclick="back();">Back</button>
 
 								</div>
 					</div>
 					</div></div>
 				</form>
+
 
 			</div>
 		</div>
@@ -1003,22 +1036,23 @@ function cancelpop() {
 	
 	<!-- *************************************************Verify User***************************************************** -->
 	
-	<div th:if="${formmode}=='verify'">
-		<div class="row">
-			<div class="col-sm-12 finuserapply">
+	
+	<div th:if="${formmode}=='verify'" style="margin-left:26px;">
+	<div class="row">
+			<div class="col-sm-12 finuserapply" >
 				<form action="#" th:object="${userProfile}" method="post"
 					autocomplete="off" id="userProfile" th:fragment="finuserapply">
-					<div class="card" style="width: 1433px; margin-left: -26px;">
-						<div class="card-header" style="background-color: #376275;">
+					<div class="card" style="margin-left: -26px;">
+						<div class="card-header"style="background-color: #376275;">
 					<div class="float-left">
-								<h3 style="font-family: verdana;color: white; font-size: 30px; font-weight: bold; padding-top: 10px;">USER PROFILE - VERIFY</h3>
+								<h3 style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - VERIFY</h3>
 							</div>
 							<div class="custom-tab-btn-group nav-buttons float-right">
-								<button type="button" class="custom-tab-btn custom-tab-btn-xs custom-tab-btn-primary custom-tab-btns"
+								<button type="button" class="custom-tab-btn"
 									id="custom-tab-btnInq" onclick="list();">List</button>
 							</div>
 						</div>
-						<div class="card-body">
+						<div class="card-body" style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
 
 							<input autocomplete="false" name="hidden" type="text"
 								style="display: none;">
@@ -1323,10 +1357,10 @@ function cancelpop() {
 						</div>
 				
 						<div class="card-footer text-center" style="background-color: #376275;">
-						<button type="button" class="custom-tab-btn custom-tab-btn-xs custom-tab-btn-primary" id="custom-tab-btnHome"
+						<button type="button" class="custom-tab-btn" id="Home"
 								onclick="home();">Home</button>
 							<button  th:if="${formmode == 'verify' and userProfile.entity_flg == 'N'}"  type="button"
-								class="custom-tab-btn custom-tab-btn-xs custom-tab-btn-primary"
+								class="custom-tab-btn"
 								th:attr="data-userid=${userProfile.userid},
 								data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
 								onclick="verify(this);" id="custom-tab-btnModify">Verify</button>
@@ -1337,7 +1371,7 @@ function cancelpop() {
 									data-modify_user=${userProfile.modify_user},
 									data-userid=${userProfile.userid}"
 								id="delete">Delete User</button> -->
-							<button type="button" class="custom-tab-btn custom-tab-btn-xs custom-tab-btn-primary" id="custom-tab-btnBack"
+							<button type="button" class="custom-tab-btn" id="custom-tab-btnBack"
 								onclick="back();">Back</button>
 
 						</div>

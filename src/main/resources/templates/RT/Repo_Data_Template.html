@@ -400,9 +400,9 @@ $(document).ready(function () {
 		$("#loader").modal("toggle");
 
 		$.ajax({
-	     url: `./updateNostro`,
+	     url: `./updateRepo`,
 	     type: 'POST',
-	     data: $('#nostroData').serialize(),
+	     data: $('#repoData').serialize(),
 	     success: function(response) {
 	    $("#loader").modal("hide");
 
@@ -470,51 +470,56 @@ $(document).ready(function () {
 
      <script>
      
-     function downloadNostro() {
-    	    $('#downloadProcessingModal').modal('show');
+     function downloadRepo() {
+    		// 1. Show the loader modal
+    		$('#loader').mo
+    		dal('show');
 
-    	    $.ajax({
-    	        url: './downloadNostroExcel',
-    	        type: 'GET',
-    	        xhrFields: {
-    	            responseType: 'blob'
-    	        },
-    	        success: function (data) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
+    		$.ajax({
+    			url: './downloadRepoExcel',
+    			type: 'GET',
+    			xhrFields: {
+    				responseType: 'blob'
+    			},
+    			success: function (data) {
+    				// Always hide loader first
+    				$('#loader').modal('hide');
 
-    	            if (data && data.size > 0) {
-    	                var blob = new Blob([data], { type: 'application/octet-stream' });
-    	                var url = window.URL.createObjectURL(blob);
-    	                var a = document.createElement('a');
-    	                a.href = url;
-    	                a.download = 'NostroAccBalance.xls';
-    	                document.body.appendChild(a);
-    	                a.click();
-    	                window.URL.revokeObjectURL(url);
-    	                document.body.removeChild(a);
+    				let message = '';
 
-    	                $('#customAlertBody').text('Downloaded NostroAccBalance.xls');
-    	            } else {
-    	                $('#customAlertBody').text('No data available to download.');
-    	            }
+    				if (data && data.size > 100) {
+    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+    					const url = window.URL.createObjectURL(blob);
+    					const a = document.createElement('a');
+    					a.style.display = 'none';
+    					a.href = url;
+    					a.download = 'RepoDataTemplate.xls';
+    					document.body.appendChild(a);
 
-    	            $('#customAlertModal').modal('show');
-    	        },
-    	        error: function (xhr, status, error) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
+    					a.click();
 
-    	            console.error("Download failed:", error);
-    	            $('#customAlertBody').text('Failed to download NostroAccBalance.xls');
-    	            $('#customAlertModal').modal('show');
-    	        }
-    	    });
+    					window.URL.revokeObjectURL(url);
+    					document.body.removeChild(a);
 
-    	    // Fallback hide in case AJAX fails silently
-    	    setTimeout(function () {
-    	        $("#loader").modal("hide");
-    	    }, 10000);
+    					message = 'RepoDataTemplate.xls has been downloaded successfully.';
+    				} else {
+    					message = 'No data available to download.';
+    				}
+
+    				// Show custom alert modal with the message
+    				$('#alertmsg').text(message);
+    				$('#alert').modal('show');
+    			},
+    			error: function (jqXHR, textStatus, errorThrown) {
+    				$('#loader').modal('hide');
+
+    				console.error("Download failed:", textStatus, errorThrown);
+
+    				// Show error message in your custom alert
+    				$('#alertmsg').text('An error occurred while downloading RepoDataTemplate.xls.');
+    				$('#alert').modal('show');
+    			}
+    		});
     	}
 
 
@@ -550,7 +555,7 @@ $(document).ready(function () {
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
-  onclick="downloadNostro();">
+  onclick="downloadRepo();">
   <i class="fa fa-download"></i> Download
 </button></div>
 </div>
@@ -976,7 +981,7 @@ $(document).ready(function () {
 
         <div class="card-body" style="max-height: 500px; overflow-y: auto;">
           <input type="hidden" th:field="*{slNo}" />
-
+			
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Data Date</label>
             <div class="col-sm-4">
@@ -1075,14 +1080,19 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CBUAE Internal Ref</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeInternalRef}" />
+        <input type="text" class="form-control" th:field="*{cbuaeInternalRef}" id="cbuaeInternalRef" readonly />
     </div>
 
     <label class="col-sm-2 col-form-label">Transaction Type</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{transactionType}" />
+        <select class="form-control" th:field="*{transactionType}" onchange="handleTransactionType(this)">
+            <option value="">-- Select --</option>
+            <option value="Repo">Repo</option>
+            <option value="Reverse Repo">Reverse Repo</option>
+        </select>
     </div>
 </div>
+
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Deal No</label>
@@ -1164,7 +1174,13 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Issuer Type</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{issuerType}" />
+         <select class="form-control" th:field="*{issuerType}" >
+            <option value="">-- Select --</option>
+            <option value="Sovereign">Sovereign</option>
+            <option value="Reverse Repo">Corporate</option>
+            <option value="FI">FI</option>
+            <option value="Other">Other</option>
+        </select>
     </div>
 </div>
 
@@ -1200,14 +1216,17 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Security Country of Risk</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityCountryOfRisk}" />
+        <select class="form-control" th:field="*{securityCountryOfRisk}" onchange="handleCountryChange2(this)">
+            <option value="">-- Select Country --</option>
+            <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+        </select>
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CBUAE Geo Zone 2</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeGeoZone2}" />
+        <input type="text" class="form-control" th:field="*{cbuaeGeoZone2}" id="cbuaeGeographicalZone2" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">Bond/Sukuk Nominal</label>
@@ -1260,7 +1279,11 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Repo Interest Rate Type</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{repoInterestRateType}" />
+         <select class="form-control" th:field="*{repoInterestRateType}">
+                <option value="">-- Select --</option>
+                <option value="Fixed">Fixed</option>
+                <option value="Floating">Floating</option>
+              </select>
     </div>
 </div>
 
@@ -1279,7 +1302,11 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Floating Rate Type</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{floatingRateType}" />
+        <select class="form-control" th:field="*{floatingRateType}">
+                <option value="">-- Select --</option>
+                <option value="IBOR">IBOR</option>
+                <option value="RFR">RFR</option>
+              </select>
     </div>
 
     <label class="col-sm-2 col-form-label">Repo Margin</label>
@@ -1327,7 +1354,13 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Margin Call Frequency</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{marginCallFreq}" />
+        <select class="form-control" th:field="*{marginCallFreq}">
+                <option value="">-- Select --</option>
+                <option value="Daily">Daily</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+              </select>
     </div>
 </div>
 
@@ -1336,7 +1369,7 @@ $(document).ready(function () {
         </div>
 
         <div class="card-footer text-center" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-          <button type="submit" class="custom-tab-btn">Update</button>
+          <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
           <a th:href="@{/Repo_Data_Template}" class="custom-tab-btn">Cancel</a>
         </div>
       </div>
@@ -1534,6 +1567,7 @@ div.dataTables_filter {
 
 
 <script>
+
 function handleBankChange(select) {
     const selectedBank = select.value;
 
@@ -1594,6 +1628,49 @@ window.onload = function() {
     }
 }; 
 </script>
+<script>
+function handleCountryChange2(select) {
+    const selectedCountry = select.value;
 
+    if (!selectedCountry) {
+        $('#cbuaeGeographicalZone2').val('');
+        return;
+    }
+
+    $.ajax({
+        url: '/BCDRS/getCountryDetails',
+        type: 'GET',
+        data: { countryName: selectedCountry },
+        success: function(data) {
+            $('#cbuaeGeographicalZone2').val(data.cbuaeGeographicalZone || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            alert('Failed to fetch geographical zone.');
+        }
+    });
+}
+
+// Run on page load (for edit mode)
+window.onload = function() {
+    const countrySelect = document.getElementById("countryOfRisk");
+    if (countrySelect && countrySelect.value) {
+        handleCountryChange(countrySelect);
+    }
+}; 
+</script>
+
+<script>
+    function handleTransactionType(selectElement) {
+        var selectedValue = selectElement.value;
+        var cbuaeInput = document.getElementById("cbuaeInternalRef");
+
+        if (selectedValue === "Repo" || selectedValue === "Reverse Repo") {
+            cbuaeInput.value = selectedValue;
+        } else {
+            cbuaeInput.value = "";
+        }
+    }
+</script>
 
 </html>

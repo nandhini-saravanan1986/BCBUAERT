@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,7 @@ import com.bornfire.xbrl.services.NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_MmdataService;
+import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 
 @Controller
@@ -115,6 +117,8 @@ public class XBRLNavigationController {
 	@Autowired
 	RT_RepoDataTemplateRepository repoRepo;
 	
+	@Autowired
+	RT_RepoService repoService;
 	 @Autowired
 	SessionFactory sessionFactory;
 
@@ -264,6 +268,41 @@ public class XBRLNavigationController {
 		return "XBRLUserprofile";
 	}
 
+	@GetMapping("/getRoleDetails")
+	@ResponseBody
+	public AccessAndRoles getRoleDetails(@RequestParam String roleId) {
+		System.out.println("role id for fetching is : "+roleId);
+	    return accessandrolesrepository.findById(roleId).orElse(null);
+	}
+	
+	@RequestMapping(value = "createUser", method = RequestMethod.POST)
+	@ResponseBody
+	public String createUser(@RequestParam("formmode") String formmode,
+	                         @ModelAttribute UserProfile userprofile,
+	                         Model md, HttpServletRequest rq) {
+
+	    String mob = (String) rq.getSession().getAttribute("MOBILENUMBER");
+	    String role = (String) rq.getSession().getAttribute("ROLEDESC");
+	    String userId = (String) rq.getSession().getAttribute("USERID");
+	    String userName = (String) rq.getSession().getAttribute("USERNAME");
+
+	    String msg = loginServices.addUser(userprofile, formmode, userId, userName, mob, role);
+
+	    return msg;
+	}
+
+
+	
+	@RequestMapping(value = "deleteuser", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteuser(@RequestParam("formmode") String userid, Model md, HttpServletRequest rq) {
+
+		String msg = loginServices.deleteuser(userid);
+
+		return msg;
+
+	}
+	
 	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
 	public String NostroAccountBal(@RequestParam(required = false) String formmode,
@@ -389,7 +428,38 @@ public class XBRLNavigationController {
 	    return "RT/Repo_Data_Template";
 	}
 
-	
+//Updated data saving code for Repo
+	@RequestMapping("/updateRepo")
+	@ResponseBody
+	public String updateRepo(@ModelAttribute RT_RepoDataTemplate repoData, HttpServletRequest request) {
+
+	    // Call the update logic from service or directly use the repository if simple
+	    boolean updated = repoService.updateRepoData(repoData);
+
+	    if (updated) {
+	        System.out.println("Update successful for SL_NO: " + repoData.getSlNo());
+	        return "Updated successful";
+	    } else {
+	        System.out.println("Record not found for update for SL_NO: " + repoData.getSlNo());
+	        return "Record not found for update";
+	    }
+	}
+
+//Downloading Excel for Repo
+	@RequestMapping(value = "downloadRepoExcel", method = RequestMethod.GET)
+		public ResponseEntity<byte[]> downloadRepoExcel() throws IOException {
+			System.out.println("Entered controller downloadRepoExcel");
+
+			File excelFile = repoService.generateRepoExcel();
+			byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+			HttpHeaders headersResponse = new HttpHeaders();
+			headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headersResponse.setContentDispositionFormData("attachment", "RepoDataTemplate.xls");
+
+			return ResponseEntity.ok().headers(headersResponse).body(excelData);
+		}
+		
 	@PostMapping("/updateFxriskdata")
 	@ResponseBody
 	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {

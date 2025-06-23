@@ -471,50 +471,54 @@ $(document).ready(function () {
      <script>
      
      function downloadNostro() {
-    	    $('#downloadProcessingModal').modal('show');
+    		// 1. Show the loader modal
+    		$('#loader').modal('show');
 
-    	    $.ajax({
-    	        url: './downloadNostroExcel',
-    	        type: 'GET',
-    	        xhrFields: {
-    	            responseType: 'blob'
-    	        },
-    	        success: function (data) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
+    		$.ajax({
+    			url: './downloadNostroExcel',
+    			type: 'GET',
+    			xhrFields: {
+    				responseType: 'blob'
+    			},
+    			success: function (data) {
+    				// Always hide loader first
+    				$('#loader').modal('hide');
 
-    	            if (data && data.size > 0) {
-    	                var blob = new Blob([data], { type: 'application/octet-stream' });
-    	                var url = window.URL.createObjectURL(blob);
-    	                var a = document.createElement('a');
-    	                a.href = url;
-    	                a.download = 'NostroAccBalance.xls';
-    	                document.body.appendChild(a);
-    	                a.click();
-    	                window.URL.revokeObjectURL(url);
-    	                document.body.removeChild(a);
+    				let message = '';
 
-    	                $('#customAlertBody').text('Downloaded NostroAccBalance.xls');
-    	            } else {
-    	                $('#customAlertBody').text('No data available to download.');
-    	            }
+    				if (data && data.size > 100) {
+    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+    					const url = window.URL.createObjectURL(blob);
+    					const a = document.createElement('a');
+    					a.style.display = 'none';
+    					a.href = url;
+    					a.download = 'NostroAccBalance.xls';
+    					document.body.appendChild(a);
 
-    	            $('#customAlertModal').modal('show');
-    	        },
-    	        error: function (xhr, status, error) {
-    	            $("#loader").modal("hide");
-    	            $('#downloadProcessingModal').modal('hide');
+    					a.click();
 
-    	            console.error("Download failed:", error);
-    	            $('#customAlertBody').text('Failed to download NostroAccBalance.xls');
-    	            $('#customAlertModal').modal('show');
-    	        }
-    	    });
+    					window.URL.revokeObjectURL(url);
+    					document.body.removeChild(a);
 
-    	    // Fallback hide in case AJAX fails silently
-    	    setTimeout(function () {
-    	        $("#loader").modal("hide");
-    	    }, 10000);
+    					message = 'NostroAccBalance.xls has been downloaded successfully.';
+    				} else {
+    					message = 'No data available to download.';
+    				}
+
+    				// Show custom alert modal with the message
+    				$('#alertmsg').text(message);
+    				$('#alert').modal('show');
+    			},
+    			error: function (jqXHR, textStatus, errorThrown) {
+    				$('#loader').modal('hide');
+
+    				console.error("Download failed:", textStatus, errorThrown);
+
+    				// Show error message in your custom alert
+    				$('#alertmsg').text('An error occurred while downloading NostroAccBalance.xls.');
+    				$('#alert').modal('show');
+    			}
+    		});
     	}
 
 
