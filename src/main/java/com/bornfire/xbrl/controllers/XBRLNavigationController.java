@@ -465,7 +465,7 @@ public class XBRLNavigationController {
 		}
 
 	}
-
+//-------------------------------------Repo Report Start---------------------------------------
 // Repo Report code
 	@RequestMapping(value = "Repo_Data_Template", method = RequestMethod.GET)
 	public String RepoDataTemplate(
@@ -529,7 +529,74 @@ public class XBRLNavigationController {
 			return ResponseEntity.ok().headers(headersResponse).body(excelData);
 		}
 		
-	@PostMapping("/updateFxriskdata")
+//-------------------------------------Repo Report End---------------------------------------
+
+//-------------------------------------Investment Risk Data Report Start---------------------------------------
+	// Investment Report code
+			@RequestMapping(value = "Investment_Risk_Data_Dashboard_Template", method = RequestMethod.GET)
+			public String InvestmentRiskDataDashboardTemplate(
+			        @RequestParam(required = false) String formmode,
+			        @RequestParam(required = false) Long slNo,  // changed from accountNo to slNo
+			        Model md,
+			        HttpServletRequest req) {
+
+				if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+			        RT_RepoDataTemplate data = repoRepo.findById(slNo).orElse(null);  // make sure entity class matches
+			        md.addAttribute("repoData", data);
+			        System.out.println("edit is formmode");
+			        md.addAttribute("formmode", "edit");
+			    } else if ("list".equalsIgnoreCase(formmode)) {
+			        md.addAttribute("repoList", repoRepo.getlist());
+			        System.out.println("list is formmode");
+			        md.addAttribute("formmode", "list");
+			    } else {
+			        md.addAttribute("formmode", "add");
+			        md.addAttribute("formmode", "null");
+			    }
+
+			    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+			    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+			    md.addAttribute("bankList", bankList);
+			    md.addAttribute("countryList", countryList);
+
+			    return "RT/Investment_Risk_Data_Dashboard_Template";
+			}
+
+	//Updated data saving code for Repo
+			@RequestMapping("/updateInvenstment")
+			@ResponseBody
+			public String updateInvenstment(@ModelAttribute RT_RepoDataTemplate repoData, HttpServletRequest request) {
+
+			    // Call the update logic from service or directly use the repository if simple
+			    boolean updated = repoService.updateRepoData(repoData);
+
+			    if (updated) {
+			        System.out.println("Update successful for SL_NO: " + repoData.getSlNo());
+			        return "Updated successful";
+			    } else {
+			        System.out.println("Record not found for update for SL_NO: " + repoData.getSlNo());
+			        return "Record not found for update";
+			    }
+			}
+
+	//Downloading Excel for Repo
+			@RequestMapping(value = "downloadInvestmentExcel", method = RequestMethod.GET)
+				public ResponseEntity<byte[]> downloadInvenstmentExcel() throws IOException {
+					System.out.println("Entered controller downloadRepoExcel");
+
+					File excelFile = repoService.generateRepoExcel();
+					byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+					HttpHeaders headersResponse = new HttpHeaders();
+					headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					headersResponse.setContentDispositionFormData("attachment", "RepoDataTemplate.xls");
+
+					return ResponseEntity.ok().headers(headersResponse).body(excelData);
+				}
+				
+//-------------------------------------Repo Report End---------------------------------------		
+		@PostMapping("/updateFxriskdata")
 	@ResponseBody
 	public String updateFxriskdata(@ModelAttribute RT_Fxriskdata fxriskData) {
 		boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
