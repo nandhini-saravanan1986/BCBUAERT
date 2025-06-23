@@ -3,12 +3,21 @@ package com.bornfire.xbrl.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
@@ -33,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
@@ -56,6 +66,31 @@ import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_DataControl;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.UserProfile;
+import com.bornfire.xbrl.entities.UserProfileRep;
+import com.bornfire.xbrl.entities.ASL_BANKMASTER_ENTITY;
+import com.bornfire.xbrl.entities.ASL_BANKMASTER_REPO;
+import com.bornfire.xbrl.entities.ASL_Report_Entity;
+import com.bornfire.xbrl.entities.ASL_Report_Rep;
+import com.bornfire.xbrl.entities.BRF095AServiceRepo;
+import com.bornfire.xbrl.entities.BRF39_ENTITYREP;
+import com.bornfire.xbrl.entities.BRF40_Entity1;
+import com.bornfire.xbrl.entities.BRF40_Entity2;
+import com.bornfire.xbrl.entities.BRF40_Rep1;
+import com.bornfire.xbrl.entities.BRF40_Rep2;
+import com.bornfire.xbrl.entities.BRF_095_A_REPORT_ENTITY;
+import com.bornfire.xbrl.entities.BankLimit_Entity;
+import com.bornfire.xbrl.entities.BankLimit_Rep;
+import com.bornfire.xbrl.entities.Counterparty_Entity;
+import com.bornfire.xbrl.entities.Counterparty_Rep;
+import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
+import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
+import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
+import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
+import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
+import com.bornfire.xbrl.entities.TreasuryPlacementRep;
+import com.bornfire.xbrl.services.ASL_Excel_Services;
+import com.bornfire.xbrl.services.Excel_Services;
+import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
 import com.bornfire.xbrl.services.LoginServices;
@@ -71,12 +106,48 @@ import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 public class XBRLNavigationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(XBRLNavigationController.class);
+	/*
+	 * @PersistenceContext private EntityManager entityManager;
+	 */
+	@Autowired
+	UserProfileRep UserProfileReps;
+		@Autowired
+		private BRF40_Rep1 brf40aRepository;
+		@Autowired
+		MIS_TREASURY_LIMITS_ENTITY_REP MIS_TREASURY_LIMITS_ENTITY_REPs;
+		@Autowired
+		private BRF40_Rep2 brf40bRepository;
+		@Autowired
+		BRF095AServiceRepo BRF095AServiceRepos;
+		@Autowired
+		BankLimit_Rep banklimit_rep;
+
+		@Autowired
+		MIS_SETTLEMENT_ENTITY_REP MIS_SETTLEMENT_ENTITY_REPs;
+		@Autowired
+		private ASL_BANKMASTER_REPO ASL_BANKMASTER_REPO;
+		@Autowired
+		private BRF39_ENTITYREP brf39_entityrep;
+		@Autowired
+		TreasuryPlacementRep TreasuryPlacementReps;
+		@Autowired
+		ASL_Excel_Services ASL_Excel_Servicess;
+		@Autowired
+		ASL_Report_Rep ASL_Report_Reps;
+		@Autowired
+		Excel_Services Excel_Servicess;
+		@Autowired
+		Counterparty_Rep Counterparty_Reps;
+		@Autowired
+		counter_services counter_servicess;
+		@Autowired
+		LoginServices loginServices;
+		@Autowired
+		SessionFactory sessionFactory;
 
 	@Autowired
 	private RT_FxriskdataService fxriskdataService;
 
-	@Autowired
-	LoginServices loginServices;
 
 	@Autowired
 	AccessAndRolesServices AccessRoleService;
@@ -119,8 +190,6 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	RT_RepoService repoService;
-	 @Autowired
-	SessionFactory sessionFactory;
 
 	private String pagesize;
 
@@ -696,5 +765,626 @@ public class XBRLNavigationController {
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
+	
+
+		
+
+		@RequestMapping(value = "counterparty", method = { RequestMethod.GET, RequestMethod.POST })
+		public String counterparty(@RequestParam(required = false) String formmode,
+				@RequestParam(required = false) String id,
+				@RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
+			logger.info("Enter controller of counterparty");
+
+			md.addAttribute("menu", "List Of Counterparty Bank"); // To highlight the menu
+			String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
+			md.addAttribute("dom_ids", domIds); // To highlight the menu
+			if (formmode == null || formmode.equals("list")) {
+				md.addAttribute("formmode", "list");
+				md.addAttribute("currentDate", new Date()); // java.util.Date
+				md.addAttribute("listall", Counterparty_Reps.getalllist());
+			} else if (formmode.equals("edit")) {
+				md.addAttribute("formmode", formmode);
+			    logger.info("modify screen id is: "+ id);
+				md.addAttribute("list", Counterparty_Reps.getBYID(Long.valueOf(id)));
+			    List<String> counterList = Counterparty_Reps.getall();
+			    md.addAttribute("counterlist", counterList);
+			    List<String> getcode = Counterparty_Reps.getcodes();
+			    md.addAttribute("getcode", getcode);
+			} else {
+			    logger.info("Adding new Counterparty Bank form initialization started.");
+				md.addAttribute("menu", "Counterparty Bank - Add");
+				md.addAttribute("formmode", formmode);
+
+			    List<String> counterList = Counterparty_Reps.getall();
+			    md.addAttribute("counterlist", counterList);
+			    List<String> getcode = Counterparty_Reps.getcodes();
+			    md.addAttribute("getcode", getcode);
+			    logger.info("Fetched counterparty list: size={}", counterList.size());
+				
+				Integer maxSuffix = Counterparty_Reps.findMaxSrlNoSuffix(); // e.g., returns 1
+				int nextSuffix = (maxSuffix != null) ? maxSuffix + 1 : 1;
+				String serialNo = String.format("%s%03d", "BOBUAE", nextSuffix); // BOBUAE002
+				md.addAttribute("serialNo", serialNo);
+				 logger.info("Generated serial number: {}", serialNo);
+			}
+			return "MIS/counterparty.html";
+		}
+
+		@RequestMapping(value = "Addcounter", method = { RequestMethod.GET, RequestMethod.POST })
+		@ResponseBody
+		public String Addcounter(@ModelAttribute Counterparty_Entity Counterparty_Entity,
+				@RequestParam(required = false) String formmode, Model md, HttpServletRequest rq) {
+			 logger.info("Add counter party...");
+			String userid = (String) rq.getSession().getAttribute("USERID");
+			String msg = counter_servicess.addcunter(Counterparty_Entity, userid,formmode);
+			return msg;
+
+		}
+
+		@RequestMapping(value = "counterparty_list", method = { RequestMethod.GET, RequestMethod.POST })
+		public String counterparty_list(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+		    String userid = (String) req.getSession().getAttribute("USERID");
+		    String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
+		    String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
+		    String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		    String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
+		    logger.info("User '{}' accessed counterparty_list with formmode='{}'", userid, formmode);
+
+			md.addAttribute("dom_ids", domIds); // To highlight the menu
+
+		    if ("list".equalsIgnoreCase(formmode)) {
+		        logger.info("Loading exposure data list view for branch '{}'", BRANCHNAME);
+
+			    md.addAttribute("menu", "List Of Exposure Data"); // Default menu label
+		        md.addAttribute("formmode", "list");
+		        Date currentDate = new Date(); // current system date
+		        md.addAttribute("currentDate", currentDate);
+		        List<String> branchList = ASL_Report_Reps.getAllBranchNames(); 
+		        md.addAttribute("branches", branchList);
+		        md.addAttribute("currentBranch", BRANCHNAME);
+		        List<String> branchesl;
+		        if ("ADM".equalsIgnoreCase(ROLEID)) {
+		            branchesl = ASL_Report_Reps.getAllBranchNames(); 
+		        } else {
+		            branchesl = Collections.singletonList(BRANCHNAME);
+		        }
+
+		        md.addAttribute("branchesl", branchesl);
+		        LocalDate today = LocalDate.now();
+		        java.sql.Date sqlDate = java.sql.Date.valueOf(today);
+		        List<ASL_Report_Entity> list = ASL_Report_Reps.getAlls(sqlDate, BRANCHNAME.trim());
+		        logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
+		        md.addAttribute("listall", list);
+
+		        } else {
+		         logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);
+			    md.addAttribute("menu", "List Of Counterparty"); // Default menu label
+		        md.addAttribute("menu", "Upload File Of Counterparty");
+		        md.addAttribute("formmode", "add"); 
+		        md.addAttribute("userid", userid);
+		        
+		        if ("ADM".equalsIgnoreCase(ROLEID)) {
+		            List<String> codes = UserProfileReps.getallcodes();
+		            logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
+		            md.addAttribute("codes", codes);
+		        }
+		        // Add for all roles
+		        md.addAttribute("BRANCHCODE", BRANCHCODE);
+		        md.addAttribute("BRANCHNAME", BRANCHNAME);
+		        md.addAttribute("ROLEID", ROLEID);
+
+		    }
+
+		    return "MIS/counterpart_list.html";
+		}
+
+		@RequestMapping(value = "/asl_dashboard", method = { RequestMethod.GET, RequestMethod.POST })
+		public String asl_dashboard(@RequestParam(required = false) String formmode,
+				@RequestParam(required = false) String reportDate,Model md, HttpServletRequest req) {
+			String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
+			md.addAttribute("dom_ids", domIds); // To highlight the menu
+			if (formmode == null || formmode.equals("list")) {
+		        logger.info("list of Final Risk View.");
+				md.addAttribute("formmode", "list");
+			    Date currentDate = new Date(); // current system date
+			    List<BankLimit_Entity> banklist=banklimit_rep.getalllist(currentDate);
+				md.addAttribute("list", banklist);
+				md.addAttribute("currentDate", currentDate); 
+		
+				
+				//Bank Limit
+		         md.addAttribute("Bank_limit_size", banklist.size());
+	//Exposure Datas:-
+				List<ASL_Report_Entity> Exposure = ASL_Report_Reps.getAllListByDate(currentDate);
+		         md.addAttribute("Exposure_size", Exposure.size());
+	//List Of Treasury Placements
+	List<MIS_TREASURY_PLACEMENT_ENTITY> placements = TreasuryPlacementReps.getAllListByDate(currentDate);
+	            md.addAttribute("placements_size", placements.size());
+	///List Of Treasury Limits
+	         //   List<MIS_TREASURY_LIMITS_ENTITY> limits = MIS_TREASURY_LIMITS_ENTITY_REPs.getAllListByDate(currentDate);
+	          //  md.addAttribute("Treasry_size", limits.size());
+	///swap_settlement
+	            List<MIS_SETTLEMENT_ENTITY> swapList = MIS_SETTLEMENT_ENTITY_REPs.getAllListByDate(currentDate);
+	            md.addAttribute("swap_size", swapList.size());
+				
+				
+			}else if ( formmode.equals("search")) {
+				 logger.info("list of Final Risk View.");
+					md.addAttribute("formmode", "list");
+				    Date reportDateConverted = java.sql.Date.valueOf(reportDate); // current system date
+					md.addAttribute("list", banklimit_rep.getalllist(reportDateConverted));
+					md.addAttribute("currentDate", reportDateConverted);
+					
+	                //Exposure Datas:-
+					List<ASL_Report_Entity> Exposure = ASL_Report_Reps.getAllListByDate(reportDateConverted);
+					md.addAttribute("Exposure_size", Exposure.size());
+					// List Of Treasury Placements
+					List<MIS_TREASURY_PLACEMENT_ENTITY> placements = TreasuryPlacementReps.getAllListByDate(reportDateConverted);
+					md.addAttribute("placements_size", placements.size());
+					/// List Of Treasury Limits
+					List<MIS_TREASURY_LIMITS_ENTITY> limits = MIS_TREASURY_LIMITS_ENTITY_REPs.getAllListByDate(reportDateConverted);
+					md.addAttribute("Treasry_size", limits.size());
+					/// swap_settlement
+					List<MIS_SETTLEMENT_ENTITY> swapList = MIS_SETTLEMENT_ENTITY_REPs.getAllListByDate(reportDateConverted);
+					md.addAttribute("swap_size", swapList.size());
+	 
+			}
+		    logger.info("Returning view: Asl_dashboard");
+
+			return "MIS/Asl_dashboard";
+		}
+		
+		@RequestMapping(value = "/CallmanualReconprocedurerun", method = { RequestMethod.GET, RequestMethod.POST })
+		public ResponseEntity<?> CallmanualReconprocedurerun(
+		        @RequestParam("report_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate) {
+
+		    String msg = "";
+		    System.out.println("Reconciliation Started");
+
+		    // Format the date to '27-MAY-2025'
+		    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+		    String formattedDate = sdf.format(reportDate).toUpperCase();
+
+		    // Call stored procedure with 1 VARCHAR2 parameter
+		   /*StoredProcedureQuery query = entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
+		    query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		    query.setParameter(1, formattedDate);
+		    query.execute();*/
+
+		    msg = "Reconciliation completed for " + formattedDate;
+
+		    return ResponseEntity.ok(msg);
+		}
+
+		@RequestMapping(value = "Add_ASL", method = { RequestMethod.POST })
+		@ResponseBody
+		public String Add_ASL(@RequestParam("iBranchCode") String iBranchCode,
+				@RequestParam("iBranchName") String iBranchName,
+				@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+				@RequestParam("file") MultipartFile file, @RequestParam("uploadedBy") String uploadedBy,
+				HttpServletRequest request, @RequestParam(required = false) String mode) {
+			String msg = "";
+			String userid = (String) request.getSession().getAttribute("USERID");
+			if (mode.equals("exposure")) {
+				logger.info("Enter theExposure data Upload File: " + "Branch: " + iBranchCode + ", File: "
+						+ file.getOriginalFilename());
+				msg = ASL_Excel_Servicess.addASL(iBranchCode, iBranchName, reportDate, uploadedBy, file, userid,mode);
+			} else if (mode.equals("placement")) {
+				logger.info("Enter theExposure data Upload File: " + "Branch: " + iBranchCode + ", File: "
+						+ file.getOriginalFilename());
+				msg = ASL_Excel_Servicess.addASL(iBranchCode, iBranchName, reportDate, uploadedBy, file, userid,mode);
+			} else if (mode.equals("settlement")) {
+				logger.info("Enter theExposure data Upload File: " + "Branch: " + iBranchCode + ", File: "
+						+ file.getOriginalFilename());
+				msg = ASL_Excel_Servicess.addASL(iBranchCode, iBranchName, reportDate, uploadedBy, file, userid,mode);
+
+			}
+			return msg;
+		}
+
+		@RequestMapping(value = "/getvalues", method = RequestMethod.POST)
+		@ResponseBody
+		public List<BRF_095_A_REPORT_ENTITY> getvalues(@RequestParam(required = false) String year) {
+		    logger.info("Received request to fetch BRF095A values for year: {}", year);
+
+		    List<BRF_095_A_REPORT_ENTITY> resultList = null;
+		    try {
+		        resultList = BRF095AServiceRepos.getvalues(year);
+		        logger.info("Successfully fetched {} records for year: {}", 
+		                    (resultList != null ? resultList.size() : 0), year);
+		    } catch (Exception e) {
+		        logger.error("Error while fetching BRF095A values for year {}: {}", year, e.getMessage(), e);
+		    }
+
+		    return resultList;
+		}
+
+		// Fetch bank details by bank name
+		@RequestMapping(value = "/loadbankdata", method = RequestMethod.POST)
+		@ResponseBody
+		public List<ASL_BANKMASTER_ENTITY> getBankDetailss(@RequestParam(required = false) String name) {
+		    logger.info("Fetching bank details for bank name: {}", name);
+
+		    List<ASL_BANKMASTER_ENTITY> bankDetails = ASL_BANKMASTER_REPO.getBankDetails(name);
+
+		    logger.info("Found {} bank record(s) for name: {}", bankDetails.size(), name);
+
+		    return bankDetails;
+		}
+
+		@RequestMapping(value = "/banks", method = RequestMethod.GET)
+		@ResponseBody
+		public List<String> getAllBanks() {
+		    logger.info("Fetching all distinct bank names");
+
+		    List<String> bankNames = ASL_BANKMASTER_REPO.findDistinctBankNames();
+
+		    logger.info("Total banks retrieved: {}", bankNames.size());
+
+		    return bankNames;
+		}
+
+
+		@RequestMapping(value = "/loadOverallTop10BRF39", method = RequestMethod.GET)
+		@ResponseBody
+		public List<Map<String, Object>> loadOverallTop10BRF39Data(HttpServletRequest req) {
+		    logger.info("Entered /loadOverallTop10BRF39 ");
+
+			List<Map<String, Object>> list=counter_servicess.loadOverallTop10BRF39Data();
+			return list;
+		}
+
+		
+		@RequestMapping(value = "/getcounterpartylist", method = RequestMethod.GET)
+		@ResponseBody
+		public List<Map<String, Object>> getcounterpartylist(HttpServletRequest req) {
+		    logger.info("Entered /getcounterpartylist ");
+
+			List<Map<String, Object>> list=counter_servicess.getcounterpartylist();
+			return list;
+		}
+
+		private String getCurrentYear() {
+		    return String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+		}
+
+
+	@RequestMapping(value = "/individualraw", method = RequestMethod.GET)
+	@ResponseBody
+	public List<BRF40_Entity1> getRawIndividualExposureData(
+	        @RequestParam(name = "year", required = false) String yearParam) {
+
+	    String year = (yearParam == null || yearParam.trim().isEmpty()) ? getCurrentYear() : yearParam;
+	    logger.info("Fetching individual raw exposure data for year: {}", year);
+
+	    try {
+	        List<BRF40_Entity1> data = brf40aRepository.getassetvalues(year);
+	        if (data == null || data.isEmpty()) {
+	            logger.warn("No data found for year: {}", year);
+	            return new ArrayList<>();
+	        }
+	        logger.info("Fetched {} records for year: {}", data.size(), year);
+	        return data;
+	    } catch (Exception e) {
+	        logger.error("Error while fetching individual raw exposure data for year: {}", year, e);
+	        return new ArrayList<>();
+	    }
+	}
+
+
+	@RequestMapping(value = "/corporateraw", method = RequestMethod.GET)
+	@ResponseBody
+	public List<BRF40_Entity1> getRawCorporateExposureData(
+	        @RequestParam(name = "year", required = false) String yearParam) {
+
+	    String year = (yearParam == null || yearParam.trim().isEmpty()) ? getCurrentYear() : yearParam;
+	    logger.info("Fetching corporate raw exposure data for year: {}", year);
+
+	    try {
+	        List<BRF40_Entity1> data = brf40aRepository.getassetvalues(year);
+	        if (data == null || data.isEmpty()) {
+	            logger.warn("No corporate exposure data found for year: {}", year);
+	            return new ArrayList<>();
+	        }
+	        logger.info("Fetched {} corporate exposure records for year: {}", data.size(), year);
+	        return data;
+	    } catch (Exception e) {
+	        logger.error("Error while fetching corporate exposure data for year: {}", year, e);
+	        return new ArrayList<>();
+	    }
+	}
+
+
+	@RequestMapping(value = "/economicsectorsraw", method = RequestMethod.GET)
+	@ResponseBody
+	public List<BRF40_Entity2> getRawEconomicSectorsExposureData(
+	        @RequestParam(name = "year", required = false) String yearParam) {
+
+	    String year = (yearParam == null || yearParam.trim().isEmpty()) ? getCurrentYear() : yearParam;
+	    logger.info("Fetching economic sector exposure data for year: {}", year);
+
+	    try {
+	        List<BRF40_Entity2> data = brf40bRepository.getasseteconomicvalues(year);
+	        if (data == null || data.isEmpty()) {
+	            logger.warn("No economic sector data found for year: {}", year);
+	            return new ArrayList<>();
+	        }
+	        logger.info("Fetched {} economic sector exposure records for year: {}", data.size(), year);
+	        return data;
+	    } catch (Exception e) {
+	        logger.error("Error occurred while fetching economic sector exposure data for year: {}", year, e);
+	        return new ArrayList<>();
+	    }
+	}
+
+
+	@RequestMapping(value = "Interbank_placement", method = { RequestMethod.GET, RequestMethod.POST })
+	public String Interbank_placement(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String reportDate,Model md, HttpServletRequest req) {
+	    String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
+	    String userid = (String) req.getSession().getAttribute("USERID");
+	    String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
+	    String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
+	    String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+
+	    md.addAttribute("dom_ids", domIds); // To highlight the menu
+	    logger.info("Accessing Interbank_placement with formmode: {}", formmode);
+
+	    try {
+	        if (formmode == null || "list".equalsIgnoreCase(formmode)) {
+	            md.addAttribute("menu", "List Of Treasury Placements");
+	            md.addAttribute("formmode", "list");
+	            List<?> placements = counter_servicess.getTreasury_placement();
+	            md.addAttribute("listss", placements);
+	            logger.info("Fetched {} treasury placements.", placements.size());
+	        } else if ("treasury_list".equalsIgnoreCase(formmode)) {
+	            md.addAttribute("formmode", formmode);
+	            System.out.println("Reportdate is"+reportDate);
+	            md.addAttribute("reportdate", reportDate);
+	            md.addAttribute("menu", "List Of Treasury Limits");
+	            List<?> limits = counter_servicess.getTreasury_limit(reportDate);
+	            md.addAttribute("listall", limits);
+	            logger.info("Fetched {} treasury limits.", limits.size());
+	        }else if("add".equalsIgnoreCase(formmode)){
+	            logger.info("Opening file upload mode for Treasury Placement. User: '{}', Branch: '{}'", userid, BRANCHNAME);
+			    md.addAttribute("menu", "List Of Treasury Placement"); // Default menu label
+		        md.addAttribute("menu", "Upload File Of Treasury Placement");
+		        md.addAttribute("formmode", "add"); 
+		        md.addAttribute("userid", userid);
+		        
+		        if ("ADM".equalsIgnoreCase(ROLEID)) {
+		            List<String> codes = UserProfileReps.getallcodes();
+		            logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
+		            md.addAttribute("codes", codes);
+		        }
+		        // Add for all roles
+		        md.addAttribute("BRANCHCODE", BRANCHCODE);
+		        md.addAttribute("BRANCHNAME", BRANCHNAME);
+		        md.addAttribute("ROLEID", ROLEID);
+	        }
+	    } catch (Exception e) {
+	        logger.error("Error in Interbank_placement controller for formmode: {}", formmode, e);
+	    }
+
+	    return "MIS/Interbank_Placements.html";
+	}
+
+
+		
+	@RequestMapping(value = "swap_settlement", method = { RequestMethod.GET, RequestMethod.POST })
+	public String swap_settlement(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+	    logger.info("Entered swap_settlement controller with formmode: {}", formmode);
+
+	    String userid = (String) req.getSession().getAttribute("USERID");
+	    String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
+	    String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
+	    String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+
+	    try {
+	        md.addAttribute("menu", "List Of Settlement"); // Default menu label
+	        String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
+	        md.addAttribute("dom_ids", domIds); // To highlight the menu
+	        logger.debug("DOMAINID from session: {}", domIds);
+
+	        if (formmode == null || "list".equalsIgnoreCase(formmode)) {
+	            md.addAttribute("formmode", "list");
+	            List<Map<String, Object>> swapList = counter_servicess.getSwap();
+	            md.addAttribute("listall", swapList);
+	            logger.info("Loaded {} swap settlement records", swapList.size());
+	        }else if("add".equalsIgnoreCase(formmode)){
+	            logger.info("Opening file upload mode for Swap Settlement. User: '{}', Branch: '{}'", userid, BRANCHNAME);
+			    md.addAttribute("menu", "List Of Swap Settlement"); // Default menu label
+		        md.addAttribute("menu", "Upload File Of Swap Settlement");
+		        md.addAttribute("formmode", "add"); 
+		        md.addAttribute("userid", userid);
+		        if ("ADM".equalsIgnoreCase(ROLEID)) {
+		            List<String> codes = UserProfileReps.getallcodes();
+		            logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
+		            md.addAttribute("codes", codes);
+		        }
+		        // Add for all roles
+		        md.addAttribute("BRANCHCODE", BRANCHCODE);
+		        md.addAttribute("BRANCHNAME", BRANCHNAME);
+		        md.addAttribute("ROLEID", ROLEID);
+	        }
+
+	    } catch (Exception e) {
+	        logger.error("Error occurred in swap_settlement method", e);
+	    }
+
+	    return "MIS/Swap_Settlement.html";
+	}
+
+	@GetMapping("/getExplosure_datas")
+	@ResponseBody
+	public List<Map<String, Object>> getExplosureDatas(
+	    @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+	    @RequestParam("selected_branch") String selected_branch) {
+
+	    logger.info("Received request to getExplosureDatas with reportDate: {} and selected_branch: {}", reportDate, selected_branch);
+
+	    Date reportDateConverted = java.sql.Date.valueOf(reportDate);
+
+	    List<Map<String, Object>> response = new ArrayList<>();
+	    try {
+	        response = counter_servicess.getExploreData(reportDateConverted, selected_branch);
+	        logger.info("Fetched {} records for reportDate {} and branch {}", response.size(), reportDate, selected_branch);
+	    } catch (Exception e) {
+	        logger.error("Error fetching exposure data for reportDate {} and branch {}", reportDate, selected_branch, e);
+	    }
+
+	    return response;
+	}
+
+
+	@GetMapping("/getExploreDataBranch")
+	@ResponseBody
+	public List<Map<String, Object>> getExploreDataBranch(
+	        @RequestParam("selected_branch") String selected_branch) {
+
+	    Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	    logger.info("Received request for branch: {}", selected_branch);
+
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    try {
+	        result = counter_servicess.getExploreDataBranch(selected_branch);
+	        logger.info("Fetched {} records for branch: {}", result.size(), selected_branch);
+	    } catch (Exception e) {
+	        logger.error("Error while fetching data for branch: {}", selected_branch, e);
+	    }
+
+	    return result;
+	}
+		
+
+	@GetMapping("/getTre_limit_Datas")
+	@ResponseBody
+	public List<Map<String, Object>> getTre_limit_Datas(
+	        @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate) {
+
+	    Logger logger = LoggerFactory.getLogger(this.getClass());
+	    logger.info("Received request to fetch Treasury Limit Data for report date: {}", reportDate);
+
+	    Date reportDateConverted = java.sql.Date.valueOf(reportDate);
+
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    try {
+	        result = counter_servicess.getTre_limit_Datas(reportDateConverted);
+	        logger.info("Fetched {} treasury limit records for report date {}", result.size(), reportDate);
+	    } catch (Exception e) {
+	        logger.error("Error fetching treasury limit data for report date: {}", reportDate, e);
+	    }
+
+	    return result;
+	}
+		
+		@GetMapping("/getTre_place_Datas")
+		@ResponseBody
+		public List<Map<String, Object>> getTre_place_Datas(
+		        @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate) {
+			  Logger logger = LoggerFactory.getLogger(this.getClass());
+			    logger.info("Received request to fetch Placement Limit Data for report date: {}", reportDate);
+
+			    Date reportDateConverted = java.sql.Date.valueOf(reportDate);
+
+			    List<Map<String, Object>> result = new ArrayList<>();
+			    try {
+			        result = counter_servicess.getTre_place_Datas(reportDateConverted);
+			        logger.info("Fetched {} Placement limit records for report date {}", result.size(), reportDate);
+			    } catch (Exception e) {
+			        logger.error("Error fetching Placement limit data for report date: {}", reportDate, e);
+			    }
+			    return result;
+		}
+		@GetMapping("/getSwap_Datas")
+		@ResponseBody
+		public List<Map<String, Object>> getSwap_Datas(
+		        @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate) {
+			 logger.info("Received request to fetch Swap settlement Data for report date: {}", reportDate);
+
+			    Date reportDateConverted = java.sql.Date.valueOf(reportDate);
+
+			    List<Map<String, Object>> result = new ArrayList<>();
+			    try {
+			        result = counter_servicess.getSwap_Datas(reportDateConverted);
+			        logger.info("Fetched {}  Swap settlement records for report date {}", result.size(), reportDate);
+			    } catch (Exception e) {
+			        logger.error("Error fetching  Swap settlement data for report date: {}", reportDate, e);
+			    }
+			    return result;
+		    
+		}
+
+		@RequestMapping(value = "search_date", method = RequestMethod.GET)
+		@ResponseBody
+		public int search_date(
+		        @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+		        @RequestParam("iBranchCode") String iBranchCode,@RequestParam(required = false) String mode) {
+
+		    Logger logger = LoggerFactory.getLogger(this.getClass());
+		    logger.info("Searching report data for date: {} and branch code: {}", reportDate, iBranchCode);
+
+		    int size = 0;
+		    if(mode.equals("exposure")) {
+		    try {
+		        List<ASL_Report_Entity> list = ASL_Report_Reps.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
+		        size = list.size();
+		        logger.info("Number of records found is Exposure Data: {}", size);
+		    } catch (Exception e) {
+		        logger.error("Error occurred while searching Exposure Data for date: {} and branch code: {}", reportDate, iBranchCode, e);
+		    }
+		    }else if(mode.equals("placement")) {
+		    	   try {
+		   	        List<MIS_TREASURY_PLACEMENT_ENTITY> list = TreasuryPlacementReps.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
+		   	        size = list.size();
+		   	        logger.info("Number of records found for placement: {}", size);
+		   	    } catch (Exception e) {
+		   	        logger.error("Error occurred while searching placement data for date: {} and branch code: {}", reportDate, iBranchCode, e);
+		   	    }
+		    }else if(mode.equals("settlement")) {
+		    	   try {
+			   	        List<MIS_SETTLEMENT_ENTITY> list = MIS_SETTLEMENT_ENTITY_REPs.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
+			   	        size = list.size();
+			   	        logger.info("Number of records found for settlement: {}", size);
+			   	    } catch (Exception e) {
+			   	        logger.error("Error occurred while searching settlement data for date: {} and branch code: {}", reportDate, iBranchCode, e);
+			   	    }
+			    }
+		    return size; // returns 0 if no report, >0 if exists
+		}
+
+	@RequestMapping(value = "Replace_data", method = { RequestMethod.POST })
+	@ResponseBody
+	public String Replace_data(
+	        @RequestParam("iBranchCode") String iBranchCode,
+	        @RequestParam("iBranchName") String iBranchName,
+	        @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+	        @RequestParam("file") MultipartFile file,
+	        @RequestParam("uploadedBy") String uploadedBy,
+	        HttpServletRequest request,@RequestParam(required = false) String mode) {
+	    Logger logger = LoggerFactory.getLogger(this.getClass());
+	    String userid = (String) request.getSession().getAttribute("USERID");
+
+	    logger.info("Replace_data called - BranchCode: {}, BranchName: {}, ReportDate: {}, File: {}, UploadedBy: {}, UserID: {}",
+	            iBranchCode, iBranchName, reportDate, file.getOriginalFilename(), uploadedBy, userid);
+	    String result;
+	    try {
+	        result = ASL_Excel_Servicess.Replace_data(iBranchCode, iBranchName, reportDate, uploadedBy, file, userid,mode);
+	        logger.info("Replace_data processed successfully for BranchCode: {}", iBranchCode);
+	    } catch (Exception e) {
+	        logger.error("Error during Replace_data for BranchCode: {}", iBranchCode, e);
+	        result = "Failed to process replacement data.";
+	    }
+
+	    return result;
+	}
+	@RequestMapping(value = "getbranch", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public String getbranch(@RequestParam(required = false) String selected_branch) {
+	    return counter_servicess.getbranch(selected_branch);
+	}
+
+
 
 }

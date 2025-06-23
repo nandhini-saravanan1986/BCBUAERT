@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
 public interface UserProfileRep extends CrudRepository<UserProfile,String>{
 	
@@ -21,5 +22,10 @@ public interface UserProfileRep extends CrudRepository<UserProfile,String>{
 	
 	@Query(value = "select * from XBRL_USER_PROFILE_TABLE where USER_ID=?1", nativeQuery = true)
 	UserProfile getRole(String userId);
+
+	@Query(value = "select DISTINCT BRANCH_CODE from XBRL_USER_PROFILE_TABLE", nativeQuery = true)
+	List<String> getallcodes();
 	
+	@Query(value = "select * from XBRL_USER_PROFILE_TABLE", nativeQuery = true)
+	List<UserProfile> getallbranches();
 }

@@ -1,0 +1,1108 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+<style>
+
+
+.btns {
+	float: right;
+	margin: 5px;
+}
+	.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: darkorange;
+    border-color: darkorange;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+</style>
+<style>
+        .valids { color: green; }
+        .invalids { color: red; }
+    </style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+
+
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+
+
+	
+	function adduser() {
+		
+		
+		location.href = 'counterparty?formmode=add';
+		
+	}
+
+	function list() {
+		location.href = 'counterparty?formmode=list';
+	}
+
+	
+
+	/*]]>*/
+</script>
+
+<script>
+	function deleteuser() {
+		
+		var entryuser = document.querySelector('[data-entry_user]');
+		var modifyuser = document.querySelector('[data-modify_user]');
+
+		if (confirm('Are you sure you want to delete this User?')) {		
+			$("#loader1").modal("toggle");
+			var userid = document.getElementById("userId").value;
+			$.ajax({
+				type : 'post',
+				url : './deleteuser?formmode=' + userid,
+				success : function(response) {
+					$("#loader1").modal("hide");
+					$("#alertmsg").text('User Deleted');
+					$('#alert').modal("toggle");
+				},
+	            error: function(xhr, status, error) {
+	            	$("#loader1").modal("hide");
+	                alert('Not able to delete contact administrator');
+	            }
+			});
+		}
+		
+	}
+</script>
+<script>
+	function roledesc1() {
+
+		var roleid = $("#roleId").find(':selected').val();
+
+		if (roleid == 'VISAP1') {
+			$("#roleDesc1").val("VISAP1");
+		} else if (roleid == 'VISAR2') {
+			$("#roleDesc1").val("VISAR2");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'CURINT4') {
+			$("#roleDesc1").val("CURINT4");
+		}
+		$(this).find(':selected').text();
+
+	}
+	
+	function brflogin() {
+
+		var roleid = $("#roleId").find(':selected').val();
+
+		if (roleid == 'VISAP1') {
+			$("#roleDesc1").val("VISAP1");
+		} else if (roleid == 'VISAR2') {
+			$("#roleDesc1").val("VISAR2");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'CURINT4') {
+			$("#roleDesc1").val("CURINT4");
+		}
+		$(this).find(':selected').text();
+
+	}
+
+	function home() {
+		location.href = "/MIS/Dashboard";
+	}
+
+	function back() {
+		window.history.back();
+	}
+</script>
+
+<script>
+function submitform() {
+	
+    var counterPartyBankCode = $("#counterPartyBankCode").val().trim();
+    var counterPartyBank = $("#counterPartyBank").val().trim();
+    var location = $("#location").val().trim();
+    var expiryDate = $("#expiryDate").val().trim();
+    var rating = $("#rating").val().trim();
+    var regularLimit = $("#regularLimit").val().trim();
+    var adhocLimit = $("#adhocLimit").val().trim();
+    var creditLimit = $("#creditLimit").val().trim();
+    var settlementLimit = $("#settlementLimit").val().trim();
+    var moneyMarketLimit = $("#moneyMarketLimit").val().trim();
+    var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
+
+    if (counterPartyBankCode === "") {
+        alert("Please enter counterParty Bank Code.");
+        $("#counterPartyBankCode").focus();
+        return;
+    }
+    if (regularLimit === "") {
+        alert("Please enter regularLimit.");
+        $("#regularLimit").focus();
+        return;
+    }if (adhocLimit === "") {
+        alert("Please enter adhocLimit.");
+        $("#adhocLimit").focus();
+        return;
+    }if (creditLimit === "") {
+        alert("Please enter creditLimit.");
+        $("#creditLimit").focus();
+        return;
+    }if (settlementLimit === "") {
+        alert("Please enter settlementLimit.");
+        $("#settlementLimit").focus();
+        return;
+    }if (moneyMarketLimit === "") {
+        alert("Please enter moneyMarketLimit.");
+        $("#moneyMarketLimit").focus();
+        return;
+    }if (tradeFinanceLimit === "") {
+        alert("Please enter tradeFinanceLimit.");
+        $("#tradeFinanceLimit").focus();
+        return;
+    }
+    
+    if (counterPartyBank === "") {
+        alert("Please enter counterparty bank name.");
+        $("#counterPartyBank").focus();
+        return;
+    }
+    if (expiryDate === "") {
+        alert("Please enter Expiry Date.");
+        $("#expiryDate").focus();
+        return;
+    }
+    if (rating === "") {
+        alert("Please enter Rating .");
+        $("#rating").focus();
+        return;
+    }
+    if (location === "") {
+        alert("Please enter location.");
+        $("#location").focus();
+        return;
+    }
+    if (Adhoc_Limit_exp_date === "") {
+        alert("Please enter Adhoc Limit Expiry Date.");
+        $("#Adhoc_Limit_exp_date").focus();
+        return;
+    }
+
+    // All fields are valid — proceed with AJAX
+    var formData = $("#counterpartys").serialize();
+    console.log("Form data being submitted:", formData);
+
+    $.ajax({
+        url: "./Addcounter",
+        type: "POST",
+        data: formData,
+        success: function (response) {
+            console.log("Server response:", response);
+            $("#alertmsg").text(response);
+            $('#alert').modal("toggle");
+
+            // Trigger download using browser, not AJAX
+           /*  setTimeout(function() {
+                window.location.href = "./download/excel";
+            }, 200); */ // slight delay to ensure file generation completes
+            },
+        error: function (xhr, status, error) {
+            console.error("Error occurred:", error);
+            $("#alertmsg").text("An error occurred: " + error);
+            $('#alert').modal("toggle");
+        }
+    });
+}
+
+</script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var counterlist = /*[[${counterlist}]]*/ [];
+var getcode = /*[[${getcode}]]*/ [];
+console.log(getcode)
+// -------------------- Bank Name Validation --------------------
+
+function validatelis(inputElem) {
+    const inputVal = inputElem.value.trim().toLowerCase();
+    let matches = [];
+
+    $("#bankSuggestions").empty().hide();
+
+    // Collect matching suggestions
+    counterlist.forEach(item => {
+        if (item.toLowerCase().includes(inputVal) && inputVal !== "") {
+            matches.push(item);
+        }
+    });
+
+    // Do not show "Already exists!" message
+    $("#bankExistsMsg").hide();
+
+    // Do not hide the generate button
+    $("#generatebtn").show();
+
+    if (matches.length > 0) {
+        matches.forEach(suggestion => {
+            $("#bankSuggestions").append(
+                `<div class='suggestion-item-bank' style='padding: 5px; cursor: pointer;'>${suggestion}</div>`
+            );
+        });
+        $("#bankSuggestions").show();
+    }
+}
+
+
+$(document).on("click", ".suggestion-item-bank", function () {
+    $("#counterPartyBank").val($(this).text());
+    $("#bankSuggestions").hide();
+    validatelis(document.getElementById("counterPartyBank"));
+});
+
+$(document).click(function (e) {
+    if (!$(e.target).closest("#counterPartyBank, #bankSuggestions").length) {
+        $("#bankSuggestions").hide();
+    }
+});
+
+// -------------------- Bank Code Validation --------------------
+
+function validatelist(inputElem) {
+    const inputVal = inputElem.value.trim().toLowerCase();
+    let exists = false;
+    let matches = [];
+
+    $("#bankSuggestions_code").empty().hide();
+
+    getcode.forEach(item => {
+        if (item.toLowerCase() === inputVal) {
+            exists = true;
+        } else if (item.toLowerCase().includes(inputVal) && inputVal !== "") {
+            matches.push(item);
+        }
+    });
+
+    $("#bankExistsMsg_code").toggle(exists);
+    if (exists) $("#generatebtn").hide();
+    else $("#generatebtn").show();
+
+    if (matches.length > 0) {
+        matches.forEach(suggestion => {
+            $("#bankSuggestions_code").append(
+                `<div class='suggestion-item-code' style='padding: 5px; cursor: pointer;'>${suggestion}</div>`
+            );
+        });
+        $("#bankSuggestions_code").show();
+    }
+}
+
+$(document).on("click", ".suggestion-item-code", function () {
+    $("#counterPartyBankCode").val($(this).text());
+    $("#bankSuggestions_code").hide();
+    validatelist(document.getElementById("counterPartyBankCode"));
+});
+
+$(document).click(function (e) {
+    if (!$(e.target).closest("#counterPartyBankCode, #bankSuggestions_code").length) {
+        $("#bankSuggestions_code").hide();
+    }
+});
+/*]]>*/
+</script>
+
+<style>
+.btn{
+font-size: unset !important;
+}
+input {
+  font-size: 12px !important;
+}
+.container-fluid {
+
+    width: 100%;
+    padding-top:1px;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+label,table{
+font-family: verdana;
+}
+</style>
+<script>
+$(document).ready(function () {
+	$('#usertable').DataTable({
+		scrollX: true,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: true,
+		pageLength: 5,
+		fixedHeader: true
+
+	});
+});
+</script>
+<script>
+
+function modifyCounterparty(id) {
+    console.log("Modify clicked for ID:", id);
+		location.href = 'counterparty?formmode=edit' +'&id=' +id;
+}
+
+</script>
+
+
+<script>
+function modify() {
+	
+    var counterPartyBankCode = $("#counterPartyBankCode").val().trim();
+    var counterPartyBank = $("#counterPartyBank").val().trim();
+    var location = $("#location").val().trim();
+    var expiryDate = $("#expiryDate").val().trim();
+    var rating = $("#rating").val().trim();
+    var regularLimit = $("#regularLimit").val().trim();
+    var adhocLimit = $("#adhocLimit").val().trim();
+    var creditLimit = $("#creditLimit").val().trim();
+    var settlementLimit = $("#settlementLimit").val().trim();
+    var moneyMarketLimit = $("#moneyMarketLimit").val().trim();
+    var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
+
+    if (counterPartyBankCode === "") {
+        alert("Please enter counterParty Bank Code.");
+        $("#counterPartyBankCode").focus();
+        return;
+    }
+    if (regularLimit === "") {
+        alert("Please enter regularLimit.");
+        $("#regularLimit").focus();
+        return;
+    }if (adhocLimit === "") {
+        alert("Please enter adhocLimit.");
+        $("#adhocLimit").focus();
+        return;
+    }if (creditLimit === "") {
+        alert("Please enter creditLimit.");
+        $("#creditLimit").focus();
+        return;
+    }if (settlementLimit === "") {
+        alert("Please enter settlementLimit.");
+        $("#settlementLimit").focus();
+        return;
+    }if (moneyMarketLimit === "") {
+        alert("Please enter moneyMarketLimit.");
+        $("#moneyMarketLimit").focus();
+        return;
+    }if (tradeFinanceLimit === "") {
+        alert("Please enter tradeFinanceLimit.");
+        $("#tradeFinanceLimit").focus();
+        return;
+    }
+    
+    if (counterPartyBank === "") {
+        alert("Please enter counterparty bank name.");
+        $("#counterPartyBank").focus();
+        return;
+    }
+    if (expiryDate === "") {
+        alert("Please enter Expiry Date.");
+        $("#expiryDate").focus();
+        return;
+    }
+    if (rating === "") {
+        alert("Please enter Rating .");
+        $("#rating").focus();
+        return;
+    }
+    if (location === "") {
+        alert("Please enter location.");
+        $("#location").focus();
+        return;
+    }
+    if (Adhoc_Limit_exp_date === "") {
+        alert("Please enter Adhoc Limit Expiry Date.");
+        $("#Adhoc_Limit_exp_date").focus();
+        return;
+    }
+
+    // All fields are valid — proceed with AJAX
+    var formData = $("#counterpartys").serialize();
+    console.log("Form data being submitted:", formData);
+
+    $.ajax({
+        url: "./Addcounter?formmode=edit",
+        type: "POST",
+        data: formData,
+        success: function (response) {
+            console.log("Server response:", response);
+            $("#alertmsg").text(response);
+            $('#alert').modal("toggle");
+
+            // Trigger download using browser, not AJAX
+           /*  setTimeout(function() {
+                window.location.href = "./download/excel";
+            }, 200); */ // slight delay to ensure file generation completes
+            },
+        error: function (xhr, status, error) {
+            console.error("Error occurred:", error);
+            $("#alertmsg").text("An error occurred: " + error);
+            $('#alert').modal("toggle");
+        }
+    });
+}
+
+</script>
+</head>
+<title>MIS</title>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div class="col-sm-12">
+
+<div th:if="${formmode}=='list'">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 th:text="${menu}"
+                style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm text-white mx-1"
+                        style="background-color: darkorange;" onclick="window.location.href='./download/excel?mode=exposure'">
+                    Template Download
+                </button>
+                <button type="button" class="btn btn-sm text-white mx-1"
+                        style="background-color: darkorange;" onclick="adduser();">
+                    Add
+                </button>
+            </div>
+        </div>
+
+				<div class="row">
+					<div class="col-sm-12">
+				<div class="table-responsive" style="overflow-x: auto; overflow-y: auto; ">
+					<table class="table table-striped table-bordered table-hover"
+						id="usertable" style="width: 100%;font-family: verdana;">
+						<thead>
+							<tr>
+								<th  style="white-space: nowrap;">S. No.</th>
+								<th  style="white-space: nowrap;">CounterParty Bank Code</th>
+								<th  style="white-space: nowrap;">CounterParty Bank</th>
+								<th  style="white-space: nowrap;">Rating</th>
+								<th  style="white-space: nowrap;">Location</th>
+								<th style=" text-align: right;white-space: nowrap;">Regular Limit</th>
+								<th style=" text-align: right;white-space: nowrap;">Adhoc Limit</th>
+								<th style=" text-align: right;white-space: nowrap;">Settlement
+									Limit</th>
+								<th style="text-align: right;white-space: nowrap;">Credit Limit</th>
+								<th style="text-align: right;white-space: nowrap;">Money Market
+									Limit</th>
+								<th style=" text-align: right;white-space: nowrap;">Trade Finance
+									Limit</th>
+								<th style=" text-align: center;white-space: nowrap;">Adhoc Limit
+									Expiry Date</th>
+								<th style=" text-align: center;white-space: nowrap;">Status</th>
+								<th style=" text-align: center;white-space: nowrap;">Expiry Date</th>
+								<th style=" text-align: center;white-space: nowrap;">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="lists : ${listall}" style="cursor: pointer;">
+								<td th:text="${lists.srlNo}"></td>
+								<td style="text-align:center" th:text="${lists.counterPartyBankCode}"></td>
+								<td th:text="${lists.counterPartyBank}"></td>
+								<td th:text="${lists.rating}"></td>
+								<td th:text="${lists.location}"></td>
+<td th:text="${#numbers.formatDecimal(lists.regularLimit, 1, 2)}" style="text-align: right;"></td>
+<td th:text="${#numbers.formatDecimal(lists.adhocLimit, 1, 2)}" style="text-align: right;"></td>
+<td th:text="${#numbers.formatDecimal(lists.settlementLimit, 1, 2)}" style="text-align: right;"></td>
+<td th:text="${#numbers.formatDecimal(lists.creditLimit, 1, 2)}" style="text-align: right;"></td>
+<td th:text="${#numbers.formatDecimal(lists.moneyMarketLimit, 1, 2)}" style="text-align: right;"></td>
+<td th:text="${#numbers.formatDecimal(lists.tradeFinanceLimit, 1, 2)}" style="text-align: right;"></td>
+
+								
+								<td
+									th:text="${#dates.format(lists.Adhoc_Limit_exp_date, 'dd-MM-yyyy')}"
+									style="text-align: center;"></td>
+								<td style="text-align: center;"><span
+									th:text="${lists.expiryDate >= currentDate} ? 'Active' : 'Expired'"
+									th:style="${lists.expiryDate >= currentDate} ? 'color:green;' : 'color:red;'">
+								</span></td>
+								<td th:text="${#dates.format(lists.expiryDate, 'dd-MM-yyyy')}"
+									style="text-align: center;"></td>
+								 <!-- Modify Button -->
+    <td style="text-align: center;">
+        <button type="button" class="btn btn-sm btn-primary" style="background-color:darkorange;--bs-btn-border-color:none"
+                th:attr="onclick=|modifyCounterparty('${lists.id}')|">
+            Modify
+        </button>
+    </td>	
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				</div>
+				</div>
+
+				<div class="card-footer text-center">
+            <button type="button" class="btn btn-sm text-white mx-2"
+                    style="background-color: darkorange;" onclick="home();">Home</button>
+            <button type="button" class="btn btn-sm text-white mx-2"
+                    style="background-color: darkorange;" onclick="back();">Back</button>
+        </div>
+    </div>
+</div>
+
+		
+	<div th:if="${formmode}=='add'">
+		<div class="row">
+			<div class="col-sm-12 ">
+					<form action="#" method="post" autocomplete="off" id="counterpartys">
+						<div class="card">
+							<div class="card-header">
+								<div class="float-left">
+						<h5 th:text="${menu}"
+							style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
+					</div>
+								<div class="btn-group nav-buttons float-right">
+									<button type="button" class="btn btn-xs  btns"
+										style="background-color: darkorange" id="btnInq"
+										onclick="list();">List</button>
+								</div>
+							</div>
+							<div class="card-body">
+
+								<input autocomplete="false" name="hidden" type="text"
+									style="display: none;">
+								<div class="form-group">
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+
+										<div class="col-sm-2">
+											<label for="userId">Serial No.<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" id="srlNo" th:value="${serialNo}"
+												class="form-control form-control-sm" name="srlNo"
+												autocomplete="off" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label for="counterPartyBankCode">CounterParty Bank Code<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBankCode"
+												id="counterPartyBankCode" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelist(this)" required />
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg_code" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions_code"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+
+									</div>
+									
+									
+										<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="counterPartyBank">CounterParty Bank<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBank"
+												id="counterPartyBank" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelis(this)" required />
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="rating">Rating<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="rating" id="rating"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										
+									</div>
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Location<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="location" id="location"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="date" name="expiryDate" id="expiryDate"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Regular Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="regularLimit" id="regularLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="adhocLimit" id="adhocLimit"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Settlement Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="settlementLimit" id="settlementLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="Date" name="Adhoc_Limit_exp_date" id="Adhoc_Limit_exp_date"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">Credit Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="creditLimit" id="creditLimit"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Money Market Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										
+									
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Trade Finance Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="tradeFinanceLimit" id="tradeFinanceLimit"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										</div>
+									
+								</div>
+								<div class="card-footer text-center">
+									<button type="button" class="btn btn-xs "
+										style="background-color: darkorange" id="btnHome"
+										onclick="home();">Home</button>
+									<button type="button" class="btn btn-xs " id="generatebtn"
+										style="background-color: darkorange" onclick="submitform();">Submit</button>
+									<button type="button" class="btn btn-xs "
+										style="background-color: darkorange" id="btnBack"
+										onclick="back();">Back</button>
+
+								</div>
+							</div>
+						</div>
+					</form>
+
+				</div>
+		</div>
+	</div>
+	
+	<div th:if="${formmode}=='edit'">
+		<div class="row">
+			<div class="col-sm-12 ">
+					<form action="#" method="post" autocomplete="off" id="counterpartys">
+						<div class="card">
+							<div class="card-header">
+								<div class="float-left">
+						<h5 
+							style="font-family: verdana;  font-weight: bold; padding-top: 10px;">CounterParty Bank - Modify</h5>
+					</div>
+								<div class="btn-group nav-buttons float-right">
+									<button type="button" class="btn btn-xs  btns"
+										style="background-color: darkorange" id="btnInq"
+										onclick="list();">List</button>
+								</div>
+							</div>
+							<div class="card-body">
+
+								<input autocomplete="false" name="hidden" type="text"
+									style="display: none;">
+								<div class="form-group">
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+	                                         <input type="number" id="id" th:value="${list.id}"
+												class="form-control form-control-sm" name="id"
+												autocomplete="off" readonly hidden/>
+										<div class="col-sm-2">
+											<label for="userId">Serial No.<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" id="srlNo" th:value="${list.srlNo}"
+												class="form-control form-control-sm" name="srlNo"
+												autocomplete="off" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label for="counterPartyBankCode">CounterParty Bank Code<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBankCode" th:value="${list.counterPartyBankCode}"
+												id="counterPartyBankCode" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelist(this)" required />
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg_code" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions_code"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+
+									</div>
+									
+									
+										<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="counterPartyBank">CounterParty Bank<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBank" th:value="${list.counterPartyBank}"
+												id="counterPartyBank" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelis(this)" required />
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="rating">Rating<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="rating" id="rating" th:value="${list.rating}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										
+									</div>
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Location<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="location" id="location" th:value="${list.location}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+													<input type="date" name="expiryDate" id="expiryDate"
+														class="form-control form-control-sm"
+														th:value="${#dates.format(list.expiryDate, 'yyyy-MM-dd')}"
+														required />
+
+												</div>
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Regular Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="regularLimit" id="regularLimit" th:value="${list.regularLimit}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="adhocLimit" id="adhocLimit" th:value="${list.adhocLimit}"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Settlement Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="settlementLimit" id="settlementLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required th:value="${list.settlementLimit}"/>
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="Date" name="Adhoc_Limit_exp_date" id="Adhoc_Limit_exp_date"
+												class="form-control form-control-sm" 
+												required th:value="${#dates.format(list.Adhoc_Limit_exp_date, 'yyyy-MM-dd')}"
+												/>
+										</div>
+										
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">Credit Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="creditLimit" id="creditLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${list.creditLimit}"/>
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Money Market Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required  th:value="${list.moneyMarketLimit}"/>
+										</div>
+										
+									
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Trade Finance Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="tradeFinanceLimit" id="tradeFinanceLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${list.tradeFinanceLimit}"/>
+										</div>
+										</div>
+									
+								</div>
+								<div class="card-footer text-center">
+									<button type="button" class="btn btn-xs "
+										style="background-color: darkorange" id="btnHome"
+										onclick="home();">Home</button>
+									<button type="button" class="btn btn-xs " id="generatebtn"
+										style="background-color: darkorange" onclick="modify();">Submit</button>
+									<button type="button" class="btn btn-xs "
+										style="background-color: darkorange" id="btnBack"
+										onclick="back();">Back</button>
+
+								</div>
+							</div>
+						</div>
+					</form>
+
+				</div>
+		</div>
+	</div>
+	
+	
+	
+
+	
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;background-color: orange;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn "style="background-color:darkorange" onclick="back()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	</div>
+	</div>
+
+
+</body>
+</html>

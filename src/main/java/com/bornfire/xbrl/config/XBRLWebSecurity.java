@@ -231,6 +231,11 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("DOMAINID", user.getDomain_id());
 				request.getSession().setAttribute("PERMISSIONS", user.getPermissions());
 				request.getSession().setAttribute("WORKCLASS", user.getWork_class());
+				request.getSession().setAttribute("MOBILENUMBER", user.getMob_number());
+				request.getSession().setAttribute("ROLEDESC", user.getRole_desc());
+				request.getSession().setAttribute("ACCESSCODE", user.getAcct_access_code());
+				request.getSession().setAttribute("BRANCHCODE", user.getBranch_code());
+				request.getSession().setAttribute("BRANCHNAME", user.getBranch_name());
 				response.sendRedirect("Dashboard");
 			}
 

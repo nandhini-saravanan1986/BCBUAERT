@@ -68,7 +68,7 @@ public class XbrlDataSource {
 		dataSource.setPassword(password);
 		dataSource.setURL(url);
 		dataSource.setImplicitCachingEnabled(true);
-		dataSource.setFastConnectionFailoverEnabled(true);
+		//dataSource.setFastConnectionFailoverEnabled(true);
 		return dataSource;
 	}
 
