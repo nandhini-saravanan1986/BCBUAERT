@@ -351,40 +351,39 @@ font-family: verdana;
 
 	
 	function submitform() {
-        var formmode = /*[[${formmode}]]*/ null; // Make sure this is replaced server-side or set properly
-		//alert(formmode)
-        var userid = $('#userId').val();
+	    // Get the formmode from the Submit button's data attribute
+	    var formmode = $('#btnSubmit').data('formmode');
+	    //alert("Form mode is: " + formmode); // Alert the formmode
 
-		  if (!userid) {
-		    alert("Please Provide User Id");
-		    $('#userid').focus();
-		    return false; // stop submission
-		  }
+	    var userid = $('#userId').val();
 
-		  // Show loader (assuming #loader1 is a modal)
-		  $("#loader1").modal("toggle");
+	    if (!userid) {
+	        alert("Please Provide User Id");
+	        $('#userId').focus();
+	        return false;
+	    }
 
-		  // Prepare form data for AJAX submit
-		  var formmode = 'add'; // or get dynamically
-		  var url = "./createUser?formmode=" + formmode;
+	    $("#loader1").modal("toggle");
 
-		  // Use jQuery AJAX `instead of ajaxSubmit
-		  $.ajax({
-		    url: url,
-		    type: 'POST',
-		    data: $("#userProfile").serialize(),
-		    success: function(response) {
-		      $("#loader1").modal("hide");
-		      $("#alertmsg").text(response);
-		      $('#alert').modal("toggle");
-		    },
-		    error: function() {
-		      $("#loader1").modal("hide");
-		      alert('Error submitting form');
-		    }
-		  });
-		}
+	    var url = "./createUser?formmode=" + formmode;
 
+	    $.ajax({
+	        url: url,
+	        type: 'POST',
+	        data: $("#userProfile").serialize(),
+	        success: function(response) {
+	            $("#loader1").modal("hide");
+	            $("#alertmsg").text(response);
+	            $('#alert').modal("toggle");
+	        },
+	        error: function() {
+	            $("#loader1").modal("hide");
+	            alert('Error submitting form');
+	        }
+	    });
+	}
+
+	
 	/*]]>*/
 </script>
 <script>

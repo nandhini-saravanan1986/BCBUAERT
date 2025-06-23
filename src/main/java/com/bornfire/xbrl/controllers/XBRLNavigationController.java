@@ -285,7 +285,6 @@ public class XBRLNavigationController {
 	    String role = (String) rq.getSession().getAttribute("ROLEDESC");
 	    String userId = (String) rq.getSession().getAttribute("USERID");
 	    String userName = (String) rq.getSession().getAttribute("USERNAME");
-
 	    String msg = loginServices.addUser(userprofile, formmode, userId, userName, mob, role);
 
 	    return msg;
@@ -302,7 +301,55 @@ public class XBRLNavigationController {
 		return msg;
 
 	}
-	
+	//In Reports
+	//In Modify section If we select the Bank name other details are fetching code
+		@RequestMapping(value = "getBankDetails", method = RequestMethod.GET)
+		public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
+
+			RT_BankNameMaster bank = bankRepo.findByBankName(bankName);
+			System.out.println("came to controller with bank name ");
+			if (bank == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			Map<String, String> bankDetails = new HashMap<>();
+			bankDetails.put("bankSymbol", bank.getBankSymbol());
+			bankDetails.put("conventionalIslamic", bank.getConventionalIslamic());
+			bankDetails.put("localForeign", bank.getLocalForeign());
+			bankDetails.put("cbuaeTiering", bank.getCbuaeTiering());
+
+			return ResponseEntity.ok(bankDetails);
+		}
+
+	//In Modify section If we select the Country of Risk, cbuaeGeographicalZone fetching code
+		@RequestMapping(value = "getCountryDetails", method = RequestMethod.GET)
+		public ResponseEntity<Map<String, String>> getCountryDetails(@RequestParam String countryName) {
+			RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
+			System.out.println("Fetched country details for: " + countryName);
+
+			if (country == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			Map<String, String> response = new HashMap<>();
+			response.put("cbuaeGeographicalZone", country.getCbuaeGeographicalZone());
+
+			return ResponseEntity.ok(response);
+		}
+
+	//Creating Data Control
+		@PostMapping("/createDataControl")
+		@ResponseBody
+		public String createDataControl(
+				@RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
+				@RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
+				@ModelAttribute RT_DataControl dto) {
+			System.out.println("Controller: createOrUpdateNostro() called");
+			System.out.println("report name is: " + report_name);
+			return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
+		}
+
+
 	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
 	public String NostroAccountBal(@RequestParam(required = false) String formmode,
@@ -330,53 +377,6 @@ public class XBRLNavigationController {
 	    md.addAttribute("countryList", countryList);
 	    
 		return "RT/Nostro_Account_Bal";
-	}
-
-//In Modify section If we select the Bank name other details are fetching code
-	@RequestMapping(value = "getBankDetails", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
-
-		RT_BankNameMaster bank = bankRepo.findByBankName(bankName);
-		System.out.println("came to controller with bank name ");
-		if (bank == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		Map<String, String> bankDetails = new HashMap<>();
-		bankDetails.put("bankSymbol", bank.getBankSymbol());
-		bankDetails.put("conventionalIslamic", bank.getConventionalIslamic());
-		bankDetails.put("localForeign", bank.getLocalForeign());
-		bankDetails.put("cbuaeTiering", bank.getCbuaeTiering());
-
-		return ResponseEntity.ok(bankDetails);
-	}
-
-//In Modify section If we select the Country of Risk, cbuaeGeographicalZone fetching code
-	@RequestMapping(value = "getCountryDetails", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, String>> getCountryDetails(@RequestParam String countryName) {
-		RT_CountryRiskDropdown country = countryRepo.findByCountryOfRisk(countryName);
-		System.out.println("Fetched country details for: " + countryName);
-
-		if (country == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		Map<String, String> response = new HashMap<>();
-		response.put("cbuaeGeographicalZone", country.getCbuaeGeographicalZone());
-
-		return ResponseEntity.ok(response);
-	}
-
-//Creating Data Control
-	@PostMapping("/createDataControl")
-	@ResponseBody
-	public String createDataControl(
-			@RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
-			@RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
-			@ModelAttribute RT_DataControl dto) {
-		System.out.println("Controller: createOrUpdateNostro() called");
-		System.out.println("report name is: " + report_name);
-		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
 
 	// Update Submit code in nostro
