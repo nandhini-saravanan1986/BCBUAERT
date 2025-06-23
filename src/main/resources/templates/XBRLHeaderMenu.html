@@ -535,24 +535,51 @@ h3 {
 	</style>
 
 	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const currentPath = window.location.pathname;
-			const navLinks = document.querySelectorAll(".nav-link");
+	document.addEventListener("DOMContentLoaded", function () {
+	    const currentPath = window.location.pathname;
+	    const navLinks = document.querySelectorAll(".nav-link");
+	    const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
 
-			navLinks.forEach(link => {
-				const linkPath = link.getAttribute("href");
+	    // First, handle direct nav links (e.g., Home, and actual sub-menu items)
+	    navLinks.forEach(link => {
+	        const linkPath = link.getAttribute("href");
 
-				if (linkPath && currentPath.includes(linkPath)) {
-					link.classList.add("active");
+	        // Check for exact match for sub-menu items (e.g., /UserProfile)
+	        // or for direct top-level links like /Dashboard
+	        if (linkPath && (currentPath === linkPath || currentPath.startsWith(linkPath + '?'))) {
+	            link.classList.add("active");
 
-					// If inside a dropdown, also highlight the parent dropdown toggle
-					const dropdownToggle = link.closest(".dropdown-menu")?.previousElementSibling;
-					if (dropdownToggle?.classList.contains("dropdown-toggle")) {
-						dropdownToggle.classList.add("active");
-					}
-				}
-			});
-		});
+	            // If this active link is inside a dropdown, highlight its parent dropdown toggle
+	            const parentDropdownMenu = link.closest(".dropdown-menu");
+	            if (parentDropdownMenu) {
+	                const parentToggle = parentDropdownMenu.previousElementSibling;
+	                if (parentToggle && parentToggle.classList.contains("dropdown-toggle")) {
+	                    parentToggle.classList.add("active");
+	                }
+	            }
+	        }
+	    });
+
+	    // Handle dropdown toggles based on whether any of their children are active
+	    dropdownToggles.forEach(toggle => {
+	        const dropdownMenu = toggle.nextElementSibling; // The actual <ul> dropdown
+	        if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+	            const childLinks = dropdownMenu.querySelectorAll('.nav-link');
+	            let hasActiveChild = false;
+
+	            childLinks.forEach(childLink => {
+	                const childLinkPath = childLink.getAttribute('href');
+	                if (childLinkPath && (currentPath === childLinkPath || currentPath.startsWith(childLinkPath + '?'))) {
+	                    hasActiveChild = true;
+	                }
+	            });
+
+	            if (hasActiveChild) {
+	                toggle.classList.add("active");
+	            }
+	        }
+	    });
+	});
 	</script>
 <style>
 
