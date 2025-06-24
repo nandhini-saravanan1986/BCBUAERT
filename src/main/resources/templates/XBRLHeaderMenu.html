@@ -8,10 +8,12 @@
 	<!-- CSS Dependencies -->
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+	
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	
 	<!-- JS Dependencies -->
 	<script th:src="@{/js/datatables.min.js}"></script>
 	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-
 
 
 	<style>
@@ -539,22 +541,31 @@ h3 {
 	    const currentPath = window.location.pathname;
 	    const navLinks = document.querySelectorAll(".nav-link");
 	    const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+	    const urlParams = new URLSearchParams(window.location.search);
+	    const formMode = urlParams.get('formmode');
 
 	    // First, handle direct nav links (e.g., Home, and actual sub-menu items)
 	    navLinks.forEach(link => {
 	        const linkPath = link.getAttribute("href");
+	        const linkFormMode = link.getAttribute("data-formmode") || 
+	                           (linkPath.includes('?') ? 
+	                            new URLSearchParams(linkPath.split('?')[1]).get('formmode') : 
+	                            null);
 
-	        // Check for exact match for sub-menu items (e.g., /UserProfile)
-	        // or for direct top-level links like /Dashboard
-	        if (linkPath && (currentPath === linkPath || currentPath.startsWith(linkPath + '?'))) {
-	            link.classList.add("active");
-
-	            // If this active link is inside a dropdown, highlight its parent dropdown toggle
-	            const parentDropdownMenu = link.closest(".dropdown-menu");
-	            if (parentDropdownMenu) {
-	                const parentToggle = parentDropdownMenu.previousElementSibling;
-	                if (parentToggle && parentToggle.classList.contains("dropdown-toggle")) {
-	                    parentToggle.classList.add("active");
+	        // Check for exact match including formmode parameter
+	        if (linkPath) {
+	            const cleanLinkPath = linkPath.split('?')[0];
+	            const cleanCurrentPath = currentPath.split('?')[0];
+	            
+	            if (cleanCurrentPath === cleanLinkPath) {
+	                // If formmode parameter exists in URL, match it with the link's formmode
+	                if (formMode || linkFormMode) {
+	                    if (formMode === linkFormMode) {
+	                        link.classList.add("active");
+	                    }
+	                } else {
+	                    // No formmode parameter, just match the path
+	                    link.classList.add("active");
 	                }
 	            }
 	        }
@@ -562,14 +573,13 @@ h3 {
 
 	    // Handle dropdown toggles based on whether any of their children are active
 	    dropdownToggles.forEach(toggle => {
-	        const dropdownMenu = toggle.nextElementSibling; // The actual <ul> dropdown
+	        const dropdownMenu = toggle.nextElementSibling;
 	        if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
 	            const childLinks = dropdownMenu.querySelectorAll('.nav-link');
 	            let hasActiveChild = false;
 
 	            childLinks.forEach(childLink => {
-	                const childLinkPath = childLink.getAttribute('href');
-	                if (childLinkPath && (currentPath === childLinkPath || currentPath.startsWith(childLinkPath + '?'))) {
+	                if (childLink.classList.contains('active')) {
 	                    hasActiveChild = true;
 	                }
 	            });
@@ -797,7 +807,7 @@ color:white;
 								<li><a class="nav-link" th:href="@{/Mm_Data}">MM Data</a></li>
 								<li><a class="nav-link" th:href="@{/Repo_Data_Template}">Repo
 										Data Template</a></li>
-
+								<li><a class="nav-link" th:href="@{/Investment_Risk_Data_Dashboard_Template}">Investment Risk Data Dashboard Template</a></li>
 							</ul></li>
 
 						<li class="nav-item dropdown"
@@ -823,9 +833,10 @@ color:white;
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/counterparty_list}"
 									data-name="Upload Exposure">Exposure Data</a></li>
-								<li><a class="nav-link"
-									th:href="@{/Interbank_placement?formmode=add}"
-									data-name="Upload Exposure">Treasury Placement</a></li>
+								<li><a class="nav-link" 
+       th:href="@{/Interbank_placement?formmode=add}"
+       data-formmode="add"
+       data-name="Upload Exposure">Treasury Placement</a></li>
 								<li><a class="nav-link"
 									th:href="@{/swap_settlement?formmode=add}"
 									data-name="Upload Exposure">Settlement</a></li>
