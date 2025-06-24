@@ -18,6 +18,7 @@
 	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
 <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
 	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
@@ -194,7 +195,7 @@
 	}
 
 	function home() {
-		location.href = "/MIS/Dashboard";
+		location.href = "/BCDRS/Dashboard";
 	}
 
 	function back() {
@@ -306,7 +307,7 @@ function submitform() {
 	.page-item.active .page-link {
     z-index: 1;
     color: #fff;
-    background-color: darkorange;
+    ;
     border-color: darkorange;
 }
 .btn{
@@ -619,7 +620,7 @@ function get_branch() {
 }
 </script>
 </head>
-<title>MIS</title>
+<title>BCDRS</title>
 <body>
 	
 <div class="container-fluid">
@@ -638,8 +639,8 @@ function get_branch() {
 							style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
 					</div>
 									<div class="btn-group nav-buttons float-right">
-											<button type="button" class="btn btn-sm text-white mx-1"
-												style="background-color: darkorange;"
+											<button type="button" class="custom-tab-btn"
+												style=";"
 												onclick="window.location.href='./download/excel?mode=placement'">
 												Template Download</button>
 										</div>
@@ -725,13 +726,13 @@ function get_branch() {
 									</div>
 								</div>
 								<div class="card-footer text-center">
-									<button type="button" class="btn btn-xs "
-										style="background-color: darkorange" id="btnHome"
+									<button type="button" class="custom-tab-btn"
+										style="" id="btnHome"
 										onclick="home();">Home</button>
-									<button type="button" class="btn btn-xs " id="generatebtn"
-										style="background-color: darkorange" onclick="check_date();">Submit</button>
-									<button type="button" class="btn btn-xs "
-										style="background-color: darkorange" id="btnBack"
+									<button type="button" class="custom-tab-btn" id="generatebtn"
+										style="" onclick="check_date();">Submit</button>
+									<button type="button" class="custom-tab-btn"
+										style="" id="btnBack"
 										onclick="back();">Back</button>
 
 								</div>
@@ -759,12 +760,11 @@ function get_branch() {
 							value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
 					</div>
 					<div class="d-flex align-items-center gap-1">
-							<button type="button" class="btn btn-light btn-sm mx-1"
-								style="background-color: darkorange" id="btnAdd"
+							<button type="button" class="custom-tab-btn"
+								style="" id="btnAdd"
 								onclick="Trasury_Limits();">List Of Treasury Limits</button>
 								
-							<button type="button" class="btn btn-light btn-sm"
-									style="border-radius: 8px; background-color: darkorange"
+							<button type="button" class="custom-tab-btn"
 									onclick="placement()">Download</button>
 
 						</div>
@@ -829,9 +829,9 @@ function get_branch() {
 						</div>
 					<div class="card-footer text-center"
 						>
-						<button type="button" class="btn btn-xs " style="background-color:darkorange" id="btnHome"
+						<button type="button" class="custom-tab-btn" id="btnHome"
 							onclick="home();">Home</button>
-						<button type="button" class="btn btn-xs "style="background-color:darkorange" id="btnBack"
+						<button type="button" class="custom-tab-btn"id="btnBack"
 							onclick="back();">Back</button>
 					</div>
 				</div>
@@ -855,16 +855,17 @@ function get_branch() {
 							class="form-control form-control-sm"   th:value="${reportdate}"  />
 					</div>
 						<div class="d-flex align-items-center gap-1">
-							<button type="button" class="btn btn-light btn-sm mx-1"
-								style="background-color: darkorange" id="btnAdd"
+							<button type="button" class="custom-tab-btn"
+								style="" id="btnAdd"
 								onclick="Trasury_place();">List Of Treasury Placements</button>
 	
-							<button type="button" class="btn btn-light btn-sm"
-									style="border-radius: 8px; background-color: darkorange"
+							<button type="button" class="custom-tab-btn"
+									style="border-radius: 8px; "
 									onclick="treasuryLimit()">Download</button>
 						</div>
 					</div>
 				</div>
+				
 
 
 				<div class="row">
@@ -900,9 +901,9 @@ function get_branch() {
 
 					<div class="card-footer text-center"
 						>
-						<button type="button" class="btn btn-xs " style="background-color:darkorange" id="btnHome"
+						<button type="button" class="custom-tab-btn" 
 							onclick="home();">Home</button>
-						<button type="button" class="btn btn-xs "style="background-color:darkorange" id="btnBack"
+						<button type="button" class="custom-tab-btn" id="btnBack"
 							onclick="back();">Back</button>
 					</div>
 				</div>
@@ -919,11 +920,11 @@ function get_branch() {
 			<div class="modal-content">
 			<div class="menu-title-header">
 					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;background-color: darkorange;">BANK OF BARODA</div>
+						style="text-align: center; color: white;">BANK OF BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="btn "style="background-color:darkorange" onclick="list()"
+					<button type="button" class="custom-tab-btn" onclick="list()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -954,7 +955,7 @@ function get_branch() {
 			<div class="modal-content">
 			<div class="menu-title-header">
 					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;background-color: darkorange;">BANK OF BARODA</div>
+						style="text-align: center; color: white;">BANK OF BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
