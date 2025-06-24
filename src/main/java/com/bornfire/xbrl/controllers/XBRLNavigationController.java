@@ -87,6 +87,7 @@ import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
+import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
 import com.bornfire.xbrl.entities.TreasuryPlacementRep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.Excel_Services;
@@ -101,6 +102,7 @@ import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 
+
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -109,6 +111,9 @@ public class XBRLNavigationController {
 	/*
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
+	
+	@Autowired
+	RT_Investment_Risk_Data_Dashboard_TemplateRepository RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS;
 	@Autowired
 	UserProfileRep UserProfileReps;
 		@Autowired
@@ -546,7 +551,10 @@ public class XBRLNavigationController {
 			        System.out.println("edit is formmode");
 			        md.addAttribute("formmode", "edit");
 			    } else if ("list".equalsIgnoreCase(formmode)) {
-			        md.addAttribute("repoList", repoRepo.getlist());
+			    	
+			    	System.out.println("RT"+RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist().size() );
+			        md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist());
+			        
 			        System.out.println("list is formmode");
 			        md.addAttribute("formmode", "list");
 			    } else {
