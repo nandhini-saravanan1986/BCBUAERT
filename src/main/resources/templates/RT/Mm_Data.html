@@ -410,53 +410,67 @@ function mmdata() {
 
 
     <script>
-    function downloadMm() {
-        $('#downloadProcessingModal').modal('show');
+function downloadMm() {
+    // 1. Show the loader modal
+    $('#downloadProcessingModal').modal('show');
 
-        $.ajax({
-            url: './downloadMmExcel', // Make sure this URL maps to your controller endpoint
-            type: 'GET',
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+    $.ajax({
+        url: './downloadMmExcel',
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob' // To properly receive file data
+        },
+        success: function (data) {
+            // 2a. Hide loader on success
+            $('#downloadProcessingModal').modal('hide');
+            $('#loader').modal('hide');
 
-                if (data && data.size > 0) {
-                    var blob = new Blob([data], { type: 'application/octet-stream' });
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'MmData.xls';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+            // Ensure file is not empty (adjust size threshold as needed)
+            if (data && data.size > 100) {
+                // Create a downloadable link
+                const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'MmData.xls';
+                document.body.appendChild(a);
 
-                    $('#customAlertBody').text('Downloaded MmData.xls');
-                } else {
-                    $('#customAlertBody').text('No data available to download.');
-                }
+                a.click(); // Trigger download
 
-                $('#customAlertModal').modal('show');
-            },
-            error: function (xhr, status, error) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+                // Clean up
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
 
-                console.error("Download failed:", error);
-                $('#customAlertBody').text('Failed to download MmData.xls');
-                $('#customAlertModal').modal('show');
+                // Show success message in your custom modal
+                $('#customAlertBody').text('The file has been downloaded successfully.');
+            } else {
+                // Show info if no data was returned
+                $('#customAlertBody').text('No data available to download.');
             }
-        });
 
-        // Fallback hide in case AJAX fails silently
-        setTimeout(function () {
-            $("#loader").modal("hide");
-        }, 10000);
-    }
+            $('#customAlertModal').modal('show');
+        },
+        error: function (xhr, status, error) {
+            // 2b. Hide loader on error
+            $('#downloadProcessingModal').modal('hide');
+            $('#loader').modal('hide');
+
+            console.error("Download failed:", error);
+
+            // Show error in modal
+            $('#customAlertBody').text('An error occurred while downloading the file. Please try again.');
+            $('#customAlertModal').modal('show');
+        }
+    });
+
+    // Fallback: ensure loader doesn't stay stuck if something goes wrong
+    setTimeout(function () {
+        $('#loader').modal('hide');
+    }, 10000);
+}
 </script>
+
 
 	<script>
 
@@ -1231,7 +1245,7 @@ function mmdata() {
 							</div>
 						</div>
 					</div>
-					<!-- Download Message -->
+					 Download Message 
 					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
 						aria-labelledby="customAlertModalLabel" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered" role="document">

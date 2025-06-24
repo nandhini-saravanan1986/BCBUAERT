@@ -101,7 +101,9 @@ import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
-
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
+import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 
 @Controller
 @ConfigurationProperties("default")
@@ -195,6 +197,12 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	RT_RepoService repoService;
+	
+	@Autowired
+	RT_TradeLevelDataDerivativesRepository tradeleveldataderivativesRepo;
+	
+    @Autowired
+	private RT_TradeLevelDerivativesService tradeleveldataderivativeService;
 
 	private String pagesize;
 
@@ -661,7 +669,7 @@ public class XBRLNavigationController {
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
 		md.addAttribute("bankList", bankList);
 
-		return "Fx_Risk_Data";
+		return "RT/Fx_Risk_Data";
 	}
 
 	// For download excel for fxriskdata
@@ -824,7 +832,7 @@ public class XBRLNavigationController {
 		md.addAttribute("bankList", bankList);
 		md.addAttribute("countryList", countryList);
 
-		return "Mm_Data";
+		return "RT/Mm_Data";
 	}
 
 	@RequestMapping(value = "downloadMmExcel", method = RequestMethod.GET)
@@ -1459,6 +1467,64 @@ public class XBRLNavigationController {
 	public String getbranch(@RequestParam(required = false) String selected_branch) {
 	    return counter_servicess.getbranch(selected_branch);
 	}
+	
+	@RequestMapping(value = "downloadTradeleveldataderivativeExcel", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadTradeleveldataderivativeExcel() throws IOException {
+		System.out.println("Entered controller downloadMmExcel");
+
+		File excelFile = tradeleveldataderivativeService.generateTradeleveldataderivativeExcel();
+		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+		HttpHeaders headersResponse = new HttpHeaders();
+		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headersResponse.setContentDispositionFormData("attachment", "Mmdata.xls");
+
+		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	}
+	
+	@RequestMapping(value = "Trade_Level_Data_Derivatives", method = RequestMethod.GET)
+	public String Tradeleveldataderivatives(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_TradeLevelDataDerivatives data = tradeleveldataderivativesRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("tradeleveldataderivative", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
+
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", tradeleveldataderivativesRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
+
+			// You had md.addAttribute("formmode", "null"); — removed this line because it
+			// would overwrite the previous one
+		}
+
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		md.addAttribute("bankList", bankList);
+
+		return "RT/Trade_Level_Data_Derivatives";
+	}
+	
+	
+	@PostMapping("/updatetradeleveldataderivative")
+	@ResponseBody
+	public String updatetradeleveldataderivative(@ModelAttribute RT_TradeLevelDataDerivatives tradeleveldataderivative) {
+		boolean updated = tradeleveldataderivativeService.updatetradeleveldataderivative(tradeleveldataderivative);
+
+		if (updated) {
+			return "Update successful";
+		} else {
+			return "Record not found for update";
+		}
+
+
+}
 
 
 
