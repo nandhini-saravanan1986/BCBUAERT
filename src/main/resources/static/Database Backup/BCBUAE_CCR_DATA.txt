@@ -1,0 +1,110 @@
+
+
+CREATE TABLESPACE BCBUAE_CCRDATA_TS
+DATAFILE '/opt/oracle/oradata/CXBRL/datafile/BCBUAE_CCRDATA_TS01.dbf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE 1G;
+
+
+
+CREATE TABLE BCBUAE_CCR_DATA (
+    Transaction_Date                      DATE,
+    Bank_Name                             VARCHAR2(200),
+    Head_Office_Subsidiary                VARCHAR2(100),
+    Subsidiary                            VARCHAR2(200),
+    Bank_Symbol                           VARCHAR2(50),
+    Conventional_Islamic                  VARCHAR2(50),
+    CBUAE_Tiering                         VARCHAR2(50),
+    CBUAE_Tiering_Secondary               VARCHAR2(50),
+    Counterparty_Name                     VARCHAR2(200),
+    Internal_Counterparty_Ref             VARCHAR2(100),
+    Internal_Counterparty_Rating          VARCHAR2(50),
+    Final_Rating_CBUAE                    VARCHAR2(50),
+    Country_of_Risk                       VARCHAR2(100),
+    CBUAE_Geographical_Zone               VARCHAR2(100),
+    Counterparty_Type                     VARCHAR2(100),
+    Sector                                VARCHAR2(100),
+    PFE_95_AED                            NUMBER(20, 2),
+    Expected_Positive_Exposure_AED        NUMBER(20, 2),
+    Expected_Negative_Exposure_AED        NUMBER(20, 2),
+    CSA                                   VARCHAR2(100),
+    Collateral_Type                       VARCHAR2(100),
+    Threshold                             NUMBER(20, 2),
+    Minimum_Transfer_Amount_AED           NUMBER(20, 2),
+    Independent_Amount_AED                NUMBER(20, 2),
+    Margin_Call_Frequency                 VARCHAR2(50),
+    Net_Collateral_Outstanding_AED        NUMBER(20, 2),
+    CVA_AED                                NUMBER(20, 2),
+    DVA_AED                                NUMBER(20, 2),
+    Bilateral_CVA_AED                     NUMBER(20, 2),
+    FVA_AED                                NUMBER(20, 2),
+    Incremental_PFE                       NUMBER(20, 2),
+    REPORT_SUBMIT_DATE  DATE, 
+	"REPORT_FROM_DATE" DATE, 
+	"REPORT_TO_DATE" DATE, 
+	"REPORT_DATE" DATE, 
+	"ENTITY_FLG" VARCHAR2(1 BYTE), 
+	"MODIFY_FLG" VARCHAR2(1 BYTE), 
+	"DEL_FLG" VARCHAR2(1 BYTE), 
+	"SI_NO" VARCHAR2(20 BYTE)
+);
+
+
+
+
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.BANK_NAME IS 'Select your bank name in the list. In case the bank name is not in the list, select other and inform CBUAE accordingly.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.HEAD_OFFICE_SUBSIDIARY IS 'Whether the data pertain to head office or subsidiary/branch.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.SUBSIDIARY IS 'Subsidiary name if applicable.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.BANK_SYMBOL IS 'Refers to CBUAE internal code.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CONVENTIONAL_ISLAMIC IS 'Differentiation between Islamic and Conventional Institution.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CBUAE_TIERING IS 'Internal CBUAE Tiering classification.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CBUAE_TIERING_SECONDARY IS 'Secondary CBUAE Tiering classification if applicable.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.COUNTERPARTY_NAME IS 'Internal Name of the counterparty.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.INTERNAL_COUNTERPARTY_REF IS 'Internal reference of the counterparty.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.INTERNAL_COUNTERPARTY_RATING IS 'Rating of the counterparty. Select the worst rating between S&P, Moody''s, and Fitch in case of external rating. Leave blank if unrated. For internal rating, provide the internal grid and mapping. For Central Banks, use country rating; for bank branches, use the rating of the head office.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.FINAL_RATING_CBUAE IS 'Final counterparty rating as per CBUAE.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.COUNTRY_OF_RISK IS 'Country of Risk of the Counterparty. If not part of the list, select other.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CBUAE_GEOGRAPHICAL_ZONE IS 'Geographical zone as per CBUAE definition.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.COUNTERPARTY_TYPE IS 'Type of issuer: sovereign, GRE, PSE, FI, NBFI, corporate, SME, retail, other. NBFI includes hedge funds, insurance, broker, etc.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.SECTOR IS 'Refers to the sector of the counterparty. Use the dropdown list or refer to the Industry Classification (GCIS). If not defined, select other.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.PFE_95_AED IS 'Potential Future Exposure at 95% confidence. Measures the maximum positive MTM from the bank''s perspective.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.EXPECTED_POSITIVE_EXPOSURE_AED IS 'Average of positive exposure through the lifetime.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.EXPECTED_NEGATIVE_EXPOSURE_AED IS 'Average of negative exposure through the lifetime.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CSA IS 'Credit Support Annex defines the terms for the management of collateral in derivative transactions.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.COLLATERAL_TYPE IS 'Whether the collateral is eligible.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.THRESHOLD IS 'Threshold that triggers margin call between both parties.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.MINIMUM_TRANSFER_AMOUNT_AED IS 'Minimum Transfer Amount to be posted against derivative price variation.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.INDEPENDENT_AMOUNT_AED IS 'Collateral amount posted upfront and independent of further collateralization.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.MARGIN_CALL_FREQUENCY IS 'Frequency of margin call as per CSA: daily, weekly, monthly, quarterly.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.NET_COLLATERAL_OUTSTANDING_AED IS 'Collateral outstanding between the bank and counterparty. Report net amount in AED. Positive if bank holds more collateral. If enforceability is uncertain, report gross and inform CBUAE.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.CVA_AED IS 'Credit Valuation Adjustment: change in market value due to counterparty credit risk.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.DVA_AED IS 'Debit Valuation Adjustment: reflects own credit risk in derivative liabilities.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.BILATERAL_CVA_AED IS 'Difference between CVA and DVA. Floored at CVA level; bank should not benefit from large DVA.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.FVA_AED IS 'Funding Valuation Adjustment: cost and benefit of funding the transaction.';
+COMMENT ON COLUMN CXBRL.BCBUAE_CCR_DATA.INCREMENTAL_PFE IS 'Individual contribution of counterparty PFE to the overall PFE.';
+
+
+
+CREATE INDEX "CXBRL"."IDX_BCBUAE_CCR_DATA_BANK_NAME" ON "CXBRL"."BCBUAE_CCR_DATA" ("BANK_NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE( INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BCBUAE_CCRDATA_TS" ;
+  ALTER INDEX "CXBRL"."IDX_BCBUAE_CCR_DATA_BANK_NAME"  UNUSABLE;
+
+
+ALTER TABLE CXBRL.BCBUAE_CCR_DATA
+MOVE TABLESPACE BCBUAE_CCRDATA_TS;
+
+
+
+
+CREATE INDEX "CXBRL"."IDX_BCBUAE_CCR_DATA_INDEPENDENT_AMOUNT_AED" ON "CXBRL"."BCBUAE_CCR_DATA" ("INDEPENDENT_AMOUNT_AED") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE( INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BCBUAE_CCRDATA_TS" ;
+
