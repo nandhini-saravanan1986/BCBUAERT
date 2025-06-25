@@ -80,13 +80,15 @@ public class RT_TradeLevelDataDerivatives {
 	private BigDecimal	uleg1_margin;
 	private String	uleg1_benchmark;
 	private String	uleg1_tenor;
-	private String	uleg1_details;
+	private String	underlying_leg1;
+    private String	uleg1_details;
 	private BigDecimal	uleg2_notional;
 	private String	uleg2_currency;
 	private String	uleg2_pay_receive;
 	private BigDecimal	uleg2_coupon;
 	private BigDecimal	uleg2_margin;
 	private String	uleg2_benchmark;
+	private String	underlying_leg2;
 	private String	uleg2_tenor;
 	private String	uleg2_details;
 	private BigDecimal	uleg2_clean_value_aed;
@@ -96,7 +98,8 @@ public class RT_TradeLevelDataDerivatives {
 	private String	cds_underlyings;
 	private String	quanto;
 	private BigDecimal	nominal;
-	private BigDecimal	ir_dv01_aed;
+	private String	cleanvalue_aed;
+   private BigDecimal	ir_dv01_aed;
 	private BigDecimal	cs01_aed;
 	private String	future_type;
 	private String	future_underlying_contract;
@@ -146,6 +149,13 @@ public class RT_TradeLevelDataDerivatives {
 	private String	entity_flg;
 	private String	modify_flg;
 	private String	del_flg;
+	private String	report_code;
+	private String	entry_user;
+	private String	modify_user;
+	private String	verify_user;
+	private Date	entry_time;
+	private Date	modify_time;
+	private Date	verify_time;
 	public String getSI_NO() {
 		return SI_NO;
 	}
@@ -884,6 +894,66 @@ public class RT_TradeLevelDataDerivatives {
 	public void setDel_flg(String del_flg) {
 		this.del_flg = del_flg;
 	}
+	public String getUnderlying_leg1() {
+		return underlying_leg1;
+	}
+	public void setUnderlying_leg1(String underlying_leg1) {
+		this.underlying_leg1 = underlying_leg1;
+	}
+	public String getUnderlying_leg2() {
+		return underlying_leg2;
+	}
+	public void setUnderlying_leg2(String underlying_leg2) {
+		this.underlying_leg2 = underlying_leg2;
+	}
+	public String getCleanvalue_aed() {
+		return cleanvalue_aed;
+	}
+	public void setCleanvalue_aed(String cleanvalue_aed) {
+		this.cleanvalue_aed = cleanvalue_aed;
+	}
+	public String getReport_code() {
+		return report_code;
+	}
+	public void setReport_code(String report_code) {
+		this.report_code = report_code;
+	}
+	public String getEntry_user() {
+		return entry_user;
+	}
+	public void setEntry_user(String entry_user) {
+		this.entry_user = entry_user;
+	}
+	public String getModify_user() {
+		return modify_user;
+	}
+	public void setModify_user(String modify_user) {
+		this.modify_user = modify_user;
+	}
+	public String getVerify_user() {
+		return verify_user;
+	}
+	public void setVerify_user(String verify_user) {
+		this.verify_user = verify_user;
+	}
+	public Date getEntry_time() {
+		return entry_time;
+	}
+	public void setEntry_time(Date entry_time) {
+		this.entry_time = entry_time;
+	}
+	public Date getModify_time() {
+		return modify_time;
+	}
+	public void setModify_time(Date modify_time) {
+		this.modify_time = modify_time;
+	}
+	public Date getVerify_time() {
+		return verify_time;
+	}
+	public void setVerify_time(Date verify_time) {
+		this.verify_time = verify_time;
+	}
 	public RT_TradeLevelDataDerivatives(String sI_NO, Date bank_date, String bank_name, String head_office_subsidiary,
 			String subsidiary, String bank_symbol, String conventional_islamic, String cbuae_tiering1,
 			String cbuae_tiering2, String cpty_name, String internal_counterparty_ref, String internal_transaction_ref,
@@ -918,7 +988,10 @@ public class RT_TradeLevelDataDerivatives {
 			BigDecimal irs_negative_mtm, BigDecimal asset_swap_negative_mtm, BigDecimal cds_negative_mtm,
 			BigDecimal future_contract_negative_mtm, BigDecimal option_negative_mtm, BigDecimal overall_negative_mtm,
 			String individual_negative_contribution, Date report_submit_date, Date report_from_date,
-			Date report_to_date, Date report_date, String entity_flg, String modify_flg, String del_flg) {
+			Date report_to_date, Date report_date, String entity_flg, String modify_flg, String del_flg,
+			String underlying_leg1, String underlying_leg2, String cleanvalue_aed, String report_code,
+			String entry_user, String modify_user, String verify_user, Date entry_time, Date modify_time,
+			Date verify_time) {
 		super();
 		SI_NO = sI_NO;
 		this.bank_date = bank_date;
@@ -1043,6 +1116,16 @@ public class RT_TradeLevelDataDerivatives {
 		this.entity_flg = entity_flg;
 		this.modify_flg = modify_flg;
 		this.del_flg = del_flg;
+		this.underlying_leg1 = underlying_leg1;
+		this.underlying_leg2 = underlying_leg2;
+		this.cleanvalue_aed = cleanvalue_aed;
+		this.report_code = report_code;
+		this.entry_user = entry_user;
+		this.modify_user = modify_user;
+		this.verify_user = verify_user;
+		this.entry_time = entry_time;
+		this.modify_time = modify_time;
+		this.verify_time = verify_time;
 	}
 	public RT_TradeLevelDataDerivatives() {
 		super();
@@ -1050,6 +1133,7 @@ public class RT_TradeLevelDataDerivatives {
 	}
 	
 	
+
 	
 }
 

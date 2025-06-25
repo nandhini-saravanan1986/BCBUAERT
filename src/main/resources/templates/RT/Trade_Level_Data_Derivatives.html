@@ -909,6 +909,7 @@ if (tabId === 'data') {
 <th>ULeg1 Margin</th>
 <th>ULeg1 Benchmark</th>
 <th>ULeg1 Tenor</th>
+<th>ULeg1 </th>
 <th>ULeg1 Details</th>
 <th>ULeg2 Notional</th>
 <th>ULeg2 Currency</th>
@@ -917,6 +918,7 @@ if (tabId === 'data') {
 <th>ULeg2 Margin</th>
 <th>ULeg2 Benchmark</th>
 <th>ULeg2 Tenor</th>
+<th>ULeg2 </th>
 <th>ULeg2 Details</th>
 <th>ULeg2 Clean Value AED</th>
 <th>ULeg2 Accrued Interest AED</th>
@@ -925,6 +927,7 @@ if (tabId === 'data') {
 <th>CDS Underlyings</th>
 <th>Quanto</th>
 <th>Nominal</th>
+<th>Clean Value AED</th>
 <th>IR DV01 AED</th>
 <th>CS01 AED</th>
 <th>Future Type</th>
@@ -1037,6 +1040,7 @@ if (tabId === 'data') {
 <td th:text="${data.uleg1_margin}"></td>
 <td th:text="${data.uleg1_benchmark}"></td>
 <td th:text="${data.uleg1_tenor}"></td>
+<td th:text="${data.underlying_leg1}"></td>
 <td th:text="${data.uleg1_details}"></td>
 <td th:text="${data.uleg2_notional}"></td>
 <td th:text="${data.uleg2_currency}"></td>
@@ -1045,6 +1049,7 @@ if (tabId === 'data') {
 <td th:text="${data.uleg2_margin}"></td>
 <td th:text="${data.uleg2_benchmark}"></td>
 <td th:text="${data.uleg2_tenor}"></td>
+<td th:text="${data.underlying_leg2}"></td>
 <td th:text="${data.uleg2_details}"></td>
 <td th:text="${data.uleg2_clean_value_aed}"></td>
 <td th:text="${data.uleg2_accrued_interest_aed}"></td>
@@ -1053,6 +1058,7 @@ if (tabId === 'data') {
 <td th:text="${data.cds_underlyings}"></td>
 <td th:text="${data.quanto}"></td>
 <td th:text="${data.nominal}"></td>
+<td th:text="${data.cleanvalue_aed}"></td>
 <td th:text="${data.ir_dv01_aed}"></td>
 <td th:text="${data.cs01_aed}"></td>
 <td th:text="${data.future_type}"></td>
@@ -1145,14 +1151,11 @@ if (tabId === 'data') {
  
   
    <input type="hidden" th:field="*{SI_NO}" />
-
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Bank Date</label>
-            <div class="col-sm-4">
-              <input type="date" class="form-control" th:field="*{bank_date}" />
-            </div>
-
-            <label class="col-sm-2 col-form-label">Bank Name</label>
+   
+   <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bank Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{bank_date}" /></div>
+     <label class="col-sm-2 col-form-label">Bank Name</label>
             <div class="col-sm-4">
               <select class="form-control" th:field="*{bank_name}" onchange="handleBankChange(this)">
                 <option value="">-- Select Bank --</option>
@@ -1161,28 +1164,34 @@ if (tabId === 'data') {
                         th:text="${bank.bankName}">
                 </option>
               </select>
-            </div>
-          </div>
-          
-          <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{head_office_subsidiary}" /></div>
+              </div>
+</div>
+
+<div class="form-group row">
+      <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{head_office_subsidiary}">
+        <option value="">-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
     <label class="col-sm-2 col-form-label">Subsidiary</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Bank Symbol</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bank_symbol}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bank_symbol}"  id="bankSymbol" readonly/></div>
     <label class="col-sm-2 col-form-label">Conventional Islamic</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{conventional_islamic}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{conventional_islamic}" id="conventionalIslamic" readonly /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CBUAE Tiering1</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering1}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering1}" id="localForeign" readonly /></div>
     <label class="col-sm-2 col-form-label">CBUAE Tiering2</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering2}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering2}" id="cbuaeTiering" readonly /></div>
 </div>
 
 <div class="form-group row">
@@ -1363,34 +1372,41 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg1 Tenor</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_tenor}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg1}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg1 Details</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_details}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 Notional</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_notional}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_currency}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 Pay Receive</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_pay_receive}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 Coupon</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_coupon}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 Margin</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_margin}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_benchmark}" /></div>
 </div>
 
 <div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_benchmark}" /></div>
     <label class="col-sm-2 col-form-label">ULeg2 Tenor</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_tenor}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg2}" /></div>
     <label class="col-sm-2 col-form-label">ULeg2 Details</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_details}" /></div>
 </div>
@@ -1419,148 +1435,157 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Nominal</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{nominal}" /></div>
+    <label class="col-sm-2 col-form-label">Clean Value AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cleanvalue_aed}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">IR DV01 AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{ir_dv01_aed}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">CS01 AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cs01_aed}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Type</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_type}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Underlying Contract</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_underlying_contract}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Qty</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_qty}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Size</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_size}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_rate}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Market Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_market_rate}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Valuation</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_valuation}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Sensitivity AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_sensitivity_aed}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Options List</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{options_list}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Type</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_type}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Underlying Type</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_type}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Underlying Details</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_details}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Strike</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{strike}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Market Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_market_rate}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Barrier Type</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_type}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Barrier Upper Range</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_upper_range}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Barrier Lower Range</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_lower_range}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Fair Value AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_fair_value_aed}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Dollar Delta</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_delta}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Dollar Vega</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_vega}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Dollar Gamma</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_gamma}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Dollar Rho</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_rho}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Dollar Theta</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_theta}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Overall MTM AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_mtm_aed}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">IRS Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_positive_mtm}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Asset Swap Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">CDS Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_positive_mtm}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_positive_mtm}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Overall Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Individual Positive Contribution</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_positive_contribution}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">IRS Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_negative_mtm}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Asset Swap Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_negative_mtm}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">CDS Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_negative_mtm}" /></div>
+</div>
+
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_negative_mtm}" /></div>
-</div>
-
-<div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_negative_mtm}" /></div>
-    <label class="col-sm-2 col-form-label">Overall Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Overall Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_negative_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Individual Negative Contribution</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_negative_contribution}" /></div>
 </div>
 
+
+
+
+
+
+
+          
 
           
           
