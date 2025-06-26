@@ -211,31 +211,30 @@ function final_sheet() {
 
 		<div th:if="${formmode}=='list'">
 			<div class="card">
-				<div
-					class="card-header d-flex justify-content-between align-items-center">
-					<h5 class="font-weight-bold text-dark">ASL-Final sheet</h5>
-					<!-- Trigger Buttons -->
-					<div class="btn-group gap-auto">
-								<label class="col-sm-auto">Report Date :</label> <input type="date"
-									name="ReportDate" id="ReportDate" onchange="getall()"
-									class="form-control form-control-sm col-sm-4"
-									th:value="${#dates.format(currentDate, 'yyyy-MM-dd')}" />
+			<div class="card-header d-flex justify-content-between align-items-center">
+    <!-- Title -->
+    <h5 class="mb-0" style="font-family: Verdana; font-size: 20px; font-weight: bold; margin-left: 20px;">
+        ASL - Final Sheet
+    </h5>
 
+    <!-- Action Controls -->
+    <div class="d-flex align-items-center gap-2 me-3">
+        <!-- Report Date Label + Input -->
+<label for="ReportDate" class="me-2 mb-0 text-white">Report Date:</label>
+<input type="date"
+               name="ReportDate"
+               id="ReportDate"
+               onchange="getall()"
+               class="form-control form-control-sm"
+               style="width: auto;"
+               th:value="${#dates.format(currentDate, 'yyyy-MM-dd')}" />
 
+        <!-- Buttons -->
+        <button type="button" class="custom-tab-btn" onclick="calculate()">Calculate</button>
+        <button type="button" class="custom-tab-btn" onclick="final_sheet()">Download</button>
+    </div>
+</div>
 
-								<button type="button" class="custom-tab-btn"
-									onclick="calculate()">Calculate</button>
-									
-								<button type="button" class="custom-tab-btn"
-									onclick="final_sheet()">Download</button>
-								<!-- 	<button type="button" class="btn btn-light btn-sm"
-							style="border-radius: 8px; background-color: darkorange"
-							onclick="openLimitModal('add')">Add Limit</button>
-						<button type="button" class="btn btn-light btn-sm"
-							style="border-radius: 8px; background-color: darkorange"
-							onclick="openLimitModal('reduce')">Reduce Limit</button> -->
-					</div>
-				</div>
 
 				<div class="row">
 					<div class="col-sm-12">

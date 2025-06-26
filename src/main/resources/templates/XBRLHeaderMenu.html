@@ -545,85 +545,76 @@ h3 {
 	    const navLinks = document.querySelectorAll(".nav-link");
 	    const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
 
-	    let activeNavLinkFound = null; // Variable to store the active nav-link
+	    let activeNavLinkFound = null;
 
-	    // First loop: Handles direct nav links and sub-menu items
+	    // First, clear all existing 'active' classes to prevent conflicts
+	    navLinks.forEach(link => link.classList.remove("active"));
+	    dropdownToggles.forEach(toggle => toggle.classList.remove("active"));
+
+	    // Loop through nav links to find the currently active one
 	    navLinks.forEach(link => {
 	        const linkHref = link.getAttribute("href");
 
 	        if (linkHref) {
 	            const linkUrl = new URL(linkHref, window.location.origin);
 	            const linkPath = linkUrl.pathname;
+	            // Get formmode from data-formmode or URL search params
 	            const linkFormMode = link.getAttribute("data-formmode") || linkUrl.searchParams.get('formmode');
 
 	            const cleanCurrentPath = currentPath.split('?')[0];
 	            const cleanLinkPath = linkPath.split('?')[0];
 
+	            // Check if the base paths match
 	            if (cleanCurrentPath === cleanLinkPath) {
-	                if (currentFormMode) {
-	                    if (linkFormMode) {
-	                        if (currentFormMode === linkFormMode) {
-	                            link.classList.add("active");
-	                            activeNavLinkFound = link; // Store the found active link
-	                        }
-	                    } else {
-	                        // This handles /UserProfile when URL is /UserProfile?formmode=add
+	                // Special handling for /counterparty_list to distinguish ASL vs ASL Upload
+	                if (cleanCurrentPath === '/counterparty_list') {
+	                    // Scenario 1: ASL -> Exposure Data (URL: /counterparty_list?formmode=list)
+	                    if (currentFormMode === 'list' && linkFormMode === 'list') {
 	                        link.classList.add("active");
-	                        activeNavLinkFound = link; // Store the found active link
+	                        activeNavLinkFound = link;
+	                    }
+	                    // Scenario 2: ASL Upload -> Exposure Data (URL: /counterparty_list, no formmode)
+	                    // We need to be precise here: current URL has no formmode, and this link is specifically the one in ASL Upload
+	                    else if (!currentFormMode && !linkFormMode && link.closest('#asl-upload-dropdown')) {
+	                        link.classList.add("active");
+	                        activeNavLinkFound = link;
 	                    }
 	                } else {
-	                    if (!linkFormMode) {
-	                        link.classList.add("active");
-	                        activeNavLinkFound = link; // Store the found active link
+	                    // General logic for other links not specifically /counterparty_list
+	                    if (currentFormMode) { // If current URL has a formmode
+	                        if (linkFormMode) { // If link also has a formmode
+	                            if (currentFormMode === linkFormMode) {
+	                                link.classList.add("active");
+	                                activeNavLinkFound = link;
+	                            }
+	                        } else { // If link does not have a formmode but current URL does (e.g., /UserProfile?formmode=add matches /UserProfile)
+	                            // Only activate if the link is a 'base' link and not intended to be distinct by formmode
+	                            // This might need further refinement depending on your application's formmode usage
+	                            link.classList.add("active");
+	                            activeNavLinkFound = link;
+	                        }
+	                    } else { // If current URL has no formmode
+	                        if (!linkFormMode) { // If link also has no formmode
+	                            link.classList.add("active");
+	                            activeNavLinkFound = link;
+	                        }
 	                    }
 	                }
 	            }
 	        }
 	    });
 
-	    // Handle dropdown toggles based on the *specifically* active child link
-	    if (activeNavLinkFound) { // Only proceed if an active nav-link was found
-	        // Find the closest parent .dropdown-menu of the active link
-	        const parentDropdownMenu = activeNavLinkFound.closest('.dropdown-menu');
-
-	        if (parentDropdownMenu) {
-	            // Find the dropdown-toggle that is a sibling of the parentDropdownMenu
-	            // This ensures we get the correct toggle for the specific dropdown.
-	            const parentDropdownToggle = parentDropdownMenu.previousElementSibling;
-
-	            // Check if it's actually a dropdown-toggle
-	            if (parentDropdownToggle && parentDropdownToggle.classList.contains('dropdown-toggle')) {
+	    // Now, activate the parent dropdown based on the activeNavLinkFound
+	    if (activeNavLinkFound) {
+	        // Find the closest ancestor li.nav-item that contains the dropdown-toggle
+	        const parentNavItem = activeNavLinkFound.closest('li.nav-item.dropdown');
+	        if (parentNavItem) {
+	            const parentDropdownToggle = parentNavItem.querySelector('.dropdown-toggle');
+	            if (parentDropdownToggle) {
 	                parentDropdownToggle.classList.add("active");
 	            }
 	        }
 	    }
-
-	    // Optional: If you still want the broader check for other dropdowns where this specific logic isn't needed,
-	    // you can keep a modified version of the original dropdownToggles loop.
-	    // However, for the ASL/ASL Upload scenario, the above specific logic is better.
-	    // If you remove the below loop, only the direct parent of an active link will be highlighted.
-	    // If you want broader parent highlighting for non-ASL/ASL-Upload items, consider this:
-	    /*
-	    dropdownToggles.forEach(toggle => {
-	        const dropdownMenu = toggle.nextElementSibling;
-	        if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
-	            const childLinks = dropdownMenu.querySelectorAll('.nav-link');
-	            let hasActiveChild = false;
-
-	            childLinks.forEach(childLink => {
-	                if (childLink.classList.contains('active')) {
-	                    hasActiveChild = true;
-	                }
-	            });
-
-	            // Only add active if the specific activeNavLinkFound isn't handling it,
-	            // or if this toggle is specifically for the activeNavLinkFound's parent.
-	            if (hasActiveChild && (!activeNavLinkFound || !activeNavLinkFound.closest('.dropdown-menu') || activeNavLinkFound.closest('.dropdown-menu').previousElementSibling !== toggle)) {
-	                toggle.classList.add("active");
-	            }
-	        }
-	    });
-	    */
 	});
 	</script>
 <style>
