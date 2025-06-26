@@ -2,6 +2,7 @@ package com.bornfire.xbrl.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bornfire.xbrl.entities.ASL_BANKMASTER_ENTITY;
 import com.bornfire.xbrl.entities.ASL_BANKMASTER_REPO;
@@ -66,6 +67,7 @@ import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
 import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
+
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE_REPOSITORY;
 
@@ -86,6 +88,9 @@ import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
 import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
 import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
+
+import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
+import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.TreasuryPlacementRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
@@ -101,6 +106,8 @@ import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
+
+import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
 
 @Controller
@@ -194,7 +201,14 @@ public class XBRLNavigationController {
 	RT_RepoDataTemplateRepository repoRepo;
 	
 	@Autowired
+	RT_TreasuryCreditRepo treasuryCreditRepo;
+	
+	@Autowired
 	RT_RepoService repoService;
+	
+	@Autowired
+	RT_TreasuryCredit_Service treasuryCreditService;
+
 	
 	@Autowired
 	RT_TradeLevelDataDerivativesRepository tradeleveldataderivativesRepo;
@@ -542,6 +556,60 @@ public class XBRLNavigationController {
 		}
 		
 //-------------------------------------Repo Report End---------------------------------------
+
+		
+		//-------------------------------------Treasury_Credit_Limit_Management---------------------------------------
+				// Repo Report code    
+		 @RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
+		    public String TreasuryCredit(@RequestParam(required = false) String formmode,
+		                                 @RequestParam(required = false) BigDecimal slNo,
+		                                 Model model) {
+
+		        if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+		            model.addAttribute("formmode", "edit");
+		            model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
+		        } else if ("list".equalsIgnoreCase(formmode)) {
+		            model.addAttribute("formmode", "list");
+		            model.addAttribute("TClist", treasuryCreditRepo.getTClist());
+		        } else {
+		            model.addAttribute("formmode", "add");
+		        }
+
+		        return "RT/Treasury_Credit.html";
+		    }
+
+		    @PostMapping("/updateTreasuryCredit")
+		    public String updateTreasuryCredit(@ModelAttribute("creditData") RT_TreasuryCreditEntity creditData,
+		                                       RedirectAttributes redirectAttributes) {
+
+		        boolean updated = treasuryCreditService.updateTreasuryCredit(creditData);
+
+		        if (updated) {
+		            redirectAttributes.addFlashAttribute("message", "Update successful");
+		        } else {
+		            redirectAttributes.addFlashAttribute("error", "Record not found for update");
+		        }
+
+		        return "redirect:/Treasury_Credit_Limit_Management?formmode=list";
+		    }
+		    @RequestMapping(value = "downloadTreasuryCreditExcel", method = RequestMethod.GET)
+			public ResponseEntity<byte[]> downloadTreasuryCreditExcel() throws IOException {
+				System.out.println("Entered controller downloadTreasuryCreditExcel");
+
+				File excelFile = treasuryCreditService.generateTreasuryExcel();
+
+				byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+				HttpHeaders headersResponse = new HttpHeaders();
+				headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				headersResponse.setContentDispositionFormData("attachment", "TreasuryCreditReport.xls");
+
+				return ResponseEntity.ok().headers(headersResponse).body(excelData);
+			}
+
+		
+
+		//-------------------------------------Treasury_Credit_Limit_Management---------------------------------------
 
 //-------------------------------------Investment Risk Data Report Start---------------------------------------
 	// Investment Report code
