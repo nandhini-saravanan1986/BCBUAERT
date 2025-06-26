@@ -15,9 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
@@ -44,33 +42,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bornfire.xbrl.entities.AccessAndRoles;
-import com.bornfire.xbrl.entities.AccessandRolesRepository;
-import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
-import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
-import com.bornfire.xbrl.entities.RT_BankNameMaster;
-import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
-import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
-import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
-import com.bornfire.xbrl.entities.RT_DataControl;
-import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
-import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
-import com.bornfire.xbrl.entities.RT_MmData;
-import com.bornfire.xbrl.entities.RT_MmDataRepository;
-import com.bornfire.xbrl.entities.RT_NostroAccBalData;
-import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
-
-import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
-import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
-import com.bornfire.xbrl.entities.RT_DataControl;
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
-import com.bornfire.xbrl.entities.UserProfile;
-import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.entities.ASL_BANKMASTER_ENTITY;
 import com.bornfire.xbrl.entities.ASL_BANKMASTER_REPO;
 import com.bornfire.xbrl.entities.ASL_Report_Entity;
 import com.bornfire.xbrl.entities.ASL_Report_Rep;
+import com.bornfire.xbrl.entities.AccessAndRoles;
+import com.bornfire.xbrl.entities.AccessandRolesRepository;
 import com.bornfire.xbrl.entities.BRF095AServiceRepo;
 import com.bornfire.xbrl.entities.BRF39_ENTITYREP;
 import com.bornfire.xbrl.entities.BRF40_Entity1;
@@ -87,23 +64,44 @@ import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
+import com.bornfire.xbrl.entities.RT_BankNameMaster;
+import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
+import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
+import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE_REPOSITORY;
+
+import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
+import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
+import com.bornfire.xbrl.entities.RT_DataControl;
+import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
+import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
+import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
+import com.bornfire.xbrl.entities.RT_MmData;
+import com.bornfire.xbrl.entities.RT_MmDataRepository;
+import com.bornfire.xbrl.entities.RT_NostroAccBalData;
+import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
+import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
+import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
+import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
+import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.TreasuryPlacementRep;
+import com.bornfire.xbrl.entities.UserProfile;
+import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
-import com.bornfire.xbrl.services.Excel_Services;
-import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.BCBUAE_NostroExcelDownload;
+import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_RepoService;
-import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
+import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
+import com.bornfire.xbrl.services.counter_services;
 
 @Controller
 @ConfigurationProperties("default")
@@ -203,6 +201,7 @@ public class XBRLNavigationController {
 	
     @Autowired
 	private RT_TradeLevelDerivativesService tradeleveldataderivativeService;
+
 
 	private String pagesize;
 
@@ -1525,7 +1524,63 @@ public class XBRLNavigationController {
 
 
 }
+	
+	@Autowired
+	RT_CCR_DATA_TEMPLATE_REPOSITORY ccr_data_template_repository;
 
+/* CCR_Data_Templates
+ * CREATED BY : SANJEEVI S
+ *  
+ *  */
+	@PersistenceContext
+    private EntityManager entityManager;
+	@RequestMapping(value = "CCR_Data_Templates", method = RequestMethod.GET)
+	public String CCR_Data_Templates(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) String slNo,  // changed from accountNo to slNo
+	        Model md,
+	        HttpServletRequest req) {
+
+		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(slNo);  // make sure entity class matches
+	        md.addAttribute("repoData", data);
+	        System.out.println("edit is formmode");
+	        md.addAttribute("formmode", "edit");
+	    } else if ("list".equalsIgnoreCase(formmode)) {
+	    	
+	    
+	
+	   	  List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist();
+	    	 System.out.println("testing count" + ccr_data_template_repository.getlist().size()); 	;
+	       // System.out.println("the count" +CCrrepo.getlist().size());
+				/*
+				 * for (RT_CCR_Data_Template r : repoList) { System.out.println("Data: " +
+				 * r.getSiNo()); // just to confirm data presence } md.addAttribute("repoList1",
+				 * repoList);
+				 */
+	    	 
+	    	 md.addAttribute("repoList1", repoList);
+	        System.out.println("list is formmode");
+	        md.addAttribute("formmode", "list");
+	    } else {
+	        md.addAttribute("formmode", "add");
+	        md.addAttribute("formmode", "null");
+	    }
+
+	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
+
+	    return "RT/CCR_Data_Templates";
+	}
+	
+	
+	 
+	
+	
+	
 
 
 }
