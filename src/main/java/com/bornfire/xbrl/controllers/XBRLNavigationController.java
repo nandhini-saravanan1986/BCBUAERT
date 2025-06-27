@@ -788,7 +788,7 @@ public class XBRLNavigationController {
 			System.out.println("Add mode activated");
 		}
 
-		return "Trade_Market_Risk"; // Thymeleaf template name: Trade_Market_Risk.html
+		return "RT/Trade_Market_Risk"; // Thymeleaf template name: Trade_Market_Risk.html
 	}
 
 	@RequestMapping(value = "updateTradeMarketRisk", method = RequestMethod.POST)
@@ -833,32 +833,27 @@ public class XBRLNavigationController {
 		try {
 			byte[] excelData = rtTradeMarketRiskService.generateTradeMarketRiskExcel();
 
-			// This check for an empty array is the correct way to handle "no data".
 			if (excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-				return ResponseEntity.noContent().build(); // HTTP 204
+				return ResponseEntity.noContent().build();
 			}
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
 			String filename = "TradeMarketRiskData.xls";
-			// This header is crucial for telling the browser to download the file.
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-
-			// This is a well-formed, complete response for a file download.
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
 		} catch (FileNotFoundException e) {
 			logger.error("Controller ERROR: A required template file was not found.", e);
-			// 500 is appropriate as this is a server configuration error.
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} catch (Exception e) {
 			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-			// A generic 500 error for all other unexpected problems.
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
