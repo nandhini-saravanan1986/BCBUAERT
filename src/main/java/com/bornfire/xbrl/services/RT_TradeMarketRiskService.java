@@ -1,18 +1,16 @@
 package com.bornfire.xbrl.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -23,21 +21,47 @@ import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
 @Service
 public class RT_TradeMarketRiskService {
 
+	// Best Practice: Use a proper SLF4J logger instead of System.out.println
+	private static final Logger logger = LoggerFactory.getLogger(RT_TradeMarketRiskService.class);
+
 	@Autowired
 	private Environment env;
 
 	@Autowired
 	private RT_TradeMarketriskDataRepository tradeMarketRiskDataRepo;
 
-	public File generateTradeMarketRiskExcel() {
-		File outputFile = null;
+	public byte[] generateTradeMarketRiskExcel() throws Exception {
+		logger.info("Service: Starting Excel generation process in memory.");
 
-		try {
-			List<RT_TradeMarketRiskData> dataList = tradeMarketRiskDataRepo.getlist();
+		List<RT_TradeMarketRiskData> dataList = tradeMarketRiskDataRepo.getlist();
 
-			File templateFile = new File(
-					env.getProperty("output.exportpathtemp") + "CBUAE_Trade_Market_Risk_Data_Template.xls");
-			Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
+		if (dataList.isEmpty()) {
+			logger.warn("Service: No data found for Trade Market Risk report. Returning empty result.");
+			return new byte[0];
+		}
+
+		String templateDir = env.getProperty("output.exportpathtemp");
+		String templateFileName = "CBUAE_Trade_Market_Risk_Data_Template.xls";
+		Path templatePath = Paths.get(templateDir, templateFileName);
+
+		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+		if (!Files.exists(templatePath)) {
+			// This specific exception will be caught by the controller.
+			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+		}
+		if (!Files.isReadable(templatePath)) {
+			// A specific exception for permission errors.
+			throw new SecurityException(
+					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
+		}
+
+		// This try-with-resources block is perfect. It guarantees all resources are
+		// closed automatically.
+		try (InputStream templateInputStream = Files.newInputStream(templatePath);
+				Workbook workbook = WorkbookFactory.create(templateInputStream);
+				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
 			Sheet sheet = workbook.getSheetAt(0);
 
 			// --- Style Definitions ---
@@ -530,24 +554,16 @@ public class RT_TradeMarketRiskService {
 				}
 
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-
-				outputFile = new File(env.getProperty("output.exportpathfinal") + "TradeMarketRiskData.xls");
-				try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-					workbook.write(fos);
-					System.out
-							.println("Trade Market Risk Excel generated successfully: " + outputFile.getAbsolutePath());
-				}
-
 			} else {
 				System.out.println("No Trade Market Risk data found to generate the Excel file.");
 			}
 
-			workbook.close();
+			// Write the final workbook content to the in-memory stream.
+			workbook.write(out);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
 		}
-
-		return outputFile;
 	}
 }

@@ -1,10 +1,10 @@
 package com.bornfire.xbrl.services;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -92,13 +92,14 @@ public class NostroAccBalDataService {
 					if (row == null)
 						row = sheet.createRow(startRow + i);
 
+					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
 					// 0 - DATA_DATE
 					Cell cell0 = row.getCell(0);
 					if (cell0 == null)
 						cell0 = row.createCell(0);
-					if (data[0] instanceof Date) {
-						cell0.setCellValue((Date) data[0]);
-						cell0.setCellStyle(dateStyle);
+					if (data[0] != null && data[0] instanceof Date) {
+						cell0.setCellValue(sdf.format((Date) data[0]));
 					} else {
 						cell0.setCellValue("");
 					}
@@ -185,9 +186,9 @@ public class NostroAccBalDataService {
 					Cell cell14 = row.getCell(14);
 					if (cell14 == null)
 						cell14 = row.createCell(14);
-					if (data[14] instanceof Date) {
-						cell14.setCellValue((Date) data[14]);
-						cell14.setCellStyle(dateStyle);
+
+					if (data[14] != null && data[14] instanceof Date) {
+						cell14.setCellValue(sdf.format((Date) data[14]));
 					} else {
 						cell14.setCellValue("");
 					}
@@ -208,9 +209,9 @@ public class NostroAccBalDataService {
 					Cell cell17 = row.getCell(17);
 					if (cell17 == null)
 						cell17 = row.createCell(17);
-					if (data[17] instanceof Date) {
-						cell17.setCellValue((Date) data[17]);
-						cell17.setCellStyle(dateStyle);
+
+					if (data[17] != null && data[17] instanceof Date) {
+						cell17.setCellValue(sdf.format((Date) data[17]));
 					} else {
 						cell17.setCellValue("");
 					}
