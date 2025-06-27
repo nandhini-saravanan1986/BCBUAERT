@@ -101,7 +101,7 @@ import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
-import com.bornfire.xbrl.services.NostroAccBalDataService;
+import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
@@ -172,7 +172,7 @@ public class XBRLNavigationController {
 	RT_NostroAccBalDataRepository nostroAccBalRepo;
 
 	@Autowired
-	NostroAccBalDataService nostroService;
+	RT_NostroAccBalDataService nostroService;
 
 	@Autowired
 	RT_DataControlService RT_DataControlService;
@@ -483,7 +483,7 @@ public class XBRLNavigationController {
 
 		if (updated) {
 			System.out.println("Update successful");
-			return "Updated successful";
+			return "Updated successfully";
 		} else {
 			System.out.println("Update Record not found for update");
 			return "Record not found for update";
@@ -531,7 +531,7 @@ public class XBRLNavigationController {
 
 		if (updated) {
 			System.out.println("Update successful for SL_NO: " + repoData.getSlNo());
-			return "Updated successful";
+			return "Updated successfully";
 		} else {
 			System.out.println("Record not found for update for SL_NO: " + repoData.getSlNo());
 			return "Record not found for update";

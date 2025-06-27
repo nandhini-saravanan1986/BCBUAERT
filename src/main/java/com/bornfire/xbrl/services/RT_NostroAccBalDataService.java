@@ -24,7 +24,7 @@ import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 
 @Service
-public class NostroAccBalDataService {
+public class RT_NostroAccBalDataService {
 
 	@Autowired
 	RT_NostroAccBalDataRepository nostroAccBalRepo;

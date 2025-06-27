@@ -817,7 +817,7 @@ $(document).ready(function () {
         <tr>
         <th style="width: 40px;"></th>
         
-          <th style="min-width:100px">Data Date</th>
+          <th style="min-width:100px">Date</th>
           <th>Bank Name</th>
           <th>Head Office/Subsidiary</th>
           <th>Subsidiary</th>
@@ -839,7 +839,6 @@ $(document).ready(function () {
           <th>Bank Balance (AED)</th>
           <th>Account No</th>
           <th>Gap</th>
-         <th style="min-width:130px">Report Date</th>
          
          
         </tr>
@@ -854,7 +853,7 @@ $(document).ready(function () {
   </a>
 </td>
 
-          <td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
+          <td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
           <td th:text="${data.bankName}"></td>
           <td th:text="${data.headOfficeSubsidiary}"></td>
           <td th:text="${data.subsidiary}"></td>
@@ -869,14 +868,13 @@ $(document).ready(function () {
           <td th:text="${data.cbuaeGeographicalZone}"></td>
           <td th:text="${data.currency}"></td>
           <td th:text="${#dates.format(data.counterpartySettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.counterpartyBalance}"></td>
-          <td th:text="${data.counterpartyBalanceAed}"></td>
-          <td th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.bankBalance}"></td>
-          <td th:text="${data.bankBalanceAed}"></td>
+          <td th:text="${#numbers.formatDecimal(data.counterpartyBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td th:text="${#numbers.formatDecimal(data.counterpartyBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
+          <td th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.accountNo}"></td>
           <td th:text="${data.gap}"></td>
-          <td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
           
           
         </tr>
@@ -928,7 +926,6 @@ $(document).ready(function () {
 
  
   
-    <input type="hidden" th:field="*{accountNo}" />
     
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Bank Name</label>
@@ -946,27 +943,30 @@ $(document).ready(function () {
 
       </div>
 
-      <label class="col-sm-2 col-form-label">Bank Symbol</label>
+  <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
       <div class="col-sm-4">
-       <input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly/>
-
-      </div>
-    </div>
-
- <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
-      <div class="col-sm-4">
-          <select class="form-control" th:field="*{headOfficeSubsidiary}">
+        <select class="form-control" th:field="*{headOfficeSubsidiary}">
   <option value="">-- Select --</option>
   <option value="Head Office">Head Office</option>
    <option value="Subsidiary">Subsidiary</option>
       </select>
+       
       </div>
+    </div>
 
-      <label class="col-sm-2 col-form-label">Subsidiary</label>
+ <div class="form-group row">
+  <label class="col-sm-2 col-form-label">Subsidiary</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{subsidiary}" />
       </div>
+        <label class="col-sm-2 col-form-label">Bank Symbol</label>
+    
+      <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly/>
+        
+      </div>
+
+     
 </div>   
  <div class="form-group row">
       <label class="col-sm-2 col-form-label">Conventional Islamic</label>
@@ -996,7 +996,7 @@ $(document).ready(function () {
         <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
       </div>
 
-      <label class="col-sm-2 col-form-label">final Rating CBUAE</label>
+      <label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
       </div>
@@ -1017,7 +1017,7 @@ $(document).ready(function () {
 </div>
 
  <div class="form-group row">
-      <label class="col-sm-2 col-form-label">currency</label>
+      <label class="col-sm-2 col-form-label">Currency</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{currency}" />
       </div>
@@ -1034,7 +1034,7 @@ $(document).ready(function () {
         <input type="text" class="form-control" th:field="*{counterpartyBalance}" />
       </div>
 
-      <label class="col-sm-2 col-form-label">Counter Party Balance Aed</label>
+      <label class="col-sm-2 col-form-label">Counter Party Balance AED</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{counterpartyBalanceAed}" />
       </div>
@@ -1051,7 +1051,7 @@ $(document).ready(function () {
       </div>
 </div>   
  <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Bank Balance Aed</label>
+      <label class="col-sm-2 col-form-label">Bank Balance AED</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{bankBalanceAed}" />
       </div>
@@ -1061,6 +1061,13 @@ $(document).ready(function () {
         <input type="text" class="form-control" th:field="*{gap}" />
       </div>
 </div>   
+<div class="form-group row">
+      <label class="col-sm-2 col-form-label">Account Number</label>
+      <div class="col-sm-4">
+ <input type="text" class="form-control" th:field="*{accountNo}" readonly />
+ </div>
+ </div>
+   
  </div>
 
     
