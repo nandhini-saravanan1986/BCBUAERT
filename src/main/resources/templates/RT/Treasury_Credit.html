@@ -281,7 +281,7 @@ $(document).ready(function () {
     function submitForm() {
 		$("#loader").modal("toggle");
 
-        const reportName = 'TreasuryCreditReport';
+        const reportName = 'CBUAE_Treasury_Credit_Limit_Management_Data_Template';
         const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
         const formData = $("#nostroForm").serialize();
 	
@@ -332,69 +332,9 @@ $(document).ready(function () {
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Nostro_Account_Bal';
+	        window.location.href = './Treasury_Credit_Limit_Management';
 	    });
 	});
-
-
-	/*function updateform() {
-		
-	    $('#Nostro').validate({
-	        rules: {
-	            bankName: { required: true },
-	            dataDate: { required: true },
-	            counterpartyBalance: { number: true },
-	            bankBalance: { number: true },
-	            counterpartyBalanceAed: { number: true },
-	            bankBalanceAed: { number: true },
-	            gap: { number: true }
-	        },
-	        messages: {
-	            bankName: { required: "Please provide Bank Name", minlength: "Bank Name must be at least 2 characters" },
-	            dataDate: "Please provide Data Date",
-	            counterpartyBalance: "Enter valid number",
-	            bankBalance: "Enter valid number",
-	            counterpartyBalanceAed: "Enter valid number",
-	            bankBalanceAed: "Enter valid number",
-	            gap: "Enter valid number"
-	        }
-	    });
-
-	    if ($("#Nostro").valid()) {
-	        $("#loader1").modal("show");
-
-	        var url = "./updateNostro";
-	        $("#Nostro").attr('action', url);
-
-	        var options = {
-	            success: function (responseText, statusText, xhr, $form) {
-	                $("#loader1").modal("hide");
-
-	                // Show modal alert
-	               // $("#alertmsg").text("Updated Success fully");
-
-					//$('#alert').modal("toggle");
-
-	                // Redirect after short delay
-	               
-	                    window.location.href = "Nostro_Account_Bal";
-	                
-	            },
-	            error: function (xhr, status, error) {
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Error: " + error);
-	               
-					$('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#Nostro").ajaxSubmit(options);
-	    } else {
-	        $("#alertmsg").text("Please fix validation errors.");
-	        $('#alert').modal("show");
-	    }
-	}*/
-	
 	
 	function updateform(event) {
 		
@@ -468,61 +408,60 @@ $(document).ready(function () {
 
 
 
-     <script>
-     
-     function download() {
-    		// 1. Show the loader modal
-    		$('#loader').modal('show');
+<script>
+function download() {
+    // 1. Show the loader modal
+    $('#loader').modal('show');
 
-    		$.ajax({
-    			url: './downloadTreasuryCreditExcel',
-    			type: 'GET',
-    			xhrFields: {
-    				responseType: 'blob'
-    			},
-    			success: function (data) {
-    				// Always hide loader first
-    				$('#loader').modal('hide');
+    $.ajax({
+        url: './downloadTreasuryCreditExcel',
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob' // Important: To handle binary file (Excel)
+        },
+        success: function (data, status, xhr) {
+            $('#loader').modal('hide');
 
-    				let message = '';
+            // Get filename from Content-Disposition header if available
+            let filename = "TreasuryCredit.xls";
+            const disposition = xhr.getResponseHeader('Content-Disposition');
+            if (disposition && disposition.indexOf('filename=') !== -1) {
+                const filenameMatch = disposition.match(/filename="?(.+)"?/);
+                if (filenameMatch.length > 1) {
+                    filename = filenameMatch[1];
+                }
+            }
 
-    				if (data && data.size > 100) {
-    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
-    					const url = window.URL.createObjectURL(blob);
-    					const a = document.createElement('a');
-    					a.style.display = 'none';
-    					a.href = url;
-    					a.download = 'TreasuryCredit.xls';
-    					document.body.appendChild(a);
+            if (data.size > 100) {
+                const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                const url = window.URL.createObjectURL(blob);
 
-    					a.click();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
 
-    					window.URL.revokeObjectURL(url);
-    					document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
 
-    					message = 'TreasuryCredit.xls has been downloaded successfully.';
-    				} else {
-    					message = 'No data available to download.';
-    				}
+                $('#alertmsg').text(filename + ' has been downloaded successfully.');
+            } else {
+                $('#alertmsg').text('No data available to download.');
+            }
 
-    				// Show custom alert modal with the message
-    				$('#alertmsg').text(message);
-    				$('#alert').modal('show');
-    			},
-    			error: function (jqXHR, textStatus, errorThrown) {
-    				$('#loader').modal('hide');
-
-    				console.error("Download failed:", textStatus, errorThrown);
-
-    				// Show error message in your custom alert
-    				$('#alertmsg').text('An error occurred while downloading TreasuryCredit.xls.');
-    				$('#alert').modal('show');
-    			}
-    		});
-    	}
-
-
+            $('#alert').modal('show');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $('#loader').modal('hide');
+            console.error("Download failed:", textStatus, errorThrown);
+            $('#alertmsg').text('An error occurred while downloading TreasuryCredit.xls.');
+            $('#alert').modal('show');
+        }
+    });
+}
 </script>
+
 <title>BCDRS</title>
 <body> 
 <div class="container-fluid" style="padding-left:0px; padding-right:0px;">
@@ -556,16 +495,16 @@ $(document).ready(function () {
  
   onclick="download();">
   <i class="fa fa-download"></i> Download
-</button></div>
+</button>
+
+
+
+</div>
 </div>
 
-
-
-
-
-
-<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
-  <div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+	
+	<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode == null or formmode == 'add'}">
+	  <div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
    
 		<div class="row">
 			<div class="col-sm-12 finuserapply" >
@@ -753,8 +692,11 @@ $(document).ready(function () {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
+ <!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>-->
+				  
+				  <button th:if="${formmode == null or formmode == 'add'}" type="button" class="custom-tab-btn" onclick="submitForm()">Save</button>
+
        
 
 <button type="button" class="custom-tab-btn"
@@ -770,28 +712,25 @@ $(document).ready(function () {
 
 <!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-  <div class="tab-pane fade" id="template" role="tabpanel"  th:if="${formmode == 'null'}">
-    <p>Templates tabs</p>
-    <div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-  <button type="button" class="custom-tab-btn"        
-        onclick="home();">
-  <i class="fa fa-home"></i> Home
-</button>
+<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == null or formmode == 'add'}">
+  <p>Templates tabs</p>
 
+  <div class="card-footer text-center"
+       style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+    <button type="button" class="custom-tab-btn" onclick="home();">
+      <i class="fa fa-home"></i> Home
+    </button>
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
-       
+    <button type="button" class="custom-tab-btn" onclick="submitForm()">
+      Save
+    </button>
 
-<button type="button" class="custom-tab-btn"
-        
-        onclick="back();">
-  <i class="fa fa-arrow-left"></i> Back
-</button>
-
-</div>
+    <button type="button" class="custom-tab-btn" onclick="back();">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
   </div>
+</div>
+
  
  <!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
   
@@ -804,7 +743,7 @@ $(document).ready(function () {
 
 							 <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
 							   <tr>
-								<th colspan="">Edit</th>
+								<th colspan=""></th>
 							     <th colspan="8">Bank Information</th>
 							     <th colspan="7">Counterparty Information</th>
 							     <th colspan="3">Money Market</th>
