@@ -25,13 +25,14 @@ PURPOSE		: Nostra Account balance Report
 	
 
 	<!-- ✅ Your manually placed jQuery validation
-	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-	 <script th:src="/jquery/jquery.validate.min.js"></script>
-	 -->
 	
-	<!-- jQuery (required first) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	
+	
+	<!-- jQuery (required first)
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
 
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
 	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
@@ -242,6 +243,9 @@ label.error {
   margin-top: 5px;
   display: block;
 }
+.section-header {
+		font-weight: bold;
+	}
 </style>
     <script>
 $(document).ready(function () {
@@ -335,91 +339,41 @@ $(document).ready(function () {
 	});
 
 
-	/*function updateform() {
-		
-	    $('#Nostro').validate({
-	        rules: {
-	            bankName: { required: true },
-	            dataDate: { required: true },
-	            counterpartyBalance: { number: true },
-	            bankBalance: { number: true },
-	            counterpartyBalanceAed: { number: true },
-	            bankBalanceAed: { number: true },
-	            gap: { number: true }
-	        },
-	        messages: {
-	            bankName: { required: "Please provide Bank Name", minlength: "Bank Name must be at least 2 characters" },
-	            dataDate: "Please provide Data Date",
-	            counterpartyBalance: "Enter valid number",
-	            bankBalance: "Enter valid number",
-	            counterpartyBalanceAed: "Enter valid number",
-	            bankBalanceAed: "Enter valid number",
-	            gap: "Enter valid number"
-	        }
-	    });
-
-	    if ($("#Nostro").valid()) {
-	        $("#loader1").modal("show");
-
-	        var url = "./updateNostro";
-	        $("#Nostro").attr('action', url);
-
-	        var options = {
-	            success: function (responseText, statusText, xhr, $form) {
-	                $("#loader1").modal("hide");
-
-	                // Show modal alert
-	               // $("#alertmsg").text("Updated Success fully");
-
-					//$('#alert').modal("toggle");
-
-	                // Redirect after short delay
-	               
-	                    window.location.href = "Nostro_Account_Bal";
-	                
-	            },
-	            error: function (xhr, status, error) {
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Error: " + error);
-	               
-					$('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#Nostro").ajaxSubmit(options);
-	    } else {
-	        $("#alertmsg").text("Please fix validation errors.");
-	        $('#alert').modal("show");
-	    }
-	}*/
-	
 	
 	function updateform(event) {
-		
-		event.preventDefault();	
-		$("#loader").modal("toggle");
+		  event.preventDefault();	
+		  $("#loader").modal("toggle");
 
-		$.ajax({
-	     url: `./updateNostro`,
-	     type: 'POST',
-	     data: $('#nostroData').serialize(),
-	     success: function(response) {
-	    $("#loader").modal("hide");
+		  // 🧹 Remove commas from numeric inputs before submit
+		  const fieldsToUnformat = [
+		    'counterpartyBalance', 'counterpartyBalanceAed',
+		    'bankBalance', 'bankBalanceAed', 'gap'
+		  ];
 
-	      
-	      $("#alertmsg").text(response);
-         $("#alert").modal("toggle");
-	      
-	     },
-	     error: function(xhr, status, error) {
-	         console.error("Error in modify:", error);
-	 	    $("#loader").modal("hide");
+		  fieldsToUnformat.forEach(function(fieldName) {
+		    const input = document.querySelector(`[name="${fieldName}"]`);
+		    if (input) {
+		      input.value = input.value.replace(/,/g, '');
+		    }
+		  });
 
-	         alert("Failed to modify. Please try again.");
-	     }
-	 });
-	
-	}
+		  $.ajax({
+		    url: `./updateNostro`,
+		    type: 'POST',
+		    data: $('#nostroData').serialize(),
+		    success: function(response) {
+		      $("#loader").modal("hide");
+		      $("#alertmsg").text(response);
+		      $("#alert").modal("toggle");
+		    },
+		    error: function(xhr, status, error) {
+		      console.error("Error in modify:", error);
+		      $("#loader").modal("hide");
+		      alert("Failed to modify. Please try again.");
+		    }
+		  });
+		}
+
 	
     </script>
   
@@ -883,7 +837,7 @@ $(document).ready(function () {
           <td th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
 		  <td th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.accountNo}"></td>
-          <td th:text="${data.gap}"></td>
+          <td th:text="${#numbers.formatDecimal(data.gap, 1, 'COMMA', 2, 'POINT')}"></td>
           
           
         </tr>
@@ -935,7 +889,8 @@ $(document).ready(function () {
 
  
   
-    
+    <h4 class="section-header">CBUAE Information</h4>
+							
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Bank Name</label>
       <div class="col-sm-4">
@@ -993,24 +948,27 @@ $(document).ready(function () {
       <div class="col-sm-4">
        <input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly/>
 </div>
-
-      <label class="col-sm-2 col-form-label">counter party Nostro Account</label>
+</div> 
+     
+  
+    <h4 class="section-header">Counterparty Information</h4>
+ <div class="form-group row">
+  <label class="col-sm-2 col-form-label">Counter Party Nostro Account</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{counterpartyNostroAccount}" />
       </div>
-</div>   
- <div class="form-group row">
       <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
       </div>
 
-      <label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
+      
+</div>   
+ <div class="form-group row">
+ <label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
       </div>
-</div>   
- <div class="form-group row">
   <label class="col-sm-2 col-form-label">Country Of Risk</label>
   <div class="col-sm-4">
     <select class="form-control" th:field="*{countryOfRisk}" id="countryOfRisk" onchange="handleCountryChange(this)">
@@ -1019,35 +977,41 @@ $(document).ready(function () {
     </select>
   </div>
 
-  <label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-  <div class="col-sm-4">
-    <input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly/>
-  </div>
+  
 </div>
 
  <div class="form-group row">
+ <label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly/>
+  </div>
       <label class="col-sm-2 col-form-label">Currency</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{currency}" />
       </div>
 
-      <label class="col-sm-2 col-form-label">Counter Party Settlement Date</label>
-      <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{counterpartySettlementDate}" />
-      </div>
+     
 </div>   
 
  <div class="form-group row">
+  <label class="col-sm-2 col-form-label">Counter Party Settlement Date</label>
+      <div class="col-sm-4">
+        <input type="date" class="form-control" th:field="*{counterpartySettlementDate}" />
+      </div>
       <label class="col-sm-2 col-form-label">Counter Party Balance</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{counterpartyBalance}" />
       </div>
 
-      <label class="col-sm-2 col-form-label">Counter Party Balance AED</label>
+      
+</div>   
+<div class="form-group row">
+<label class="col-sm-2 col-form-label">Counter Party Balance AED</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{counterpartyBalanceAed}" />
       </div>
-</div>   
+  
+    <h4 class="section-header">Bank Information</h4>
  <div class="form-group row">
       <label class="col-sm-2 col-form-label">Bank Internal Settlement Date</label>
       <div class="col-sm-4">
@@ -1064,17 +1028,20 @@ $(document).ready(function () {
       <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{bankBalanceAed}" />
       </div>
-
-      <label class="col-sm-2 col-form-label">Gap</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{gap}" />
-      </div>
-</div>   
-<div class="form-group row">
-      <label class="col-sm-2 col-form-label">Account Number</label>
+ <label class="col-sm-2 col-form-label">Account Number</label>
       <div class="col-sm-4">
  <input type="text" class="form-control" th:field="*{accountNo}" readonly />
  </div>
+      
+</div>   
+
+
+    <h4 class="section-header">Reconciliation</h4>
+<div class="form-group row">
+     <label class="col-sm-2 col-form-label">Gap</label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{gap}" />
+      </div>
  </div>
    
  </div>
@@ -1341,6 +1308,46 @@ window.onload = function() {
         handleCountryChange(countrySelect);
     }
 };
+</script>
+<script>
+  function formatNumberInput(input) {
+    let value = input.value.replace(/,/g, '');
+    if (!isNaN(value) && value !== '') {
+      input.value = parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+  }
+
+  function removeFormatting(input) {
+    input.value = input.value.replace(/,/g, '');
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const fieldsToFormat = [
+      'counterpartyBalance', 'counterpartyBalanceAed',
+      'bankBalance', 'bankBalanceAed', 'gap'
+    ];
+
+    fieldsToFormat.forEach(function(fieldName) {
+      const input = document.querySelector(`[name="${fieldName}"]`);
+      if (input && input.value) {
+        // Apply formatting immediately on page load
+        formatNumberInput(input);
+
+        // Apply formatting on blur
+        input.addEventListener('blur', function () {
+          formatNumberInput(this);
+        });
+
+        // Remove formatting on focus (so user can edit)
+        input.addEventListener('focus', function () {
+          removeFormatting(this);
+        });
+      }
+    });
+  });
 </script>
 
 

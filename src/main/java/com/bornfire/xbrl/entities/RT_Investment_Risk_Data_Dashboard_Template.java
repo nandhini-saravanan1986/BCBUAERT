@@ -334,6 +334,24 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
     @Column(name = "REPORT_DATE")
     private Date reportDate;
 
+    @Column(name = "REPORT_CODE", length = 10)
+    private String reportCode;
+
+    @Column(name = "ENTRY_USER", length = 20)
+    private String entryUser;
+
+    @Column(name = "MODIFY_USER", length = 20)
+    private String modifyUser;
+
+    @Column(name = "VERIFY_USER", length = 20)
+    private String verifyUser;
+
+    @Column(name = "ENTRY_TIME")
+    private Date entryTime;
+
+    @Column(name = "MODIFY_TIME")
+    private Date modifyTime;
+    
 	public Long getSlNo() {
 		return slNo;
 	}
@@ -1190,6 +1208,57 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.reportDate = reportDate;
 	}
 
+	
+	public String getReportCode() {
+		return reportCode;
+	}
+
+	public void setReportCode(String reportCode) {
+		this.reportCode = reportCode;
+	}
+
+	public String getEntryUser() {
+		return entryUser;
+	}
+
+	public void setEntryUser(String entryUser) {
+		this.entryUser = entryUser;
+	}
+
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
+	public String getVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(String verifyUser) {
+		this.verifyUser = verifyUser;
+	}
+
+	public Date getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(Date entryTime) {
+		this.entryTime = entryTime;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	
+
 	public RT_Investment_Risk_Data_Dashboard_Template(Long slNo, Date dataDate, String bankName,
 			String groupHeadOfficeSubsidiary, String subsidiary, String bankSymbol, String conventionalIslamic,
 			String localForeign, String cbuAeTiering, Long assetBalanceSheetSizeAed, Long investmentBookSizeAed,
@@ -1217,7 +1286,8 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 			Long equityImpactAed, Long equitySensitiveImpactPct, Long commoditiesImpactAed,
 			Long commoditySensitiveImpactPct, Long jtdLossImpactAed, Long jtdRelativeImpactPct, Long overallImpactAed,
 			Long coreTier1RelativeImpactPct, Date reportSubmitDate, String entityFlg, String modifyFlg, String delFlg,
-			Date reportFromDate, Date reportToDate, Date reportDate) {
+			Date reportFromDate, Date reportToDate, Date reportDate, String reportCode, String entryUser,
+			String modifyUser, String verifyUser, Date entryTime, Date modifyTime) {
 		super();
 		this.slNo = slNo;
 		this.dataDate = dataDate;
@@ -1326,6 +1396,12 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.reportFromDate = reportFromDate;
 		this.reportToDate = reportToDate;
 		this.reportDate = reportDate;
+		this.reportCode = reportCode;
+		this.entryUser = entryUser;
+		this.modifyUser = modifyUser;
+		this.verifyUser = verifyUser;
+		this.entryTime = entryTime;
+		this.modifyTime = modifyTime;
 	}
 
 	public RT_Investment_Risk_Data_Dashboard_Template() {

@@ -87,7 +87,6 @@ public class RT_RepoService {
 	            existingData.setSecurityStartPrice(newRepoData.getSecurityStartPrice());
 	            existingData.setSecurityStartCashAmount(newRepoData.getSecurityStartCashAmount());
 	            existingData.setStartCashAmount(newRepoData.getStartCashAmount());
-	            existingData.setRepoInterestRateType(newRepoData.getRepoInterestRateType());
 	            existingData.setInterestProfitRate(newRepoData.getInterestProfitRate());
 	            existingData.setFixedRate(newRepoData.getFixedRate());
 	            existingData.setFloatingRateType(newRepoData.getFloatingRateType());

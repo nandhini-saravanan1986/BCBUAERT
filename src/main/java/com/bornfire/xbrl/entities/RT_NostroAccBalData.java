@@ -109,6 +109,26 @@ public class RT_NostroAccBalData {
 	@Temporal(TemporalType.DATE)
 	private Date reportToDate;
 
+	 @Column(name = "REPORT_CODE", length = 10)
+	    private String reportCode;
+
+	   
+	    @Column(name = "ENTRY_USER", length = 20)
+	    private String entryUser;
+
+	    @Column(name = "MODIFY_USER", length = 20)
+	    private String modifyUser;
+
+	    @Column(name = "VERIFY_USER", length = 20)
+	    private String verifyUser;
+
+	    @Column(name = "ENTRY_TIME")
+	    private Date entryTime;
+
+	    @Column(name = "MODIFY_TIME")
+	    private Date modifyTime;
+	    
+	    
 	public String getAccountNo() {
 		return accountNo;
 	}
@@ -341,6 +361,55 @@ public class RT_NostroAccBalData {
 	public void setReportToDate(Date reportToDate) {
 		this.reportToDate = reportToDate;
 	}
+	
+
+	public String getReportCode() {
+		return reportCode;
+	}
+
+	public void setReportCode(String reportCode) {
+		this.reportCode = reportCode;
+	}
+
+	public String getEntryUser() {
+		return entryUser;
+	}
+
+	public void setEntryUser(String entryUser) {
+		this.entryUser = entryUser;
+	}
+
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
+	public String getVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(String verifyUser) {
+		this.verifyUser = verifyUser;
+	}
+
+	public Date getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(Date entryTime) {
+		this.entryTime = entryTime;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
 
 	@Override
 	public String toString() {
@@ -358,13 +427,16 @@ public class RT_NostroAccBalData {
 				+ delFlg + ", reportFromDate=" + reportFromDate + ", reportToDate=" + reportToDate + "]";
 	}
 
+	
 	public RT_NostroAccBalData(String accountNo, Date dataDate, String bankName, String headOfficeSubsidiary,
 			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
 			String counterpartyNostroAccount, String finalRatingBanks, String finalRatingCbuae, String countryOfRisk,
 			String cbuaeGeographicalZone, String currency, Date counterpartySettlementDate,
 			BigDecimal counterpartyBalance, BigDecimal counterpartyBalanceAed, Date bankInternalSettlementDate,
 			BigDecimal bankBalance, BigDecimal bankBalanceAed, BigDecimal gap, Date reportSubmitDate, Date reportDate,
-			String entityFlg, String modifyFlg, String delFlg, Date reportFromDate, Date reportToDate) {
+			String entityFlg, String modifyFlg, String delFlg, Date reportFromDate, Date reportToDate,
+			String reportCode, String entryUser, String modifyUser, String verifyUser, Date entryTime,
+			Date modifyTime) {
 		super();
 		this.accountNo = accountNo;
 		this.dataDate = dataDate;
@@ -395,6 +467,12 @@ public class RT_NostroAccBalData {
 		this.delFlg = delFlg;
 		this.reportFromDate = reportFromDate;
 		this.reportToDate = reportToDate;
+		this.reportCode = reportCode;
+		this.entryUser = entryUser;
+		this.modifyUser = modifyUser;
+		this.verifyUser = verifyUser;
+		this.entryTime = entryTime;
+		this.modifyTime = modifyTime;
 	}
 
 	public RT_NostroAccBalData() {

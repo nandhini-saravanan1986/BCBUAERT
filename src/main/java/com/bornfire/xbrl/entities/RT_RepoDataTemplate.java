@@ -1,6 +1,8 @@
 package com.bornfire.xbrl.entities;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -75,13 +77,13 @@ public class RT_RepoDataTemplate {
     private Integer initialMaturityRounded;
 
     @Column(name = "INITIAL_MATURITY_PERIOD")
-    private String initialMaturityPeriod;
+    private BigDecimal initialMaturityPeriod;
 
     @Column(name = "RESIDUAL_MATURITY_DATE")
     private Date residualMaturityDate;
 
     @Column(name = "MATURITY_PERIOD")
-    private String maturityPeriod;
+    private BigDecimal maturityPeriod;
 
     @Column(name = "REPO_CURRENCY")
     private String repoCurrency;
@@ -132,7 +134,7 @@ public class RT_RepoDataTemplate {
     private Date securityResidualMaturity;
 
     @Column(name = "SECURITY_MATURITY_PERIOD")
-    private String securityMaturityPeriod;
+    private BigDecimal securityMaturityPeriod;
 
     @Column(name = "GMRA_EFFECTIVE_HAIRCUT")
     private Double gmraEffectiveHaircut;
@@ -145,9 +147,6 @@ public class RT_RepoDataTemplate {
 
     @Column(name = "START_CASH_AMOUNT")
     private Double startCashAmount;
-
-    @Column(name = "REPO_INTEREST_RATE_TYPE")
-    private String repoInterestRateType;
 
     @Column(name = "INTEREST_PROFIT_RATE")
     private Double interestProfitRate;
@@ -203,94 +202,23 @@ public class RT_RepoDataTemplate {
     @Column(name = "REPORT_TO_DATE")
     private Date reportToDate;
 
-	public RT_RepoDataTemplate(Long slNo, Date dataDate, String bankName, String headOfficeSubsidiary,
-			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
-			String counterpartyName, String counterpartyInternalRef, String finalRatingBanks, String finalRatingCbuae,
-			String countryOfRisk, String cbuaeGeoZone, String cbuaeInternalRef, String transactionType, String dealNo,
-			Date repoStartDate, Date repoMaturityDate, Double initialMaturity, Integer initialMaturityRounded,
-			String initialMaturityPeriod, Date residualMaturityDate, String maturityPeriod, String repoCurrency,
-			String underlyingSecurityIsin, String rehypothecationStatus, String securityCurrency, String obligor,
-			String issuerType, String industry, String sector, String underlyingBondDetails, String securityFinalRating,
-			String finalSecurityRatingCbuae, String securityCountryOfRisk, String cbuaeGeoZone2,
-			Double bondSukukNominal, Date securityMaturityDate, Date securityResidualMaturity,
-			String securityMaturityPeriod, Double gmraEffectiveHaircut, Double securityStartPrice,
-			Double securityStartCashAmount, Double startCashAmount, String repoInterestRateType,
-			Double interestProfitRate, Double fixedRate, String floatingRateType, Double repoMargin,
-			Double interestAccruals, Double repoValuation, Double dirtyPrice, Double gmraCollateralMtm,
-			Double minTransferAmount, Double threshold, String marginCallFreq, Date reportSubmitDate, Date reportDate,
-			String entityFlg, String modifyFlg, String delFlg, Date reportFromDate, Date reportToDate) {
-		super();
-		this.slNo = slNo;
-		this.dataDate = dataDate;
-		this.bankName = bankName;
-		this.headOfficeSubsidiary = headOfficeSubsidiary;
-		this.subsidiary = subsidiary;
-		this.bankSymbol = bankSymbol;
-		this.conventionalIslamic = conventionalIslamic;
-		this.localForeign = localForeign;
-		this.cbuaeTiering = cbuaeTiering;
-		this.counterpartyName = counterpartyName;
-		this.counterpartyInternalRef = counterpartyInternalRef;
-		this.finalRatingBanks = finalRatingBanks;
-		this.finalRatingCbuae = finalRatingCbuae;
-		this.countryOfRisk = countryOfRisk;
-		this.cbuaeGeoZone = cbuaeGeoZone;
-		this.cbuaeInternalRef = cbuaeInternalRef;
-		this.transactionType = transactionType;
-		this.dealNo = dealNo;
-		this.repoStartDate = repoStartDate;
-		this.repoMaturityDate = repoMaturityDate;
-		this.initialMaturity = initialMaturity;
-		this.initialMaturityRounded = initialMaturityRounded;
-		this.initialMaturityPeriod = initialMaturityPeriod;
-		this.residualMaturityDate = residualMaturityDate;
-		this.maturityPeriod = maturityPeriod;
-		this.repoCurrency = repoCurrency;
-		this.underlyingSecurityIsin = underlyingSecurityIsin;
-		this.rehypothecationStatus = rehypothecationStatus;
-		this.securityCurrency = securityCurrency;
-		this.obligor = obligor;
-		this.issuerType = issuerType;
-		this.industry = industry;
-		this.sector = sector;
-		this.underlyingBondDetails = underlyingBondDetails;
-		this.securityFinalRating = securityFinalRating;
-		this.finalSecurityRatingCbuae = finalSecurityRatingCbuae;
-		this.securityCountryOfRisk = securityCountryOfRisk;
-		this.cbuaeGeoZone2 = cbuaeGeoZone2;
-		this.bondSukukNominal = bondSukukNominal;
-		this.securityMaturityDate = securityMaturityDate;
-		this.securityResidualMaturity = securityResidualMaturity;
-		this.securityMaturityPeriod = securityMaturityPeriod;
-		this.gmraEffectiveHaircut = gmraEffectiveHaircut;
-		this.securityStartPrice = securityStartPrice;
-		this.securityStartCashAmount = securityStartCashAmount;
-		this.startCashAmount = startCashAmount;
-		this.repoInterestRateType = repoInterestRateType;
-		this.interestProfitRate = interestProfitRate;
-		this.fixedRate = fixedRate;
-		this.floatingRateType = floatingRateType;
-		this.repoMargin = repoMargin;
-		this.interestAccruals = interestAccruals;
-		this.repoValuation = repoValuation;
-		this.dirtyPrice = dirtyPrice;
-		this.gmraCollateralMtm = gmraCollateralMtm;
-		this.minTransferAmount = minTransferAmount;
-		this.threshold = threshold;
-		this.marginCallFreq = marginCallFreq;
-		this.reportSubmitDate = reportSubmitDate;
-		this.reportDate = reportDate;
-		this.entityFlg = entityFlg;
-		this.modifyFlg = modifyFlg;
-		this.delFlg = delFlg;
-		this.reportFromDate = reportFromDate;
-		this.reportToDate = reportToDate;
-	}
+    @Column(name = "REPORT_CODE", length = 10)
+    private String reportCode;
 
-	public RT_RepoDataTemplate() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    @Column(name = "ENTRY_USER", length = 20)
+    private String entryUser;
+
+    @Column(name = "MODIFY_USER", length = 20)
+    private String modifyUser;
+
+    @Column(name = "VERIFY_USER", length = 20)
+    private String verifyUser;
+
+    @Column(name = "ENTRY_TIME")
+    private Date entryTime;
+
+    @Column(name = "MODIFY_TIME")
+    private Date modifyTime;
 
 	public Long getSlNo() {
 		return slNo;
@@ -468,11 +396,11 @@ public class RT_RepoDataTemplate {
 		this.initialMaturityRounded = initialMaturityRounded;
 	}
 
-	public String getInitialMaturityPeriod() {
+	public BigDecimal getInitialMaturityPeriod() {
 		return initialMaturityPeriod;
 	}
 
-	public void setInitialMaturityPeriod(String initialMaturityPeriod) {
+	public void setInitialMaturityPeriod(BigDecimal initialMaturityPeriod) {
 		this.initialMaturityPeriod = initialMaturityPeriod;
 	}
 
@@ -484,11 +412,11 @@ public class RT_RepoDataTemplate {
 		this.residualMaturityDate = residualMaturityDate;
 	}
 
-	public String getMaturityPeriod() {
+	public BigDecimal getMaturityPeriod() {
 		return maturityPeriod;
 	}
 
-	public void setMaturityPeriod(String maturityPeriod) {
+	public void setMaturityPeriod(BigDecimal maturityPeriod) {
 		this.maturityPeriod = maturityPeriod;
 	}
 
@@ -620,11 +548,11 @@ public class RT_RepoDataTemplate {
 		this.securityResidualMaturity = securityResidualMaturity;
 	}
 
-	public String getSecurityMaturityPeriod() {
+	public BigDecimal getSecurityMaturityPeriod() {
 		return securityMaturityPeriod;
 	}
 
-	public void setSecurityMaturityPeriod(String securityMaturityPeriod) {
+	public void setSecurityMaturityPeriod(BigDecimal securityMaturityPeriod) {
 		this.securityMaturityPeriod = securityMaturityPeriod;
 	}
 
@@ -658,14 +586,6 @@ public class RT_RepoDataTemplate {
 
 	public void setStartCashAmount(Double startCashAmount) {
 		this.startCashAmount = startCashAmount;
-	}
-
-	public String getRepoInterestRateType() {
-		return repoInterestRateType;
-	}
-
-	public void setRepoInterestRateType(String repoInterestRateType) {
-		this.repoInterestRateType = repoInterestRateType;
 	}
 
 	public Double getInterestProfitRate() {
@@ -811,10 +731,150 @@ public class RT_RepoDataTemplate {
 	public void setReportToDate(Date reportToDate) {
 		this.reportToDate = reportToDate;
 	}
-	
+
+	public String getReportCode() {
+		return reportCode;
+	}
+
+	public void setReportCode(String reportCode) {
+		this.reportCode = reportCode;
+	}
+
+	public String getEntryUser() {
+		return entryUser;
+	}
+
+	public void setEntryUser(String entryUser) {
+		this.entryUser = entryUser;
+	}
+
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
+	public String getVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(String verifyUser) {
+		this.verifyUser = verifyUser;
+	}
+
+	public Date getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(Date entryTime) {
+		this.entryTime = entryTime;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	public RT_RepoDataTemplate(Long slNo, Date dataDate, String bankName, String headOfficeSubsidiary,
+			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
+			String counterpartyName, String counterpartyInternalRef, String finalRatingBanks, String finalRatingCbuae,
+			String countryOfRisk, String cbuaeGeoZone, String cbuaeInternalRef, String transactionType, String dealNo,
+			Date repoStartDate, Date repoMaturityDate, Double initialMaturity, Integer initialMaturityRounded,
+			BigDecimal initialMaturityPeriod, Date residualMaturityDate, BigDecimal maturityPeriod, String repoCurrency,
+			String underlyingSecurityIsin, String rehypothecationStatus, String securityCurrency, String obligor,
+			String issuerType, String industry, String sector, String underlyingBondDetails, String securityFinalRating,
+			String finalSecurityRatingCbuae, String securityCountryOfRisk, String cbuaeGeoZone2,
+			Double bondSukukNominal, Date securityMaturityDate, Date securityResidualMaturity,
+			BigDecimal securityMaturityPeriod, Double gmraEffectiveHaircut, Double securityStartPrice,
+			Double securityStartCashAmount, Double startCashAmount, Double interestProfitRate, Double fixedRate,
+			String floatingRateType, Double repoMargin, Double interestAccruals, Double repoValuation,
+			Double dirtyPrice, Double gmraCollateralMtm, Double minTransferAmount, Double threshold,
+			String marginCallFreq, Date reportSubmitDate, Date reportDate, String entityFlg, String modifyFlg,
+			String delFlg, Date reportFromDate, Date reportToDate, String reportCode, String entryUser,
+			String modifyUser, String verifyUser, Date entryTime, Date modifyTime) {
+		super();
+		this.slNo = slNo;
+		this.dataDate = dataDate;
+		this.bankName = bankName;
+		this.headOfficeSubsidiary = headOfficeSubsidiary;
+		this.subsidiary = subsidiary;
+		this.bankSymbol = bankSymbol;
+		this.conventionalIslamic = conventionalIslamic;
+		this.localForeign = localForeign;
+		this.cbuaeTiering = cbuaeTiering;
+		this.counterpartyName = counterpartyName;
+		this.counterpartyInternalRef = counterpartyInternalRef;
+		this.finalRatingBanks = finalRatingBanks;
+		this.finalRatingCbuae = finalRatingCbuae;
+		this.countryOfRisk = countryOfRisk;
+		this.cbuaeGeoZone = cbuaeGeoZone;
+		this.cbuaeInternalRef = cbuaeInternalRef;
+		this.transactionType = transactionType;
+		this.dealNo = dealNo;
+		this.repoStartDate = repoStartDate;
+		this.repoMaturityDate = repoMaturityDate;
+		this.initialMaturity = initialMaturity;
+		this.initialMaturityRounded = initialMaturityRounded;
+		this.initialMaturityPeriod = initialMaturityPeriod;
+		this.residualMaturityDate = residualMaturityDate;
+		this.maturityPeriod = maturityPeriod;
+		this.repoCurrency = repoCurrency;
+		this.underlyingSecurityIsin = underlyingSecurityIsin;
+		this.rehypothecationStatus = rehypothecationStatus;
+		this.securityCurrency = securityCurrency;
+		this.obligor = obligor;
+		this.issuerType = issuerType;
+		this.industry = industry;
+		this.sector = sector;
+		this.underlyingBondDetails = underlyingBondDetails;
+		this.securityFinalRating = securityFinalRating;
+		this.finalSecurityRatingCbuae = finalSecurityRatingCbuae;
+		this.securityCountryOfRisk = securityCountryOfRisk;
+		this.cbuaeGeoZone2 = cbuaeGeoZone2;
+		this.bondSukukNominal = bondSukukNominal;
+		this.securityMaturityDate = securityMaturityDate;
+		this.securityResidualMaturity = securityResidualMaturity;
+		this.securityMaturityPeriod = securityMaturityPeriod;
+		this.gmraEffectiveHaircut = gmraEffectiveHaircut;
+		this.securityStartPrice = securityStartPrice;
+		this.securityStartCashAmount = securityStartCashAmount;
+		this.startCashAmount = startCashAmount;
+		this.interestProfitRate = interestProfitRate;
+		this.fixedRate = fixedRate;
+		this.floatingRateType = floatingRateType;
+		this.repoMargin = repoMargin;
+		this.interestAccruals = interestAccruals;
+		this.repoValuation = repoValuation;
+		this.dirtyPrice = dirtyPrice;
+		this.gmraCollateralMtm = gmraCollateralMtm;
+		this.minTransferAmount = minTransferAmount;
+		this.threshold = threshold;
+		this.marginCallFreq = marginCallFreq;
+		this.reportSubmitDate = reportSubmitDate;
+		this.reportDate = reportDate;
+		this.entityFlg = entityFlg;
+		this.modifyFlg = modifyFlg;
+		this.delFlg = delFlg;
+		this.reportFromDate = reportFromDate;
+		this.reportToDate = reportToDate;
+		this.reportCode = reportCode;
+		this.entryUser = entryUser;
+		this.modifyUser = modifyUser;
+		this.verifyUser = verifyUser;
+		this.entryTime = entryTime;
+		this.modifyTime = modifyTime;
+	}
+
+	public RT_RepoDataTemplate() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
     
     
-    
-    
-    
+	    
 }
