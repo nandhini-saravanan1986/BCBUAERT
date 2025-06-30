@@ -3,7 +3,7 @@
 <!-- 
 CREATED BY	: SUJIDHARSHINI V
 CREATED ON	: 04.06.2025
-PURPOSE		: F Risk Data Report
+PURPOSE		: MM  Data Report
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -30,7 +30,7 @@ PURPOSE		: F Risk Data Report
 	 -->
 	
 	<!-- jQuery (required first) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -412,22 +412,22 @@ function mmdata() {
     <script>
 function downloadMm() {
     // 1. Show the loader modal
-    $('#downloadProcessingModal').modal('show');
+    $('#loader').modal('show');
 
     $.ajax({
         url: './downloadMmExcel',
         type: 'GET',
         xhrFields: {
-            responseType: 'blob' // To properly receive file data
+            responseType: 'blob' // Important for binary file response
         },
         success: function (data) {
-            // 2a. Hide loader on success
-            $('#downloadProcessingModal').modal('hide');
+            // 2. Hide loader after response
             $('#loader').modal('hide');
 
-            // Ensure file is not empty (adjust size threshold as needed)
+            let message = '';
+
+            // Check if the response contains valid file content
             if (data && data.size > 100) {
-                // Create a downloadable link
                 const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -442,34 +442,34 @@ function downloadMm() {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                // Show success message in your custom modal
-                $('#customAlertBody').text('The file has been downloaded successfully.');
+                message = 'MmData.xls has been downloaded successfully.';
             } else {
-                // Show info if no data was returned
-                $('#customAlertBody').text('No data available to download.');
+                message = 'No data available to download.';
             }
 
-            $('#customAlertModal').modal('show');
+            // Display result in alert modal
+            $('#alertmsg').text(message);
+            $('#alert').modal('show');
         },
         error: function (xhr, status, error) {
-            // 2b. Hide loader on error
-            $('#downloadProcessingModal').modal('hide');
+            // Hide loader on error
             $('#loader').modal('hide');
 
             console.error("Download failed:", error);
 
-            // Show error in modal
-            $('#customAlertBody').text('An error occurred while downloading the file. Please try again.');
-            $('#customAlertModal').modal('show');
+            // Show error message
+            $('#alertmsg').text('An error occurred while downloading MmData.xls.');
+            $('#alert').modal('show');
         }
     });
 
-    // Fallback: ensure loader doesn't stay stuck if something goes wrong
+    // Safety fallback in case loader gets stuck
     setTimeout(function () {
         $('#loader').modal('hide');
     }, 10000);
 }
 </script>
+
 
 
 	<script>
@@ -1033,7 +1033,7 @@ function downloadMm() {
 
     <!-- Row -->
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Geographical Zone</label>
+        <label class="col-sm-2 col-form-label"> CBUAE Geographical Zone</label>
         <div class="col-sm-4">
             <input type="text" class="form-control" th:field="*{cbuae_geographical_zone}" id="cbuaeGeographicalZone" readonly/ />
         </div>
@@ -1073,12 +1073,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Initial Maturity</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{initial_maturity}" />
+            <input type="number" class="form-control" th:field="*{initial_maturity}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{initial_maturity_rounded}" />
+            <input type="number" class="form-control" th:field="*{initial_maturity_rounded}" />
         </div>
     </div>
 
@@ -1086,12 +1086,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Initial Maturity Period</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{initial_maturity_period}" />
+            <input type="number" class="form-control" th:field="*{initial_maturity_period}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Residual Maturity</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{residual_maturity}" />
+            <input type="number" class="form-control" th:field="*{residual_maturity}" />
         </div>
     </div>
 
@@ -1099,12 +1099,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Residual Maturity Rounded</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{residual_maturity_rounded}" />
+            <input type="number" class="form-control" th:field="*{residual_maturity_rounded}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Maturity Period</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{maturity_period}" />
+            <input type="number" class="form-control" th:field="*{maturity_period}" />
         </div>
     </div>
 
@@ -1117,15 +1117,15 @@ function downloadMm() {
 
         <label class="col-sm-2 col-form-label">Principal</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{principal}" />
+            <input type="number" class="form-control" th:field="*{principal}" />
         </div>
     </div>
 
     <!-- Row -->
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Principal AED</label>
+        <label class="col-sm-2 col-form-label">Principal(AED)</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{principal_aed}" />
+            <input type="number" class="form-control" th:field="*{principal_aed}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Interest/Profit Rate</label>
@@ -1245,7 +1245,7 @@ function downloadMm() {
 							</div>
 						</div>
 					</div>
-					 Download Message 
+					 
 					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
 						aria-labelledby="customAlertModalLabel" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered" role="document">

@@ -38,15 +38,15 @@ public class RT_MmData {
 
     private Date value_date;
     private Date maturity_date;
-     private String initial_maturity;
-    private String initial_maturity_rounded;
-    private String initial_maturity_period;
-    private String residual_maturity;
-    private String residual_maturity_rounded;
-    private String maturity_period;
+     private BigDecimal initial_maturity;
+    private BigDecimal initial_maturity_rounded;
+    private BigDecimal initial_maturity_period;
+    private BigDecimal residual_maturity;
+    private BigDecimal residual_maturity_rounded;
+    private BigDecimal maturity_period;
     private String currency;
-    private String principal;
-    private String principal_aed;
+    private BigDecimal principal;
+    private BigDecimal principal_aed;
     private String interest_profit_rate;
     private Date report_submit_date;
     private Date report_from_date;
@@ -169,40 +169,40 @@ public class RT_MmData {
 	public void setMaturity_date(Date maturity_date) {
 		this.maturity_date = maturity_date;
 	}
-	public String getInitial_maturity() {
+	public BigDecimal getInitial_maturity() {
 		return initial_maturity;
 	}
-	public void setInitial_maturity(String initial_maturity) {
+	public void setInitial_maturity(BigDecimal initial_maturity) {
 		this.initial_maturity = initial_maturity;
 	}
-	public String getInitial_maturity_rounded() {
+	public BigDecimal getInitial_maturity_rounded() {
 		return initial_maturity_rounded;
 	}
-	public void setInitial_maturity_rounded(String initial_maturity_rounded) {
+	public void setInitial_maturity_rounded(BigDecimal initial_maturity_rounded) {
 		this.initial_maturity_rounded = initial_maturity_rounded;
 	}
-	public String getInitial_maturity_period() {
+	public BigDecimal getInitial_maturity_period() {
 		return initial_maturity_period;
 	}
-	public void setInitial_maturity_period(String initial_maturity_period) {
+	public void setInitial_maturity_period(BigDecimal initial_maturity_period) {
 		this.initial_maturity_period = initial_maturity_period;
 	}
-	public String getResidual_maturity() {
+	public BigDecimal getResidual_maturity() {
 		return residual_maturity;
 	}
-	public void setResidual_maturity(String residual_maturity) {
+	public void setResidual_maturity(BigDecimal residual_maturity) {
 		this.residual_maturity = residual_maturity;
 	}
-	public String getResidual_maturity_rounded() {
+	public BigDecimal getResidual_maturity_rounded() {
 		return residual_maturity_rounded;
 	}
-	public void setResidual_maturity_rounded(String residual_maturity_rounded) {
+	public void setResidual_maturity_rounded(BigDecimal residual_maturity_rounded) {
 		this.residual_maturity_rounded = residual_maturity_rounded;
 	}
-	public String getMaturity_period() {
+	public BigDecimal getMaturity_period() {
 		return maturity_period;
 	}
-	public void setMaturity_period(String maturity_period) {
+	public void setMaturity_period(BigDecimal maturity_period) {
 		this.maturity_period = maturity_period;
 	}
 	public String getCurrency() {
@@ -211,16 +211,16 @@ public class RT_MmData {
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
-	public String getPrincipal() {
+	public BigDecimal getPrincipal() {
 		return principal;
 	}
-	public void setPrincipal(String principal) {
+	public void setPrincipal(BigDecimal principal) {
 		this.principal = principal;
 	}
-	public String getPrincipal_aed() {
+	public BigDecimal getPrincipal_aed() {
 		return principal_aed;
 	}
-	public void setPrincipal_aed(String principal_aed) {
+	public void setPrincipal_aed(BigDecimal principal_aed) {
 		this.principal_aed = principal_aed;
 	}
 	public String getInterest_profit_rate() {
@@ -275,9 +275,9 @@ public class RT_MmData {
 			String bank_symbol, String conventional_islamic, String local_foreign, String cbuae_tiering,
 			BigDecimal deal_no, String customer_id, String counterparty_name, String final_rating_banks,
 			String final_rating_cbuae, String country_of_risk, String cbuae_geographical_zone, String deal_type,
-			Date value_date, Date maturity_date, String initial_maturity, String initial_maturity_rounded,
-			String initial_maturity_period, String residual_maturity, String residual_maturity_rounded,
-			String maturity_period, String currency, String principal, String principal_aed,
+			Date value_date, Date maturity_date, BigDecimal initial_maturity, BigDecimal initial_maturity_rounded,
+			BigDecimal initial_maturity_period, BigDecimal residual_maturity, BigDecimal residual_maturity_rounded,
+			BigDecimal maturity_period, String currency, BigDecimal principal, BigDecimal principal_aed,
 			String interest_profit_rate, Date report_submit_date, Date report_from_date, Date report_to_date,
 			Date report_date, String entity_flg, String modify_flg, String del_flg) {
 		super();
@@ -323,7 +323,5 @@ public class RT_MmData {
 		// TODO Auto-generated constructor stub
 	}
 	
-
-    
      
 }

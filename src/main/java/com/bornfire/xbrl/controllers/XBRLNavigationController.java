@@ -678,7 +678,7 @@ public class XBRLNavigationController {
 		boolean updated = fxriskdataService.updateFxriskdata(fxriskData);
 
 		if (updated) {
-			return "Update successful";
+			return "Updated successful";
 		} else {
 			return "Record not found for update";
 		}
@@ -690,7 +690,7 @@ public class XBRLNavigationController {
 		boolean updated = mmdataService.updateMmdata(mmData);
 
 		if (updated) {
-			return "Update successful";
+			return "Updated successful";
 		} else {
 			return "Record not found for update";
 		}
@@ -1574,7 +1574,7 @@ public class XBRLNavigationController {
 		boolean updated = tradeleveldataderivativeService.updatetradeleveldataderivative(tradeleveldataderivative);
 
 		if (updated) {
-			return "Update successful";
+			return "Updated successfully";
 		} else {
 			return "Record not found for update";
 		}

@@ -319,80 +319,7 @@ label.error {
 	        }
 	    }
 	};
-	/*	function updateform() {
-	    console.log("updateform function called"); // Debug log
-	    
-	    // Retrieve form and field values
-	    var bankDate = document.getElementById('bank_date').value.trim();
-	    var bankName = document.getElementById('bank_name').value.trim();
-	    
-	    var isValid = true;
-	    var mandatoryMessage = "Please fill the required field(s)";
-	    
-	    // Validate each field and highlight if empty
-	    function validateField(fieldSelector, errorMessage) {
-	        var field = $(fieldSelector);
-	        if (!field.val().trim()) {
-	            field.css("border-color", "red").attr("title", errorMessage);
-	            isValid = false;
-	        } else {
-	            field.css("border-color", "").attr("title", ""); // Reset styles
-	        }
-	    }
-	    
-	    // Validate required fields
-	    validateField('#bank_date', "Please provide Data Date");
-	    validateField('#bank_name', "Please provide Bank Name");
-	    
-	    // Additional validation for bank name length
-	    if (bankName && bankName.length < 2) {
-	        $('#bank_name').css("border-color", "red").attr("title", "Bank Name must be at least 2 characters");
-	        isValid = false;
-	    }
-	    
-	    // If validation fails, show alert and stop form submission
-	    if (!isValid) {
-	        $("#alertmsg").text(mandatoryMessage);
-	        $("#alert").modal("show");
-	        return;
-	    }
-	    
-	    console.log("Validation passed, submitting form"); // Debug log
-	    
-	    // Show loader and submit form traditionally
-	    $("#loader1").modal("show");
-	    
-	    // Use jQuery form plugin for traditional submit with callback
-	    var options = {
-	        url: './updateFxriskdata',
-	        type: 'POST',
-	        beforeSubmit: function() {
-	            console.log("Form being submitted");
-	            return true;
-	        },
-	        success: function(responseText, statusText, xhr, $form) {
-	            console.log("Form submitted successfully");
-	            $("#loader1").modal("hide");
-	            
-	            // Show success message
-	            $("#alertmsg").text("Updated Successfully");
-	            $("#alert").modal("show");
-	            
-	            // Redirect after showing message
-	            setTimeout(function() {
-	                window.location.href = "./Fx_Risk_Data?formmode=list";
-	            }, 1500);
-	        },
-	        error: function(xhr, status, error) {
-	            console.log("Form submission error:", error);
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text("Error: " + error);
-	            $("#alert").modal("show");
-	        }
-	    };
-	    
-	    $("#Fxriskdata").ajaxSubmit(options);
-	}*/
+	
 	
 	function updateform(event) {
     event.preventDefault();
@@ -478,50 +405,57 @@ if (tabId === 'data') {
 
      <script>
     function downloadTradeleveldataderivative() {
-        // Show loading modal
-        $('#downloadProcessingModal').modal('show');
+        // 1. Show the loader modal
+        $('#loader').modal('show');
 
         $.ajax({
-            url: './downloadTradeleveldataderivativeExcel', // Ensure this matches your controller endpoint
+            url: './downloadTradeleveldataderivativeExcel',
             type: 'GET',
             xhrFields: {
                 responseType: 'blob'
             },
             success: function (data) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+                // 2. Hide the loader modal
+                $('#loader').modal('hide');
 
-                if (data && data.size > 0) {
-                    var blob = new Blob([data], { type: 'application/octet-stream' });
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
+                let message = '';
+
+                if (data && data.size > 100) {
+                    const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
                     a.href = url;
                     a.download = 'TradelevelDataDerivative.xls';
                     document.body.appendChild(a);
+
                     a.click();
+
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    $('#customAlertBody').text('Downloaded TradelevelDataDerivative.xls');
+                    message = 'TradelevelDataDerivative.xls has been downloaded successfully.';
                 } else {
-                    $('#customAlertBody').text('No data available to download.');
+                    message = 'No data available to download.';
                 }
 
-                $('#customAlertModal').modal('show');
+                // Show result in unified alert modal
+                $('#alertmsg').text(message);
+                $('#alert').modal('show');
             },
             error: function (xhr, status, error) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+                $('#loader').modal('hide');
 
                 console.error("Download failed:", error);
-                $('#customAlertBody').text('Failed to download TradelevelDataDerivative.xls');
-                $('#customAlertModal').modal('show');
+
+                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alert').modal('show');
             }
         });
 
-        // Fallback in case AJAX fails silently
+        // Safety fallback in case AJAX hangs silently
         setTimeout(function () {
-            $("#loader").modal("hide");
+            $('#loader').modal('hide');
         }, 10000);
     }
 </script>

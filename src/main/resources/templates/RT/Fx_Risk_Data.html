@@ -30,7 +30,7 @@ PURPOSE		: F Risk Data Report
 	 -->
 	
 	<!-- jQuery (required first) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -319,80 +319,7 @@ label.error {
 	        }
 	    }
 	};
-	/*	function updateform() {
-	    console.log("updateform function called"); // Debug log
-	    
-	    // Retrieve form and field values
-	    var bankDate = document.getElementById('bank_date').value.trim();
-	    var bankName = document.getElementById('bank_name').value.trim();
-	    
-	    var isValid = true;
-	    var mandatoryMessage = "Please fill the required field(s)";
-	    
-	    // Validate each field and highlight if empty
-	    function validateField(fieldSelector, errorMessage) {
-	        var field = $(fieldSelector);
-	        if (!field.val().trim()) {
-	            field.css("border-color", "red").attr("title", errorMessage);
-	            isValid = false;
-	        } else {
-	            field.css("border-color", "").attr("title", ""); // Reset styles
-	        }
-	    }
-	    
-	    // Validate required fields
-	    validateField('#bank_date', "Please provide Data Date");
-	    validateField('#bank_name', "Please provide Bank Name");
-	    
-	    // Additional validation for bank name length
-	    if (bankName && bankName.length < 2) {
-	        $('#bank_name').css("border-color", "red").attr("title", "Bank Name must be at least 2 characters");
-	        isValid = false;
-	    }
-	    
-	    // If validation fails, show alert and stop form submission
-	    if (!isValid) {
-	        $("#alertmsg").text(mandatoryMessage);
-	        $("#alert").modal("show");
-	        return;
-	    }
-	    
-	    console.log("Validation passed, submitting form"); // Debug log
-	    
-	    // Show loader and submit form traditionally
-	    $("#loader1").modal("show");
-	    
-	    // Use jQuery form plugin for traditional submit with callback
-	    var options = {
-	        url: './updateFxriskdata',
-	        type: 'POST',
-	        beforeSubmit: function() {
-	            console.log("Form being submitted");
-	            return true;
-	        },
-	        success: function(responseText, statusText, xhr, $form) {
-	            console.log("Form submitted successfully");
-	            $("#loader1").modal("hide");
-	            
-	            // Show success message
-	            $("#alertmsg").text("Updated Successfully");
-	            $("#alert").modal("show");
-	            
-	            // Redirect after showing message
-	            setTimeout(function() {
-	                window.location.href = "./Fx_Risk_Data?formmode=list";
-	            }, 1500);
-	        },
-	        error: function(xhr, status, error) {
-	            console.log("Form submission error:", error);
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text("Error: " + error);
-	            $("#alert").modal("show");
-	        }
-	    };
-	    
-	    $("#Fxriskdata").ajaxSubmit(options);
-	}*/
+	
 	
 	function updateform(event) {
     event.preventDefault();
@@ -478,8 +405,8 @@ if (tabId === 'data') {
 
      <script>
     function downloadFxrisk() {
-        // Show loading modal
-        $('#downloadProcessingModal').modal('show');
+        // 1. Show loader modal
+        $('#loader').modal('show');
 
         $.ajax({
             url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
@@ -488,13 +415,16 @@ if (tabId === 'data') {
                 responseType: 'blob'
             },
             success: function (data) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+                // Always hide loader
+                $('#loader').modal('hide');
 
-                if (data && data.size > 0) {
-                    var blob = new Blob([data], { type: 'application/octet-stream' });
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
+                let message = '';
+
+                if (data && data.size > 100) {
+                    const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
                     a.href = url;
                     a.download = 'FxRiskData.xls';
                     document.body.appendChild(a);
@@ -502,29 +432,32 @@ if (tabId === 'data') {
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    $('#customAlertBody').text('Downloaded FxRiskData.xls');
+                    message = 'FxRiskData.xls has been downloaded successfully.';
                 } else {
-                    $('#customAlertBody').text('No data available to download.');
+                    message = 'No data available to download.';
                 }
 
-                $('#customAlertModal').modal('show');
+                // Show custom alert modal with the message
+                $('#alertmsg').text(message);
+                $('#alert').modal('show');
             },
             error: function (xhr, status, error) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+                $('#loader').modal('hide');
 
                 console.error("Download failed:", error);
-                $('#customAlertBody').text('Failed to download FxRiskData.xls');
-                $('#customAlertModal').modal('show');
+
+                $('#alertmsg').text('An error occurred while downloading FxRiskData.xls.');
+                $('#alert').modal('show');
             }
         });
 
-        // Fallback in case AJAX fails silently
+        // Fallback timeout
         setTimeout(function () {
-            $("#loader").modal("hide");
+            $('#loader').modal('hide');
         }, 10000);
     }
 </script>
+
 
 	<script>
 
@@ -882,7 +815,7 @@ if (tabId === 'data') {
 									</a>
 								</td>
 								
-                                      <td th:text="${#dates.format(data.bank_date, 'dd-MM-yyyy')}"></td>
+                                      <td th:text="${#dates.format(data.report_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${data.bank_name}"></td>
 												<td th:text="${data.bank_symbol}"></td>
 												<td th:text="${data.conventional_islamic}"></td>
@@ -956,7 +889,7 @@ if (tabId === 'data') {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Bank Date</label>
             <div class="col-sm-4">
-              <input type="date" class="form-control" th:field="*{bank_date}" />
+              <input type="date" class="form-control" th:field="*{report_date}"  readonly/>
             </div>
 
             <label class="col-sm-2 col-form-label">Bank Name</label>
