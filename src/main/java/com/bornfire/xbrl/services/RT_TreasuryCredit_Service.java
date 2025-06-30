@@ -37,6 +37,7 @@ public class RT_TreasuryCredit_Service {
 
         if (existingOpt.isPresent()) {
             RT_TreasuryCreditEntity existing = existingOpt.get();
+            // Basic Information
             existing.setReportDate(updatedEntity.getReportDate());
             existing.setBankName(updatedEntity.getBankName());
             existing.setHeadOfficeSubsidiary(updatedEntity.getHeadOfficeSubsidiary());
@@ -45,6 +46,7 @@ public class RT_TreasuryCredit_Service {
             existing.setConventionalIslamic(updatedEntity.getConventionalIslamic());
             existing.setLocalForeign(updatedEntity.getLocalForeign());
             existing.setCbuaeTiering(updatedEntity.getCbuaeTiering());
+            // Counterparty Info
             existing.setCounterpartyName(updatedEntity.getCounterpartyName());
             existing.setCounterpartyIntRef(updatedEntity.getCounterpartyIntRef());
             existing.setCounterpartyRiskRating(updatedEntity.getCounterpartyRiskRating());
@@ -53,9 +55,62 @@ public class RT_TreasuryCredit_Service {
             existing.setCbuaeGeographicalZone(updatedEntity.getCbuaeGeographicalZone());
             existing.setCounterpartyType(updatedEntity.getCounterpartyType());
 
-            // You can update more fields as per need
+            // MM
+            existing.setLimitAedMoneymarket(updatedEntity.getLimitAedMoneymarket());
+            existing.setUtilizationAedMoneymarket(updatedEntity.getUtilizationAedMoneymarket());
+            existing.setMoneymarketPercent(updatedEntity.getMoneymarketPercent());
+
+            // Repo
+            existing.setLimitAedRepo(updatedEntity.getLimitAedRepo());
+            existing.setUtilizationAedRepo(updatedEntity.getUtilizationAedRepo());
+            existing.setRepoPercent(updatedEntity.getRepoPercent());
+
+            // Bonds
+            existing.setLimitAedBonds(updatedEntity.getLimitAedBonds());
+            existing.setUtilizationAedBonds(updatedEntity.getUtilizationAedBonds());
+            existing.setBondsPercent(updatedEntity.getBondsPercent());
+
+            // Credit
+            existing.setLimitAedCredit(updatedEntity.getLimitAedCredit());
+            existing.setUtilizationAedCredit(updatedEntity.getUtilizationAedCredit());
+            existing.setCreditPercent(updatedEntity.getCreditPercent());
+
+            // Other
+            existing.setLimitAedOther(updatedEntity.getLimitAedOther());
+            existing.setUtilizationAedOther(updatedEntity.getUtilizationAedOther());
+            existing.setOtherPercent(updatedEntity.getOtherPercent());
+
+            // Nostro
+            existing.setLimitAedNostro(updatedEntity.getLimitAedNostro());
+            existing.setUtilizationAedNostro(updatedEntity.getUtilizationAedNostro());
+            existing.setNostroPercent(updatedEntity.getNostroPercent());
+
+            // Derivatives
+            existing.setLimitAedDerivatives(updatedEntity.getLimitAedDerivatives());
+            existing.setUtilizationAedDerivatives(updatedEntity.getUtilizationAedDerivatives());
+            existing.setDerivativesPercent(updatedEntity.getDerivativesPercent());
+
+            // FX
+            existing.setLimitAedFxsettlement(updatedEntity.getLimitAedFxsettlement());
+            existing.setUtilizationAedFxsettlement(updatedEntity.getUtilizationAedFxsettlement());
+            existing.setFxsettlementPercent(updatedEntity.getFxsettlementPercent());
+
+            // Bond Settlement
+            existing.setLimitAedBondsettlement(updatedEntity.getLimitAedBondsettlement());
+            existing.setUtilizationAedBondsettlement(updatedEntity.getUtilizationAedBondsettlement());
+            existing.setBondsettlementPercent(updatedEntity.getBondsettlementPercent());
+
+            // Overall Treasury
+            existing.setTreasuryLmtAed(updatedEntity.getTreasuryLmtAed());
+            existing.setTreasuryLmt(updatedEntity.getTreasuryLmt());
+
+            // Exposure
+            existing.setExposureAed(updatedEntity.getExposureAed());
+            existing.setExposure(updatedEntity.getExposure());
+
+            // Final details
             existing.setReportSubmitDate(updatedEntity.getReportSubmitDate());
-            existing.setModifyTime(new Date()); // track update time
+            existing.setModifyTime(new Date());// track update time
 
             treasuryRepo.save(existing);
             return true;
@@ -73,7 +128,7 @@ public class RT_TreasuryCredit_Service {
             List<Object[]> treasuryList = treasuryRepo.getTreasuryData();
 
             // Load Excel template file
-            File templateFile = new File(env.getProperty("output.exportpathtemp") + "TreasuryCreditReport.xls");
+            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
             Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -90,10 +145,6 @@ public class RT_TreasuryCredit_Service {
                     Row row = sheet.getRow(startRow + i);
                     if (row == null)
                         row = sheet.createRow(startRow + i);
-
-                    Cell cell0 = row.getCell(0);
-                    if (cell0 == null) cell0 = row.createCell(0);
-                    cell0.setCellValue(data[0] instanceof BigDecimal ? ((BigDecimal) data[0]).doubleValue() : 0);
 
                     Cell cell1 = row.getCell(1);
                     if (cell1 == null) cell1 = row.createCell(1);
@@ -298,13 +349,13 @@ public class RT_TreasuryCredit_Service {
                 workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
                 // Write output to file         
-                outputFile = new File(env.getProperty("output.exportpathfinal") + "TreasuryCreditReport.xls");
+                outputFile = new File(env.getProperty("output.exportpathfinal") + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
 
                 try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                     workbook.write(fos);
                     System.out.println("Treasury Excel generated: " + outputFile.getAbsolutePath());
                     
-                    System.out.println("Template path: " + env.getProperty("output.exportpathtemp") + "TreasuryCreditReport.xls");
+                    System.out.println("Template path: " + env.getProperty("output.exportpathtemp") + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
 
                 }
 

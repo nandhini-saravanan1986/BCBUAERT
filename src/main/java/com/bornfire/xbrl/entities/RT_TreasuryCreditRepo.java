@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import java.math.BigDecimal;
 
 @Repository
-public interface RT_TreasuryCreditRepo extends JpaRepository<RT_TreasuryCreditEntity, BigDecimal> {
+
+	public interface RT_TreasuryCreditRepo extends JpaRepository<RT_TreasuryCreditEntity, Integer>{
+
 	// Add custom queries if needed
 
 	@Query(value = "select * from BCBUAE_TREASURY_CRE_LMT_MANAGEMENT where DEL_FLG != 'Y'", nativeQuery = true)

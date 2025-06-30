@@ -2,8 +2,8 @@
 
 <!-- 
 CREATED BY	: Rajalakshmi R
-CREATED ON	: 04.06.2025
-PURPOSE		: Nostra Account balance Report
+CREATED ON	: 24.06.2025
+PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -342,9 +342,9 @@ $(document).ready(function () {
 		$("#loader").modal("toggle");
 
 		$.ajax({
-	     url: `./updateNostro`,
+	     url: `./updateTreasuryCredit`,
 	     type: 'POST',
-	     data: $('#nostroData').serialize(),
+	     data: $('#creditData').serialize(),
 	     success: function(response) {
 	    $("#loader").modal("hide");
 
@@ -744,19 +744,19 @@ function download() {
 							 <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
 							   <tr>
 								<th colspan=""></th>
-							     <th colspan="8">Bank Information</th>
-							     <th colspan="7">Counterparty Information</th>
-							     <th colspan="3">Money Market</th>
-							     <th colspan="3">Repo</th>
-							     <th colspan="3">Bonds/Sukuks</th>
-							     <th colspan="3">Equity</th>
-							     <th colspan="3">Credit</th>
-							     <th colspan="3">Other</th>
-							     <th colspan="3">Nostro</th>
-							     <th colspan="3">Derivatives</th>
-							     <th colspan="3">FX Settlement</th>
-							     <th colspan="3">Bond Settlement</th>
-							     <th colspan="4">Overall Treasury Limit & Exposure</th>
+							     <th colspan="8" style="text-align: center;">Bank Information</th>
+							     <th colspan="7" style="text-align: center;">Counterparty Information</th>
+							     <th colspan="3" style="text-align: center;">Money Market</th>
+							     <th colspan="3" style="text-align: center;">Repo</th>
+							     <th colspan="3" style="text-align: center;">Bonds/Sukuks</th>
+							     <th colspan="3" style="text-align: center;">Equity</th>
+							     <th colspan="3" style="text-align: center;">Credit</th>
+							     <th colspan="3" style="text-align: center;">Other</th>
+							     <th colspan="3" style="text-align: center;">Nostro</th>
+							     <th colspan="3" style="text-align: center;">Derivatives</th>
+							     <th colspan="3" style="text-align: center;">FX Settlement</th>
+							     <th colspan="3" style="text-align: center;">Bond Settlement</th>
+							     <th colspan="4" style="text-align: center;">Overall Treasury Limit & Exposure</th>
 							   </tr>
 							   <tr>
 							     <!-- Bank Info -->
@@ -828,61 +828,62 @@ function download() {
 							     <td th:text="${data.cbuaeGeographicalZone}"></td>
 							     <td th:text="${data.counterpartyType}"></td>
 
-							     <!-- Money Market -->
-							     <td th:text="${data.limitAedMoneymarket}"></td>
-							     <td th:text="${data.utilizationAedMoneymarket}"></td>
-							     <td th:text="${data.moneymarketPercent}"></td>
+								 <!-- Money Market -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedMoneymarket, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedMoneymarket, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.moneymarketPercent}"></td>
 
-							     <!-- Repo -->
-							     <td th:text="${data.limitAedRepo}"></td>
-							     <td th:text="${data.utilizationAedRepo}"></td>
-							     <td th:text="${data.repoPercent}"></td>
+								    <!-- Repo -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedRepo, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedRepo, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.repoPercent}"></td>
 
-							     <!-- Bonds -->
-							     <td th:text="${data.limitAedBonds}"></td>
-							     <td th:text="${data.utilizationAedBonds}"></td>
-							     <td th:text="${data.bondsPercent}"></td>
+								    <!-- Bonds -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedBonds, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedBonds, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.bondsPercent}"></td>
 
-							     <!-- Equity -->
-							     <td th:text="${data.limitAedEquity}"></td>
-							     <td th:text="${data.utilizationAedEquity}"></td>
-							     <td th:text="${data.equityPercent}"></td>
+								    <!-- Equity -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedEquity, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedEquity, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.equityPercent}"></td>
 
-							     <!-- Credit -->
-							     <td th:text="${data.limitAedCredit}"></td>
-							     <td th:text="${data.utilizationAedCredit}"></td>
-							     <td th:text="${data.creditPercent}"></td>
+								    <!-- Credit -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedCredit, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedCredit, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.creditPercent}"></td>
 
-							     <!-- Other -->
-							     <td th:text="${data.limitAedOther}"></td>
-							     <td th:text="${data.utilizationAedOther}"></td>
-							     <td th:text="${data.otherPercent}"></td>
+								    <!-- Other -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedOther, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedOther, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.otherPercent}"></td>
 
-							     <!-- Nostro -->
-							     <td th:text="${data.limitAedNostro}"></td>
-							     <td th:text="${data.utilizationAedNostro}"></td>
-							     <td th:text="${data.nostroPercent}"></td>
+								    <!-- Nostro -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedNostro, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedNostro, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.nostroPercent}"></td>
 
-							     <!-- Derivatives -->
-							     <td th:text="${data.limitAedDerivatives}"></td>
-							     <td th:text="${data.utilizationAedDerivatives}"></td>
-							     <td th:text="${data.derivativesPercent}"></td>
+								    <!-- Derivatives -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedDerivatives, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedDerivatives, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.derivativesPercent}"></td>
 
-							     <!-- FX -->
-							     <td th:text="${data.limitAedFxsettlement}"></td>
-							     <td th:text="${data.utilizationAedFxsettlement}"></td>
-							     <td th:text="${data.fxsettlementPercent}"></td>
+								    <!-- FX -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedFxsettlement, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedFxsettlement, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.fxsettlementPercent}"></td>
 
-							     <!-- Bond Settlement -->
-							     <td th:text="${data.limitAedBondsettlement}"></td>
-							     <td th:text="${data.utilizationAedBondsettlement}"></td>
-							     <td th:text="${data.bondsettlementPercent}"></td>
+								    <!-- Bond Settlement -->
+								    <td th:text="${#numbers.formatDecimal(data.limitAedBondsettlement, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${#numbers.formatDecimal(data.utilizationAedBondsettlement, 1, 'COMMA', 2, 'POINT')}"></td>
+								    <td th:text="${data.bondsettlementPercent}"></td>
 
-							     <!-- Overall -->
-							     <td th:text="${data.treasuryLmtAed}"></td>
-							     <td th:text="${data.treasuryLmt}"></td>
-							     <td th:text="${data.exposureAed}"></td>
-							     <td th:text="${data.exposure}"></td>
+								    <!-- Overall -->
+									<td th:text="${#numbers.formatDecimal(data.treasuryLmtAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${#numbers.formatDecimal(data.treasuryLmt, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${#numbers.formatDecimal(data.exposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${#numbers.formatDecimal(data.exposure, 1, 'COMMA', 2, 'POINT')}"></td>
+
 							   </tr>
 							 </tbody>
 
@@ -920,10 +921,15 @@ function download() {
 		
 <div th:if="${formmode}=='edit'" style="align-items:center">
   <form th:action="@{/updateTreasuryCredit}" th:object="${creditData}" method="post" id="creditData">
-    <div class="card" style="margin: 0 15px;">
-      <div class="card-header" style="background-color: rgb(166,0,0);">
-        <h3 style="font-family: verdana; color: white; font-size: 24px; font-weight: bold;">Treasury Credit Limit - Edit</h3>
-      </div>
+    <div class="card" style="margin: 0 15px;">  
+	 <div class="card-header" style="background-color: rgb(107, 122, 143) ;">
+	      <h5 class="m-0 font-weight-bold" style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
+			
+			
+	          TREASURY CREDIT LIMIT - EDIT
+	      </h5>
+	  </div>
+
 
       <div class="card-body" style="max-height: 500px; overflow-y: auto;">
         <input type="hidden" th:field="*{slNo}" />
@@ -1023,6 +1029,132 @@ function download() {
           <label class="col-sm-2 col-form-label">%</label>
           <div class="col-sm-2"><input type="number" class="form-control" th:field="*{bondsPercent}" /></div>
         </div>
+		<!-- Bonds -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Bonds Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedBonds" th:value="${creditData.limitAedBonds}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedBonds" th:value="${creditData.utilizationAedBonds}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="bondsPercent" th:value="${creditData.bondsPercent}" />
+		  </div>
+		</div>
+
+		<!-- Credit -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Credit Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedCredit" th:value="${creditData.limitAedCredit}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedCredit" th:value="${creditData.utilizationAedCredit}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="creditPercent" th:value="${creditData.creditPercent}" />
+		  </div>
+		</div>
+
+		<!-- Other -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Other Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedOther" th:value="${creditData.limitAedOther}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedOther" th:value="${creditData.utilizationAedOther}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="otherPercent" th:value="${creditData.otherPercent}" />
+		  </div>
+		</div>
+
+		<!-- Nostro -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Nostro Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedNostro" th:value="${creditData.limitAedNostro}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedNostro" th:value="${creditData.utilizationAedNostro}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="nostroPercent" th:value="${creditData.nostroPercent}" />
+		  </div>
+		</div>
+
+		<!-- Derivatives -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Derivatives Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedDerivatives" th:value="${creditData.limitAedDerivatives}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedDerivatives" th:value="${creditData.utilizationAedDerivatives}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="derivativesPercent" th:value="${creditData.derivativesPercent}" />
+		  </div>
+		</div>
+
+		<!-- FX -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">FX Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedFxsettlement" th:value="${creditData.limitAedFxsettlement}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedFxsettlement" th:value="${creditData.utilizationAedFxsettlement}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="fxsettlementPercent" th:value="${creditData.fxsettlementPercent}" />
+		  </div>
+		</div>
+
+		<!-- Bond Settlement -->
+		<div class="form-group row">
+		  <label class="col-sm-2 col-form-label">Bond Settlement Limit</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="limitAedBondsettlement" th:value="${creditData.limitAedBondsettlement}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">Utilization</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="utilizationAedBondsettlement" th:value="${creditData.utilizationAedBondsettlement}" />
+		  </div>
+
+		  <label class="col-sm-2 col-form-label">%</label>
+		  <div class="col-sm-2">
+		    <input type="text" class="form-control" name="bondsettlementPercent" th:value="${creditData.bondsettlementPercent}" />
+		  </div>
+		</div>
+
 
         <!-- Repeat similar block for: Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
 
@@ -1043,7 +1175,7 @@ function download() {
       </div>
 
       <div class="card-footer text-center" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-        <button type="submit" class="custom-tab-btn">Update</button>
+		<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
         <a th:href="@{/Treasury_Credit_Limit_Management}" class="custom-tab-btn">Cancel</a>
       </div>
     </div>
@@ -1161,8 +1293,22 @@ function download() {
 								</div>
 							</div>
 						</div>
+					</div>		
+					<div class="modal fade" id="alert1">
+					    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					        <div class="modal-content">
+					            <div class="menu-title-header">
+					                <div class="modal-title" style="text-align: center; color: white;">BANK OF BARODA</div>
+					            </div>
+					            <div class="modal-body" style="text-align: center">
+					                <p id="alertmsg1"></p>
+					                <button type="button" class="custom-tab-btn" data-dismiss="modal">Close</button>
+					            </div>
+					        </div>
+					    </div>
 					</div>
-		</div>
+
+	
 </body>
 <script>
   $(document).ready(function () {
@@ -1267,36 +1413,20 @@ function handleBankChange(select) {
     });
 }
 </script>
-<script>
-function handleCountryChange(select) {
-    const selectedCountry = select.value;
+<!-- ALERT SCRIPT TO SHOW MODAL IF MESSAGE IS PRESENT -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+	
+	console.log("Flash message from controller:", message);
 
-    if (!selectedCountry) {
-        $('#cbuaeGeographicalZone').val('');
-        return;
+    const message = /*[[${updateMsg}]]*/ null;
+    if (message !== null && message !== '') {
+        $(document).ready(function () {
+            $('#alertmsg1').text(message);
+            $('#alert1').modal('show');
+        });
     }
-
-    $.ajax({
-        url: '/BCDRS/getCountryDetails',
-        type: 'GET',
-        data: { countryName: selectedCountry },
-        success: function(data) {
-            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-            alert('Failed to fetch geographical zone.');
-        }
-    });
-}
-
-// Run on page load (for edit mode)
-window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect && countrySelect.value) {
-        handleCountryChange(countrySelect);
-    }
-};
+    /*]]>*/
 </script>
 
 

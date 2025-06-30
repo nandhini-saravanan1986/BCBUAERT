@@ -82,6 +82,8 @@ import com.bornfire.xbrl.entities.RT_ForeignCurrencyDepositRepository;
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
+import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
+import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
@@ -105,6 +107,7 @@ import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
+import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
@@ -206,6 +209,8 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_TreasuryCredit_Service treasuryCreditService;
+	@Autowired
+	RT_InvestmentSecurity_Service investmentSecurity_Service;
 
 	@Autowired
 	RT_TradeLevelDataDerivativesRepository tradeleveldataderivativesRepo;
@@ -218,6 +223,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_ForeignCurrencyDepositRepository foreigncurrencydepositRepo;
+	
+	@Autowired
+    RT_Investment_Securities_Data_Template_Repo investmentSecuritiesDataTemplateRepo;
 
 	private String pagesize;
 
@@ -556,10 +564,10 @@ public class XBRLNavigationController {
 //-------------------------------------Repo Report End---------------------------------------
 
 	// -------------------------------------Treasury_Credit_Limit_Management---------------------------------------
-	// Repo Report code
+
 	@RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
 	public String TreasuryCredit(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) BigDecimal slNo, Model model) {
+			@RequestParam(required = false) Integer slNo, Model model) {
 
 		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
 			model.addAttribute("formmode", "edit");
@@ -575,20 +583,26 @@ public class XBRLNavigationController {
 	}
 
 	@PostMapping("/updateTreasuryCredit")
+	@ResponseBody
 	public String updateTreasuryCredit(@ModelAttribute("creditData") RT_TreasuryCreditEntity creditData,
 			RedirectAttributes redirectAttributes) {
 
 		boolean updated = treasuryCreditService.updateTreasuryCredit(creditData);
 
-		if (updated) {
-			redirectAttributes.addFlashAttribute("message", "Update successful");
+		/*if (updated) {
+			redirectAttributes.addFlashAttribute("updateMsg", "Updated Successfully");
 		} else {
-			redirectAttributes.addFlashAttribute("error", "Record not found for update");
+			redirectAttributes.addFlashAttribute("updateMsg", "Record not found for update");
 		}
 
-		return "redirect:/Treasury_Credit_Limit_Management?formmode=list";
+		return "redirect:/Treasury_Credit_Limit_Management?formmode=list";*/
+		
+		
+		if (updated) { return "Updated successfully"; 
+		} else { return
+				"Record not found for update"; }
 	}
-
+	
 	@RequestMapping(value = "downloadTreasuryCreditExcel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadTreasuryCreditExcel() throws IOException {
 		System.out.println("Entered controller downloadTreasuryCreditExcel");
@@ -604,7 +618,110 @@ public class XBRLNavigationController {
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
 
-	// -------------------------------------Treasury_Credit_Limit_Management---------------------------------------
+	// -------------------------------------Treasury_Credit_Limit_Management End---------------------------------------
+	
+	// -------------------------------------Investent_Securities_Data START---------------------------------------
+
+	
+	/*
+	 * @RequestMapping(value = "Investment_Securities_Data", method =
+	 * RequestMethod.GET) public String TreasuryCredit(@RequestParam(required =
+	 * false) BigDecimal siNo,String formmode,
+	 * 
+	 * @RequestParam(required = false) Model model) {
+	 * 
+	 * if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+	 * model.addAttribute("formmode", "edit"); model.addAttribute("creditData",
+	 * treasuryCreditRepo.findById(siNo).orElse(new RT_TreasuryCreditEntity())); }
+	 * else if ("list".equalsIgnoreCase(formmode)) { model.addAttribute("formmode",
+	 * "list"); model.addAttribute("TClist", treasuryCreditRepo.getTClist()); } else
+	 * { model.addAttribute("formmode", "add"); }
+	 * 
+	 * return "RT/InvestmentSecurityData.html";
+	 */ 
+	  
+	@RequestMapping(value = "Investment_Securities_Data", method = RequestMethod.GET)
+	public String treasuryCredit(@RequestParam(required = false) String siNo,
+	                             @RequestParam(required = false) String formmode,
+	                             Model model) {
+
+	    if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new RT_Investment_Securities_Data_Template()));
+		}else if ("list".equalsIgnoreCase(formmode)) {
+	        List<RT_Investment_Securities_Data_Template> list =
+	            investmentSecuritiesDataTemplateRepo.getsecDatalist();
+
+	        model.addAttribute("formmode", "list");
+	        model.addAttribute("ISList", list); // Used in HTML table
+		} /*
+			 * else { model.addAttribute("formmode", "add");
+			 * model.addAttribute("securityData", new
+			 * RT_Investment_Securities_Data_Template()); }
+			 */else {
+			model.addAttribute("formmode", "add");
+		}
+
+	    return "RT/Investment_SecurityData";
+	}
+
+
+	/*
+	 * @RequestMapping(value = "Investment_Securities_Data", method =
+	 * RequestMethod.GET) public String InvestmentSecurity(@RequestParam(required =
+	 * false) String formmode, Model model) {
+	 * 
+	 * if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+	 * RT_Investment_Securities_Data_Template data =
+	 * investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new
+	 * RT_Investment_Securities_Data_Template()); model.addAttribute("formmode",
+	 * "edit"); model.addAttribute("InvestmentData", data);
+	 * 
+	 * } else if ("list".equalsIgnoreCase(formmode)) {
+	 * List<RT_Investment_Securities_Data_Template> list =
+	 * investmentSecuritiesDataTemplateRepo.getsecDatalist();
+	 * model.addAttribute("formmode", "list"); model.addAttribute("ISList", list);
+	 * 
+	 * } else { model.addAttribute("formmode", "add");
+	 * model.addAttribute("securityData", new
+	 * RT_Investment_Securities_Data_Template()); }
+	 * 
+	 * return "RT/Investment_SecurityData"; // Your HTML page name }
+	 */
+
+	/*
+	 * @PostMapping("/updateInvestmentSecurity") public String
+	 * updateInvestmentSecurity(@ModelAttribute("InvestmentData")
+	 * RT_Investment_Securities_Data_Template InvestmentData, RedirectAttributes
+	 * redirectAttributes) {
+	 * 
+	 * boolean updated =
+	 * investmentSecurity_Service.updateInvestmentSecurity(InvestmentData);
+	 * 
+	 * if (updated) { redirectAttributes.addFlashAttribute("message",
+	 * "Update successfully"); } else {
+	 * redirectAttributes.addFlashAttribute("error", "Record not found for update");
+	 * }
+	 * 
+	 * return "redirect:/Investment_SecurityData?formmode=list"; }
+	 */
+
+	@PostMapping("/updateInvestmentSecurity")
+	@ResponseBody
+	public String updateInvestmentSecurity(@ModelAttribute("InvestmentData") RT_Investment_Securities_Data_Template InvestmentData) {
+
+	    boolean updated = investmentSecurity_Service.updateInvestmentSecurity(InvestmentData);
+
+	    if (updated) {
+	        return "Updated successfully";
+	    } else {
+	        return "Record not found for update";
+	    }
+	}
+
+
+
+	// -------------------------------------Investent_Securities_Data End---------------------------------------
 
 //-------------------------------------Investment Risk Data Report Start---------------------------------------
 	// Investment Report code

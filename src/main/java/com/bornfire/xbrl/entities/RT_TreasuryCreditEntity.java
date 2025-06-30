@@ -11,7 +11,7 @@ public class RT_TreasuryCreditEntity {
 
     @Id
     @Column(name = "SL_NO")
-    private BigDecimal slNo;
+    private Integer slNo;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "REPORT_DATE")
@@ -206,11 +206,11 @@ public class RT_TreasuryCreditEntity {
     @Column(name = "VERIFY_TIME")
     private Date verifyTime;
 
-	public BigDecimal getSlNo() {
+	public Integer getSlNo() {
 		return slNo;
 	}
 
-	public void setSlNo(BigDecimal slNo) {
+	public void setSlNo(Integer slNo) {
 		this.slNo = slNo;
 	}
 
@@ -778,7 +778,7 @@ public class RT_TreasuryCreditEntity {
 				+ ", toString()=" + super.toString() + "]";
 	}
 
-	public RT_TreasuryCreditEntity(BigDecimal slNo, Date reportDate, String bankName, String headOfficeSubsidiary,
+	public RT_TreasuryCreditEntity(Integer slNo, Date reportDate, String bankName, String headOfficeSubsidiary,
 			String subsidiary, String bankSymbol, String conventionalIslamic, String localForeign, String cbuaeTiering,
 			String counterpartyName, String counterpartyIntRef, String counterpartyRiskRating, String finalRatingCbuae,
 			String countryOfRisk, String cbuaeGeographicalZone, String counterpartyType, BigDecimal limitAedMoneymarket,

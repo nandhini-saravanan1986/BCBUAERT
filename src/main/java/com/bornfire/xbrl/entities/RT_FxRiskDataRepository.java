@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_FxRiskDataRepository extends JpaRepository<RT_Fxriskdata, Date> {
+public interface RT_FxRiskDataRepository extends JpaRepository<RT_Fxriskdata, String> {
 	// Add custom queries if needed
 
 	@Query(value = "select * from BCBUAE_FX_RISK_DATA  ", nativeQuery = true)
