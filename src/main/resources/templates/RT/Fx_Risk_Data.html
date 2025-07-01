@@ -822,17 +822,17 @@ if (tabId === 'data') {
 												<td th:text="${data.local_foreign}"></td>
 												<td th:text="${data.cbuae_tiering}"></td>
 												<td th:text="${data.currency}"></td>
-												<td th:text="${data.fx_net_openposition}"></td>
-												<td th:text="${data.off_balance_sheet_position}"></td>
-												<td th:text="${data.on_balance_sheet_position}"></td>
-												<td th:text="${data.fx_net_openposition_foreign_currency}"></td>
-												<td th:text="${data.internal_long_limit}"></td>
+                                                <td th:text="${#numbers.formatDecimal(data.fx_net_openposition, 1, 'COMMA', 2, 'POINT')}"></td>
+                                                <td th:text="${#numbers.formatDecimal(data.off_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}"></td>
+                                                <td th:text="${#numbers.formatDecimal(data.on_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}"></td>
+                                                <td th:text="${#numbers.formatDecimal(data.fx_net_openposition_foreign_currency, 1, 'COMMA', 2, 'POINT')}"></td>
+												<td th:text="${#numbers.formatDecimal(data.internal_long_limit , 1, 'COMMA', 2, 'POINT')}"></td>
 												<td th:text="${data.internal_long_limit_trigger_status}"></td>
-												<td th:text="${data.internal_short_limit}"></td>
+												<td th:text="${#numbers.formatDecimal(data.internal_short_limit , 1, 'COMMA', 2, 'POINT')}"></td>
 												<td th:text="${data.internal_short_limit_trigger_status}"></td>
-												<td th:text="${data.bank_core_tier1_capital}"></td>
-												<td th:text="${data.bank_core_tier1_capital_lc}"></td>
-												<td th:text="${data.percent_of_group_capital}"></td>
+												<td th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital , 1, 'COMMA', 2, 'POINT')}"></td>
+												<td th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital_lc , 1, 'COMMA', 2, 'POINT')}"></td>
+												<td th:text="${#numbers.formatDecimal(data.percent_of_group_capital , 1, 'COMMA', 2, 'POINT')}"></td>
 
 
 							</tr>
