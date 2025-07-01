@@ -613,7 +613,7 @@ public class XBRLNavigationController {
 
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "TreasuryCreditReport.xls");
+		headersResponse.setContentDispositionFormData("attachment", "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
