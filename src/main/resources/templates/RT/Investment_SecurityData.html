@@ -412,56 +412,54 @@ PURPOSE		: Nostra Account balance Report
 
 
 <script>
-	function download() {
-		// 1. Show the loader modal
+	function downloadInvestmentSecurities() {
 		$('#loader').modal('show');
 
 		$.ajax({
-			url: './downloadTreasuryCreditExcel',
+			url: './downloadInvestmentSecuritiesExcel', // This URL must match your controller endpoint
 			type: 'GET',
 			xhrFields: {
-				responseType: 'blob' // Important: To handle binary file (Excel)
+				responseType: 'blob' // Essential for handling binary file data
 			},
-			success: function (data, status, xhr) {
+			success: function (data, textStatus, jqXHR) {
 				$('#loader').modal('hide');
 
-				// Get filename from Content-Disposition header if available
-				let filename = "TreasuryCredit.xls";
-				const disposition = xhr.getResponseHeader('Content-Disposition');
-				if (disposition && disposition.indexOf('filename=') !== -1) {
-					const filenameMatch = disposition.match(/filename="?(.+)"?/);
-					if (filenameMatch.length > 1) {
-						filename = filenameMatch[1];
-					}
+				// Check for a "No Content" response from the server
+				if (jqXHR.status === 204 || !data || data.size < 100) {
+					showResultModal('Information', 'No data was available to create the report.');
+					return;
 				}
 
-				if (data.size > 100) {
-					const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-					const url = window.URL.createObjectURL(blob);
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
 
-					const a = document.createElement('a');
-					a.href = url;
-					a.download = filename;
-					document.body.appendChild(a);
-					a.click();
+				a.style.display = 'none';
+				a.href = url;
+				a.download = 'INVESTMENT_SECURITY.xls'; // The filename for the user
 
-					window.URL.revokeObjectURL(url);
-					document.body.removeChild(a);
+				document.body.appendChild(a);
+				a.click();
 
-					$('#alertmsg').text(filename + ' has been downloaded successfully.');
-				} else {
-					$('#alertmsg').text('No data available to download.');
-				}
+				// Clean up the temporary URL and link
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
 
-				$('#alert').modal('show');
+				showResultModal('Success', 'The file has been downloaded successfully.');
+
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				$('#loader').modal('hide');
 				console.error("Download failed:", textStatus, errorThrown);
-				$('#alertmsg').text('An error occurred while downloading TreasuryCredit.xls.');
-				$('#alert').modal('show');
+				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
 			}
 		});
+	}
+
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+		$('#resultModal').modal('show');
 	}
 </script>
 
@@ -499,7 +497,8 @@ PURPOSE		: Nostra Account balance Report
 						Instructions</button>
 					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 					<div class="float-right" style="margin-left:61%">
-						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn" onclick="download();">
+						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
+							onclick="downloadInvestmentSecurities();">
 							<i class="fa fa-download"></i> Download
 						</button>
 
@@ -1330,27 +1329,27 @@ PURPOSE		: Nostra Account balance Report
 								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{pledgedAmountAed}" /></div>
 							</div>
-							
-							
-							
+
+
+
 							<div class="form-group row">
-														<label class="col-sm-2 col-form-label">unencumberedAmountAed</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{unencumberedAmountAed}" /></div>
+								<label class="col-sm-2 col-form-label">unencumberedAmountAed</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{unencumberedAmountAed}" /></div>
 
-														<label class="col-sm-2 col-form-label">proportionUnencumbered</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{proportionUnencumbered}" /></div>
-													</div>
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">hqlaElarEligibility</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{hqlaElarEligibility}" /></div>
+								<label class="col-sm-2 col-form-label">proportionUnencumbered</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{proportionUnencumbered}" /></div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">hqlaElarEligibility</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{hqlaElarEligibility}" /></div>
 
-														<label class="col-sm-2 col-form-label">liquidityType</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{liquidityType}" /></div>
-													</div>
+								<label class="col-sm-2 col-form-label">liquidityType</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{liquidityType}" /></div>
+							</div>
 						</div>
 
 						<div class="card-footer text-center"
@@ -1362,44 +1361,13 @@ PURPOSE		: Nostra Account balance Report
 				</form>
 			</div>
 
-			<div class="modal fade" id="datadelete">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
-							<button type="button" class="close" data-dismiss="modal">×</button>
-							Are you Sure want to delete?
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-								th:attr="data-formmode=delete">Submit</button>
-							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal fade" id="formmsg">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
-							<button type="button" class="close" data-dismiss="modal">×</button>
-							<a th:value="${msg}"></a>
-						</div>
-						<div class="modal-footer"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-								th:attr="data-formmode=delete">Submit</button>
-							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
 			<div class="modal fade" id="alert">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 					<div class="modal-content">
 						<div class="menu-title-header">
 							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-								BANK OF BARODA</div>
+								BANK OF
+								BARODA</div>
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
@@ -1415,56 +1383,47 @@ PURPOSE		: Nostra Account balance Report
 					<div class="modal-content">
 						<div class="menu-title-header">
 							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-								BANK OF BARODA</div>
+								BANK OF
+								BARODA</div>
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg1"></p>
-							<button type="button" class="custom-tab-btn" onclick="nostro()"
+							<button type="button" class="custom-tab-btn" onclick="trade()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!-- Loader Modal (Using your existing loader image) -->
 			<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content" style="background: transparent;">
-						<div class="modal-body" style="text-align: center">
-							<div>
-								<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-								border-color: transparent;" alt="Bornfire">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content" style="background: transparent; border: none;">
+						<div class="modal-body text-center">
+							<img th:src="@{/images/loader.gif}" style="width: 150px; height: auto;" alt="Processing...">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Custom Alert/Result Modal (Matches your existing style) -->
+			<div class="modal fade" id="resultModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<!-- Your custom styled header -->
+						<div class="menu-title-header">
+							<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
+								<!-- Title will be set by JavaScript -->
 							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
-				aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="downloadProcessingModalLabel">Download
-								Processing...</h5>
+						<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
+							<p id="resultModalBody"></p>
+							<!-- Your custom styled button -->
+							<button type="button" class="custom-tab-btn" onclick="list()"
+								data-dismiss="modal">OK</button>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- Download Message -->
-			<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
-				aria-labelledby="customAlertModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
-						</div>
-						<div class="modal-body" id="customAlertBody"></div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-dismiss="modal"
-								onclick="list()">OK</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 </body>
 <script>
 	$(document).ready(function () {

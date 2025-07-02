@@ -103,6 +103,7 @@ import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
+import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
@@ -223,9 +224,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_ForeignCurrencyDepositRepository foreigncurrencydepositRepo;
-	
+
 	@Autowired
-    RT_Investment_Securities_Data_Template_Repo investmentSecuritiesDataTemplateRepo;
+	RT_Investment_Securities_Data_Template_Repo investmentSecuritiesDataTemplateRepo;
 
 	private String pagesize;
 
@@ -589,20 +590,22 @@ public class XBRLNavigationController {
 
 		boolean updated = treasuryCreditService.updateTreasuryCredit(creditData);
 
-		/*if (updated) {
-			redirectAttributes.addFlashAttribute("updateMsg", "Updated Successfully");
-		} else {
-			redirectAttributes.addFlashAttribute("updateMsg", "Record not found for update");
-		}
+		/*
+		 * if (updated) { redirectAttributes.addFlashAttribute("updateMsg",
+		 * "Updated Successfully"); } else {
+		 * redirectAttributes.addFlashAttribute("updateMsg",
+		 * "Record not found for update"); }
+		 * 
+		 * return "redirect:/Treasury_Credit_Limit_Management?formmode=list";
+		 */
 
-		return "redirect:/Treasury_Credit_Limit_Management?formmode=list";*/
-		
-		
-		if (updated) { return "Updated successfully"; 
-		} else { return
-				"Record not found for update"; }
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
 	}
-	
+
 	@RequestMapping(value = "downloadTreasuryCreditExcel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadTreasuryCreditExcel() throws IOException {
 		System.out.println("Entered controller downloadTreasuryCreditExcel");
@@ -613,16 +616,18 @@ public class XBRLNavigationController {
 
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
+		headersResponse.setContentDispositionFormData("attachment",
+				"CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
 
-	// -------------------------------------Treasury_Credit_Limit_Management End---------------------------------------
-	
-	// -------------------------------------Investent_Securities_Data START---------------------------------------
+	// -------------------------------------Treasury_Credit_Limit_Management
+	// End---------------------------------------
 
-	
+	// -------------------------------------Investent_Securities_Data
+	// START---------------------------------------
+
 	/*
 	 * @RequestMapping(value = "Investment_Securities_Data", method =
 	 * RequestMethod.GET) public String TreasuryCredit(@RequestParam(required =
@@ -638,22 +643,21 @@ public class XBRLNavigationController {
 	 * { model.addAttribute("formmode", "add"); }
 	 * 
 	 * return "RT/InvestmentSecurityData.html";
-	 */ 
-	  
+	 */
+
 	@RequestMapping(value = "Investment_Securities_Data", method = RequestMethod.GET)
 	public String treasuryCredit(@RequestParam(required = false) String siNo,
-	                             @RequestParam(required = false) String formmode,
-	                             Model model) {
+			@RequestParam(required = false) String formmode, Model model) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new RT_Investment_Securities_Data_Template()));
-		}else if ("list".equalsIgnoreCase(formmode)) {
-	        List<RT_Investment_Securities_Data_Template> list =
-	            investmentSecuritiesDataTemplateRepo.getsecDatalist();
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
+					.orElse(new RT_Investment_Securities_Data_Template()));
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist();
 
-	        model.addAttribute("formmode", "list");
-	        model.addAttribute("ISList", list); // Used in HTML table
+			model.addAttribute("formmode", "list");
+			model.addAttribute("ISList", list); // Used in HTML table
 		} /*
 			 * else { model.addAttribute("formmode", "add");
 			 * model.addAttribute("securityData", new
@@ -662,9 +666,8 @@ public class XBRLNavigationController {
 			model.addAttribute("formmode", "add");
 		}
 
-	    return "RT/Investment_SecurityData";
+		return "RT/Investment_SecurityData";
 	}
-
 
 	/*
 	 * @RequestMapping(value = "Investment_Securities_Data", method =
@@ -708,20 +711,58 @@ public class XBRLNavigationController {
 
 	@PostMapping("/updateInvestmentSecurity")
 	@ResponseBody
-	public String updateInvestmentSecurity(@ModelAttribute("InvestmentData") RT_Investment_Securities_Data_Template InvestmentData) {
+	public String updateInvestmentSecurity(
+			@ModelAttribute("InvestmentData") RT_Investment_Securities_Data_Template InvestmentData) {
 
-	    boolean updated = investmentSecurity_Service.updateInvestmentSecurity(InvestmentData);
+		boolean updated = investmentSecurity_Service.updateInvestmentSecurity(InvestmentData);
 
-	    if (updated) {
-	        return "Updated successfully";
-	    } else {
-	        return "Record not found for update";
-	    }
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
 	}
 
+	@Autowired
+	private RT_InvestmentSecurity_Service rtInvestmentSecuritiesService;
 
+	// ... other controller methods ...
 
-	// -------------------------------------Investent_Securities_Data End---------------------------------------
+	@RequestMapping(value = "/downloadInvestmentSecuritiesExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadInvestmentSecuritiesExcel() {
+		logger.info("Controller: Received request for Investment Securities Excel download.");
+
+		try {
+			byte[] excelData = rtInvestmentSecuritiesService.generateInvestmentSecuritiesExcel();
+
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: Service returned no data for Investment Securities. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			HttpHeaders headers = new HttpHeaders();
+			String filename = "INVESTMENT_SECURITY.xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: The INVESTMENT_SECURITY.xls template file was not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during Investment Securities file generation.",
+					e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	// -------------------------------------Investent_Securities_Data
+	// End---------------------------------------
 
 //-------------------------------------Investment Risk Data Report Start---------------------------------------
 	// Investment Report code
@@ -905,14 +946,13 @@ public class XBRLNavigationController {
 			System.out.println("Add mode activated");
 		}
 
-		return "RT/Trade_Market_Risk"; // Thymeleaf template name: Trade_Market_Risk.html
+		return "RT/Trade_Market_Risk";
 	}
 
 	@RequestMapping(value = "updateTradeMarketRisk", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateTradeMarketRisk(@ModelAttribute RT_TradeMarketRiskData data, HttpServletRequest request) {
 
-		// Log the action with minimal but useful debug info
 		System.out.println("User [" + request.getSession().getAttribute("USERID")
 				+ "] requested update for Report Date: " + data.getReportDate());
 
@@ -1745,6 +1785,41 @@ public class XBRLNavigationController {
 		md.addAttribute("countryList", countryList);
 
 		return "RT/CCR_Data_Templates";
+	}
+
+	@Autowired
+	private RT_CCR_DATA_Service rtCCRDataService;
+
+	@RequestMapping(value = "/downloadCCRDataExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadCCRDataExcel() {
+		logger.info("Controller: Received request for CCR DATA Excel download.");
+
+		try {
+			byte[] excelData = rtCCRDataService.generateCCRDataExcel();
+
+			if (excelData.length == 0) {
+				logger.warn("Controller: Service returned no data for CCR DATA. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			HttpHeaders headers = new HttpHeaders();
+			String filename = "CCR_DATA.xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: The CCR_DATA.xls template file was not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during CCR_DATA file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(value = "Foreign_Currency_Deposit", method = RequestMethod.GET)
