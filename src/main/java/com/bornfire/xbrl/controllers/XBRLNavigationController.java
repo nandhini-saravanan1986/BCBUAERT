@@ -115,7 +115,11 @@ import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
+import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
 
+import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
+
+import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -227,6 +231,13 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_Investment_Securities_Data_Template_Repo investmentSecuritiesDataTemplateRepo;
+	
+	@Autowired
+	private RT_ImpactAnalysisService impactanalysisService;
+	
+	
+@Autowired
+	RT_ImpactAnalysisRepository impactanalysisRepo;
 
 	private String pagesize;
 
@@ -1864,5 +1875,48 @@ public class XBRLNavigationController {
 			return "Record not found for update";
 		}
 	}
+	
+	@RequestMapping(value = "Impact_Analysis", method = RequestMethod.GET)
+	public String ImpactAnalysis(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_ImpactAnalysis data = impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("impactanalysis", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
+
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", impactanalysisRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
+
+			// You had md.addAttribute("formmode", "null"); — removed this line because it
+			// would overwrite the previous one
+		}
+
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
+
+		return "RT/ImpactAnalysis";
+	}
+	
+	@PostMapping("/updateImpactAnalysis")
+	@ResponseBody
+	public String updateImpactAnalysis(@ModelAttribute RT_ImpactAnalysis impactanalysis) {
+		boolean updated = impactanalysisService.updateImpactAnalysis(impactanalysis);
+
+		if (updated) {
+			return "Updated successful";
+		} else {
+			return "Record not found for update";
+		}
+	}	
 
 }
