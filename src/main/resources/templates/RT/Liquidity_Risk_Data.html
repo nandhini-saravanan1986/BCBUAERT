@@ -328,45 +328,40 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 		}
 
 		function list() {
-			location.href = 'Treasury_Credit_Limit_Management?formmode=list';
+			location.href = 'Liquidity_Risk_Data?formmode=list';
 		}
 
 		function nostro() {
-			location.href = 'Treasury_Credit_Limit_Management';
+			location.href = 'Liquidity_Risk_Data';
 		}
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
-				window.location.href = './Treasury_Credit_Limit_Management';
+				window.location.href = './Liquidity_Risk_Data';
 			});
 		});
 
 		function updateform(event) {
-
 			event.preventDefault();
 			$("#loader").modal("toggle");
 
 			$.ajax({
-				url: `./updateTreasuryCredit`,
+				url: './updateLiquidityRiskData',
 				type: 'POST',
-				data: $('#creditData').serialize(),
+				data: $('#LiquidityData').serialize(), // Ensure this ID matches the form
 				success: function (response) {
 					$("#loader").modal("hide");
-
-
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
-
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
 					$("#loader").modal("hide");
-
 					alert("Failed to modify. Please try again.");
 				}
 			});
-
 		}
+
 
 	</script>
 
@@ -378,11 +373,11 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 		$("#loader").modal("toggle");
 
 		if (tabId === 'data') {
-			window.location.href = 'Treasury_Credit_Limit_Management?formmode=list';
+			window.location.href = 'Liquidity_Risk_Data?formmode=list';
 			$("#loader").modal("hide");
 
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Treasury_Credit_Limit_Management?formmode=add';
+			window.location.href = 'Liquidity_Risk_Data?formmode=add';
 			$("#loader").modal("hide");
 		}
 	}
@@ -480,7 +475,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 				<div class="float-left">
 					<h5
 						style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
-						TREASURY CREDIT LIMIT MANAGEMENT</h5>
+						LIQUIDITY RISK DATA</h5>
 				</div>
 
 
@@ -762,213 +757,108 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							style="min-width: 2000px; font-family:calibri;">
 
 							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+
 								<tr>
-									<th colspan=""></th>
-									<th colspan="8" style="text-align: center;">Bank Information</th>
-									<th colspan="7" style="text-align: center;">Counterparty Information</th>
-									<th colspan="3" style="text-align: center;">Money Market</th>
-									<th colspan="3" style="text-align: center;">Repo</th>
-									<th colspan="3" style="text-align: center;">Bonds/Sukuks</th>
-									<th colspan="3" style="text-align: center;">Equity</th>
-									<th colspan="3" style="text-align: center;">Credit</th>
-									<th colspan="3" style="text-align: center;">Other</th>
-									<th colspan="3" style="text-align: center;">Nostro</th>
-									<th colspan="3" style="text-align: center;">Derivatives</th>
-									<th colspan="3" style="text-align: center;">FX Settlement</th>
-									<th colspan="3" style="text-align: center;">Bond Settlement</th>
-									<th colspan="4" style="text-align: center;">Overall Treasury Limit & Exposure</th>
-								</tr>
-								<tr>
+									<th></th>
 									<!-- Bank Info -->
-									<th>Action</th>
 									<th>Data Date</th>
 									<th>Bank Name</th>
 									<th>Head Office/Subsidiary</th>
-									<th>Subsidiary</th>
 									<th>Bank Symbol</th>
 									<th>Conventional/Islamic</th>
 									<th>Local/Foreign</th>
 									<th>CBUAE Tiering</th>
+									
 
-									<!-- Counterparty Info -->
-									<th>Counterparty Name</th>
-									<th>Counterparty Internal Reference</th>
-									<th>Counterparty Risk Rating</th>
-									<th>Final Rating (CBUAE)</th>
-									<th>Country of Risk</th>
-									<th>CBUAE Geographical Zone</th>
-									<th>Counterparty Type</th>
+									<!-- GL Info -->
+									<th>GL Level 1</th>
+									<th>GL Level 2</th>
+									<th>GL Level 3</th>
 
-									<!-- Limits -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- MM -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Repo -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Bonds -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Equity -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Credit -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Other -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Nostro -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Derivatives -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- FX -->
-									<th>Limit</th>
-									<th>Utilization</th>
-									<th>Percent</th> <!-- Bond Set -->
+									<!-- Instrument Info -->
+									<th>Option Type</th>
+									<th>Rate Type</th>
+									<th>Reference Rate</th>
+									<th>Outstanding Balance</th>
 
-									<!-- Overall -->
-									<th>Treasury Limits (AED Mio)</th>
-									<th>Treasury Limits (%)</th>
-									<th>Exposure (AED Mio)</th>
-									<th>Exposure (%)</th>
+									<!-- Maturity Buckets -->
+									<th>Overnight</th>
+									<th>1M</th>
+									<th>1-3M</th>
+									<th>3-6M</th>
+									<th>6-9M</th>
+									<th>9M-1Y</th>
+									<th>1Y-1.5Y</th>
+									<th>1.5Y-2Y</th>
+									<th>2Y-3Y</th>
+									<th>3Y-4Y</th>
+									<th>4Y-5Y</th>
+									<th>5Y-6Y</th>
+									<th>6Y-7Y</th>
+									<th>7Y-8Y</th>
+									<th>8Y-9Y</th>
+									<th>9Y-10Y</th>
+									<th>10Y-15Y</th>
+									<th>15Y-20Y</th>
+									<th>20Y Above</th>
+									<th>Non-Maturing</th>
 								</tr>
 							</thead>
 
-
 							<tbody style="font-size: 9px;">
-								<tr th:each="data : ${TClist}">
-									<!-- Edit icon (optional) -->
+								<tr th:each="data : ${liquidityList}">
+									<!-- Edit Icon -->
+
+
 									<td>
-										<a
-											th:href="@{'/Treasury_Credit_Limit_Management?formmode=edit&slNo=' + ${data.slNo}}">
+										<a th:href="@{'/Liquidity_Risk_Data?formmode=edit&slno=' + ${data.slno}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i>
 										</a>
 									</td>
 
 									<!-- Bank Info -->
-									<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
-									<td th:text="${data.bankName}"></td>
-									<td th:text="${data.headOfficeSubsidiary}"></td>
-									<td th:text="${data.subsidiary}"></td>
-									<td th:text="${data.bankSymbol}"></td>
-									<td th:text="${data.conventionalIslamic}"></td>
-									<td th:text="${data.localForeign}"></td>
-									<td th:text="${data.cbuaeTiering}"></td>
+											<td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
+											<td th:text="${data.bankName}"></td>
+											<td th:text="${data.headOfficeSubsidiary}"></td>
+											<td th:text="${data.bankSymbol}"></td>
+											<td th:text="${data.conventionalIslamic}"></td>
+											<td th:text="${data.localForeign}"></td>
+											<td th:text="${data.cbuaeTiering}"></td>
 
-									<!-- Counterparty Info -->
-									<td th:text="${data.counterpartyName}"></td>
-									<td th:text="${data.counterpartyIntRef}"></td>
-									<td th:text="${data.counterpartyRiskRating}"></td>
-									<td th:text="${data.finalRatingCbuae}"></td>
-									<td th:text="${data.countryOfRisk}"></td>
-									<td th:text="${data.cbuaeGeographicalZone}"></td>
-									<td th:text="${data.counterpartyType}"></td>
+											<!-- GL Info -->
+											<td th:text="${data.glLevel1}"></td>
+											<td th:text="${data.glLevel2}"></td>
+											<td th:text="${data.glLevel3}"></td>
 
-									<!-- Money Market -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedMoneymarket, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedMoneymarket, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.moneymarketPercent}"></td>
+											<!-- Instrument Info -->
+											<td th:text="${data.optionType}"></td>
+											<td th:text="${data.rateType}"></td>
+											<td th:text="${data.instrumentCurrency}"></td>
 
-									<!-- Repo -->
-									<td th:text="${#numbers.formatDecimal(data.limitAedRepo, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedRepo, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.repoPercent}"></td>
-
-									<!-- Bonds -->
-									<td th:text="${#numbers.formatDecimal(data.limitAedBonds, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedBonds, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.bondsPercent}"></td>
-
-									<!-- Equity -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedEquity, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedEquity, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.equityPercent}"></td>
-
-									<!-- Credit -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedCredit, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedCredit, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.creditPercent}"></td>
-
-									<!-- Other -->
-									<td th:text="${#numbers.formatDecimal(data.limitAedOther, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedOther, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.otherPercent}"></td>
-
-									<!-- Nostro -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedNostro, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedNostro, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.nostroPercent}"></td>
-
-									<!-- Derivatives -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedDerivatives, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedDerivatives, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.derivativesPercent}"></td>
-
-									<!-- FX -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedFxsettlement, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedFxsettlement, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.fxsettlementPercent}"></td>
-
-									<!-- Bond Settlement -->
-									<td
-										th:text="${#numbers.formatDecimal(data.limitAedBondsettlement, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
-										th:text="${#numbers.formatDecimal(data.utilizationAedBondsettlement, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.bondsettlementPercent}"></td>
-
-									<!-- Overall -->
-									<td
-										th:text="${#numbers.formatDecimal(data.treasuryLmtAed, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${#numbers.formatDecimal(data.treasuryLmt, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${#numbers.formatDecimal(data.exposureAed, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${#numbers.formatDecimal(data.exposure, 1, 'COMMA', 2, 'POINT')}"></td>
-
-								</tr>
+											<!-- Maturity Buckets with decimal formatting -->
+											<td th:text="${#numbers.formatDecimal(data.outstandingBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.overnight, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.onTo1m, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.oneMTo3m, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.threeMTo6m, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.sixMTo9m, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.nineMTo1y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.oneYTo1_5y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.one5yTo2y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.twoYTo3y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.threeYTo4y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.fourYTo5y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.fiveYTo6y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.sixYTo7y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.sevenYTo8y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.eightYTo9y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.nineYTo10y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.tenYTo15y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.fifteenYTo20y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.twentyYAbove, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.nonMaturing, 1, 'COMMA', 2, 'POINT')}"></td>
+										</tr>
 							</tbody>
-
 						</table>
 					</div>
 
@@ -987,38 +877,31 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 						<button type="button" class="custom-tab-btn" onclick="back();">
 							<i class="fa fa-arrow-left"></i> Back
 						</button>
-
 					</div>
-
 				</div>
-
-
-
 			</div>
-
 			<!-- ---------------- edit starts------------------------------------------------------------ -->
+			<div th:if="${formmode} == 'edit'" style="align-items:center">
+				<form th:action="@{/updateLiquidityRiskData}" th:object="${liquidityData}" method="post"
+					id="LiquidityData">
 
-			<div th:if="${formmode}=='edit'" style="align-items:center">
-				<form th:action="@{/BCDRS/updateTreasuryCredit}" th:object="${creditData}" method="post"
-					id="creditData">
 					<div class="card" style="margin: 0 15px;">
 						<div class="card-header" style="background-color: rgb(107, 122, 143);">
 							<h5 class="m-0 font-weight-bold"
 								style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
-								TREASURY CREDIT LIMIT - EDIT
+								LIQUIDITY RISK DATA - EDIT
 							</h5>
 						</div>
 
 						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-							<input type="hidden" th:field="*{slNo}" />
+							<input type="hidden" th:field="*{slno}" />
 
 							<!-- Bank Info -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Data Date</label>
-								<div class="col-sm-4">
-									<input type="date" class="form-control" th:field="*{reportDate}" />
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" />
 								</div>
-							
+
 								<label class="col-sm-2 col-form-label">Bank Name</label>
 								<div class="col-sm-4">
 									<select class="form-control" th:field="*{bankName}"
@@ -1031,429 +914,308 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Subsidiary</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{subsidiary}" />
-								</div>
-							</div>
+															<label class="col-sm-2 col-form-label">Bank Symbol</label>
+															<div class="col-sm-4">
+																<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+																	readonly />
+															</div>
+															<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+															<div class="col-sm-4">
+																<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+																	id="conventionalIslamic" readonly />
+															</div>
+														</div>
 
-							<!-- Readonly Fields -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Bank Symbol</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
-										readonly />
-								</div>
-								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{conventionalIslamic}"
-										id="conventionalIslamic" readonly />
-								</div>
-							</div>
+														<div class="form-group row">
+															<label class="col-sm-2 col-form-label">Local/Foreign</label>
+															<div class="col-sm-4">
+																<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+																	readonly />
+															</div>
+															<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+															<div class="col-sm-4">
+																<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+																	readonly />
+															</div>
+														</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Local/Foreign</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
-										readonly />
-								</div>
-								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
-										readonly />
-								</div>
-							</div>
-
-							<!-- Counterparty Info -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Counterparty Name</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyName}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Internal Ref</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyIntRef}" />
+								<label class="col-sm-2 col-form-label">GL Level 1</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{glLevel1}" />
 								</div>
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Counterparty Risk Rating</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyRiskRating}" />
+								<label class="col-sm-2 col-form-label">GL Level 2</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{glLevel2}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+
+								<label class="col-sm-2 col-form-label">GL Level 3</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{glLevel3}" />
+								</div>
+							</div>
+
+							<!-- Instrument Info -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Option Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{optionType}" /></div>
+
+								<label class="col-sm-2 col-form-label">Rate Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{rateType}" />
 								</div>
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Country of Risk</label>
-								<div class="col-sm-4">
-									<select class="form-control" th:field="*{countryOfRisk}" onchange="handleCountryChange(this)">
-										<option value="">-- Select Country --</option>
-										<option th:each="country : ${countryList}" th:value="${country.countryOfRisk}"
-											th:text="${country.countryOfRisk}"></option>
-									</select>
-								</div>
+								<label class="col-sm-2 col-form-label">Reference Rate</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{referenceRate}" /></div>
 
-								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly />
-									</div>
+								<label class="col-sm-2 col-form-label">Instrument Currency</label>
+								<div class="col-sm-4"><input type="text" class="form-control"
+										th:field="*{instrumentCurrency}" /></div>
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Counterparty Type</label>
-								<div class="col-sm-10">
-									<input type="text" class="form-control" th:field="*{counterpartyType}" />
+								<label class="col-sm-2 col-form-label">Outstanding Balance</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{outstandingBalance}" /></div>
+							</div>
+
+							<!-- Maturity Buckets -->
+							<h5 style="margin: 20px 0 10px;">Maturity Buckets</h5>
+
+							<!-- Repeat row block for each pair -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Overnight</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{overnight}" /></div>
+
+								<label class="col-sm-2 col-form-label">1D to 1M</label>
+								<div class="col-sm-4"><input type="number" class="form-control" th:field="*{onTo1m}" />
 								</div>
 							</div>
 
+							<!-- Add remaining fields in similar fashion -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">1M to 3M</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{oneMTo3m}" /></div>
 
-							<!-- Categories - Copy this block per category (MM, Repo, Bonds, etc.) -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">MM Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedMoneymarket}" /></div>
+								<label class="col-sm-2 col-form-label">3M to 6M</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{threeMTo6m}" /></div>
+							</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedMoneymarket}" /></div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">6M to 9M</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{sixMTo9m}" /></div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{moneymarketPercent}" /></div>
-													</div>
+								<label class="col-sm-2 col-form-label">9M to 1Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{nineMTo1y}" /></div>
+							</div>
 
-													<!-- REPO -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Repo Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedRepo}" /></div>
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedRepo}" /></div>
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control" th:field="*{repoPercent}" />
-														</div>
-													</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">1Y to 1.5Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{oneYTo1_5y}" /></div>
 
-													<!-- Repeat similar blocks for: Bonds, Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
-													<!-- Example: Bonds -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bonds Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedBonds}" /></div>
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedBonds}" /></div>
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{bondsPercent}" /></div>
-													</div>
-													<!-- Bonds -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bonds Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedBonds"
-																th:value="${creditData.limitAedBonds}" />
-														</div>
+								<label class="col-sm-2 col-form-label">1.5Y to 2Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{one5yTo2y}" /></div>
+							</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedBonds"
-																th:value="${creditData.utilizationAedBonds}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">2Y to 3Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{twoYTo3y}" /></div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="bondsPercent"
-																th:value="${creditData.bondsPercent}" />
-														</div>
-													</div>
-							<!-- Credit -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Credit Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedCredit"
-																th:value="${creditData.limitAedCredit}" />
-														</div>
+								<label class="col-sm-2 col-form-label">3Y to 4Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{threeYTo4y}" /></div>
+							</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedCredit"
-																th:value="${creditData.utilizationAedCredit}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">4Y to 5Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{fourYTo5y}" /></div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="creditPercent"
-																th:value="${creditData.creditPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">5Y to 6Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{fiveYTo6y}" /></div>
+							</div>
 
-													<!-- Other -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Other Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedOther"
-																th:value="${creditData.limitAedOther}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">6Y to 7Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{sixYTo7y}" /></div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedOther"
-																th:value="${creditData.utilizationAedOther}" />
-														</div>
+								<label class="col-sm-2 col-form-label">7Y to 8Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{sevenYTo8y}" /></div>
+							</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="otherPercent"
-																th:value="${creditData.otherPercent}" />
-														</div>
-													</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">8Y to 9Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{eightYTo9y}" /></div>
 
-													<!-- Nostro -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Nostro Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedNostro"
-																th:value="${creditData.limitAedNostro}" />
-														</div>
+								<label class="col-sm-2 col-form-label">9Y to 10Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{nineYTo10y}" /></div>
+							</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedNostro"
-																th:value="${creditData.utilizationAedNostro}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">10Y to 15Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{tenYTo15y}" /></div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="nostroPercent"
-																th:value="${creditData.nostroPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">15Y to 20Y</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{fifteenYTo20y}" /></div>
+							</div>
 
-													<!-- Derivatives -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Derivatives Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedDerivatives"
-																th:value="${creditData.limitAedDerivatives}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">20Y Above</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{twentyYAbove}" /></div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedDerivatives"
-																th:value="${creditData.utilizationAedDerivatives}" />
-														</div>
-
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="derivativesPercent"
-																th:value="${creditData.derivativesPercent}" />
-														</div>
-													</div>
-
-													<!-- FX -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">FX Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedFxsettlement"
-																th:value="${creditData.limitAedFxsettlement}" />
-														</div>
-
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedFxsettlement"
-																th:value="${creditData.utilizationAedFxsettlement}" />
-														</div>
-
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="fxsettlementPercent"
-																th:value="${creditData.fxsettlementPercent}" />
-														</div>
-													</div>
-
-													<!-- Bond Settlement -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bond Settlement Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedBondsettlement"
-																th:value="${creditData.limitAedBondsettlement}" />
-														</div>
-
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedBondsettlement"
-																th:value="${creditData.utilizationAedBondsettlement}" />
-														</div>
-
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="bondsettlementPercent"
-																th:value="${creditData.bondsettlementPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">Non-Maturing</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{nonMaturing}" /></div>
+							</div>
+						</div>
+					</div>
 
 
-													<!-- Repeat similar block for: Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
-
-													<!-- Overall Treasury Section -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Treasury Limit (AED)</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{treasuryLmtAed}" /></div>
-														<label class="col-sm-2 col-form-label">Treasury Limit (%)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{treasuryLmt}" />
-														</div>
-													</div>
-
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Exposure (AED)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{exposureAed}" />
-														</div>
-														<label class="col-sm-2 col-form-label">Exposure (%)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{exposure}" />
-														</div>
-													</div>
-												</div>
-
-												<div class="card-footer text-center"
-																			style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-																			<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-																			<a th:href="@{/Treasury_Credit_Limit_Management}" class="custom-tab-btn">Cancel</a>
-																		</div>
-												</form>
-				</form>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+						<a th:href="@{/Liquidity_Risk_Data}" class="custom-tab-btn">Cancel</a>
+					</div>
 			</div>
+			</form>
+		</div>
 
 
 
 
-			<div class="modal fade" id="datadelete">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
-							<button type="button" class="close" data-dismiss="modal">×</button>
-							Are you Sure want to delete?
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-								th:attr="data-formmode=delete">Submit</button>
-							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-						</div>
+		<div class="modal fade" id="datadelete">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
+						<button type="button" class="close" data-dismiss="modal">×</button>
+						Are you Sure want to delete?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+							th:attr="data-formmode=delete">Submit</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
 			</div>
-			<div class="modal fade" id="formmsg">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
-							<button type="button" class="close" data-dismiss="modal">×</button>
-							<a th:value="${msg}"></a>
-						</div>
-						<div class="modal-footer"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-								th:attr="data-formmode=delete">Submit</button>
-							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-						</div>
+		</div>
+		<div class="modal fade" id="formmsg">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
+						<button type="button" class="close" data-dismiss="modal">×</button>
+						<a th:value="${msg}"></a>
+					</div>
+					<div class="modal-footer"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+							th:attr="data-formmode=delete">Submit</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<div class="modal fade" id="alert">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="menu-title-header">
-							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-								BANK
-								OF BARODA</div>
-						</div>
-						<div class="modal-body" style="text-align: center">
-							<p id="alertmsg"></p>
-							<button type="button" class="custom-tab-btn" onclick="list()"
-								data-dismiss="modal">Close</button>
-						</div>
+		<div class="modal fade" id="alert">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="menu-title-header">
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+							BANK OF BARODA</div>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<p id="alertmsg"></p>
+						<button type="button" class="custom-tab-btn" onclick="list()"
+							data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<div class="modal fade" id="alert1">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="menu-title-header">
-							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-								BANK
-								OF BARODA</div>
-						</div>
-						<div class="modal-body" style="text-align: center">
-							<p id="alertmsg1"></p>
-							<button type="button" class="custom-tab-btn" onclick="nostro()"
-								data-dismiss="modal">Close</button>
-						</div>
+		<div class="modal fade" id="alert1">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="menu-title-header">
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+							BANK OF BARODA</div>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<p id="alertmsg1"></p>
+						<button type="button" class="custom-tab-btn" onclick="nostro()"
+							data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
-			<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content" style="background: transparent;">
-						<div class="modal-body" style="text-align: center">
-							<div>
-								<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+		</div>
+		<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
 								border-color: transparent;" alt="Bornfire">
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
-				aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="downloadProcessingModalLabel">Download
-								Processing...</h5>
-						</div>
+		</div>
+		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+			aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+							Processing...</h5>
 					</div>
 				</div>
 			</div>
-			<!-- Download Message -->
-			<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
-				aria-labelledby="customAlertModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
-						</div>
-						<div class="modal-body" id="customAlertBody"></div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-dismiss="modal"
-								onclick="list()">OK</button>
-						</div>
+		</div>
+		<!-- Download Message -->
+		<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+			aria-labelledby="customAlertModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+					</div>
+					<div class="modal-body" id="customAlertBody"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
 					</div>
 				</div>
 			</div>
-			<div class="modal fade" id="alert1">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="menu-title-header">
-							<div class="modal-title" style="text-align: center; color: white;">BANK OF BARODA</div>
-						</div>
-						<div class="modal-body" style="text-align: center">
-							<p id="alertmsg1"></p>
-							<button type="button" class="custom-tab-btn" data-dismiss="modal">Close</button>
-						</div>
+		</div>
+		<div class="modal fade" id="alert1">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="menu-title-header">
+						<div class="modal-title" style="text-align: center; color: white;">BANK OF BARODA</div>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<p id="alertmsg1"></p>
+						<button type="button" class="custom-tab-btn" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
+		</div>
 
 
 </body>
@@ -1556,7 +1318,6 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 			$('#conventionalIslamic').val('');
 			$('#localForeign').val('');
 			$('#cbuaeTiering').val('');
-			$('#cbuaeGeographicalZone').val('');
 			return;
 		}
 
@@ -1569,7 +1330,6 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 				$('#conventionalIslamic').val(data.conventionalIslamic || '');
 				$('#localForeign').val(data.localForeign || '');
 				$('#cbuaeTiering').val(data.cbuaeTiering || '');
-				$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
 			},
 			error: function (xhr, status, error) {
 				console.error('AJAX Error:', error);
@@ -1577,31 +1337,6 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 			}
 		});
 	}
-	
-	function handleCountryChange(select) {
-	    const selectedCountry = select.value;
-
-	    if (!selectedCountry) {
-	        $('#cbuaeGeographicalZone').val('');
-	        return;
-	    }
-
-	    $.ajax({
-	        url: '/BCDRS/getCountryDetails',
-	        type: 'GET',
-	        data: { countryName: selectedCountry },
-	        success: function(data) {
-	            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
-	        },
-	        error: function(xhr, status, error) {
-	            console.error('AJAX Error:', error);
-	            alert('Failed to fetch geographical zone.');
-	        }
-	    });
-	}
 </script>
-
-
-
 
 </html>

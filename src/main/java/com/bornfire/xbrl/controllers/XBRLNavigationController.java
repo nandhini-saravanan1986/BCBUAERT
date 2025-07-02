@@ -81,9 +81,13 @@ import com.bornfire.xbrl.entities.RT_ForeignCurrencyDeposit;
 import com.bornfire.xbrl.entities.RT_ForeignCurrencyDepositRepository;
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
+import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
+import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
+import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
+import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
@@ -104,22 +108,19 @@ import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
-import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
+import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
 import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
+import com.bornfire.xbrl.services.RT_Liquidity_Risk_Data_Service;
 import com.bornfire.xbrl.services.RT_MmdataService;
+import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
-import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
-
-import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
-
-import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -235,6 +236,11 @@ public class XBRLNavigationController {
 	@Autowired
 	private RT_ImpactAnalysisService impactanalysisService;
 	
+	@Autowired
+	RT_Liquidity_Risk_Data_Service   liquidityRiskDataService;
+	
+	@Autowired
+	RT_Liquidity_Risk_Data_Template_Repository   LiquidityRiskDataRepository;
 	
 @Autowired
 	RT_ImpactAnalysisRepository impactanalysisRepo;
@@ -577,22 +583,30 @@ public class XBRLNavigationController {
 
 	// -------------------------------------Treasury_Credit_Limit_Management---------------------------------------
 
-	@RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
-	public String TreasuryCredit(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) Integer slNo, Model model) {
+	 @RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
+	    public String TreasuryCredit(@RequestParam(required = false) String formmode,
+	                                 @RequestParam(required = false) Integer slNo,
+	                                 Model model) {
 
-		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
-			model.addAttribute("formmode", "edit");
-			model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			model.addAttribute("formmode", "list");
-			model.addAttribute("TClist", treasuryCreditRepo.getTClist());
-		} else {
-			model.addAttribute("formmode", "add");
-		}
+	        if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+	            model.addAttribute("formmode", "edit");
+	            model.addAttribute("creditData", treasuryCreditRepo.findById(slNo)
+	                .orElse(new RT_TreasuryCreditEntity()));
+	        } else if ("list".equalsIgnoreCase(formmode)) {
+	            model.addAttribute("formmode", "list");
+	            model.addAttribute("TClist", treasuryCreditRepo.getTClist());
+	        } else {
+	            model.addAttribute("formmode", "add");
+	        }
 
-		return "RT/Treasury_Credit.html";
-	}
+	        List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+	        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+	        model.addAttribute("bankList", bankList);
+	        model.addAttribute("countryList", countryList);
+
+	        return "RT/Treasury_Credit.html";
+	    }
+
 
 	@PostMapping("/updateTreasuryCredit")
 	@ResponseBody
@@ -658,17 +672,18 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Investment_Securities_Data", method = RequestMethod.GET)
 	public String treasuryCredit(@RequestParam(required = false) String siNo,
-			@RequestParam(required = false) String formmode, Model model) {
+	                             @RequestParam(required = false) String formmode,
+	                             Model model) {
 
-		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+	    if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
-					.orElse(new RT_Investment_Securities_Data_Template()));
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist();
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new RT_Investment_Securities_Data_Template()));
+		}else if ("list".equalsIgnoreCase(formmode)) {
+	        List<RT_Investment_Securities_Data_Template> list =
+	            investmentSecuritiesDataTemplateRepo.getsecDatalist();
 
-			model.addAttribute("formmode", "list");
-			model.addAttribute("ISList", list); // Used in HTML table
+	        model.addAttribute("formmode", "list");
+	        model.addAttribute("ISList", list); // Used in HTML table
 		} /*
 			 * else { model.addAttribute("formmode", "add");
 			 * model.addAttribute("securityData", new
@@ -676,49 +691,14 @@ public class XBRLNavigationController {
 			 */else {
 			model.addAttribute("formmode", "add");
 		}
-
-		return "RT/Investment_SecurityData";
+ 
+        List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+        model.addAttribute("bankList", bankList);
+        model.addAttribute("countryList", countryList);
+        
+	    return "RT/Investment_SecurityData";
 	}
-
-	/*
-	 * @RequestMapping(value = "Investment_Securities_Data", method =
-	 * RequestMethod.GET) public String InvestmentSecurity(@RequestParam(required =
-	 * false) String formmode, Model model) {
-	 * 
-	 * if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-	 * RT_Investment_Securities_Data_Template data =
-	 * investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new
-	 * RT_Investment_Securities_Data_Template()); model.addAttribute("formmode",
-	 * "edit"); model.addAttribute("InvestmentData", data);
-	 * 
-	 * } else if ("list".equalsIgnoreCase(formmode)) {
-	 * List<RT_Investment_Securities_Data_Template> list =
-	 * investmentSecuritiesDataTemplateRepo.getsecDatalist();
-	 * model.addAttribute("formmode", "list"); model.addAttribute("ISList", list);
-	 * 
-	 * } else { model.addAttribute("formmode", "add");
-	 * model.addAttribute("securityData", new
-	 * RT_Investment_Securities_Data_Template()); }
-	 * 
-	 * return "RT/Investment_SecurityData"; // Your HTML page name }
-	 */
-
-	/*
-	 * @PostMapping("/updateInvestmentSecurity") public String
-	 * updateInvestmentSecurity(@ModelAttribute("InvestmentData")
-	 * RT_Investment_Securities_Data_Template InvestmentData, RedirectAttributes
-	 * redirectAttributes) {
-	 * 
-	 * boolean updated =
-	 * investmentSecurity_Service.updateInvestmentSecurity(InvestmentData);
-	 * 
-	 * if (updated) { redirectAttributes.addFlashAttribute("message",
-	 * "Update successfully"); } else {
-	 * redirectAttributes.addFlashAttribute("error", "Record not found for update");
-	 * }
-	 * 
-	 * return "redirect:/Investment_SecurityData?formmode=list"; }
-	 */
 
 	@PostMapping("/updateInvestmentSecurity")
 	@ResponseBody
@@ -734,6 +714,49 @@ public class XBRLNavigationController {
 		}
 	}
 
+	
+	
+	// -------------------------------------Liquidity_Risk_Data -start---------------------------------------
+
+	@RequestMapping(value = "Liquidity_Risk_Data", method = RequestMethod.GET)
+	public String liquidityData(@RequestParam(required = false) String formmode,
+	                            @RequestParam(required = false) BigDecimal slno,
+	                            Model model) {
+
+	    if ("edit".equalsIgnoreCase(formmode) && slno != null) {
+	        model.addAttribute("formmode", "edit");
+	        model.addAttribute("liquidityData", LiquidityRiskDataRepository.findById(slno)
+	                                .orElse(new RT_Liquidity_Risk_Data_Template()));
+	    } else if ("list".equalsIgnoreCase(formmode)) {
+	        model.addAttribute("formmode", "list");
+	        model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist());
+	    } else {
+	        model.addAttribute("formmode", "add");
+	        model.addAttribute("liquidityData", new RT_Liquidity_Risk_Data_Template());
+	    }
+
+	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+        model.addAttribute("bankList", bankList);
+        model.addAttribute("countryList", countryList);
+
+	    return "RT/Liquidity_Risk_Data";
+	}
+
+
+	@PostMapping("/updateLiquidityRiskData")
+    @ResponseBody
+    public String updateLiquidityRiskData(@ModelAttribute RT_Liquidity_Risk_Data_Template LiquidityData) {
+        boolean updated = liquidityRiskDataService.updateLiquidityRisk(LiquidityData);
+
+        if (updated) {
+            return "Updated successfully";
+        } else {
+            return "Record not found for update";
+        }
+    }
+		// -------------------------------------Liquidity_Risk_Data End---------------------------------------
+	
 	@Autowired
 	private RT_InvestmentSecurity_Service rtInvestmentSecuritiesService;
 

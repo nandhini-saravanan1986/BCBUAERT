@@ -902,59 +902,63 @@ PURPOSE		: Nostra Account balance Report
 									<td th:text="${data.sector}"></td>
 
 									<td th:text="${data.issuerType}"></td>
-									<td th:text="${data.issueSize}"></td>
-									<td th:text="${data.percentIssueSize}"></td>
-									<td th:text="${data.nominalTradeCurrency}"></td>
-									<td th:text="${data.nominalAedEquivalent}"></td>
-									<td th:text="${data.premDiscAedEquivalent}"></td>
-									<td th:text="${data.specificProvisionAed}"></td>
-									<td th:text="${data.fixedIncomeInfoNetBookPrice}"></td>
-									<td th:text="${data.netBookValueAed}"></td>
-									<td th:text="${data.purchaseYieldToMaturity}"></td>
-									<td th:text="${data.cleanPrice}"></td>
-									<td th:text="${data.cleanMarketValueAed}"></td>
+									<td th:text="${#numbers.formatDecimal(data.issueSize, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.percentIssueSize, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.nominalTradeCurrency, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.nominalAedEquivalent, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.premDiscAedEquivalent, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.specificProvisionAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.fixedIncomeInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.netBookValueAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.purchaseYieldToMaturity, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.cleanPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.cleanMarketValueAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.currentYieldToMaturity, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.unrealizedGainLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
 
-									<td th:text="${data.currentYieldToMaturity}"></td>
-									<td th:text="${data.unrealizedGainLossAed}"></td>
-									<td th:text="${data.subordinatedDebtSukuk}"></td>
-									<td th:text="${data.finalRatingBanks}"></td>
-									<td th:text="${data.finalRatingCbuae}"></td>
-									<td th:text="${data.creditQuality}"></td>
-									<td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
-									<td th:text="${data.residualMaturity}"></td>
-									<td th:text="${data.maturityPeriod}"></td>
-									<td th:text="${data.percentHoldingsFi}"></td>
-									<td th:text="${data.qtyEquityFunds}"></td>
-									<td th:text="${data.equityFloatingFundAssets}"></td>
-									<td th:text="${data.totalFloatingShareFundAum}"></td>
-									<td th:text="${data.specificProvision}"></td>
-									<td th:text="${data.netBookValue}"></td>
-									<td th:text="${data.otherSecInfoNetBookPrice}"></td>
-									<td th:text="${data.marketPrice}"></td>
-									<td th:text="${data.fairValueAmountAed}"></td>
-									<td th:text="${data.unrealizedGainLossAgain}"></td>
-									<td th:text="${data.percentHoldingsOther}"></td>
-									<td th:text="${data.totalNetBookValueAed}"></td>
-									<td th:text="${data.totalMarketValueAed}"></td>
-									<td th:text="${data.totalUnrealizedGainLoss}"></td>
-									<td th:text="${data.unrealizedGainLossContrib}"></td>
-									<td th:text="${data.percentHoldings}"></td>
-									<td th:text="${data.existingPledgeStatus}"></td>
-									<td th:text="${data.pledgedAmountAed}"></td>
-									<td th:text="${data.unencumberedAmountAed}"></td>
-									<td th:text="${data.proportionUnencumbered}"></td>
-									<td th:text="${data.hqlaElarEligibility}"></td>
-									<td th:text="${data.liquidityType}"></td>
-									<td th:text="${data.sukukType}"></td>
-									<td th:text="${data.ttcPd}"></td>
-									<td th:text="${data.pitPd}"></td>
-									<td th:text="${data.ecl1y}"></td>
-									<td th:text="${data.eclLifetime}"></td>
-									<td th:text="${data.eclFinal}"></td>
-									<td th:text="${data.ifrs9Staging}"></td>
-									<td th:text="${data.bankCoreTier1CapitalAed}"></td>
+											<!-- subDebtSukuk is String -->
+											<td th:text="${data.subordinatedDebtSukuk}"></td>
 
-								</tr>
+											<td th:text="${data.finalRatingBanks}"></td>
+											<td th:text="${data.finalRatingCbuae}"></td>
+											<td th:text="${data.creditQuality}"></td>
+											<td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
+											<td th:text="${data.residualMaturity}"></td>
+											<td th:text="${data.maturityPeriod}"></td>
+
+											<td th:text="${#numbers.formatDecimal(data.percentHoldingsFi, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.qtyEquityFunds, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.equityFloatingFundAssets, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.totalFloatingShareFundAum, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.specificProvision, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.netBookValue, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.otherSecInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.marketPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.fairValueAmountAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.unrealizedGainLossAgain, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.percentHoldingsOther, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.totalNetBookValueAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.totalMarketValueAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.totalUnrealizedGainLoss, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.unrealizedGainLossContrib, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.percentHoldings, 1, 'COMMA', 2, 'POINT')}"></td>
+											
+											<!-- existingPledgeStatus and others -->
+											<td th:text="${data.existingPledgeStatus}"></td>
+											<td th:text="${#numbers.formatDecimal(data.pledgedAmountAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.unencumberedAmountAed, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.proportionUnencumbered, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${data.hqlaElarEligibility}"></td>
+											<td th:text="${data.liquidityType}"></td>
+											<td th:text="${data.sukukType}"></td>
+											<td th:text="${#numbers.formatDecimal(data.ttcPd, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.pitPd, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.ecl1y, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.eclLifetime, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${#numbers.formatDecimal(data.eclFinal, 1, 'COMMA', 2, 'POINT')}"></td>
+											<td th:text="${data.ifrs9Staging}"></td>
+											<td th:text="${#numbers.formatDecimal(data.bankCoreTier1CapitalAed, 1, 'COMMA', 2, 'POINT')}"></td>
+										</tr>
 							</tbody>
 						</table>
 					</div>
@@ -994,12 +998,11 @@ PURPOSE		: Nostra Account balance Report
 
 
 			<div th:if="${formmode}=='edit'" style="align-items:center">
-				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post"
-					id="InvestmentData">
+				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post" id="InvestmentData">
 					<div class="card" style="margin: 0 15px;">
 						<div class="card-header" style="background-color: rgb(107, 122, 143);">
 							<h5 class="m-0 font-weight-bold"
-								style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
+								style="font-family: verdana; margin-left: 20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
 								INVESTMENT SECURITIES DATA - EDIT
 							</h5>
 						</div>
@@ -1011,43 +1014,58 @@ PURPOSE		: Nostra Account balance Report
 							<!-- Bank Info -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Data Date</label>
-								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" />
+								<div class="col-sm-4">
+									<input type="date" class="form-control" th:field="*{dataDate}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Bank Name</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{bankName}" />
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{bankName}"
+										onchange="handleBankChange(this)">
+										<option value="">-- Select Bank --</option>
+										<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+											th:text="${bank.bankName}"></option>
+									</select>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{headOfficeSubsidiary}" /></div>
-
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" />
+								</div>
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{subsidiary}" /></div>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{subsidiary}" />
+								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bank Symbol</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{bankSymbol}" /></div>
-
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+										readonly />
+								</div>
 								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{conventionalIslamic}" /></div>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+										id="conventionalIslamic" readonly />
+								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Local/Foreign</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{localForeign}" /></div>
-
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+										readonly />
+								</div>
 								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{cbuAeTiering}" /></div>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuAeTiering}" id="cbuAeTiering"
+										readonly />
+								</div>
 							</div>
+
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Accounting Classification</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
@@ -1070,115 +1088,115 @@ PURPOSE		: Nostra Account balance Report
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bank Internal Portfolio Code</label>
-								<div class="col-sm-10"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{bankInternalPortfolioCode}" /></div>
 							</div>
 
 							<!-- REPO -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">CBUAE Security ID</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{cbuAeSecurityId}" /></div>
 
 								<label class="col-sm-2 col-form-label">CBUAE Access Primary Key</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{cbuAeAccessPrimaryKey}" /></div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Security Description</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{securityDescription}" /></div>
 
 								<label class="col-sm-2 col-form-label">Asset Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{assetCurrency}" /></div>
 							</div>
 
 							<!-- Bonds -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Obligor</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{obligor}" />
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{obligor}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Country of Risk</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{countryOfRisk}" /></div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{cbuAeGeographicalZone}" /></div>
 
 								<label class="col-sm-2 col-form-label">Industry</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{industry}" />
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{industry}" />
 								</div>
 							</div>
 
 							<!-- Credit -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Sector</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{sector}" />
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{sector}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Issuer Type</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{issuerType}" /></div>
 							</div>
 
 							<!-- Other -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{issueSize}" />
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{issueSize}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Percent Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{percentIssueSize}" /></div>
 							</div>
 
 							<!-- Nostro -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Nominal Trade Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{nominalTradeCurrency}" /></div>
 
 								<label class="col-sm-2 col-form-label">Nominal AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{nominalAedEquivalent}" /></div>
 							</div>
 
 							<!-- Derivatives -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Prem Disc AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{premDiscAedEquivalent}" /></div>
 
 								<label class="col-sm-2 col-form-label">Specific Provision AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{specificProvisionAed}" /></div>
 							</div>
 
 							<!-- FX -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Fixed Income Info Net Book Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{fixedIncomeInfoNetBookPrice}" /></div>
 
 								<label class="col-sm-2 col-form-label">Net Book Value AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{netBookValueAed}" /></div>
 							</div>
 
 							<!-- Bond Settlement -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Purchase YTM</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{purchaseYieldToMaturity}" /></div>
 
 								<label class="col-sm-2 col-form-label">Clean Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{cleanPrice}" /></div>
 							</div>
 
@@ -1203,163 +1221,190 @@ PURPOSE		: Nostra Account balance Report
 										th:field="*{subordinatedDebtSukuk}" /></div>
 							</div>
 
-
-
-
 							<!-- Derivatives -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">finalRatingBanks</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingBanks}" /></div>
+								<label class="col-sm-2 col-form-label">Final Rating Banks</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{finalRatingBanks}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">finalRatingCbuae</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingCbuae}" /></div>
+								<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+								</div>
 							</div>
 
 							<!-- FX -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">creditQuality</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{creditQuality}" /></div>
+								<label class="col-sm-2 col-form-label">Credit Quality</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{creditQuality}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">maturityDate</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityDate}" /></div>
+								<label class="col-sm-2 col-form-label">Maturity Date</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{maturityDate}" />
+								</div>
 							</div>
 
 							<!-- Bond Settlement -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">residualMaturity</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{residualMaturity}" /></div>
+								<label class="col-sm-2 col-form-label">Residual Maturity</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{residualMaturity}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">maturityPeriod</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityPeriod}" /></div>
+								<label class="col-sm-2 col-form-label">Maturity Period</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{maturityPeriod}" />
+								</div>
 							</div>
 
 							<!-- Overall Treasury -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsFi</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsFi}" /></div>
+								<label class="col-sm-2 col-form-label">Percent HoldingsFi</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{percentHoldingsFi}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">qtyEquityFunds</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{qtyEquityFunds}" /></div>
+								<label class="col-sm-2 col-form-label">Qty Equity Funds</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{qtyEquityFunds}" />
+								</div>
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">equityFloatingFundAssets</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{equityFloatingFundAssets}" /></div>
+								<label class="col-sm-2 col-form-label">Equity Floating Fund Assets</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{equityFloatingFundAssets}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">totalFloatingShareFundAum</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalFloatingShareFundAum}" /></div>
+								<label class="col-sm-2 col-form-label">Total Floating Share FundAum</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{totalFloatingShareFundAum}" />
+								</div>
 							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">specificProvision</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{specificProvision}" /></div>
 
-								<label class="col-sm-2 col-form-label">netBookValue</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{netBookValue}" /></div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Specific Provision</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{specificProvision}" />
+								</div>
+
+								<label class="col-sm-2 col-form-label">Net Book Value</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{netBookValue}" />
+								</div>
 							</div>
 
 							<!-- FX -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">otherSecInfoNetBookPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{otherSecInfoNetBookPrice}" /></div>
+								<label class="col-sm-2 col-form-label">Other Sec Info Net Book Price</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{otherSecInfoNetBookPrice}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">marketPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{marketPrice}" /></div>
+								<label class="col-sm-2 col-form-label">Market Price</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{marketPrice}" />
+								</div>
 							</div>
 
 							<!-- Bond Settlement -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">fairValueAmountAed</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{fairValueAmountAed}" /></div>
+								<label class="col-sm-2 col-form-label">Fair Value Amount AED</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{fairValueAmountAed}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">unrealizedGainLossAgain</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{unrealizedGainLossAgain}" /></div>
+								<label class="col-sm-2 col-form-label">UnrealizedGainLossAgain</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{unrealizedGainLossAgain}" />
+								</div>
 							</div>
 
 							<!-- Overall Treasury -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsOther</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsOther}" /></div>
+								<label class="col-sm-2 col-form-label">Percent Holdings Other</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{percentHoldingsOther}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">totalNetBookValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalNetBookValueAed}" /></div>
+								<label class="col-sm-2 col-form-label">Total NetBook ValueAED</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{totalNetBookValueAed}" />
+								</div>
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">totalMarketValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalMarketValueAed}" /></div>
+								<label class="col-sm-2 col-form-label">Total Market Value AED</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{totalMarketValueAed}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">totalUnrealizedGainLoss</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalUnrealizedGainLoss}" /></div>
+								<label class="col-sm-2 col-form-label">Total Unrealized GainLoss</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{totalUnrealizedGainLoss}" />
+								</div>
 							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unrealizedGainLossContrib</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unrealizedGainLossContrib}" /></div>
-
-								<label class="col-sm-2 col-form-label">percentHoldings</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldings}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">existingPledgeStatus</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{existingPledgeStatus}" /></div>
-
-								<label class="col-sm-2 col-form-label">pledgedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{pledgedAmountAed}" /></div>
-							</div>
-
-
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unencumberedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unencumberedAmountAed}" /></div>
+								<label class="col-sm-2 col-form-label">Unrealized GainLoss Contrib</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{unrealizedGainLossContrib}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">proportionUnencumbered</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{proportionUnencumbered}" /></div>
+								<label class="col-sm-2 col-form-label">Percent Holdings</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{percentHoldings}" />
+								</div>
 							</div>
+
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">hqlaElarEligibility</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{hqlaElarEligibility}" /></div>
+								<label class="col-sm-2 col-form-label">Existing PledgeStatus</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{existingPledgeStatus}" />
+								</div>
 
-								<label class="col-sm-2 col-form-label">liquidityType</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{liquidityType}" /></div>
+								<label class="col-sm-2 col-form-label">Pledged Amount AED</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{pledgedAmountAed}" />
+								</div>
 							</div>
-						</div>
 
-						<div class="card-footer text-center"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Investment_Securities_Data}" class="custom-tab-btn">Cancel</a>
-						</div>
-					</div>
-				</form>
-			</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Unencumbered AmountAed</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{unencumberedAmountAed}" />
+								</div>
+
+								<label class="col-sm-2 col-form-label">Proportion Unencumbered</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{proportionUnencumbered}" />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">HqlaElar Eligibility</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{hqlaElarEligibility}" />
+								</div>
+
+								<label class="col-sm-2 col-form-label">Liquidity Type</label>
+								<div class="col-sm-4">
+									<input type="number" class="form-control" th:field="*{liquidityType}" />
+								</div>
+									</div>
+										</div>
+
+										<div class="card-footer text-center"
+											style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+											<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+											<a th:href="@{/Investment_Securities_Data}" class="custom-tab-btn">Cancel</a>
+										</div>
+									</div>
+								</form>
+							</div>
 
 			<div class="modal fade" id="alert">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1503,7 +1548,6 @@ PURPOSE		: Nostra Account balance Report
 		const selectedBank = select.value;
 
 		if (!selectedBank) {
-			// Clear the fields
 			$('#bankSymbol').val('');
 			$('#conventionalIslamic').val('');
 			$('#localForeign').val('');
@@ -1512,7 +1556,7 @@ PURPOSE		: Nostra Account balance Report
 		}
 
 		$.ajax({
-			url: '/BCDRS/getBankDetails',
+			url: '/BCDRS/getBankDetails',  // This uses your existing method
 			type: 'GET',
 			data: {bankName: selectedBank},
 			success: function (data) {
@@ -1527,6 +1571,18 @@ PURPOSE		: Nostra Account balance Report
 			}
 		});
 	}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.amount-field').forEach(function (input) {
+            input.addEventListener('blur', function () {
+                if (this.value) {
+                    this.value = parseFloat(this.value).toFixed(2);
+                }
+            });
+        });
+    });
 </script>
 
 </html>
