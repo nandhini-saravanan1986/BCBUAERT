@@ -144,10 +144,10 @@ public class RT_Investment_Securities_Data_Template {
     private Date maturityDate;
 
     @Column(name = "RESIDUAL_MATURITY")
-    private String residualMaturity;
+    private BigDecimal residualMaturity;
 
     @Column(name = "MATURITY_PERIOD")
-    private String maturityPeriod;
+    private BigDecimal maturityPeriod;
 
     @Column(name = "PERCENT_HOLDINGS_FI")
     private BigDecimal percentHoldingsFi;
@@ -624,19 +624,19 @@ public class RT_Investment_Securities_Data_Template {
 		this.maturityDate = maturityDate;
 	}
 
-	public String getResidualMaturity() {
+	public BigDecimal getResidualMaturity() {
 		return residualMaturity;
 	}
 
-	public void setResidualMaturity(String residualMaturity) {
+	public void setResidualMaturity(BigDecimal residualMaturity) {
 		this.residualMaturity = residualMaturity;
 	}
 
-	public String getMaturityPeriod() {
+	public BigDecimal getMaturityPeriod() {
 		return maturityPeriod;
 	}
 
-	public void setMaturityPeriod(String maturityPeriod) {
+	public void setMaturityPeriod(BigDecimal maturityPeriod) {
 		this.maturityPeriod = maturityPeriod;
 	}
 
@@ -1003,8 +1003,8 @@ public class RT_Investment_Securities_Data_Template {
 			BigDecimal fixedIncomeInfoNetBookPrice, BigDecimal netBookValueAed, BigDecimal purchaseYieldToMaturity,
 			BigDecimal cleanPrice, BigDecimal cleanMarketValueAed, BigDecimal currentYieldToMaturity,
 			BigDecimal unrealizedGainLossAed, String subordinatedDebtSukuk, String finalRatingBanks,
-			String finalRatingCbuae, String creditQuality, Date maturityDate, String residualMaturity,
-			String maturityPeriod, BigDecimal percentHoldingsFi, BigDecimal qtyEquityFunds,
+			String finalRatingCbuae, String creditQuality, Date maturityDate, BigDecimal residualMaturity,
+			BigDecimal maturityPeriod, BigDecimal percentHoldingsFi, BigDecimal qtyEquityFunds,
 			BigDecimal equityFloatingFundAssets, BigDecimal totalFloatingShareFundAum, BigDecimal specificProvision,
 			BigDecimal netBookValue, BigDecimal otherSecInfoNetBookPrice, BigDecimal marketPrice,
 			BigDecimal fairValueAmountAed, BigDecimal unrealizedGainLossAgain, BigDecimal percentHoldingsOther,
