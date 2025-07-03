@@ -1940,6 +1940,6 @@ public class XBRLNavigationController {
 		} else {
 			return "Record not found for update";
 		}
-	}	
+	}
 
 }

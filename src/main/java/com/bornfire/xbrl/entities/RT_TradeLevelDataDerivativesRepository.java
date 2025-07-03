@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_TradeLevelDataDerivativesRepository extends JpaRepository<RT_TradeLevelDataDerivatives, Date> {
+public interface RT_TradeLevelDataDerivativesRepository extends JpaRepository<RT_TradeLevelDataDerivatives, String> {
 	// Add custom queries if needed
 
 	@Query(value = "select * from BCBUAE_TRADE_LEVEL_DERIVATIVES  ", nativeQuery = true)

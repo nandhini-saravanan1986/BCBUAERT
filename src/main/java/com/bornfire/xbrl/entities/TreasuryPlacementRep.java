@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TreasuryPlacementRep extends JpaRepository<MIS_TREASURY_PLACEMENT_ENTITY, Date> {
+public interface TreasuryPlacementRep extends JpaRepository<MIS_TREASURY_PLACEMENT_ENTITY, String> {
 	
 
     @Query(value = "SELECT * FROM MIS_TREASURY_PLACEMENT", nativeQuery = true)
