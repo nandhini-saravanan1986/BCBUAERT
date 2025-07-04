@@ -86,6 +86,8 @@ import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
+import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template;
+import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template_repository;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
 import com.bornfire.xbrl.entities.RT_MmData;
@@ -244,6 +246,9 @@ public class XBRLNavigationController {
 	
 @Autowired
 	RT_ImpactAnalysisRepository impactanalysisRepo;
+
+@Autowired 
+RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 
 	private String pagesize;
 
@@ -1940,8 +1945,36 @@ public class XBRLNavigationController {
 		} else {
 			return "Record not found for update";
 		}
+	}	
+	
+	/*iquidity risk Dashboard template*/
+	@RequestMapping(value = "Liquidity_Risk_Dashboard_Template", method = RequestMethod.GET)
+	public String Liquidity_Risk_Dashboard_Template(@RequestParam(required = false) String siNo,
+			@RequestParam(required = false) String formmode, Model model) {
+
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
+					.orElse(new RT_Investment_Securities_Data_Template()));
+			
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails();
+         
+			System.out.println("The Liquidity Risk Dashboard"  +LiquidityRiskDashboardRepo.getAlldetails().size());
+			model.addAttribute("formmode", "list");
+			model.addAttribute("ISList", list); // Used in HTML table
+		} /*
+			 * else { model.addAttribute("formmode", "add");
+			 * model.addAttribute("securityData", new
+			 * RT_Investment_Securities_Data_Template()); }
+			 */else {
+			model.addAttribute("formmode", "add");
+		}
+
+		return "RT/Liquidity_Risk_Dashboard_Template";
 	}
 	
+
 	@RequestMapping(value = "downloadForeigncurrencyExcel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadForeigncurrencyExcel() throws IOException {
 
@@ -1971,5 +2004,6 @@ public class XBRLNavigationController {
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
+
 
 }
