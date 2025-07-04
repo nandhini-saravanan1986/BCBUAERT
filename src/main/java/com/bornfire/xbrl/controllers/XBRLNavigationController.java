@@ -324,21 +324,24 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 	@RequestMapping(value = "createAccessRole", method = RequestMethod.POST)
 	@ResponseBody
 	public String createAccessRoleEn(@RequestParam("formmode") String formmode,
-			@RequestParam(value = "adminValue", required = false) String adminValue,
-			@RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
-			@RequestParam(value = "finalString", required = false) String finalString,
-			@ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
+	        @RequestParam(value = "adminValue", required = false) String adminValue,
+	        @RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
+	        @RequestParam(value = "aslValue", required = false) String aslValue,
+	        @RequestParam(value = "aslUploadValue", required = false) String aslUploadValue,
+	        @RequestParam(value = "auditUsValue", required = false) String auditUsValue,
+	        @RequestParam(value = "finalString", required = false) String finalString,
+	        @ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
 
-		System.out.println("came to controller");
-		String userid = (String) rq.getSession().getAttribute("USERID");
-		String roleId = (String) rq.getSession().getAttribute("ROLEID");
-		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
+	    String userid = (String) rq.getSession().getAttribute("USERID");
+	    String roleId = (String) rq.getSession().getAttribute("ROLEID");
+	    md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
-		String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, RT_ReportsValue, finalString,
-				userid);
+	    String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, RT_ReportsValue,
+	            aslValue, aslUploadValue, auditUsValue, finalString, userid);
 
-		return msg;
+	    return msg;
 	}
+
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,

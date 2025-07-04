@@ -50,64 +50,75 @@ public class AccessAndRolesServices {
 	}
 
 	public String addPARAMETER(AccessAndRoles alertparam, String formmode,
-	        String adminValue, String RT_ReportsValue, String finalString,
-	        String USERID) {
+	        String adminValue, String RT_ReportsValue, String aslValue, String aslUploadValue,
+	        String auditUsValue, String finalString, String USERID) {
 
 	    String msg = "";
 
 	    if (formmode.equals("add")) {
 	        AccessAndRoles up = alertparam;
-	        up.setDel_flg("N");
-	        up.setModify_flg("N");
-	        up.setEntity_flg("N");
+	        up.setDelFlg("N");
+	        up.setModifyFlg("N");
+	        up.setEntityFlg("N");
 	        up.setAdmin(adminValue);
-	        up.setRTReports(RT_ReportsValue);
-	        up.setEntry_user(USERID);
-	        up.setEntry_time(new Date());
+	        up.setRtReports(RT_ReportsValue);
+	        up.setAsl(aslValue);
+	        up.setAsl_upload(aslUploadValue);
+	        up.setAudit_us(auditUsValue);
+	        up.setEntryUser(USERID);
+	        up.setEntryTime(new Date());
 	        up.setMenulist(finalString);
-	        
 	        accessandrolesrepository.save(up);
 	        msg = "Role Created Successfully";
-	        
+
 	    } else if (formmode.equals("edit")) {
-	        System.out.println("came to services for edit the role");
-	        AccessAndRoles up = alertparam;
-	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
 	        AccessAndRoles user1 = user.get();
+
+	        AccessAndRoles up = alertparam;
 	        up.setAdmin(adminValue);
-	        up.setRTReports(RT_ReportsValue);
+	        up.setRtReports(RT_ReportsValue);
+	        up.setAsl(aslValue);
+	        up.setAsl_upload(aslUploadValue);
+	        up.setAudit_us(auditUsValue);
+
 	        if (!finalString.equals("")) {
 	            up.setMenulist(finalString);
 	        } else {
-	            up.setMenulist(user.get().getMenulist());
+	            up.setMenulist(user1.getMenulist());
 	        }
-	        up.setDel_flg("N");
-	        up.setModify_flg("Y");
-	        up.setEntity_flg("N");
-	        up.setEntry_user(user1.getEntry_user());
-	        up.setEntry_time(user1.getEntry_time());
-	        up.setModify_user(USERID);
-	        up.setModify_time(new Date());
+
+	        up.setDelFlg("N");
+	        up.setModifyFlg("Y");
+	        up.setEntityFlg("N");
+	        up.setEntryUser(user1.getEntryUser());
+	        up.setEntryTime(user1.getEntryTime());
+	        up.setModifyUser(USERID);
+	        up.setModifyTime(new Date());
+
 	        accessandrolesrepository.save(up);
 	        msg = "Role Edited Successfully";
+
 	    } else if (formmode.equals("delete")) {
-	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
 	        AccessAndRoles accessRole = user.get();
-	        accessRole.setDel_flg("Y");
-	        accessRole.setEntity_flg("N");
+	        accessRole.setDelFlg("Y");
+	        accessRole.setEntityFlg("N");
 	        accessandrolesrepository.save(accessRole);
 	        msg = "Role Deleted Successfully";
+
 	    } else if (formmode.equals("verify")) {
-	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRole_id());
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
 	        AccessAndRoles user1 = user.get();
-	        user1.setDel_flg("N");
-	        user1.setModify_flg("N");
-	        user1.setEntity_flg("Y");
-	        user1.setAuth_user(USERID);
-	        user1.setAuth_time(new Date());
+	        user1.setDelFlg("N");
+	        user1.setModifyFlg("N");
+	        user1.setEntityFlg("Y");
+	        user1.setAuthUser(USERID);
+	        user1.setAuthTime(new Date());
 	        accessandrolesrepository.save(user1);
 	        msg = "Role Verified Successfully";
 	    }
+
 	    return msg;
 	}
 
@@ -148,7 +159,7 @@ public class AccessAndRolesServices {
 		if (count == 0) {
 			Optional<AccessAndRoles> user = accessandrolesrepository.findById(userid);
 			AccessAndRoles reg = user.get();
-			reg.setDel_flg("Y");
+			reg.setDelFlg("Y");
 			accessandrolesrepository.save(reg);
 			msg = "Role Deleted Successfully";
 		} else {
