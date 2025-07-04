@@ -354,10 +354,10 @@ public class RT_InvestmentSecurity_Service {
 					cell40.setCellStyle(textStyle);
 				}
 				Cell cell41 = row.createCell(41);
-				cell41.setCellValue(record.getResidualMaturity() != null ? record.getResidualMaturity() : "");
+				cell41.setCellValue(record.getResidualMaturity() != null ? record.getResidualMaturity().doubleValue() : 0.00);
 				cell41.setCellStyle(textStyle);
 				Cell cell42 = row.createCell(42);
-				cell42.setCellValue(record.getMaturityPeriod() != null ? record.getMaturityPeriod() : "");
+				cell42.setCellValue(record.getMaturityPeriod() != null ? record.getMaturityPeriod().doubleValue() : 0.00);
 				cell42.setCellStyle(textStyle);
 				Cell cell43 = row.createCell(43);
 				cell43.setCellValue(
