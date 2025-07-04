@@ -31,7 +31,7 @@ public class AuditController {
 		md.addAttribute("menu", "Audit");
 
 		// Add both lists to the model
-		md.addAttribute("auditlogss", auditService.getAuditservices());
+		md.addAttribute("auditlogs", auditService.getAuditServices());
 		//md.addAttribute("userAuditLevels", auditService.getUserAuditLevelList());
 
 		return "User_Audit";

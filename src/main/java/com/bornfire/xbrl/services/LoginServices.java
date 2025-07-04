@@ -1,8 +1,8 @@
 package com.bornfire.xbrl.services;
 
 import java.io.File;
-
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -12,11 +12,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 
@@ -34,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
 import com.bornfire.xbrl.config.PasswordEncryption;
-
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.entities.XBRLSession;
@@ -58,16 +60,20 @@ public class LoginServices {
 	@Autowired
 	UserProfileRep userProfileRep;
 
-
+	@Autowired
+	private HttpSession session;
 	@Autowired
 	SessionFactory sessionFactory;
 	
 	@Autowired
 	DataSource srcdataSource;
 
+	@Autowired
+	AuditService auditservice;
 	@NotNull
 	private String exportpath;
 
+	
 	@Value("${default.password}")
 	private String password;
 
@@ -102,9 +108,8 @@ public class LoginServices {
 	 */
 
 	public String addUser(UserProfile userProfile, String formmode, String inputUser) {
-
 		String msg = "";
-
+		String userId = (String) session.getAttribute("USERID");
 		try {
 
 			if (formmode.equals("add")) {
@@ -137,6 +142,8 @@ public class LoginServices {
 					e.printStackTrace();
 				}
 
+				auditservice.createBusinessAudit(userProfile.getUserid(), "ADD", "ADD", null,"XBRL_USER_PROFILE_TABLE");
+				
 				
 				userProfileRep.save(up);
 
@@ -258,7 +265,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 
             // Final password set
             up.setPassword(encryptedPassword);
-
+            auditservice.createBusinessAudit(userProfile.getUserid(), "ADD", "ADD", null,"XBRL_USER_PROFILE_TABLE");
             // Save the user
             userProfileRep.save(up);
 
@@ -288,7 +295,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
         } else {
             // Form mode is not add, update flow
             Optional<UserProfile> upOptional = userProfileRep.findById(userProfile.getUserid());
-
+            Map<String, String> changeMap = new HashMap<>();
             if (upOptional.isPresent()) {
                 UserProfile up = upOptional.get();
 
@@ -318,7 +325,46 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
                 userProfile.setEntity_flg("N");
                 userProfile.setModify_user(inputUser);
                 userProfile.setModify_time(new Date());
+                List<String> ignoreFields = Arrays.asList(
+                	    "password", "user_locked_flg", "disable_flg", "pass_exp_date",
+                	    "log_in_count", "entry_user", "entry_time", "no_of_attmp",
+                	    "entity_flg", "modify_user", "modify_time"
+                	);
+                
 
+                UserProfile dbUser = upOptional.get();
+                
+                for (Field field : UserProfile.class.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    String fieldName = field.getName();
+
+                    if (ignoreFields.contains(fieldName)) {
+                        continue;
+                    }
+
+                    try {
+                        Object oldVal = field.get(dbUser);
+                        Object newVal = field.get(userProfile);
+
+                        if (oldVal == null && newVal != null
+                            || oldVal != null && newVal == null
+                            || (oldVal != null && !oldVal.equals(newVal))) {
+                            
+                            changeMap.put(fieldName, (oldVal + " → " + newVal));
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+               auditservice.createBusinessAudit(
+                	    userProfile.getUserid(),    // or whatever id you track
+                	    "MODIFY",
+                	    "USER_PROFILE_SCREEN",
+                	    changeMap,
+                	    "User profile updated"                	    
+                	);
+                
+                
                 userProfileRep.save(userProfile);
                 msg = "User Edited Successfully";
             } else {
@@ -365,7 +411,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 				userProfile.setLogin_flg("N");
 				userProfile.setAuth_user(inputUser);
 				userProfile.setAuth_time(new Date());
-
+				 auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"XBRL_USER_PROFILE_TABLE");
 				userProfileRep.save(userProfile);
 			}
 
@@ -394,6 +440,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 				user.setNo_of_attmp(0);
 				user.setLogin_flg("N");
 				user.setUser_locked_flg("N");
+				 auditservice.createBusinessAudit(user.getUserid(), "Password Reset", "UserProfile-Password Reset", null,"XBRL_USER_PROFILE_TABLE");
 				userProfileRep.save(user);
 			}
 
@@ -423,7 +470,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 
 		Optional<UserProfile> up = userProfileRep.findById(userid);
 		String loginflg = up.get().getLogin_flg();
-
+		 
 		return loginflg;
 	}
 
@@ -475,7 +522,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 						
 						LocalDateTime localDateTime = user.getPass_exp_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 						user.setPass_exp_date(Date.from(localDateTime.plusDays(365).atZone(ZoneId.systemDefault()).toInstant()));
-						
+						auditservice.createBusinessAudit(user.getUserid(), "Password Change", "Userprofile - Password Change", null,"XBRL_USER_PROFILE_TABLE");
 						userProfileRep.save(user);
 						msg = "Password Changed Successfully";
 						
@@ -525,7 +572,9 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 		try {
 			Optional<UserProfile> user = userProfileRep.findById(userid);
 			if(user.isPresent()) {
+				
 				userProfileRep.deleteById(userid);
+				auditservice.createBusinessAudit(user.get().getUserid(), "Delete User", "UserProfile - Delete User", null,"XBRL_USER_PROFILE_TABLE");
 				msg = "User Id Rejected";
 				
 			}else {

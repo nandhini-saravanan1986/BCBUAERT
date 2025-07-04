@@ -398,6 +398,17 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 
 		return "XBRLUserprofile";
 	}
+	
+	
+	@RequestMapping(value = "verifyUser", method = RequestMethod.POST)
+	@ResponseBody
+	public String verifyUser(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
+		String userid = (String) rq.getSession().getAttribute("USERID");
+		String msg = loginServices.verifyUser(userprofile, userid);
+
+		return msg;
+
+	}
 
 	@GetMapping("/getRoleDetails")
 	@ResponseBody
