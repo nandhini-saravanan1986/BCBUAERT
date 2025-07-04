@@ -934,10 +934,14 @@ if (tabId === 'data') {
               <input type="text" class="form-control" th:field="*{currency}" />
             </div>
 
-            <label class="col-sm-2 col-form-label">FX Net Open Position</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{fx_net_openposition}" />
-            </div>
+           <label class="col-sm-2 col-form-label">FX Net Open Position</label>
+<div class="col-sm-4">
+    <input  type="text"
+            class="form-control"
+            th:field="*{fx_net_openposition}"
+            th:value="${#numbers.formatDecimal(fx_net_openposition, 1, 'COMMA', 2, 'POINT')}" />
+</div>
+
           </div>
 
           <div class="form-group row">

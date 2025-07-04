@@ -48,13 +48,19 @@ public class RT_MmData {
     private BigDecimal principal;
     private BigDecimal principal_aed;
     private String interest_profit_rate;
-    private Date report_submit_date;
-    private Date report_from_date;
-    private Date report_to_date;
-    private Date report_date;
-    private String entity_flg;
-    private String modify_flg;
-    private String del_flg;
+    private Date	report_submit_date;
+    private Date	report_date;
+    private String	entity_flg;
+    private String	modify_flg;
+    private String	del_flg;
+    private Date	report_from_date;
+    private Date	report_to_date;
+    private String	report_code;
+    private String	entry_user;
+    private String	modify_user;
+    private String	verify_user;
+    private Date	entry_time;
+    private Date	modify_time;
 	public String getSI_NO() {
 		return SI_NO;
 	}
@@ -235,18 +241,6 @@ public class RT_MmData {
 	public void setReport_submit_date(Date report_submit_date) {
 		this.report_submit_date = report_submit_date;
 	}
-	public Date getReport_from_date() {
-		return report_from_date;
-	}
-	public void setReport_from_date(Date report_from_date) {
-		this.report_from_date = report_from_date;
-	}
-	public Date getReport_to_date() {
-		return report_to_date;
-	}
-	public void setReport_to_date(Date report_to_date) {
-		this.report_to_date = report_to_date;
-	}
 	public Date getReport_date() {
 		return report_date;
 	}
@@ -271,6 +265,54 @@ public class RT_MmData {
 	public void setDel_flg(String del_flg) {
 		this.del_flg = del_flg;
 	}
+	public Date getReport_from_date() {
+		return report_from_date;
+	}
+	public void setReport_from_date(Date report_from_date) {
+		this.report_from_date = report_from_date;
+	}
+	public Date getReport_to_date() {
+		return report_to_date;
+	}
+	public void setReport_to_date(Date report_to_date) {
+		this.report_to_date = report_to_date;
+	}
+	public String getReport_code() {
+		return report_code;
+	}
+	public void setReport_code(String report_code) {
+		this.report_code = report_code;
+	}
+	public String getEntry_user() {
+		return entry_user;
+	}
+	public void setEntry_user(String entry_user) {
+		this.entry_user = entry_user;
+	}
+	public String getModify_user() {
+		return modify_user;
+	}
+	public void setModify_user(String modify_user) {
+		this.modify_user = modify_user;
+	}
+	public String getVerify_user() {
+		return verify_user;
+	}
+	public void setVerify_user(String verify_user) {
+		this.verify_user = verify_user;
+	}
+	public Date getEntry_time() {
+		return entry_time;
+	}
+	public void setEntry_time(Date entry_time) {
+		this.entry_time = entry_time;
+	}
+	public Date getModify_time() {
+		return modify_time;
+	}
+	public void setModify_time(Date modify_time) {
+		this.modify_time = modify_time;
+	}
 	public RT_MmData(String sI_NO, Date bank_date, String bank_name, String head_office_subsidiary, String subsidiary,
 			String bank_symbol, String conventional_islamic, String local_foreign, String cbuae_tiering,
 			BigDecimal deal_no, String customer_id, String counterparty_name, String final_rating_banks,
@@ -278,8 +320,9 @@ public class RT_MmData {
 			Date value_date, Date maturity_date, BigDecimal initial_maturity, BigDecimal initial_maturity_rounded,
 			BigDecimal initial_maturity_period, BigDecimal residual_maturity, BigDecimal residual_maturity_rounded,
 			BigDecimal maturity_period, String currency, BigDecimal principal, BigDecimal principal_aed,
-			String interest_profit_rate, Date report_submit_date, Date report_from_date, Date report_to_date,
-			Date report_date, String entity_flg, String modify_flg, String del_flg) {
+			String interest_profit_rate, Date report_submit_date, Date report_date, String entity_flg,
+			String modify_flg, String del_flg, Date report_from_date, Date report_to_date, String report_code,
+			String entry_user, String modify_user, String verify_user, Date entry_time, Date modify_time) {
 		super();
 		SI_NO = sI_NO;
 		this.bank_date = bank_date;
@@ -311,17 +354,24 @@ public class RT_MmData {
 		this.principal_aed = principal_aed;
 		this.interest_profit_rate = interest_profit_rate;
 		this.report_submit_date = report_submit_date;
-		this.report_from_date = report_from_date;
-		this.report_to_date = report_to_date;
 		this.report_date = report_date;
 		this.entity_flg = entity_flg;
 		this.modify_flg = modify_flg;
 		this.del_flg = del_flg;
+		this.report_from_date = report_from_date;
+		this.report_to_date = report_to_date;
+		this.report_code = report_code;
+		this.entry_user = entry_user;
+		this.modify_user = modify_user;
+		this.verify_user = verify_user;
+		this.entry_time = entry_time;
+		this.modify_time = modify_time;
 	}
 	public RT_MmData() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
+
      
 }

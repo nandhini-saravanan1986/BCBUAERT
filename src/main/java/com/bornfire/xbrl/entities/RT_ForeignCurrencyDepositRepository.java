@@ -18,7 +18,7 @@ public interface RT_ForeignCurrencyDepositRepository extends JpaRepository<RT_Fo
 	List<RT_ForeignCurrencyDeposit> getfxriskdatalistdata();
 
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS ", nativeQuery = true)
-	List<Object[]> getfxriskdatalistdata1();
+	List<Object[]> getforeigncurrencylistdata1();
 	
 	
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS where SI_NO =?1 ", nativeQuery = true)

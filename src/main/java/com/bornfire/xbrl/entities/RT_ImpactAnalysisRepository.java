@@ -18,7 +18,7 @@ public interface RT_ImpactAnalysisRepository extends JpaRepository<RT_ImpactAnal
 	List<RT_ImpactAnalysis> getfxriskdatalistdata();
 
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS ", nativeQuery = true)
-	List<Object[]> getfxriskdatalistdata1();
+	List<Object[]> getimpactanalysislistdata1();
 	
 	
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS where SI_NO =?1 ", nativeQuery = true)

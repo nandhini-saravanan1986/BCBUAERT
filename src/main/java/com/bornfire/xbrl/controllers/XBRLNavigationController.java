@@ -1941,5 +1941,35 @@ public class XBRLNavigationController {
 			return "Record not found for update";
 		}
 	}
+	
+	@RequestMapping(value = "downloadForeigncurrencyExcel", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadForeigncurrencyExcel() throws IOException {
+
+		File excelFile = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
+		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+		HttpHeaders headersResponse = new HttpHeaders();
+		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headersResponse.setContentDispositionFormData("attachment", "Foreigncurrencydeposit.xls");
+
+		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	}
+	
+
+	
+	
+	
+	@RequestMapping(value = "downloadImpactanalysisExcel", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadImpactanalysisExcel() throws IOException {
+
+		File excelFile = impactanalysisService.generateImpactAnalysisExcel();
+		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+		HttpHeaders headersResponse = new HttpHeaders();
+		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headersResponse.setContentDispositionFormData("attachment", "Impactanalysis.xls");
+
+		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	}
 
 }

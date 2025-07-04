@@ -481,54 +481,60 @@ label.error {
 
 
 
-     <script>
-    function downloadFxrisk() {
-        // Show loading modal
-        $('#downloadProcessingModal').modal('show');
+    <script>
+     
+     function downloadForeigncurrencyExcel() {
+    		// 1. Show the loader modal
+    		$('#loader').modal('show');
 
-        $.ajax({
-            url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
-            type: 'GET',
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+    		$.ajax({
+    			url: './downloadForeigncurrencyExcel',
+    			type: 'GET',
+    			xhrFields: {
+    				responseType: 'blob'
+    			},
+    			success: function (data) {
+    				// Always hide loader first
+    				$('#loader').modal('hide');
 
-                if (data && data.size > 0) {
-                    var blob = new Blob([data], { type: 'application/octet-stream' });
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'FxRiskData.xls';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+    				let message = '';
 
-                    $('#customAlertBody').text('Downloaded FxRiskData.xls');
-                } else {
-                    $('#customAlertBody').text('No data available to download.');
-                }
+    				if (data && data.size > 100) {
+    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+    					const url = window.URL.createObjectURL(blob);
+    					const a = document.createElement('a');
+    					a.style.display = 'none';
+    					a.href = url;
+    					a.download = 'ForeigncurrencyDeposit.xls';
+    					document.body.appendChild(a);
 
-                $('#customAlertModal').modal('show');
-            },
-            error: function (xhr, status, error) {
-                $('#downloadProcessingModal').modal('hide');
-                $("#loader").modal("hide");
+    					a.click();
 
-                console.error("Download failed:", error);
-                $('#customAlertBody').text('Failed to download FxRiskData.xls');
-                $('#customAlertModal').modal('show');
-            }
-        });
+    					window.URL.revokeObjectURL(url);
+    					document.body.removeChild(a);
 
-        // Fallback in case AJAX fails silently
-        setTimeout(function () {
-            $("#loader").modal("hide");
-        }, 10000);
-    }
+    					message = 'ForeignCUrrencyDeposit.xls has been downloaded successfully.';
+    				} else {
+    					message = 'No data available to download.';
+    				}
+
+    				// Show custom alert modal with the message
+    				$('#alertmsg').text(message);
+    				$('#alert').modal('show');
+    			},
+    			error: function (jqXHR, textStatus, errorThrown) {
+    				$('#loader').modal('hide');
+
+    				console.error("Download failed:", textStatus, errorThrown);
+
+    				// Show error message in your custom alert
+    				$('#alertmsg').text('An error occurred while downloading ImpactAnalysis.xls.');
+    				$('#alert').modal('show');
+    			}
+    		});
+    	}
+
+
 </script>
 
 	<script>
@@ -595,7 +601,7 @@ label.error {
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
-  onclick="downloadFxrisk();">
+  onclick="downloadForeigncurrencyExcel();">
   <i class="fa fa-download"></i> Download
 </button></div>
 </div>

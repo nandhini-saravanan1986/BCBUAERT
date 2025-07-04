@@ -368,7 +368,7 @@ $(document).ready(function () {
     $("#loader").modal("toggle");
     
     if (tabId === 'data') {
-        window.location.href = 'Impact_Analysis?formmode=list';
+        window.location.href = 'Foreign_Currency_Deposit?formmode=list';
         $("#loader").modal("hide");
     } else if (tabId === 'datacontrols') {
         window.location.href = 'Impact_Analysis?formmode=add';
@@ -407,12 +407,12 @@ $(document).ready(function () {
 
      <script>
      
-     function downloadNostro() {
+     function downloadImpactanalysisExcel() {
     		// 1. Show the loader modal
     		$('#loader').modal('show');
 
     		$.ajax({
-    			url: './downloadNostroExcel',
+    			url: './downloadImpactanalysisExcel',
     			type: 'GET',
     			xhrFields: {
     				responseType: 'blob'
@@ -429,7 +429,7 @@ $(document).ready(function () {
     					const a = document.createElement('a');
     					a.style.display = 'none';
     					a.href = url;
-    					a.download = 'NostroAccBalance.xls';
+    					a.download = 'ImpactAnalysis.xls';
     					document.body.appendChild(a);
 
     					a.click();
@@ -437,7 +437,7 @@ $(document).ready(function () {
     					window.URL.revokeObjectURL(url);
     					document.body.removeChild(a);
 
-    					message = 'NostroAccBalance.xls has been downloaded successfully.';
+    					message = 'ImpactAnalysis.xls has been downloaded successfully.';
     				} else {
     					message = 'No data available to download.';
     				}
@@ -452,7 +452,7 @@ $(document).ready(function () {
     				console.error("Download failed:", textStatus, errorThrown);
 
     				// Show error message in your custom alert
-    				$('#alertmsg').text('An error occurred while downloading NostroAccBalance.xls.');
+    				$('#alertmsg').text('An error occurred while downloading ImpactAnalysis.xls.');
     				$('#alert').modal('show');
     			}
     		});
@@ -494,7 +494,7 @@ $(document).ready(function () {
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
-  onclick="downloadNostro();">
+  onclick="downloadImpactanalysisExcel();">
   <i class="fa fa-download"></i> Download
 </button></div>
 </div>
