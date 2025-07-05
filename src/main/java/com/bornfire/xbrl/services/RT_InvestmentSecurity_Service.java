@@ -140,7 +140,7 @@ public class RT_InvestmentSecurity_Service {
 		}
 
 		String templateDir = env.getProperty("output.exportpathtemp");
-		String templateFileName = "INVESTMENT_SECURITY.xls";
+		String templateFileName = "CBUAE_Investment_Securities_Data_Template_Pillar2.xls";
 		Path templatePath = Paths.get(templateDir, templateFileName);
 
 		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -473,11 +473,13 @@ public class RT_InvestmentSecurity_Service {
 				Cell cell71 = row.createCell(71);
 				cell71.setCellValue(record.getIfrs9Staging() != null ? record.getIfrs9Staging() : "");
 				cell71.setCellStyle(textStyle);
-				Cell cell72 = row.createCell(73);
-				cell72.setCellValue(
-						record.getBankCoreTier1CapitalAed() != null ? record.getBankCoreTier1CapitalAed().doubleValue()
-								: 0.0);
-				cell72.setCellStyle(numberStyle);
+
+				Cell cell73 = row.createCell(73); // Use 73, not 72
+				cell73.setCellValue(
+				    record.getBankCoreTier1CapitalAed() != null ? record.getBankCoreTier1CapitalAed().doubleValue() : 0.0);
+				cell73.setCellStyle(numberStyle);
+
+
 			}
 
 			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();

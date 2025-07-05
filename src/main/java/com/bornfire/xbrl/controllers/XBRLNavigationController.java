@@ -814,7 +814,7 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "INVESTMENT_SECURITY.xls";
+			String filename = "CBUAE_Investment_Securities_Data_Template_Pillar2.xls";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -823,7 +823,7 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
 		} catch (FileNotFoundException e) {
-			logger.error("Controller ERROR: The INVESTMENT_SECURITY.xls template file was not found.", e);
+			logger.error("Controller ERROR: The CBUAE_Investment_Securities_Data_Template_Pillar2.xls template file was not found.", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} catch (Exception e) {
 			logger.error("Controller ERROR: A critical error occurred during Investment Securities file generation.",
