@@ -650,22 +650,39 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 		}
 	}
 
-	@RequestMapping(value = "downloadTreasuryCreditExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadTreasuryCreditExcel() throws IOException {
-		System.out.println("Entered controller downloadTreasuryCreditExcel");
+	
+	
+	@RequestMapping(value = "/downloadTreasuryCreditExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel() {
+		logger.info("Controller: Received request for Trade Market Risk Excel download.");
 
-		File excelFile = treasuryCreditService.generateTreasuryExcel();
+		try {
+			byte[] excelData = treasuryCreditService.generateTreasuryExcel();
 
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+			if (excelData.length == 0) {
+				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment",
-				"CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+			HttpHeaders headers = new HttpHeaders();
+			String filename = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: A required template file was not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
-
 	// -------------------------------------Treasury_Credit_Limit_Management
 	// End---------------------------------------
 

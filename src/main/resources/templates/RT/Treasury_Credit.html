@@ -29,8 +29,8 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 	 <script th:src="/jquery/jquery.validate.min.js"></script>
 	 -->
 
-	<!-- jQuery (required first) -->
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<!-- jQuery core (must be loaded first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 	<!-- ✅ jQuery Validation -->
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -414,57 +414,50 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 
 <script>
-	function download() {
-		// 1. Show the loader modal
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+		$('#resultModal').modal('show');
+	}
+
+	function downloadTreasurycredit() {
+		// Show the loader modal
 		$('#loader').modal('show');
 
 		$.ajax({
 			url: './downloadTreasuryCreditExcel',
 			type: 'GET',
 			xhrFields: {
-				responseType: 'blob' // Important: To handle binary file (Excel)
+				responseType: 'blob'
 			},
-			success: function (data, status, xhr) {
+			success: function (data) {
 				$('#loader').modal('hide');
 
-				// Get filename from Content-Disposition header if available
-				let filename = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls";
-				const disposition = xhr.getResponseHeader('Content-Disposition');
-				if (disposition && disposition.indexOf('filename=') !== -1) {
-					const filenameMatch = disposition.match(/filename="?(.+)"?/);
-					if (filenameMatch.length > 1) {
-						filename = filenameMatch[1];
-					}
-				}
-
-				if (data.size > 100) {
+				if (data && data.size > 100) {
 					const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
 					const url = window.URL.createObjectURL(blob);
-
 					const a = document.createElement('a');
+					a.style.display = 'none';
 					a.href = url;
-					a.download = filename;
+					a.download = 'CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls';
 					document.body.appendChild(a);
 					a.click();
-
 					window.URL.revokeObjectURL(url);
 					document.body.removeChild(a);
 
-					$('#alertmsg').text(filename + ' has been downloaded successfully.');
+					showResultModal('Success', 'The file has been downloaded successfully.');
 				} else {
-					$('#alertmsg').text('No data available to download.');
+					showResultModal('Information', 'No data was available to create a download.');
 				}
-
-				$('#alert').modal('show');
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				$('#loader').modal('hide');
 				console.error("Download failed:", textStatus, errorThrown);
-				$('#alertmsg').text('An error occurred while downloading CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls.');
-				$('#alert').modal('show');
+				showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
 			}
 		});
 	}
+
 </script>
 
 <title>BCDRS</title>
@@ -501,7 +494,11 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 						Instructions</button>
 					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 					<div class="float-right" style="margin-left:61%">
-						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn" onclick="download();">
+						<!--<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn" onclick="downloadTreasurycredit						
+							<i class="fa fa-download"></i> Download
+						</button>-->
+						<button th:if="${formmode} == 'list'" type="button" class="custom-tab-btn"
+							onclick="downloadTreasurycredit()">
 							<i class="fa fa-download"></i> Download
 						</button>
 
@@ -1018,7 +1015,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 								<div class="col-sm-4">
 									<input type="date" class="form-control" th:field="*{reportDate}" />
 								</div>
-							
+
 								<label class="col-sm-2 col-form-label">Bank Name</label>
 								<div class="col-sm-4">
 									<select class="form-control" th:field="*{bankName}"
@@ -1094,7 +1091,8 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Country of Risk</label>
 								<div class="col-sm-4">
-									<select class="form-control" th:field="*{countryOfRisk}" onchange="handleCountryChange(this)">
+									<select class="form-control" th:field="*{countryOfRisk}"
+										onchange="handleCountryChange(this)">
 										<option value="">-- Select Country --</option>
 										<option th:each="country : ${countryList}" th:value="${country.countryOfRisk}"
 											th:text="${country.countryOfRisk}"></option>
@@ -1102,9 +1100,10 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 								</div>
 
 								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone" readonly />
-									</div>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
+										id="cbuaeGeographicalZone" readonly />
+								</div>
 							</div>
 
 							<div class="form-group row">
@@ -1116,221 +1115,225 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 
 							<!-- Categories - Copy this block per category (MM, Repo, Bonds, etc.) -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">MM Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedMoneymarket}" /></div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">MM Limit</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{limitAedMoneymarket}" /></div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedMoneymarket}" /></div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{utilizationAedMoneymarket}" /></div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{moneymarketPercent}" /></div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{moneymarketPercent}" /></div>
+							</div>
 
-													<!-- REPO -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Repo Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedRepo}" /></div>
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedRepo}" /></div>
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control" th:field="*{repoPercent}" />
-														</div>
-													</div>
+							<!-- REPO -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Repo Limit</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{limitAedRepo}" /></div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{utilizationAedRepo}" /></div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{repoPercent}" />
+								</div>
+							</div>
 
-													<!-- Repeat similar blocks for: Bonds, Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
-													<!-- Example: Bonds -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bonds Limit</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{limitAedBonds}" /></div>
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{utilizationAedBonds}" /></div>
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2"><input type="number" class="form-control"
-																th:field="*{bondsPercent}" /></div>
-													</div>
-													<!-- Bonds -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bonds Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedBonds"
-																th:value="${creditData.limitAedBonds}" />
-														</div>
+							<!-- Repeat similar blocks for: Bonds, Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
+							<!-- Example: Bonds -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bonds Limit</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{limitAedBonds}" /></div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{utilizationAedBonds}" /></div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2"><input type="number" class="form-control"
+										th:field="*{bondsPercent}" /></div>
+							</div>
+							<!-- Bonds -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bonds Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedBonds"
+										th:value="${creditData.limitAedBonds}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedBonds"
-																th:value="${creditData.utilizationAedBonds}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedBonds"
+										th:value="${creditData.utilizationAedBonds}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="bondsPercent"
-																th:value="${creditData.bondsPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="bondsPercent"
+										th:value="${creditData.bondsPercent}" />
+								</div>
+							</div>
 							<!-- Credit -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Credit Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedCredit"
-																th:value="${creditData.limitAedCredit}" />
-														</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Credit Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedCredit"
+										th:value="${creditData.limitAedCredit}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedCredit"
-																th:value="${creditData.utilizationAedCredit}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedCredit"
+										th:value="${creditData.utilizationAedCredit}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="creditPercent"
-																th:value="${creditData.creditPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="creditPercent"
+										th:value="${creditData.creditPercent}" />
+								</div>
+							</div>
 
-													<!-- Other -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Other Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedOther"
-																th:value="${creditData.limitAedOther}" />
-														</div>
+							<!-- Other -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Other Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedOther"
+										th:value="${creditData.limitAedOther}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedOther"
-																th:value="${creditData.utilizationAedOther}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedOther"
+										th:value="${creditData.utilizationAedOther}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="otherPercent"
-																th:value="${creditData.otherPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="otherPercent"
+										th:value="${creditData.otherPercent}" />
+								</div>
+							</div>
 
-													<!-- Nostro -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Nostro Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedNostro"
-																th:value="${creditData.limitAedNostro}" />
-														</div>
+							<!-- Nostro -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Nostro Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedNostro"
+										th:value="${creditData.limitAedNostro}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedNostro"
-																th:value="${creditData.utilizationAedNostro}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedNostro"
+										th:value="${creditData.utilizationAedNostro}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="nostroPercent"
-																th:value="${creditData.nostroPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="nostroPercent"
+										th:value="${creditData.nostroPercent}" />
+								</div>
+							</div>
 
-													<!-- Derivatives -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Derivatives Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedDerivatives"
-																th:value="${creditData.limitAedDerivatives}" />
-														</div>
+							<!-- Derivatives -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Derivatives Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedDerivatives"
+										th:value="${creditData.limitAedDerivatives}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedDerivatives"
-																th:value="${creditData.utilizationAedDerivatives}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedDerivatives"
+										th:value="${creditData.utilizationAedDerivatives}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="derivativesPercent"
-																th:value="${creditData.derivativesPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="derivativesPercent"
+										th:value="${creditData.derivativesPercent}" />
+								</div>
+							</div>
 
-													<!-- FX -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">FX Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedFxsettlement"
-																th:value="${creditData.limitAedFxsettlement}" />
-														</div>
+							<!-- FX -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">FX Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedFxsettlement"
+										th:value="${creditData.limitAedFxsettlement}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedFxsettlement"
-																th:value="${creditData.utilizationAedFxsettlement}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedFxsettlement"
+										th:value="${creditData.utilizationAedFxsettlement}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="fxsettlementPercent"
-																th:value="${creditData.fxsettlementPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="fxsettlementPercent"
+										th:value="${creditData.fxsettlementPercent}" />
+								</div>
+							</div>
 
-													<!-- Bond Settlement -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Bond Settlement Limit</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="limitAedBondsettlement"
-																th:value="${creditData.limitAedBondsettlement}" />
-														</div>
+							<!-- Bond Settlement -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bond Settlement Limit</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="limitAedBondsettlement"
+										th:value="${creditData.limitAedBondsettlement}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">Utilization</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="utilizationAedBondsettlement"
-																th:value="${creditData.utilizationAedBondsettlement}" />
-														</div>
+								<label class="col-sm-2 col-form-label">Utilization</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="utilizationAedBondsettlement"
+										th:value="${creditData.utilizationAedBondsettlement}" />
+								</div>
 
-														<label class="col-sm-2 col-form-label">%</label>
-														<div class="col-sm-2">
-															<input type="text" class="form-control" name="bondsettlementPercent"
-																th:value="${creditData.bondsettlementPercent}" />
-														</div>
-													</div>
+								<label class="col-sm-2 col-form-label">%</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="bondsettlementPercent"
+										th:value="${creditData.bondsettlementPercent}" />
+								</div>
+							</div>
 
 
-													<!-- Repeat similar block for: Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
+							<!-- Repeat similar block for: Equity, Credit, Other, Nostro, Derivatives, FX, Bond Settlement -->
 
-													<!-- Overall Treasury Section -->
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Treasury Limit (AED)</label>
-														<div class="col-sm-4"><input type="number" class="form-control"
-																th:field="*{treasuryLmtAed}" /></div>
-														<label class="col-sm-2 col-form-label">Treasury Limit (%)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{treasuryLmt}" />
-														</div>
-													</div>
+							<!-- Overall Treasury Section -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Treasury Limit (AED)</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{treasuryLmtAed}" /></div>
+								<label class="col-sm-2 col-form-label">Treasury Limit (%)</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{treasuryLmt}" />
+								</div>
+							</div>
 
-													<div class="form-group row">
-														<label class="col-sm-2 col-form-label">Exposure (AED)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{exposureAed}" />
-														</div>
-														<label class="col-sm-2 col-form-label">Exposure (%)</label>
-														<div class="col-sm-4"><input type="number" class="form-control" th:field="*{exposure}" />
-														</div>
-													</div>
-												</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Exposure (AED)</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{exposureAed}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Exposure (%)</label>
+								<div class="col-sm-4"><input type="number" class="form-control"
+										th:field="*{exposure}" />
+								</div>
+							</div>
+						</div>
 
-												<div class="card-footer text-center"
-																			style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-																			<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-																			<a th:href="@{/Treasury_Credit_Limit_Management}" class="custom-tab-btn">Cancel</a>
-																		</div>
-												</form>
+						<div class="card-footer text-center"
+							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Treasury_Credit_Limit_Management}" class="custom-tab-btn">Cancel</a>
+						</div>
+				</form>
 				</form>
 			</div>
 
@@ -1441,6 +1444,27 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 					</div>
 				</div>
 			</div>
+
+			<!-- Custom Alert/Result Modal (Matches your existing style) -->
+			<div class="modal fade" id="resultModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<!-- Your custom styled header -->
+						<div class="menu-title-header">
+							<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
+								<!-- Title will be set by JavaScript -->
+							</div>
+						</div>
+						<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
+							<p id="resultModalBody"></p>
+							<!-- Your custom styled button -->
+							<button type="button" class="custom-tab-btn" onclick="list()"
+								data-dismiss="modal">OK</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="modal fade" id="alert1">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 					<div class="modal-content">
@@ -1577,27 +1601,27 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 			}
 		});
 	}
-	
+
 	function handleCountryChange(select) {
-	    const selectedCountry = select.value;
+		const selectedCountry = select.value;
 
-	    if (!selectedCountry) {
-	        $('#cbuaeGeographicalZone').val('');
-	        return;
-	    }
+		if (!selectedCountry) {
+			$('#cbuaeGeographicalZone').val('');
+			return;
+		}
 
-	    $.ajax({
-	        url: '/BCDRS/getCountryDetails',
-	        type: 'GET',
-	        data: { countryName: selectedCountry },
-	        success: function(data) {
-	            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
-	        },
-	        error: function(xhr, status, error) {
-	            console.error('AJAX Error:', error);
-	            alert('Failed to fetch geographical zone.');
-	        }
-	    });
+		$.ajax({
+			url: '/BCDRS/getCountryDetails',
+			type: 'GET',
+			data: {countryName: selectedCountry},
+			success: function (data) {
+				$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				alert('Failed to fetch geographical zone.');
+			}
+		});
 	}
 </script>
 
