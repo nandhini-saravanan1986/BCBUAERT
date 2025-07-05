@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class AuditServicesEntity {
 
     @Id
-    private UUID audit_ref_no;
+    private String audit_ref_no;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date audit_date;
     private String audit_table;
@@ -38,10 +38,10 @@ public class AuditServicesEntity {
     private String report_id;
     private String entry_user_name;
     private String auth_user_name;
-	public UUID getAudit_ref_no() {
+	public String getAudit_ref_no() {
 		return audit_ref_no;
 	}
-	public void setAudit_ref_no(UUID audit_ref_no) {
+	public void setAudit_ref_no(String audit_ref_no) {
 		this.audit_ref_no = audit_ref_no;
 	}
 	public Date getAudit_date() {

@@ -15,8 +15,10 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
@@ -334,33 +336,54 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 
                 UserProfile dbUser = upOptional.get();
                 
-                for (Field field : UserProfile.class.getDeclaredFields()) {
-                    field.setAccessible(true);
-                    String fieldName = field.getName();
+                Map<String, String> changes = new LinkedHashMap<>();
 
-                    if (ignoreFields.contains(fieldName)) {
-                        continue;
-                    }
+    	        for (Field field : UserProfile.class.getDeclaredFields()) {
+    	            field.setAccessible(true);
+    	            try {
+    	                Object oldValue = field.get(dbUser);
+    	                Object newValue = field.get(userProfile);    
+    	                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+    	                    (newValue == null || newValue.toString().trim().isEmpty())) {
+    	                    continue; 
+    	                }
 
-                    try {
-                        Object oldVal = field.get(dbUser);
-                        Object newVal = field.get(userProfile);
+    	                if (ignoreFields.contains(field.getName()) && newValue == null) {
+    	                    continue; 
+    	                }
 
-                        if (oldVal == null && newVal != null
-                            || oldVal != null && newVal == null
-                            || (oldVal != null && !oldVal.equals(newVal))) {
-                            
-                            changeMap.put(fieldName, (oldVal + " → " + newVal));
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-               auditservice.createBusinessAudit(
+    	                if (oldValue instanceof Date || newValue instanceof Date) {
+    	                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+    	                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+    	                    if (Objects.equals(oldDateStr, newDateStr)) {
+    	                        continue; 
+    	                    }
+    	                } else {
+    	                    if (Objects.equals(oldValue, newValue)) {
+    	                        continue; 
+    	                    }
+    	                }
+
+    	                if (newValue == null) {
+    	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+    	                } else {
+    	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+    	                }
+
+    	                if (newValue != null) {
+    	                    field.set(dbUser, newValue);
+    	                }
+
+    	            } catch (IllegalAccessException e) {
+    	                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+    	            }
+    	        }               auditservice.createBusinessAudit(
                 	    userProfile.getUserid(),    // or whatever id you track
                 	    "MODIFY",
                 	    "USER_PROFILE_SCREEN",
-                	    changeMap,
+                	    changes,
                 	    "User profile updated"                	    
                 	);
                 

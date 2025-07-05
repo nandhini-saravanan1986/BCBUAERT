@@ -17,22 +17,13 @@ public interface AuditServicesRep extends JpaRepository<AuditServicesEntity , UU
 	List<AuditServicesEntity> getauditService();
 
 		
-		@Query(value = "select * from USER_AUDIT where AUDIT_TABLE = 'XBRLUSERPROFILETABLE'", nativeQuery = true)
-		List<AuditServicesEntity> getauditListLocalvalues();
-		
-		@Query(value = "select * from USER_AUDIT where AUDIT_TABLE = 'Kyc_corporate'", nativeQuery = true)
-		List<AuditServicesEntity> getauditListLocalvalues1();
-		
-		@Query(value = "select * from USER_AUDIT where TRUNC(AUDIT_DATE) = ?1", nativeQuery = true)
-		List<AuditServicesEntity> getauditListOpeartion(Date audit_date);
-		
-		@Query(value = "select * from USER_AUDIT where AUDIT_TABLE = 'XBRLUSERPROFILETABLE' AND TRUNC(AUDIT_DATE) = ?1", nativeQuery = true)
-		List<AuditServicesEntity> getauditListLocalvaluesbusiness(Date fromDateToUse);
-		
-		@Query(value = "SELECT * FROM USER_AUDIT WHERE AUDIT_TABLE IN ('Kyc_corporate', 'KYC_indidual') AND TRUNC(AUDIT_DATE) = TRUNC(?1)", nativeQuery = true)
-		List<AuditServicesEntity> getauditListLocalvaluesbusiness1(Date fromDateToUse);
-		@Query(value = "SELECT change_details FROM KYC_AUDIT_TABLE WHERE AUDIT_TABLE IN ('Kyc_corporate', 'KYC_indidual') and audit_ref_no = ?1", nativeQuery = true)
+		@Query(value = "SELECT * FROM USER_AUDIT WHERE FUNC_CODE  != 'Login'", nativeQuery = true)
+		List<AuditServicesEntity> getServiceAudit();
+		@Query(value = "SELECT * FROM USER_AUDIT WHERE FUNC_CODE  = 'Login'", nativeQuery = true)
+		List<AuditServicesEntity> getUserAudit();
+
+		@Query(value = "SELECT change_details FROM USER_AUDIT  WHERE audit_ref_no = ?1", nativeQuery = true)
 		String getchanges(String audit_ref_no);
-		
+
 
 }

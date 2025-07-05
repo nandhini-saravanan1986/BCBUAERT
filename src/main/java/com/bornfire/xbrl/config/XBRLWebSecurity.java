@@ -41,9 +41,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import com.bornfire.xbrl.entities.AuditServicesRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
+import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.LoginServices;
 
 @Configuration
@@ -60,7 +61,8 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 	LoginServices loginServices;
 
 
-	
+	@Autowired 
+	AuditService auditService;
 	
 	private final Integer SESSION_TIMEOUT_IN_SECONDS = 650000;
 
@@ -134,6 +136,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 									.setParameter(1, userid).executeUpdate();
 							tr.commit();
 							hs.close();
+							
 							throw new BadCredentialsException("Authentication failed");
 
 						} else {
@@ -236,7 +239,11 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("ACCESSCODE", user.getAcct_access_code());
 				request.getSession().setAttribute("BRANCHCODE", user.getBranch_code());
 				request.getSession().setAttribute("BRANCHNAME", user.getBranch_name());
+				
+				auditService.createBusinessAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE");				
+				
 				response.sendRedirect("Dashboard");
+				
 			}
 
 		};
