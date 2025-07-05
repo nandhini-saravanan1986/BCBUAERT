@@ -90,7 +90,7 @@ public class RT_ImpactAnalysis{
 	private BigDecimal derivativesTenorMonths;
 	
 	@Column(name = "MATURITY_PERIOD")
-	private BigDecimal maturityPeriod;
+	private String maturityPeriod;
 	
 	@Column(name = "DEALER_NAME")
 	private String dealerName;
@@ -378,11 +378,11 @@ public class RT_ImpactAnalysis{
 		this.derivativesTenorMonths = derivativesTenorMonths;
 	}
 
-	public BigDecimal getMaturityPeriod() {
+	public String getMaturityPeriod() {
 		return maturityPeriod;
 	}
 
-	public void setMaturityPeriod(BigDecimal maturityPeriod) {
+	public void setMaturityPeriod(String maturityPeriod) {
 		this.maturityPeriod = maturityPeriod;
 	}
 
@@ -663,7 +663,7 @@ public class RT_ImpactAnalysis{
 			String dealInternalReference, String legType, String internalCounterpartyReference, String cptyName,
 			String derivativesCptyCountryOfRisk, String cbuaeRegionalZone, String ccyBought, BigDecimal amountBought,
 			BigDecimal dealRate, String ccySold, BigDecimal amountSold, Date valueDate, Date dealDate,
-			BigDecimal derivativesTenorMonths, BigDecimal maturityPeriod, String dealerName,
+			BigDecimal derivativesTenorMonths, String maturityPeriod, String dealerName,
 			Date mtmAedEquivalentReportingDate, BigDecimal mtmAedEquivalentPreviousQuarter, BigDecimal mtmChange,
 			String fundingOrLoansInternalReference, String onBalanceSheetItemType, String onBalanceItemCounterparty,
 			String counterpartyCountryOfRisk, String cbuaeRegionalZne, BigDecimal nominal, String currency,
@@ -738,7 +738,6 @@ public class RT_ImpactAnalysis{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
+	
 }

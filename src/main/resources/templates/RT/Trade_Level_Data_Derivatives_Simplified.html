@@ -1,0 +1,1784 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<!-- 
+CREATED BY	: SUJIDHARSHINI V
+CREATED ON	: 04.06.2025
+PURPOSE		: F Risk Data Report
+-->
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
+	
+
+	<!-- ✅ Your manually placed jQuery validation
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	 <script th:src="/jquery/jquery.validate.min.js"></script>
+	 -->
+	
+	<!-- jQuery (required first) -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- ✅ jQuery Validation -->
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+
+
+<style>
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+</style>
+ 
+  
+ 
+ 
+ <style>
+  .card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
+
+  .card-header h5 {
+    font-size: 22px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .nav-tabs .nav-link {
+    font-weight: 500;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background-color: #f1f1f1;
+    margin-right: 5px;
+  }
+
+  .nav-tabs .nav-link.active {
+    background-color: #ffffff;
+    border-color: #dee2e6 #dee2e6 #ffffff;
+  }
+
+  .table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f3f6f9;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: #e9ecf0;
+    z-index: 1;
+  }
+
+  .card-footer {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  }
+
+  .btn-xs {
+    padding: 4px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  #usertable th, #usertable td {
+    vertical-align: middle;
+    text-align: left;
+    font-size: 17px;
+    font-family: Verdana, sans-serif;
+  }
+
+  .fa-edit:hover {
+    color: #28a745;
+    transform: scale(1.1);
+  }
+
+
+
+td {
+  border: 1px solid rgb(0,164,166);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+</style>
+ 
+
+<style>
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+            transition: border-color 0.3s ease, padding-top 0.3s ease;
+        }
+        .error {
+    		color: red;
+    		padding-top: 15px;
+			}
+        
+        
+
+        .form-control:focus {
+            border-color: #007bff;
+        }
+
+        .form-legend {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #aaa;
+            background: white;
+            padding: 0 5px;
+            pointer-events: none;
+            transition: 0.3s ease;
+        }
+
+        /* When input or select is focused or has a value, move the label up */
+        .form-control:focus ~ .form-legend,
+        .form-control:not(:placeholder-shown) ~ .form-legend {
+            top: -8px;
+            font-size: 1rem;
+            color: #007bff;
+        }
+
+        /* Hover effect when the input/select is focused */
+        .form-control:focus:hover ~ .form-legend {
+            color: #0056b3; /* Darker shade of blue on hover */
+        }
+
+        /* Ensure the label returns to the normal color after focus or hover is removed */
+        .form-control:not(:focus) ~ .form-legend {
+            color: #aaa; /* Normal label color */
+        }
+    </style>
+   
+    <style>
+/* Red border for invalid inputs */
+input.error, select.error {
+  border: 2px solid red !important;
+}
+
+/* Error message style */
+label.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: block;
+}
+</style>
+    <script th:inline="javascript">
+	
+
+	function home() {
+        $("#loader1").modal("toggle");
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+        $("#loader1").modal("toggle");
+
+		window.history.back();
+	}
+
+	function list() {
+		location.href = 'Trade_Level_Data_Derivatives_Simplified?formmode=list';
+	}
+
+	
+	$(document).ready(function () {
+	    // On modal close, redirect to your controller method path
+	    $('#alert').on('hidden.bs.modal', function () {
+	        window.location.href = './Fx_Risk_Data';
+	    });
+	});
+	
+	function fxrisk() {
+		location.href = 'Fx_Risk_Data';
+	}
+	$(document).ready(function () {
+	    // On modal close, redirect to your controller method path
+	    $('#alert').on('hidden.bs.modal', function () {
+	        window.location.href = './Fx_Risk_Data';
+	    });
+	});
+	
+	
+
+	function submitForm1() {
+		$('#nostroForm').validate({
+	        messages: {
+	            portfolioDate: "Please provide Portfolio Date",
+	            submittingInstitution: "Please provide Submitting Institution"
+	        }
+	    });
+
+	    if ($("#nostroForm").valid()) {
+	    	var formmode = /*[[${formmode}]]*/null;
+
+	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
+	        $("#loader1").modal("toggle");
+
+	        var url = "./createNostroData?report_name=" + report_name;
+
+	        $("#nostroForm").attr('action', url);
+
+	        var options = {
+	            success: showResponse,
+	            error: function (xhr, status, error) {
+	                console.log("Error occurred: ", error);
+	                console.log(xhr.responseText); // for debugging
+	                $("#loader1").modal("hide");
+	                $("#alertmsg").text("Something went wrong while submitting the form.");
+	                $('#alert').modal("toggle");
+	            }
+	        };
+
+	        $("#nostroForm").ajaxSubmit(options);
+
+	        function showResponse(responseText, statusText, xhr, $form) {
+	            $("#loader1").modal("hide");
+	            $("#alertmsg").text(responseText);
+	            $('#alert').modal("toggle");
+	        }
+	    }
+	};
+	
+	
+	function updateform(event) {
+    event.preventDefault();
+    
+    console.log("updateform function called");
+
+    // Show loader
+    $("#loader").modal("toggle");
+
+    // Check if SI_NO is present before sending
+    var formData = $('#TradelevelDataderivative').serialize(); // Make sure this ID is correct (capital F)
+
+    console.log("Serialized Data:", formData); // Debug
+
+    $.ajax({
+        url: './updatetradeleveldataderivative',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            console.log("Server response:", response);
+            $("#loader").modal("hide");
+
+            $("#alertmsg").text(response);
+            $("#alert").modal("toggle");
+
+            if (response.includes("successful")) {
+                setTimeout(function() {
+                    window.location.href = "./Trade_Level_Data_Derivatives?formmode=list";
+                }, 1500);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error in modify:", error);
+            $("#loader").modal("hide");
+            $("#alertmsg").text("Error: " + error);
+            $("#alert").modal("show");
+        }
+    });
+}
+
+	</script>
+  
+</head>
+
+ 
+<script>
+  function navigateToTab(tabId) {
+	  		$("#loader").modal("toggle");
+if (tabId === 'data') {
+			window.location.href = 'Trade_Level_Data_Derivatives_Simplified?formmode=list';
+					$("#loader").modal("hide");
+  } else if (tabId === 'datacontrols') {
+      window.location.href = 'Trade_Level_Data_Derivatives_Simplified?formmode=add';
+      		$("#loader").modal("hide");
+ }
+  }
+
+  function handleClick(tabId) {
+    // Remove active class from all buttons
+    document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId + '-btn').classList.add('active');
+
+    // Hide all panes
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+    document.getElementById(tabId).classList.add('show', 'active');
+  }
+
+  // On page load, detect formmode and show corresponding tab
+  window.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    const formmode = params.get('formmode');
+
+    if (formmode === 'list') {
+      handleClick('data');
+    } else {
+      handleClick('datacontrols'); // default or formmode=add
+    }
+  });
+</script>
+
+
+
+
+     <script>
+    function downloadTradeleveldataderivative() {
+        // 1. Show the loader modal
+        $('#loader').modal('show');
+
+        $.ajax({
+            url: './downloadTradeleveldataderivativeExcel',
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data) {
+                // 2. Hide the loader modal
+                $('#loader').modal('hide');
+
+                let message = '';
+
+                if (data && data.size > 100) {
+                    const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'TradelevelDataDerivative.xls';
+                    document.body.appendChild(a);
+
+                    a.click();
+
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+
+                    message = 'TradelevelDataDerivative.xls has been downloaded successfully.';
+                } else {
+                    message = 'No data available to download.';
+                }
+
+                // Show result in unified alert modal
+                $('#alertmsg').text(message);
+                $('#alert').modal('show');
+            },
+            error: function (xhr, status, error) {
+                $('#loader').modal('hide');
+
+                console.error("Download failed:", error);
+
+                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alert').modal('show');
+            }
+        });
+
+        // Safety fallback in case AJAX hangs silently
+        setTimeout(function () {
+            $('#loader').modal('hide');
+        }, 10000);
+    }
+</script>
+
+	<script>
+
+    function submitForm() {
+		$("#loader").modal("toggle");
+
+        const reportName = 'CBUAE_Trade_Level_Data_Derivative_Simplified_Template';
+        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+        const formData = $("#fxriskForm").serialize();
+	
+        $.ajax({
+            url: submitUrl,
+            type: "POST",
+            data: formData,
+            success: function (response) {
+        		$("#loader").modal("hide");
+
+            	$("#alertmsg1").text(response);
+                $("#alert1").modal("toggle");
+                //location.href = 'Nostro_Account_Bal';
+            },
+            error: function (xhr, status, error) {
+        	    $("#loader").modal("hide");
+
+                console.error("Error:", error);
+                alert("Error occurred: " + error);
+            }
+        });
+    }
+
+
+</script>
+<title>BCDRS</title>
+<body> 
+<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
+		<div class="row">
+		
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(107, 122, 143) ; ">
+					<div class="float-left">
+						<h5 
+							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">TRADE LEVEL DATA DERIVATVE SIMPLIFIED</h5>
+					</div>
+
+					
+				</div>
+	<!-- -------------------User List Starts----------------------------------------------------- -->
+	<div  style="padding-right: 10px;padding-left: 20px;" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+
+			
+				
+			
+
+<!-- Tabs -->
+<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
+  <button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
+  <button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
+  <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
+    	<div class="float-right" style="margin-left:61%">
+    		<button th:if="${formmode} =='list'" type="button"
+  class="custom-tab-btn"
+ 
+  onclick="downloadTradeleveldataderivative();">
+  <i class="fa fa-download"></i> Download
+</button></div>
+</div>
+
+
+
+
+
+
+<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
+  <div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+   
+		<div class="row">
+			<div class="col-sm-12 finuserapply" >
+			<form id="fxriskForm"        
+          method="post"
+          autocomplete="off" > 
+				<div class="card-body" style="max-height:450px; overflow-y:auto">
+
+
+							<input autocomplete="false" name="hidden" type="text"
+								style="display: none;">
+							 <div class="form-group" style="border:none">
+          <div class="row formline">
+            <div class="col-sm-1"></div>
+           <div class="form-group col-md-4">
+  <select id="submittingInstitution" name="submittingInstitution" class="form-control" required>
+    <option value="">-- Select Institution --</option>
+    <option value="Bank of Baroda">Bank of Baroda</option>
+  </select>
+  <label for="submittingInstitution" class="form-legend">Submitting Institution</label>
+</div>
+
+
+            <div class="col-sm-1"></div>
+            
+            <div class="form-group col-md-4">
+              <input type="date"
+                     id="portfolioDate"
+                     name="portfolioDate"
+                     class="form-control" placeholder=" "
+                     required />
+                <label for="portfolioDate" class="form-legend">Portfolio date</label>
+            </div>
+          </div>
+
+          <!-- Contact Employee 1 Name / Title -->
+          <!-- Contact Employee 1 Group -->
+<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+  <div class="row formline">
+    <div class="col-sm-12">
+      <label style="font-weight: bold; color: #007B8A;">Contact Details(Employee 1)</label>
+    </div>
+  </div>
+  <div class="row formline">
+     <div class="form-group col-md-4">
+     <input type="text" id="contactEmployee1Name1" name="contactEmployee1Name1" class="form-control" placeholder=" " required />
+      <label for="contactEmployee1Name1" class="form-legend">Name</label>
+    </div>
+    
+    
+   <div class="form-group col-md-4">
+   <input type="text" id="contactEmployee1Title1" name="contactEmployee1Title1" class="form-control" placeholder=" " required />
+      <label for="contactEmployee1Title1" class="form-legend">Title</label>
+    </div>
+   
+
+  
+    <div class="form-group col-md-4">
+       <input type="email" id="contactEmployee1Email1" name="contactEmployee1Email1" class="form-control" placeholder=" " required />
+      <label for="contactEmployee1Email1" class="form-legend">Email</label>
+    </div>
+    <div class="col-sm-3">
+    </div>
+ 
+</div>
+</div>
+<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+  <div class="row formline">
+    <div class="col-sm-12">
+      <label style="font-weight: bold; color: #007B8A;">Contact Details(Employee 2)</label>
+    </div>
+  </div>
+  <div class="row formline">
+     <div class="form-group col-md-4">
+     <input type="text" id="contactEmployee2Name2" name="contactEmployee2Name2" class="form-control" placeholder=" " required />
+      <label for="contactEmployee2Name2" class="form-legend">Name</label>
+    </div>
+    
+    
+   <div class="form-group col-md-4">
+   <input type="text" id="contactEmployee2Title2" name="contactEmployee2Title2" class="form-control" placeholder=" " required />
+      <label for="contactEmployee2Title2" class="form-legend">Title</label>
+    </div>
+   
+
+  
+    <div class="form-group col-md-4">
+       <input type="email" id="contactEmployee2Email2" name="contactEmployee2Email2" class="form-control" placeholder=" " required />
+      <label for="contactEmployee2Email2" class="form-legend">Email</label>
+    </div>
+    <div class="col-sm-3">
+    </div>
+ 
+</div>
+<!-- Contact Employee 2 Group -->
+</div>
+<div class="form-group" style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+  <div class="row formline">
+    <div class="col-sm-12">
+      <label style="font-weight: bold; color: #007B8A;">Sign Off</label>
+    </div>
+  </div>
+
+          <!-- Sign-off CRO Name / Email -->
+          <div class="row formline">
+           <div class="col-sm-1"></div>
+           <div class="form-group col-md-4">
+            <input type="text"
+                     id="signOffCroName"
+                     name="signOffCroName" class="form-control" placeholder=" "
+                     required />
+              <label for="signOffCroName" class="form-legend">CRO Name</label>
+            </div>
+             <div class="col-sm-1"></div>
+            <div class="form-group col-md-4">
+             <input type="email"
+                     id="signOffCroEmail"
+                     name="signOffCroEmail"
+                     class="form-control" placeholder=" "
+                     required />
+              <label for="signOffCroEmail" class="form-legend">CRO Email</label>
+            </div>
+            
+          </div>
+
+          <!-- Sign-off CFO Name / Email -->
+          <div class="row formline">
+          <div class="col-sm-1"></div>
+           <div class="form-group col-md-4">
+           <input type="text"
+                     id="signOffCfoName"
+                     name="signOffCfoName"
+                     class="form-control" placeholder=" "
+                     required />
+              <label for="signOffCfoName" class="form-legend">CFO Name</label>
+            </div>
+            
+            <div class="col-sm-1"></div>
+             <div class="form-group col-md-4">
+              <input type="email"
+                     id="signOffCfoEmail"
+                     name="signOffCfoEmail"
+                     class="form-control" placeholder=" "
+                     required />
+              <label for="signOffCfoEmail" class="form-legend">CFO Email</label>
+            </div>
+           
+          </div>
+
+          <!-- Sign-off Head of Treasury Name / Email -->
+          <div class="row formline">
+            <div class="col-sm-1"></div>
+           <div class="form-group col-md-4">
+            <input type="text"
+                     id="signOffHeadOfTreasuryName"
+                     name="signOffHeadOfTreasuryName"
+                    class="form-control" placeholder=" "
+                     required />
+              <label for="signOffHeadOfTreasuryName" class="form-legend">Head of Treasury Name</label>
+            </div>
+            
+            <div class="col-sm-1"></div>
+            <div class="form-group col-md-4">
+             <input type="email"
+                     id="signOffHeadOfTreasuryEmail"
+                     name="signOffHeadOfTreasuryEmail"
+                     class="form-control" placeholder=" "
+                     required />
+              <label for="signOffHeadOfTreasuryEmail" class="form-legend">Head of Treasury Email</label>
+            </div>
+                      </div>
+							</div>
+							
+							</div>
+							
+							
+							</form>
+							</div>
+							</div>
+							<div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
+							</div></div>
+									
+<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
+
+<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+
+  <div class="tab-pane fade" id="template" role="tabpanel"  th:if="${formmode == 'null'}">
+    <p>Templates tabs</p>
+    <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
+  </div>
+ 
+ <!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
+  
+  
+  
+  <!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
+  <div class="tab-pane fade" id="data" role="tabpanel">
+    <!-- Move your existing table content here -->
+
+		<!-- 	<div class="row">
+				<div class="col-sm-12">
+					<div class="container-fluid">
+   -->
+   
+   
+   
+   
+  <div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
+    <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
+  
+      <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+      
+        <tr>
+												<th style="width: 40px;"></th>
+                                                <th>Bank Date</th>
+<th>Bank Name</th>
+<th>Head Office Subsidiary</th>
+<th>Subsidiary</th>
+<th>Bank Symbol</th>
+<th>Conventional Islamic</th>
+<th>CBUAE Tiering1</th>
+<th>CBUAE Tiering2</th>
+<th>Counterparty Name</th>
+<th>Internal Counterparty Ref</th>
+<th>Internal Transaction Ref</th>
+<th>Underlying Asset Class</th>
+<th>Derivatives Type</th>
+<th>Transaction Rationale</th>
+<th>Bundle Transaction</th>
+<th>Back To Back Transaction</th>
+<th>Instruments Characteristics</th>
+<th>Currency Valuation</th>
+<th>AED FX Spot Rate Conversion</th>
+<th>Start Date</th>
+<th>Effective Delivery Date</th>
+<th>Final Maturity Date</th>
+<th>Residual Maturity</th>
+<th>Residual Maturity Rounded</th>
+<th>Maturity Period</th>
+<th>Position</th>
+<th>Notional Type</th>
+<th>Cancellable</th>
+<th>Cancellable Date</th>
+<th>Cancellable Option Type</th>
+<th>Notional1 Assets</th>
+<th>Notional1 Currency</th>
+<th>Pay Receive1</th>
+<th>Coupon Fixed Rate1</th>
+<th>Margin1</th>
+<th>Benchmark Floating Rate1</th>
+<th>Benchmark Rate Tenor1</th>
+<th>Notional2 Liabilities</th>
+<th>Notional2 Currency</th>
+<th>Pay Receive2</th>
+<th>Coupon Fixed Rate2</th>
+<th>Margin2</th>
+<th>Benchmark Floating Rate2</th>
+<th>Benchmark Rate Tenor2</th>
+<th>Clean Value AED</th>
+<th>Accrued Interest AED</th>
+<th>DV01 AED</th>
+<th>BR01 AED</th>
+<th>Dollar Delta AED</th>
+<th>Dollar Vega AED</th>
+<th>Dollar Gamma AED</th>
+<th>Dollar Theta AED</th>
+<th>ULeg1 Notional</th>
+<th>ULeg1 Currency</th>
+<th>ULeg1 Pay Receive</th>
+<th>ULeg1 Coupon</th>
+<th>ULeg1 Margin</th>
+<th>ULeg1 Benchmark</th>
+<th>ULeg1 Tenor</th>
+<th>ULeg1 </th>
+<th>ULeg1 Details</th>
+<th>ULeg2 Notional</th>
+<th>ULeg2 Currency</th>
+<th>ULeg2 Pay Receive</th>
+<th>ULeg2 Coupon</th>
+<th>ULeg2 Margin</th>
+<th>ULeg2 Benchmark</th>
+<th>ULeg2 Tenor</th>
+<th>ULeg2 </th>
+<th>ULeg2 Details</th>
+<th>ULeg2 Clean Value AED</th>
+<th>ULeg2 Accrued Interest AED</th>
+<th>ULeg2 DV01 AED</th>
+<th>CDS Type</th>
+<th>CDS Underlyings</th>
+<th>Quanto</th>
+<th>Nominal</th>
+<th>Clean Value AED</th>
+<th>IR DV01 AED</th>
+<th>CS01 AED</th>
+<th>Future Type</th>
+<th>Future Underlying Contract</th>
+<th>Future Qty</th>
+<th>Future Contract Size</th>
+<th>Future Contract Rate</th>
+<th>Future Market Rate</th>
+<th>Future Contract Valuation</th>
+<th>Future Sensitivity AED</th>
+<th>Options List</th>
+<th>Option Type</th>
+<th>Option Underlying Type</th>
+<th>Option Underlying Details</th>
+<th>Strike</th>
+<th>Option Market Rate</th>
+<th>Barrier Type</th>
+<th>Barrier Upper Range</th>
+<th>Barrier Lower Range</th>
+<th>Option Fair Value AED</th>
+<th>Option Dollar Delta</th>
+<th>Option Dollar Vega</th>
+<th>Option Dollar Gamma</th>
+<th>Option Dollar Rho</th>
+<th>Option Dollar Theta</th>
+<th>Overall MTM AED</th>
+<th>IRS Positive MTM</th>
+<th>Asset Swap Positive MTM</th>
+<th>CDS Positive MTM</th>
+<th>Future Contract Positive MTM</th>
+<th>Option Positive MTM</th>
+<th>Overall Positive MTM</th>
+<th>Individual Positive Contribution</th>
+<th>IRS Negative MTM</th>
+<th>Asset Swap Negative MTM</th>
+<th>CDS Negative MTM</th>
+<th>Future Contract Negative MTM</th>
+<th>Option Negative MTM</th>
+<th>Overall Negative MTM</th>
+<th>Individual Negative Contribution</th>
+                                                
+											</tr>
+      </thead>
+      <tbody style="font-size: 9px;">
+      
+        <!-- Loop to render data dynamically -->
+        <tr th:each="data : ${branchList}">
+<td>
+							      <a>
+                                <i class="fa fa-edit" style="color: #007bff;"></i>
+									</a>
+								</td>
+								
+                                    <td th:text="${#dates.format(data.bank_date, 'dd-MM-yyyy')}"></td>
+<td th:text="${data.bank_name}"></td>
+<td th:text="${data.head_office_subsidiary}"></td>
+<td th:text="${data.subsidiary}"></td>
+<td th:text="${data.bank_symbol}"></td>
+<td th:text="${data.conventional_islamic}"></td>
+<td th:text="${data.cbuae_tiering1}"></td>
+<td th:text="${data.cbuae_tiering2}"></td>
+<td th:text="${data.cpty_name}"></td>
+<td th:text="${data.internal_counterparty_ref}"></td>
+<td th:text="${data.internal_transaction_ref}"></td>
+<td th:text="${data.underlying_asset_class}"></td>
+<td th:text="${data.derivatives_type}"></td>
+<td th:text="${data.transaction_rationale}"></td>
+<td th:text="${data.bundle_transaction}"></td>
+<td th:text="${data.back_to_back_transaction}"></td>
+<td th:text="${data.instruments_characteristics}"></td>
+<td th:text="${data.currency_valuation}"></td>
+<td th:text="${data.aed_fx_spot_rate_conversion}"></td>
+<td th:text="${#dates.format(data.start_date, 'dd-MM-yyyy')}"></td>
+<td th:text="${#dates.format(data.effective_delivery_date, 'dd-MM-yyyy')}"></td>
+<td th:text="${#dates.format(data.final_maturity_date, 'dd-MM-yyyy')}"></td>
+<td th:text="${data.residual_maturity}"></td>
+<td th:text="${data.residual_maturity_rounded}"></td>
+<td th:text="${data.maturity_period}"></td>
+<td th:text="${data.position}"></td>
+<td th:text="${data.notional_type}"></td>
+<td th:text="${data.cancellable}"></td>
+<td th:text="${#dates.format(data.cancellable_date, 'dd-MM-yyyy')}"></td>
+<td th:text="${data.cancellable_option_type}"></td>
+<td th:text="${data.notional1_assets}"></td>
+<td th:text="${data.notional1_currency}"></td>
+<td th:text="${data.pay_receive1}"></td>
+<td th:text="${data.coupon_fixed_rate1}"></td>
+<td th:text="${data.margin1}"></td>
+<td th:text="${data.benchmark_floating_rate1}"></td>
+<td th:text="${data.benchmark_rate_tenor1}"></td>
+<td th:text="${data.notional2_liabilities}"></td>
+<td th:text="${data.notional2_currency}"></td>
+<td th:text="${data.pay_receive2}"></td>
+<td th:text="${data.coupon_fixed_rate2}"></td>
+<td th:text="${data.margin2}"></td>
+<td th:text="${data.benchmark_floating_rate2}"></td>
+<td th:text="${data.benchmark_rate_tenor2}"></td>
+<td th:text="${data.clean_value_aed}"></td>
+<td th:text="${data.accrued_interest_aed}"></td>
+<td th:text="${data.dv01_aed}"></td>
+<td th:text="${data.br01_aed}"></td>
+<td th:text="${data.dollar_delta_aed}"></td>
+<td th:text="${data.dollar_vega_aed}"></td>
+<td th:text="${data.dollar_gamma_aed}"></td>
+<td th:text="${data.dollar_theta_aed}"></td>
+<td th:text="${data.uleg1_notional}"></td>
+<td th:text="${data.uleg1_currency}"></td>
+<td th:text="${data.uleg1_pay_receive}"></td>
+<td th:text="${data.uleg1_coupon}"></td>
+<td th:text="${data.uleg1_margin}"></td>
+<td th:text="${data.uleg1_benchmark}"></td>
+<td th:text="${data.uleg1_tenor}"></td>
+<td th:text="${data.underlying_leg1}"></td>
+<td th:text="${data.uleg1_details}"></td>
+<td th:text="${data.uleg2_notional}"></td>
+<td th:text="${data.uleg2_currency}"></td>
+<td th:text="${data.uleg2_pay_receive}"></td>
+<td th:text="${data.uleg2_coupon}"></td>
+<td th:text="${data.uleg2_margin}"></td>
+<td th:text="${data.uleg2_benchmark}"></td>
+<td th:text="${data.uleg2_tenor}"></td>
+<td th:text="${data.underlying_leg2}"></td>
+<td th:text="${data.uleg2_details}"></td>
+<td th:text="${data.uleg2_clean_value_aed}"></td>
+<td th:text="${data.uleg2_accrued_interest_aed}"></td>
+<td th:text="${data.uleg2_dv01_aed}"></td>
+<td th:text="${data.cds_type}"></td>
+<td th:text="${data.cds_underlyings}"></td>
+<td th:text="${data.quanto}"></td>
+<td th:text="${data.nominal}"></td>
+<td th:text="${data.cleanvalue_aed}"></td>
+<td th:text="${data.ir_dv01_aed}"></td>
+<td th:text="${data.cs01_aed}"></td>
+<td th:text="${data.future_type}"></td>
+<td th:text="${data.future_underlying_contract}"></td>
+<td th:text="${data.future_qty}"></td>
+<td th:text="${data.future_contract_size}"></td>
+<td th:text="${data.future_contract_rate}"></td>
+<td th:text="${data.future_market_rate}"></td>
+<td th:text="${data.future_contract_valuation}"></td>
+<td th:text="${data.future_sensitivity_aed}"></td>
+<td th:text="${data.options_list}"></td>
+<td th:text="${data.option_type}"></td>
+<td th:text="${data.option_underlying_type}"></td>
+<td th:text="${data.option_underlying_details}"></td>
+<td th:text="${data.strike}"></td>
+<td th:text="${data.option_market_rate}"></td>
+<td th:text="${data.barrier_type}"></td>
+<td th:text="${data.barrier_upper_range}"></td>
+<td th:text="${data.barrier_lower_range}"></td>
+<td th:text="${data.option_fair_value_aed}"></td>
+<td th:text="${data.option_dollar_delta}"></td>
+<td th:text="${data.option_dollar_vega}"></td>
+<td th:text="${data.option_dollar_gamma}"></td>
+<td th:text="${data.option_dollar_rho}"></td>
+<td th:text="${data.option_dollar_theta}"></td>
+<td th:text="${data.overall_mtm_aed}"></td>
+<td th:text="${data.irs_positive_mtm}"></td>
+<td th:text="${data.asset_swap_positive_mtm}"></td>
+<td th:text="${data.cds_positive_mtm}"></td>
+<td th:text="${data.future_contract_positive_mtm}"></td>
+<td th:text="${data.option_positive_mtm}"></td>
+<td th:text="${data.overall_positive_mtm}"></td>
+<td th:text="${data.individual_positive_contribution}"></td>
+<td th:text="${data.irs_negative_mtm}"></td>
+<td th:text="${data.asset_swap_negative_mtm}"></td>
+<td th:text="${data.cds_negative_mtm}"></td>
+<td th:text="${data.future_contract_negative_mtm}"></td>
+<td th:text="${data.option_negative_mtm}"></td>
+<td th:text="${data.overall_negative_mtm}"></td>
+<td th:text="${data.individual_negative_contribution}"></td>
+                                    
+
+							</tr>
+							
+      </tbody>
+    </table>
+  </div>
+
+
+<div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+  <button type="button" class="custom-tab-btn"        
+        onclick="home();">
+  <i class="fa fa-home"></i> Home
+</button>
+
+
+ <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
+       
+
+<button type="button" class="custom-tab-btn"
+        
+        onclick="back();">
+  <i class="fa fa-arrow-left"></i> Back
+</button>
+
+</div>
+
+</div>
+
+
+
+				</div>
+			
+<!------------------ edit starts-------------------------------------------------------------->
+		
+<div th:if="${formmode}=='edit'" style="align-items:center">
+ 
+<div class="row">
+<form th:action="@{/updateFxriskdata}" th:object="${tradeleveldataderivative}" method="post" id="TradelevelDataderivative">    	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Trade Level Data Derivative - Edit</h3>
+							</div>
+							
+						</div>
+<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+
+ 
+  
+   <input type="hidden" th:field="*{SI_NO}" />
+   
+   <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bank Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{bank_date}" /></div>
+     <label class="col-sm-2 col-form-label">Bank Name</label>
+            <div class="col-sm-4">
+              <select class="form-control" th:field="*{bank_name}" onchange="handleBankChange(this)">
+                <option value="">-- Select Bank --</option>
+                <option th:each="bank : ${bankList}"
+                        th:value="${bank.bankName}"
+                        th:text="${bank.bankName}">
+                </option>
+              </select>
+              </div>
+</div>
+
+<div class="form-group row">
+      <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{head_office_subsidiary}">
+        <option value="">-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
+    <label class="col-sm-2 col-form-label">Subsidiary</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bank Symbol</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bank_symbol}"  id="bankSymbol" readonly/></div>
+    <label class="col-sm-2 col-form-label">Conventional Islamic</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{conventional_islamic}" id="conventionalIslamic" readonly /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">CBUAE Tiering1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering1}" id="localForeign" readonly /></div>
+    <label class="col-sm-2 col-form-label">CBUAE Tiering2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering2}" id="cbuaeTiering" readonly /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Counterparty Name</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cpty_name}" /></div>
+    <label class="col-sm-2 col-form-label">Internal Counterparty Ref</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{internal_counterparty_ref}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Internal Transaction Ref</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{internal_transaction_ref}" /></div>
+    <label class="col-sm-2 col-form-label">Underlying Asset Class</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_asset_class}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Derivatives Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{derivatives_type}" /></div>
+    <label class="col-sm-2 col-form-label">Transaction Rationale</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{transaction_rationale}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bundle Transaction</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bundle_transaction}" /></div>
+    <label class="col-sm-2 col-form-label">Back To Back Transaction</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{back_to_back_transaction}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Instruments Characteristics</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{instruments_characteristics}" /></div>
+    <label class="col-sm-2 col-form-label">Currency Valuation</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{currency_valuation}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">AED FX Spot Rate Conversion</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{aed_fx_spot_rate_conversion}" /></div>
+    <label class="col-sm-2 col-form-label">Start Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{start_date}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Effective Delivery Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{effective_delivery_date}" /></div>
+    <label class="col-sm-2 col-form-label">Final Maturity Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{final_maturity_date}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Residual Maturity</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{residual_maturity}" /></div>
+    <label class="col-sm-2 col-form-label">Residual Maturity Rounded</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{residual_maturity_rounded}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Maturity Period</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{maturity_period}" /></div>
+    <label class="col-sm-2 col-form-label">Position</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{position}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Notional Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional_type}" /></div>
+    <label class="col-sm-2 col-form-label">Cancellable</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cancellable}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Cancellable Date</label>
+    <div class="col-sm-4"><input type="date" class="form-control" th:field="*{cancellable_date}" /></div>
+    <label class="col-sm-2 col-form-label">Cancellable Option Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cancellable_option_type}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Notional1 Assets</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional1_assets}" /></div>
+    <label class="col-sm-2 col-form-label">Notional1 Currency</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional1_currency}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Pay Receive1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{pay_receive1}" /></div>
+    <label class="col-sm-2 col-form-label">Coupon Fixed Rate1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{coupon_fixed_rate1}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Margin1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{margin1}" /></div>
+    <label class="col-sm-2 col-form-label">Benchmark Floating Rate1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_floating_rate1}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Benchmark Rate Tenor1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_rate_tenor1}" /></div>
+    <label class="col-sm-2 col-form-label">Notional2 Liabilities</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional2_liabilities}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Notional2 Currency</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional2_currency}" /></div>
+    <label class="col-sm-2 col-form-label">Pay Receive2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{pay_receive2}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Coupon Fixed Rate2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{coupon_fixed_rate2}" /></div>
+    <label class="col-sm-2 col-form-label">Margin2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{margin2}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Benchmark Floating Rate2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_floating_rate2}" /></div>
+    <label class="col-sm-2 col-form-label">Benchmark Rate Tenor2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_rate_tenor2}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Clean Value AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{clean_value_aed}" /></div>
+    <label class="col-sm-2 col-form-label">Accrued Interest AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{accrued_interest_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">DV01 AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{dv01_aed}" /></div>
+    <label class="col-sm-2 col-form-label">BR01 AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{br01_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Dollar Delta AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollar_delta_aed}" /></div>
+    <label class="col-sm-2 col-form-label">Dollar Vega AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollar_vega_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Dollar Gamma AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollar_gamma_aed}" /></div>
+    <label class="col-sm-2 col-form-label">Dollar Theta AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollar_theta_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg1 Notional</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_notional}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg1 Currency</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_currency}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg1 Pay Receive</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_pay_receive}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg1 Coupon</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_coupon}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg1 Margin</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_margin}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg1 Benchmark</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_benchmark}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg1 Tenor</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_tenor}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg1</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg1}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg1 Details</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_details}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Notional</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_notional}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 Currency</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_currency}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Pay Receive</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_pay_receive}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 Coupon</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_coupon}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Margin</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_margin}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_benchmark}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Tenor</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_tenor}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg2}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Details</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_details}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 Clean Value AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_clean_value_aed}" /></div>
+    <label class="col-sm-2 col-form-label">ULeg2 Accrued Interest AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_accrued_interest_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">ULeg2 DV01 AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_dv01_aed}" /></div>
+    <label class="col-sm-2 col-form-label">CDS Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_type}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">CDS Underlyings</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_underlyings}" /></div>
+    <label class="col-sm-2 col-form-label">Quanto</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{quanto}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Nominal</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{nominal}" /></div>
+    <label class="col-sm-2 col-form-label">Clean Value AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cleanvalue_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">IR DV01 AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{ir_dv01_aed}" /></div>
+    <label class="col-sm-2 col-form-label">CS01 AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cs01_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Future Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_type}" /></div>
+    <label class="col-sm-2 col-form-label">Future Underlying Contract</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_underlying_contract}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Future Qty</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_qty}" /></div>
+    <label class="col-sm-2 col-form-label">Future Contract Size</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_size}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Future Contract Rate</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_rate}" /></div>
+    <label class="col-sm-2 col-form-label">Future Market Rate</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_market_rate}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Future Contract Valuation</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_valuation}" /></div>
+    <label class="col-sm-2 col-form-label">Future Sensitivity AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_sensitivity_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Options List</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{options_list}" /></div>
+    <label class="col-sm-2 col-form-label">Option Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_type}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Underlying Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_type}" /></div>
+    <label class="col-sm-2 col-form-label">Option Underlying Details</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_details}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Strike</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{strike}" /></div>
+    <label class="col-sm-2 col-form-label">Option Market Rate</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_market_rate}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Barrier Type</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_type}" /></div>
+    <label class="col-sm-2 col-form-label">Barrier Upper Range</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_upper_range}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Barrier Lower Range</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_lower_range}" /></div>
+    <label class="col-sm-2 col-form-label">Option Fair Value AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_fair_value_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Dollar Delta</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_delta}" /></div>
+    <label class="col-sm-2 col-form-label">Option Dollar Vega</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_vega}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Dollar Gamma</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_gamma}" /></div>
+    <label class="col-sm-2 col-form-label">Option Dollar Rho</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_rho}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Dollar Theta</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_theta}" /></div>
+    <label class="col-sm-2 col-form-label">Overall MTM AED</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_mtm_aed}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">IRS Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_positive_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">Asset Swap Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">CDS Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_positive_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">Future Contract Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_positive_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">Overall Positive MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_positive_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Individual Positive Contribution</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_positive_contribution}" /></div>
+    <label class="col-sm-2 col-form-label">IRS Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_negative_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Asset Swap Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_negative_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">CDS Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_negative_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Future Contract Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_negative_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">Option Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_negative_mtm}" /></div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Overall Negative MTM</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_negative_mtm}" /></div>
+    <label class="col-sm-2 col-form-label">Individual Negative Contribution</label>
+    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_negative_contribution}" /></div>
+</div>
+
+
+
+
+
+
+
+          
+
+          
+          
+
+         
+        </div>
+
+
+    <!-- Submit -->
+   <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/Trade_Level_Data_Derivatives(formmode='list')}" class="custom-tab-btn">Cancel</a>
+    </div>
+    
+    </div>
+  </form>
+</div>
+</div>
+</div>
+	
+
+	<div class="modal fade" id="datadelete">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body"
+					style="margin-top: 8px; text-align: center; color: #f15362;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="formmsg">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body"
+					style="margin-top: 8px; text-align: center; color: aliceblue;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<a th:value="${msg}"></a>
+				</div>
+				<div class="modal-footer" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+					<button type="button" class="btn btn-primary"
+						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="custom-tab-btn" onclick="list()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<div class="modal fade" id="alert1">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="custom-tab-btn" onclick="fxrisk()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="loader" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+		
+</body>
+<script>
+  $(document).ready(function () {
+    $('#usertable').DataTable({
+      "paging": true,
+      "pageLength": 10,
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "language": {
+        "search": "Search:"
+      }
+    });
+  });
+</script>
+
+
+<!-- Include this after your DataTable initialization script -->
+
+<style>
+/* Remove top margin/padding from DataTables parent containers */
+#data {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.table-responsive {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure DataTables filter (search box) doesn't have spacing above it */
+div.dataTables_filter {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+  /* FIX: Make search label and box inline */
+  div.dataTables_filter label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  /* Style pagination buttons */
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background-color: white;
+    border: 1px solid rgb(0,164,166);
+    color: rgb(0,164,166) !important;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 6px;
+    transition: 0.3s;
+    font-weight: 600;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: rgb(0,164,166) !important;
+    color: white !important;
+  }
+
+  /* Optional: Style the search input */
+  .dataTables_filter input {
+    border: 1px solid rgb(0,164,166);
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+</style>
+
+
+<script>
+function handleBankChange(select) {
+    const selectedBank = select.value;
+
+    if (!selectedBank) {
+        // Clear the fields
+        $('#bankSymbol').val('');
+        $('#conventionalIslamic').val('');
+        $('#localForeign').val('');
+        $('#cbuaeTiering').val('');
+        return;
+    }
+
+    $.ajax({
+    	url: '/BCDRS/getBankDetails',
+        type: 'GET',
+        data: { bankName: selectedBank },
+        success: function(data) {
+            $('#bankSymbol').val(data.bankSymbol || '');
+            $('#conventionalIslamic').val(data.conventionalIslamic || '');
+            $('#localForeign').val(data.localForeign || '');
+            $('#cbuaeTiering').val(data.cbuaeTiering || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+          //  alert('Failed to fetch bank details.');
+        }
+    });
+}
+</script>
+<script>
+  function handleCountryChange(select) {
+    const selectedCountry = select.value;
+    const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
+
+    if (selectedCountry === "United Arab Emirates") {
+      geoZoneInput.value = "GCC";
+      geoZoneInput.readOnly = true;
+    } else {
+      geoZoneInput.value = "";
+      geoZoneInput.readOnly = false;
+    }
+  }
+
+  // Run on page load (for edit mode pre-filled forms)
+  window.onload = function() {
+    const countrySelect = document.getElementById("countryOfRisk");
+    if (countrySelect) {
+      handleCountryChange(countrySelect);
+    }
+  };
+</script>
+
+</html>

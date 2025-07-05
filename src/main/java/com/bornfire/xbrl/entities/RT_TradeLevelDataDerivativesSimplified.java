@@ -10,9 +10,9 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "BCBUAE_TRADE_LEVEL_DERIVATIVES")
+@Table(name = "BCBUAE_TRADE_LEVEL_DERIVATIVES_SIMPLIFIED")
 
-public class RT_TradeLevelDataDerivatives {
+public class RT_TradeLevelDataDerivativesSimplified {
 
 	@Id
 	private String SI_NO;
@@ -948,13 +948,15 @@ public class RT_TradeLevelDataDerivatives {
 	public void setVerify_time(Date verify_time) {
 		this.verify_time = verify_time;
 	}
-	public RT_TradeLevelDataDerivatives(String sI_NO, Date bank_date, String bank_name, String head_office_subsidiary,
-			String subsidiary, String bank_symbol, String conventional_islamic, String cbuae_tiering1,
-			String cbuae_tiering2, String cpty_name, String internal_counterparty_ref, String internal_transaction_ref,
-			String underlying_asset_class, String derivatives_type, String transaction_rationale,
-			String bundle_transaction, String back_to_back_transaction, String instruments_characteristics,
-			String currency_valuation, BigDecimal aed_fx_spot_rate_conversion, Date start_date,
-			Date effective_delivery_date, Date final_maturity_date, BigDecimal residual_maturity,
+	
+	
+	public RT_TradeLevelDataDerivativesSimplified(String sI_NO, Date bank_date, String bank_name,
+			String head_office_subsidiary, String subsidiary, String bank_symbol, String conventional_islamic,
+			String cbuae_tiering1, String cbuae_tiering2, String cpty_name, String internal_counterparty_ref,
+			String internal_transaction_ref, String underlying_asset_class, String derivatives_type,
+			String transaction_rationale, String bundle_transaction, String back_to_back_transaction,
+			String instruments_characteristics, String currency_valuation, BigDecimal aed_fx_spot_rate_conversion,
+			Date start_date, Date effective_delivery_date, Date final_maturity_date, BigDecimal residual_maturity,
 			BigDecimal residual_maturity_rounded, BigDecimal maturity_period, BigDecimal position, String notional_type,
 			String cancellable, Date cancellable_date, String cancellable_option_type, BigDecimal notional1_assets,
 			String notional1_currency, String pay_receive1, BigDecimal coupon_fixed_rate1, BigDecimal margin1,
@@ -1122,11 +1124,12 @@ public class RT_TradeLevelDataDerivatives {
 		this.modify_time = modify_time;
 		this.verify_time = verify_time;
 	}
-	public RT_TradeLevelDataDerivatives() {
+	public RT_TradeLevelDataDerivativesSimplified() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	
 	
 	
 }
-

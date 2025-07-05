@@ -97,7 +97,9 @@ import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplifiedRepository;
 import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
 import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
@@ -120,6 +122,7 @@ import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
+import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
@@ -224,10 +227,10 @@ public class XBRLNavigationController {
 	RT_TradeLevelDataDerivativesRepository tradeleveldataderivativesRepo;
 
 	@Autowired
-	private RT_TradeLevelDerivativesService tradeleveldataderivativeService;
+	 RT_TradeLevelDerivativesService tradeleveldataderivativeService;
 
 	@Autowired
-	private RT_ForeignCurrencyDepositService foreigncurrencydepositService;
+	 RT_ForeignCurrencyDepositService foreigncurrencydepositService;
 
 	@Autowired
 	RT_ForeignCurrencyDepositRepository foreigncurrencydepositRepo;
@@ -249,6 +252,12 @@ public class XBRLNavigationController {
 
 @Autowired 
 RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
+
+@Autowired
+RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimplifiedRepo;
+
+@Autowired
+ RT_TradeLevelDerivativesSimplifiedService tradeleveldataderivativesimplifiedService;
 
 	private String pagesize;
 
@@ -2034,6 +2043,50 @@ RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 		headersResponse.setContentDispositionFormData("attachment", "Impactanalysis.xls");
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	}
+	
+	
+	@RequestMapping(value = "Trade_Level_Data_Derivatives_Simplified", method = RequestMethod.GET)
+	public String TradeleveldataderivativesSimplified(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_TradeLevelDataDerivativesSimplified data = tradeleveldataderivativessimplifiedRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("tradeleveldataderivative", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
+
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+
+		} else {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "null");
+
+			// You had md.addAttribute("formmode", "null"); — removed this line because it
+			// would overwrite the previous one
+		}
+
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		md.addAttribute("bankList", bankList);
+
+		return "RT/Trade_Level_Data_Derivatives_Simplified";
+	}
+
+	@PostMapping("/updatetradeleveldataderivativesimplified")
+	@ResponseBody
+	public String updatetradeleveldataderivativesimplified(
+			@ModelAttribute RT_TradeLevelDataDerivatives tradeleveldataderivative) {
+		boolean updated = tradeleveldataderivativesimplifiedService.updatetradeleveldataderivative(tradeleveldataderivative);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
 	}
 
 
