@@ -321,11 +321,11 @@ $(document).ready(function () {
 	}
 
 	function list() {
-		location.href = 'Repo_Data_Template?formmode=list';
+		location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=list';
 	}
 	
 	function nostro() {
-		location.href = 'Repo_Data_Template';
+		location.href = 'Investment_Risk_Data_Dashboard_Template';
 	}
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
@@ -395,32 +395,45 @@ $(document).ready(function () {
 	
 	
 	function updateform(event) {
-		
-		event.preventDefault();	
-		$("#loader").modal("toggle");
+    event.preventDefault();
+    
+    console.log("updateform function called");
 
-		$.ajax({
-	     url: `./updateRepo`,
-	     type: 'POST',
-	     data: $('#repoData').serialize(),
-	     success: function(response) {
-	    $("#loader").modal("hide");
+    // Show loader
+    $("#loader").modal("toggle");
 
-	      
-	      $("#alertmsg").text(response);
-         $("#alert").modal("toggle");
-	      
-	     },
-	     error: function(xhr, status, error) {
-	         console.error("Error in modify:", error);
-	 	    $("#loader").modal("hide");
+    // Check if SI_NO is present before sending
+    var formData = $('#investmentriskdatadashboard').serialize(); // Make sure this ID is correct (capital F)
 
-	         alert("Failed to modify. Please try again.");
-	     }
-	 });
-	
-	}
-	
+    console.log("Serialized Data:", formData); // Debug
+
+    $.ajax({
+        url: './updateinvestmentriskdatadictionary',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            console.log("Server response:", response);
+            $("#loader").modal("hide");
+
+            $("#alertmsg").text(response);
+            $("#alert").modal("toggle");
+
+            if (response.includes("successful")) {
+                setTimeout(function() {
+                    window.location.href = "./Investment_Risk_Data_Dashboard_Template?formmode=list";
+                }, 1500);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error in modify:", error);
+            $("#loader").modal("hide");
+            $("#alertmsg").text("Error: " + error);
+            $("#alert").modal("show");
+        }
+    });
+}
+
+
     </script>
   
 </head>
@@ -923,7 +936,7 @@ $(document).ready(function () {
   <tbody style="font-size: 9px;">
      <tr th:each="data : ${InvestmentRiskDatalist}">
     <td>
-        <a th:href="@{'/Investment_Risk_Data_Dashboard_Template?formmode=edit&slNo=' + ${data.slNo}}">
+									<a th:href="@{'/Investment_Risk_Data_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
             <i class="fa fa-edit" style="color: #007bff;"></i>
         </a>
     </td>
@@ -1063,406 +1076,694 @@ $(document).ready(function () {
 		
 <div th:if="${formmode}=='edit'" style="align-items:center">
   <div class="row">
-    <form th:action="@{/updateRepo}" th:object="${repoData}" method="post" id="repoData">
+    <form th:action="@{/updateinvestmentriskdatadictionary}" th:object="${investmentriskdatadashboard}" method="post" id="investmentriskdatadashboard">
       <div class="card" style="margin-left: 15px;margin-right: 15px;">
         <div class="card-header" style="background-color: rgb(166,0,0);">
           <div class="float-left">
-            <h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Repo Data Template - Edit</h3>
+            <h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Investment Risk Data Dictionary Template - Edit</h3>
           </div>
         </div>
 
         <div class="card-body" style="max-height: 500px; overflow-y: auto;">
-          <input type="hidden" th:field="*{slNo}" />
-			
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Data Date</label>
-            <div class="col-sm-4">
-              <input type="date" class="form-control" th:field="*{dataDate}" />
-            </div>
+   <input type="hidden" th:field="*{SI_NO}" />
+   
+  <!-- Row 1: Bank Date  |  Bank Name                                            -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bank Date</label>
+    <div class="col-sm-4">
+      <input type="date" class="form-control" th:field="*{dataDate}" readonly />
+    </div>
 
-            <label class="col-sm-2 col-form-label">Bank Name</label>
-            <div class="col-sm-4">
-              <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
-                <option value="">-- Select Bank --</option>
-                <option th:each="bank : ${bankList}" th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
-              </select>
-            </div>
-          </div>
+    <label class="col-sm-2 col-form-label">Bank Name</label>
+    <div class="col-sm-4">
+      <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
+        <option value="">-- Select Bank --</option>
+        <option th:each="bank : ${bankList}"
+                th:value="${bank.bankName}"
+                th:text="${bank.bankName}">Bank</option>
+      </select>
+    </div>
+  </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-            <div class="col-sm-4">
-              <select class="form-control" th:field="*{headOfficeSubsidiary}">
-                <option value="">-- Select --</option>
-                <option value="Head Office">Head Office</option>
-                <option value="Subsidiary">Subsidiary</option>
-              </select>
-            </div>
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <!-- Row 2: Group Head Office/Subsidiary  |  Subsidiary                         -->
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Group Head Office / Subsidiary</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
+    </div>
 
-            <label class="col-sm-2 col-form-label">Subsidiary</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{subsidiary}" />
-            </div>
-          </div>
+    <label class="col-sm-2 col-form-label">Subsidiary</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{subsidiary}" />
+    </div>
+  </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Bank Symbol</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly />
-            </div>
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <!-- Row 3: Bank Symbol | Conventional / Islamic                                -->
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bank Symbol</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{bankSymbol}" />
+    </div>
 
-            <label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{conventionalIslamic}" id="conventionalIslamic" readonly />
-            </div>
-          </div>
+    <label class="col-sm-2 col-form-label">Conventional / Islamic</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{conventionalIslamic}" />
+      <!-- If this is an enum, replace with a <select> -->
+    </div>
+  </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Local/Foreign</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{localForeign}" id="localForeign" readonly />
-            </div>
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <!-- Row 4: Local / Foreign | CBUAE Tiering                                     -->
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Local / Foreign</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{localForeign}" />
+    </div>
 
-            <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly />
-            </div>
-          </div>
+    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{cbuAeTiering}" />
+    </div>
+  </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Counterparty Name</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{counterpartyName}" />
-            </div>
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <!-- Row 5: Asset Balance Sheet size | Investment Book Size                     -->
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Asset Balance Sheet size (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{assetBalanceSheetSizeAed}" />
+    </div>
 
-            <label class="col-sm-2 col-form-label">Counterparty Internal Ref</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{counterpartyInternalRef}" />
-            </div>
-          </div>
+    <label class="col-sm-2 col-form-label">Investment Book Size (Market value AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{investmentBookSizeAed}" />
+    </div>
+  </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
-            </div>
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <!-- Row 6: Book size (% TA) | YTD Net P&L                                      -->
+  <!-- ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Book size (% Total Assets)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{bookSizeTotalAssetsPct}" />
+    </div>
 
-            <label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
-            </div>
-          </div>
-
-          <!-- Country of Risk -->
+    <label class="col-sm-2 col-form-label">YTD Net P&L (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{ytdNetPnlAed}" />
+    </div>
+  </div>
+  
+  <!-- ────────── Row: YTD FVTOCI loss | CET1 ────────── -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Country Of Risk</label>
-    <div class="col-sm-4">
-        <select class="form-control" th:field="*{countryOfRisk}" onchange="handleCountryChange(this)">
-            <option value="">-- Select Country --</option>
-            <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
-        </select>
-    </div>
+  <label class="col-sm-2 col-form-label">YTD FVTOCI unrealized loss (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control"
+           th:field="*{ytdFvtociUnrealizedLossAed}" />
+  </div>
 
-    <label class="col-sm-2 col-form-label">CBUAE Geo Zone</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeGeoZone}" id="cbuaeGeographicalZone" readonly />
-    </div>
+  <label class="col-sm-2 col-form-label">CET1 (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control"
+           th:field="*{cet1Aed}" />
+  </div>
 </div>
 
+<!-- ────────── Row: UGL Core Tier‑1 Impact | YTD Amortized Cost loss ────────── -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CBUAE Internal Ref</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeInternalRef}" id="cbuaeInternalRef" readonly />
-    </div>
+  <label class="col-sm-2 col-form-label">UGL Core Tier 1 Relative Impact (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.0001" class="form-control"
+           th:field="*{uglCoreTier1RelativeImpactPct}" />
+  </div>
 
-    <label class="col-sm-2 col-form-label">Transaction Type</label>
-    <div class="col-sm-4">
-        <select class="form-control" th:field="*{transactionType}" onchange="handleTransactionType(this)">
-            <option value="">-- Select --</option>
-            <option value="Repo">Repo</option>
-            <option value="Reverse Repo">Reverse Repo</option>
-        </select>
-    </div>
+  <label class="col-sm-2 col-form-label">YTD Amortized Cost unrealized loss  (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control"
+           th:field="*{ytdAmortizedUnrealizedLossAed}" />
+  </div>
 </div>
 
-
+<!-- ────────── Row: YTD HQLA/AC loss | HQLA/AC Core Tier‑1 Impact ────────── -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Deal No</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{dealNo}" />
-    </div>
+  <label class="col-sm-2 col-form-label">YTD HQLA/Amortized Cost unrealized loss  (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control"
+           th:field="*{ytdHqlaAcUnrealizedLossAed}" />
+  </div>
 
-    <label class="col-sm-2 col-form-label">Repo Start Date</label>
-    <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{repoStartDate}" />
-    </div>
+  <label class="col-sm-2 col-form-label">HQLA/AC Core Tier 1 Relative Impact   (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.0001" class="form-control"
+           th:field="*{hqlaAcCoreTier1ImpactPct}" />
+  </div>
 </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Repo Maturity Date</label>
+  
+  <!-- Row …: IR VaR Confidence Interval | IR VaR Holding Period -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Confidence Interval (Interest Rate VaR)</label>
     <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{repoMaturityDate}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{irVarConfidenceInterval}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Initial Maturity</label>
+    <label class="col-sm-2 col-form-label">Holding Period (Interest Rate VaR)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{initialMaturity}" />
+      <input type="number" step="1" class="form-control" th:field="*{irVarHoldingPeriod}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
+  <!-- IR Fixed Income Exposure | IR VaR Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Fixed Income Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="number" class="form-control" th:field="*{initialMaturityRounded}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Initial Maturity Period</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{initialMaturityPeriod}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Residual Maturity Date</label>
-    <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{residualMaturityDate}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{irFixedIncomeExposureAed}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Maturity Period</label>
+    <label class="col-sm-2 col-form-label">Interest Rate VaR Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{maturityPeriod}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{irVarExposureAed}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Repo Currency</label>
+  <!-- IR VaR Limit | IR Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Interest Rate VaR Limit (AED)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{repoCurrency}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Underlying Security ISIN</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{underlyingSecurityIsin}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Rehypothecation Status</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{rehypothecationStatus}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{irVarLimitAed}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Security Currency</label>
+    <label class="col-sm-2 col-form-label">Status</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityCurrency}" />
+      <input type="text" class="form-control" th:field="*{irStatus}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Obligor</label>
+  <!-- IR VaR Impact % | CS VaR Confidence Interval -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Int. VaR Impact (%)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{obligor}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Issuer Type</label>
-    <div class="col-sm-4">
-         <select class="form-control" th:field="*{issuerType}" >
-            <option value="">-- Select --</option>
-            <option value="Sovereign">Sovereign</option>
-            <option value="Reverse Repo">Corporate</option>
-            <option value="FI">FI</option>
-            <option value="Other">Other</option>
-        </select>
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Industry</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{industry}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{irVarImpactPct}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Sector</label>
+    <label class="col-sm-2 col-form-label">Confidence Interval (Credit Spread VaR)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{sector}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{csVarConfidenceInterval}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Underlying Bond Details</label>
+  <!-- CS VaR Holding Period | CS Fixed Income Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Holding Period (Credit Spread VaR)</label>
     <div class="col-sm-4">
-        <textarea class="form-control" th:field="*{underlyingBondDetails}"></textarea>
-    </div>
-
-    <label class="col-sm-2 col-form-label">Security Final Rating</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityFinalRating}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Final Security Rating (CBUAE)</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalSecurityRatingCbuae}" />
+      <input type="number" step="1" class="form-control" th:field="*{csVarHoldingPeriod}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Security Country of Risk</label>
+    <label class="col-sm-2 col-form-label">Fixed Income Exposure (AED)</label>
     <div class="col-sm-4">
-        <select class="form-control" th:field="*{securityCountryOfRisk}" onchange="handleCountryChange2(this)">
-            <option value="">-- Select Country --</option>
-            <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
-        </select>
+      <input type="number" step="0.01" class="form-control" th:field="*{csFixedIncomeExposureAed}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">CBUAE Geo Zone 2</label>
+  <!-- CS VaR Exposure | CS VaR Limit -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Credit Spread VaR Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeGeoZone2}" id="cbuaeGeographicalZone2" readonly/>
+      <input type="number" step="0.01" class="form-control" th:field="*{csVarExposureAed}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Bond/Sukuk Nominal</label>
+    <label class="col-sm-2 col-form-label">Credit Spread VaR Limit (AED)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{bondSukukNominal}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{csVarLimitAed}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Security Maturity Date</label>
+  <!-- CS Status | CS VaR Impact % -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Status</label>
     <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{securityMaturityDate}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Security Residual Maturity</label>
-    <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{securityResidualMaturity}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Security Maturity Period</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityMaturityPeriod}" />
+      <input type="text" class="form-control" th:field="*{csStatus}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">GMRA Effective Haircut</label>
+    <label class="col-sm-2 col-form-label">Cred. VaR Impact (%)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{gmraEffectiveHaircut}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{csVarImpactPct}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Security Start Price</label>
+  <!-- FX VaR Confidence Interval | FX VaR Holding Period -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Confidence Interval (FX VaR)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{securityStartPrice}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Security Start Cash Amount</label>
-    <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{securityStartCashAmount}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Start Cash Amount</label>
-    <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{startCashAmount}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{fxVarConfidenceInterval}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Repo Interest Rate Type</label>
+    <label class="col-sm-2 col-form-label">Holding Period (FX VaR)</label>
     <div class="col-sm-4">
-         <select class="form-control" th:field="*{repoInterestRateType}">
-                <option value="">-- Select --</option>
-                <option value="Fixed">Fixed</option>
-                <option value="Floating">Floating</option>
-              </select>
+      <input type="number" step="1" class="form-control" th:field="*{fxVarHoldingPeriod}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Interest Profit Rate</label>
+  <!-- FX Exposure | FX VaR Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">FX Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{interestProfitRate}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{fxExposureAed}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Fixed Rate</label>
+    <label class="col-sm-2 col-form-label">FX VaR Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{fixedRate}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{fxVarExposureAed}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Floating Rate Type</label>
+  <!-- FX VaR Limit | FX Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">FX VaR Limit (AED)</label>
     <div class="col-sm-4">
-        <select class="form-control" th:field="*{floatingRateType}">
-                <option value="">-- Select --</option>
-                <option value="IBOR">IBOR</option>
-                <option value="RFR">RFR</option>
-              </select>
+      <input type="number" step="0.01" class="form-control" th:field="*{fxVarLimitAed}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Repo Margin</label>
+    <label class="col-sm-2 col-form-label">Status</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{repoMargin}" />
+      <input type="text" class="form-control" th:field="*{fxStatus}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Interest Accruals</label>
+  <!-- FX VaR Impact % | EQ VaR Confidence Interval -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">FX VaR Impact (%)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{interestAccruals}" />
-    </div>
-
-    <label class="col-sm-2 col-form-label">Repo Valuation</label>
-    <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{repoValuation}" />
-    </div>
-</div>
-
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Dirty Price</label>
-    <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{dirtyPrice}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{fxVarImpactPct}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
+    <label class="col-sm-2 col-form-label">Confidence Interval (Equity VaR)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{gmraCollateralMtm}" />
+      <input type="number" step="0.0001" class="form-control" th:field="*{eqVarConfidenceInterval}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Min Transfer Amount</label>
+  <!-- EQ VaR Holding Period | EQ Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Holding Period (Equity VaR)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{minTransferAmount}" />
+      <input type="number" step="1" class="form-control" th:field="*{eqVarHoldingPeriod}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Threshold</label>
+    <label class="col-sm-2 col-form-label">Equity Exposure (AED)</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{threshold}" />
+      <input type="number" step="0.01" class="form-control" th:field="*{eqExposureAed}" />
     </div>
-</div>
+  </div>
 
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label">Margin Call Frequency</label>
+  <!-- EQ VaR Exposure | EQ VaR Limit -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Equity VaR Exposure (AED)</label>
     <div class="col-sm-4">
-        <select class="form-control" th:field="*{marginCallFreq}">
-                <option value="">-- Select --</option>
-                <option value="Daily">Daily</option>
-                <option value="Weekly">Weekly</option>
-                <option value="Monthly">Monthly</option>
-                <option value="Quarterly">Quarterly</option>
-              </select>
+      <input type="number" step="0.01" class="form-control" th:field="*{eqVarExposureAed}" />
     </div>
-</div>
 
-          <!-- Additional fields can continue from here -->
+    <label class="col-sm-2 col-form-label">Equity VaR Limit (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{eqVarLimitAed}" />
+    </div>
+  </div>
+
+  <!-- EQ Status | EQ VaR Impact % -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{eqStatus}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Equity VaR Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{eqVarImpactPct}" />
+    </div>
+  </div>
+
+  <!-- Commodity VaR Confidence Interval | Commodity VaR Holding Period -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Confidence Interval (Commodity VaR)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{commVarConfidenceInterval}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Holding Period (Commodity VaR)</label>
+    <div class="col-sm-4">
+      <input type="number" step="1" class="form-control" th:field="*{commVarHoldingPeriod}" />
+    </div>
+  </div>
+
+  <!-- Commodity Exposure | Commodity VaR Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Commodity Exposure (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{commExposureAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Commodity VaR Exposure (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{commVarExposureAed}" />
+    </div>
+  </div>
+
+  <!-- Commodity VaR Limit | Commodity Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Commodity VaR Limit (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{commVarLimitAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{commStatus}" />
+    </div>
+  </div>
+
+  <!-- Commodity VaR Impact % | Overall VaR Confidence Interval -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Commodity VaR Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{commVarImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Confidence Interval (Overall VaR)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{overallVarConfidenceInterval}" />
+    </div>
+  </div>
+
+  <!-- Overall VaR Holding Period | VaR Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Holding Period (Overall VaR)</label>
+    <div class="col-sm-4">
+      <input type="number" step="1" class="form-control" th:field="*{overallVarHoldingPeriod}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">VaR Exposure (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{varExposureAed}" />
+    </div>
+  </div>
+
+  <!-- VaR Limit | Overall VaR Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">VaR Limit (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{varLimitAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{overallVarStatus}" />
+    </div>
+  </div>
+
+  <!-- Portfolio Relative Impact % | Expected Shortfall Exposure -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Portfolio Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{portfolioRelativeImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Expected Shortfall Exposure (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{expectedShortfallExposureAed}" />
+    </div>
+  </div>
+
+  <!-- Expected Shortfall Limit | Expected Shortfall Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Expected Shortfall Limit (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{expectedShortfallLimitAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{expectedShortfallStatus}" />
+    </div>
+  </div>
+
+  <!-- Expected Shortfall Impact % | Modified Duration -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Portfolio Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{expectedShortfallImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Modified Duration</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{modifiedDuration}" />
+    </div>
+  </div>
+
+  <!-- Interest‑Rate Shock | Interest‑Rate Limit -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Interest‑Rate Shock Applied (bps)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{interestRateShockBps}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Limit</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{interestRateLimit}" />
+    </div>
+  </div>
+
+  <!-- Interest‑Rate Status | DV01 (AED) -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{interestRateStatus}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">DV01 (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{dv01Aed}" />
+    </div>
+  </div>
+
+  <!-- DV01 Limit | DV01 Status -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Limit (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{dv01LimitAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{dv01Status}" />
+    </div>
+  </div>
+
+  <!-- DV01 Tenor Gaps | DV01 Tenor Gaps >3 yr -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">DV01 Tenor Gaps (&lt;3 yr) AED</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{dv01TenorGapLt3Aed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">DV01 Tenor Gaps (&gt;3 yr) AED</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{dv01TenorGapGt3Aed}" />
+    </div>
+  </div>
+
+  <!-- DV01 Check | CS01 (AED) -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Check</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{dv01Check}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Credit Spread CS01 (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01Aed}" />
+    </div>
+  </div>
+
+  <!-- CS01 Shock | CS01 Limit -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Credit Spread Shock Applied (bps)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01ShockBps}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Limit</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01Limit}" />
+    </div>
+  </div>
+
+  <!-- CS01 Status | CS01 Investment Grade -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{cs01Status}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">CS01 (Investment Grade) AED</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01InvestmentGradeAed}" />
+    </div>
+  </div>
+
+  <!-- CS01 Sub‑Investment | CS01 Unrated -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">CS01 (Sub‑Investment) AED</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01SubInvestmentAed}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">CS01 (Unrated) AED</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{cs01UnratedAed}" />
+    </div>
+  </div>
+
+  <!-- CS01 Check | Beta Equity -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Check</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{cs01Check}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Beta Equity</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{betaEquity}" />
+    </div>
+  </div>
+
+  <!-- Equity Shock | Equity Limit -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Equity Shock Applied (bps)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{equityShockBps}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Limit</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{equityLimit}" />
+    </div>
+  </div>
+
+  <!-- Equity Status | Credit Spread Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Status</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" th:field="*{equityStatus}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Credit Spread Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{creditSpreadImpactAed}" />
+    </div>
+  </div>
+
+  <!-- Credit Sensitive Impact % | Interest‑Rate Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Credit Sensitive Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{creditSensitiveImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Interest‑Rate Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{interestRateImpactAed}" />
+    </div>
+  </div>
+
+  <!-- Rate Sensitive Impact % | FX Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Rate Sensitive Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{rateSensitiveImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">FX Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{fxImpactAed}" />
+    </div>
+  </div>
+
+  <!-- FX Sensitive Impact % | Equity Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">FX Sensitive Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{fxSensitiveImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Equity Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{equityImpactAed}" />
+    </div>
+  </div>
+
+  <!-- Equity Sensitive Impact % | Commodities Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Equity Sensitive Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{equitySensitiveImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Commodities Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{commoditiesImpactAed}" />
+    </div>
+  </div>
+
+  <!-- Commodity Sensitive Impact % | JTD Loss Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Commodity Sensitive Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{commoditySensitiveImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Jump‑to‑Default Loss Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{jtdLossImpactAed}" />
+    </div>
+  </div>
+
+  <!-- JTD Relative Impact % | Overall Impact -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">JTD Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{jtdRelativeImpactPct}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Overall Impact (AED)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.01" class="form-control" th:field="*{overallImpactAed}" />
+    </div>
+  </div>
+
+  <!-- Core Tier‑1 Relative Impact % (single‑field row) -->
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Core Tier 1 Relative Impact (%)</label>
+    <div class="col-sm-4">
+      <input type="number" step="0.0001" class="form-control" th:field="*{coreTier1RelativeImpactPct}" />
+    </div>
+  </div>
+
+  
+
+  
 
         </div>
 
         <div class="card-footer text-center" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
           <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-          <a th:href="@{/Repo_Data_Template}" class="custom-tab-btn">Cancel</a>
+          <a th:href="@{/Investment_Risk_Data_Dashboard_Template(formmode='list')}" class="custom-tab-btn">Cancel</a>
         </div>
       </div>
     </form>

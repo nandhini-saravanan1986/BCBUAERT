@@ -83,6 +83,7 @@ import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
+import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_Template;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
@@ -116,6 +117,7 @@ import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
+import com.bornfire.xbrl.services.RT_InvestmentRiskDataDictionaryService;
 import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
 import com.bornfire.xbrl.services.RT_Liquidity_Risk_Data_Service;
 import com.bornfire.xbrl.services.RT_MmdataService;
@@ -258,6 +260,10 @@ RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimpli
 
 @Autowired
  RT_TradeLevelDerivativesSimplifiedService tradeleveldataderivativesimplifiedService;
+
+
+@Autowired
+RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 
 	private String pagesize;
 
@@ -847,12 +853,11 @@ RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimpli
 	// Investment Report code
 	@RequestMapping(value = "Investment_Risk_Data_Dashboard_Template", method = RequestMethod.GET)
 	public String InvestmentRiskDataDashboardTemplate(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) Long slNo, // changed from accountNo to slNo
+			@RequestParam(required = false) String SI_NO, // changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
-
-		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
-			RT_RepoDataTemplate data = repoRepo.findById(slNo).orElse(null); // make sure entity class matches
-			md.addAttribute("repoData", data);
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("investmentriskdatadashboard", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
@@ -874,6 +879,21 @@ RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimpli
 		md.addAttribute("countryList", countryList);
 
 		return "RT/Investment_Risk_Data_Dashboard_Template";
+	}
+	
+	
+	@PostMapping("/updateinvestmentriskdatadictionary")
+	@ResponseBody
+	public String updateinvestmentriskdatadictionary(
+			@ModelAttribute RT_Investment_Risk_Data_Dashboard_Template investmentriskdatadashboard ) {
+		boolean updated = investmentriskdatadictionaryService.updateinvestmentriskdatadictionary(investmentriskdatadashboard);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
 	}
 
 	// Updated data saving code for Repo

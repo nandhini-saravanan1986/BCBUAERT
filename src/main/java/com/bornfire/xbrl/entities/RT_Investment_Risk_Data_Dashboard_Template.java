@@ -13,8 +13,7 @@ import javax.persistence.Table;
 public class RT_Investment_Risk_Data_Dashboard_Template {
 	
 	@Id
-    @Column(name = "SL_NO")
-    private Long slNo;
+	private String SI_NO;
 
     @Column(name = "DATA_DATE")
     private Date dataDate;
@@ -351,13 +350,13 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 
     @Column(name = "MODIFY_TIME")
     private Date modifyTime;
-    
-	public Long getSlNo() {
-		return slNo;
+
+	public String getSI_NO() {
+		return SI_NO;
 	}
 
-	public void setSlNo(Long slNo) {
-		this.slNo = slNo;
+	public void setSI_NO(String sI_NO) {
+		SI_NO = sI_NO;
 	}
 
 	public Date getDataDate() {
@@ -1208,7 +1207,6 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.reportDate = reportDate;
 	}
 
-	
 	public String getReportCode() {
 		return reportCode;
 	}
@@ -1257,9 +1255,7 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.modifyTime = modifyTime;
 	}
 
-	
-
-	public RT_Investment_Risk_Data_Dashboard_Template(Long slNo, Date dataDate, String bankName,
+	public RT_Investment_Risk_Data_Dashboard_Template(String sI_NO, Date dataDate, String bankName,
 			String groupHeadOfficeSubsidiary, String subsidiary, String bankSymbol, String conventionalIslamic,
 			String localForeign, String cbuAeTiering, Long assetBalanceSheetSizeAed, Long investmentBookSizeAed,
 			Long bookSizeTotalAssetsPct, Long ytdNetPnlAed, Long ytdFvtociUnrealizedLossAed, Long cet1Aed,
@@ -1289,7 +1285,7 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 			Date reportFromDate, Date reportToDate, Date reportDate, String reportCode, String entryUser,
 			String modifyUser, String verifyUser, Date entryTime, Date modifyTime) {
 		super();
-		this.slNo = slNo;
+		SI_NO = sI_NO;
 		this.dataDate = dataDate;
 		this.bankName = bankName;
 		this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
@@ -1409,6 +1405,5 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		// TODO Auto-generated constructor stub
 	}
     
-    
-    
+	
 }
