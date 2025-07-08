@@ -1166,18 +1166,36 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 		return "RT/Mm_Data";
 	}
 
-	@RequestMapping(value = "downloadMmExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadMmExcel() throws IOException {
-		System.out.println("Entered controller downloadMmExcel");
+	@RequestMapping(value = "/downloadMmExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadMmExcel() {
+	    logger.info("Controller: Received request for MM Excel download.");
 
-		File excelFile = mmdataService.generateMmExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    try {
+	    	
+	        byte[] excelData = mmdataService.generateMmExcel();
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "Mmdata.xls");
+        if (excelData.length == 0) {
+	            logger.warn("Controller: MM Excel file has no data. Returning 204.");
+	            return ResponseEntity.noContent().build();
+	        }
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Mmdata.xls");
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: MM template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Error generating MM Excel file.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	@RequestMapping(value = "counterparty", method = { RequestMethod.GET, RequestMethod.POST })

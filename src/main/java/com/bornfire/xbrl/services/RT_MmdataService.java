@@ -7,6 +7,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.io.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.FileNotFoundException;
+
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +32,9 @@ public class RT_MmdataService {
 
     @Autowired
     private Environment env;
+    
+    private static final Logger logger = LoggerFactory.getLogger(RT_MmdataService.class);
+
 
     @Autowired
     private RT_MmDataRepository mmdataRepo;
@@ -76,22 +89,57 @@ public class RT_MmdataService {
     
     
 
-    public File generateMmExcel() {
-        File outputFile = null;
+    public byte[] generateMmExcel() throws Exception {
+        logger.info("Service: Starting MM Excel generation process in memory.");
 
-        try {
-            // Fetch data from repository
-            List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1();
+        List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1();
 
-            // Load Excel template file
-            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Mm_Data_Template.xls");
-            Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
+        if (mmDataList.isEmpty()) {
+            logger.warn("Service: No data found for MM report. Returning empty result.");
+            return new byte[0];
+        }
+
+        String templateDir = env.getProperty("output.exportpathtemp");  // Corrected property key
+        String templateFileName = "CBUAE_Mm_Data_Template.xls";
+        Path templatePath = Paths.get(templateDir, templateFileName);
+
+        logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+        if (!Files.exists(templatePath)) {
+            throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+        }
+
+        if (!Files.isReadable(templatePath)) {
+            throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
+        }
+
+        try (InputStream templateInputStream = Files.newInputStream(templatePath);
+             Workbook workbook = WorkbookFactory.create(templateInputStream);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
             Sheet sheet = workbook.getSheetAt(0);
-
-            // Create date cell style
             CreationHelper createHelper = workbook.getCreationHelper();
+
+            // Define cell styles
             CellStyle dateStyle = workbook.createCellStyle();
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setBorderBottom(BorderStyle.THIN);
+            dateStyle.setBorderTop(BorderStyle.THIN);
+            dateStyle.setBorderLeft(BorderStyle.THIN);
+            dateStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setBorderBottom(BorderStyle.THIN);
+            textStyle.setBorderTop(BorderStyle.THIN);
+            textStyle.setBorderLeft(BorderStyle.THIN);
+            textStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle numberStyle = workbook.createCellStyle();
+            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+            numberStyle.setBorderBottom(BorderStyle.THIN);
+            numberStyle.setBorderTop(BorderStyle.THIN);
+            numberStyle.setBorderLeft(BorderStyle.THIN);
+            numberStyle.setBorderRight(BorderStyle.THIN);
 
             int startRow = 3; // Assuming data starts from row index 3 (4rd row)
 
@@ -261,26 +309,18 @@ public class RT_MmdataService {
                     cell27.setCellValue(mm[27] == null ? "" : mm[27].toString());
                 }
 
-                // Evaluate formulas
-                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            
+			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+		} else {
+			System.out.println("No Mm data found to generate the Excel file.");
+		}
 
-                // Write output to file
-                outputFile = new File(env.getProperty("output.exportpathfinal") + "MmData.xls");
-                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                    workbook.write(fos);
-                    System.out.println("Mmdata Excel generated: " + outputFile.getAbsolutePath());
-                }
+		// Write the final workbook content to the in-memory stream.
+		workbook.write(out);
 
-                workbook.close();
-            } else {
-                System.out.println("No Mm data found.");
-                workbook.close();
-            }
+		logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return outputFile;
-    }
+		return out.toByteArray();
+	}
+}
 }
