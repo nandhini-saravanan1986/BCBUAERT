@@ -137,10 +137,30 @@ public class RT_CCR_DATA_TEMPLATE {
 
 	    @Column(name = "DEL_FLG")
 	    private String delFlg;
-	    
+
+	    @Column(name = "REPORT_CODE")
+	    private String reportCode;
+
+	    @Column(name = "ENTRY_USER")
+	    private String entryUser;
+
+	    @Column(name = "MODIFY_USER")
+	    private String modifyUser;
+
+	    @Column(name = "VERIFY_USER")
+	    private String verifyUser;
+
+	    @DateTimeFormat(pattern = "dd-MM-yyyy")
+	    @Column(name = "ENTRY_TIME")
+	    private Date entryTime;
+
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "MODIFY_TIME")
 	    private Date modifyTime;
+
+	    @DateTimeFormat(pattern = "dd-MM-yyyy")
+	    @Column(name = "VERIFY_TIME")
+	    private Date verifyTime;
 
 		public String getSiNo() {
 			return siNo;
@@ -454,12 +474,60 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.delFlg = delFlg;
 		}
 
+		public String getReportCode() {
+			return reportCode;
+		}
+
+		public void setReportCode(String reportCode) {
+			this.reportCode = reportCode;
+		}
+
+		public String getEntryUser() {
+			return entryUser;
+		}
+
+		public void setEntryUser(String entryUser) {
+			this.entryUser = entryUser;
+		}
+
+		public String getModifyUser() {
+			return modifyUser;
+		}
+
+		public void setModifyUser(String modifyUser) {
+			this.modifyUser = modifyUser;
+		}
+
+		public String getVerifyUser() {
+			return verifyUser;
+		}
+
+		public void setVerifyUser(String verifyUser) {
+			this.verifyUser = verifyUser;
+		}
+
+		public Date getEntryTime() {
+			return entryTime;
+		}
+
+		public void setEntryTime(Date entryTime) {
+			this.entryTime = entryTime;
+		}
+
 		public Date getModifyTime() {
 			return modifyTime;
 		}
 
 		public void setModifyTime(Date modifyTime) {
 			this.modifyTime = modifyTime;
+		}
+
+		public Date getVerifyTime() {
+			return verifyTime;
+		}
+
+		public void setVerifyTime(Date verifyTime) {
+			this.verifyTime = verifyTime;
 		}
 
 		public RT_CCR_DATA_TEMPLATE(String siNo, Date transactionDate, String bankName, String headOfficeSubsidiary,
@@ -472,7 +540,8 @@ public class RT_CCR_DATA_TEMPLATE {
 				BigDecimal independentAmountAed, String marginCallFrequency, BigDecimal netCollateralOutstandingAed,
 				BigDecimal cvaAed, BigDecimal dvaAed, BigDecimal bilateralCvaAed, BigDecimal fvaAed,
 				BigDecimal incrementalPfe, Date reportSubmitDate, Date reportFromDate, Date reportToDate,
-				Date reportDate, String entityFlg, String modifyFlg, String delFlg, Date modifyTime) {
+				Date reportDate, String entityFlg, String modifyFlg, String delFlg, String reportCode, String entryUser,
+				String modifyUser, String verifyUser, Date entryTime, Date modifyTime, Date verifyTime) {
 			super();
 			this.siNo = siNo;
 			this.transactionDate = transactionDate;
@@ -513,12 +582,22 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.entityFlg = entityFlg;
 			this.modifyFlg = modifyFlg;
 			this.delFlg = delFlg;
+			this.reportCode = reportCode;
+			this.entryUser = entryUser;
+			this.modifyUser = modifyUser;
+			this.verifyUser = verifyUser;
+			this.entryTime = entryTime;
 			this.modifyTime = modifyTime;
+			this.verifyTime = verifyTime;
 		}
 
 		public RT_CCR_DATA_TEMPLATE() {
 			super();
 			// TODO Auto-generated constructor stub
 		}
-	
+	    
+	    
+	    
+	    
+
 }
