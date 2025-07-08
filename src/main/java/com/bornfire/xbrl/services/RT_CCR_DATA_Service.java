@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,6 +37,75 @@ public class RT_CCR_DATA_Service {
 
 	@Autowired
 	private RT_CCR_DATA_TEMPLATE_REPOSITORY ccrDataRepo;
+	
+	
+	
+	/*
+	 * public boolean updateCCRData(RT_CCR_DATA_TEMPLATE updatedEntity) {
+	 * Optional<RT_CCR_DATA_TEMPLATE> existingOpt =
+	 * ccrDataRepo.findById(updatedEntity.getSiNo());
+	 */
+	    
+	    public boolean updateCCRData(RT_CCR_DATA_TEMPLATE updatedEntity) {
+	        System.out.println("updateCCRData: Received SI_NO = " + updatedEntity.getSiNo());
+	        Optional<RT_CCR_DATA_TEMPLATE> existingOpt = ccrDataRepo.findById(updatedEntity.getSiNo());
+
+
+	    if (existingOpt.isPresent()) {
+	    	RT_CCR_DATA_TEMPLATE existing = existingOpt.get();
+
+	        // Basic Information
+	        existing.setTransactionDate(updatedEntity.getTransactionDate());
+	        existing.setBankName(updatedEntity.getBankName());
+	        existing.setHeadOfficeSubsidiary(updatedEntity.getHeadOfficeSubsidiary());
+	        existing.setSubsidiary(updatedEntity.getSubsidiary());
+	        existing.setBankSymbol(updatedEntity.getBankSymbol());
+	        existing.setConventionalIslamic(updatedEntity.getConventionalIslamic());
+	        existing.setCbuaeTiering(updatedEntity.getCbuaeTiering());
+	        existing.setCbuaeTieringSecondary(updatedEntity.getCbuaeTieringSecondary());
+
+	        // Counterparty Info
+	        existing.setCounterpartyName(updatedEntity.getCounterpartyName());
+	        existing.setInternalCounterpartyRef(updatedEntity.getInternalCounterpartyRef());
+	        existing.setInternalCounterpartyRating(updatedEntity.getInternalCounterpartyRating());
+	        existing.setFinalRatingCbuae(updatedEntity.getFinalRatingCbuae());
+	        existing.setCountryOfRisk(updatedEntity.getCountryOfRisk());
+	        existing.setCbuaeGeographicalZone(updatedEntity.getCbuaeGeographicalZone());
+	        existing.setCounterpartyType(updatedEntity.getCounterpartyType());
+	        existing.setSector(updatedEntity.getSector());
+
+	        // Exposure Info
+	        existing.setPfe95Aed(updatedEntity.getPfe95Aed());
+	        existing.setExpectedPositiveExposureAed(updatedEntity.getExpectedPositiveExposureAed());
+	        existing.setExpectedNegativeExposureAed(updatedEntity.getExpectedNegativeExposureAed());
+
+	        // Collateral Info
+	        existing.setCsa(updatedEntity.getCsa());
+	        existing.setCollateralType(updatedEntity.getCollateralType());
+	        existing.setThreshold(updatedEntity.getThreshold());
+	        existing.setMinimumTransferAmountAed(updatedEntity.getMinimumTransferAmountAed());
+	        existing.setIndependentAmountAed(updatedEntity.getIndependentAmountAed());
+	        existing.setMarginCallFrequency(updatedEntity.getMarginCallFrequency());
+	        existing.setNetCollateralOutstandingAed(updatedEntity.getNetCollateralOutstandingAed());
+
+	        // Adjustments Info
+	        existing.setCvaAed(updatedEntity.getCvaAed());
+	        existing.setDvaAed(updatedEntity.getDvaAed());
+	        existing.setBilateralCvaAed(updatedEntity.getBilateralCvaAed());
+	        existing.setFvaAed(updatedEntity.getFvaAed());
+	        existing.setIncrementalPfe(updatedEntity.getIncrementalPfe());
+
+	        // Update time
+
+	        existing.setModifyTime(new Date());
+
+	        ccrDataRepo.save(existing);
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
 
 	public byte[] generateCCRDataExcel() throws Exception {
 		logger.info("Service: Starting CCR_DATA Excel generation process in memory.");

@@ -74,13 +74,14 @@ PURPOSE		: CCR DATA TEMPLATES
 			border-color: #0c0c0c;
 		}
 
-		.btn-primary:not (:disabled):not (.disabled).active,
-		.btn-primary:not (:disabled):not (.disabled):active,
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
 		.show>.btn-primary.dropdown-toggle {
 			color: #fff;
 			background-color: #cc000000;
 			border-color: #161617;
 		}
+
 
 		#finusertb {
 			width: 460px;
@@ -398,13 +399,14 @@ PURPOSE		: CCR DATA TEMPLATES
 		}*/
 
 
+
 		function updateform(event) {
 
 			event.preventDefault();
 			$("#loader").modal("toggle");
 
 			$.ajax({
-				url: `./updateRepo`,
+				url: `./updateCCRData`,
 				type: 'POST',
 				data: $('#repoData').serialize(),
 				success: function (response) {
@@ -862,7 +864,7 @@ PURPOSE		: CCR DATA TEMPLATES
 							<tbody style="font-size: 9px;">
 								<tr th:each="data : ${repoList1}">
 									<td>
-										<a th:href="@{'/CCR_Data_Templates?formmode=edit&slNo=' + ${data.siNo}}">
+										<a th:href="@{'/CCR_Data_Templates?formmode=edit&siNo=' + ${data.siNo}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i>
 										</a>
 									</td>
@@ -931,471 +933,293 @@ PURPOSE		: CCR DATA TEMPLATES
 			<!------------------ edit starts-------------------------------------------------------------->
 
 			<div th:if="${formmode}=='edit'" style="align-items:center">
-				<div class="row">
-					<form th:action="@{/updateRepo}" th:object="${repoData}" method="post" id="repoData">
-						<div class="card" style="margin-left: 15px;margin-right: 15px;">
-							<div class="card-header" style="background-color: rgb(166,0,0);">
-								<div class="float-left">
-									<h3
-										style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">
-										Repo Data Template - Edit</h3>
-								</div>
-							</div>
-
-							<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-								<input type="hidden" th:field="*{siNo}" />
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Data Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{transactionDate}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Bank Name</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{bankName}"
-											onchange="handleBankChange(this)">
-											<option value="">-- Select Bank --</option>
-											<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
-												th:text="${bank.bankName}"></option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{headOfficeSubsidiary}">
-											<option value="">-- Select --</option>
-											<option value="Head Office">Head Office</option>
-											<option value="Subsidiary">Subsidiary</option>
-										</select>
-									</div>
-
-									<label class="col-sm-2 col-form-label">Subsidiary</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{subsidiary}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Bank Symbol</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
-											readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{conventionalIslamic}"
-											id="conventionalIslamic" readonly />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeTiering}"
-											id="cbuaeTiering" readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeTieringSecondary}"
-											id="cbuaeTiering" readonly />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Counterparty Name</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{counterpartyName}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label"> Internal Counterparty Ref</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{internalCounterpartyRating}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Country Of Risk</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{countryOfRisk}"
-											onchange="handleCountryChange(this)">
-											<option value="">-- Select Country --</option>
-											<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
-												th:text="${c.countryOfRisk}"></option>
-										</select>
-									</div>
-								</div>
-
-								<!-- Country of Risk -->
-								<div class="form-group row">
-
-
-									<label class="col-sm-2 col-form-label">CBUAE Geo Zone</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
-											id="cbuaeGeographicalZone" readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Counter Party Type</label>
-									<div class="col-sm-4">
-
-										<select class="form-control" th:field="*{counterpartyType}"
-											id="counterpartyType">
-											<option value="">Select Type</option>
-											<option value="Corporate">Corporate</option>
-											<option value="FI">FI</option>
-											<option value="NBFI">NBFI</option>
-											<option value="PSE Commercial">PSE Commercial</option>
-											<option value="Retail">Retail</option>
-											<option value="SME">SME</option>
-											<option value="Sovereign">Sovereign</option>
-											<option value="Other">Other</option>
-											<option value="Multilateral Development Banks">Multilateral Development
-												Banks</option>
-
-
-										</select>
-									</div>
-
-
-
-
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CBUAE Internal Ref</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeInternalRef}"
-											id="cbuaeInternalRef" readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Transaction Type</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{transactionType}"
-											onchange="handleTransactionType(this)">
-											<option value="">-- Select --</option>
-											<option value="Repo">Repo</option>
-											<option value="Reverse Repo">Reverse Repo</option>
-										</select>
-									</div>
-								</div>
-
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Deal No</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{dealNo}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Repo Start Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{repoStartDate}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Repo Maturity Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{repoMaturityDate}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Initial Maturity</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{initialMaturity}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
-									<div class="col-sm-4">
-										<input type="number" class="form-control"
-											th:field="*{initialMaturityRounded}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Initial Maturity Period</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{initialMaturityPeriod}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Residual Maturity Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{residualMaturityDate}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Maturity Period</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{maturityPeriod}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Repo Currency</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{repoCurrency}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Underlying Security ISIN</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{underlyingSecurityIsin}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Rehypothecation Status</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{rehypothecationStatus}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Security Currency</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{securityCurrency}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Obligor</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{obligor}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Issuer Type</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{issuerType}">
-											<option value="">-- Select --</option>
-											<option value="Sovereign">Sovereign</option>
-											<option value="Reverse Repo">Corporate</option>
-											<option value="FI">FI</option>
-											<option value="Other">Other</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Industry</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{industry}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Sector</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{sector}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Underlying Bond Details</label>
-									<div class="col-sm-4">
-										<textarea class="form-control" th:field="*{underlyingBondDetails}"></textarea>
-									</div>
-
-									<label class="col-sm-2 col-form-label">Security Final Rating</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{securityFinalRating}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Final Security Rating (CBUAE)</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{finalSecurityRatingCbuae}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Security Country of Risk</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{securityCountryOfRisk}"
-											onchange="handleCountryChange2(this)">
-											<option value="">-- Select Country --</option>
-											<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
-												th:text="${c.countryOfRisk}"></option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CBUAE Geo Zone 2</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{cbuaeGeoZone2}"
-											id="cbuaeGeographicalZone2" readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Bond/Sukuk Nominal</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{bondSukukNominal}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Security Maturity Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{securityMaturityDate}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Security Residual Maturity</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control"
-											th:field="*{securityResidualMaturity}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Security Maturity Period</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control" th:field="*{securityMaturityPeriod}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">GMRA Effective Haircut</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{gmraEffectiveHaircut}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Security Start Price</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{securityStartPrice}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Security Start Cash Amount</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{securityStartCashAmount}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Start Cash Amount</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{startCashAmount}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Repo Interest Rate Type</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{repoInterestRateType}">
-											<option value="">-- Select --</option>
-											<option value="Fixed">Fixed</option>
-											<option value="Floating">Floating</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Interest Profit Rate</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{interestProfitRate}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Fixed Rate</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control" th:field="*{fixedRate}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Floating Rate Type</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{floatingRateType}">
-											<option value="">-- Select --</option>
-											<option value="IBOR">IBOR</option>
-											<option value="RFR">RFR</option>
-										</select>
-									</div>
-
-									<label class="col-sm-2 col-form-label">Repo Margin</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{repoMargin}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Interest Accruals</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{interestAccruals}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Repo Valuation</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{repoValuation}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Dirty Price</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{dirtyPrice}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{gmraCollateralMtm}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Min Transfer Amount</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control"
-											th:field="*{minTransferAmount}" />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Threshold</label>
-									<div class="col-sm-4">
-										<input type="number" step="0.01" class="form-control" th:field="*{threshold}" />
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Margin Call Frequency</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{marginCallFreq}">
-											<option value="">-- Select --</option>
-											<option value="Daily">Daily</option>
-											<option value="Weekly">Weekly</option>
-											<option value="Monthly">Monthly</option>
-											<option value="Quarterly">Quarterly</option>
-										</select>
-									</div>
-								</div>
-
-								<!-- Additional fields can continue from here -->
-
-							</div>
-
-							<div class="card-footer text-center"
-								style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-								<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-								<a th:href="@{/Repo_Data_Template}" class="custom-tab-btn">Cancel</a>
+				<form th:action="@{/BCDRS/updateCCRData}" th:object="${repoData}" method="post" id="repoData">
+					<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header" style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3
+									style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">
+									CCR_Data_Templates - Edit
+								</h3>
 							</div>
 						</div>
-					</form>
-				</div>
+
+
+						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+							<input type="hidden" name="siNo" th:field="*{siNo}" />
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Data Date</label>
+								<div class="col-sm-4">
+
+									<input type="date" class="form-control" th:field="*{transactionDate}" readonly
+										required />
+
+								</div>
+								<label class="col-sm-2 col-form-label">Bank Name</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{bankName}"
+										onchange="handleBankChange(this)">
+										<option value="">-- Select Bank --</option>
+										<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+											th:text="${bank.bankName}"></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{headOfficeSubsidiary}">
+										<option value="">-- Select --</option>
+										<option value="Head Office">Head Office</option>
+										<option value="Subsidiary">Subsidiary</option>
+									</select>
+								</div>
+
+								<label class="col-sm-2 col-form-label">Subsidiary</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{subsidiary}" />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bank Symbol</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+										readonly />
+								</div>
+
+								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+										id="conventionalIslamic" readonly />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+										readonly />
+								</div>
+
+								<label class="col-sm-2 col-form-label">CBUAE Tiering Secondary</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeTieringSecondary}"
+										id="cbuaeTieringSecondary" />
+
+								</div>
+							</div>
+
+							<div class="form-group row">
+
+								<label class="col-sm-2 col-form-label"> Counterparty Name</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{counterpartyName}" />
+								</div>
+								<label class="col-sm-2 col-form-label"> Internal Counterparty Ref</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRef}" />
+								</div>
+							</div>
+							<div class="form-group row">
+
+
+								<label class="col-sm-2 col-form-label"> internalCounterpartyRating</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRating}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+								</div>
+
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-2 col-form-label">Country Of Risk</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{countryOfRisk}"
+										onchange="handleCountryChange(this)">
+										<option value="">-- Select Country --</option>
+										<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
+											th:text="${c.countryOfRisk}"></option>
+									</select>
+								</div>
+
+								<label class="col-sm-2 col-form-label">CBUAE Geo Zone</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
+										id="cbuaeGeographicalZone" readonly />
+								</div>
+							</div>
+
+							<!-- Country of Risk -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Counter Party Type</label>
+								<div class="col-sm-4">
+
+									<select class="form-control" th:field="*{counterpartyType}" id="counterpartyType">
+										<option value="">Select Type</option>
+										<option value="Corporate">Corporate</option>
+										<option value="FI">FI</option>
+										<option value="NBFI">NBFI</option>
+										<option value="PSE Commercial">PSE Commercial</option>
+										<option value="Retail">Retail</option>
+										<option value="SME">SME</option>
+										<option value="Sovereign">Sovereign</option>
+										<option value="Other">Other</option>
+										<option value="Multilateral Development Banks">Multilateral Development
+											Banks</option>
+									</select>
+								</div>
+
+								<label class="col-sm-2 col-form-label">Sector</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{sector}" id="sector" readonly />
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-2 col-form-label">PFE_95_AED</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{pfe95Aed}" id="pfe95Aed" />
+								</div>
+
+
+								<label class="col-sm-2 col-form-label">EXPECTED_POSITIVE_EXPOSURE_AED</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{expectedPositiveExposureAed}"
+										id="expectedPositiveExposureAed" />
+								</div>
+
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-2 col-form-label">EXPECTED_NEGATIVE_EXPOSURE_AED</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{expectedNegativeExposureAed}"
+										id="expectedNegativeExposureAed" />
+								</div>
+
+
+								<label class="col-sm-2 col-form-label">CSA</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{csa}" id="csa" />
+								</div>
+
+							</div>
+							<div class="form-group row">
+
+								<!-- Collateral Type -->
+								<label class="col-sm-2 col-form-label">Collateral Type</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{collateralType}"
+										id="collateralType" />
+								</div>
+
+								<!-- Threshold -->
+								<label class="col-sm-2 col-form-label">Threshold</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{threshold}" id="threshold" />
+								</div>
+
+							</div>
+
+							<div class="form-group row">
+
+								<!-- Minimum Transfer Amount AED -->
+								<label class="col-sm-2 col-form-label">Minimum Transfer Amount (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{minimumTransferAmountAed}"
+										id="minimumTransferAmountAed" />
+								</div>
+
+								<!-- Independent Amount AED -->
+								<label class="col-sm-2 col-form-label">Independent Amount (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{independentAmountAed}"
+										id="independentAmountAed" />
+								</div>
+
+							</div>
+
+							<div class="form-group row">
+
+								<!-- Margin Call Frequency -->
+								<label class="col-sm-2 col-form-label">Margin Call Frequency</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{marginCallFrequency}"
+										id="marginCallFrequency" />
+								</div>
+
+								<!-- Net Collateral Outstanding AED -->
+								<label class="col-sm-2 col-form-label">Net Collateral Outstanding (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{netCollateralOutstandingAed}" id="netCollateralOutstandingAed" />
+
+								</div>
+
+							</div>
+
+							<div class="form-group row">
+
+								<!-- CVA AED -->
+								<label class="col-sm-2 col-form-label">CVA (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cvaAed}" id="cvaAed" />
+								</div>
+
+								<!-- DVA AED -->
+								<label class="col-sm-2 col-form-label">DVA (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{dvaAed}" id="dvaAed" />
+								</div>
+
+							</div>
+
+							<div class="form-group row">
+
+								<!-- Bilateral CVA AED -->
+								<label class="col-sm-2 col-form-label">Bilateral CVA (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bilateralCvaAed}"
+										id="bilateralCvaAed" />
+								</div>
+
+								<!-- FVA AED -->
+								<label class="col-sm-2 col-form-label">FVA (AED)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{fvaAed}" id="fvaAed" />
+								</div>
+
+							</div>
+
+							<div class="form-group row">
+
+								<!-- Incremental PFE -->
+								<label class="col-sm-2 col-form-label">Incremental PFE</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{incrementalPfe}"
+										id="incrementalPfe" />
+								</div>
+
+							</div>
+						</div>
+						<!-- End card-body -->
+						<!-- ✅ Footer section -->
+						<div class="card-footer text-center"
+							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Cancel</a>
+							<a th:href="@{/home}" class="custom-tab-btn">Home</a>
+						</div>
+					</div>
+				</form>
 			</div>
-
-
 		</div>
+
 
 
 		<div class="modal fade" id="datadelete">
@@ -1434,7 +1258,8 @@ PURPOSE		: CCR DATA TEMPLATES
 			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+							BANK
 							OF
 							BARODA</div>
 					</div>
@@ -1451,7 +1276,8 @@ PURPOSE		: CCR DATA TEMPLATES
 			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+							BANK
 							OF
 							BARODA</div>
 					</div>
@@ -1566,38 +1392,6 @@ PURPOSE		: CCR DATA TEMPLATES
 	}
 </style>
 
-
-<script>
-
-	function handleBankChange(select) {
-		const selectedBank = select.value;
-
-		if (!selectedBank) {
-			// Clear the fields
-			$('#bankSymbol').val('');
-			$('#conventionalIslamic').val('');
-			$('#localForeign').val('');
-			$('#cbuaeTiering').val('');
-			return;
-		}
-
-		$.ajax({
-			url: '/BCDRS/getBankDetails',
-			type: 'GET',
-			data: {bankName: selectedBank},
-			success: function (data) {
-				$('#bankSymbol').val(data.bankSymbol || '');
-				$('#conventionalIslamic').val(data.conventionalIslamic || '');
-				$('#localForeign').val(data.localForeign || '');
-				$('#cbuaeTiering').val(data.cbuaeTiering || '');
-			},
-			error: function (xhr, status, error) {
-				console.error('AJAX Error:', error);
-				alert('Failed to fetch bank details.');
-			}
-		});
-	}
-</script>
 <script>
 	function handleCountryChange(select) {
 		const selectedCountry = select.value;
@@ -1671,6 +1465,37 @@ PURPOSE		: CCR DATA TEMPLATES
 		} else {
 			cbuaeInput.value = "";
 		}
+	}
+</script>
+<script>
+	function handleBankChange(select) {
+		const selectedBank = select.value;
+
+		if (!selectedBank) {
+			$('#bankSymbol').val('');
+			$('#conventionalIslamic').val('');
+			$('#localForeign').val('');
+			$('#cbuaeTiering').val('');
+			$('#cbuaeGeographicalZone').val('');
+			return;
+		}
+
+		$.ajax({
+			url: '/BCDRS/getBankDetails',  // This uses your existing method
+			type: 'GET',
+			data: {bankName: selectedBank},
+			success: function (data) {
+				$('#bankSymbol').val(data.bankSymbol || '');
+				$('#conventionalIslamic').val(data.conventionalIslamic || '');
+				$('#localForeign').val(data.localForeign || '');
+				$('#cbuaeTiering').val(data.cbuaeTiering || '');
+				$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				alert('Failed to fetch bank details.');
+			}
+		});
 	}
 </script>
 

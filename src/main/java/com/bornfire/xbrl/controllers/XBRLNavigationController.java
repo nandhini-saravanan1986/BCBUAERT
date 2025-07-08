@@ -1849,11 +1849,11 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 
 	@RequestMapping(value = "CCR_Data_Templates", method = RequestMethod.GET)
 	public String CCR_Data_Templates(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String slNo, // changed from accountNo to slNo
+			@RequestParam(required = false) String siNo, // changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
 
-		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
-			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(slNo); // make sure entity class matches
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo); // make sure entity class matches
 			md.addAttribute("repoData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -1886,6 +1886,29 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 		return "RT/CCR_Data_Templates";
 	}
 
+	@PostMapping("/updateCCRData")
+	@ResponseBody
+	public String updateCCRData(@ModelAttribute("repoData") RT_CCR_DATA_TEMPLATE repoData,
+			RedirectAttributes redirectAttributes) {
+
+		boolean updated = rtCCRDataService.updateCCRData(repoData);
+
+		/*
+		 * if (updated) { redirectAttributes.addFlashAttribute("updateMsg",
+		 * "Updated Successfully"); } else {
+		 * redirectAttributes.addFlashAttribute("updateMsg",
+		 * "Record not found for update"); }
+		 * 
+		 * return "redirect:/Treasury_Credit_Limit_Management?formmode=list";
+		 */
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+	}
+	
 	@Autowired
 	private RT_CCR_DATA_Service rtCCRDataService;
 

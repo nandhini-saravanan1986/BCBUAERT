@@ -137,6 +137,10 @@ public class RT_CCR_DATA_TEMPLATE {
 
 	    @Column(name = "DEL_FLG")
 	    private String delFlg;
+	    
+	    @DateTimeFormat(pattern = "dd-MM-yyyy")
+	    @Column(name = "MODIFY_TIME")
+	    private Date modifyTime;
 
 		public String getSiNo() {
 			return siNo;
@@ -450,6 +454,14 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.delFlg = delFlg;
 		}
 
+		public Date getModifyTime() {
+			return modifyTime;
+		}
+
+		public void setModifyTime(Date modifyTime) {
+			this.modifyTime = modifyTime;
+		}
+
 		public RT_CCR_DATA_TEMPLATE(String siNo, Date transactionDate, String bankName, String headOfficeSubsidiary,
 				String subsidiary, String bankSymbol, String conventionalIslamic, String cbuaeTiering,
 				String cbuaeTieringSecondary, String counterpartyName, String internalCounterpartyRef,
@@ -460,7 +472,7 @@ public class RT_CCR_DATA_TEMPLATE {
 				BigDecimal independentAmountAed, String marginCallFrequency, BigDecimal netCollateralOutstandingAed,
 				BigDecimal cvaAed, BigDecimal dvaAed, BigDecimal bilateralCvaAed, BigDecimal fvaAed,
 				BigDecimal incrementalPfe, Date reportSubmitDate, Date reportFromDate, Date reportToDate,
-				Date reportDate, String entityFlg, String modifyFlg, String delFlg) {
+				Date reportDate, String entityFlg, String modifyFlg, String delFlg, Date modifyTime) {
 			super();
 			this.siNo = siNo;
 			this.transactionDate = transactionDate;
@@ -501,6 +513,7 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.entityFlg = entityFlg;
 			this.modifyFlg = modifyFlg;
 			this.delFlg = delFlg;
+			this.modifyTime = modifyTime;
 		}
 
 		public RT_CCR_DATA_TEMPLATE() {
@@ -508,8 +521,4 @@ public class RT_CCR_DATA_TEMPLATE {
 			// TODO Auto-generated constructor stub
 		}
 	
-
-	
-	
-
 }
