@@ -1,6 +1,8 @@
 package com.bornfire.xbrl.services;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,7 +10,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import java.io.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -20,15 +23,26 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.FileNotFoundException;
+
+
 
 @Service
 public class RT_FxriskdataService {
 
 	@Autowired
 	private Environment env;
+	
+    private static final Logger logger = LoggerFactory.getLogger(RT_FxriskdataService.class);
+
 
 	@Autowired
 	private RT_FxRiskDataRepository friskdataRepo;
@@ -80,22 +94,57 @@ public class RT_FxriskdataService {
 
 
 
-	public File generateFxRiskExcel() {
-		File outputFile = null;
+	public byte[] generateFxRiskExcel() throws Exception {
+		logger.info("Service: Starting Fx Risk Excel generation process in memory.");
 
-		try {
-			// Fetch data from repository
-			List<Object[]> fxDataList = friskdataRepo.getfxriskdatalistdata1();
+	    List<Object[]> fxDataList = friskdataRepo.getfxriskdatalistdata1();
 
-			// Load Excel template file
-			File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_FX_Risk_Data_Template.xls");
-			Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
-			Sheet sheet = workbook.getSheetAt(0);
+	    if (fxDataList.isEmpty()) {
+	        logger.warn("Service: No data found for Fx Risk report. Returning empty result.");
+	        return new byte[0];
+	    }
 
-			// Create date cell style
-			CreationHelper createHelper = workbook.getCreationHelper();
-			CellStyle dateStyle = workbook.createCellStyle();
-			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+	    String templateDir = env.getProperty("ou-tput.exportpathtemp");
+	    String templateFileName = "CBUAE_FX_Risk_Data_Template.xls";
+	    Path templatePath = Paths.get(templateDir, templateFileName);
+
+	    logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+	    if (!Files.exists(templatePath)) {
+	        throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+	    }
+
+	    if (!Files.isReadable(templatePath)) {
+	        throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
+	    }
+
+	    try (InputStream templateInputStream = Files.newInputStream(templatePath);
+	         Workbook workbook = WorkbookFactory.create(templateInputStream);
+	         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+	        Sheet sheet = workbook.getSheetAt(0);
+	        CreationHelper createHelper = workbook.getCreationHelper();
+
+	        // Define cell styles
+	        CellStyle dateStyle = workbook.createCellStyle();
+	        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+	        dateStyle.setBorderBottom(BorderStyle.THIN);
+	        dateStyle.setBorderTop(BorderStyle.THIN);
+	        dateStyle.setBorderLeft(BorderStyle.THIN);
+	        dateStyle.setBorderRight(BorderStyle.THIN);
+
+	        CellStyle textStyle = workbook.createCellStyle();
+	        textStyle.setBorderBottom(BorderStyle.THIN);
+	        textStyle.setBorderTop(BorderStyle.THIN);
+	        textStyle.setBorderLeft(BorderStyle.THIN);
+	        textStyle.setBorderRight(BorderStyle.THIN);
+
+	        CellStyle numberStyle = workbook.createCellStyle();
+	        numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+	        numberStyle.setBorderBottom(BorderStyle.THIN);
+	        numberStyle.setBorderTop(BorderStyle.THIN);
+	        numberStyle.setBorderLeft(BorderStyle.THIN);
+	        numberStyle.setBorderRight(BorderStyle.THIN);
 
 			int startRow = 2; // assuming data starts from row 3 (index 2)
 
@@ -107,15 +156,14 @@ public class RT_FxriskdataService {
 						row = sheet.createRow(startRow + i);
 
 					// 0 - Date column
-					Cell cell0 = row.getCell(0);
-					if (cell0 == null)
-						cell0 = row.createCell(0);
-					if (fx[0] instanceof Date) {
-						cell0.setCellValue((Date) fx[0]);
-						cell0.setCellStyle(dateStyle);
-					} else {
-						cell0.setCellValue("");
-					}
+					  Cell cell0 = row.getCell(0);
+	                    if (cell0 == null) cell0 = row.createCell(0);
+	                    if (fx[0] instanceof Date) {
+	                        cell0.setCellValue((Date) fx[0]);
+	                        cell0.setCellStyle(dateStyle);
+	                    } else {
+	                        cell0.setCellValue("");
+	                    }
 
 					// 1 - String
 					Cell cell1 = row.getCell(1);
@@ -221,29 +269,17 @@ public class RT_FxriskdataService {
 
 					// Add more columns as needed...
 				}
-
-				// Evaluate all formulas in the workbook
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-
-				// Write output to file
-				outputFile = new File(env.getProperty("output.exportpathfinal") + "FxRiskData.xls");
-				try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-					workbook.write(fos);
-					System.out.println("FxRisk Excel generated: " + outputFile.getAbsolutePath());
-				}
-
-				workbook.close();
-
 			} else {
-				System.out.println("No FX Risk data found.");
-				workbook.close();
+				System.out.println("No Fx Risk data found to generate the Excel file.");
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			// Write the final workbook content to the in-memory stream.
+			workbook.write(out);
+
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
 		}
-
-		return outputFile;
 	}
-
 }

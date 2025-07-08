@@ -991,19 +991,40 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 
 	// For download excel for fxriskdata
 
-	@RequestMapping(value = "downloadFxriskExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadFxriskExcel() throws IOException {
-		System.out.println("Entered controller downloadFxriskExcel");
+	@RequestMapping(value = "/downloadFxriskExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadFxriskExcel() {
+	    logger.info("Controller: Received request for Fx Risk Excel download.");
 
-		File excelFile = fxriskdataService.generateFxRiskExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    try {
+	        byte[] excelData = fxriskdataService.generateFxRiskExcel();
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "FxriskData.xls");
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        HttpHeaders headers = new HttpHeaders();
+	        String filename = "FxriskData.xls";
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: A required template file was not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
+
 	// For download excel for downloadNostroExcel
 
 	@RequestMapping(value = "downloadNostroExcel", method = RequestMethod.GET)
