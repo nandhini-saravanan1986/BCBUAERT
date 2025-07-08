@@ -4,7 +4,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -14,6 +17,11 @@ import javax.persistence.TemporalType;
 public class RT_DataControl {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "data_control_seq_gen")
+    @SequenceGenerator(name = "data_control_seq_gen", sequenceName = "DATA_CONTROL_SEQ", allocationSize = 1)
+    @Column(name = "SI_NO")
+    private Integer siNo;
+
     @Column(name = "PORTFOLIO_DATE")
     @Temporal(TemporalType.DATE)
     private Date portfolioDate;
@@ -90,6 +98,14 @@ public class RT_DataControl {
 
     
     
+	public Integer getSiNo() {
+		return siNo;
+	}
+
+	public void setSiNo(Integer siNo) {
+		this.siNo = siNo;
+	}
+
 	public Date getPortfolioDate() {
 		return portfolioDate;
 	}
@@ -282,7 +298,7 @@ public class RT_DataControl {
 			String signOffCfoName, String signOffCfoEmail, String signOffHeadOfTreasuryName,
 			String signOffHeadOfTreasuryEmail, String report_name, String auditedData, Date reportSubmitDate,
 			Date reportFromDate, Date reportToDate, Date reportDate, String entityFlg, String modifyFlg,
-			String delFlg) {
+			String delFlg,Integer siNo ) {
 		super();
 		this.portfolioDate = portfolioDate;
 		this.submittingInstitution = submittingInstitution;
@@ -307,6 +323,7 @@ public class RT_DataControl {
 		this.entityFlg = entityFlg;
 		this.modifyFlg = modifyFlg;
 		this.delFlg = delFlg;
+		this.siNo=siNo;
 	}
 
 	public RT_DataControl() {
