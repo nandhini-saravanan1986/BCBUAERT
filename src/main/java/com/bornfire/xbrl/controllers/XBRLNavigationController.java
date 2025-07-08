@@ -81,6 +81,12 @@ import com.bornfire.xbrl.entities.RT_ForeignCurrencyDeposit;
 import com.bornfire.xbrl.entities.RT_ForeignCurrencyDepositRepository;
 import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates_Repository;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_Template;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_Template_Repository;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_Template;
@@ -256,6 +262,7 @@ public class XBRLNavigationController {
 RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 
 @Autowired
+
 RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimplifiedRepo;
 
 @Autowired
@@ -264,6 +271,16 @@ RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimpli
 
 @Autowired
 RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
+
+
+@Autowired
+RT_IRRBB_Data_Template_Repository IRRB_EVE_Repo;
+
+@Autowired 
+RT_IRRBB_Data_EAR_Repository IRRBB_EAR_Repository;
+
+@Autowired 
+RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 
 	private String pagesize;
 
@@ -2095,6 +2112,76 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 
 		return "RT/Liquidity_Risk_Dashboard_Template";
 	}
+	
+	/*--IRRBB Data template--*/
+	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
+	public String IRRBB_data_Template(@RequestParam(required = false) String siNo,
+			@RequestParam(required = false) String formmode, Model model) {
+
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
+					.orElse(new RT_Investment_Securities_Data_Template()));
+			
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_IRRBB_Data_Template> list = IRRB_EVE_Repo.getAlldetails();
+         
+			System.out.println("IRRBB EVE "  +IRRB_EVE_Repo.getAlldetails().size());
+			model.addAttribute("formmode", "list");
+			model.addAttribute("ISList", list); // Used in HTML table
+		} else if ("EAR".equalsIgnoreCase(formmode)) {
+			System.out.println("THE EAR REPORT START");
+			List<RT_IRRBB_Data_EAR> list = IRRBB_EAR_Repository.getAlldetails();
+            System.out.println("IRRBB EAR "  +IRRBB_EAR_Repository.getAlldetails().size());
+			model.addAttribute("formmode", "EAR");
+			model.addAttribute("ISListEar", list); // Used in HTML table
+			System.out.println("Formmode" +formmode);
+		}
+		else if ("DiscountRate".equalsIgnoreCase(formmode)) {
+			System.out.println("---- Discount Rate---");
+			List<RT_IRRBB_Data_Discount_Rates> list = IRRBB_Data_Template_DiscountRate_repo.getAlldetails();
+            System.out.println("IRRBB EAR "  +IRRBB_Data_Template_DiscountRate_repo.getAlldetails().size());
+			model.addAttribute("formmode", "DiscountRate");
+			model.addAttribute("ISListDiscount", list); // Used in HTML table
+			System.out.println("Formmode" +formmode);
+		}
+		
+		/*
+			 * else { model.addAttribute("formmode", "add");
+			 * model.addAttribute("securityData", new
+			 * RT_Investment_Securities_Data_Template()); }
+			 */else {
+			model.addAttribute("formmode", "add");
+		}
+
+		return "RT/IRRBB_data_Template";
+	}
+	
+	/*--IRRBB Data template--*/
+	@RequestMapping(value = "IRRBB_data_Template_EAR", method = RequestMethod.GET)
+	public String IRRBB_data_Template_EAR(@RequestParam(required = false) String siNo,
+			@RequestParam(required = false) String formmode, Model model) {
+
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
+					.orElse(new RT_Investment_Securities_Data_Template()));
+			
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_IRRBB_Data_Template> list = IRRB_EVE_Repo.getAlldetails();
+         
+			System.out.println("IRRBB EVE "  +IRRB_EVE_Repo.getAlldetails().size());
+			model.addAttribute("formmode", "list");
+			model.addAttribute("ISList", list); // Used in HTML table
+		} else {
+			model.addAttribute("formmode", "add");
+		}
+
+		return "RT/IRRBB_data_Template_EAR";
+	}
+	
+	
+	
 	
 
 	@RequestMapping(value = "/downloadForeigncurrencyExcel", method = RequestMethod.GET)
