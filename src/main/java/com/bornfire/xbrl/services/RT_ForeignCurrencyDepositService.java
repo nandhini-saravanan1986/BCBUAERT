@@ -18,9 +18,22 @@ import com.bornfire.xbrl.entities.RT_ForeignCurrencyDepositRepository;
 import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.io.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.FileNotFoundException;
+
 
 @Service
 public class RT_ForeignCurrencyDepositService {
+	
+    private static final Logger logger = LoggerFactory.getLogger(RT_ForeignCurrencyDepositService.class);
+
 
     @Autowired
     private Environment env;
@@ -77,22 +90,57 @@ public class RT_ForeignCurrencyDepositService {
 	    }
 	}
     
-    public File generateForeignCurrencyDepositExcel() {
-		File outputFile = null;
+    public byte[] generateForeignCurrencyDepositExcel() throws Exception {
+        logger.info("Service: Starting Foreign Currency Deposit Excel generation process in memory.");
 
-		try {
-			// Fetch data from repository
-			List<Object[]> foreigncurrencyList = foreigncurrencydepositRepo.getforeigncurrencylistdata1();
+        List<Object[]> foreigncurrencyList = foreigncurrencydepositRepo.getforeigncurrencylistdata1();
 
-			// Load Excel template file
-			File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Foreign_Currency_Deposit_Template.xls");
-			Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
-			Sheet sheet = workbook.getSheetAt(0);
+        if (foreigncurrencyList.isEmpty()) {
+            logger.warn("Service: No data found for Foreign Currency report. Returning empty result.");
+            return new byte[0];
+        }
 
-			// Create date cell style
-			CreationHelper createHelper = workbook.getCreationHelper();
-			CellStyle dateStyle = workbook.createCellStyle();
-			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+        String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
+        String templateFileName = "CBUAE_Foreign_Currency_Deposit_Template.xls";
+        Path templatePath = Paths.get(templateDir, templateFileName);
+
+        logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+        if (!Files.exists(templatePath)) {
+            throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+        }
+
+        if (!Files.isReadable(templatePath)) {
+            throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
+        }
+
+        try (InputStream templateInputStream = Files.newInputStream(templatePath);
+             Workbook workbook = WorkbookFactory.create(templateInputStream);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            CreationHelper createHelper = workbook.getCreationHelper();
+
+            // Define cell styles
+            CellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setBorderBottom(BorderStyle.THIN);
+            dateStyle.setBorderTop(BorderStyle.THIN);
+            dateStyle.setBorderLeft(BorderStyle.THIN);
+            dateStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setBorderBottom(BorderStyle.THIN);
+            textStyle.setBorderTop(BorderStyle.THIN);
+            textStyle.setBorderLeft(BorderStyle.THIN);
+            textStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle numberStyle = workbook.createCellStyle();
+            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+            numberStyle.setBorderBottom(BorderStyle.THIN);
+            numberStyle.setBorderTop(BorderStyle.THIN);
+            numberStyle.setBorderLeft(BorderStyle.THIN);
+            numberStyle.setBorderRight(BorderStyle.THIN);
 
 			int startRow = 2; // assuming data starts from row 3 (index 2)
 
@@ -269,30 +317,19 @@ public class RT_ForeignCurrencyDepositService {
 					
 				}
 
-				// Evaluate all formulas in the workbook
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-
-				// Write output to file
-				outputFile = new File(env.getProperty("output.exportpathfinal") + "Foreigncurrencydeposit.xls");
-				try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-					workbook.write(fos);
-					System.out.println("Foreigncurrencydeposit Excel generated: " + outputFile.getAbsolutePath());
-				}
-
-				workbook.close();
-
 			} else {
-				System.out.println("No Foreigncurrencydeposit data found.");
-				workbook.close();
+				System.out.println("No Fx Risk data found to generate the Excel file.");
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			// Write the final workbook content to the in-memory stream.
+			workbook.write(out);
 
-		return outputFile;
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
+		}
 	}
-    
     
 
     

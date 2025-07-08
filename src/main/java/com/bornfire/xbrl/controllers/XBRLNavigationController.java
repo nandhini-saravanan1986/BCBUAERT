@@ -2097,36 +2097,80 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 	}
 	
 
-	@RequestMapping(value = "downloadForeigncurrencyExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadForeigncurrencyExcel() throws IOException {
+	@RequestMapping(value = "/downloadForeigncurrencyExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel() {
+	    logger.info("Controller: Received request for Foreign Currency Deposit Excel download.");
 
-		File excelFile = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    try {
+	        byte[] excelData = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "Foreigncurrencydeposit.xls");
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Foreign Currency report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "Foreigncurrencydeposit.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Foreign Currency Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
-	
+
 
 	
 	
 	
-	@RequestMapping(value = "downloadImpactanalysisExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadImpactanalysisExcel() throws IOException {
+	@RequestMapping(value = "/downloadImpactanalysisExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel() {
+	    logger.info("Controller: Received request for Impact Analysis Excel download.");
 
-		File excelFile = impactanalysisService.generateImpactAnalysisExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    try {
+	        byte[] excelData = impactanalysisService.generateImpactAnalysisExcel();
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "Impactanalysis.xls");
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Impact Analysis report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "Impactanalysis.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Impact Analysis Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
-	
+
 	
 	@RequestMapping(value = "Trade_Level_Data_Derivatives_Simplified", method = RequestMethod.GET)
 	public String TradeleveldataderivativesSimplified(@RequestParam(required = false) String formmode,
