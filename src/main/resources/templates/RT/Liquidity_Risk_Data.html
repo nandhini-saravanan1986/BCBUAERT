@@ -30,7 +30,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 	 -->
 
 	<!-- jQuery (required first) -->
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 	<!-- ✅ jQuery Validation -->
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -414,7 +414,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 		$('#loader').modal('show');
 
 		$.ajax({
-			url: './downloadTreasuryCreditExcel',
+			url: './downloadLiquidityRiskData',
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Important: To handle binary file (Excel)
@@ -423,7 +423,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 				$('#loader').modal('hide');
 
 				// Get filename from Content-Disposition header if available
-				let filename = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls";
+				let filename = "CBUAE_Liquidity Risk_Data_Template.xls";
 				const disposition = xhr.getResponseHeader('Content-Disposition');
 				if (disposition && disposition.indexOf('filename=') !== -1) {
 					const filenameMatch = disposition.match(/filename="?(.+)"?/);
@@ -455,7 +455,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 			error: function (jqXHR, textStatus, errorThrown) {
 				$('#loader').modal('hide');
 				console.error("Download failed:", textStatus, errorThrown);
-				$('#alertmsg').text('An error occurred while downloading CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls.');
+				$('#alertmsg').text('An error occurred while downloading CBUAE_Liquidity Risk_Data_Template.xls.');
 				$('#alert').modal('show');
 			}
 		});

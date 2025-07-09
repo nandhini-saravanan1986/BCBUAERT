@@ -823,6 +823,38 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
             return "Record not found for update";
         }
     }
+	
+	@RequestMapping(value = "/downloadLiquidityRiskData", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadLiquidityRiskData() {
+		logger.info("Controller: Received request for Trade Market Risk Excel download.");
+
+		try {
+			byte[] excelData = liquidityRiskDataService.generateLiquidityDataExcel();
+
+			if (excelData.length == 0) {
+				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			HttpHeaders headers = new HttpHeaders();
+			String filename = "CBUAE_Liquidity Risk_Data_Template.xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: A required template file was not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 		// -------------------------------------Liquidity_Risk_Data End---------------------------------------
 	
 	@Autowired
@@ -1909,22 +1941,20 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo); // make sure entity class matches
+			//RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo);
+			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.findById(siNo).orElse(null);
+// make sure entity class matches
 			md.addAttribute("repoData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			System.out.println("marginCallFrequency = " + data.getMarginCallFrequency());
+			System.out.println("netCollateralOutstandingAed = " + data.getNetCollateralOutstandingAed());
+
 		} else if ("list".equalsIgnoreCase(formmode)) {
 
 			List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist();
 			System.out.println("testing count" + ccr_data_template_repository.getlist().size());
 			;
-			// System.out.println("the count" +CCrrepo.getlist().size());
-			/*
-			 * for (RT_CCR_Data_Template r : repoList) { System.out.println("Data: " +
-			 * r.getSiNo()); // just to confirm data presence } md.addAttribute("repoList1",
-			 * repoList);
-			 */
-
 			md.addAttribute("repoList1", repoList);
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
