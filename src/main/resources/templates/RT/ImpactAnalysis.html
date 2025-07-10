@@ -931,8 +931,14 @@ $(document).ready(function () {
 
 <!-- Row 2 -->
 <div class="form-group row">
-  <label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" /></div>
+  <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+  <div class="col-sm-4">
+    <select class="form-control" th:field="*{headOfficeSubsidiary}">
+        <option value="">-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
   <label class="col-sm-2 col-form-label">Subsidiary</label>
   <div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" /></div>
 </div>
@@ -970,10 +976,16 @@ $(document).ready(function () {
 
 <!-- Row 7 -->
 <div class="form-group row">
-  <label class="col-sm-2 col-form-label">CPTY Country of Risk</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{derivativesCptyCountryOfRisk}" /></div>
+<label class="col-sm-2 col-form-label">CPTY Country of Risk</label>
+<div class="col-sm-4">
+  <select class="form-control" th:field="*{derivativesCptyCountryOfRisk}" id="derivativesCptyCountryOfRisk" onchange="handleCountryChange(this)">
+    <option value="">-- Select Country --</option>
+    <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+  </select>
+</div>
+
   <label class="col-sm-2 col-form-label">CBUAE Regional Zone</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuaeRegionalZone}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuaeRegionalZone}" id="cbuaeGeographicalZone" readonly / /></div>
 </div>
 
 <!-- Row 8 -->

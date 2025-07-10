@@ -905,7 +905,8 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			@RequestParam(required = false) String SI_NO, // changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(SI_NO);
+			Long Serialnumber=Long.parseLong(SI_NO);
+			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(Serialnumber);
 			md.addAttribute("investmentriskdatadashboard", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -1868,18 +1869,40 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 		return counter_servicess.getbranch(selected_branch);
 	}
 
-	@RequestMapping(value = "downloadTradeleveldataderivativeExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadTradeleveldataderivativeExcel() throws IOException {
-		System.out.println("Entered controller downloadMmExcel");
+	@RequestMapping(value = "/downloadTradeleveldataderivativeExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativeExcel() {
+	    logger.info("Controller: Received request for Trade Level Data Derivative Excel download.");
 
-		File excelFile = tradeleveldataderivativeService.generateTradeleveldataderivativeExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    try {
+	        byte[] excelData = tradeleveldataderivativeService.generateTradeleveldataderivativeExcel();
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "Mmdata.xls");
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Trade Level Data Derivative report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "TradeLevelDataDerivative.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Trade Level Data Derivative Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	@RequestMapping(value = "Trade_Level_Data_Derivatives", method = RequestMethod.GET)
@@ -2332,5 +2355,81 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 
 	}
 
+	
+	@RequestMapping(value = "/downloadTradeleveldataderivativesimplifiedExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel() {
+	    logger.info("Controller: Received request for Trade Level Data Derivative Simplified Excel download.");
 
+	    try {
+	        byte[] excelData = tradeleveldataderivativesimplifiedService.generateTradeleveldataderivativesimplifiedExcel();
+
+
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Trade Level Data Derivative Simplified report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "TradeLevelDataDerivativeSimplified.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Trade Level Data Derivative Simplified Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	
+	
+	
+	
+	@RequestMapping(value = "/downloadInvestmentriskdatadashboardExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel() {
+	    logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
+
+	    try {
+	        byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel();
+
+
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Investment Risk Data Dashboard report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "InvestmentRiskDataDashboard.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Investment Risk Data Dashboard Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	
+	
 }

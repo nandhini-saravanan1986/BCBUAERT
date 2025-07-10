@@ -1,9 +1,15 @@
 package com.bornfire.xbrl.services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -18,15 +24,29 @@ import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplifiedRepository;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.io.ByteArrayOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.FileNotFoundException;
 
 @Service
 public class RT_TradeLevelDerivativesSimplifiedService {
+	
+    private static final Logger logger = LoggerFactory.getLogger(RT_TradeLevelDerivativesSimplifiedService.class);
+
 
     @Autowired
     private Environment env;
 
     @Autowired
-    private RT_TradeLevelDataDerivativesRepository tradeleveldataderivaticeRepo;
+    private RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivaticesimplifiedRepo;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -34,7 +54,7 @@ public class RT_TradeLevelDerivativesSimplifiedService {
     public boolean updatetradeleveldataderivative(RT_TradeLevelDataDerivatives updatedData) {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
-	    RT_TradeLevelDataDerivatives existing = tradeleveldataderivaticeRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+	    RT_TradeLevelDataDerivativesSimplified existing = tradeleveldataderivaticesimplifiedRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
 
 	    if (existing != null) {
 	        // Update fields
@@ -46,7 +66,7 @@ public class RT_TradeLevelDerivativesSimplifiedService {
 	    	
 
 
-	    	tradeleveldataderivaticeRepo.save(existing);
+	    	tradeleveldataderivaticesimplifiedRepo.save(existing);
 	        return true;
 	    } else {
 	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());
@@ -55,22 +75,58 @@ public class RT_TradeLevelDerivativesSimplifiedService {
 	}
     
     
-    public File generateTradeleveldataderivativeExcel() {
-        File outputFile = null;
+    public byte[] generateTradeleveldataderivativesimplifiedExcel() throws Exception {
+        logger.info("Service: Starting Foreign Currency Deposit Excel generation process in memory.");
 
-        try {
-            // Fetch data from repository
-            List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticeRepo.gettradeleveldataderivative1();
+        List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticesimplifiedRepo.gettradeleveldataderivative1();
 
-            // Load Excel template file
-            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Trade_Level_Data_Derivative_Template.xls");
-            Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
+        if (tradeleveldataDerivative.isEmpty()) {
+            logger.warn("Service: No data found for Trade level data derivative simplified report. Returning empty result.");
+            return new byte[0];
+        }
+
+        String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
+        String templateFileName = "CBUAE_Trade_Level_Data_Derivative_Simplified_Template.xls";
+        Path templatePath = Paths.get(templateDir, templateFileName);
+
+        logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+        if (!Files.exists(templatePath)) {
+            throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+        }
+
+        if (!Files.isReadable(templatePath)) {
+            throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
+        }
+
+        try (InputStream templateInputStream = Files.newInputStream(templatePath);
+             Workbook workbook = WorkbookFactory.create(templateInputStream);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
             Sheet sheet = workbook.getSheetAt(0);
-
-            // Create date cell style
             CreationHelper createHelper = workbook.getCreationHelper();
+
+            // Define cell styles
             CellStyle dateStyle = workbook.createCellStyle();
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setBorderBottom(BorderStyle.THIN);
+            dateStyle.setBorderTop(BorderStyle.THIN);
+            dateStyle.setBorderLeft(BorderStyle.THIN);
+            dateStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setBorderBottom(BorderStyle.THIN);
+            textStyle.setBorderTop(BorderStyle.THIN);
+            textStyle.setBorderLeft(BorderStyle.THIN);
+            textStyle.setBorderRight(BorderStyle.THIN);
+
+            CellStyle numberStyle = workbook.createCellStyle();
+            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+            numberStyle.setBorderBottom(BorderStyle.THIN);
+            numberStyle.setBorderTop(BorderStyle.THIN);
+            numberStyle.setBorderLeft(BorderStyle.THIN);
+            numberStyle.setBorderRight(BorderStyle.THIN);
+
 
             int startRow = 4; // Assuming data starts from row index 3 (4rd row)
 
@@ -577,36 +633,20 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell117 = row.getCell(117); if (cell117 == null) cell117 = row.createCell(117);
                     cell117.setCellValue(mm[117] == null ? "" : mm[117].toString());
 
-
-                    
-
-                    
-                 
-                    
-               
-                   
+     
                 }
 
-                // Evaluate formulas
                 workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+			} else {
+				System.out.println("No Trade level data derivatives found to generate the Excel file.");
+			}
 
-                // Write output to file
-                outputFile = new File(env.getProperty("output.exportpathfinal") + "Tradeleveldataderivative.xls");
-                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                    workbook.write(fos);
-                    System.out.println("Tradeleveldataderivative Excel generated: " + outputFile.getAbsolutePath());
-                }
+			// Write the final workbook content to the in-memory stream.
+			workbook.write(out);
 
-                workbook.close();
-            } else {
-                System.out.println("No Tradeleveldataderivative data found.");
-                workbook.close();
-            }
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return outputFile;
-    }
+			return out.toByteArray();
+		}
+	}
 }
