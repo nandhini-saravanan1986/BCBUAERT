@@ -774,7 +774,6 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 									<th colspan="7" style="text-align:center;">Collateralization information</th>
 									<th colspan="6" style="text-align:center;">IFRS Provision information (where
 										applicable)</th>
-									<th rowspan="2" style="text-align:center;">Bank Core Tier 1 Capital (AED)</th>
 								</tr>
 								<tr>
 									<!-- Financial Institution Information -->
@@ -1021,9 +1020,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 									</td>
 									<td th:text="${#numbers.formatDecimal(data.eclFinal, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.ifrs9Staging}"></td>
-									<td
-										th:text="${#numbers.formatDecimal(data.bankCoreTier1CapitalAed, 1, 'COMMA', 2, 'POINT')}">
-									</td>
+									
 								</tr>
 							</tbody>
 						</table>
@@ -1089,7 +1086,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								<div class="col-sm-4">
 									<select class="form-control" th:field="*{bankName}"
 										onchange="handleBankChange(this)">
-										<option value="">-- Select Bank --</option>
+										<option value="" disabled selected>-- Select Bank --</option>
 										<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
 											th:text="${bank.bankName}"></option>
 									</select>
@@ -1099,7 +1096,11 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" />
+									<select class="form-control" th:field="*{headOfficeSubsidiary}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Head Office">Head Office</option>
+										<option value="Subsidiary">Subsidiary</option>
+									</select>
 								</div>
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
 								<div class="col-sm-4">
@@ -1132,24 +1133,52 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 										readonly />
 								</div>
 							</div>
-							<h4 class="section-header">Counterparty Information</h4>
+							<h4 class="section-header">Accounts Information</h4>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Accounting Classification</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{accountingClassification}" />
+									<select class="form-control" th:field="*{accountingClassification}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="FVT PL">FVT PL</option>
+										<option value="FVTOCI">FVTOCI</option>
+										<option value="Amortized Cost">Amortized Cost</option>
+									</select>
+
 								</div>
 
 								<label class="col-sm-2 col-form-label">Instrument Type</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{instrumentType}" />
+									<select class="form-control" th:field="*{instrumentType}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Bond">Bond</option>
+										<option value="Sukuk">Sukuk</option>
+										<option value="Private Placement">Private Placement</option>
+										<option value="Equity">Equity</option>
+										<option value="Credit">Credit</option>
+										<option value="Active Fund ">Active Fund</option>
+										<option value="Passive Fund">Passive Fund</option>
+										<option value="ETF">ETF</option>
+										<option value="Other">Other</option>
+									</select>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Instrument Subcategory Type</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{instrumentSubcategoryType}" />
+									<select class="form-control" th:field="*{instrumentSubcategoryType}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Equity">Equity</option>
+										<option value="Fixed Income">Fixed Income</option>
+										<option value="Money Market">Money Market</option>
+										<option value="Diversified">Diversified</option>
+										<option value="Hedge Fund">Hedge Fund</option>
+										<option value="Commodities">Commodities</option>
+										<option value="Real Estate">Real Estate</option>
+										<option value="Private Placement">Private Placement</option>
+										<option value="Other">Other</option>
+									</select>
 								</div>
 
 								<label class="col-sm-2 col-form-label">ISIN Code</label>
@@ -1187,41 +1216,49 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{assetCurrency}" />
 								</div>
-
+							</div>
+							<h4 class="section-header">Counterparty Information</h4>
+							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Obligor</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{obligor}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Country of Risk</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{countryOfRisk}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{cbuAeGeographicalZone}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Industry</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{industry}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">Sector</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{sector}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Issuer Type</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{issuerType}" />
+									<select class="form-control" th:field="*{issuerType}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Sovereign">Sovereign</option>
+										<option value="Corporate">Corporate</option>
+										<option value="FI">FI</option>
+										<option value="Other">Other</option>
+									</select>
+
 								</div>
 							</div>
 
@@ -1262,7 +1299,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 
 							<!-- FX -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Fixed Income Info Net Book Price</label>
+								<label class="col-sm-2 col-form-label">Net Book Price</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{fixedIncomeInfoNetBookPrice}" /></div>
 
@@ -1273,7 +1310,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 
 							<!-- Bond Settlement -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Purchase YTM</label>
+								<label class="col-sm-2 col-form-label">Purchase Yeild to Maturity</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{purchaseYieldToMaturity}" /></div>
 
@@ -1288,7 +1325,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{cleanMarketValueAed}" /></div>
 
-								<label class="col-sm-2 col-form-label">Current YTM</label>
+								<label class="col-sm-2 col-form-label">Current Yeild to Maturity</label>
 								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{currentYieldToMaturity}" /></div>
 							</div>
@@ -1298,9 +1335,13 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{unrealizedGainLossAed}" /></div>
 
-								<label class="col-sm-2 col-form-label">Subordinated Debt Sukuk</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{subordinatedDebtSukuk}" /></div>
+								<label class="col-sm-2 col-form-label">Subordinated Debt/Sukuk</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{subordinatedDebtSukuk}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Y">Y</option>
+									</select>
+								</div>
 							</div>
 
 							<!-- Derivatives -->
@@ -1316,7 +1357,7 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								</div>
 							</div>
 
-							<h4 class="section-header">Other Security Information</h4>
+
 							<!-- FX -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Credit Quality</label>
@@ -1345,105 +1386,113 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 
 							<!-- Overall Treasury -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Percent HoldingsFi</label>
+								<label class="col-sm-2 col-form-label">Percent Holdings FI</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{percentHoldingsFi}" />
 								</div>
+							</div>
 
-								<label class="col-sm-2 col-form-label">Qty Equity Funds</label>
+							<h4 class="section-header">Other Security Information</h4>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Qty (Equity/Funds)</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{qtyEquityFunds}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Equity Floating Fund Assets</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{equityFloatingFundAssets}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">Total Floating Share FundAum</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{totalFloatingShareFundAum}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Specific Provision</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{specificProvision}" />
 								</div>
 
+							</div>
+
+							<div class="form-group row">
+
 								<label class="col-sm-2 col-form-label">Net Book Value</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{netBookValue}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Net Book Price</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{otherSecInfoNetBookPrice}" />
 								</div>
 							</div>
 
 							<!-- FX -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Other Sec Info Net Book Price</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{otherSecInfoNetBookPrice}" />
-								</div>
 
 								<label class="col-sm-2 col-form-label">Market Price</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{marketPrice}" />
+									<input type="number"  step="0.01" class="form-control" th:field="*{marketPrice}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Fair Value Amount AED</label>
+								<div class="col-sm-4">
+									<input type="number" step="0.01" class="form-control" th:field="*{fairValueAmountAed}" />
 								</div>
 							</div>
 
 							<!-- Bond Settlement -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Fair Value Amount AED</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{fairValueAmountAed}" />
-								</div>
 
-								<label class="col-sm-2 col-form-label">UnrealizedGainLossAgain</label>
+
+								<label class="col-sm-2 col-form-label">UnrealizedGainLoss Again</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{unrealizedGainLossAgain}" />
+									<input type="number" class="form-control" th:field="*{unrealizedGainLossAgain}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Percent Holdings Other</label>
+								<div class="col-sm-4">
+									<input type="number" step="0.01" class="form-control" th:field="*{percentHoldingsOther}" />
 								</div>
 							</div>
 
 							<!-- Overall Treasury -->
+
+							<h4 class="section-header">Overall Portfolio Information</h4>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Percent Holdings Other</label>
-								<div class="col-sm-4">
-									<input type="number" class="form-control" th:field="*{percentHoldingsOther}" />
-								</div>
-
-								<h4 class="section-header">Overall Portfolio Information</h4>
-
 								<label class="col-sm-2 col-form-label">Total NetBook ValueAED</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{totalNetBookValueAed}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Total Market Value AED</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{totalMarketValueAed}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">Total Unrealized GainLoss</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{totalUnrealizedGainLoss}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Unrealized GainLoss Contrib</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{unrealizedGainLossContrib}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">Percent Holdings</label>
 								<div class="col-sm-4">
 									<input type="number" class="form-control" th:field="*{percentHoldings}" />
 								</div>
 							</div>
+
 							<h4 class="section-header">Collateralization information</h4>
 
 							<div class="form-group row">
@@ -1471,14 +1520,23 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">HqlaElar Eligibility</label>
+								<label class="col-sm-2 col-form-label">HQLA/ELAR Eligibility</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{hqlaElarEligibility}" />
+									<select class="form-control" th:field="*{hqlaElarEligibility}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="HQLA">HQLA</option>
+										<option value="ELAR">ELAR</option>
+									</select>
 								</div>
 
 								<label class="col-sm-2 col-form-label">Liquidity Type</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{liquidityType}" />
+									<select class="form-control" th:field="*{liquidityType}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="1">1</option>
+										<option value="2A">2A</option>
+										<option value="2B">2B</option>
+									</select>
 								</div>
 							</div>
 
@@ -1487,52 +1545,45 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{sukukType}" />
 								</div>
+							</div>
 
-								<h4 class="section-header">IFRS Provision information (where applicable)</h4>
-
+							<h4 class="section-header">IFRS Provision information (where applicable)</h4>
+							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">TTC PD</label>
 								<div class="col-sm-4">
 									<input type="number" step="0.01" class="form-control" th:field="*{ttcPd}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">PIT PD</label>
 								<div class="col-sm-4">
 									<input type="number" step="0.01" class="form-control" th:field="*{pitPd}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">ECL 1Y</label>
 								<div class="col-sm-4">
 									<input type="number" step="0.01" class="form-control" th:field="*{ecl1y}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">ECL Lifetime</label>
 								<div class="col-sm-4">
 									<input type="number" step="0.01" class="form-control" th:field="*{eclLifetime}" />
 								</div>
+							</div>
+
+							<div class="form-group row">
+
 
 								<label class="col-sm-2 col-form-label">ECL Final</label>
 								<div class="col-sm-4">
 									<input type="number" step="0.01" class="form-control" th:field="*{eclFinal}" />
 								</div>
-							</div>
-
-							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">IFRS9 Staging</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{ifrs9Staging}" />
 								</div>
-
-								<label class="col-sm-2 col-form-label">Bank Core Tier1 Capital (AED)</label>
-								<div class="col-sm-4">
-									<input type="number" step="0.01" class="form-control"
-										th:field="*{bankCoreTier1CapitalAed}" />
-								</div>
 							</div>
-
 						</div>
 
 						<div class="card-footer text-center"
@@ -1683,6 +1734,9 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 		border-radius: 4px;
 		padding: 4px 8px;
 	}
+	.no-spinner {
+	  -moz-appearance: textfield;
+	}
 </style>
 
 
@@ -1734,5 +1788,18 @@ PURPOSE		: CBUAE_Investment_Securities_Data_Template_Pillar 2_
 		$('#alert1').modal('hide');
 	}
 </script>
+<style>
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+</style>
 
 </html>

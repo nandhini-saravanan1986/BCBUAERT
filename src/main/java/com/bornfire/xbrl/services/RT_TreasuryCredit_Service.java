@@ -30,7 +30,7 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 @Service
 public class RT_TreasuryCredit_Service {
 
-	private static final Logger logger = LoggerFactory.getLogger(RT_InvestmentSecurity_Service.class);
+	private static final Logger logger = LoggerFactory.getLogger(RT_TreasuryCredit_Service.class);
 	
     @Autowired
     RT_TreasuryCreditRepo treasuryRepo;

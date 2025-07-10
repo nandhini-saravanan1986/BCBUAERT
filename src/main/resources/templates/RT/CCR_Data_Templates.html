@@ -326,82 +326,20 @@ PURPOSE		: CCR DATA TEMPLATES
 		}
 
 		function list() {
-			location.href = 'Repo_Data_Template?formmode=list';
+			location.href = 'CCR_Data_Templates?formmode=list';
 		}
 
 		function nostro() {
-			location.href = 'Repo_Data_Template';
+			location.href = 'CCR_Data_Templates';
 		}
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
-				window.location.href = './Repo_Data_Template';
+				window.location.href = './CCR_Data_Templates';
 			});
 		});
 
-
-		/*function updateform() {
-			
-			$('#Nostro').validate({
-				rules: {
-					bankName: { required: true },
-					dataDate: { required: true },
-					counterpartyBalance: { number: true },
-					bankBalance: { number: true },
-					counterpartyBalanceAed: { number: true },
-					bankBalanceAed: { number: true },
-					gap: { number: true }
-				},
-				messages: {
-					bankName: { required: "Please provide Bank Name", minlength: "Bank Name must be at least 2 characters" },
-					dataDate: "Please provide Data Date",
-					counterpartyBalance: "Enter valid number",
-					bankBalance: "Enter valid number",
-					counterpartyBalanceAed: "Enter valid number",
-					bankBalanceAed: "Enter valid number",
-					gap: "Enter valid number"
-				}
-			});
-	
-			if ($("#Nostro").valid()) {
-				$("#loader1").modal("show");
-	
-				var url = "./updateNostro";
-				$("#Nostro").attr('action', url);
-	
-				var options = {
-					success: function (responseText, statusText, xhr, $form) {
-						$("#loader1").modal("hide");
-	
-						// Show modal alert
-					   // $("#alertmsg").text("Updated Success fully");
-	
-						//$('#alert').modal("toggle");
-	
-						// Redirect after short delay
-					   
-							window.location.href = "Nostro_Account_Bal";
-					    
-					},
-					error: function (xhr, status, error) {
-						$("#loader1").modal("hide");
-						$("#alertmsg").text("Error: " + error);
-					   
-						$('#alert').modal("toggle");
-					}
-				};
-	
-				$("#Nostro").ajaxSubmit(options);
-			} else {
-				$("#alertmsg").text("Please fix validation errors.");
-				$('#alert').modal("show");
-			}
-		}*/
-
-
-
 		function updateform(event) {
-
 			event.preventDefault();
 			$("#loader").modal("toggle");
 
@@ -822,6 +760,12 @@ PURPOSE		: CCR DATA TEMPLATES
 							style="min-width: 2000px; font-family: calibri;">
 							<thead class="thead-light" style="background-color: #e9ecf0; font-size: 11px;">
 								<tr>
+								       <th rowspan="1"></th>
+								       <th colspan="8">Financial Institution Information</th>
+								       <th colspan="22">Counterparty Information</th>
+								       <th colspan="1">Exposure</th>
+								   </tr>
+								<tr>
 									<th>Action</th>
 									<th>Data Date</th>
 									<th>Bank Name</th>
@@ -880,24 +824,45 @@ PURPOSE		: CCR DATA TEMPLATES
 									<td th:text="${data.cbuaeGeographicalZone}"></td>
 									<td th:text="${data.counterpartyType}"></td>
 									<td th:text="${data.sector}"></td>
-									<td th:text="${data.pfe95Aed}"></td>
-									<td th:text="${data.expectedPositiveExposureAed}"></td>
-									<td th:text="${data.expectedNegativeExposureAed}"></td>
+
+									<!-- Decimal Format for Amount Fields -->
+									<td th:text="${#numbers.formatDecimal(data.pfe95Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.expectedPositiveExposureAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.expectedNegativeExposureAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+
 									<td th:text="${data.csa}"></td>
 									<td th:text="${data.collateralType}"></td>
-									<td th:text="${data.threshold}"></td>
-									<td th:text="${data.minimumTransferAmountAed}"></td>
-									<td th:text="${data.independentAmountAed}"></td>
-									<td th:text="${data.marginCallFrequency}"></td>
-									<td th:text="${data.netCollateralOutstandingAed}"></td>
-									<td th:text="${data.cvaAed}"></td>
-									<td th:text="${data.dvaAed}"></td>
-									<td th:text="${data.bilateralCvaAed}"></td>
-									<td th:text="${data.fvaAed}"></td>
-									<td th:text="${data.incrementalPfe}"></td>
 
+									<td th:text="${#numbers.formatDecimal(data.threshold, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.minimumTransferAmountAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td
+										th:text="${#numbers.formatDecimal(data.independentAmountAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+
+									<td th:text="${data.marginCallFrequency}"></td>
+
+									<td
+										th:text="${#numbers.formatDecimal(data.netCollateralOutstandingAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.cvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td th:text="${#numbers.formatDecimal(data.dvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.bilateralCvaAed, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td th:text="${#numbers.formatDecimal(data.fvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(data.incrementalPfe, 1, 'COMMA', 2, 'POINT')}">
+									</td>
 								</tr>
 							</tbody>
+
 						</table>
 
 					</div>
@@ -943,7 +908,7 @@ PURPOSE		: CCR DATA TEMPLATES
 
 						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 							<input type="hidden" name="siNo" th:field="*{siNo}" />
-
+							<h4 class="section-header">Financial Institution Information</h4>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Data Date</label>
 								<div class="col-sm-4">
@@ -1007,6 +972,7 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								</div>
 							</div>
+							<h4 class="section-header">Counterparty Information</h4>
 
 							<div class="form-group row">
 
@@ -1057,7 +1023,7 @@ PURPOSE		: CCR DATA TEMPLATES
 								<div class="col-sm-4">
 
 									<select class="form-control" th:field="*{counterpartyType}" id="counterpartyType">
-										<option value="">Select Type</option>
+										<option value="">-- Select --</option>
 										<option value="Corporate">Corporate</option>
 										<option value="FI">FI</option>
 										<option value="NBFI">NBFI</option>
@@ -1073,7 +1039,23 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								<label class="col-sm-2 col-form-label">Sector</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{sector}" id="sector" readonly />
+								
+							   <select class="form-control" th:field="*{sector}" id="sector">
+									<option value="" disabled selected>-- Select --</option>
+									<option value="Communication Services">Communication Services</option>
+									<option value="Consumer Discretionary">Consumer Discretionary</option>
+								    <option value="Consumer Staples">Consumer Staples</option>
+									<option value="Energy">Energy</option>
+									<option value="Financials">Financials</option>
+									<option value="Health Care">Health Care</option>
+									<option value="Industrials">Industrials</option>
+									<option value="Information Technology">Information Technology</option>
+					   				<option value="Materials">Materials</option>
+									<option value="Real Estate">Real Estate</option>
+									<option value="Utilities">Utilities</option>
+									<option value="Other">Other</option>
+								</select>
+								
 								</div>
 							</div>
 							<div class="form-group row">
@@ -1102,7 +1084,13 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								<label class="col-sm-2 col-form-label">CSA</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{csa}" id="csa" />
+									
+									<select class="form-control" th:field="*{csa}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Y">Y</option>
+									
+									</select>
+									
 								</div>
 
 							</div>
@@ -1111,8 +1099,12 @@ PURPOSE		: CCR DATA TEMPLATES
 								<!-- Collateral Type -->
 								<label class="col-sm-2 col-form-label">Collateral Type</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{collateralType}"
-										id="collateralType" />
+										<select class="form-control" th:field="*{collateralType}" id="collateralType">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Cash">Cash</option>
+										<option value="Security">Security</option>
+																			
+							 		   </select>
 								</div>
 
 								<!-- Threshold -->
@@ -1146,8 +1138,16 @@ PURPOSE		: CCR DATA TEMPLATES
 								<!-- Margin Call Frequency -->
 								<label class="col-sm-2 col-form-label">Margin Call Frequency</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{marginCallFrequency}"
-										id="marginCallFrequency" />
+								
+								<select class="form-control" th:field="*{marginCallFrequency}" id="marginCallFrequency">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Daily">Daily</option>
+										<option value="Weekly">Weekly</option>
+										<option value="Monthly">Monthly</option>
+										<option value="Quarterly">Quarterly</option>
+																													
+					 		   </select>
+							   
 								</div>
 
 								<!-- Net Collateral Outstanding AED -->
@@ -1192,7 +1192,8 @@ PURPOSE		: CCR DATA TEMPLATES
 								</div>
 
 							</div>
-
+							
+							<h4 class="section-header">Exposure</h4>
 							<div class="form-group row">
 
 								<!-- Incremental PFE -->
@@ -1210,7 +1211,10 @@ PURPOSE		: CCR DATA TEMPLATES
 							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
 							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Cancel</a>
-							<a th:href="@{/home}" class="custom-tab-btn">Home</a>
+							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
+							<button type="button" class="custom-tab-btn" onclick="home();">
+														<i class="fa fa-home"></i> Home
+													</button>
 						</div>
 					</div>
 				</form>
