@@ -404,12 +404,12 @@ if (tabId === 'data') {
 
 
      <script>
-    function downloadTradeleveldataderivative() {
+    function downloadTradeleveldataderivativesimplified() {
         // 1. Show the loader modal
         $('#loader').modal('show');
 
         $.ajax({
-            url: './downloadTradeleveldataderivativeExcel',
+            url: './downloadTradeleveldataderivativesimplifiedExcel',
             type: 'GET',
             xhrFields: {
                 responseType: 'blob'
@@ -426,7 +426,7 @@ if (tabId === 'data') {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'TradelevelDataDerivative.xls';
+                    a.download = 'TradelevelDataDerivativesimplified.xls';
                     document.body.appendChild(a);
 
                     a.click();
@@ -434,7 +434,7 @@ if (tabId === 'data') {
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    message = 'TradelevelDataDerivative.xls has been downloaded successfully.';
+                    message = 'TradelevelDataDerivativeSimplified.xls has been downloaded successfully.';
                 } else {
                     message = 'No data available to download.';
                 }
@@ -448,7 +448,7 @@ if (tabId === 'data') {
 
                 console.error("Download failed:", error);
 
-                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivativeSimplified.xls.');
                 $('#alert').modal('show');
             }
         });
@@ -522,7 +522,7 @@ if (tabId === 'data') {
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
-  onclick="downloadTradeleveldataderivative();">
+  onclick="downloadTradeleveldataderivativesimplified();">
   <i class="fa fa-download"></i> Download
 </button></div>
 </div>
