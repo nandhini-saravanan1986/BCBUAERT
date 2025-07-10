@@ -2360,5 +2360,45 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
+	
+	
+	
+	
+	@RequestMapping(value = "/downloadInvestmentriskdatadashboardExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel() {
+	    logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
 
+	    try {
+	        byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel();
+
+
+	        if (excelData.length == 0) {
+	            logger.warn("Controller: No data found for Investment Risk Data Dashboard report. Responding with 204 No Content.");
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+	        String filename = "InvestmentRiskDataDashboard.xls";
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
+
+	    } catch (FileNotFoundException e) {
+	        logger.error("Controller ERROR: Investment Risk Data Dashboard Excel template file not found.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	
+	
 }

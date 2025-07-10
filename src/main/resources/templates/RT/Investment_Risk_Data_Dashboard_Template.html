@@ -478,65 +478,65 @@ $(document).ready(function () {
   });
 </script>
 
+<script>
+    function investmentriskdata() {
+        // 1. Show the loader modal
+        $('#loader').modal('show');
 
+        $.ajax({
+            url: './downloadInvestmentriskdatadashboardExcel',
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data) {
+                // 2. Hide the loader modal
+                $('#loader').modal('hide');
 
+                let message = '';
 
-     <script>
-     
-     function downloadRepo() {
-    		// 1. Show the loader modal
-    		$('#loader').mo
-    		dal('show');
+                if (data && data.size > 100) {
+                    const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'Investmentriskdatadashboard.xls';
+                    document.body.appendChild(a);
 
-    		$.ajax({
-    			url: './downloadRepoExcel',
-    			type: 'GET',
-    			xhrFields: {
-    				responseType: 'blob'
-    			},
-    			success: function (data) {
-    				// Always hide loader first
-    				$('#loader').modal('hide');
+                    a.click();
 
-    				let message = '';
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
 
-    				if (data && data.size > 100) {
-    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
-    					const url = window.URL.createObjectURL(blob);
-    					const a = document.createElement('a');
-    					a.style.display = 'none';
-    					a.href = url;
-    					a.download = 'RepoDataTemplate.xls';
-    					document.body.appendChild(a);
+                    message = 'Investmentriskdatadashboard.xls has been downloaded successfully.';
+                } else {
+                    message = 'No data available to download.';
+                }
 
-    					a.click();
+                // Show result in unified alert modal
+                $('#alertmsg').text(message);
+                $('#alert').modal('show');
+            },
+            error: function (xhr, status, error) {
+                $('#loader').modal('hide');
 
-    					window.URL.revokeObjectURL(url);
-    					document.body.removeChild(a);
+                console.error("Download failed:", error);
 
-    					message = 'RepoDataTemplate.xls has been downloaded successfully.';
-    				} else {
-    					message = 'No data available to download.';
-    				}
+                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alert').modal('show');
+            }
+        });
 
-    				// Show custom alert modal with the message
-    				$('#alertmsg').text(message);
-    				$('#alert').modal('show');
-    			},
-    			error: function (jqXHR, textStatus, errorThrown) {
-    				$('#loader').modal('hide');
-
-    				console.error("Download failed:", textStatus, errorThrown);
-
-    				// Show error message in your custom alert
-    				$('#alertmsg').text('An error occurred while downloading RepoDataTemplate.xls.');
-    				$('#alert').modal('show');
-    			}
-    		});
-    	}
-
-
+        // Safety fallback in case AJAX hangs silently
+        setTimeout(function () {
+            $('#loader').modal('hide');
+        }, 10000);
+    }
 </script>
+
+
+     
 <title>BCDRS</title>
 <body> 
 <div class="container-fluid" style="padding-left:0px; padding-right:0px;">
@@ -568,7 +568,7 @@ $(document).ready(function () {
     		<button th:if="${formmode} =='list'" type="button"
   class="custom-tab-btn"
  
-  onclick="downloadRepo();">
+  onclick="investmentriskdata();">
   <i class="fa fa-download"></i> Download
 </button></div>
 </div>
