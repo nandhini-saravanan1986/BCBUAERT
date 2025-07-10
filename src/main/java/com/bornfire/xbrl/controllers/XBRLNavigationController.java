@@ -873,7 +873,8 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			@RequestParam(required = false) String SI_NO, // changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(SI_NO);
+			Long Serialnumber=Long.parseLong(SI_NO);
+			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(Serialnumber);
 			md.addAttribute("investmentriskdatadashboard", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");

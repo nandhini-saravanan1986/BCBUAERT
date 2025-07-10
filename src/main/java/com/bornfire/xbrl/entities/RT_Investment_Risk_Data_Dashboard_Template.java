@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 public class RT_Investment_Risk_Data_Dashboard_Template {
 	
 	@Id
-	private String SI_NO;
+	private Long SI_NO;
 
     @Column(name = "DATA_DATE")
     private Date dataDate;
@@ -40,277 +41,277 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
     private String cbuAeTiering;
 
     @Column(name = "ASSET_BALANCE_SHEET_SIZE_AED")
-    private Long assetBalanceSheetSizeAed;
+    private BigDecimal assetBalanceSheetSizeAed;
 
     @Column(name = "INVESTMENT_BOOK_SIZE_AED")
-    private Long investmentBookSizeAed;
+    private BigDecimal investmentBookSizeAed;
 
     @Column(name = "BOOK_SIZE_TOTAL_ASSETS_PCT")
-    private Long bookSizeTotalAssetsPct;
+    private BigDecimal bookSizeTotalAssetsPct;
 
     @Column(name = "YTD_NET_PNL_AED")
-    private Long ytdNetPnlAed;
+    private BigDecimal ytdNetPnlAed;
 
     @Column(name = "YTD_FVTOCI_UNREALIZED_LOSS_AED")
-    private Long ytdFvtociUnrealizedLossAed;
+    private BigDecimal ytdFvtociUnrealizedLossAed;
 
     @Column(name = "CET1_AED")
-    private Long cet1Aed;
+    private BigDecimal cet1Aed;
 
     @Column(name = "UGL_CORE_TIER1_RELATIVE_IMPACT_PCT")
-    private Long uglCoreTier1RelativeImpactPct;
+    private BigDecimal uglCoreTier1RelativeImpactPct;
 
     @Column(name = "YTD_AMORTIZED_UNREALIZED_LOSS_AED")
-    private Long ytdAmortizedUnrealizedLossAed;
+    private BigDecimal ytdAmortizedUnrealizedLossAed;
 
     @Column(name = "YTD_HQLA_AC_UNREALIZED_LOSS_AED")
-    private Long ytdHqlaAcUnrealizedLossAed;
+    private BigDecimal ytdHqlaAcUnrealizedLossAed;
 
     @Column(name = "HQLA_AC_CORE_TIER1_IMPACT_PCT")
-    private Long hqlaAcCoreTier1ImpactPct;
+    private BigDecimal hqlaAcCoreTier1ImpactPct;
 
     @Column(name = "IR_VAR_CONFIDENCE_INTERVAL")
-    private String irVarConfidenceInterval;
+    private BigDecimal irVarConfidenceInterval;
 
     @Column(name = "IR_VAR_HOLDING_PERIOD")
     private String irVarHoldingPeriod;
 
     @Column(name = "IR_FIXED_INCOME_EXPOSURE_AED")
-    private Long irFixedIncomeExposureAed;
+    private BigDecimal irFixedIncomeExposureAed;
 
     @Column(name = "IR_VAR_EXPOSURE_AED")
-    private Long irVarExposureAed;
+    private BigDecimal irVarExposureAed;
 
     @Column(name = "IR_VAR_LIMIT_AED")
-    private Long irVarLimitAed;
+    private BigDecimal irVarLimitAed;
 
     @Column(name = "IR_STATUS")
     private String irStatus;
 
     @Column(name = "IR_VAR_IMPACT_PCT")
-    private Long irVarImpactPct;
+    private BigDecimal irVarImpactPct;
 
     @Column(name = "CS_VAR_CONFIDENCE_INTERVAL")
-    private String csVarConfidenceInterval;
+    private BigDecimal csVarConfidenceInterval;
 
     @Column(name = "CS_VAR_HOLDING_PERIOD")
     private String csVarHoldingPeriod;
 
     @Column(name = "CS_FIXED_INCOME_EXPOSURE_AED")
-    private Long csFixedIncomeExposureAed;
+    private BigDecimal csFixedIncomeExposureAed;
 
     @Column(name = "CS_VAR_EXPOSURE_AED")
-    private Long csVarExposureAed;
+    private BigDecimal csVarExposureAed;
 
     @Column(name = "CS_VAR_LIMIT_AED")
-    private Long csVarLimitAed;
+    private BigDecimal csVarLimitAed;
 
     @Column(name = "CS_STATUS")
     private String csStatus;
 
     @Column(name = "CS_VAR_IMPACT_PCT")
-    private Long csVarImpactPct;
+    private BigDecimal csVarImpactPct;
 
     @Column(name = "FX_VAR_CONFIDENCE_INTERVAL")
-    private String fxVarConfidenceInterval;
+    private BigDecimal fxVarConfidenceInterval;
 
     @Column(name = "FX_VAR_HOLDING_PERIOD")
     private String fxVarHoldingPeriod;
 
     @Column(name = "FX_EXPOSURE_AED")
-    private Long fxExposureAed;
+    private BigDecimal fxExposureAed;
 
     @Column(name = "FX_VAR_EXPOSURE_AED")
-    private Long fxVarExposureAed;
+    private BigDecimal fxVarExposureAed;
 
     @Column(name = "FX_VAR_LIMIT_AED")
-    private Long fxVarLimitAed;
+    private BigDecimal fxVarLimitAed;
 
     @Column(name = "FX_STATUS")
     private String fxStatus;
 
     @Column(name = "FX_VAR_IMPACT_PCT")
-    private Long fxVarImpactPct;
+    private BigDecimal fxVarImpactPct;
 
     @Column(name = "EQ_VAR_CONFIDENCE_INTERVAL")
-    private String eqVarConfidenceInterval;
+    private BigDecimal eqVarConfidenceInterval;
 
     @Column(name = "EQ_VAR_HOLDING_PERIOD")
     private String eqVarHoldingPeriod;
 
     @Column(name = "EQ_EXPOSURE_AED")
-    private Long eqExposureAed;
+    private BigDecimal eqExposureAed;
 
     @Column(name = "EQ_VAR_EXPOSURE_AED")
-    private Long eqVarExposureAed;
+    private BigDecimal eqVarExposureAed;
 
     @Column(name = "EQ_VAR_LIMIT_AED")
-    private Long eqVarLimitAed;
+    private BigDecimal eqVarLimitAed;
 
     @Column(name = "EQ_STATUS")
     private String eqStatus;
 
     @Column(name = "EQ_VAR_IMPACT_PCT")
-    private Long eqVarImpactPct;
+    private BigDecimal eqVarImpactPct;
 
     @Column(name = "COMM_VAR_CONFIDENCE_INTERVAL")
-    private String commVarConfidenceInterval;
+    private BigDecimal commVarConfidenceInterval;
 
     @Column(name = "COMM_VAR_HOLDING_PERIOD")
     private String commVarHoldingPeriod;
 
     @Column(name = "COMM_EXPOSURE_AED")
-    private Long commExposureAed;
+    private BigDecimal commExposureAed;
 
     @Column(name = "COMM_VAR_EXPOSURE_AED")
-    private Long commVarExposureAed;
+    private BigDecimal commVarExposureAed;
 
     @Column(name = "COMM_VAR_LIMIT_AED")
-    private Long commVarLimitAed;
+    private BigDecimal commVarLimitAed;
 
     @Column(name = "COMM_STATUS")
     private String commStatus;
 
     @Column(name = "COMM_VAR_IMPACT_PCT")
-    private Long commVarImpactPct;
+    private BigDecimal commVarImpactPct;
 
     @Column(name = "OVERALL_VAR_CONFIDENCE_INTERVAL")
-    private String overallVarConfidenceInterval;
+    private BigDecimal overallVarConfidenceInterval;
 
     @Column(name = "OVERALL_VAR_HOLDING_PERIOD")
     private String overallVarHoldingPeriod;
 
     @Column(name = "VAR_EXPOSURE_AED")
-    private Long varExposureAed;
+    private BigDecimal varExposureAed;
 
     @Column(name = "VAR_LIMIT_AED")
-    private Long varLimitAed;
+    private BigDecimal varLimitAed;
 
     @Column(name = "OVERALL_VAR_STATUS")
     private String overallVarStatus;
 
     @Column(name = "PORTFOLIO_RELATIVE_IMPACT_PCT")
-    private Long portfolioRelativeImpactPct;
+    private BigDecimal portfolioRelativeImpactPct;
 
     @Column(name = "EXPECTED_SHORTFALL_EXPOSURE_AED")
-    private Long expectedShortfallExposureAed;
+    private BigDecimal expectedShortfallExposureAed;
 
     @Column(name = "EXPECTED_SHORTFALL_LIMIT_AED")
-    private Long expectedShortfallLimitAed;
+    private BigDecimal expectedShortfallLimitAed;
 
     @Column(name = "EXPECTED_SHORTFALL_STATUS")
     private String expectedShortfallStatus;
 
     @Column(name = "EXPECTED_SHORTFALL_IMPACT_PCT")
-    private Long expectedShortfallImpactPct;
+    private BigDecimal expectedShortfallImpactPct;
 
     @Column(name = "MODIFIED_DURATION")
-    private Long modifiedDuration;
+    private BigDecimal modifiedDuration;
 
     @Column(name = "INTEREST_RATE_SHOCK_BPS")
     private Integer interestRateShockBps;
 
     @Column(name = "INTEREST_RATE_LIMIT")
-    private Long interestRateLimit;
+    private BigDecimal interestRateLimit;
 
     @Column(name = "INTEREST_RATE_STATUS")
     private String interestRateStatus;
 
     @Column(name = "DV01_AED")
-    private Long dv01Aed;
+    private BigDecimal dv01Aed;
 
     @Column(name = "DV01_LIMIT_AED")
-    private Long dv01LimitAed;
+    private BigDecimal dv01LimitAed;
 
     @Column(name = "DV01_STATUS")
     private String dv01Status;
 
     @Column(name = "DV01_TENOR_GAP_LT3_AED")
-    private Long dv01TenorGapLt3Aed;
+    private BigDecimal dv01TenorGapLt3Aed;
 
     @Column(name = "DV01_TENOR_GAP_GT3_AED")
-    private Long dv01TenorGapGt3Aed;
+    private BigDecimal dv01TenorGapGt3Aed;
 
     @Column(name = "DV01_CHECK")
     private String dv01Check;
 
     @Column(name = "CS01_AED")
-    private Long cs01Aed;
+    private BigDecimal cs01Aed;
 
     @Column(name = "CS01_SHOCK_BPS")
     private Integer cs01ShockBps;
 
     @Column(name = "CS01_LIMIT")
-    private Long cs01Limit;
+    private BigDecimal cs01Limit;
 
     @Column(name = "CS01_STATUS")
     private String cs01Status;
 
     @Column(name = "CS01_INVESTMENT_GRADE_AED")
-    private Long cs01InvestmentGradeAed;
+    private BigDecimal cs01InvestmentGradeAed;
 
     @Column(name = "CS01_SUB_INVESTMENT_AED")
-    private Long cs01SubInvestmentAed;
+    private BigDecimal cs01SubInvestmentAed;
 
     @Column(name = "CS01_UNRATED_AED")
-    private Long cs01UnratedAed;
+    private BigDecimal cs01UnratedAed;
 
     @Column(name = "CS01_CHECK")
     private String cs01Check;
 
     @Column(name = "BETA_EQUITY")
-    private Long betaEquity;
+    private BigDecimal betaEquity;
 
     @Column(name = "EQUITY_SHOCK_BPS")
     private Integer equityShockBps;
 
     @Column(name = "EQUITY_LIMIT")
-    private Long equityLimit;
+    private BigDecimal equityLimit;
 
     @Column(name = "EQUITY_STATUS")
     private String equityStatus;
 
     @Column(name = "CREDIT_SPREAD_IMPACT_AED")
-    private Long creditSpreadImpactAed;
+    private BigDecimal creditSpreadImpactAed;
 
     @Column(name = "CREDIT_SENSITIVE_IMPACT_PCT")
-    private Long creditSensitiveImpactPct;
+    private BigDecimal creditSensitiveImpactPct;
 
     @Column(name = "INTEREST_RATE_IMPACT_AED")
-    private Long interestRateImpactAed;
+    private BigDecimal interestRateImpactAed;
 
     @Column(name = "RATE_SENSITIVE_IMPACT_PCT")
-    private Long rateSensitiveImpactPct;
+    private BigDecimal rateSensitiveImpactPct;
 
     @Column(name = "FX_IMPACT_AED")
-    private Long fxImpactAed;
+    private BigDecimal fxImpactAed;
 
     @Column(name = "FX_SENSITIVE_IMPACT_PCT")
-    private Long fxSensitiveImpactPct;
+    private BigDecimal fxSensitiveImpactPct;
 
     @Column(name = "EQUITY_IMPACT_AED")
-    private Long equityImpactAed;
+    private BigDecimal equityImpactAed;
 
     @Column(name = "EQUITY_SENSITIVE_IMPACT_PCT")
-    private Long equitySensitiveImpactPct;
+    private BigDecimal equitySensitiveImpactPct;
 
     @Column(name = "COMMODITIES_IMPACT_AED")
-    private Long commoditiesImpactAed;
+    private BigDecimal commoditiesImpactAed;
 
     @Column(name = "COMMODITY_SENSITIVE_IMPACT_PCT")
-    private Long commoditySensitiveImpactPct;
+    private BigDecimal commoditySensitiveImpactPct;
 
     @Column(name = "JTD_LOSS_IMPACT_AED")
-    private Long jtdLossImpactAed;
+    private BigDecimal jtdLossImpactAed;
 
     @Column(name = "JTD_RELATIVE_IMPACT_PCT")
-    private Long jtdRelativeImpactPct;
+    private BigDecimal jtdRelativeImpactPct;
 
     @Column(name = "OVERALL_IMPACT_AED")
-    private Long overallImpactAed;
+    private BigDecimal overallImpactAed;
 
     @Column(name = "CORE_TIER1_RELATIVE_IMPACT_PCT")
-    private Long coreTier1RelativeImpactPct;
+    private BigDecimal coreTier1RelativeImpactPct;
 
     @Column(name = "REPORT_SUBMIT_DATE")
     private Date reportSubmitDate;
@@ -347,15 +348,18 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 
     @Column(name = "ENTRY_TIME")
     private Date entryTime;
+    
+    @Column(name="VERIFY_TIME")
+    private Date verifyTime;
 
     @Column(name = "MODIFY_TIME")
     private Date modifyTime;
 
-	public String getSI_NO() {
+	public Long getSI_NO() {
 		return SI_NO;
 	}
 
-	public void setSI_NO(String sI_NO) {
+	public void setSI_NO(Long sI_NO) {
 		SI_NO = sI_NO;
 	}
 
@@ -423,91 +427,91 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.cbuAeTiering = cbuAeTiering;
 	}
 
-	public Long getAssetBalanceSheetSizeAed() {
+	public BigDecimal getAssetBalanceSheetSizeAed() {
 		return assetBalanceSheetSizeAed;
 	}
 
-	public void setAssetBalanceSheetSizeAed(Long assetBalanceSheetSizeAed) {
+	public void setAssetBalanceSheetSizeAed(BigDecimal assetBalanceSheetSizeAed) {
 		this.assetBalanceSheetSizeAed = assetBalanceSheetSizeAed;
 	}
 
-	public Long getInvestmentBookSizeAed() {
+	public BigDecimal getInvestmentBookSizeAed() {
 		return investmentBookSizeAed;
 	}
 
-	public void setInvestmentBookSizeAed(Long investmentBookSizeAed) {
+	public void setInvestmentBookSizeAed(BigDecimal investmentBookSizeAed) {
 		this.investmentBookSizeAed = investmentBookSizeAed;
 	}
 
-	public Long getBookSizeTotalAssetsPct() {
+	public BigDecimal getBookSizeTotalAssetsPct() {
 		return bookSizeTotalAssetsPct;
 	}
 
-	public void setBookSizeTotalAssetsPct(Long bookSizeTotalAssetsPct) {
+	public void setBookSizeTotalAssetsPct(BigDecimal bookSizeTotalAssetsPct) {
 		this.bookSizeTotalAssetsPct = bookSizeTotalAssetsPct;
 	}
 
-	public Long getYtdNetPnlAed() {
+	public BigDecimal getYtdNetPnlAed() {
 		return ytdNetPnlAed;
 	}
 
-	public void setYtdNetPnlAed(Long ytdNetPnlAed) {
+	public void setYtdNetPnlAed(BigDecimal ytdNetPnlAed) {
 		this.ytdNetPnlAed = ytdNetPnlAed;
 	}
 
-	public Long getYtdFvtociUnrealizedLossAed() {
+	public BigDecimal getYtdFvtociUnrealizedLossAed() {
 		return ytdFvtociUnrealizedLossAed;
 	}
 
-	public void setYtdFvtociUnrealizedLossAed(Long ytdFvtociUnrealizedLossAed) {
+	public void setYtdFvtociUnrealizedLossAed(BigDecimal ytdFvtociUnrealizedLossAed) {
 		this.ytdFvtociUnrealizedLossAed = ytdFvtociUnrealizedLossAed;
 	}
 
-	public Long getCet1Aed() {
+	public BigDecimal getCet1Aed() {
 		return cet1Aed;
 	}
 
-	public void setCet1Aed(Long cet1Aed) {
+	public void setCet1Aed(BigDecimal cet1Aed) {
 		this.cet1Aed = cet1Aed;
 	}
 
-	public Long getUglCoreTier1RelativeImpactPct() {
+	public BigDecimal getUglCoreTier1RelativeImpactPct() {
 		return uglCoreTier1RelativeImpactPct;
 	}
 
-	public void setUglCoreTier1RelativeImpactPct(Long uglCoreTier1RelativeImpactPct) {
+	public void setUglCoreTier1RelativeImpactPct(BigDecimal uglCoreTier1RelativeImpactPct) {
 		this.uglCoreTier1RelativeImpactPct = uglCoreTier1RelativeImpactPct;
 	}
 
-	public Long getYtdAmortizedUnrealizedLossAed() {
+	public BigDecimal getYtdAmortizedUnrealizedLossAed() {
 		return ytdAmortizedUnrealizedLossAed;
 	}
 
-	public void setYtdAmortizedUnrealizedLossAed(Long ytdAmortizedUnrealizedLossAed) {
+	public void setYtdAmortizedUnrealizedLossAed(BigDecimal ytdAmortizedUnrealizedLossAed) {
 		this.ytdAmortizedUnrealizedLossAed = ytdAmortizedUnrealizedLossAed;
 	}
 
-	public Long getYtdHqlaAcUnrealizedLossAed() {
+	public BigDecimal getYtdHqlaAcUnrealizedLossAed() {
 		return ytdHqlaAcUnrealizedLossAed;
 	}
 
-	public void setYtdHqlaAcUnrealizedLossAed(Long ytdHqlaAcUnrealizedLossAed) {
+	public void setYtdHqlaAcUnrealizedLossAed(BigDecimal ytdHqlaAcUnrealizedLossAed) {
 		this.ytdHqlaAcUnrealizedLossAed = ytdHqlaAcUnrealizedLossAed;
 	}
 
-	public Long getHqlaAcCoreTier1ImpactPct() {
+	public BigDecimal getHqlaAcCoreTier1ImpactPct() {
 		return hqlaAcCoreTier1ImpactPct;
 	}
 
-	public void setHqlaAcCoreTier1ImpactPct(Long hqlaAcCoreTier1ImpactPct) {
+	public void setHqlaAcCoreTier1ImpactPct(BigDecimal hqlaAcCoreTier1ImpactPct) {
 		this.hqlaAcCoreTier1ImpactPct = hqlaAcCoreTier1ImpactPct;
 	}
 
-	public String getIrVarConfidenceInterval() {
+	public BigDecimal getIrVarConfidenceInterval() {
 		return irVarConfidenceInterval;
 	}
 
-	public void setIrVarConfidenceInterval(String irVarConfidenceInterval) {
+	public void setIrVarConfidenceInterval(BigDecimal irVarConfidenceInterval) {
 		this.irVarConfidenceInterval = irVarConfidenceInterval;
 	}
 
@@ -519,27 +523,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.irVarHoldingPeriod = irVarHoldingPeriod;
 	}
 
-	public Long getIrFixedIncomeExposureAed() {
+	public BigDecimal getIrFixedIncomeExposureAed() {
 		return irFixedIncomeExposureAed;
 	}
 
-	public void setIrFixedIncomeExposureAed(Long irFixedIncomeExposureAed) {
+	public void setIrFixedIncomeExposureAed(BigDecimal irFixedIncomeExposureAed) {
 		this.irFixedIncomeExposureAed = irFixedIncomeExposureAed;
 	}
 
-	public Long getIrVarExposureAed() {
+	public BigDecimal getIrVarExposureAed() {
 		return irVarExposureAed;
 	}
 
-	public void setIrVarExposureAed(Long irVarExposureAed) {
+	public void setIrVarExposureAed(BigDecimal irVarExposureAed) {
 		this.irVarExposureAed = irVarExposureAed;
 	}
 
-	public Long getIrVarLimitAed() {
+	public BigDecimal getIrVarLimitAed() {
 		return irVarLimitAed;
 	}
 
-	public void setIrVarLimitAed(Long irVarLimitAed) {
+	public void setIrVarLimitAed(BigDecimal irVarLimitAed) {
 		this.irVarLimitAed = irVarLimitAed;
 	}
 
@@ -551,19 +555,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.irStatus = irStatus;
 	}
 
-	public Long getIrVarImpactPct() {
+	public BigDecimal getIrVarImpactPct() {
 		return irVarImpactPct;
 	}
 
-	public void setIrVarImpactPct(Long irVarImpactPct) {
+	public void setIrVarImpactPct(BigDecimal irVarImpactPct) {
 		this.irVarImpactPct = irVarImpactPct;
 	}
 
-	public String getCsVarConfidenceInterval() {
+	public BigDecimal getCsVarConfidenceInterval() {
 		return csVarConfidenceInterval;
 	}
 
-	public void setCsVarConfidenceInterval(String csVarConfidenceInterval) {
+	public void setCsVarConfidenceInterval(BigDecimal csVarConfidenceInterval) {
 		this.csVarConfidenceInterval = csVarConfidenceInterval;
 	}
 
@@ -575,27 +579,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.csVarHoldingPeriod = csVarHoldingPeriod;
 	}
 
-	public Long getCsFixedIncomeExposureAed() {
+	public BigDecimal getCsFixedIncomeExposureAed() {
 		return csFixedIncomeExposureAed;
 	}
 
-	public void setCsFixedIncomeExposureAed(Long csFixedIncomeExposureAed) {
+	public void setCsFixedIncomeExposureAed(BigDecimal csFixedIncomeExposureAed) {
 		this.csFixedIncomeExposureAed = csFixedIncomeExposureAed;
 	}
 
-	public Long getCsVarExposureAed() {
+	public BigDecimal getCsVarExposureAed() {
 		return csVarExposureAed;
 	}
 
-	public void setCsVarExposureAed(Long csVarExposureAed) {
+	public void setCsVarExposureAed(BigDecimal csVarExposureAed) {
 		this.csVarExposureAed = csVarExposureAed;
 	}
 
-	public Long getCsVarLimitAed() {
+	public BigDecimal getCsVarLimitAed() {
 		return csVarLimitAed;
 	}
 
-	public void setCsVarLimitAed(Long csVarLimitAed) {
+	public void setCsVarLimitAed(BigDecimal csVarLimitAed) {
 		this.csVarLimitAed = csVarLimitAed;
 	}
 
@@ -607,19 +611,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.csStatus = csStatus;
 	}
 
-	public Long getCsVarImpactPct() {
+	public BigDecimal getCsVarImpactPct() {
 		return csVarImpactPct;
 	}
 
-	public void setCsVarImpactPct(Long csVarImpactPct) {
+	public void setCsVarImpactPct(BigDecimal csVarImpactPct) {
 		this.csVarImpactPct = csVarImpactPct;
 	}
 
-	public String getFxVarConfidenceInterval() {
+	public BigDecimal getFxVarConfidenceInterval() {
 		return fxVarConfidenceInterval;
 	}
 
-	public void setFxVarConfidenceInterval(String fxVarConfidenceInterval) {
+	public void setFxVarConfidenceInterval(BigDecimal fxVarConfidenceInterval) {
 		this.fxVarConfidenceInterval = fxVarConfidenceInterval;
 	}
 
@@ -631,27 +635,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.fxVarHoldingPeriod = fxVarHoldingPeriod;
 	}
 
-	public Long getFxExposureAed() {
+	public BigDecimal getFxExposureAed() {
 		return fxExposureAed;
 	}
 
-	public void setFxExposureAed(Long fxExposureAed) {
+	public void setFxExposureAed(BigDecimal fxExposureAed) {
 		this.fxExposureAed = fxExposureAed;
 	}
 
-	public Long getFxVarExposureAed() {
+	public BigDecimal getFxVarExposureAed() {
 		return fxVarExposureAed;
 	}
 
-	public void setFxVarExposureAed(Long fxVarExposureAed) {
+	public void setFxVarExposureAed(BigDecimal fxVarExposureAed) {
 		this.fxVarExposureAed = fxVarExposureAed;
 	}
 
-	public Long getFxVarLimitAed() {
+	public BigDecimal getFxVarLimitAed() {
 		return fxVarLimitAed;
 	}
 
-	public void setFxVarLimitAed(Long fxVarLimitAed) {
+	public void setFxVarLimitAed(BigDecimal fxVarLimitAed) {
 		this.fxVarLimitAed = fxVarLimitAed;
 	}
 
@@ -663,19 +667,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.fxStatus = fxStatus;
 	}
 
-	public Long getFxVarImpactPct() {
+	public BigDecimal getFxVarImpactPct() {
 		return fxVarImpactPct;
 	}
 
-	public void setFxVarImpactPct(Long fxVarImpactPct) {
+	public void setFxVarImpactPct(BigDecimal fxVarImpactPct) {
 		this.fxVarImpactPct = fxVarImpactPct;
 	}
 
-	public String getEqVarConfidenceInterval() {
+	public BigDecimal getEqVarConfidenceInterval() {
 		return eqVarConfidenceInterval;
 	}
 
-	public void setEqVarConfidenceInterval(String eqVarConfidenceInterval) {
+	public void setEqVarConfidenceInterval(BigDecimal eqVarConfidenceInterval) {
 		this.eqVarConfidenceInterval = eqVarConfidenceInterval;
 	}
 
@@ -687,27 +691,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.eqVarHoldingPeriod = eqVarHoldingPeriod;
 	}
 
-	public Long getEqExposureAed() {
+	public BigDecimal getEqExposureAed() {
 		return eqExposureAed;
 	}
 
-	public void setEqExposureAed(Long eqExposureAed) {
+	public void setEqExposureAed(BigDecimal eqExposureAed) {
 		this.eqExposureAed = eqExposureAed;
 	}
 
-	public Long getEqVarExposureAed() {
+	public BigDecimal getEqVarExposureAed() {
 		return eqVarExposureAed;
 	}
 
-	public void setEqVarExposureAed(Long eqVarExposureAed) {
+	public void setEqVarExposureAed(BigDecimal eqVarExposureAed) {
 		this.eqVarExposureAed = eqVarExposureAed;
 	}
 
-	public Long getEqVarLimitAed() {
+	public BigDecimal getEqVarLimitAed() {
 		return eqVarLimitAed;
 	}
 
-	public void setEqVarLimitAed(Long eqVarLimitAed) {
+	public void setEqVarLimitAed(BigDecimal eqVarLimitAed) {
 		this.eqVarLimitAed = eqVarLimitAed;
 	}
 
@@ -719,19 +723,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.eqStatus = eqStatus;
 	}
 
-	public Long getEqVarImpactPct() {
+	public BigDecimal getEqVarImpactPct() {
 		return eqVarImpactPct;
 	}
 
-	public void setEqVarImpactPct(Long eqVarImpactPct) {
+	public void setEqVarImpactPct(BigDecimal eqVarImpactPct) {
 		this.eqVarImpactPct = eqVarImpactPct;
 	}
 
-	public String getCommVarConfidenceInterval() {
+	public BigDecimal getCommVarConfidenceInterval() {
 		return commVarConfidenceInterval;
 	}
 
-	public void setCommVarConfidenceInterval(String commVarConfidenceInterval) {
+	public void setCommVarConfidenceInterval(BigDecimal commVarConfidenceInterval) {
 		this.commVarConfidenceInterval = commVarConfidenceInterval;
 	}
 
@@ -743,27 +747,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.commVarHoldingPeriod = commVarHoldingPeriod;
 	}
 
-	public Long getCommExposureAed() {
+	public BigDecimal getCommExposureAed() {
 		return commExposureAed;
 	}
 
-	public void setCommExposureAed(Long commExposureAed) {
+	public void setCommExposureAed(BigDecimal commExposureAed) {
 		this.commExposureAed = commExposureAed;
 	}
 
-	public Long getCommVarExposureAed() {
+	public BigDecimal getCommVarExposureAed() {
 		return commVarExposureAed;
 	}
 
-	public void setCommVarExposureAed(Long commVarExposureAed) {
+	public void setCommVarExposureAed(BigDecimal commVarExposureAed) {
 		this.commVarExposureAed = commVarExposureAed;
 	}
 
-	public Long getCommVarLimitAed() {
+	public BigDecimal getCommVarLimitAed() {
 		return commVarLimitAed;
 	}
 
-	public void setCommVarLimitAed(Long commVarLimitAed) {
+	public void setCommVarLimitAed(BigDecimal commVarLimitAed) {
 		this.commVarLimitAed = commVarLimitAed;
 	}
 
@@ -775,19 +779,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.commStatus = commStatus;
 	}
 
-	public Long getCommVarImpactPct() {
+	public BigDecimal getCommVarImpactPct() {
 		return commVarImpactPct;
 	}
 
-	public void setCommVarImpactPct(Long commVarImpactPct) {
+	public void setCommVarImpactPct(BigDecimal commVarImpactPct) {
 		this.commVarImpactPct = commVarImpactPct;
 	}
 
-	public String getOverallVarConfidenceInterval() {
+	public BigDecimal getOverallVarConfidenceInterval() {
 		return overallVarConfidenceInterval;
 	}
 
-	public void setOverallVarConfidenceInterval(String overallVarConfidenceInterval) {
+	public void setOverallVarConfidenceInterval(BigDecimal overallVarConfidenceInterval) {
 		this.overallVarConfidenceInterval = overallVarConfidenceInterval;
 	}
 
@@ -799,19 +803,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.overallVarHoldingPeriod = overallVarHoldingPeriod;
 	}
 
-	public Long getVarExposureAed() {
+	public BigDecimal getVarExposureAed() {
 		return varExposureAed;
 	}
 
-	public void setVarExposureAed(Long varExposureAed) {
+	public void setVarExposureAed(BigDecimal varExposureAed) {
 		this.varExposureAed = varExposureAed;
 	}
 
-	public Long getVarLimitAed() {
+	public BigDecimal getVarLimitAed() {
 		return varLimitAed;
 	}
 
-	public void setVarLimitAed(Long varLimitAed) {
+	public void setVarLimitAed(BigDecimal varLimitAed) {
 		this.varLimitAed = varLimitAed;
 	}
 
@@ -823,27 +827,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.overallVarStatus = overallVarStatus;
 	}
 
-	public Long getPortfolioRelativeImpactPct() {
+	public BigDecimal getPortfolioRelativeImpactPct() {
 		return portfolioRelativeImpactPct;
 	}
 
-	public void setPortfolioRelativeImpactPct(Long portfolioRelativeImpactPct) {
+	public void setPortfolioRelativeImpactPct(BigDecimal portfolioRelativeImpactPct) {
 		this.portfolioRelativeImpactPct = portfolioRelativeImpactPct;
 	}
 
-	public Long getExpectedShortfallExposureAed() {
+	public BigDecimal getExpectedShortfallExposureAed() {
 		return expectedShortfallExposureAed;
 	}
 
-	public void setExpectedShortfallExposureAed(Long expectedShortfallExposureAed) {
+	public void setExpectedShortfallExposureAed(BigDecimal expectedShortfallExposureAed) {
 		this.expectedShortfallExposureAed = expectedShortfallExposureAed;
 	}
 
-	public Long getExpectedShortfallLimitAed() {
+	public BigDecimal getExpectedShortfallLimitAed() {
 		return expectedShortfallLimitAed;
 	}
 
-	public void setExpectedShortfallLimitAed(Long expectedShortfallLimitAed) {
+	public void setExpectedShortfallLimitAed(BigDecimal expectedShortfallLimitAed) {
 		this.expectedShortfallLimitAed = expectedShortfallLimitAed;
 	}
 
@@ -855,19 +859,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.expectedShortfallStatus = expectedShortfallStatus;
 	}
 
-	public Long getExpectedShortfallImpactPct() {
+	public BigDecimal getExpectedShortfallImpactPct() {
 		return expectedShortfallImpactPct;
 	}
 
-	public void setExpectedShortfallImpactPct(Long expectedShortfallImpactPct) {
+	public void setExpectedShortfallImpactPct(BigDecimal expectedShortfallImpactPct) {
 		this.expectedShortfallImpactPct = expectedShortfallImpactPct;
 	}
 
-	public Long getModifiedDuration() {
+	public BigDecimal getModifiedDuration() {
 		return modifiedDuration;
 	}
 
-	public void setModifiedDuration(Long modifiedDuration) {
+	public void setModifiedDuration(BigDecimal modifiedDuration) {
 		this.modifiedDuration = modifiedDuration;
 	}
 
@@ -879,11 +883,11 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.interestRateShockBps = interestRateShockBps;
 	}
 
-	public Long getInterestRateLimit() {
+	public BigDecimal getInterestRateLimit() {
 		return interestRateLimit;
 	}
 
-	public void setInterestRateLimit(Long interestRateLimit) {
+	public void setInterestRateLimit(BigDecimal interestRateLimit) {
 		this.interestRateLimit = interestRateLimit;
 	}
 
@@ -895,19 +899,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.interestRateStatus = interestRateStatus;
 	}
 
-	public Long getDv01Aed() {
+	public BigDecimal getDv01Aed() {
 		return dv01Aed;
 	}
 
-	public void setDv01Aed(Long dv01Aed) {
+	public void setDv01Aed(BigDecimal dv01Aed) {
 		this.dv01Aed = dv01Aed;
 	}
 
-	public Long getDv01LimitAed() {
+	public BigDecimal getDv01LimitAed() {
 		return dv01LimitAed;
 	}
 
-	public void setDv01LimitAed(Long dv01LimitAed) {
+	public void setDv01LimitAed(BigDecimal dv01LimitAed) {
 		this.dv01LimitAed = dv01LimitAed;
 	}
 
@@ -919,19 +923,19 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.dv01Status = dv01Status;
 	}
 
-	public Long getDv01TenorGapLt3Aed() {
+	public BigDecimal getDv01TenorGapLt3Aed() {
 		return dv01TenorGapLt3Aed;
 	}
 
-	public void setDv01TenorGapLt3Aed(Long dv01TenorGapLt3Aed) {
+	public void setDv01TenorGapLt3Aed(BigDecimal dv01TenorGapLt3Aed) {
 		this.dv01TenorGapLt3Aed = dv01TenorGapLt3Aed;
 	}
 
-	public Long getDv01TenorGapGt3Aed() {
+	public BigDecimal getDv01TenorGapGt3Aed() {
 		return dv01TenorGapGt3Aed;
 	}
 
-	public void setDv01TenorGapGt3Aed(Long dv01TenorGapGt3Aed) {
+	public void setDv01TenorGapGt3Aed(BigDecimal dv01TenorGapGt3Aed) {
 		this.dv01TenorGapGt3Aed = dv01TenorGapGt3Aed;
 	}
 
@@ -943,11 +947,11 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.dv01Check = dv01Check;
 	}
 
-	public Long getCs01Aed() {
+	public BigDecimal getCs01Aed() {
 		return cs01Aed;
 	}
 
-	public void setCs01Aed(Long cs01Aed) {
+	public void setCs01Aed(BigDecimal cs01Aed) {
 		this.cs01Aed = cs01Aed;
 	}
 
@@ -959,11 +963,11 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.cs01ShockBps = cs01ShockBps;
 	}
 
-	public Long getCs01Limit() {
+	public BigDecimal getCs01Limit() {
 		return cs01Limit;
 	}
 
-	public void setCs01Limit(Long cs01Limit) {
+	public void setCs01Limit(BigDecimal cs01Limit) {
 		this.cs01Limit = cs01Limit;
 	}
 
@@ -975,27 +979,27 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.cs01Status = cs01Status;
 	}
 
-	public Long getCs01InvestmentGradeAed() {
+	public BigDecimal getCs01InvestmentGradeAed() {
 		return cs01InvestmentGradeAed;
 	}
 
-	public void setCs01InvestmentGradeAed(Long cs01InvestmentGradeAed) {
+	public void setCs01InvestmentGradeAed(BigDecimal cs01InvestmentGradeAed) {
 		this.cs01InvestmentGradeAed = cs01InvestmentGradeAed;
 	}
 
-	public Long getCs01SubInvestmentAed() {
+	public BigDecimal getCs01SubInvestmentAed() {
 		return cs01SubInvestmentAed;
 	}
 
-	public void setCs01SubInvestmentAed(Long cs01SubInvestmentAed) {
+	public void setCs01SubInvestmentAed(BigDecimal cs01SubInvestmentAed) {
 		this.cs01SubInvestmentAed = cs01SubInvestmentAed;
 	}
 
-	public Long getCs01UnratedAed() {
+	public BigDecimal getCs01UnratedAed() {
 		return cs01UnratedAed;
 	}
 
-	public void setCs01UnratedAed(Long cs01UnratedAed) {
+	public void setCs01UnratedAed(BigDecimal cs01UnratedAed) {
 		this.cs01UnratedAed = cs01UnratedAed;
 	}
 
@@ -1007,11 +1011,11 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.cs01Check = cs01Check;
 	}
 
-	public Long getBetaEquity() {
+	public BigDecimal getBetaEquity() {
 		return betaEquity;
 	}
 
-	public void setBetaEquity(Long betaEquity) {
+	public void setBetaEquity(BigDecimal betaEquity) {
 		this.betaEquity = betaEquity;
 	}
 
@@ -1023,11 +1027,11 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.equityShockBps = equityShockBps;
 	}
 
-	public Long getEquityLimit() {
+	public BigDecimal getEquityLimit() {
 		return equityLimit;
 	}
 
-	public void setEquityLimit(Long equityLimit) {
+	public void setEquityLimit(BigDecimal equityLimit) {
 		this.equityLimit = equityLimit;
 	}
 
@@ -1039,115 +1043,115 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.equityStatus = equityStatus;
 	}
 
-	public Long getCreditSpreadImpactAed() {
+	public BigDecimal getCreditSpreadImpactAed() {
 		return creditSpreadImpactAed;
 	}
 
-	public void setCreditSpreadImpactAed(Long creditSpreadImpactAed) {
+	public void setCreditSpreadImpactAed(BigDecimal creditSpreadImpactAed) {
 		this.creditSpreadImpactAed = creditSpreadImpactAed;
 	}
 
-	public Long getCreditSensitiveImpactPct() {
+	public BigDecimal getCreditSensitiveImpactPct() {
 		return creditSensitiveImpactPct;
 	}
 
-	public void setCreditSensitiveImpactPct(Long creditSensitiveImpactPct) {
+	public void setCreditSensitiveImpactPct(BigDecimal creditSensitiveImpactPct) {
 		this.creditSensitiveImpactPct = creditSensitiveImpactPct;
 	}
 
-	public Long getInterestRateImpactAed() {
+	public BigDecimal getInterestRateImpactAed() {
 		return interestRateImpactAed;
 	}
 
-	public void setInterestRateImpactAed(Long interestRateImpactAed) {
+	public void setInterestRateImpactAed(BigDecimal interestRateImpactAed) {
 		this.interestRateImpactAed = interestRateImpactAed;
 	}
 
-	public Long getRateSensitiveImpactPct() {
+	public BigDecimal getRateSensitiveImpactPct() {
 		return rateSensitiveImpactPct;
 	}
 
-	public void setRateSensitiveImpactPct(Long rateSensitiveImpactPct) {
+	public void setRateSensitiveImpactPct(BigDecimal rateSensitiveImpactPct) {
 		this.rateSensitiveImpactPct = rateSensitiveImpactPct;
 	}
 
-	public Long getFxImpactAed() {
+	public BigDecimal getFxImpactAed() {
 		return fxImpactAed;
 	}
 
-	public void setFxImpactAed(Long fxImpactAed) {
+	public void setFxImpactAed(BigDecimal fxImpactAed) {
 		this.fxImpactAed = fxImpactAed;
 	}
 
-	public Long getFxSensitiveImpactPct() {
+	public BigDecimal getFxSensitiveImpactPct() {
 		return fxSensitiveImpactPct;
 	}
 
-	public void setFxSensitiveImpactPct(Long fxSensitiveImpactPct) {
+	public void setFxSensitiveImpactPct(BigDecimal fxSensitiveImpactPct) {
 		this.fxSensitiveImpactPct = fxSensitiveImpactPct;
 	}
 
-	public Long getEquityImpactAed() {
+	public BigDecimal getEquityImpactAed() {
 		return equityImpactAed;
 	}
 
-	public void setEquityImpactAed(Long equityImpactAed) {
+	public void setEquityImpactAed(BigDecimal equityImpactAed) {
 		this.equityImpactAed = equityImpactAed;
 	}
 
-	public Long getEquitySensitiveImpactPct() {
+	public BigDecimal getEquitySensitiveImpactPct() {
 		return equitySensitiveImpactPct;
 	}
 
-	public void setEquitySensitiveImpactPct(Long equitySensitiveImpactPct) {
+	public void setEquitySensitiveImpactPct(BigDecimal equitySensitiveImpactPct) {
 		this.equitySensitiveImpactPct = equitySensitiveImpactPct;
 	}
 
-	public Long getCommoditiesImpactAed() {
+	public BigDecimal getCommoditiesImpactAed() {
 		return commoditiesImpactAed;
 	}
 
-	public void setCommoditiesImpactAed(Long commoditiesImpactAed) {
+	public void setCommoditiesImpactAed(BigDecimal commoditiesImpactAed) {
 		this.commoditiesImpactAed = commoditiesImpactAed;
 	}
 
-	public Long getCommoditySensitiveImpactPct() {
+	public BigDecimal getCommoditySensitiveImpactPct() {
 		return commoditySensitiveImpactPct;
 	}
 
-	public void setCommoditySensitiveImpactPct(Long commoditySensitiveImpactPct) {
+	public void setCommoditySensitiveImpactPct(BigDecimal commoditySensitiveImpactPct) {
 		this.commoditySensitiveImpactPct = commoditySensitiveImpactPct;
 	}
 
-	public Long getJtdLossImpactAed() {
+	public BigDecimal getJtdLossImpactAed() {
 		return jtdLossImpactAed;
 	}
 
-	public void setJtdLossImpactAed(Long jtdLossImpactAed) {
+	public void setJtdLossImpactAed(BigDecimal jtdLossImpactAed) {
 		this.jtdLossImpactAed = jtdLossImpactAed;
 	}
 
-	public Long getJtdRelativeImpactPct() {
+	public BigDecimal getJtdRelativeImpactPct() {
 		return jtdRelativeImpactPct;
 	}
 
-	public void setJtdRelativeImpactPct(Long jtdRelativeImpactPct) {
+	public void setJtdRelativeImpactPct(BigDecimal jtdRelativeImpactPct) {
 		this.jtdRelativeImpactPct = jtdRelativeImpactPct;
 	}
 
-	public Long getOverallImpactAed() {
+	public BigDecimal getOverallImpactAed() {
 		return overallImpactAed;
 	}
 
-	public void setOverallImpactAed(Long overallImpactAed) {
+	public void setOverallImpactAed(BigDecimal overallImpactAed) {
 		this.overallImpactAed = overallImpactAed;
 	}
 
-	public Long getCoreTier1RelativeImpactPct() {
+	public BigDecimal getCoreTier1RelativeImpactPct() {
 		return coreTier1RelativeImpactPct;
 	}
 
-	public void setCoreTier1RelativeImpactPct(Long coreTier1RelativeImpactPct) {
+	public void setCoreTier1RelativeImpactPct(BigDecimal coreTier1RelativeImpactPct) {
 		this.coreTier1RelativeImpactPct = coreTier1RelativeImpactPct;
 	}
 
@@ -1247,6 +1251,14 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.entryTime = entryTime;
 	}
 
+	public Date getVerifyTime() {
+		return verifyTime;
+	}
+
+	public void setVerifyTime(Date verifyTime) {
+		this.verifyTime = verifyTime;
+	}
+
 	public Date getModifyTime() {
 		return modifyTime;
 	}
@@ -1255,35 +1267,39 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.modifyTime = modifyTime;
 	}
 
-	public RT_Investment_Risk_Data_Dashboard_Template(String sI_NO, Date dataDate, String bankName,
+	public RT_Investment_Risk_Data_Dashboard_Template(Long sI_NO, Date dataDate, String bankName,
 			String groupHeadOfficeSubsidiary, String subsidiary, String bankSymbol, String conventionalIslamic,
-			String localForeign, String cbuAeTiering, Long assetBalanceSheetSizeAed, Long investmentBookSizeAed,
-			Long bookSizeTotalAssetsPct, Long ytdNetPnlAed, Long ytdFvtociUnrealizedLossAed, Long cet1Aed,
-			Long uglCoreTier1RelativeImpactPct, Long ytdAmortizedUnrealizedLossAed, Long ytdHqlaAcUnrealizedLossAed,
-			Long hqlaAcCoreTier1ImpactPct, String irVarConfidenceInterval, String irVarHoldingPeriod,
-			Long irFixedIncomeExposureAed, Long irVarExposureAed, Long irVarLimitAed, String irStatus,
-			Long irVarImpactPct, String csVarConfidenceInterval, String csVarHoldingPeriod,
-			Long csFixedIncomeExposureAed, Long csVarExposureAed, Long csVarLimitAed, String csStatus,
-			Long csVarImpactPct, String fxVarConfidenceInterval, String fxVarHoldingPeriod, Long fxExposureAed,
-			Long fxVarExposureAed, Long fxVarLimitAed, String fxStatus, Long fxVarImpactPct,
-			String eqVarConfidenceInterval, String eqVarHoldingPeriod, Long eqExposureAed, Long eqVarExposureAed,
-			Long eqVarLimitAed, String eqStatus, Long eqVarImpactPct, String commVarConfidenceInterval,
-			String commVarHoldingPeriod, Long commExposureAed, Long commVarExposureAed, Long commVarLimitAed,
-			String commStatus, Long commVarImpactPct, String overallVarConfidenceInterval,
-			String overallVarHoldingPeriod, Long varExposureAed, Long varLimitAed, String overallVarStatus,
-			Long portfolioRelativeImpactPct, Long expectedShortfallExposureAed, Long expectedShortfallLimitAed,
-			String expectedShortfallStatus, Long expectedShortfallImpactPct, Long modifiedDuration,
-			Integer interestRateShockBps, Long interestRateLimit, String interestRateStatus, Long dv01Aed,
-			Long dv01LimitAed, String dv01Status, Long dv01TenorGapLt3Aed, Long dv01TenorGapGt3Aed, String dv01Check,
-			Long cs01Aed, Integer cs01ShockBps, Long cs01Limit, String cs01Status, Long cs01InvestmentGradeAed,
-			Long cs01SubInvestmentAed, Long cs01UnratedAed, String cs01Check, Long betaEquity, Integer equityShockBps,
-			Long equityLimit, String equityStatus, Long creditSpreadImpactAed, Long creditSensitiveImpactPct,
-			Long interestRateImpactAed, Long rateSensitiveImpactPct, Long fxImpactAed, Long fxSensitiveImpactPct,
-			Long equityImpactAed, Long equitySensitiveImpactPct, Long commoditiesImpactAed,
-			Long commoditySensitiveImpactPct, Long jtdLossImpactAed, Long jtdRelativeImpactPct, Long overallImpactAed,
-			Long coreTier1RelativeImpactPct, Date reportSubmitDate, String entityFlg, String modifyFlg, String delFlg,
-			Date reportFromDate, Date reportToDate, Date reportDate, String reportCode, String entryUser,
-			String modifyUser, String verifyUser, Date entryTime, Date modifyTime) {
+			String localForeign, String cbuAeTiering, BigDecimal assetBalanceSheetSizeAed,
+			BigDecimal investmentBookSizeAed, BigDecimal bookSizeTotalAssetsPct, BigDecimal ytdNetPnlAed,
+			BigDecimal ytdFvtociUnrealizedLossAed, BigDecimal cet1Aed, BigDecimal uglCoreTier1RelativeImpactPct,
+			BigDecimal ytdAmortizedUnrealizedLossAed, BigDecimal ytdHqlaAcUnrealizedLossAed,
+			BigDecimal hqlaAcCoreTier1ImpactPct, BigDecimal irVarConfidenceInterval, String irVarHoldingPeriod,
+			BigDecimal irFixedIncomeExposureAed, BigDecimal irVarExposureAed, BigDecimal irVarLimitAed, String irStatus,
+			BigDecimal irVarImpactPct, BigDecimal csVarConfidenceInterval, String csVarHoldingPeriod,
+			BigDecimal csFixedIncomeExposureAed, BigDecimal csVarExposureAed, BigDecimal csVarLimitAed, String csStatus,
+			BigDecimal csVarImpactPct, BigDecimal fxVarConfidenceInterval, String fxVarHoldingPeriod,
+			BigDecimal fxExposureAed, BigDecimal fxVarExposureAed, BigDecimal fxVarLimitAed, String fxStatus,
+			BigDecimal fxVarImpactPct, BigDecimal eqVarConfidenceInterval, String eqVarHoldingPeriod,
+			BigDecimal eqExposureAed, BigDecimal eqVarExposureAed, BigDecimal eqVarLimitAed, String eqStatus,
+			BigDecimal eqVarImpactPct, BigDecimal commVarConfidenceInterval, String commVarHoldingPeriod,
+			BigDecimal commExposureAed, BigDecimal commVarExposureAed, BigDecimal commVarLimitAed, String commStatus,
+			BigDecimal commVarImpactPct, BigDecimal overallVarConfidenceInterval, String overallVarHoldingPeriod,
+			BigDecimal varExposureAed, BigDecimal varLimitAed, String overallVarStatus,
+			BigDecimal portfolioRelativeImpactPct, BigDecimal expectedShortfallExposureAed,
+			BigDecimal expectedShortfallLimitAed, String expectedShortfallStatus, BigDecimal expectedShortfallImpactPct,
+			BigDecimal modifiedDuration, Integer interestRateShockBps, BigDecimal interestRateLimit,
+			String interestRateStatus, BigDecimal dv01Aed, BigDecimal dv01LimitAed, String dv01Status,
+			BigDecimal dv01TenorGapLt3Aed, BigDecimal dv01TenorGapGt3Aed, String dv01Check, BigDecimal cs01Aed,
+			Integer cs01ShockBps, BigDecimal cs01Limit, String cs01Status, BigDecimal cs01InvestmentGradeAed,
+			BigDecimal cs01SubInvestmentAed, BigDecimal cs01UnratedAed, String cs01Check, BigDecimal betaEquity,
+			Integer equityShockBps, BigDecimal equityLimit, String equityStatus, BigDecimal creditSpreadImpactAed,
+			BigDecimal creditSensitiveImpactPct, BigDecimal interestRateImpactAed, BigDecimal rateSensitiveImpactPct,
+			BigDecimal fxImpactAed, BigDecimal fxSensitiveImpactPct, BigDecimal equityImpactAed,
+			BigDecimal equitySensitiveImpactPct, BigDecimal commoditiesImpactAed,
+			BigDecimal commoditySensitiveImpactPct, BigDecimal jtdLossImpactAed, BigDecimal jtdRelativeImpactPct,
+			BigDecimal overallImpactAed, BigDecimal coreTier1RelativeImpactPct, Date reportSubmitDate, String entityFlg,
+			String modifyFlg, String delFlg, Date reportFromDate, Date reportToDate, Date reportDate, String reportCode,
+			String entryUser, String modifyUser, String verifyUser, Date entryTime, Date verifyTime, Date modifyTime) {
 		super();
 		SI_NO = sI_NO;
 		this.dataDate = dataDate;
@@ -1397,6 +1413,7 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		this.modifyUser = modifyUser;
 		this.verifyUser = verifyUser;
 		this.entryTime = entryTime;
+		this.verifyTime = verifyTime;
 		this.modifyTime = modifyTime;
 	}
 
@@ -1405,5 +1422,6 @@ public class RT_Investment_Risk_Data_Dashboard_Template {
 		// TODO Auto-generated constructor stub
 	}
     
-	
+    
+
 }
