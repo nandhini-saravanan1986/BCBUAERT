@@ -116,6 +116,7 @@ import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
+import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
@@ -143,6 +144,8 @@ public class XBRLNavigationController {
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
 
+	@Autowired 
+	AuditService auditService;
 	@Autowired
 	RT_Investment_Risk_Data_Dashboard_TemplateRepository RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS;
 	@Autowired
@@ -514,13 +517,20 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	@PostMapping("/createDataControl")
 	@ResponseBody
 	public String createDataControl(
-			@RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
-			@RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
-			@ModelAttribute RT_DataControl dto) {
-		System.out.println("Controller: createOrUpdateNostro() called");
-		System.out.println("report name is: " + report_name);
-		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
+	        @RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
+	        @RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
+	        @ModelAttribute RT_DataControl dto,
+	        HttpServletRequest req
+	) {
+	    System.out.println("Controller: createOrUpdateNostro() called");
+	    System.out.println("report name is: " + report_name);
+
+	    String userid = (String) req.getSession().getAttribute("USERID");
+	    auditService.createBusinessAudit(userid, "ADD", "DATACONTROL", null, "BCBUAE_DATACONTROL");
+
+	    return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
+
 
 	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
@@ -1078,18 +1088,24 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	// For download excel for downloadNostroExcel
 
 	@RequestMapping(value = "downloadNostroExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadNostroExcel() throws IOException {
-		System.out.println("Entered controller downloadNostroExcel");
+	public ResponseEntity<byte[]> downloadNostroExcel(HttpServletRequest req) throws IOException {
+	    System.out.println("Entered controller downloadNostroExcel");
 
-		File excelFile = nostroService.generateNostroExcel();
-		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+	    String userid = (String) req.getSession().getAttribute("USERID");
 
-		HttpHeaders headersResponse = new HttpHeaders();
-		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xls");
+	    auditService.createBusinessAudit(userid, "DOWNLOAD", "NOSTRO_EXCEL", null, "BCBUAE_NOSTRO_BALANCE");
 
-		return ResponseEntity.ok().headers(headersResponse).body(excelData);
+	    // ✅ Generate Excel file and prepare response
+	    File excelFile = nostroService.generateNostroExcel();
+	    byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+
+	    HttpHeaders headersResponse = new HttpHeaders();
+	    headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	    headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xls");
+
+	    return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
+
 
 	@Autowired
 	private RT_TradeMarketriskDataRepository trade_market_risk_repo;

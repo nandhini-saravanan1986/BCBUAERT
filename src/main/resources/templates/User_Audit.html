@@ -10,7 +10,8 @@
 	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
-
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	
 <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
 	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 <script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
@@ -265,7 +266,7 @@
 	})
 
 	function goHome() {
-		window.location.href = '/BRBS/Dashboard';
+		window.location.href = '/BCDRS/Dashboard';
 	}
 	function goBack() {
 		window.history.back();
@@ -349,11 +350,10 @@
 
 	/* Style the DataTable header to match the image */
 	#userAuditLevelTb thead th {
-		background-color: #37474F;
 		/* dark blue-gray */
-		color: white;
+		color: BLACK;
 		font-weight: bold;
-		font-size: 13px;
+		font-size: 16px;
 		text-align: left;
 		border: 1px solid #dee2e6;
 	}
@@ -362,7 +362,7 @@
 	#userAuditLevelTb tbody td {
 		text-align: left;
 		border: 1px solid #dee2e6;
-		font-size: 13px;
+		font-size: 15px;
 	}
 
 	/* Zebra striping */
@@ -416,7 +416,7 @@
 	}
 
 	.table-container {
-		max-height: 500px;
+		max-height: 450px;
 		/* You can adjust this height */
 		overflow-y: auto;
 	}
@@ -471,7 +471,7 @@
 									<td th:text="${auditdata.entry_user}"></td>
 									<td
 										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'dd-MM-yyyy') : 'N/A'}">
-									</td>
+								</td>
 									<td
 										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'HH:mm:ss') : 'N/A'}">
 									</td>
@@ -484,10 +484,10 @@
 						</table>
 					</div>
 
-					<div class="card-footer text-center" style="background-color: #376275;">
-						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
-							onclick="goHome();">Home</button>
-						<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+					<div class="card-footer text-center">
+						<button type="button" class="custom-tab-btn" id="btnHome"
+							onclick="goHome();">Homes</button>
+						<button type="button" class="custom-tab-btn" id="btnBack"
 							onclick="goBack();">Back</button>
 					</div>
 				</div>

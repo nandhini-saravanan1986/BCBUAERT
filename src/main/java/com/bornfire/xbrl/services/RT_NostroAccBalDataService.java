@@ -6,7 +6,10 @@ import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -30,43 +33,144 @@ public class RT_NostroAccBalDataService {
 	RT_NostroAccBalDataRepository nostroAccBalRepo;
 
 	@Autowired
+	AuditService auditservice;
+	
+	@Autowired
 	private Environment env;
 
 	public boolean updateNostro(RT_NostroAccBalData updatedData) {
-		Optional<RT_NostroAccBalData> existingOpt = nostroAccBalRepo.findById(updatedData.getAccountNo());
+	    Optional<RT_NostroAccBalData> existingOpt = nostroAccBalRepo.findById(updatedData.getAccountNo());
 
-		if (existingOpt.isPresent()) {
-			RT_NostroAccBalData existing = existingOpt.get();
+	    if (existingOpt.isPresent()) {
+	        RT_NostroAccBalData existing = existingOpt.get();
+	        Map<String, String> changes = new LinkedHashMap<>();
 
-			// Only update fields expected from the form
-			existing.setBankName(updatedData.getBankName());
-			existing.setHeadOfficeSubsidiary(updatedData.getHeadOfficeSubsidiary());
-			existing.setSubsidiary(updatedData.getSubsidiary());
-			existing.setBankSymbol(updatedData.getBankSymbol());
-			existing.setConventionalIslamic(updatedData.getConventionalIslamic());
-			existing.setLocalForeign(updatedData.getLocalForeign());
-			existing.setCbuaeTiering(updatedData.getCbuaeTiering());
-			existing.setCounterpartyNostroAccount(updatedData.getCounterpartyNostroAccount());
-			existing.setFinalRatingBanks(updatedData.getFinalRatingBanks());
-			existing.setFinalRatingCbuae(updatedData.getFinalRatingCbuae());
-			existing.setCountryOfRisk(updatedData.getCountryOfRisk());
-			existing.setCbuaeGeographicalZone(updatedData.getCbuaeGeographicalZone());
-			existing.setCurrency(updatedData.getCurrency());
-			existing.setCounterpartySettlementDate(updatedData.getCounterpartySettlementDate());
-			existing.setCounterpartyBalance(updatedData.getCounterpartyBalance());
-			existing.setCounterpartyBalanceAed(updatedData.getCounterpartyBalanceAed());
-			existing.setBankInternalSettlementDate(updatedData.getBankInternalSettlementDate());
-			existing.setBankBalance(updatedData.getBankBalance());
-			existing.setBankBalanceAed(updatedData.getBankBalanceAed());
-			existing.setGap(updatedData.getGap());
-			existing.setReportSubmitDate(updatedData.getReportSubmitDate());
+	        // Compare fields before updating and track changes
+	        if (!Objects.equals(existing.getBankName(), updatedData.getBankName())) {
+	            changes.put("bankName", "OldValue: " + existing.getBankName() + ", NewValue: " + updatedData.getBankName());
+	        }
 
-			// save updated data
-			nostroAccBalRepo.save(existing);
-			return true;
-		} else {
-			return false; // record not found
-		}
+	        if (!Objects.equals(existing.getHeadOfficeSubsidiary(), updatedData.getHeadOfficeSubsidiary())) {
+	            changes.put("headOfficeSubsidiary", "OldValue: " + existing.getHeadOfficeSubsidiary() + ", NewValue: " + updatedData.getHeadOfficeSubsidiary());
+	        }
+
+	        if (!Objects.equals(existing.getSubsidiary(), updatedData.getSubsidiary())) {
+	            changes.put("subsidiary", "OldValue: " + existing.getSubsidiary() + ", NewValue: " + updatedData.getSubsidiary());
+	        }
+
+	        if (!Objects.equals(existing.getBankSymbol(), updatedData.getBankSymbol())) {
+	            changes.put("bankSymbol", "OldValue: " + existing.getBankSymbol() + ", NewValue: " + updatedData.getBankSymbol());
+	        }
+
+	        if (!Objects.equals(existing.getConventionalIslamic(), updatedData.getConventionalIslamic())) {
+	            changes.put("conventionalIslamic", "OldValue: " + existing.getConventionalIslamic() + ", NewValue: " + updatedData.getConventionalIslamic());
+	        }
+
+	        if (!Objects.equals(existing.getLocalForeign(), updatedData.getLocalForeign())) {
+	            changes.put("localForeign", "OldValue: " + existing.getLocalForeign() + ", NewValue: " + updatedData.getLocalForeign());
+	        }
+
+	        if (!Objects.equals(existing.getCbuaeTiering(), updatedData.getCbuaeTiering())) {
+	            changes.put("cbuaeTiering", "OldValue: " + existing.getCbuaeTiering() + ", NewValue: " + updatedData.getCbuaeTiering());
+	        }
+
+	        if (!Objects.equals(existing.getCounterpartyNostroAccount(), updatedData.getCounterpartyNostroAccount())) {
+	            changes.put("counterpartyNostroAccount", "OldValue: " + existing.getCounterpartyNostroAccount() + ", NewValue: " + updatedData.getCounterpartyNostroAccount());
+	        }
+
+	        if (!Objects.equals(existing.getFinalRatingBanks(), updatedData.getFinalRatingBanks())) {
+	            changes.put("finalRatingBanks", "OldValue: " + existing.getFinalRatingBanks() + ", NewValue: " + updatedData.getFinalRatingBanks());
+	        }
+
+	        if (!Objects.equals(existing.getFinalRatingCbuae(), updatedData.getFinalRatingCbuae())) {
+	            changes.put("finalRatingCbuae", "OldValue: " + existing.getFinalRatingCbuae() + ", NewValue: " + updatedData.getFinalRatingCbuae());
+	        }
+
+	        if (!Objects.equals(existing.getCountryOfRisk(), updatedData.getCountryOfRisk())) {
+	            changes.put("countryOfRisk", "OldValue: " + existing.getCountryOfRisk() + ", NewValue: " + updatedData.getCountryOfRisk());
+	        }
+
+	        if (!Objects.equals(existing.getCbuaeGeographicalZone(), updatedData.getCbuaeGeographicalZone())) {
+	            changes.put("cbuaeGeographicalZone", "OldValue: " + existing.getCbuaeGeographicalZone() + ", NewValue: " + updatedData.getCbuaeGeographicalZone());
+	        }
+
+	        if (!Objects.equals(existing.getCurrency(), updatedData.getCurrency())) {
+	            changes.put("currency", "OldValue: " + existing.getCurrency() + ", NewValue: " + updatedData.getCurrency());
+	        }
+
+	        if (!Objects.equals(existing.getCounterpartySettlementDate(), updatedData.getCounterpartySettlementDate())) {
+	            changes.put("counterpartySettlementDate", "OldValue: " + existing.getCounterpartySettlementDate() + ", NewValue: " + updatedData.getCounterpartySettlementDate());
+	        }
+
+	        if (!Objects.equals(existing.getCounterpartyBalance(), updatedData.getCounterpartyBalance())) {
+	            changes.put("counterpartyBalance", "OldValue: " + existing.getCounterpartyBalance() + ", NewValue: " + updatedData.getCounterpartyBalance());
+	        }
+
+	        if (!Objects.equals(existing.getCounterpartyBalanceAed(), updatedData.getCounterpartyBalanceAed())) {
+	            changes.put("counterpartyBalanceAed", "OldValue: " + existing.getCounterpartyBalanceAed() + ", NewValue: " + updatedData.getCounterpartyBalanceAed());
+	        }
+
+	        if (!Objects.equals(existing.getBankInternalSettlementDate(), updatedData.getBankInternalSettlementDate())) {
+	            changes.put("bankInternalSettlementDate", "OldValue: " + existing.getBankInternalSettlementDate() + ", NewValue: " + updatedData.getBankInternalSettlementDate());
+	        }
+
+	        if (!Objects.equals(existing.getBankBalance(), updatedData.getBankBalance())) {
+	            changes.put("bankBalance", "OldValue: " + existing.getBankBalance() + ", NewValue: " + updatedData.getBankBalance());
+	        }
+
+	        if (!Objects.equals(existing.getBankBalanceAed(), updatedData.getBankBalanceAed())) {
+	            changes.put("bankBalanceAed", "OldValue: " + existing.getBankBalanceAed() + ", NewValue: " + updatedData.getBankBalanceAed());
+	        }
+
+	        if (!Objects.equals(existing.getGap(), updatedData.getGap())) {
+	            changes.put("gap", "OldValue: " + existing.getGap() + ", NewValue: " + updatedData.getGap());
+	        }
+
+	        if (!Objects.equals(existing.getReportSubmitDate(), updatedData.getReportSubmitDate())) {
+	            changes.put("reportSubmitDate", "OldValue: " + existing.getReportSubmitDate() + ", NewValue: " + updatedData.getReportSubmitDate());
+	        }
+
+	        // Update all fields (as you originally had)
+	        existing.setBankName(updatedData.getBankName());
+	        existing.setHeadOfficeSubsidiary(updatedData.getHeadOfficeSubsidiary());
+	        existing.setSubsidiary(updatedData.getSubsidiary());
+	        existing.setBankSymbol(updatedData.getBankSymbol());
+	        existing.setConventionalIslamic(updatedData.getConventionalIslamic());
+	        existing.setLocalForeign(updatedData.getLocalForeign());
+	        existing.setCbuaeTiering(updatedData.getCbuaeTiering());
+	        existing.setCounterpartyNostroAccount(updatedData.getCounterpartyNostroAccount());
+	        existing.setFinalRatingBanks(updatedData.getFinalRatingBanks());
+	        existing.setFinalRatingCbuae(updatedData.getFinalRatingCbuae());
+	        existing.setCountryOfRisk(updatedData.getCountryOfRisk());
+	        existing.setCbuaeGeographicalZone(updatedData.getCbuaeGeographicalZone());
+	        existing.setCurrency(updatedData.getCurrency());
+	        existing.setCounterpartySettlementDate(updatedData.getCounterpartySettlementDate());
+	        existing.setCounterpartyBalance(updatedData.getCounterpartyBalance());
+	        existing.setCounterpartyBalanceAed(updatedData.getCounterpartyBalanceAed());
+	        existing.setBankInternalSettlementDate(updatedData.getBankInternalSettlementDate());
+	        existing.setBankBalance(updatedData.getBankBalance());
+	        existing.setBankBalanceAed(updatedData.getBankBalanceAed());
+	        existing.setGap(updatedData.getGap());
+	        existing.setReportSubmitDate(updatedData.getReportSubmitDate());
+
+	        // Save the data
+	        nostroAccBalRepo.save(existing);
+
+	        // Audit only if any field was changed
+	        if (!changes.isEmpty()) {
+	            auditservice.createBusinessAudit(
+	                updatedData.getAccountNo(),           // Unique ID
+	                "MODIFY",                             // Action
+	                "NOSTRO_ACC_SCREEN",                  // Screen name
+	                changes,                              // Changed fields map
+	                "RT_NOSTRO_ACC_BAL_DATA"              // Table name
+	            );
+	        }
+
+	        return true;
+	    } else {
+	        return false; // record not found
+	    }
 	}
 
 	public File generateNostroExcel() {
