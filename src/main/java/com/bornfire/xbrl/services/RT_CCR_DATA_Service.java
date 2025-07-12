@@ -118,7 +118,7 @@ public class RT_CCR_DATA_Service {
 		}
 
 		String templateDir = env.getProperty("output.exportpathtemp");
-		String templateFileName = "CCR_DATA.xls";
+		String templateFileName = "CBUAE_CCR_Data_Template.xls";
 		Path templatePath = Paths.get(templateDir, templateFileName);
 
 		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -350,6 +350,10 @@ public class RT_CCR_DATA_Service {
 					cell30.setCellValue(
 							record.getIncrementalPfe() != null ? record.getIncrementalPfe().doubleValue() : 0.0);
 					cell30.setCellStyle(numberStyle);
+				}
+				// Auto-size all 31 columns
+				for (int i = 0; i <= 30; i++) {
+				    sheet.autoSizeColumn(i);
 				}
 
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();

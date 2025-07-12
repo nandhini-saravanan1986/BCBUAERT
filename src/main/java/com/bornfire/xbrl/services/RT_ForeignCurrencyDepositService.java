@@ -312,9 +312,10 @@ public class RT_ForeignCurrencyDepositService {
 					    cell25.setCellValue(((BigDecimal) fx[25]).doubleValue());
 					else
 					    cell25.setCellValue("");
-
-
-					
+				}
+				// Auto-size all 31 columns
+				for (int i = 0; i <= 30; i++) {
+				    sheet.autoSizeColumn(i);
 				}
 
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();

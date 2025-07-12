@@ -74,7 +74,7 @@ PURPOSE		: F Risk Data Report
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+.btn-primary:not  (:disabled ):not (.disabled ).active, .btn-primary:not
 	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
 	{
 	color: #fff;
@@ -505,7 +505,7 @@ label.error {
     					const a = document.createElement('a');
     					a.style.display = 'none';
     					a.href = url;
-    					a.download = 'ForeigncurrencyDeposit.xls';
+    					a.download = 'CBUAE_Foreign_Currency_Deposit_Template.xls';
     					document.body.appendChild(a);
 
     					a.click();
@@ -513,7 +513,7 @@ label.error {
     					window.URL.revokeObjectURL(url);
     					document.body.removeChild(a);
 
-    					message = 'ForeignCUrrencyDeposit.xls has been downloaded successfully.';
+    					message = 'CBUAE_Foreign_Currency_Deposit_Template.xls has been downloaded successfully.';
     				} else {
     					message = 'No data available to download.';
     				}
@@ -917,14 +917,19 @@ label.error {
           <td th:text="${data.industryGcis}"></td>
           <td th:text="${data.counterpartyCountryRisk}"></td>
           <td th:text="${data.cbuaeRegionalZone}"></td>
-          <td th:text="${data.nominal}"></td>
-          <td th:text="${data.nominalInAed}"></td>
+         <!-- <td th:text="${data.nominal}"></td>
+          <td th:text="${data.nominalInAed}"></td>-->
+		  
+		  <td th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td th:text="${#numbers.formatDecimal(data.nominalInAed, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.currency}"></td>
           <td th:text="${data.rateType}"></td>
           <td th:text="${data.depositFixedRateOrAdministrativeRate}"></td>
           <td th:text="${data.benchmarkFloatingRate}"></td>
-          <td th:text="${data.tenorFloatingRate}"></td>
-          <td th:text="${data.spreadOverBenchmarkRate}"></td>
+          <!--<td th:text="${data.tenorFloatingRate}"></td>-->
+		  <td th:text="${#numbers.formatDecimal(data.tenorFloatingRate, 1, 'COMMA', 2, 'POINT')}"></td>
+          <!--<td th:text="${data.spreadOverBenchmarkRate}"></td>-->
+		  <td th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
           <td th:text="${data.tenorMths}"></td>
           <td th:text="${data.maturityPeriod}"></td>
@@ -1008,7 +1013,7 @@ label.error {
     </select>
 </div>
   <label class="col-sm-2 col-form-label">Subsidiary</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" id="subsidiary"/></div>
 </div>
 
 <div class="form-group row">
@@ -1027,16 +1032,16 @@ label.error {
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Deposit Internal Reference</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{depositInternalReference}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{depositInternalReference}"  id="depositInternalReference" /></div>
   <label class="col-sm-2 col-form-label">On-Balance Sheet Deposit Type</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{onBalanceSheetDepType}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{onBalanceSheetDepType}"  id="onBalanceSheetDepType" /></div>
 </div>
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Funding Counterparty</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{fundingCounterParty}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{fundingCounterParty}" id="fundingCounterParty"/></div>
   <label class="col-sm-2 col-form-label">Counterparty Type</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{counterpartyType}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{counterpartyType}" id="counterpartyType"/></div>
 </div>
 
 <div class="form-group row">
@@ -1073,42 +1078,41 @@ label.error {
   <label class="col-sm-2 col-form-label">CBUAE Regional Zone</label>
   <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuaeRegionalZone}" id="cbuaeGeographicalZone" readonly /></div>
   <label class="col-sm-2 col-form-label">Nominal</label>
-  <div class="col-sm-4"><input type="number" step="0.01" class="form-control" th:field="*{nominal}" /></div>
+  <div class="col-sm-4"><input type="number" step="0.01" class="form-control" th:field="*{nominal}"  id="nominal"/></div>
 </div>
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Nominal in AED</label>
-  <div class="col-sm-4"><input type="number" step="0.01" class="form-control" th:field="*{nominalInAed}" /></div>
+  <div class="col-sm-4"><input type="number" step="0.01" class="form-control" th:field="*{nominalInAed}" id="nominalInAed"/></div>
   <label class="col-sm-2 col-form-label">Currency</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{currency}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{currency}" id="currency"/></div>
 </div>
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Rate Type</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{rateType}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{rateType}" id="rateType"/></div>
   <label class="col-sm-2 col-form-label">Deposit Fixed/Admin Rate (%)</label>
-  <div class="col-sm-4"><input type="number" step="0.0001" class="form-control" th:field="*{depositFixedRateOrAdministrativeRate}" /></div>
+  <div class="col-sm-4"><input type="number" step="0.0001" class="form-control" th:field="*{depositFixedRateOrAdministrativeRate}" id="depositFixedRateOrAdministrativeRate"/></div>
 </div>
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Benchmark Floating Rate</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmarkFloatingRate}" /></div>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmarkFloatingRate}" id="benchmarkFloatingRate"/></div>
   <label class="col-sm-2 col-form-label">Tenor Floating Rate</label>
-  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{tenorFloatingRate}" /></div>
-</div>
-
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{tenorFloatingRate}" id="tenorFloatingRate"/> </div>
+  </div>
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Spread Over Benchmark Rate</label>
-  <div class="col-sm-4"><input type="number" step="0.0001" class="form-control" th:field="*{spreadOverBenchmarkRate}" /></div>
+  <div class="col-sm-4"><input type="number" step="0.0001" class="form-control" th:field="*{spreadOverBenchmarkRate}" id="spreadOverBenchmarkRate"/></div>
   <label class="col-sm-2 col-form-label">Maturity Date</label>
-  <div class="col-sm-4"><input type="date" class="form-control" th:field="*{maturityDate}" /></div>
+  <div class="col-sm-4"><input type="date" class="form-control" th:field="*{maturityDate}" id="maturityDate"/></div>
 </div>
 
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">Tenor (Mths)</label>
-  <div class="col-sm-4"><input type="number" class="form-control" th:field="*{tenorMths}" /></div>
+  <div class="col-sm-4"><input type="number" class="form-control" th:field="*{tenorMths}" id="tenorMths"/></div>
   <label class="col-sm-2 col-form-label">Maturity Period</label>
-  <div class="col-sm-4"><input type="number" class="form-control" th:field="*{maturityPeriod}" /></div>
+  <div class="col-sm-4"><input type="number" class="form-control" th:field="*{maturityPeriod}" id="maturityPeriod"/></div>
 </div>
 
 
@@ -1377,5 +1381,104 @@ window.onload = function() {
     }
 };
 </script>
+
+<script>
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    headOfficeSubsidiary: 20,
+    subsidiary: 50,
+    bankSymbol: 30,
+    conventionalOrIslamic: 50,
+    localOrForeign: 50,
+    cbuaeTiering: 50,
+    depositInternalReference: 50,
+    onBalanceSheetDepType: 20,
+    fundingCounterParty: 50,
+    counterpartyType: 50,
+    industryGcis: 50,
+    counterpartyCountryRisk: 50,
+    cbuaeRegionalZone: 50,
+    currency: 50,
+    rateType: 50,
+    benchmarkFloatingRate: 20,
+    tenorFloatingRate: 10,
+
+    // NUMBER(p,s) fields
+    nominal: "24,2",
+    nominalInAed: "24,2",
+    depFixedRateOrAdminisRate: "24,2",
+    spreadOverBenchmarkRate: "24,2",
+    tenorMths: "5,2",
+    maturityPeriod: "24,2"
+  };
+
+  function showError(input, msg) {
+    console.log("Showing error for", input.id, msg); // Debug
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
+  }
+
+
+  function clearError(input) {
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
+  }
+
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || !value) {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number") {
+      // Text field with max length
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
+      }
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // Number field
+      const [total, decimal] = rule.split(",").map(Number);
+      const parts = value.split(".");
+      const intLen = parts[0].replace(/^0+/, "").length;
+      const decLen = parts[1] ? parts[1].length : 0;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Optional: Add maxlength attribute to text fields
+        if (typeof fieldRules[id] === "number") {
+          input.setAttribute("maxlength", fieldRules[id]);
+        }
+      }
+    }
+  });
+</script>
+
+
 
 </html>

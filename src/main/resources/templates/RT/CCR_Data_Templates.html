@@ -4,6 +4,7 @@
 CREATED BY	: SANJEEVI S 
 CREATED ON	: 25.06.2025 (Started)
 PURPOSE		: CCR DATA TEMPLATES
+Tested by   : Rajalakshmi
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
@@ -437,7 +438,7 @@ PURPOSE		: CCR DATA TEMPLATES
 				const a = document.createElement('a');
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'CCR_DATA.xls';
+				a.download = 'CBUAE_CCR_Data_Template.xls';
 				document.body.appendChild(a);
 
 				a.click();
@@ -900,7 +901,7 @@ PURPOSE		: CCR DATA TEMPLATES
 							<div class="float-left">
 								<h3
 									style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">
-									CCR_Data_Templates - Edit
+									CCR Data Templates - Edit
 								</h3>
 							</div>
 						</div>
@@ -940,7 +941,7 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{subsidiary}" />
+									<input type="text" class="form-control" th:field="*{subsidiary}" id="subsidiary"/>
 								</div>
 							</div>
 
@@ -978,11 +979,11 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								<label class="col-sm-2 col-form-label"> Counterparty Name</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyName}" />
+									<input type="text" class="form-control" th:field="*{counterpartyName}"  id="counterpartyName"/>
 								</div>
 								<label class="col-sm-2 col-form-label"> Internal Counterparty Ref</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{internalCounterpartyRef}" />
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRef}"  id="internalCounterpartyRef"/>
 								</div>
 							</div>
 							<div class="form-group row">
@@ -990,11 +991,11 @@ PURPOSE		: CCR DATA TEMPLATES
 
 								<label class="col-sm-2 col-form-label"> Internal Counterparty Rating</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{internalCounterpartyRating}" />
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRating}" id="internalCounterpartyRating"/>
 								</div>
 								<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" id="finalRatingCbuae"/>
 								</div>
 
 							</div>
@@ -1477,7 +1478,6 @@ PURPOSE		: CCR DATA TEMPLATES
 			$('#conventionalIslamic').val('');
 			$('#localForeign').val('');
 			$('#cbuaeTiering').val('');
-			$('#cbuaeGeographicalZone').val('');
 			return;
 		}
 
@@ -1490,7 +1490,6 @@ PURPOSE		: CCR DATA TEMPLATES
 				$('#conventionalIslamic').val(data.conventionalIslamic || '');
 				$('#localForeign').val(data.localForeign || '');
 				$('#cbuaeTiering').val(data.cbuaeTiering || '');
-				$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
 			},
 			error: function (xhr, status, error) {
 				console.error('AJAX Error:', error);
@@ -1498,6 +1497,104 @@ PURPOSE		: CCR DATA TEMPLATES
 			}
 		});
 	}
+</script>
+
+<script>
+  const fieldRules = {
+    // VARCHAR2 validations
+    bankName: 100,
+    subsidiary: 50,
+    bankSymbol: 10,
+    conventionalIslamic: 50,
+    cbuaeTiering: 10,
+    cbuaeTieringSecondary: 10,
+    counterpartyName: 50,
+    internalCounterpartyRef: 50,
+    internalCounterpartyRating: 50,
+    finalRatingCbuae: 50,
+    countryOfRisk: 50,
+    cbuaeGeographicalZone: 50,
+    counterpartyType: 50,
+    sector: 50,
+    csa: 10,
+    collateralType: 50,
+    marginCallFrequency: 50,
+
+    // NUMBER(24,2) validations
+    pfe95Aed: "24,2",
+    expectedPositiveExposureAed: "24,2",
+    expectedNegativeExposureAed: "24,2",
+    threshold: "24,2",
+    minimumTransferAmountAed: "24,2",
+    independentAmountAed: "24,2",
+    netCollateralOutstandingAed: "24,2",
+    cvaAed: "24,2",
+    dvaAed: "24,2",
+    bilateralCvaAed: "24,2",
+    fvaAed: "24,2",
+    incrementalPfe: "24,2"
+  };
+
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
+  }
+
+  function clearError(input) {
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
+  }
+
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || !value) {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number") {
+      // Text field
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
+      }
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // Number field
+      const [total, decimal] = rule.split(",").map(Number);
+      const parts = value.split(".");
+      const intLen = parts[0].replace(/^0+/, "").length;
+      const decLen = parts[1] ? parts[1].length : 0;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(
+          input,
+          `Max ${total - decimal} digits before and ${decimal} after decimal`
+        );
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+      }
+    }
+  });
 </script>
 
 </html>
