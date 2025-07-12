@@ -2052,7 +2052,7 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "CCR_DATA.xls";
+			String filename = "CBUAE_CCR_Data_Template.xls";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -2061,7 +2061,7 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
 		} catch (FileNotFoundException e) {
-			logger.error("Controller ERROR: The CCR_DATA.xls template file was not found.", e);
+			logger.error("Controller ERROR: The CBUAE_CCR_Data_Template.xls template file was not found.", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} catch (Exception e) {
 			logger.error("Controller ERROR: A critical error occurred during CCR_DATA file generation.", e);
@@ -2267,7 +2267,7 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 
 	        ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        String filename = "Foreigncurrencydeposit.xls";
+	        String filename = "CBUAE_Foreign_Currency_Deposit_Template.xls";
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
