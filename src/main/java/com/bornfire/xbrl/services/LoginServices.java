@@ -109,90 +109,7 @@ public class LoginServices {
 	 * 
 	 */
 
-	public String addUser(UserProfile userProfile, String formmode, String inputUser) {
-		String msg = "";
-		String userId = (String) session.getAttribute("USERID");
-		try {
-
-			if (formmode.equals("add")) {
-
-				UserProfile up = userProfile;
-				try {
-					String encryptedPassword = PasswordEncryption.getEncryptedPassword(this.password);
-
-					if (up.getLogin_status().equals("Active")) {
-						up.setUser_locked_flg("N");
-					} else {
-						up.setUser_locked_flg("Y");
-					}
-
-					if (up.getUser_status().equals("Active")) {
-						up.setDisable_flg("N");
-					} else {
-						up.setDisable_flg("Y");
-					}
-
-					up.setEntity_flg("N");
-					up.setEntry_time(new Date());
-					up.setEntry_user(inputUser);
-					
-					up.setLogin_flg("N");//To prompt the user for changing the password at first login
-					up.setNo_of_attmp(0);
-					up.setPassword(encryptedPassword);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				auditservice.createBusinessAudit(userProfile.getUserid(), "ADD", "ADD", null,"XBRL_USER_PROFILE_TABLE");
-				
-				
-				userProfileRep.save(up);
-
-				msg = "User Created Successfully";
-
-			}
-			//When the user data modifed and submitted.
-			else {
-
-				Optional<UserProfile> up = userProfileRep.findById(userProfile.getUserid());
-
-				if (up.isPresent()) {
-
-					userProfile.setPassword(up.get().getPassword());
-
-					if (userProfile.getLogin_status().equals("Active")) {
-						userProfile.setUser_locked_flg("N");
-					} else {
-						userProfile.setUser_locked_flg("Y");
-					}
-
-					if (userProfile.getUser_status().equals("Active")) {
-						userProfile.setDisable_flg("N");
-					} else {
-						userProfile.setDisable_flg("Y");
-					}
-
-					userProfile.setNo_of_attmp(0);
-					userProfile.setEntity_flg("N");
-					userProfile.setModify_user(inputUser);
-					userProfile.setModify_time(new Date());
-
-					userProfileRep.save(userProfile);
-				}
-
-				msg = "User Edited Successfully";
-
-			}
-		} catch (Exception e) {
-			msg = "Error Occured. Please contact Administrator";
-			e.printStackTrace();
-			logger.info(e.getMessage());
-		}
-
-		return msg;
-	}
-
+	
 	
 	public Iterable<UserProfile> getUsersList() {
 
@@ -241,6 +158,18 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
             // Login and User Status Flags
             up.setUser_locked_flg("Active".equalsIgnoreCase(up.getLogin_status()) ? "N" : "Y");
             up.setDisable_flg("Active".equalsIgnoreCase(up.getUser_status()) ? "N" : "Y");
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			Date date1 = formatter.parse("28-02-2027"); // <-- note full year!
+			Date Disabledate = formatter.parse("21-12-23"); // <-- note full year!
+								
+			up.setPass_exp_date(date1);
+			up.setAcc_exp_date(date1);
+			
+			up.setLogin_high("00:00");
+			up.setLogin_low("23:59");
+			up.setDisable_start_date(Disabledate);
+			up.setDisable_end_date(Disabledate);
 
             up.setEntity_flg("N");
             up.setEntry_time(new Date());

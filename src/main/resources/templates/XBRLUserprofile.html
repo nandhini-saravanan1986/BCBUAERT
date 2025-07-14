@@ -191,6 +191,14 @@ font-family: verdana;
 		}
 	}
 	
+	function fnView(a) {
+		var userid = a.getAttribute("data-userid")
+		var WORKCLASS = a.getAttribute("data-WORKCLASS")
+	
+			location.href = 'UserProfile?formmode=view&userid=' + userid
+		
+	}
+	
 	
 	function fnClick1(a) {
 		var userid = a.getAttribute("data-userid")
@@ -298,18 +306,17 @@ font-family: verdana;
 	            data: { roleId: roleId },
 	            success: function(data) {
 	                if (data) {
-	                    $("#roleDesc").val(data.role_desc || "");
-	                    $("#workClass").val(data.work_class || "");
+	                    $("#role_desc").val(data.roleDesc || "");
+	                    $("#work_class").val(data.workClass || "");
 	                    $("#domainId").val(data.menulist || ""); // assuming you're using menulist as domain info
 
-	                    // Check if menulist includes 'BRF_Reports'
 	                    if ((data.menulist || "").includes("BRF_Reports")) {
 	                        $("#acctAccessContainer").show();
 	                    } else {
 	                        $("#acctAccessContainer").hide();
 	                    }
 
-	                    $("#permission").val(data.permissions || "");
+	                    $("#permissions").val(data.permissions || "");
 	                }
 	            },
 	            error: function(xhr, status, error) {
@@ -514,6 +521,37 @@ font-family: verdana;
         }
     </script>
     <script>
+    function validateMobile(input) {
+    	const value = input.value;
+    	const errorEl = document.getElementById("mobError");
+    	const mobPattern = /^971\d{7}$/; // <-- updated pattern: 971 + 7 digits
+
+    	if (!mobPattern.test(value)) {
+    		errorEl.textContent = "Mobile number must start with 971 and be exactly 10 digits.";
+    		input.classList.add("is-invalid");
+    	} else {
+    		errorEl.textContent = "";
+    		input.classList.remove("is-invalid");
+    	}
+    }
+
+
+function validateEmail(input) {
+	const value = input.value;
+	const errorEl = document.getElementById("emailError");
+	const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+	if (!emailPattern.test(value)) {
+		errorEl.textContent = "Please enter a valid email address.";
+		input.classList.add("is-invalid");
+	} else {
+		errorEl.textContent = "";
+		input.classList.remove("is-invalid");
+	}
+}
+</script>
+    
+    <script>
   $(document).ready(function () {
     $('#usertable').DataTable({
       pageLength: 10,
@@ -597,9 +635,20 @@ function cancelpop() {
 										th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}"
 										onclick="fnClick1(this);">UnVerified</td>
 									</th:block>
-									<td><button style="border: groove;font-weight: lighter;"
-									 onclick="fnClick(this);"th:attr="data-userid=${userProfile.userid},
-									data-WORKCLASS=${WORKCLASSAC}">Modify</button></td>
+									<td>
+  <i class="fa fa-edit" title="Modify"
+     style="cursor: pointer; color: blue; margin-right: 12px;"
+     onclick="fnClick(this);"
+     th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}">
+  </i>
+
+  <i class="fa fa-eye" title="View"
+     style="cursor: pointer; color: blue;"
+     onclick="fnView(this);"
+     th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}">
+  </i>
+</td>
+
 								</tr>
 							</tbody>
 						</table>
@@ -620,7 +669,7 @@ function cancelpop() {
 			</div>
 		</div>
 		
-		<div style="padding-right: 0px;padding-left: 0px; margin-left:35px;" th:if="${formmode}=='edit' OR ${formmode}=='add'" >
+		<div style="padding-right: 0px;padding-left: 0px; margin-left:35px;" th:if="${formmode}=='edit' OR ${formmode}=='add' OR ${formmode}=='view'" >
 		<div class="row">
 			<div class="col-sm-12 finuserapply" >
 				<form action="#" th:object="${userProfile}" method="post"
@@ -629,6 +678,7 @@ function cancelpop() {
 						<div class="card-header"style="background-color: #376275;">
 							<div class="float-left">
 								<h3 th:if="${formmode}=='add'" style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - ADD</h3>
+								<h3 th:if="${formmode}=='view'" style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - VIEW</h3>
 								<h3 th:if="${formmode}=='edit'" style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">USER PROFILE - EDIT</h3>
 							</div>
 							<div class="btn-group nav-buttons float-right">
@@ -645,12 +695,18 @@ function cancelpop() {
 									<div class="col-sm-2">
 										<label for="userId">User Id <b style="color:red;">*</b></label>
 									</div>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode} != 'view'">
 										<input type="text" th:field="*{userid}" th:value="${userid}"
 											id="userId" class="form-control form-control-sm" placeholder="Log in User id"
 											name="userid" autocomplete="off" onchange="validateUserId()"
 											onkeyup="this.value = this.value.toUpperCase();"
 											maxlength="8"  required />
+											<span id="feedbackuser"></span>
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{userid}" class="form-control form-control-sm" placeholder="Log in User id"
+											 autocomplete="off" 
+											maxlength="8"  readonly />
 											<span id="feedbackuser"></span>
 									</div>
 									
@@ -675,6 +731,11 @@ function cancelpop() {
 											class="form-control form-control-sm" autocomplete="false"
 											required />
 									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{username}" readonly
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
 								</div>
 
 
@@ -682,23 +743,36 @@ function cancelpop() {
 								<div class="row formline">
 
 									<label class="col-sm-2">Bank Code<b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<input type="text" th:field="*{bank_code}"
 											th:value="${bank_code}" id="bankCode" value=""
 											class="form-control form-control-sm" autocomplete="false"
 											required />
 									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{bank_code}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+
 
 									<div class="col-sm-1"></div>
 
 
 									<label class="col-sm-2">Bank Name<b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{bank_name}"
+									<div class="col-sm-3"  th:if="${formmode}!='view'">
+										<input type="text"  th:field="*{bank_name}"
 											th:value="${bank_name}" id="bankName" value=""
 											class="form-control form-control-sm" autocomplete="false"
 											required />
 									</div>
+									
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{bank_name}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 									<div class="col-sm-1"></div>
 								</div>
 
@@ -707,7 +781,7 @@ function cancelpop() {
 								<div class="row formline">
 
 									<label class="col-sm-2">Branch Code/Sol_id <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<!-- <input type="text" th:field="*{branch_code}"  maxlength="4"
 												oninput="this.value=this.value.replace(/[^0-9]/g,'');"
 											th:value="${branch_code}" id="branchCode" value=""
@@ -728,35 +802,46 @@ function cancelpop() {
 											<option value="9010">9010</option>
 										</select>
 									</div>
+									
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{branch_code}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 									<div class="col-sm-1"></div>
 
 
 									<label class="col-sm-2">Branch Name <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<input type="text" th:field="*{branch_name}"
 											th:value="${branch_name}" id="branchName" value=""
 											class="form-control form-control-sm" autocomplete="off" readonly="readonly"
 											required />
+									</div>
+										<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{branch_name}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 								</div>
 								<div class="row formline">
 
 									<label class="col-sm-2">Employee Id <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<input type="text" th:field="*{empid}" th:value="${empid}"
 											id="empId" value="" class="form-control form-control-sm"
 											autocomplete="off" required />
 									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{empid}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
 									<div class="col-sm-1"></div>
 
 
-									<!-- <label class="col-sm-2">Employee Name</label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{emp_name}"
-											th:value="${emp_name}" id="empName" value=""
-											class="form-control form-control-sm" required />
-									</div> -->
 									<div class="col-sm-1"></div>
 								</div>
 
@@ -766,22 +851,39 @@ function cancelpop() {
 
 
 									<label class="col-sm-2">Mobile No <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{mob_number}" placeholder="Number Must Start with 971"
-											th:value="${mob_number}" id="mobNo" value="" maxlength="12"
-											oninput="this.value=this.value.replace(/[^0-9]/g,'');"
-											class="form-control form-control-sm" autocomplete="off"
-											required />
+									<div class="col-sm-3" th:if="${formmode}!='view'">
+										<input type="text" id="mobNo" name="mob_number"
+	class="form-control form-control-sm"
+	placeholder="Number must start with 971"
+	maxlength="10" pattern="971[0-9]{7}" required
+	title="Must start with 971 and be 10 digits"
+	oninput="validateMobile(this)" />
+<small id="mobError" class="text-danger"></small>
+
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{mob_number}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 
 
 									<label class="col-sm-2">Email Id <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<input type="email" th:field="*{email_id}"
-											th:value="${email_id}" id="emailId" value=""
-											class="form-control form-control-sm" autocomplete="off"
-											required />
+									<div class="col-sm-3" th:if="${formmode}!='view'">
+										<input type="email" id="emailId" name="email_id"
+	class="form-control form-control-sm"
+	pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+	required title="Enter a valid email"
+	oninput="validateEmail(this)" />
+<small id="emailError" class="text-danger"></small>
+
+
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{email_id}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 								</div>
@@ -808,15 +910,16 @@ function cancelpop() {
 												required />
 												
 									</div>
-									
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" placeholder="********"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
 									<div class="col-sm-1"></div>
 
 									<label class="col-sm-2">Password Exp Days <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<!-- <input type="text" th:field="*{pass_exp_date}"
-											style="background-color: White;" th:value="${password}"
-											id="passExDate" value="" class="form-control form-control-sm"
-											required />  -->
+									<div class="col-sm-3" th:if="${formmode}!='view'">
+										
 										<select id="pass_exp_days"  th:field="*{pass_exp_days}" th:value="${pass_exp_days}"
 											class="form-control  form-control-sm" required="required">
 											<option selected value="">Select</option>
@@ -824,6 +927,11 @@ function cancelpop() {
 											<option value="90">90 Days</option>
 											
 										</select>
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{pass_exp_days}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 								</div>
@@ -833,7 +941,7 @@ function cancelpop() {
 
 
 									<label class="col-sm-2">User Status <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<select th:field="*{user_status}" th:value="${user_status}"
 											id="userStatus" class="form-control form-control-sm"
 											autocomplete="off" required>
@@ -842,9 +950,15 @@ function cancelpop() {
 											<option value="Inactive">Inactive</option>
 										</select>
 									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{user_status}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 									<div class="col-sm-1"></div>
 									<label class="col-sm-2">Login Status <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 										<select th:field="*{login_status}" th:value="${login_status}"
 											id="loginStatus" class="form-control form-control-sm"
 											autocomplete="off" required>
@@ -854,27 +968,15 @@ function cancelpop() {
 
 										</select>
 									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{login_status}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 									<div class="col-sm-1"></div>
 								</div>
-								<div class="row formline">
-
-									<!-- <label class="col-sm-2">Account Expiry Date</label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{acc_exp_date}"
-											style="background-color: White;" readonly='true'
-											th:value="${acc_exp_date}" id="expiryDate" value=""
-											class="form-control form-control-sm"/>
-									</div>
-									<div class="col-sm-1"></div> -->
-									<label class="col-sm-2">Remarks</label>
-									<div class="col-sm-3">
-										<input type="text" style="background-color: White;"
-											id="remarks" value="" class="form-control form-control-sm" />
-									</div>
-									<div class="col-sm-1"></div>
-								</div>
-
-
+								
 								
 								<div class="row"
 										style="background-color: #6B7A8F; color: white; height: 44px; border-radius: .20rem; padding: 11px 10px; top: 10px;">
@@ -886,17 +988,8 @@ function cancelpop() {
 
 
 									<label class="col-sm-2">Role Id <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-									<!-- 	<select th:field="*{role_id}" th:value="${role_id}"
-											id="roleId" class="form-control form-control-sm"
-											onchange="roledesc();" autocomplete="off" required>
-											<option value="">SELECT</option>
-												<option id="role_id"
-													th:each="monitoringparam : ${RuleIDType}"
-													th:value="${monitoringparam}" th:text="${monitoringparam}"></option>
-										</select>
+									<div class="col-sm-3" th:if="${formmode}!='view'">
 									
-									 -->
 									<select th:field="*{role_id}" th:value="${role_id}"
 	id="roleId" class="form-control form-control-sm"
 	onchange="roledesc();" autocomplete="off" required>
@@ -906,15 +999,29 @@ function cancelpop() {
 </select>
 									
 									
-									
-									
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{role_id}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 									<label class="col-sm-2">Role Description <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{role_desc}"
-											th:value="${role_desc}" id="roleDesc" value="" readonly
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text" name="role_desc"
+											 id="role_desc"  readonly
 											class="form-control form-control-sm" />
+									</div>
+									
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{role_desc}" readonly
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{role_desc}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
 								</div>
@@ -923,76 +1030,58 @@ function cancelpop() {
 
 								<div class="row formline">
 								<label class="col-sm-2">Work Class <b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-									<!-- 	<select th:field="*{work_class}" th:value="${work_class}"
-											id="roleId" class="form-control form-control-sm"
-											onchange="roledesc();" autocomplete="off" required>
-											<option value="">Select</option>
-											<option value="M">Maker</option>
-											<option value="C">Checker</option>
-										</select> -->
-										<select th:field="*{work_class}" th:value="${work_class}"
-	id="workClass" class="form-control form-control-sm"
-	onchange="roledesc();" autocomplete="off" required readonly>
-	<option value=""></option>
-	<option value="M">Maker</option>
-	<option value="C">Checker</option>
-</select>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+									<input type="text" id="work_class" name="work_class"
+											class="form-control form-control-sm" required readonly/>
+									
 										
 									</div>
+									
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{work_class}" readonly
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{work_class}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 									<div class="col-sm-1"></div>
 
 									<label class="col-sm-2">Module<b style="color:red;">*</b></label>
-									<div class="col-sm-3">
-										<input type="text" th:field="*{domain_id}"
-											th:value="${domain_id}" id="domainId"
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text" id="domainId" name="domain_id"
 											class="form-control form-control-sm" required readonly/>
 
 									</div>
-									<!-- <div class="col-sm-1 ">
-										<a href="#"><i class="fas fa-search searchico"
-											id="domainidsearch" title="Domain Id Details"
-											data-toggle="modal" data-target="#getDomain"></i></a>
-									</div> -->
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{domain_id}" readonly
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{domain_id}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
+									
 								</div>
 								<div class="row formline">
     <!-- Permissions -->
     <label class="col-sm-2">Permissions <b style="color:red;">*</b></label>
-    <div class="col-sm-3">
-        <select th:field="*{permissions}" th:value="${permissions}"
-                id="permission" class="form-control form-control-sm"
-                autocomplete="off" required readonly>
-            <option value="O"></option>
-            <option value="R">Read</option>
-            <option value="W">Write</option>
-        </select>
-    </div>
+    <div class="col-sm-3" >
+	<input type="text" th:field="*{permissions}"
+	class="form-control form-control-sm" required readonly/>
 
+		</div>
+      
     <div class="col-sm-1"></div>
 
     <!-- HIDDEN BY DEFAULT: Acct Access Code Section -->
     <div class="col-sm-5" id="acctAccessContainer" style="display: none;">
-        <!-- <div class="row">
-            <label class="col-sm-5" style="white-space: nowrap;">Acct Access Code <br><b style="color:red;">Only For BRF181</b></label>
-            <div class="col-sm-7">
-                <select th:field="*{acct_access_code}"
-                        th:value="${acct_access_code}" id="roleId"
-                        class="form-control form-control-sm" onchange="roledesc1()"
-                        autocomplete="off">
-                    <option value="">Select</option>
-                    <option value="VISAP1">VISAP1</option>
-                    <option value="RBR">RBR CCSYS</option>
-                    <option value="VISAR2">VISAR2</option>
-                    <option value="RFI3">RFI3</option>
-                    <option value="CURINT4">CURINT4</option>
-                    <option value="OPR">OPR</option>
-                    <option value="COB">COB</option>
-                    <option value="FR">FR</option>
-                    <option value="FTR">FTR</option>
-                    <option value="AML">AML</option>
-                </select>
-            </div>
-        </div> -->
+      
     </div>
 
     <div class="col-sm-1"></div>
@@ -1012,7 +1101,7 @@ function cancelpop() {
 										onclick="passwordReset();">PasswordReset</button>
 								<!-- th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null" -->	
 								<button
-										type="button" class="custom-tab-btn"
+										type="button" class="custom-tab-btn" th:if="${formmode} != 'view'"
 										form="userProfile" id="btnSubmit" onclick="submitform();"
 										th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
 
@@ -1251,24 +1340,8 @@ function cancelpop() {
 
 									<label class="col-sm-2">Role Id <b style="color:red;">*</b></label>
 									<div class="col-sm-3">
-							<!-- 		<input type="text" th:field="*{role_desc}"
-											th:value="${role_desc}" id="roleDesc" value="" readonly
-											class="form-control form-control-sm"/>
-										<select th:field="*{role_id}" th:value="${role_id}"
-											id="role_id" class="form-control form-control-sm"
-											onchange="roledesc();" autocomplete="off" required readonly="readonly">
-											<option value="">Select</option>
-											<option value="ADM">ADMIN</option>
-											<option value="GEN">GEN</option>
-											<option value="RECONADM">RECONADM</option>
-											<option value="RECONGEN">RECONGEN</option>
-											<option value="RBR">RBR Admin</option>
-											<option value="RBR_BRANCH">RBR Branch</option>
-											<option value="BRC">BRC</option>
-											<option value="DCD">Due Dilligience</option>
-										</select>
- -->							
- <input type="text" th:field="*{role_id}"
+							
+ 									<input type="text" th:field="*{role_id}"
 											th:value="${role_id}" id="role_id" value="" readonly
 											class="form-control form-control-sm"/>
 													</div>
@@ -1276,7 +1349,7 @@ function cancelpop() {
 									<label class="col-sm-2">Role Description <b style="color:red;">*</b></label>
 									<div class="col-sm-3">
 										<input type="text" th:field="*{role_desc}"
-											th:value="${role_desc}" id="roleDesc" value="" readonly
+											th:value="${role_desc}" id="role_desc" value="" readonly
 											class="form-control form-control-sm"/>
 									</div>
 									<div class="col-sm-1"></div>
@@ -1289,7 +1362,7 @@ function cancelpop() {
 									<div class="col-sm-3">
 										<select th:field="*{work_class}" th:value="${work_class}"
 											id="roleId" class="form-control form-control-sm"
-											onchange="roledesc();" autocomplete="off" required readonly="readonly">
+											 autocomplete="off" required readonly="readonly">
 											<option value="">Select</option>
 											<option value="M">Maker</option>
 											<option value="C">Checker</option>
@@ -1304,11 +1377,7 @@ function cancelpop() {
 											class="form-control form-control-sm" required readonly="readonly"/>
 
 									</div>
-									<!-- <div class="col-sm-1 ">
-										<a href="#"><i class="fas fa-search searchico"
-											id="domainidsearch" title="Domain Id Details"
-											data-toggle="modal" data-target="#getDomain"></i></a>
-									</div> -->
+									
 								</div>
 								<div class="row formline">
 

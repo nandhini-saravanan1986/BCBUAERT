@@ -377,6 +377,7 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	    return msg;
 	}
 
+	
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
@@ -415,6 +416,11 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
 
+		}else if (formmode.equals("view")) {
+
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("userProfile", loginServices.getUser(userid));
+
 		} else if (formmode.equals("add")) {
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(""));
@@ -448,9 +454,19 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	@GetMapping("/getRoleDetails")
 	@ResponseBody
 	public AccessAndRoles getRoleDetails(@RequestParam String roleId) {
-		System.out.println("role id for fetching is : " + roleId);
-		return accessandrolesrepository.findById(roleId).orElse(null);
+	    System.out.println("role id for fetching is : " + roleId);
+	    AccessAndRoles access = accessandrolesrepository.findById(roleId).orElse(null);
+
+	    if (access != null) {
+	        System.out.println("roleDesc = " + access.getRoleDesc()); // <== ADD THIS
+	        System.out.println("workClass = " + access.getWorkClass()); // <== ADD THIS
+	        System.out.println("permission = " + access.getPermissions()); // <== ADD THIS
+	        System.out.println("module = " + access.getDomainId()); // <== ADD THIS
+	    }
+
+	    return access;
 	}
+
 
 	@RequestMapping(value = "createUser", method = RequestMethod.POST)
 	@ResponseBody
