@@ -328,16 +328,16 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		}
 
 		function list() {
-			location.href = 'Investment_Securities_Data?formmode=list';
+			location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list';
 		}
 
 		function nostro() {
-			location.href = 'Investment_Securities_Data';
+			location.href = 'Liquidity_Risk_Dashboard_Template';
 		}
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
-				window.location.href = './Investment_Securities_Data';
+				window.location.href = './Liquidity_Risk_Dashboard_Template';
 			});
 		});
 
@@ -347,9 +347,9 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 			$("#loader").modal("toggle");
 
 			$.ajax({
-				url: `./updateInvestmentSecurity`,
+				url: `./updateliquidityriskdashboard`,
 				type: 'POST',
-				data: $('#InvestmentData').serialize(),
+				data: $('#liquidityriskdashboard').serialize(),
 				success: function (response) {
 					$("#loader").modal("hide");
 
@@ -367,6 +367,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 			});
 
 		}
+
 
 	</script>
 
@@ -411,12 +412,13 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 
 
+
 <script>
-	function downloadInvestmentSecurities() {
+	function downloadLiquidityrisk() {
 		$('#loader').modal('show');
 
 		$.ajax({
-			url: './downloadInvestmentSecuritiesExcel', // This URL must match your controller endpoint
+			url: './downloadLiquidityriskdashboardExcel', // This URL must match your controller endpoint
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Essential for handling binary file data
@@ -436,7 +438,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'INVESTMENT_SECURITY.xls'; // The filename for the user
+				a.download = 'Liquidity_Risk_Dashboard_Dashboard.xls'; // The filename for the user
 
 				document.body.appendChild(a);
 				a.click();
@@ -498,7 +500,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 					<div class="float-right" style="margin-left:61%">
 						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
-							onclick="downloadInvestmentSecurities();">
+							onclick="downloadLiquidityrisk();">
 							<i class="fa fa-download"></i> Download
 						</button>
 
@@ -753,12 +755,12 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 
 				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-				<div class="tab-pane fade" id="data" role="tabpanel">
-					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
-						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; font-family:calibri;">
-
-							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+				<div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
+    <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
+  
+      <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+      
+        <tr>
 								    <tr>
 									<th rowspan="2">Action</th>
 									<th colspan="8" style="text-align:center">Financial Institution Information</th>
@@ -951,29 +953,16 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 									<th>Top 5 Industry Deposits (AED)</th>
 									<th>Top 5 Industry deposits / Total Deposits</th>
 									<th>Long Term Liabilities / Total Liabilities</th>
-									
-									
-								
-									
-									
-
-								</tr>
+									</tr>
 							</thead>
-							<!--<tbody style="font-size: 9px;">
-								<tr th:each="data : ${ISList}">
-									<td>
-										<a
-											th:href="@{'/Investment_Securities_Data?formmode=edit&siNo=' + ${data.siNo}}">
+						
+							<tbody style="font-size: 9px;">
+                         <tr th:each="data : ${branchList}">
+							 
+                                        <td>
+									<a th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i>
-										</a>
-									</td>-->
-							<tbody style="font-size: 9px;" th:each="data : ${ISList}">
-								<tr>
-								
-								 
-									<td><a
-											th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&siNo=' + ${data.siNo}}">
-											<i class="fa fa-edit" style="color: #007bff;"></i></a>
+											</a>
 									</td>
 									
 									<!-- Financial Institution Information 8-->
@@ -1187,379 +1176,971 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 			<!-- ---------------- edit starts------------------------------------------------------------ -->
 
-
-
-			<!--<div th:if="${formmode}=='edit'" style="align-items:center">
-				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post"
-					id="InvestmentData">
-					<div class="card" style="margin: 0 15px;">-->
-
-			<!-- Card Header -->
-
-
-			<div th:if="${formmode}=='edit'" style="align-items:center">
-				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post"
-					id="InvestmentData">
-					<div class="card" style="margin: 0 15px;">
-						<div class="card-header" style="background-color: rgb(107, 122, 143);">
-							<h5 class="m-0 font-weight-bold"
-								style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
-								INVESTMENT SECURITIES DATA - EDIT
-							</h5>
+<div th:if="${formmode}=='edit'" style="align-items:center">
+ 
+<div class="row">
+<form th:action="@{/updateliquidityriskdashboard}" th:object="${liquidityriskdashboard}" method="post" id="liquidityriskdashboard">
+	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Liquidity Risk Dashboard - Edit</h3>
+							</div>
+							
 						</div>
+<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
-						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-							<input type="hidden" th:field="*{siNo}" />
+ 
+  
+   <input type="hidden" th:field="*{SI_NO}" />
 
 
 							<!-- Bank Info -->
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Data Date</label>
-								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" />
+								<label class="col-sm-2 col-form-label"> Date</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{reportDate}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Bank Name</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{bankName}" />
 								</div>
 							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Group Head Office Subsidiary</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{headOfficeSubsidiary}" /></div>
+  <label class="col-sm-2 col-form-label">Subsidiary</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{subsidiary}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{subsidiary}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Bank Symbol</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{bankSymbol}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Bank Symbol</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{bankSymbol}" /></div>
+  <label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{conventionalIslamic}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{conventionalIslamic}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Local/Foreign</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{localForeign}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Local/Foreign</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{localForeign}" /></div>
+  <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+  <div class="col-sm-4">
+    <input type="text" class="form-control" th:field="*{cbuAeTiering}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{cbuAeTiering}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Accounting Classification</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{accountingClassification}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Asset Balance Sheet Size (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{assetBalanceSheetSizeAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">Instrument Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{instrumentType}" /></div>
-							</div>
+  <label class="col-sm-2 col-form-label">Cash (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{cashAed}" />
+  </div>
+</div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Instrument Subcategory Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{instrumentSubcategoryType}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Cash (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{cashPercent}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">ISIN Code</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{isinCode}" />
-								</div>
-							</div>
+  <label class="col-sm-2 col-form-label">Due from Central Bank (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromCentralBankAed}" />
+  </div>
+</div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Bank Internal Portfolio Code</label>
-								<div class="col-sm-10"><input type="text" class="form-control"
-										th:field="*{bankInternalPortfolioCode}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due from Central Bank (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromCentralBankPercent}" />
+  </div>
 
-							<!-- REPO -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CBUAE Security ID</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
-										th:field="*{cbuAeSecurityId}" /></div>
+  <label class="col-sm-2 col-form-label">Due from HO Branch/Subs (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromHoBranchSubsAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">CBUAE Access Primary Key</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
-										th:field="*{cbuAeAccessPrimaryKey}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due from HO Branch/Subs (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromHoBranchSubsPercent}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Security Description</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{securityDescription}" /></div>
+  <label class="col-sm-2 col-form-label">Due from Banks (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromBanksAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Asset Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{assetCurrency}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due from Banks (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromBanksPercent}" />
+  </div>
 
-							<!-- Bonds -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Obligor</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{obligor}" />
-								</div>
+  <label class="col-sm-2 col-form-label">Due from NBFI (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromNbfiAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Country of Risk</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{countryOfRisk}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due from NBFI (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueFromNbfiPercent}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{cbuAeGeographicalZone}" /></div>
+  <label class="col-sm-2 col-form-label">Investment (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{investmentAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Industry</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{industry}" />
-								</div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Investment (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{investmentPercent}" />
+  </div>
 
-							<!-- Credit -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Sector</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{sector}" />
-								</div>
+  <label class="col-sm-2 col-form-label">Other Investments (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{otherInvestmentsAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Issuer Type</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{issuerType}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Other Investments (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{otherInvestmentsPercent}" />
+  </div>
 
-							<!-- Other -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{issueSize}" />
-								</div>
+  <label class="col-sm-2 col-form-label">Net Credit Portfolio (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{netCreditPortfolioAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Percent Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{percentIssueSize}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Net Credit Portfolio (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{netCreditPortfolioPercent}" />
+  </div>
 
-							<!-- Nostro -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Nominal Trade Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{nominalTradeCurrency}" /></div>
+  <label class="col-sm-2 col-form-label">Trade Bills (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{tradeBillsAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Nominal AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{nominalAedEquivalent}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Trade Bills (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{tradeBillsPercent}" />
+  </div>
 
-							<!-- Derivatives -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Prem Disc AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{premDiscAedEquivalent}" /></div>
+  <label class="col-sm-2 col-form-label">Net Fixed Other Assets (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{netFixedOtherAssetsAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Specific Provision AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{specificProvisionAed}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Net Fixed Other Assets (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{netFixedOtherAssetsPercent}" />
+  </div>
 
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Fixed Income Info Net Book Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{fixedIncomeInfoNetBookPrice}" /></div>
+  <label class="col-sm-2 col-form-label">Positive FV Derivatives (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{positiveFvDerivativesAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Net Book Value AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{netBookValueAed}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Positive FV Derivatives (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{positiveFvDerivativesPercent}" />
+  </div>
 
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Purchase YTM</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{purchaseYieldToMaturity}" /></div>
+  <label class="col-sm-2 col-form-label">Liability Balance Sheet Size (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{liabilityBalanceSheetSizeAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Clean Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{cleanPrice}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due to Central Bank (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToCentralBankAed}" />
+  </div>
 
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Clean Market Value AED</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{cleanMarketValueAed}" /></div>
+  <label class="col-sm-2 col-form-label">Due to Central Bank (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToCentralBankPercent}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Current YTM</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{currentYieldToMaturity}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due to HO/Branch/Subs (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToHoBranchSubsAed}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Unrealized Gain/Loss AED</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unrealizedGainLossAed}" /></div>
+  <label class="col-sm-2 col-form-label">Due to HO (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToHoPercent}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">Subordinated Debt Sukuk</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{subordinatedDebtSukuk}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due to Banks (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToBanksAed}" />
+  </div>
 
+  <label class="col-sm-2 col-form-label">Due to Banks (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToBanksPercent}" />
+  </div>
+</div>
 
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Due to NBFI (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToNbfiAed}" />
+  </div>
 
+  <label class="col-sm-2 col-form-label">Due to NBFI (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{dueToNbfiPercent}" />
+  </div>
+</div>
 
-							<!-- Derivatives -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">finalRatingBanks</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingBanks}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Customer Deposit (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{customerDepositAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">finalRatingCbuae</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingCbuae}" /></div>
-							</div>
+  <label class="col-sm-2 col-form-label">Customer Deposit (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{customerDepositPercent}" />
+  </div>
+</div>
 
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">creditQuality</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{creditQuality}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Long Term Funding (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{longTermFundingAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">maturityDate</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityDate}" /></div>
-							</div>
+  <label class="col-sm-2 col-form-label">Long Term Funding (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{longTermFundingPercent}" />
+  </div>
+</div>
 
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">residualMaturity</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{residualMaturity}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Other Liabilities (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{otherLiabilitiesAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">maturityPeriod</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityPeriod}" /></div>
-							</div>
+  <label class="col-sm-2 col-form-label">Other Liabilities (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{otherLiabilitiesPercent}" />
+  </div>
+</div>
 
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsFi</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsFi}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Negative FV Derivatives (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{negativeFvDerivativesAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">qtyEquityFunds</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{qtyEquityFunds}" /></div>
-							</div>
+  <label class="col-sm-2 col-form-label">Negative FV Derivatives (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{negativeFvDerivativesPercent}" />
+  </div>
+</div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">equityFloatingFundAssets</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{equityFloatingFundAssets}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Capital Reserves (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{capitalReservesAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">totalFloatingShareFundAum</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalFloatingShareFundAum}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">specificProvision</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{specificProvision}" /></div>
+  <label class="col-sm-2 col-form-label">Capital Reserves (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{capitalReservesPercent}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">netBookValue</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{netBookValue}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Short Term Reg. Ratio Requirement</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{shortTermRegRatioReq}" />
+  </div>
 
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">otherSecInfoNetBookPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{otherSecInfoNetBookPrice}" /></div>
+  <label class="col-sm-2 col-form-label">HQ Assets Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{hqAssetsConvertedAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">marketPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{marketPrice}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Outflows 30D (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{outflows30dAed}" />
+  </div>
 
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">fairValueAmountAed</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{fairValueAmountAed}" /></div>
+  <label class="col-sm-2 col-form-label">Inflows 30D (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{inflows30dAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">unrealizedGainLossAgain</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{unrealizedGainLossAgain}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">LCR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{lcr}" />
+  </div>
 
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsOther</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsOther}" /></div>
+  <label class="col-sm-2 col-form-label">AED HQ Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedHqAssets}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">totalNetBookValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalNetBookValueAed}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED Outflows 30D</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedOutflows30d}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">totalMarketValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalMarketValueAed}" /></div>
+  <label class="col-sm-2 col-form-label">AED Inflows 30D</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedInflows30d}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">totalUnrealizedGainLoss</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalUnrealizedGainLoss}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unrealizedGainLossContrib</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unrealizedGainLossContrib}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED LCR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedLcr}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">percentHoldings</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldings}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">existingPledgeStatus</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{existingPledgeStatus}" /></div>
+  <label class="col-sm-2 col-form-label">USD HQ Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdHqAssets}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">pledgedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{pledgedAmountAed}" /></div>
-							</div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD Outflows 30D</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdOutflows30d}" />
+  </div>
 
+  <label class="col-sm-2 col-form-label">USD Inflows 30D</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdInflows30d}" />
+  </div>
+</div>
 
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD LCR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdLcr}" />
+  </div>
 
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unencumberedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unencumberedAmountAed}" /></div>
+  <label class="col-sm-2 col-form-label">ELAR HQ Assets Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{elarHqAssetsConvertedAed}" />
+  </div>
+</div>
 
-								<label class="col-sm-2 col-form-label">proportionUnencumbered</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{proportionUnencumbered}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">hqlaElarEligibility</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{hqlaElarEligibility}" /></div>
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Liabilities Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalLiabilitiesConvertedAed}" />
+  </div>
 
-								<label class="col-sm-2 col-form-label">liquidityType</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{liquidityType}" /></div>
-							</div>
-						</div>
+  <label class="col-sm-2 col-form-label">Eligible Asset Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{eligibleAssetRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED ELAR HQ Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedElarHqAssets}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">AED Total Liabilities</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedTotalLiabilities}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED Eligible Asset Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedEligiblrAssetRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD ELAR HQ Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdElarHqAssets}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD Total Liabilities</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdTotalLiabilities}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD Eligible Asset Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdEigibleAssetRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">ASF Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{asfConvertedAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">RSF Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{rsfConvertedAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">NSFR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{nsfr}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">AED ASF</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedAsf}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED RSF</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedRsf}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">AED NSFR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedNsfr}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD ASF</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdAsf}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD RSF</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdRsf}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD NSFR</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdNsfr}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Loans & Advances Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{loansAdvancesConvertedAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Stable Resources Converted (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stableResourcesConvertedAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Loans to Stable Resources Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{loansToStableResourcesRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED Loans & Advances</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedLoansAdvances}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">AED Stable Resources</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedStableResources}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED LTS Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedLtsRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD Loans & Advances</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdLoansAdvances}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD Stable Resources</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdStableResources}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD LTS Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdLtsRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Stable Term Deposit (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stableTermDepositAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Volatile Term Deposit (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{volatileTermDepositAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Stable CASA (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stableCasaAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Volatile CASA (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{volatileCasaAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Term Deposit (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{termDepositAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">CASA (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{casaAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Loans to Deposits Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{loansToDepositsRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Stable Term Deposit to Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stableTermDepositToAssets}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Volatile Term Deposit to Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{volatileTermDepositToAssets}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Stable CASA to Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stableCasaToAssets}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Volatile CASA to Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{volatileCasaToAssets}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Liquid Assets to Total Deposits</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{liquidAssetsToTotalDeposits}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Liquid Assets to Total CASA</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{liquidAssetsToTotalCasa}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">6M Cash Flow Gap (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{sixMonthCashFlowGapAed}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Liabilities Excl. Capital</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalLiabilitiesExclCapital}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">6M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{sixMonthGapRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED 6M Cash Flow Gap</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedSixMonthCashFlowGap}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">AED Liabilities Excl. Capital</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedLiabilitiesExclCapital}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">AED 6M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{aedSixMonthGapRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD 6M Cash Flow Gap</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdSixMonthCashFlowGap}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">USD Liabilities Excl. Capital</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdLiabilitiesExclCapital}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">USD 6M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{usdSixMonthGapRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">3M Cash Flow Gap (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{threeMonthCashFlowGapAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">3M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{threeMonthGapRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">1M Cash Flow Gap (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{oneMonthCashFlowGapAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">1M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{oneMonthGapRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">7 Day Cash Flow Gap (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{sevenDayCashFlowGapAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">7 Day Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{sevenDayGapRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Unencumbered Liquid Assets (AED)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{unencumberedLiquidAssetsAed}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">One Month Cash Flow Gap Copy</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{oneMonthCashFlowGapCopy}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Unencumbered To 1M Gap Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{unencumberedTo1mGapRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">CBUAE Cash Balances</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{cbuaeCashBalances}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">CBUAE Cash Balances (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{cbuaeCashBalancesPercent}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Money Mkt Placements &lt; 6M</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{moneyMktPlacementsLt6m}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Money Mkt Placements &lt; 6M (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{moneyMktPlacementsLt6mPercent}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Local Currency Govt Bonds</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{localCurrencyGovtBonds}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Local Currency Govt Bonds (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{localCurrencyGovtBondsPercent}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Hard Currency Govt Bonds</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{hardCurrencyGovtBonds}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Hard Currency Govt Bonds (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{hardCurrencyGovtBondsPercent}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Foreign Govt Bonds</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{foreignGovtBonds}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Foreign Govt Bonds (%)</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{foreignGovtBondsPercent}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Pledge Securities</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{pledgeSecurities}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Pledgeable Securities</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalPledgeableSecurities}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Pledge Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{pledgeRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Complex Fin Instruments</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalComplexFinInstruments}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Total Tradable Assets</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalTradableAssets}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Complex to Tradable Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{complexToTradableRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Top 10 Deposits</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{top10Deposits}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Deposits AED 1</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalDepositsAed1}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Top 10 to Total Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{top10ToTotalRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">ST IB Borrowing &lt; 3M</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stIbBorrowingLt3m}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">ST Repo &lt; 3M</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stRepoLt3m}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Interbank Borrowing</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{interbankBorrowing}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Repo Agreements</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{repoAgreements}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Total Deposits AED 2</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{totalDepositsAed2}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Long Term Funding Copy</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{longTermFundingCopy}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">ST IB Repo to Total Funding Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{stIbRepoToTotalFundingRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Largest Single Depositor</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{largestSingleDepositor}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Individual Counterparty to Total Funding Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{individualCounterpartyToTotalFundingRatio}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Unutilized Loans Credit Lines</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{unutilizedLoansCreditLines}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Derivatives Expected Neg Exposure</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{derivativesExpectedNegExposure}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Derivatives Expected Neg Exposure Proxy</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{derivativesExpectedNegExposureProxy}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Contingent Liabilities</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{contingentLiabilities}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Contingent Liabilities to Total Funding Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{contingentLiabilitiesToTotalFundingRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Top 5 Industry Deposits</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{top5IndustryDeposits}" />
+  </div>
+
+  <label class="col-sm-2 col-form-label">Top 5 to Total Deposits Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{top5ToTotalDepositsRatio}" />
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">Long Term Liabilities to Total Liabilities Ratio</label>
+  <div class="col-sm-4">
+    <input type="number" step="0.01" class="form-control" th:field="*{longTermLiabilitiesToTotalLiabilitiesRatio}" />
+  </div>
+</div>
+
+</div>
 
 						<div class="card-footer text-center"
 							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Investment_Securities_Data}" class="custom-tab-btn">Cancel</a>
+<a th:href="@{/Liquidity_Risk_Dashboard_Template(formmode='list')}" class="custom-tab-btn">Cancel</a>
 						</div>
 					</div>
 				</form>
