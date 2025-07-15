@@ -14,6 +14,9 @@ public interface RT_IRRBB_Data_EAR_Repository extends JpaRepository <RT_IRRBB_Da
 	@Query(value = "SELECT * FROM BCBUAE_IRRBB_EAR where SI_NO =?1 ", nativeQuery = true)
 	RT_IRRBB_Data_EAR getParticularDataBySI_NO(String SI_NO);
 	
+	@Query(value = "SELECT * FROM BCBUAE_IRRBB_EAR ", nativeQuery = true)
+	List<Object[]> getirrbbeardatalistdata1();
+	
 	
 
 }

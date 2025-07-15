@@ -467,11 +467,11 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
 <script>
-	function downloadInvestmentSecurities() {
+	function downloadIrrbbeve() {
 		$('#loader').modal('show');
 
 		$.ajax({
-			url: './downloadInvestmentSecuritiesExcel', // This URL must match your controller endpoint
+			url: './downloadIrrbbeveExcel', // This URL must match your controller endpoint
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Essential for handling binary file data
@@ -491,7 +491,113 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'INVESTMENT_SECURITY.xls'; // The filename for the user
+				a.download = 'IRRBB_DATA_EVE.xls'; // The filename for the user
+
+				document.body.appendChild(a);
+				a.click();
+
+				// Clean up the temporary URL and link
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', 'The file has been downloaded successfully.');
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				$('#loader').modal('hide');
+				console.error("Download failed:", textStatus, errorThrown);
+				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
+			}
+		});
+	}
+
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+		$('#resultModal').modal('show');
+	}
+</script>
+
+
+<script>
+	function downloadIrrbbear() {
+		$('#loader').modal('show');
+
+		$.ajax({
+			url: './downloadIrrbbearExcel', // This URL must match your controller endpoint
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob' // Essential for handling binary file data
+			},
+			success: function (data, textStatus, jqXHR) {
+				$('#loader').modal('hide');
+
+				// Check for a "No Content" response from the server
+				if (jqXHR.status === 204 || !data || data.size < 100) {
+					showResultModal('Information', 'No data was available to create the report.');
+					return;
+				}
+
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+
+				a.style.display = 'none';
+				a.href = url;
+				a.download = 'IRRBB_DATA_EAR.xls'; // The filename for the user
+
+				document.body.appendChild(a);
+				a.click();
+
+				// Clean up the temporary URL and link
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', 'The file has been downloaded successfully.');
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				$('#loader').modal('hide');
+				console.error("Download failed:", textStatus, errorThrown);
+				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
+			}
+		});
+	}
+
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+		$('#resultModal').modal('show');
+	}
+</script>
+
+
+<script>
+	function downloadIrrbbdiscount() {
+		$('#loader').modal('show');
+
+		$.ajax({
+			url: './downloadIrrbbdiscountrateExcel', // This URL must match your controller endpoint
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob' // Essential for handling binary file data
+			},
+			success: function (data, textStatus, jqXHR) {
+				$('#loader').modal('hide');
+
+				// Check for a "No Content" response from the server
+				if (jqXHR.status === 204 || !data || data.size < 100) {
+					showResultModal('Information', 'No data was available to create the report.');
+					return;
+				}
+
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+
+				a.style.display = 'none';
+				a.href = url;
+				a.download = 'IRRBB_DATA_DISCOUNT_RATE.xls'; // The filename for the user
 
 				document.body.appendChild(a);
 				a.click();
@@ -552,19 +658,19 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					
 					<!-- ---LIST MEAN--EVE-- -->
 						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
-							onclick="downloadInvestmentSecurities();">
+							onclick="downloadIrrbbeve();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---EAR DOWNLOAD-->
 						<button th:if="${formmode} =='EAR'" type="button" class="custom-tab-btn"
-							onclick="downloadInvestmentSecurities();">
+							onclick="downloadIrrbbear();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---DiscountRate DOWNLOAD-->
 						<button th:if="${formmode} =='DiscountRate'" type="button" class="custom-tab-btn"
-							onclick="downloadInvestmentSecurities();">
+							onclick="downloadIrrbbdiscount();">
 							<i class="fa fa-download"></i> Download
 						</button>
 

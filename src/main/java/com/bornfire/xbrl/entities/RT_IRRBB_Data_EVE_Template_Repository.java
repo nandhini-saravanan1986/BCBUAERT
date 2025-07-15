@@ -16,6 +16,10 @@ public interface RT_IRRBB_Data_EVE_Template_Repository  extends JpaRepository <R
 	RT_IRRBB_Data_EVE_Template getParticularDataBySI_NO(String SI_NO);
 	
 	
+	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DATA_TEMPLATE ", nativeQuery = true)
+	List<Object[]> getirrbbevedatalistdata1();
+	
+	
 	
 	
 	

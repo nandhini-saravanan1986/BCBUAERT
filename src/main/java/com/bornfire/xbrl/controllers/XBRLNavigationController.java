@@ -2370,6 +2370,11 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		} else {
 			return "Record not found for update";
 		}
+		
+		
+		
+		
+		
 
 	}
 
@@ -2561,7 +2566,117 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 		}
 	  
+	  
+	  @RequestMapping(value = "/downloadIrrbbeveExcel", method = RequestMethod.GET)
+		public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel() {
+		    logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+
+		    try {
+		        byte[] excelData = irrbbeveService.generateIrrbbeveExcel();
+
+
+		        if (excelData.length == 0) {
+		            logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
+		            return ResponseEntity.noContent().build();
+		        }
+
+		        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+		        String filename = "IrrbbDataEVE.xls";
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+		        return ResponseEntity.ok()
+		                .headers(headers)
+		                .contentLength(excelData.length)
+		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+		                .body(resource);
+
+		    } catch (FileNotFoundException e) {
+		        logger.error("Controller ERROR: IRRBB Data EVE Excel template file not found.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    } catch (Exception e) {
+		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    }
+		}
 	
+	
+	  @RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
+		public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel() {
+		    logger.info("Controller: Received request for IRRBB Data EAR Excel download.");
+
+		    try {
+		        byte[] excelData = irrbbearService.generateIrrbbearExcel();
+
+
+		        if (excelData.length == 0) {
+		            logger.warn("Controller: No data found for IRRBB Data EAR report. Responding with 204 No Content.");
+		            return ResponseEntity.noContent().build();
+		        }
+
+		        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+		        String filename = "IrrbbDataEAR.xls";
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+		        return ResponseEntity.ok()
+		                .headers(headers)
+		                .contentLength(excelData.length)
+		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+		                .body(resource);
+
+		    } catch (FileNotFoundException e) {
+		        logger.error("Controller ERROR: IRRBB Data EAR Excel template file not found.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    } catch (Exception e) {
+		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    }
+		}
+	
+	  
+	  
+	  @RequestMapping(value = "/downloadIrrbbdiscountrateExcel", method = RequestMethod.GET)
+		public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel() {
+		    logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+
+		    try {
+		        byte[] excelData = discountratesService.generateIrrbbdiscountrateExcel();
+
+
+		        if (excelData.length == 0) {
+		            logger.warn("Controller: No data found for IRRBB Data Discount Rate report. Responding with 204 No Content.");
+		            return ResponseEntity.noContent().build();
+		        }
+
+		        ByteArrayResource resource = new ByteArrayResource(excelData);
+
+		        String filename = "IrrbbDataDiscountRate.xls";
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+		        return ResponseEntity.ok()
+		                .headers(headers)
+		                .contentLength(excelData.length)
+		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+		                .body(resource);
+
+		    } catch (FileNotFoundException e) {
+		        logger.error("Controller ERROR: IRRBB Data Discount Rate Excel template file not found.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    } catch (Exception e) {
+		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		    }
+		}
 	
 	
 	
