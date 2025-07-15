@@ -14,9 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="BCBUAE_IRRBB_DISCOUNT_RATES")
 public class RT_IRRBB_Data_Discount_Rates {
 	
-	 @Id
-	    @Column(name = "SI_NO")
-	    private Long siNo;
+	@Id
+	private String SI_NO;
 
 	    @Column(name = "DERIVED_TENOR")
 	    private String derivedTenor;
@@ -143,12 +142,12 @@ public class RT_IRRBB_Data_Discount_Rates {
 	  
 	    private Date verifyTime;
 
-		public Long getSiNo() {
-			return siNo;
+		public String getSI_NO() {
+			return SI_NO;
 		}
 
-		public void setSiNo(Long siNo) {
-			this.siNo = siNo;
+		public void setSI_NO(String sI_NO) {
+			SI_NO = sI_NO;
 		}
 
 		public String getDerivedTenor() {
@@ -447,7 +446,7 @@ public class RT_IRRBB_Data_Discount_Rates {
 			this.verifyTime = verifyTime;
 		}
 
-		public RT_IRRBB_Data_Discount_Rates(Long siNo, String derivedTenor, BigDecimal overnight, BigDecimal oneWeek,
+		public RT_IRRBB_Data_Discount_Rates(String sI_NO, String derivedTenor, BigDecimal overnight, BigDecimal oneWeek,
 				BigDecimal oneMonth, BigDecimal twoMonth, BigDecimal threeMonth, BigDecimal sixMonth,
 				BigDecimal nineMonth, BigDecimal oneYear, BigDecimal onePointFiveYear, BigDecimal twoYear,
 				BigDecimal threeYear, BigDecimal fourYear, BigDecimal fiveYear, BigDecimal sixYear,
@@ -457,7 +456,7 @@ public class RT_IRRBB_Data_Discount_Rates {
 				String delFlg, String reportCode, Date reportSubmitDate, String entryUser, String modifyUser,
 				String verifyUser, Date entryTime, Date modifyTime, Date verifyTime) {
 			super();
-			this.siNo = siNo;
+			SI_NO = sI_NO;
 			this.derivedTenor = derivedTenor;
 			this.overnight = overnight;
 			this.oneWeek = oneWeek;
@@ -502,6 +501,6 @@ public class RT_IRRBB_Data_Discount_Rates {
 			// TODO Auto-generated constructor stub
 		}
 
-	    
+		 
 	    
 }

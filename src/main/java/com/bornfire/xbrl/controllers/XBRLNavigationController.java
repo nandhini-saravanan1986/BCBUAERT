@@ -85,8 +85,8 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_Template;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_Template_Repository;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_Template;
@@ -126,7 +126,11 @@ import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
 import com.bornfire.xbrl.services.RT_InvestmentRiskDataDictionaryService;
 import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
+import com.bornfire.xbrl.services.RT_Irrbb_Discount_Rates_Service;
+import com.bornfire.xbrl.services.RT_Irrbb_Ear_Service;
+import com.bornfire.xbrl.services.RT_Irrbb_Eve_Service;
 import com.bornfire.xbrl.services.RT_Liquidity_Risk_Data_Service;
+import com.bornfire.xbrl.services.RT_LiquidityriskdashboardService;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
@@ -277,13 +281,25 @@ RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
 
 
 @Autowired
-RT_IRRBB_Data_Template_Repository IRRB_EVE_Repo;
-
+RT_IRRBB_Data_EVE_Template_Repository IRRB_EVE_Repo;
 @Autowired 
 RT_IRRBB_Data_EAR_Repository IRRBB_EAR_Repository;
 
 @Autowired 
 RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
+
+
+@Autowired
+RT_LiquidityriskdashboardService liquidityriskdashboardService;
+
+@Autowired
+RT_Irrbb_Eve_Service irrbbeveService;
+
+@Autowired
+RT_Irrbb_Ear_Service irrbbearService;
+
+@Autowired
+RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	private String pagesize;
 
@@ -2171,63 +2187,54 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 		}
 	}	
 	
-	/*iquidity risk Dashboard template*/
-	@RequestMapping(value = "Liquidity_Risk_Dashboard_Template", method = RequestMethod.GET)
-	public String Liquidity_Risk_Dashboard_Template(@RequestParam(required = false) String siNo,
-			@RequestParam(required = false) String formmode, Model model) {
-
-		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
-					.orElse(new RT_Investment_Securities_Data_Template()));
-			
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails();
-         
-			System.out.println("The Liquidity Risk Dashboard"  +LiquidityRiskDashboardRepo.getAlldetails().size());
-			model.addAttribute("formmode", "list");
-			model.addAttribute("ISList", list); // Used in HTML table
-		} /*
-			 * else { model.addAttribute("formmode", "add");
-			 * model.addAttribute("securityData", new
-			 * RT_Investment_Securities_Data_Template()); }
-			 */else {
-			model.addAttribute("formmode", "add");
-		}
-
-		return "RT/Liquidity_Risk_Dashboard_Template";
-	}
 	
-	/*--IRRBB Data template--*/
-	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
-	public String IRRBB_data_Template(@RequestParam(required = false) String siNo,
-			@RequestParam(required = false) String formmode, Model model) {
 
-		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
-					.orElse(new RT_Investment_Securities_Data_Template()));
+/*--IRRBB Data template--*/
+	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
+	public String IRRBB_data_Template(@RequestParam(required = false) String SI_NO,
+			@RequestParam(required = false) String formmode,Model md) {
+
+		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
+			RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("irrbbear", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "editear");
 			
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_IRRBB_Data_Template> list = IRRB_EVE_Repo.getAlldetails();
+		} 
+		
+		else if ("editeve".equalsIgnoreCase(formmode)) {
+	        RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
+	        md.addAttribute("irrbbeve", data); // Same variable name used, if form is reused
+	        md.addAttribute("formmode", "editeve");
+		}
+		
+		else if ("editdiscount".equalsIgnoreCase(formmode)) {
+			RT_IRRBB_Data_Discount_Rates data = IRRBB_Data_Template_DiscountRate_repo.getParticularDataBySI_NO(SI_NO);
+	        md.addAttribute("irrbbdiscount", data); // Same variable name used, if form is reused
+	        md.addAttribute("formmode", "editdiscount");
+		}
+		
+		
+		else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
          
 			System.out.println("IRRBB EVE "  +IRRB_EVE_Repo.getAlldetails().size());
-			model.addAttribute("formmode", "list");
-			model.addAttribute("ISList", list); // Used in HTML table
+			md.addAttribute("formmode", "list");
+			md.addAttribute("ISList", list); // Used in HTML table
 		} else if ("EAR".equalsIgnoreCase(formmode)) {
 			System.out.println("THE EAR REPORT START");
 			List<RT_IRRBB_Data_EAR> list = IRRBB_EAR_Repository.getAlldetails();
             System.out.println("IRRBB EAR "  +IRRBB_EAR_Repository.getAlldetails().size());
-			model.addAttribute("formmode", "EAR");
-			model.addAttribute("ISListEar", list); // Used in HTML table
+			md.addAttribute("formmode", "EAR");
+			md.addAttribute("ISListEar", list); // Used in HTML table
 			System.out.println("Formmode" +formmode);
 		}
 		else if ("DiscountRate".equalsIgnoreCase(formmode)) {
 			System.out.println("---- Discount Rate---");
 			List<RT_IRRBB_Data_Discount_Rates> list = IRRBB_Data_Template_DiscountRate_repo.getAlldetails();
             System.out.println("IRRBB EAR "  +IRRBB_Data_Template_DiscountRate_repo.getAlldetails().size());
-			model.addAttribute("formmode", "DiscountRate");
-			model.addAttribute("ISListDiscount", list); // Used in HTML table
+			md.addAttribute("formmode", "DiscountRate");
+			md.addAttribute("ISListDiscount", list); // Used in HTML table
 			System.out.println("Formmode" +formmode);
 		}
 		
@@ -2236,34 +2243,13 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 			 * model.addAttribute("securityData", new
 			 * RT_Investment_Securities_Data_Template()); }
 			 */else {
-			model.addAttribute("formmode", "add");
+			md.addAttribute("formmode", "add");
 		}
 
 		return "RT/IRRBB_data_Template";
 	}
 	
-	/*--IRRBB Data template--*/
-	@RequestMapping(value = "IRRBB_data_Template_EAR", method = RequestMethod.GET)
-	public String IRRBB_data_Template_EAR(@RequestParam(required = false) String siNo,
-			@RequestParam(required = false) String formmode, Model model) {
-
-		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
-					.orElse(new RT_Investment_Securities_Data_Template()));
-			
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_IRRBB_Data_Template> list = IRRB_EVE_Repo.getAlldetails();
-         
-			System.out.println("IRRBB EVE "  +IRRB_EVE_Repo.getAlldetails().size());
-			model.addAttribute("formmode", "list");
-			model.addAttribute("ISList", list); // Used in HTML table
-		} else {
-			model.addAttribute("formmode", "add");
-		}
-
-		return "RT/IRRBB_data_Template_EAR";
-	}
+	
 	
 	
 	
@@ -2462,6 +2448,121 @@ RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
+	
+	/*iquidity risk Dashboard template*/
+	@RequestMapping(value = "Liquidity_Risk_Dashboard_Template", method = RequestMethod.GET)
+	public String Liquidity_Risk_Dashboard_Template(@RequestParam(required = false) String SI_NO,
+			@RequestParam(required = false) String formmode, Model model,Model md) {
+
+		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
+			RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("liquidityriskdashboard", data);
+			System.out.println("edit is formmode");
+			md.addAttribute("formmode", "edit");
+			
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			md.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+		}else {
+			model.addAttribute("formmode", "add");
+		}
+		
+
+		return "RT/Liquidity_Risk_Dashboard_Template";
+	}
+	
+	
+	@PostMapping("/updateliquidityriskdashboard")
+	@ResponseBody
+	public String updateliquidityriskdashboard(
+			@ModelAttribute RT_Liquidity_Risk_Dashboard_Template liquidityriskdashboard) {
+		boolean updated = liquidityriskdashboardService.updateliquidityriskdashboard(liquidityriskdashboard);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
+	}
+
+	
+	
+	  @RequestMapping(value = "/downloadLiquidityriskdashboardExcel",method = RequestMethod.GET) 
+	  public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel() { logger.
+	  info("Controller: Received request for Liquidity Risk Dashboard Template Excel download."
+	  );
+	  
+	  try { byte[] excelData = liquidityriskdashboardService.generateLiquidityriskdashboardExcel();
+	  
+	  
+	  if (excelData.length == 0) { logger.
+	  warn("Controller: No data found for Liquidity Risk Dashboard Template Excel report. Responding with 204 No Content."
+	  ); return ResponseEntity.noContent().build(); }
+	  
+	  ByteArrayResource resource = new ByteArrayResource(excelData);
+	  
+	  String filename = "Liquidityriskdashboard.xls"; HttpHeaders
+	  headers = new HttpHeaders(); headers.add(HttpHeaders.CONTENT_DISPOSITION,
+	  "attachment; filename=" + filename);
+	  
+	  logger.info("Controller: Sending file '{}' to client ({} bytes).", filename,
+	  excelData.length);
+	  
+	  return ResponseEntity.ok() .headers(headers) .contentLength(excelData.length)
+	  .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	  .body(resource);
+	  
+	  } catch (FileNotFoundException e) { logger.
+	  error("Controller ERROR: Liquidity Risk Dashboard Template Excel template file not found."
+	  , e); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	  } catch (Exception e) { logger.error("Controller ERROR: Unexpected error occurred during file generation.",
+	  e); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); }
+	  }
+	 
+	  
+	  @PostMapping("/updateirrbear")
+		@ResponseBody public String updateirrbear(@ModelAttribute RT_IRRBB_Data_EAR irrbbear)
+	  {
+		  boolean updated = irrbbearService.updateirrbbear(irrbbear);
+
+			if (updated) {
+				return "Updated successfully";
+			} else {
+				return "Record not found for update";
+			}
+
+		}
+	  
+	  @PostMapping("/updateirrbeve")
+		@ResponseBody public String updateirrbeve(@ModelAttribute RT_IRRBB_Data_EVE_Template irrbbeve)
+	  {
+		  boolean updated = irrbbeveService.updateirrbbeve(irrbbeve);
+
+			if (updated) {
+				return "Updated successfully";
+			} else {
+				return "Record not found for update";
+			}
+
+		}
+	  
+	  @PostMapping("/updateirrbdiscount")
+		@ResponseBody public String updateirrbdiscount(@ModelAttribute RT_IRRBB_Data_Discount_Rates irrbbdiscount)
+	  {
+		  boolean updated = discountratesService.updateirrbbdiscount(irrbbdiscount);
+
+			if (updated) {
+				return "Updated successfully";
+			} else {
+				return "Record not found for update";
+			}
+
+		}
+	  
+	
+	
 	
 	
 }

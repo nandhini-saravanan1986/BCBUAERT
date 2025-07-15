@@ -14,8 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="BCBUAE_LIQUIDITY_RISK_DASHBOARD_TEMPLATE")
 public class RT_Liquidity_Risk_Dashboard_Template {
 	  @Id
-	    @Column(name = "SI_NO")
-	    private String siNo;
+	  private String SI_NO;
 
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "REPORT_DATE")
@@ -536,12 +535,12 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 	    @Column(name = "VERIFY_TIME")
 	    private Date verifyTime;
 
-		public String getSiNo() {
-			return siNo;
+		public String getSI_NO() {
+			return SI_NO;
 		}
 
-		public void setSiNo(String siNo) {
-			this.siNo = siNo;
+		public void setSI_NO(String sI_NO) {
+			SI_NO = sI_NO;
 		}
 
 		public Date getReportDate() {
@@ -1904,7 +1903,7 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 			this.verifyTime = verifyTime;
 		}
 
-		public RT_Liquidity_Risk_Dashboard_Template(String siNo, Date reportDate, String bankName,
+		public RT_Liquidity_Risk_Dashboard_Template(String sI_NO, Date reportDate, String bankName,
 				String groupHeadOfficeSubsidiary, String subsidiary, String bankSymbol, String conventionalIslamic,
 				String localForeign, String cbuAeTiering, BigDecimal assetBalanceSheetSizeAed, BigDecimal cashAed,
 				BigDecimal cashPercent, BigDecimal dueFromCentralBankAed, BigDecimal dueFromCentralBankPercent,
@@ -1965,7 +1964,7 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 				String reportCode, Date reportSubmitDate, String entryUser, String modifyUser, String verifyUser,
 				Date entryTime, Date modifyTime, Date verifyTime) {
 			super();
-			this.siNo = siNo;
+			SI_NO = sI_NO;
 			this.reportDate = reportDate;
 			this.bankName = bankName;
 			this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
@@ -2142,7 +2141,7 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 			super();
 			// TODO Auto-generated constructor stub
 		}
-	    
-	    
+
+		
 
 }

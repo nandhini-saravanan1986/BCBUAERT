@@ -10,5 +10,10 @@ import org.springframework.stereotype.Repository;
 public interface RT_IRRBB_Data_EAR_Repository extends JpaRepository <RT_IRRBB_Data_EAR,Long> {
 	@Query(value = "select * from BCBUAE_IRRBB_EAR ", nativeQuery = true)
 	List<RT_IRRBB_Data_EAR> getAlldetails();
+	
+	@Query(value = "SELECT * FROM BCBUAE_IRRBB_EAR where SI_NO =?1 ", nativeQuery = true)
+	RT_IRRBB_Data_EAR getParticularDataBySI_NO(String SI_NO);
+	
+	
 
 }

@@ -12,11 +12,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name="BCBUAE_IRRBB_DATA_TEMPLATE")
-public class RT_IRRBB_Data_Template {
+public class RT_IRRBB_Data_EVE_Template {
 	
 	@Id
-	@Column(name = "SI_NO")
-	private Long sino;
+	private String SI_NO;
 	
 	@Column(name = "REPORT_DATE")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -169,12 +168,12 @@ public class RT_IRRBB_Data_Template {
 	@Column(name = "VERIFY_TIME")
 	private Date verifyTime;
 
-	public Long getSino() {
-		return sino;
+	public String getSI_NO() {
+		return SI_NO;
 	}
 
-	public void setSino(Long sino) {
-		this.sino = sino;
+	public void setSI_NO(String sI_NO) {
+		SI_NO = sI_NO;
 	}
 
 	public Date getDate() {
@@ -577,7 +576,7 @@ public class RT_IRRBB_Data_Template {
 		this.verifyTime = verifyTime;
 	}
 
-	public RT_IRRBB_Data_Template(Long sino, Date date, String bankName, String groupHeadOfficeSubsidiary,
+	public RT_IRRBB_Data_EVE_Template(String sI_NO, Date date, String bankName, String groupHeadOfficeSubsidiary,
 			String bankSymbol, String conventionalOrIslamic, String localOrForeign, String cbuaeTiering,
 			String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3, String optionType,
 			String rateType, String referenceRate, String instrumentCurrency, BigDecimal outstandingBalance,
@@ -590,7 +589,7 @@ public class RT_IRRBB_Data_Template {
 			String delFlg, String reportCode, Date reportSubmitDate, String entryUser, String modifyUser,
 			String verifyUser, Date entryTime, Date modifyTime, Date verifyTime) {
 		super();
-		this.sino = sino;
+		SI_NO = sI_NO;
 		this.date = date;
 		this.bankName = bankName;
 		this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
@@ -643,11 +642,12 @@ public class RT_IRRBB_Data_Template {
 		this.verifyTime = verifyTime;
 	}
 
-	public RT_IRRBB_Data_Template() {
+	public RT_IRRBB_Data_EVE_Template() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	
 	
 	
 	

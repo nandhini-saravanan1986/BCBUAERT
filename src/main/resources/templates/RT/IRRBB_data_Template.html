@@ -339,7 +339,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		}
 
 		function list() {
-			location.href = 'Investment_Securities_Data?formmode=list';
+			location.href = 'IRRBB_data_Template?formmode=DiscountRate';
 		}
 
 		function nostro() {
@@ -358,9 +358,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			$("#loader").modal("toggle");
 
 			$.ajax({
-				url: `./updateInvestmentSecurity`,
+				url: `./updateirrbear`,
 				type: 'POST',
-				data: $('#InvestmentData').serialize(),
+				data: $('#irrbbear').serialize(),
 				success: function (response) {
 					$("#loader").modal("hide");
 
@@ -432,6 +432,36 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		}
 	});
 </script>
+<script>
+	function updateformdiscount(event) {
+
+			event.preventDefault();
+			$("#loader").modal("toggle");
+
+			$.ajax({
+				url: `./updateirrbdiscount`,
+				type: 'POST',
+				data: $('#irrbbdiscount').serialize(),
+				success: function (response) {
+					$("#loader").modal("hide");
+
+
+					$("#alertmsg").text(response);
+					$("#alert").modal("toggle");
+
+				},
+				error: function (xhr, status, error) {
+					console.error("Error in modify:", error);
+					$("#loader").modal("hide");
+
+					alert("Failed to modify. Please try again.");
+				}
+			});
+
+		}
+
+	</script>
+
 
 
 
@@ -839,7 +869,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							<tbody style="font-size: 9px;" th:each="data : ${ISList}">
 								<tr>
 								<td><a
-											th:href="@{'/IRRBB_data_Template?formmode=edit&siNo=' + ${data.sino}}">
+											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i></a>
 									</td>
 									
@@ -908,6 +938,275 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				</div>
 				
 				
+				<!------------------ edit starts for IRRBBEVE-------------------------------------------------------------->
+		
+<div th:if="${formmode == 'editeve'}" style="align-items:center">
+ 
+<div class="row">
+<form th:action="@{/updateirrbeve}" th:object="${irrbbeve}" method="post" id="irrbbeve">
+	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Mm Data - Edit</h3>
+							</div>
+							
+						</div>
+<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+
+ 
+  
+   <input type="hidden" th:field="*{SI_NO}" />
+
+      
+
+  
+    
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Report Date</label>
+    <div class="col-sm-4">
+        <input type="date" class="form-control" th:field="*{date}" readonly />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Bank Name</label>
+    <div class="col-sm-4">
+        <input type="date" class="form-control" th:field="*{bankName}" readonly />
+            
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Group Head Office/Subsidiary</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Bank Symbol</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{bankSymbol}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Conventional or Islamic</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{conventionalOrIslamic}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Local or Foreign</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{localOrForeign}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{cbuaeTiering}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Subsidiary</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{subsidiary}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Scenario</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{scenario}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">GL Level 1</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel1}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">GL Level 2</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel2}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">GL Level 3</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel3}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Type</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{optionType}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Rate Type</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{rateType}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Reference Rate</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{referenceRate}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Instrument Currency</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{instrumentCurrency}" />
+    </div>
+</div>
+
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Outstanding Balance</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{outstandingBalance}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Overnight</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{overnight}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">0-1M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{onToOneM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">1M-3M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{oneMToThreeM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">3M-6M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{threeMToSixM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">6M-9M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sixMonthToNineM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">9M-1Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{nineMonthToOneY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">1Y-5Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{oneYToFiveY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">1.5Y-2Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{onePointFiveYToTwoY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">2Y-3Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twoYToThreeY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">3Y-4Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{threeYToFourY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">4Y-5Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fourYToFiveY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">5Y-6Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fiveYToSixY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">6Y-7Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sixYToSevenY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">7Y-8Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sevenYToEightY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">8Y-9Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{eightYToNineY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">9Y-10Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{nineYToTenY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">10Y-15Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{tenYToFifteenY}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">15Y-20Y</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fifteenYToTwentyY}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">20Y Above</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twentyYearAbove}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Non-Rate Sensitive</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{nonRateSensitive}" />
+    </div>
+</div>
+
+
+
+
+   
+
+    
+
+
+    <!-- Submit -->
+   <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/Mm_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
+    </div>
+    
+    </div>
+  </form>
+</div>
+</div>
+				
+				
 				
 				
 				<!-- -----------------------------------EAR LIST STARTS -------------------------------------------- -->
@@ -958,7 +1257,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							<tbody style="font-size: 9px;" th:each="data : ${ISListEar}">
 								<tr>
 								<td><a
-											th:href="@{'/IRRBB_data_Template?formmode=edit&siNo=' + ${data.slNo}}">
+											th:href="@{'/IRRBB_data_Template?formmode=editear&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i></a>
 									</td>
 									
@@ -1020,6 +1319,250 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				</div>
 				
+							
+<!------------------ edit starts for IRRBBEAR-------------------------------------------------------------->
+		
+<div th:if="${formmode == 'editear'}" style="align-items:center">
+ 
+<div class="row">
+<form th:action="@{/updateirrbear}" th:object="${irrbbear}" method="post" id="irrbbear">
+	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Mm Data - Edit</h3>
+							</div>
+							
+						</div>
+<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+
+ 
+  
+   <input type="hidden" th:field="*{SI_NO}" />
+
+      
+
+  
+    
+   <!-- Row: Report Date & Bank Name -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Report Date</label>
+    <div class="col-sm-4">
+        <input type="date" class="form-control" th:field="*{reportDate}" readonly />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Bank Name</label>
+    <div class="col-sm-4">
+        <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
+            <option value="">-- Select Bank --</option>
+            <option th:each="bank : ${bankList}" th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+        </select>
+    </div>
+</div>
+
+<!-- Row: Group Head Office Subsidiary & Bank Symbol -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Group Head Office Subsidiary</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Bank Symbol</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{bankSymbol}" />
+    </div>
+</div>
+
+<!-- Row: Conventional or Islamic & Local or Foreign -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Conventional or Islamic</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{conventionalOrIslamic}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Local or Foreign</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{localOrForeign}" />
+    </div>
+</div>
+
+<!-- Row: CBUAE Tiering & Subsidiary -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{cbuaeTiering}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Subsidiary</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{subsidiary}" />
+    </div>
+</div>
+
+<!-- Row: Scenario & GL Level 1 -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Scenario</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{scenario}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">GL Level 1</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel1}" />
+    </div>
+</div>
+
+<!-- Row: GL Level 2 & GL Level 3 -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">GL Level 2</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel2}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">GL Level 3</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{glLevel3}" />
+    </div>
+</div>
+
+<!-- Row: Option Type & Rate Type -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Option Type</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{optionType}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Rate Type</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{rateType}" />
+    </div>
+</div>
+
+<!-- Row: Reference Rate & Instrument Currency -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Reference Rate</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{referenceRate}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Instrument Currency</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{instrumentCurrency}" />
+    </div>
+</div>
+
+
+<!-- Example of 2 BigDecimal Fields -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Pass Through Rate</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{passThroughRate}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Overnight</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{overnight}" />
+    </div>
+</div>
+
+<!-- Repeat for remaining BigDecimal fields -->
+<!-- Loop begins -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">On to Two W</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{onToTwoW}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Two W to One M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{twoWToOneM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">One M to Two M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{oneMToTwoM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Two M to Three M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{twoMToThreeM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Three M to Four M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{threeMToFourM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Four M to Five M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{fourMToFiveM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Five M to Six M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{fiveMToSixM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Six M to Seven M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{sixMToSevenM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Seven M to Eight M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{sevenMToEightM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Eight M to Nine M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{eightMToNineM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Nine M to Ten M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{nineMToTenM}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Ten M to Eleven M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{tenMToElevenM}" />
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Eleven M to Twelve M</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.0001" class="form-control" th:field="*{elevenMToTwelveM}" />
+    </div>
+</div>
+
+
+   
+
+    
+
+
+    <!-- Submit -->
+   <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/Mm_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
+    </div>
+    
+    </div>
+  </form>
+</div>
+</div>
+				
 				
 				
 				
@@ -1061,7 +1604,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							<tbody style="font-size: 9px;" th:each="data : ${ISListDiscount}">
 								<tr>
 								<td><a
-											th:href="@{'/IRRBB_data_Template?formmode=edit&siNo=' + ${data.siNo}}">
+											th:href="@{'/IRRBB_data_Template?formmode=editdiscount&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i></a>
 									</td> 
 									
@@ -1116,14 +1659,204 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				</div>
 				
-				
-				
-				
-				
-			
-				
+					</div>
 				</div>
-				</div>
+				
+				
+				
+<!------------------ edit starts for IRRBBDISOCUNTRATE-------------------------------------------------------------->		
+<div th:if="${formmode == 'editdiscount'}" style="align-items:center">
+ 
+<div class="row">
+<form th:action="@{/updateirrbdiscount}" th:object="${irrbbdiscount}" method="post" id="irrbbdiscount">
+	<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="card-header"style="background-color: rgb(166,0,0);">
+							<div class="float-left">
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB DISCOUNT RATE - Edit</h3>
+							</div>
+							
+						</div>
+<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+
+ 
+  
+   <input type="hidden" th:field="*{SI_NO}" />
+
+      
+
+  
+    
+   <!-- Row: Derived Tenor & Overnight -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Derived Tenor</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" th:field="*{derivedTenor}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Overnight</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{overnight}" />
+    </div>
+</div>
+
+<!-- Row: One Week & One Month -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">One Week</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{oneWeek}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">One Month</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{oneMonth}" />
+    </div>
+</div>
+
+<!-- Row: Two Month & Three Month -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Two Month</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twoMonth}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Three Month</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{threeMonth}" />
+    </div>
+</div>
+
+<!-- Row: Six Month & Nine Month -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Six Month</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sixMonth}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Nine Month</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{nineMonth}" />
+    </div>
+</div>
+
+<!-- Row: One Year & One Point Five Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">One Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{oneYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">1.5 Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{onePointFiveYear}" />
+    </div>
+</div>
+
+<!-- Row: Two Year & Three Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Two Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twoYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Three Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{threeYear}" />
+    </div>
+</div>
+
+<!-- Row: Four Year & Five Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Four Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fourYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Five Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fiveYear}" />
+    </div>
+</div>
+
+<!-- Row: Six Year & Seven Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Six Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sixYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Seven Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{sevenYear}" />
+    </div>
+</div>
+
+<!-- Row: Eight Year & Nine Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Eight Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{eightYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Nine Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{nineYear}" />
+    </div>
+</div>
+
+<!-- Row: Ten Year & Twelve Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Ten Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{tenYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Twelve Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twelveYear}" />
+    </div>
+</div>
+
+<!-- Row: Fifteen Year & Twenty Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Fifteen Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{fifteenYear}" />
+    </div>
+
+    <label class="col-sm-2 col-form-label">Twenty Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{twentyYear}" />
+    </div>
+</div>
+
+<!-- Row: Thirty Year -->
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Thirty Year</label>
+    <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" th:field="*{thirtyYear}" />
+    </div>
+</div>
+
+
+
+
+
+   
+
+    
+
+
+    <!-- Submit -->
+   <div class="card-footer text-center"
+     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+   <button type="submit" class="custom-tab-btn" onclick="updateformdiscount(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='DiscountRate')}" class="custom-tab-btn">Cancel</a>
+    </div>
+    
+    </div>
+  </form>
+</div>
+</div>
 
 			<!-- ---------------- edit starts------------------------------------------------------------ -->
 
@@ -1137,373 +1870,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			<!-- Card Header -->
 
 
-			<div th:if="${formmode}=='edit'" style="align-items:center">
-				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post"
-					id="InvestmentData">
-					<div class="card" style="margin: 0 15px;">
-						<div class="card-header" style="background-color: rgb(107, 122, 143);">
-							<h5 class="m-0 font-weight-bold"
-								style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
-								INVESTMENT SECURITIES DATA - EDIT
-							</h5>
-						</div>
-
-						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-							<input type="hidden" th:field="*{siNo}" />
-
-
-							<!-- Bank Info -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Data Date</label>
-								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" />
-								</div>
-
-								<label class="col-sm-2 col-form-label">Bank Name</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{bankName}" />
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{headOfficeSubsidiary}" /></div>
-
-								<label class="col-sm-2 col-form-label">Subsidiary</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{subsidiary}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Bank Symbol</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{bankSymbol}" /></div>
-
-								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{conventionalIslamic}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Local/Foreign</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{localForeign}" /></div>
-
-								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{cbuAeTiering}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Accounting Classification</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{accountingClassification}" /></div>
-
-								<label class="col-sm-2 col-form-label">Instrument Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{instrumentType}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Instrument Subcategory Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{instrumentSubcategoryType}" /></div>
-
-								<label class="col-sm-2 col-form-label">ISIN Code</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{isinCode}" />
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Bank Internal Portfolio Code</label>
-								<div class="col-sm-10"><input type="text" class="form-control"
-										th:field="*{bankInternalPortfolioCode}" /></div>
-							</div>
-
-							<!-- REPO -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CBUAE Security ID</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
-										th:field="*{cbuAeSecurityId}" /></div>
-
-								<label class="col-sm-2 col-form-label">CBUAE Access Primary Key</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
-										th:field="*{cbuAeAccessPrimaryKey}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Security Description</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{securityDescription}" /></div>
-
-								<label class="col-sm-2 col-form-label">Asset Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{assetCurrency}" /></div>
-							</div>
-
-							<!-- Bonds -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Obligor</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{obligor}" />
-								</div>
-
-								<label class="col-sm-2 col-form-label">Country of Risk</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{countryOfRisk}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{cbuAeGeographicalZone}" /></div>
-
-								<label class="col-sm-2 col-form-label">Industry</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{industry}" />
-								</div>
-							</div>
-
-							<!-- Credit -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Sector</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{sector}" />
-								</div>
-
-								<label class="col-sm-2 col-form-label">Issuer Type</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{issuerType}" /></div>
-							</div>
-
-							<!-- Other -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control" th:field="*{issueSize}" />
-								</div>
-
-								<label class="col-sm-2 col-form-label">Percent Issue Size</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{percentIssueSize}" /></div>
-							</div>
-
-							<!-- Nostro -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Nominal Trade Currency</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{nominalTradeCurrency}" /></div>
-
-								<label class="col-sm-2 col-form-label">Nominal AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{nominalAedEquivalent}" /></div>
-							</div>
-
-							<!-- Derivatives -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Prem Disc AED Equivalent</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{premDiscAedEquivalent}" /></div>
-
-								<label class="col-sm-2 col-form-label">Specific Provision AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{specificProvisionAed}" /></div>
-							</div>
-
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Fixed Income Info Net Book Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{fixedIncomeInfoNetBookPrice}" /></div>
-
-								<label class="col-sm-2 col-form-label">Net Book Value AED</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{netBookValueAed}" /></div>
-							</div>
-
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Purchase YTM</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{purchaseYieldToMaturity}" /></div>
-
-								<label class="col-sm-2 col-form-label">Clean Price</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{cleanPrice}" /></div>
-							</div>
-
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Clean Market Value AED</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{cleanMarketValueAed}" /></div>
-
-								<label class="col-sm-2 col-form-label">Current YTM</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{currentYieldToMaturity}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Unrealized Gain/Loss AED</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unrealizedGainLossAed}" /></div>
-
-								<label class="col-sm-2 col-form-label">Subordinated Debt Sukuk</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{subordinatedDebtSukuk}" /></div>
-							</div>
-
-
-
-
-							<!-- Derivatives -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">finalRatingBanks</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingBanks}" /></div>
-
-								<label class="col-sm-2 col-form-label">finalRatingCbuae</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{finalRatingCbuae}" /></div>
-							</div>
-
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">creditQuality</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{creditQuality}" /></div>
-
-								<label class="col-sm-2 col-form-label">maturityDate</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityDate}" /></div>
-							</div>
-
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">residualMaturity</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{residualMaturity}" /></div>
-
-								<label class="col-sm-2 col-form-label">maturityPeriod</label>
-								<div class="col-sm-2"><input type="text" class="form-control"
-										th:field="*{maturityPeriod}" /></div>
-							</div>
-
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsFi</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsFi}" /></div>
-
-								<label class="col-sm-2 col-form-label">qtyEquityFunds</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{qtyEquityFunds}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">equityFloatingFundAssets</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{equityFloatingFundAssets}" /></div>
-
-								<label class="col-sm-2 col-form-label">totalFloatingShareFundAum</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalFloatingShareFundAum}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">specificProvision</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{specificProvision}" /></div>
-
-								<label class="col-sm-2 col-form-label">netBookValue</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{netBookValue}" /></div>
-							</div>
-
-							<!-- FX -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">otherSecInfoNetBookPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{otherSecInfoNetBookPrice}" /></div>
-
-								<label class="col-sm-2 col-form-label">marketPrice</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{marketPrice}" /></div>
-							</div>
-
-							<!-- Bond Settlement -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">fairValueAmountAed</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{fairValueAmountAed}" /></div>
-
-								<label class="col-sm-2 col-form-label">unrealizedGainLossAgain</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{unrealizedGainLossAgain}" /></div>
-							</div>
-
-							<!-- Overall Treasury -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">percentHoldingsOther</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldingsOther}" /></div>
-
-								<label class="col-sm-2 col-form-label">totalNetBookValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalNetBookValueAed}" /></div>
-							</div>
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">totalMarketValueAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalMarketValueAed}" /></div>
-
-								<label class="col-sm-2 col-form-label">totalUnrealizedGainLoss</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{totalUnrealizedGainLoss}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unrealizedGainLossContrib</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unrealizedGainLossContrib}" /></div>
-
-								<label class="col-sm-2 col-form-label">percentHoldings</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{percentHoldings}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">existingPledgeStatus</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{existingPledgeStatus}" /></div>
-
-								<label class="col-sm-2 col-form-label">pledgedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{pledgedAmountAed}" /></div>
-							</div>
-
-
-
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">unencumberedAmountAed</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{unencumberedAmountAed}" /></div>
-
-								<label class="col-sm-2 col-form-label">proportionUnencumbered</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{proportionUnencumbered}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">hqlaElarEligibility</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{hqlaElarEligibility}" /></div>
-
-								<label class="col-sm-2 col-form-label">liquidityType</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
-										th:field="*{liquidityType}" /></div>
-							</div>
-						</div>
-
-						<div class="card-footer text-center"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Investment_Securities_Data}" class="custom-tab-btn">Cancel</a>
-						</div>
-					</div>
-				</form>
-			</div>
+		
 
 			<div class="modal fade" id="alert">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

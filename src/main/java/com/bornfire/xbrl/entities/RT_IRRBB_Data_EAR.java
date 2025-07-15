@@ -14,9 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table (name="BCBUAE_IRRBB_EAR")
 public class RT_IRRBB_Data_EAR {
 	
-	 @Id
-     @Column(name = "SL_NO")
-	    private Long slNo;
+	@Id
+	private String SI_NO;
 
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "REPORT_DATE")
@@ -158,13 +157,13 @@ public class RT_IRRBB_Data_EAR {
 	    private Date verifyTime;
 
 
-		public Long getSlNo() {
-			return slNo;
+		public String getSI_NO() {
+			return SI_NO;
 		}
 
 
-		public void setSlNo(Long slNo) {
-			this.slNo = slNo;
+		public void setSI_NO(String sI_NO) {
+			SI_NO = sI_NO;
 		}
 
 
@@ -608,7 +607,7 @@ public class RT_IRRBB_Data_EAR {
 		}
 
 
-		public RT_IRRBB_Data_EAR(Long slNo, Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
+		public RT_IRRBB_Data_EAR(String sI_NO, Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
 				String bankSymbol, String conventionalOrIslamic, String localOrForeign, String cbuaeTiering,
 				String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3,
 				String optionType, String rateType, String referenceRate, String instrumentCurrency,
@@ -620,7 +619,7 @@ public class RT_IRRBB_Data_EAR {
 				Date reportSubmitDate, String entryUser, String modifyUser, String verifyUser, Date entryTime,
 				Date modifyTime, Date verifyTime) {
 			super();
-			this.slNo = slNo;
+			SI_NO = sI_NO;
 			this.reportDate = reportDate;
 			this.bankName = bankName;
 			this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
@@ -672,7 +671,8 @@ public class RT_IRRBB_Data_EAR {
 			super();
 			// TODO Auto-generated constructor stub
 		}
-	    
-	    
+
+
+		
 
 }
