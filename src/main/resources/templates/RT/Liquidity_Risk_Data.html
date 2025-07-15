@@ -899,7 +899,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<!-- Bank Info -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Data Date</label>
-								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" />
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dataDate}" required readonly/>
 								</div>
 
 								<label class="col-sm-2 col-form-label">Bank Name</label>
@@ -918,7 +918,11 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 												<label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
 												<div class="col-sm-4">
-													<input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" />
+													<select class="form-control" th:field="*{headOfficeSubsidiary}">
+											        <option value="" disabled selected>-- Select --</option>
+												    <option value="Assets">Head Office</option>
+											        <option value="Liabilities">Subsidiary</option>													
+												    </select>
 												</div>
 												<label class="col-sm-2 col-form-label">Bank Symbol</label>
 												<div class="col-sm-4">
@@ -944,39 +948,231 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 												</div>
 												<label class="col-sm-2 col-form-label">GL Level 1</label>
 												<div class="col-sm-4">
-													<input type="text" class="form-control" th:field="*{glLevel1}" />
+													
+													<select class="form-control" th:field="*{glLevel1}">
+													        <option value="" disabled selected>-- Select --</option>
+													        <option value="Assets">Assets</option>
+													        <option value="Liabilities">Liabilities</option>
+															<option value="Equity">Equity</option>
+													     <option value="Off_BS">Off_BS</option>
+													    </select>
 												</div>
 											</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">GL Level 2</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{glLevel2}" />
+								<div class="col-sm-4">
+									
+									<select class="form-control" th:field="*{glLevel2}">
+									        <option value="" disabled selected>-- Select --</option>
+									        <option value="Cash and Balances with central Banks">Cash and Balances with central Banks</option>
+										    <option value="Due from Banks financial institutions">Due from Banks financial institutions</option>
+											<option value="Derivatives Financial Assets">Derivatives Financial Assets</option>
+											<option value="Loans and advances performing">Loans and advances performing</option>
+										    <option value="Loans and advances non performing">Loans and advances non performing</option>
+											<option value="Investment in Associaates">Investment in Associaates</option>
+											<option value="Intangible assets">Intangible assets</option>
+											<option value="Other assets">Other assets</option>
+											<option value="Fixed assets">Fixed assets</option>
+										
+							    </select>
 								</div>
 
 								<label class="col-sm-2 col-form-label">GL Level 3</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{glLevel3}" />
+								<div class="col-sm-4">
+									
+							<select class="form-control" th:field="*{glLevel3}">
+							  <option value="" disabled selected>-- Select --</option>
+							    <option value="Cash and Cash items">Cash and Cash items</option>
+							 <option value="Central Bank Current Account">Central Bank Current Account</option>
+								<option value="Central Bank Reserve Account">Central Bank Reserve Account</option>
+								<option value="Due from Central Bank -ODF">Due from Central Bank -ODF</option>
+								 <option value="Due from Central Bank -CD">Due from Central Bank -CD</option>
+								<option value="Due from Central Bank -MBills">Due from Central Bank -MBills</option>
+								<option value="Reverse Repose with Central Banks">Reverse Repose with Central Banks</option>
+								<option value="Due from Banks Nastro">Due from Banks Nastro</option>
+								<option value="Inter Bank Margin Call">Inter Bank Margin Call</option>	
+								<option value="Inter Bank Placements">Inter Bank Placements</option>
+						      <option value="Reverse Repo">Reverse Repo</option>	
+								<option value="Islamic Reverse Repo">Islamic Reverse Repo</option>
+								<option value="Islamic Placements">Islamic Placements</option>									
+							    </select>
 								</div>
 							</div>
 
 							<!-- Instrument Info -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Option Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{optionType}" /></div>
+								<div class="col-sm-4">
+									
+										<select class="form-control" th:field="*{optionType}">
+											    <option value="" disabled selected>-- Select --</option>
+											     <option value="Behavioural">Behavioural</option>
+											  <option value="Automatic">Automatic</option>
+												<option value="NA">NA</option>
+										    </select>
+									</div>
+										
+										
 
 								<label class="col-sm-2 col-form-label">Rate Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{rateType}" />
+								<div class="col-sm-4">
+									
+									<select class="form-control" th:field="*{rateType}">
+										 <option value="" disabled selected>-- Select --</option>
+									     <option value="Behavioural">Fixed</option>
+										  <option value="Automatic">Floating</option>
+										  <option value="Automatic">Admin</option>
+										<option value="NA">NA</option>
+								    </select>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Reference Rate</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{referenceRate}" /></div>
+								<div class="col-sm-4">
+									
+										<select class="form-control" th:field="*{referenceRate}">
+										 <option value="" disabled selected>-- Select --</option>
+							  	     <option value="NA">NA</option> </select>
+									</div>
 
 								<label class="col-sm-2 col-form-label">Instrument Currency</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{instrumentCurrency}" /></div>
+								<div class="col-sm-4">
+									
+										<select class="form-control" th:field="*{instrumentCurrency}">
+										<option value="" disabled selected>-- Select --</option>
+										   <option value="AED">AED</option>
+										 <option value="AFN">AFN</option>
+										  <option value="ALL">ALL</option>
+										<option value="AMD">AMD</option>
+									   <option value="ANG">ANG</option>
+									 <option value="AOA">AOA</option>
+								     <option value="ARS">ARS</option>
+								     <option value="AUD">AUD</option>
+									 <option value="AWG">AWG</option>
+						 <option value="AZN">AZN</option>
+							  <option value="BAM">BAM</option>
+								<option value="BBD">BBD</option>
+							   <option value="BDT">BDT</option>
+								 <option value="BGN">BGN</option>
+							     <option value="BHD">BHD</option>
+							     <option value="BIF">BIF</option>
+								 <option value="BMD">BMD</option>
+								  <option value="BND">BND</option>
+							     <option value="BOB">BOB</option>
+							    <option value="BOV">BOV</option>
+								<option value="BTN">BTN</option>
+								  <option value="BWP">BWP</option>
+							    <option value="BYN">BYN</option>
+								    <option value="BZD">BZD</option>
+									<option value="CAD">CAD</option>
+								 <option value="CDF">CDF</option>
+								  <option value="CHE">CHE</option>
+							     <option value="CHF">CHF</option>
+							    <option value="CHW">CHW</option>
+								<option value="CLF">CLF</option>
+								  <option value="CLP">CLP</option>
+							    <option value="CNY">CNY</option>
+							    <option value="COP">COP</option>
+									<option value="COU">COU</option>
+							    <option value="CRC">CRC</option>
+								<option value="CUC">CUC</option>
+														
+								
+								
+								<option value="CUP">CUP</option>
+							  <option value="CVE">CVE</option>
+								  <option value="CZK">CZK</option>
+							    <option value="DJF">DJF</option>
+								<option value="DKK">DKK</option>
+								  <option value="DOP">DOP</option>
+							    <option value="DZD">DZD</option>
+							    <option value="EGP">EGP</option>
+								<option value="ERN">ERN</option>
+								  <option value="ETB">ETB</option>
+								<option value="EUR">EUR</option>	
+								
+						<option value="FJD">FJD</option>
+					  <option value="FKP">FKP</option>
+						 <option value="GBP">GBP</option>
+					    <option value="GEL">GEL</option>
+						<option value="GHS">GHS</option>
+					  <option value="GIP">GIP</option>
+					    <option value="GMD">GMD</option>
+				    <option value="GNF">GNF</option>
+					<option value="GTQ">GTQ</option>
+				  <option value="GYD">GYD</option>
+				<option value="HKD">HKD</option>
+				
+				<option value="HNL">HNL</option>
+			  <option value="HTG">HTG</option>
+				 <option value="HUF">HUF</option>
+		    <option value="IDR">IDR</option>
+			<option value="ILS">ILS</option>
+			 <option value="INR">INR</option>
+		    <option value="IQD">IQD</option>
+		    <option value="IRR">IRR</option>
+			<option value="ISK">ISK</option>
+			  <option value="JMD">JMD</option>
+			<option value="JOD">JOD</option>					
+		    <option value="JPY">JPY</option>
+			
+			<option value="KES">KES</option>
+						  <option value="KGS">KGS</option>
+							 <option value="KHR">KHR</option>
+					    <option value="KMF">KMF</option>
+						<option value="KPW">KPW</option>
+						 <option value="KRW">KRW</option>
+					    <option value="KWD">KWD</option>
+					    <option value="KYD">KYD</option>
+						<option value="KZT">KZT</option>
+						  <option value="LAK">LAK</option>
+						<option value="LBP">LBP</option>					
+					    <option value="LKR">LKR</option>
+						
+						<option value="LRD">LRD</option>
+						  <option value="LSL">LSL</option>
+						 <option value="LYD">LYD</option>
+				    <option value="MAD">MAD</option>
+					<option value="MDL">MDL</option>
+					 <option value="MKD">MKD</option>
+				    <option value="MMK">MMK</option>
+				    <option value="MNT">MNT</option>
+					<option value="MOP">MOP</option>
+				  <option value="MRU">MRU</option>
+				<option value="MUR">MUR</option>					
+			    <option value="MVR">MVR</option>
+				
+				<option value="MWK">MWK</option>
+										  <option value="MXN">MXN</option>
+										 <option value="MXV">MXV</option>
+								    <option value="MYR">MYR</option>
+									<option value="MZN">MZN</option>
+									 <option value="NAD">NAD</option>
+								    <option value="NGN">NGN</option>
+								    <option value="NIO">NIO</option>
+									<option value="NOK">NOK</option>
+								  <option value="NPR">NPR</option>
+								<option value="NZD">NZD</option>					
+							    <option value="OMR">OMR</option>
+								<option value="Other">Other</option>
+								
+								<option value="PAB">PAB</option>
+							  <option value="PEN">PEN</option>
+							 <option value="PGK">PGK</option>
+						    <option value="PHP">PHP</option>
+							<option value="PKR">PKR</option>
+						 <option value="PLN">PLN</option>
+						 <option value="PYG">PYG</option>
+							<option value="QAR">QAR</option>
+						<option value="RON">RON</option>
+							  <option value="RSD">RSD</option>
+							<option value="RUB">RUB</option>					
+						    <option value="RWF">RWF</option>
+							<option value="SAR">SAR</option>
+		   </select>
+									</div>
 							</div>
 
 							<div class="form-group row">
@@ -1103,7 +1299,9 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 						<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-						<a th:href="@{/Liquidity_Risk_Data}" class="custom-tab-btn">Cancel</a>
+						<!--<a th:href="@{/Liquidity_Risk_Data}" class="custom-tab-btn">Cancel</a>-->
+						<a th:href="@{/Liquidity_Risk_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
+
 					</div>
 			</div>
 			</form>

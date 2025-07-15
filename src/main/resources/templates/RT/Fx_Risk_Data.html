@@ -883,9 +883,6 @@ if (tabId === 'data') {
 							
 						</div>
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
-
- 
-  
    <input type="hidden" th:field="*{SI_NO}" />
 
           <div class="form-group row">
@@ -933,7 +930,7 @@ if (tabId === 'data') {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Currency</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{currency}" />
+              <input type="text" class="form-control" th:field="*{currency}" id="currency"/>
             </div>
 
            <label class="col-sm-2 col-form-label">FX Net Open Position</label>
@@ -941,7 +938,7 @@ if (tabId === 'data') {
     <input  type="text"
             class="form-control"
             th:field="*{fx_net_openposition}"
-            th:value="${#numbers.formatDecimal(fx_net_openposition, 1, 'COMMA', 2, 'POINT')}" />
+            th:value="${#numbers.formatDecimal(fx_net_openposition, 1, 'COMMA', 2, 'POINT')}" id="fx_net_openposition"/>
 </div>
 
           </div>
@@ -949,60 +946,60 @@ if (tabId === 'data') {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Off Balance Sheet Position</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{off_balance_sheet_position}" />
+              <input type="text" class="form-control" th:field="*{off_balance_sheet_position}" id="off_balance_sheet_position"/>
             </div>
 
             <label class="col-sm-2 col-form-label">On Balance Sheet Position</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{on_balance_sheet_position}" />
+              <input type="text" class="form-control" th:field="*{on_balance_sheet_position}" id="on_balance_sheet_position"/>
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">FX Net Open Position (Foreign Currency)</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{fx_net_openposition_foreign_currency}" />
+              <input type="text" class="form-control" th:field="*{fx_net_openposition_foreign_currency}" id="fx_net_openposition_foreign_currency"/>
             </div>
 
             <label class="col-sm-2 col-form-label">Internal Long Limit</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{internal_long_limit}" />
+              <input type="text" class="form-control" th:field="*{internal_long_limit}" id="internal_long_limit"/>
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Internal Long Limit Trigger Status</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{internal_long_limit_trigger_status}" />
+              <input type="text" class="form-control" th:field="*{internal_long_limit_trigger_status}" id="internal_long_limit_trigger_status"/>
             </div>
 
             <label class="col-sm-2 col-form-label">Internal Short Limit</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{internal_short_limit}" />
+              <input type="text" class="form-control" th:field="*{internal_short_limit}" id="internal_short_limit"/>
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Internal Short Limit Trigger Status</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{internal_short_limit_trigger_status}" />
+              <input type="text" class="form-control" th:field="*{internal_short_limit_trigger_status}" id="internal_short_limit_trigger_status"/>
             </div>
 
             <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital}" />
+              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital}" id="bank_core_tier1_capital"/>
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Bank Core Tier1 Capital LC</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital_lc}" />
+              <input type="text" class="form-control" th:field="*{bank_core_tier1_capital_lc}" id="bank_core_tier1_capital_lc"/>
             </div>
 
             <label class="col-sm-2 col-form-label">Percent Of Group Capital</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{percent_of_group_capital}" />
+              <input type="text" class="form-control" th:field="*{percent_of_group_capital}" id="percent_of_group_capital"/>
             </div>
           </div>
         </div>
@@ -1260,5 +1257,102 @@ function handleBankChange(select) {
     }
   };
 </script>
+<script>
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    bankSymbol: 50,
+    conventionalIslamic: 50,
+    localForeign: 50,
+    cbuaeTiering: 50,
+    currency: 50,
+    internalLongLimitTriggerStatus: 10,
+    internalShortLimitTriggerStatus: 10,
+
+    // NUMBER(24,2) fields
+    fxNetOpenposition: "24,2",
+    offBalanceSheetPosition: "24,2",
+    onBalanceSheetPosition: "24,2",
+    fxNetOpenpositionForeignCurrency: "24,2",
+    internalLongLimit: "24,2",
+    internalShortLimit: "24,2",
+    bankCoreTier1Capital: "24,2",
+    bankCoreTier1CapitalLc: "24,2",
+    percentOfGroupCapital: "24,2",
+    bankCoreTier1CapitalAed: "24,2"
+  };
+
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
+  }
+
+  function clearError(input) {
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
+  }
+
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || value === "") {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number" || !isNaN(rule)) {
+      // VARCHAR2 Validation (check character length)
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
+      }
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // NUMBER(p,s) validation
+      const [total, decimal] = rule.split(",").map(Number);
+      const regex = /^\d+(\.\d+)?$/;
+
+      if (!regex.test(value)) {
+        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+        return;
+      }
+
+      const [intPart, decPart = ""] = value.split(".");
+      const intLen = intPart.replace(/^0+/, "").length;
+      const decLen = decPart.length;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Add maxlength to VARCHAR2 fields only
+        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+          input.setAttribute("maxlength", fieldRules[id]);
+        }
+      }
+    }
+  });
+</script>
+
+
 
 </html>

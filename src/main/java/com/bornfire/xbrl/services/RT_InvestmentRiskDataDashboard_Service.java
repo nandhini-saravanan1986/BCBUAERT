@@ -35,9 +35,9 @@ import java.nio.file.Paths;
 import java.io.FileNotFoundException;
 
 @Service
-public class RT_InvestmentRiskDataDictionaryService {
+public class RT_InvestmentRiskDataDashboard_Service {
 	
-    private static final Logger logger = LoggerFactory.getLogger(RT_InvestmentRiskDataDictionaryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RT_InvestmentRiskDataDashboard_Service.class);
 
     @Autowired
     private Environment env;

@@ -124,7 +124,7 @@ import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
-import com.bornfire.xbrl.services.RT_InvestmentRiskDataDictionaryService;
+import com.bornfire.xbrl.services.RT_InvestmentRiskDataDashboard_Service;
 import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
 import com.bornfire.xbrl.services.RT_Irrbb_Discount_Rates_Service;
 import com.bornfire.xbrl.services.RT_Irrbb_Ear_Service;
@@ -277,7 +277,7 @@ RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimpli
 
 
 @Autowired
-RT_InvestmentRiskDataDictionaryService investmentriskdatadictionaryService;
+RT_InvestmentRiskDataDashboard_Service investmentriskdatadictionaryService;
 
 
 @Autowired
