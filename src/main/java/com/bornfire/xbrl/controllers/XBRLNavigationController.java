@@ -2149,8 +2149,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_ImpactAnalysis data = impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
-			md.addAttribute("impactanalysis", data);
+			RT_ImpactAnalysis data= impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("ImpactAnalysis", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 
@@ -2173,7 +2173,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		md.addAttribute("countryList", countryList);
 
 		return "RT/ImpactAnalysis";
-	}
+	} 
 	
 	@PostMapping("/updateImpactAnalysis")
 	@ResponseBody

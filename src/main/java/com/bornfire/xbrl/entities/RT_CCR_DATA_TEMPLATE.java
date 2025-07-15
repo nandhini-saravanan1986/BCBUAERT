@@ -41,8 +41,8 @@ public class RT_CCR_DATA_TEMPLATE {
 	    @Column(name = "CBUAE_TIERING")
 	    private String cbuaeTiering;
 
-	    @Column(name = "CBUAE_TIERING_SECONDARY")
-	    private String cbuaeTieringSecondary;
+	    @Column(name = "LOCAL_FOREIGN")
+	    private String localForeign;
 
 	    @Column(name = "COUNTERPARTY_NAME")
 	    private String counterpartyName;
@@ -226,12 +226,12 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.cbuaeTiering = cbuaeTiering;
 		}
 
-		public String getCbuaeTieringSecondary() {
-			return cbuaeTieringSecondary;
+		public String getLocalForeign() {
+			return localForeign;
 		}
 
-		public void setCbuaeTieringSecondary(String cbuaeTieringSecondary) {
-			this.cbuaeTieringSecondary = cbuaeTieringSecondary;
+		public void setLocalForeign(String localForeign) {
+			this.localForeign = localForeign;
 		}
 
 		public String getCounterpartyName() {
@@ -532,7 +532,7 @@ public class RT_CCR_DATA_TEMPLATE {
 
 		public RT_CCR_DATA_TEMPLATE(String siNo, Date transactionDate, String bankName, String headOfficeSubsidiary,
 				String subsidiary, String bankSymbol, String conventionalIslamic, String cbuaeTiering,
-				String cbuaeTieringSecondary, String counterpartyName, String internalCounterpartyRef,
+				String localForeign, String counterpartyName, String internalCounterpartyRef,
 				String internalCounterpartyRating, String finalRatingCbuae, String countryOfRisk,
 				String cbuaeGeographicalZone, String counterpartyType, String sector, BigDecimal pfe95Aed,
 				BigDecimal expectedPositiveExposureAed, BigDecimal expectedNegativeExposureAed, String csa,
@@ -551,7 +551,7 @@ public class RT_CCR_DATA_TEMPLATE {
 			this.bankSymbol = bankSymbol;
 			this.conventionalIslamic = conventionalIslamic;
 			this.cbuaeTiering = cbuaeTiering;
-			this.cbuaeTieringSecondary = cbuaeTieringSecondary;
+			this.localForeign = localForeign;
 			this.counterpartyName = counterpartyName;
 			this.internalCounterpartyRef = internalCounterpartyRef;
 			this.internalCounterpartyRating = internalCounterpartyRating;

@@ -4,6 +4,7 @@
 CREATED BY	: KRISHNAPANDI MG 
 CREATED ON	: 23.06.2025 (Started)
 PURPOSE		: Investment_Risk_Data_Dashboard_Template Report
+TESTED BY   : RAJALAKSHMI R
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -30,7 +31,7 @@ PURPOSE		: Investment_Risk_Data_Dashboard_Template Report
 	 -->
 	
 	<!-- jQuery (required first) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -501,7 +502,7 @@ $(document).ready(function () {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'Investmentriskdatadashboard.xls';
+                    a.download = 'CBUAE_Investment Risk Data_Dashboard_Template.xls';
                     document.body.appendChild(a);
 
                     a.click();
@@ -509,7 +510,7 @@ $(document).ready(function () {
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    message = 'Investmentriskdatadashboard.xls has been downloaded successfully.';
+                    message = 'CBUAE_Investment Risk Data_Dashboard_Template.xls has been downloaded successfully.';
                 } else {
                     message = 'No data available to download.';
                 }
@@ -948,97 +949,97 @@ $(document).ready(function () {
     <td th:text="${data.conventionalIslamic}"></td>
     <td th:text="${data.localForeign}"></td>
     <td th:text="${data.cbuAeTiering}"></td>
-    <td th:text="${data.assetBalanceSheetSizeAed}"></td>
-    <td th:text="${data.investmentBookSizeAed}"></td>
-    <td th:text="${data.bookSizeTotalAssetsPct}"></td>
-    <td th:text="${data.ytdNetPnlAed}"></td>
-    <td th:text="${data.ytdFvtociUnrealizedLossAed}"></td>
-    <td th:text="${data.cet1Aed}"></td>
-    <td th:text="${data.uglCoreTier1RelativeImpactPct}"></td>
-    <td th:text="${data.ytdAmortizedUnrealizedLossAed}"></td>
-    <td th:text="${data.ytdHqlaAcUnrealizedLossAed}"></td>
-    <td th:text="${data.hqlaAcCoreTier1ImpactPct}"></td>
-    <td th:text="${data.irVarConfidenceInterval}"></td>
-    <td th:text="${data.irVarHoldingPeriod}"></td>
-    <td th:text="${data.irFixedIncomeExposureAed}"></td>
-    <td th:text="${data.irVarExposureAed}"></td>
-    <td th:text="${data.irVarLimitAed}"></td>
-    <td th:text="${data.irStatus}"></td>
-    <td th:text="${data.irVarImpactPct}"></td>
-    <td th:text="${data.csVarConfidenceInterval}"></td>
-    <td th:text="${data.csVarHoldingPeriod}"></td>
-    <td th:text="${data.csFixedIncomeExposureAed}"></td>
-    <td th:text="${data.csVarExposureAed}"></td>
-    <td th:text="${data.csVarLimitAed}"></td>
-    <td th:text="${data.csStatus}"></td>
-    <td th:text="${data.csVarImpactPct}"></td>
-    <td th:text="${data.fxVarConfidenceInterval}"></td>
-    <td th:text="${data.fxVarHoldingPeriod}"></td>
-    <td th:text="${data.fxExposureAed}"></td>
-    <td th:text="${data.fxVarExposureAed}"></td>
-    <td th:text="${data.fxVarLimitAed}"></td>
-    <td th:text="${data.fxStatus}"></td>
-    <td th:text="${data.fxVarImpactPct}"></td>
-    <td th:text="${data.eqVarConfidenceInterval}"></td>
-    <td th:text="${data.eqVarHoldingPeriod}"></td>
-    <td th:text="${data.eqExposureAed}"></td>
-    <td th:text="${data.eqVarExposureAed}"></td>
-    <td th:text="${data.eqVarLimitAed}"></td>
-    <td th:text="${data.eqStatus}"></td>
-    <td th:text="${data.eqVarImpactPct}"></td>
-    <td th:text="${data.commVarConfidenceInterval}"></td>
-    <td th:text="${data.commVarHoldingPeriod}"></td>
-    <td th:text="${data.commExposureAed}"></td>
-    <td th:text="${data.commVarExposureAed}"></td>
-    <td th:text="${data.commVarLimitAed}"></td>
-    <td th:text="${data.commStatus}"></td>
-    <td th:text="${data.commVarImpactPct}"></td>
-    <td th:text="${data.overallVarConfidenceInterval}"></td>
-    <td th:text="${data.overallVarHoldingPeriod}"></td>
-    <td th:text="${data.varExposureAed}"></td>
-    <td th:text="${data.varLimitAed}"></td>
-    <td th:text="${data.overallVarStatus}"></td>
-    <td th:text="${data.portfolioRelativeImpactPct}"></td>
-    <td th:text="${data.expectedShortfallExposureAed}"></td>
-    <td th:text="${data.expectedShortfallLimitAed}"></td>
-    <td th:text="${data.expectedShortfallStatus}"></td>
-    <td th:text="${data.expectedShortfallImpactPct}"></td>
-    <td th:text="${data.modifiedDuration}"></td>
-    <td th:text="${data.interestRateShockBps}"></td>
-    <td th:text="${data.interestRateLimit}"></td>
-    <td th:text="${data.interestRateStatus}"></td>
-    <td th:text="${data.dv01Aed}"></td>
-    <td th:text="${data.dv01LimitAed}"></td>
-    <td th:text="${data.dv01Status}"></td>
-    <td th:text="${data.dv01TenorGapLt3Aed}"></td>
-    <td th:text="${data.dv01TenorGapGt3Aed}"></td>
-    <td th:text="${data.dv01Check}"></td>
-    <td th:text="${data.cs01Aed}"></td>
-    <td th:text="${data.cs01ShockBps}"></td>
-    <td th:text="${data.cs01Limit}"></td>
-    <td th:text="${data.cs01Status}"></td>
-    <td th:text="${data.cs01InvestmentGradeAed}"></td>
-    <td th:text="${data.cs01SubInvestmentAed}"></td>
-    <td th:text="${data.cs01UnratedAed}"></td>
-    <td th:text="${data.cs01Check}"></td>
-    <td th:text="${data.betaEquity}"></td>
-    <td th:text="${data.equityShockBps}"></td>
-    <td th:text="${data.equityLimit}"></td>
-    <td th:text="${data.equityStatus}"></td>
-    <td th:text="${data.creditSpreadImpactAed}"></td>
-    <td th:text="${data.creditSensitiveImpactPct}"></td>
-    <td th:text="${data.interestRateImpactAed}"></td>
-    <td th:text="${data.rateSensitiveImpactPct}"></td>
-    <td th:text="${data.fxImpactAed}"></td>
-    <td th:text="${data.fxSensitiveImpactPct}"></td>
-    <td th:text="${data.equityImpactAed}"></td>
-    <td th:text="${data.equitySensitiveImpactPct}"></td>
-    <td th:text="${data.commoditiesImpactAed}"></td>
-    <td th:text="${data.commoditySensitiveImpactPct}"></td>
-    <td th:text="${data.jtdLossImpactAed}"></td>
-    <td th:text="${data.jtdRelativeImpactPct}"></td>
-    <td th:text="${data.overallImpactAed}"></td>
-    <td th:text="${data.coreTier1RelativeImpactPct}"></td>
+	<td th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.investmentBookSizeAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.bookSizeTotalAssetsPct, 1, 'COMMA', 4, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.ytdNetPnlAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.ytdFvtociUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.cet1Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.uglCoreTier1RelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.ytdAmortizedUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.ytdHqlaAcUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.hqlaAcCoreTier1ImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.irVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${data.irVarHoldingPeriod}"></td>
+	<td th:text="${#numbers.formatDecimal(data.irFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.irVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.irVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${data.irStatus}"></td>
+	<td th:text="${#numbers.formatDecimal(data.irVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+	<td th:text="${#numbers.formatDecimal(data.csVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+	   <td th:text="${data.csVarHoldingPeriod}"></td>
+	   <td th:text="${#numbers.formatDecimal(data.csFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	   <td th:text="${#numbers.formatDecimal(data.csVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	   <td th:text="${#numbers.formatDecimal(data.csVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	   <td th:text="${data.csStatus}"></td>
+	   <td th:text="${#numbers.formatDecimal(data.csVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+	   <td th:text="${#numbers.formatDecimal(data.fxVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+	       <td th:text="${data.fxVarHoldingPeriod}"></td>
+	       <td th:text="${#numbers.formatDecimal(data.fxExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	       <td th:text="${#numbers.formatDecimal(data.fxVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	       <td th:text="${#numbers.formatDecimal(data.fxVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+	       <td th:text="${data.fxStatus}"></td>
+	       <td th:text="${#numbers.formatDecimal(data.fxVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+		   <td th:text="${#numbers.formatDecimal(data.fxVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+		       <td th:text="${data.fxVarHoldingPeriod}"></td>
+		       <td th:text="${#numbers.formatDecimal(data.fxExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+		       <td th:text="${#numbers.formatDecimal(data.fxVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+		       <td th:text="${#numbers.formatDecimal(data.fxVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+		       <td th:text="${data.fxStatus}"></td>
+		       <td th:text="${#numbers.formatDecimal(data.fxVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.commVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${data.commVarHoldingPeriod}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.commExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.commVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.commVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${data.commStatus}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.commVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+			   <td th:text="${#numbers.formatDecimal(data.overallVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
+			      <td th:text="${data.overallVarHoldingPeriod}"></td>
+			      <td th:text="${#numbers.formatDecimal(data.varExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+			      <td th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+			      <td th:text="${data.overallVarStatus}"></td>
+			      <td th:text="${#numbers.formatDecimal(data.portfolioRelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.expectedShortfallExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.expectedShortfallLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.expectedShortfallStatus}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.expectedShortfallImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.modifiedDuration, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.interestRateShockBps, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.interestRateLimit, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.interestRateStatus}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.dv01Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.dv01LimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.dv01Status}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.dv01TenorGapLt3Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.dv01TenorGapGt3Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.dv01Check}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01ShockBps, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01Limit, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.cs01Status}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01InvestmentGradeAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01SubInvestmentAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.cs01UnratedAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.cs01Check}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.betaEquity, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.equityShockBps, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.equityLimit, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${data.equityStatus}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.creditSpreadImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.creditSensitiveImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.interestRateImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.rateSensitiveImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.fxImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.fxSensitiveImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.equityImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.equitySensitiveImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.commoditiesImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.commoditySensitiveImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.jtdLossImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.jtdRelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.overallImpactAed, 1, 'COMMA', 2, 'POINT')}"></td>
+				  <td th:text="${#numbers.formatDecimal(data.coreTier1RelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
 </tr>
   </tbody>
 </table>
@@ -1126,12 +1127,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Bank Symbol</label>
     <div class="col-sm-4">
-      <input type="text" class="form-control" th:field="*{bankSymbol}" />
+      <input type="text" class="form-control" th:field="*{bankSymbol}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">Conventional / Islamic</label>
     <div class="col-sm-4">
-      <input type="text" class="form-control" th:field="*{conventionalIslamic}" />
+      <input type="text" class="form-control" th:field="*{conventionalIslamic}" readonly/>
       <!-- If this is an enum, replace with a <select> -->
     </div>
   </div>
@@ -1142,12 +1143,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Local / Foreign</label>
     <div class="col-sm-4">
-      <input type="text" class="form-control" th:field="*{localForeign}" />
+      <input type="text" class="form-control" th:field="*{localForeign}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
     <div class="col-sm-4">
-      <input type="text" class="form-control" th:field="*{cbuAeTiering}" />
+      <input type="text" class="form-control" th:field="*{cbuAeTiering}" readonly/>
     </div>
   </div>
 
@@ -1157,12 +1158,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Asset Balance Sheet size (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{assetBalanceSheetSizeAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{assetBalanceSheetSizeAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Investment Book Size (Market value AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{investmentBookSizeAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner"th:field="*{investmentBookSizeAed}" />
     </div>
   </div>
 
@@ -1172,12 +1173,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Book size (% Total Assets)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{bookSizeTotalAssetsPct}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{bookSizeTotalAssetsPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">YTD Net P&L (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{ytdNetPnlAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{ytdNetPnlAed}" />
     </div>
   </div>
   
@@ -1185,13 +1186,13 @@ $(document).ready(function () {
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">YTD FVTOCI unrealized loss (AED)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.01" class="form-control"
+    <input type="number" step="0.01" class="form-control no-spinner"
            th:field="*{ytdFvtociUnrealizedLossAed}" />
   </div>
 
   <label class="col-sm-2 col-form-label">CET1 (AED)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.01" class="form-control"
+    <input type="number" step="0.01" class="form-control no-spinner"
            th:field="*{cet1Aed}" />
   </div>
 </div>
@@ -1200,13 +1201,13 @@ $(document).ready(function () {
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">UGL Core Tier 1 Relative Impact (%)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.0001" class="form-control"
+    <input type="number" step="0.0001" class="form-control no-spinner"
            th:field="*{uglCoreTier1RelativeImpactPct}" />
   </div>
 
   <label class="col-sm-2 col-form-label">YTD Amortized Cost unrealized loss  (AED)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.01" class="form-control"
+    <input type="number" step="0.01" class="form-control no-spinner"
            th:field="*{ytdAmortizedUnrealizedLossAed}" />
   </div>
 </div>
@@ -1215,13 +1216,13 @@ $(document).ready(function () {
 <div class="form-group row">
   <label class="col-sm-2 col-form-label">YTD HQLA/Amortized Cost unrealized loss  (AED)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.01" class="form-control"
+    <input type="number" step="0.01" class="form-control no-spinner"
            th:field="*{ytdHqlaAcUnrealizedLossAed}" />
   </div>
 
   <label class="col-sm-2 col-form-label">HQLA/AC Core Tier 1 Relative Impact   (%)</label>
   <div class="col-sm-4">
-    <input type="number" step="0.0001" class="form-control"
+    <input type="number" step="0.0001" class="form-control no-spinner"
            th:field="*{hqlaAcCoreTier1ImpactPct}" />
   </div>
 </div>
@@ -1231,12 +1232,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Confidence Interval (Interest Rate VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{irVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{irVarConfidenceInterval}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Holding Period (Interest Rate VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{irVarHoldingPeriod}" />
+      <input type="text" step="1" class="form-control no-spinner" th:field="*{irVarHoldingPeriod}" />
     </div>
   </div>
 
@@ -1244,12 +1245,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Fixed Income Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{irFixedIncomeExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{irFixedIncomeExposureAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Interest Rate VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{irVarExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{irVarExposureAed}" />
     </div>
   </div>
 
@@ -1257,7 +1258,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Interest Rate VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{irVarLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{irVarLimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1270,12 +1271,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Int. VaR Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{irVarImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{irVarImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Confidence Interval (Credit Spread VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{csVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{csVarConfidenceInterval}" />
     </div>
   </div>
 
@@ -1283,12 +1284,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Holding Period (Credit Spread VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{csVarHoldingPeriod}" />
+      <input type="text" step="1" class="form-control no-spinner" th:field="*{csVarHoldingPeriod}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Fixed Income Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{csFixedIncomeExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{csFixedIncomeExposureAed}" />
     </div>
   </div>
 
@@ -1296,12 +1297,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Credit Spread VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{csVarExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{csVarExposureAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Credit Spread VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{csVarLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{csVarLimitAed}" />
     </div>
   </div>
 
@@ -1314,7 +1315,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Cred. VaR Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{csVarImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{csVarImpactPct}" />
     </div>
   </div>
 
@@ -1322,12 +1323,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Confidence Interval (FX VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{fxVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{fxVarConfidenceInterval}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Holding Period (FX VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{fxVarHoldingPeriod}" />
+      <input type="text" step="1" class="form-control no-spinner" th:field="*{fxVarHoldingPeriod}" />
     </div>
   </div>
 
@@ -1335,12 +1336,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">FX Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{fxExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{fxExposureAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">FX VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{fxVarExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{fxVarExposureAed}" />
     </div>
   </div>
 
@@ -1348,7 +1349,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">FX VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{fxVarLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{fxVarLimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1361,12 +1362,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">FX VaR Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{fxVarImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{fxVarImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Confidence Interval (Equity VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{eqVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{eqVarConfidenceInterval}" />
     </div>
   </div>
 
@@ -1374,12 +1375,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Holding Period (Equity VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{eqVarHoldingPeriod}" />
+      <input type="text" class="form-control no-spinner"  th:field="*{eqVarHoldingPeriod}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Equity Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{eqExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{eqExposureAed}" />
     </div>
   </div>
 
@@ -1387,12 +1388,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Equity VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{eqVarExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{eqVarExposureAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Equity VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{eqVarLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{eqVarLimitAed}" />
     </div>
   </div>
 
@@ -1405,7 +1406,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Equity VaR Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{eqVarImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{eqVarImpactPct}" />
     </div>
   </div>
 
@@ -1413,12 +1414,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Confidence Interval (Commodity VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{commVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{commVarConfidenceInterval}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Holding Period (Commodity VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{commVarHoldingPeriod}" />
+      <input type="text" step="1" class="form-control no-spinner" th:field="*{commVarHoldingPeriod}" />
     </div>
   </div>
 
@@ -1426,12 +1427,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Commodity Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{commExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{commExposureAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Commodity VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{commVarExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{commVarExposureAed}" />
     </div>
   </div>
 
@@ -1439,7 +1440,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Commodity VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{commVarLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{commVarLimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1452,12 +1453,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Commodity VaR Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{commVarImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{commVarImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Confidence Interval (Overall VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{overallVarConfidenceInterval}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{overallVarConfidenceInterval}" />
     </div>
   </div>
 
@@ -1465,12 +1466,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Holding Period (Overall VaR)</label>
     <div class="col-sm-4">
-      <input type="number" step="1" class="form-control" th:field="*{overallVarHoldingPeriod}" />
+      <input type="text" step="1" class="form-control no-spinner" th:field="*{overallVarHoldingPeriod}" />
     </div>
 
     <label class="col-sm-2 col-form-label">VaR Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{varExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{varExposureAed}" />
     </div>
   </div>
 
@@ -1478,7 +1479,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">VaR Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{varLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{varLimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1491,12 +1492,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Portfolio Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{portfolioRelativeImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{portfolioRelativeImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Expected Shortfall Exposure (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{expectedShortfallExposureAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{expectedShortfallExposureAed}" />
     </div>
   </div>
 
@@ -1504,7 +1505,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Expected Shortfall Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{expectedShortfallLimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{expectedShortfallLimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1517,25 +1518,25 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Portfolio Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{expectedShortfallImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{expectedShortfallImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Modified Duration</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{modifiedDuration}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{modifiedDuration}" />
     </div>
   </div>
 
   <!-- Interest‑Rate Shock | Interest‑Rate Limit -->
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Interest‑Rate Shock Applied (bps)</label>
+    <label class="col-sm-2 col-form-label">Interest-Rate Shock Applied (bps)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{interestRateShockBps}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{interestRateShockBps}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Limit</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{interestRateLimit}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{interestRateLimit}" />
     </div>
   </div>
 
@@ -1548,7 +1549,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">DV01 (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{dv01Aed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{dv01Aed}" />
     </div>
   </div>
 
@@ -1556,7 +1557,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Limit (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{dv01LimitAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{dv01LimitAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Status</label>
@@ -1569,12 +1570,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">DV01 Tenor Gaps (&lt;3 yr) AED</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{dv01TenorGapLt3Aed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{dv01TenorGapLt3Aed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">DV01 Tenor Gaps (&gt;3 yr) AED</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{dv01TenorGapGt3Aed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{dv01TenorGapGt3Aed}" />
     </div>
   </div>
 
@@ -1587,7 +1588,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Credit Spread CS01 (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01Aed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01Aed}" />
     </div>
   </div>
 
@@ -1595,12 +1596,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Credit Spread Shock Applied (bps)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01ShockBps}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01ShockBps}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Limit</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01Limit}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01Limit}" />
     </div>
   </div>
 
@@ -1613,7 +1614,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">CS01 (Investment Grade) AED</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01InvestmentGradeAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01InvestmentGradeAed}" />
     </div>
   </div>
 
@@ -1621,12 +1622,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">CS01 (Sub‑Investment) AED</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01SubInvestmentAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01SubInvestmentAed}" />
     </div>
 
     <label class="col-sm-2 col-form-label">CS01 (Unrated) AED</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{cs01UnratedAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{cs01UnratedAed}" />
     </div>
   </div>
 
@@ -1639,7 +1640,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Beta Equity</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{betaEquity}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{betaEquity}" />
     </div>
   </div>
 
@@ -1647,12 +1648,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Equity Shock Applied (bps)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{equityShockBps}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{equityShockBps}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Limit</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{equityLimit}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{equityLimit}" />
     </div>
   </div>
 
@@ -1665,7 +1666,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Credit Spread Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{creditSpreadImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{creditSpreadImpactAed}" />
     </div>
   </div>
 
@@ -1673,12 +1674,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Credit Sensitive Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{creditSensitiveImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{creditSensitiveImpactPct}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Interest‑Rate Impact (AED)</label>
+    <label class="col-sm-2 col-form-label">Interest Rate Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{interestRateImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{interestRateImpactAed}" />
     </div>
   </div>
 
@@ -1686,12 +1687,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Rate Sensitive Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{rateSensitiveImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{rateSensitiveImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">FX Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{fxImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{fxImpactAed}" />
     </div>
   </div>
 
@@ -1699,12 +1700,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">FX Sensitive Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{fxSensitiveImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{fxSensitiveImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Equity Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{equityImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{equityImpactAed}" />
     </div>
   </div>
 
@@ -1712,12 +1713,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Equity Sensitive Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{equitySensitiveImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{equitySensitiveImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Commodities Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{commoditiesImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{commoditiesImpactAed}" />
     </div>
   </div>
 
@@ -1725,12 +1726,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Commodity Sensitive Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{commoditySensitiveImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{commoditySensitiveImpactPct}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Jump‑to‑Default Loss Impact (AED)</label>
+    <label class="col-sm-2 col-form-label">Jump-to-Default Loss Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{jtdLossImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{jtdLossImpactAed}" />
     </div>
   </div>
 
@@ -1738,12 +1739,12 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">JTD Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{jtdRelativeImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{jtdRelativeImpactPct}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Overall Impact (AED)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.01" class="form-control" th:field="*{overallImpactAed}" />
+      <input type="number" step="0.01" class="form-control no-spinner" th:field="*{overallImpactAed}" />
     </div>
   </div>
 
@@ -1751,7 +1752,7 @@ $(document).ready(function () {
   <div class="form-group row">
     <label class="col-sm-2 col-form-label">Core Tier 1 Relative Impact (%)</label>
     <div class="col-sm-4">
-      <input type="number" step="0.0001" class="form-control" th:field="*{coreTier1RelativeImpactPct}" />
+      <input type="number" step="0.0001" class="form-control no-spinner" th:field="*{coreTier1RelativeImpactPct}" />
     </div>
   </div>
 
@@ -1956,6 +1957,18 @@ div.dataTables_filter {
     border-radius: 4px;
     padding: 4px 8px;
   }
+  
+  /* Hide arrows in input[type="number"] */
+  .no-spinner::-webkit-inner-spin-button,
+  .no-spinner::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .no-spinner {
+    -moz-appearance: textfield; /* Firefox */
+  }
+
 </style>
 
 
@@ -1990,68 +2003,7 @@ function handleBankChange(select) {
     });
 }
 </script>
-<script>
-function handleCountryChange(select) {
-    const selectedCountry = select.value;
 
-    if (!selectedCountry) {
-        $('#cbuaeGeographicalZone').val('');
-        return;
-    }
-
-    $.ajax({
-        url: '/BCDRS/getCountryDetails',
-        type: 'GET',
-        data: { countryName: selectedCountry },
-        success: function(data) {
-            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-            alert('Failed to fetch geographical zone.');
-        }
-    });
-}
-
-// Run on page load (for edit mode)
-window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect && countrySelect.value) {
-        handleCountryChange(countrySelect);
-    }
-}; 
-</script>
-<script>
-function handleCountryChange2(select) {
-    const selectedCountry = select.value;
-
-    if (!selectedCountry) {
-        $('#cbuaeGeographicalZone2').val('');
-        return;
-    }
-
-    $.ajax({
-        url: '/BCDRS/getCountryDetails',
-        type: 'GET',
-        data: { countryName: selectedCountry },
-        success: function(data) {
-            $('#cbuaeGeographicalZone2').val(data.cbuaeGeographicalZone || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-            alert('Failed to fetch geographical zone.');
-        }
-    });
-}
-
-// Run on page load (for edit mode)
-window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect && countrySelect.value) {
-        handleCountryChange(countrySelect);
-    }
-}; 
-</script>
 
 <script>
     function handleTransactionType(selectElement) {
@@ -2064,6 +2016,170 @@ window.onload = function() {
             cbuaeInput.value = "";
         }
     }
+</script>
+<script>
+	const fieldRules = {
+		// VARCHAR2 fields
+		bankName: 100,
+		groupHeadOfficeSubsidiary: 50,
+		subsidiary: 100,
+		bankSymbol: 20,
+		conventionalIslamic: 20,
+		localForeign: 20,
+		cbuaeTiering: 50,
+		irVarHoldingPeriod: 10,
+		csVarHoldingPeriod: 10,
+		fxVarHoldingPeriod: 10,
+		eqVarHoldingPeriod: 10,
+		commVarHoldingPeriod: 10,
+		overallVarHoldingPeriod: 10,
+		interestRateStatus: 20,
+		irStatus: 20,
+		csStatus: 20,
+		fxStatus: 20,
+		eqStatus: 20,
+		commStatus: 20,
+		overallVarStatus: 20,
+		expectedShortfallStatus: 20,
+		dv01Status: 20,
+		dv01Check: 20,
+		cs01Status: 20,
+		cs01Check: 20,
+		equityStatus: 20,
+
+		// NUMBER(24,2) or similar precision fields
+		assetBalanceSheetSizeAed: "24,2",
+		investmentBookSizeAed: "24,2",
+		bookSizeTotalAssetsPct: "24,4",
+		ytdNetPnlAed: "24,2",
+		ytdFvtociUnrealizedLossAed: "24,2",
+		cet1Aed: "24,2",
+		uglCoreTier1RelativeImpactPct: "24,2",
+		ytdAmortizedUnrealizedLossAed: "24,2",
+		ytdHqlaAcUnrealizedLossAed: "24,2",
+		hqlaAcCoreTier1ImpactPct: "24,2",
+		irVarConfidenceInterval: "24,2",
+		irFixedIncomeExposureAed: "24,2",
+		irVarExposureAed: "24,2",
+		irVarLimitAed: "24,2",
+		irVarImpactPct: "24,2",
+		csVarConfidenceInterval: "24,2",
+		csFixedIncomeExposureAed: "24,2",
+		csVarExposureAed: "24,2",
+		csVarLimitAed: "24,2",
+		csVarImpactPct: "24,2",
+		fxVarConfidenceInterval: "24,2",
+		fxExposureAed: "24,2",
+		fxVarExposureAed: "24,2",
+		fxVarLimitAed: "24,2",
+		fxVarImpactPct: "24,2",
+		eqVarConfidenceInterval: "24,2",
+		eqExposureAed: "24,2",
+		eqVarExposureAed: "24,2",
+		eqVarLimitAed: "24,2",
+		eqVarImpactPct: "24,2",
+		commVarConfidenceInterval: "24,2",
+		commExposureAed: "24,2",
+		commVarExposureAed: "24,2",
+		commVarLimitAed: "24,2",
+		commVarImpactPct: "24,2",
+		overallVarConfidenceInterval: "24,2",
+		varExposureAed: "24,2",
+		varLimitAed: "24,2",
+		portfolioRelativeImpactPct: "24,2",
+		expectedShortfallExposureAed: "24,2",
+		expectedShortfallLimitAed: "24,2",
+		expectedShortfallImpactPct: "24,2",
+		modifiedDuration: "24,2",
+		interestRateShockBps: "24,2",
+		interestRateLimit: "24,2",
+		dv01Aed: "24,2",
+		dv01LimitAed: "24,2",
+		dv01TenorGapLt3Aed: "24,2",
+		dv01TenorGapGt3Aed: "24,2",
+		cs01Aed: "24,2",
+		cs01ShockBps: "24,2",
+		cs01Limit: "24,2",
+		cs01InvestmentGradeAed: "24,2",
+		cs01SubInvestmentAed: "24,2",
+		cs01UnratedAed: "24,2",
+		betaEquity: "24,2",
+		equityShockBps: "24,2",
+		equityLimit: "24,2",
+		creditSpreadImpactAed: "24,2",
+		creditSensitiveImpactPct: "24,2",
+		interestRateImpactAed: "24,2",
+		rateSensitiveImpactPct: "24,2",
+		fxImpactAed: "24,2",
+		fxSensitiveImpactPct: "24,2",
+		equityImpactAed: "24,2",
+		equitySensitiveImpactPct: "24,2",
+		commoditiesImpactAed: "24,2",
+		commoditySensitiveImpactPct: "24,2",
+		jtdLossImpactAed: "24,2",
+		jtdRelativeImpactPct: "24,2",
+		overallImpactAed: "24,2",
+		coreTier1RelativeImpactPct: "24,2"
+	};
+
+	function showError(input, msg) {
+		let span = document.getElementById(input.id + "-error");
+		if (!span) {
+			span = document.createElement("small");
+			span.id = input.id + "-error";
+			span.className = "text-danger";
+			span.style.display = "block";
+			input.parentNode.appendChild(span);
+		}
+		span.innerText = msg;
+	}
+
+	function clearError(input) {
+		const span = document.getElementById(input.id + "-error");
+		if (span) span.innerText = "";
+	}
+
+	function validateInput(event) {
+		const input = event.target;
+		const rule = fieldRules[input.id];
+		const value = input.value.trim();
+
+		if (!rule || !value) {
+			clearError(input);
+			return;
+		}
+
+		if (typeof rule === "number") {
+			if (value.length > rule) {
+				showError(input, `Max ${rule} characters allowed`);
+			} else {
+				clearError(input);
+			}
+		} else if (typeof rule === "string" && rule.includes(",")) {
+			const [total, decimal] = rule.split(",").map(Number);
+			const parts = value.split(".");
+			const intLen = parts[0].replace(/^0+/, "").length;
+			const decLen = parts[1] ? parts[1].length : 0;
+
+			if (intLen + decLen > total || decLen > decimal) {
+				showError(
+					input,
+					`Max ${total - decimal} digits before and ${decimal} after decimal`
+				);
+			} else {
+				clearError(input);
+			}
+		}
+	}
+
+	document.addEventListener("DOMContentLoaded", () => {
+		for (const id in fieldRules) {
+			const input = document.getElementById(id);
+			if (input) {
+				input.addEventListener("input", validateInput);
+			}
+		}
+	});
 </script>
 
 </html>

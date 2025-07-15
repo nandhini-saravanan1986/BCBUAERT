@@ -4,6 +4,7 @@
 CREATED BY	: SUJIDHARSHINI V
 CREATED ON	: 04.06.2025
 PURPOSE		: F Risk Data Report
+TESTED BY   : RAJALAKSHMI R
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -30,7 +31,7 @@ PURPOSE		: F Risk Data Report
 	 -->
 	
 	<!-- jQuery (required first) -->
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -74,17 +75,18 @@ PURPOSE		: F Risk Data Report
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
 	color: #fff;
-	background-color: #cc000000;
+	background-color: #cc0000;
 	border-color: #161617;
 }
 
 #finusertb {
 	width: 460px;
 }
+
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
 	padding: 0px;
@@ -426,13 +428,13 @@ if (tabId === 'data') {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'FxRiskData.xls';
+                    a.download = 'CBUAE_FX_Risk_Data_Template.xls';
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    message = 'FxRiskData.xls has been downloaded successfully.';
+                    message = 'CBUAE_FX_Risk_Data_Template.xls has been downloaded successfully.';
                 } else {
                     message = 'No data available to download.';
                 }
@@ -889,7 +891,7 @@ if (tabId === 'data') {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Bank Date</label>
             <div class="col-sm-4">
-              <input type="date" class="form-control" th:field="*{report_date}"  readonly/>
+              <input type="date" class="form-control" th:field="*{report_date}"  required readonly/>
             </div>
 
             <label class="col-sm-2 col-form-label">Bank Name</label>

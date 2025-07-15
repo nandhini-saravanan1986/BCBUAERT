@@ -3,7 +3,8 @@
 <!-- 
 CREATED BY	: SUJIDHARSHINI V
 CREATED ON	: 04.06.2025
-PURPOSE		: F Risk Data Report
+PURPOSE		: FX Risk Data Report
+TESTED BY   : RAJALAKSHMI R
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -30,7 +31,7 @@ PURPOSE		: F Risk Data Report
 	 -->
 	
 	<!-- jQuery (required first) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 <!-- ✅ jQuery Validation -->
 <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
@@ -74,17 +75,18 @@ PURPOSE		: F Risk Data Report
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not  (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
 	color: #fff;
-	background-color: #cc000000;
+	background-color: #cc0000;
 	border-color: #161617;
 }
 
 #finusertb {
 	width: 460px;
 }
+
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
 	padding: 0px;
@@ -595,7 +597,7 @@ label.error {
   <button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
   <button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
   <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Foreign Curr Deposit </button>
-   <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('dataimpact')">Impt Anlysis </button>
+   <button class="custom-tab-btn" id="dataimpact" onclick="navigateToTab('dataimpact')">Impt Anlysis </button>
 
     	<div class="float-right" style="margin-left:61%">
     		<button th:if="${formmode} =='list'" type="button"
@@ -992,7 +994,7 @@ label.error {
           <div class="form-group row">
   <label class="col-sm-2 col-form-label">Date</label>
   <div class="col-sm-4">
-    <input type="date" class="form-control" th:field="*{date}" />
+    <input type="date" class="form-control" th:field="*{date}" required readonly/>
   </div>
   <label class="col-sm-2 col-form-label">Bank Name</label>
   <div class="col-sm-4">

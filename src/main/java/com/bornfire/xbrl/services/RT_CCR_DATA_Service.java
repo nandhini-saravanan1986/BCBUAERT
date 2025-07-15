@@ -62,7 +62,7 @@ public class RT_CCR_DATA_Service {
 	        existing.setBankSymbol(updatedEntity.getBankSymbol());
 	        existing.setConventionalIslamic(updatedEntity.getConventionalIslamic());
 	        existing.setCbuaeTiering(updatedEntity.getCbuaeTiering());
-	        existing.setCbuaeTieringSecondary(updatedEntity.getCbuaeTieringSecondary());
+	        existing.setLocalForeign(updatedEntity.getLocalForeign());
 
 	        // Counterparty Info
 	        existing.setCounterpartyName(updatedEntity.getCounterpartyName());
@@ -211,13 +211,13 @@ public class RT_CCR_DATA_Service {
 
 					// Column 6: CBUAE Tiering
 					Cell cell6 = row.createCell(6);
-					cell6.setCellValue(record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
+					cell6.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
 					cell6.setCellStyle(textStyle);
 
 					// Column 7: CBUAE Tiering (Secondary)
 					Cell cell7 = row.createCell(7);
 					cell7.setCellValue(
-							record.getCbuaeTieringSecondary() != null ? record.getCbuaeTieringSecondary() : "");
+							record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
 					cell7.setCellStyle(textStyle);
 
 					// Column 8: Cpty Name

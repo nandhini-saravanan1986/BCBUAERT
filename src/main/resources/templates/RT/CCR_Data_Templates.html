@@ -285,7 +285,7 @@ Tested by   : Rajalakshmi
 		function submitForm() {
 			$("#loader").modal("toggle");
 
-			const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
+			const reportName = 'CBUAE_CCR_Data_Template';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
 			const formData = $("#nostroForm").serialize();
 
@@ -375,17 +375,19 @@ Tested by   : Rajalakshmi
 	function navigateToTab(tabId) {
 		$("#loader").modal("toggle");
 
+		let url = '';
 		if (tabId === 'data') {
-			window.location.href = 'CCR_Data_Templates?formmode=list';
-			$("#loader").modal("hide");
-
+			url = 'CCR_Data_Templates?formmode=list';
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'CCR_Data_Templates?formmode=add';
-			$("#loader").modal("hide");
-
-
+			url = 'CCR_Data_Templates?formmode=add';
+		} else if (tabId === 'template') {
+			url = 'CCR_Data_Templates?formmode=add&tab=template';
 		}
+
+		window.location.href = url;
 	}
+
+
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
@@ -401,11 +403,14 @@ Tested by   : Rajalakshmi
 	window.addEventListener('DOMContentLoaded', function () {
 		const params = new URLSearchParams(window.location.search);
 		const formmode = params.get('formmode');
+		const tab = params.get('tab');
 
-		if (formmode === 'list') {
+		if (tab === 'template') {
+			handleClick('template');
+		} else if (formmode === 'list') {
 			handleClick('data');
 		} else {
-			handleClick('datacontrols'); // default or formmode=add
+			handleClick('datacontrols');
 		}
 	});
 </script>
@@ -494,8 +499,8 @@ Tested by   : Rajalakshmi
 				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
 					<button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
 						Controls</button>
-					<button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template
-						Instructions</button>
+						<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template Instructions</button>
+
 					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 					<div class="float-right" style="margin-left:61%">
 						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
@@ -723,26 +728,25 @@ Tested by   : Rajalakshmi
 				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
 				<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+				<div class="tab-pane fade" id="template" role="tabpanel"
+				     th:if="${formmode == null or formmode == 'add'}">
+									<p>Templates tabs</p>
 
-				<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
-					<p>Templates tabs</p>
-					<div class="card-footer text-center"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button>
+									<div class="card-footer text-center"
+										style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+										<button type="button" class="custom-tab-btn" onclick="home();">
+											<i class="fa fa-home"></i> Home
+										</button>
 
+										<button type="button" class="custom-tab-btn" onclick="submitForm()">
+											Save
+										</button>
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
-							onclick="submitForm()">Save</button>
-
-
-						<button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button>
-
-					</div>
-				</div>
+										<button type="button" class="custom-tab-btn" onclick="back();">
+											<i class="fa fa-arrow-left"></i> Back
+										</button>
+									</div>
+								</div>
 
 				<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
@@ -774,8 +778,8 @@ Tested by   : Rajalakshmi
 									<th>Subsidiary</th>
 									<th>Bank Symbol</th>
 									<th>Conventional/Islamic</th>
+									<th> Local Foreign</th>
 									<th>CBUAE Tiering</th>
-									<th>CBUAE Tiering Secondary</th>
 									<th>Counterparty Name</th>
 									<th>Internal Counterparty Reference</th>
 									<th>Internal Counterparty Rating</th>
@@ -815,8 +819,8 @@ Tested by   : Rajalakshmi
 									<td th:text="${data.subsidiary}"></td>
 									<td th:text="${data.bankSymbol}"></td>
 									<td th:text="${data.conventionalIslamic}"></td>
+									<td th:text="${data.localForeign}"></td>
 									<td th:text="${data.cbuaeTiering}"></td>
-									<td th:text="${data.cbuaeTieringSecondary}"></td>
 									<td th:text="${data.counterpartyName}"></td>
 									<td th:text="${data.internalCounterpartyRef}"></td>
 									<td th:text="${data.internalCounterpartyRating}"></td>
@@ -960,16 +964,16 @@ Tested by   : Rajalakshmi
 							</div>
 
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+								<label class="col-sm-2 col-form-label">Local Foreign</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+									<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
 										readonly />
 								</div>
 
-								<label class="col-sm-2 col-form-label">CBUAE Tiering Secondary</label>
+								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeTieringSecondary}"
-										id="cbuaeTieringSecondary" />
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}"
+										id="cbuaeTiering" readonly/>
 
 								</div>
 							</div>
@@ -1506,8 +1510,8 @@ Tested by   : Rajalakshmi
     subsidiary: 50,
     bankSymbol: 10,
     conventionalIslamic: 50,
+	localForeign: 10,
     cbuaeTiering: 10,
-    cbuaeTieringSecondary: 10,
     counterpartyName: 50,
     internalCounterpartyRef: 50,
     internalCounterpartyRating: 50,

@@ -199,7 +199,7 @@ public class RT_InvestmentRiskDataDictionaryService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp");
-        String templateFileName = "CBUAE_Investment_Risk_Data_Dashboard_Template.xls";
+        String templateFileName = "CBUAE_Investment Risk Data_Dashboard_Template.xls";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -743,13 +743,11 @@ public class RT_InvestmentRiskDataDictionaryService {
                 Cell cell98 = row.createCell(colIndex++);
                 cell98.setCellStyle(numberStyle);
                 cell98.setCellValue(mm[98] instanceof Number ? ((Number) mm[98]).doubleValue() : 0);
-
-
-                
-                
-                
-
             }
+         // Auto-size all columns
+			for (int i = 0; i <= 98; i++) {
+			    sheet.autoSizeColumn(i);
+			}
 
             workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             workbook.write(out);
