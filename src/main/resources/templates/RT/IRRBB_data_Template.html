@@ -644,7 +644,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			</div>
 			<!-- -------------------User List Starts----------------------------------------------------- -->
 			<div style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate'}">
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' }">
             <!-- Tabs -->
 				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
 					<button  class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
@@ -1047,13 +1047,13 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				<!------------------ edit starts for IRRBBEVE-------------------------------------------------------------->
 		
 <div th:if="${formmode == 'editeve'}" style="align-items:center">
- 
+
 <div class="row">
-<form th:action="@{/updateirrbeve}" th:object="${irrbbeve}" method="post" id="irrbbeve">
+<form th:action="@{/updateirrbeve}"  th:object="${irrbbeve}" method="post" >
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Mm Data - Edit</h3>
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB EVE - Edit</h3>
 							</div>
 							
 						</div>
@@ -1063,10 +1063,6 @@ PURPOSE		: IRRBB DATA TEMPLATE
   
    <input type="hidden" th:field="*{SI_NO}" />
 
-      
-
-  
-    
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Report Date</label>
     <div class="col-sm-4">
@@ -1294,6 +1290,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
 
+      
+
+  
+    
+
+
 
    
 
@@ -1304,7 +1306,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
    <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/Mm_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
+<a th:href="@{/IRRBB_data_Template(formmode='list')}" class="custom-tab-btn">Cancel</a>
     </div>
     
     </div>
@@ -1435,7 +1437,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 						<div class="card-header"style="background-color: rgb(166,0,0);">
 							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">Mm Data - Edit</h3>
+								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB EAR - Edit</h3>
 							</div>
 							
 						</div>
@@ -1661,7 +1663,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
    <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/Mm_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
+<a th:href="@{/IRRBB_data_Template(formmode='EAR')}" class="custom-tab-btn">Cancel</a>
     </div>
     
     </div>

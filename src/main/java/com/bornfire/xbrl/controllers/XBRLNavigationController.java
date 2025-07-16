@@ -2203,10 +2203,12 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		} 
 		
 		else if ("editeve".equalsIgnoreCase(formmode)) {
-	        RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
-	        md.addAttribute("irrbbeve", data); // Same variable name used, if form is reused
-	        md.addAttribute("formmode", "editeve");
+		    System.out.println("EVE is formmode");
+		    RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO); 
+		    md.addAttribute("irrbbeve", data);
+		    md.addAttribute("formmode", "editeve");
 		}
+
 		
 		else if ("editdiscount".equalsIgnoreCase(formmode)) {
 			RT_IRRBB_Data_Discount_Rates data = IRRBB_Data_Template_DiscountRate_repo.getParticularDataBySI_NO(SI_NO);

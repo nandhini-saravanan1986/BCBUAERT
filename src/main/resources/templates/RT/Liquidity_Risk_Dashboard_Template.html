@@ -702,15 +702,15 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 								</form>
 							</div>
 						</div>
-						<div class="card-footer text-center"
+					<!--	<div class="card-footer text-center"
 							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 							<button type="button" class="custom-tab-btn" onclick="home();">
 								<i class="fa fa-home"></i> Home
 							</button>
 
 
-							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>-->
+							<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
 
 							<button th:if="${formmode == null or formmode == 'add'}" type="button"
 								class="custom-tab-btn" onclick="submitForm()">Save</button>
@@ -721,7 +721,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 								<i class="fa fa-arrow-left"></i> Back
 							</button>
 
-						</div>
+						</div>-->
 					</div>
 				</div>
 
@@ -755,12 +755,12 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 
 				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-				<div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
+				<div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;"th:if="${formmode == 'list'}">
     <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
   
       <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
       
-        <tr>
+        
 								    <tr>
 									<th rowspan="2">Action</th>
 									<th colspan="8" style="text-align:center">Financial Institution Information</th>
@@ -956,8 +956,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 									</tr>
 							</thead>
 						
-							<tbody style="font-size: 9px;">
-                         <tr th:each="data : ${branchList}">
+							<tbody style="font-size: 9px;" th:each="data : ${branchList}">
+                         <tr >
 							 
                                         <td>
 									<a th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
