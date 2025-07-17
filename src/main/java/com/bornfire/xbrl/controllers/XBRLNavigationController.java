@@ -2253,6 +2253,12 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("formmode", "add");
 		}
 
+		
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
 		return "RT/IRRBB_data_Template";
 	}
 	

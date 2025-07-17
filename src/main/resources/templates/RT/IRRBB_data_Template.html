@@ -1069,42 +1069,43 @@ PURPOSE		: IRRBB DATA TEMPLATE
         <input type="date" class="form-control" th:field="*{date}" readonly />
     </div>
 
-    <label class="col-sm-2 col-form-label">Bank Name</label>
-    <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{bankName}" readonly />
-            
-    </div>
+   <label class="col-sm-2 col-form-label">Bank Name</label>
+  <div class="col-sm-4">
+    <select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
+      <option value="">-- Select Bank --</option>
+      <option th:each="bank : ${bankList}" th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+    </select>
+  </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Group Head Office/Subsidiary</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
-    </div>
+    <select class="form-control" th:field="*{groupHeadOfficeSubsidiary}">
+        <option value="" disabled selected>-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
 
-    <label class="col-sm-2 col-form-label">Bank Symbol</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankSymbol}" />
-    </div>
+      <label class="col-sm-2 col-form-label">Bank Symbol</label>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Conventional or Islamic</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{conventionalOrIslamic}" />
-    </div>
+    <label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+  <div class="col-sm-4"><input type="text" class="form-control" th:field="*{conventionalOrIslamic}" id="conventionalIslamic" readonly /></div>
 
     <label class="col-sm-2 col-form-label">Local or Foreign</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{localOrForeign}" />
-    </div>
+<input type="text" class="form-control" th:field="*{localOrForeign}" id="localForeign" readonly />    </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeTiering}" />
-    </div>
+        <input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly /></div>
+
 
     <label class="col-sm-2 col-form-label">Subsidiary</label>
     <div class="col-sm-4">
@@ -1114,38 +1115,87 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Scenario</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{scenario}" />
-    </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{scenario}">
+        <option value="" disabled selected>Select Scenario</option>
+        <option value="Base">Base</option>
+        <option value="Parallel_up">Parallel_up</option>
+        <option value="Parallel_down">Parallel_down</option>
+    </select>
+</div>
 
-    <label class="col-sm-2 col-form-label">GL Level 1</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{glLevel1}" />
-    </div>
+
+   <label class="col-sm-2 col-form-label">GL Level 1</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{glLevel1}">
+        <option value="">Select GL Level 1</option>
+        <option value="Assets">Assets</option>
+        <option value="Liabilities">Liabilities</option>
+        <option value="Equity">Equity</option>
+        <option value="Off_BS">Off_BS</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">GL Level 2</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{glLevel2}" />
-    </div>
+   <label class="col-sm-2 col-form-label">GL Level 2</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{glLevel2}">
+        <option value="">-- Select GL Level 2 --</option>
+        <option value="Cash_and_balances_with_central_banks">Cash and balances with central banks</option>
+        <option value="Due_from_banks_and_financial_institutions">Due from banks and financial institutions</option>
+        <option value="Derivatives_Financial_Assets">Derivatives Financial Assets</option>
+        <option value="Securities">Securities</option>
+        <option value="Loans_and_Advances_Performing">Loans and Advances Performing</option>
+        <option value="Loans_and_Advances_Non_Performing">Loans and Advances Non Performing</option>
+        <option value="Investment_in_associates">Investment in associates</option>
+        <option value="Investment_in_property">Investment in property</option>
+        <option value="Intangible_Assets">Intangible Assets</option>
+        <option value="Other_Assets">Other Assets</option>
+        <option value="Fixed_Assets">Fixed Assets</option>
+    </select>
+</div>
+
 
     <label class="col-sm-2 col-form-label">GL Level 3</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{glLevel3}" />
-    </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{glLevel3}">
+        <option value="">-- Select GL Level 3 --</option>
+        <option value="CASH AND CASH ITEMS">CASH AND CASH ITEMS</option>
+        <option value="CENTRAL BANK CURRENT ACCOUNT">CENTRAL BANK CURRENT ACCOUNT</option>
+        <option value="CENTRAL BANK RESERVE ACCOUNT">CENTRAL BANK RESERVE ACCOUNT</option>
+        <option value="DUE FROM CENTRAL BANK – ODF">DUE FROM CENTRAL BANK – ODF</option>
+        <option value="DUE FROM CENTRAL BANK - CD">DUE FROM CENTRAL BANK - CD</option>
+        <option value="REVERSE REPOS WITH CENTRAL BANKS">REVERSE REPOS WITH CENTRAL BANKS</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Type</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{optionType}" />
-    </div>
+  <label class="col-sm-2 col-form-label">Option Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{optionType}">
+        <option value="">-- Select Option Type --</option>
+        <option value="Behavioural">Behavioural</option>
+        <option value="Automatic">Automatic</option>
+        <option value="NA">NA</option>
+    </select>
+</div>
+
 
     <label class="col-sm-2 col-form-label">Rate Type</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{rateType}" />
-    </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{rateType}">
+        <option value="">-- Select Rate Type --</option>
+        <option value="Fixed">Fixed</option>
+        <option value="Floating">Floating</option>
+        <option value="Admin">Admin</option>
+        <option value="NA">NA</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1155,9 +1205,192 @@ PURPOSE		: IRRBB DATA TEMPLATE
     </div>
 
     <label class="col-sm-2 col-form-label">Instrument Currency</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{instrumentCurrency}" />
-    </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{instrumentCurrency}">
+        <option value="">-- Select Instrument Currency --</option>
+        <option value="AFN">AFN</option>
+        <option value="EUR">EUR</option>
+        <option value="ALL">ALL</option>
+        <option value="DZD">DZD</option>
+        <option value="USD">USD</option>
+        <option value="AOA">AOA</option>
+        <option value="XCD">XCD</option>
+        <option value="ARS">ARS</option>
+        <option value="AMD">AMD</option>
+        <option value="AWG">AWG</option>
+        <option value="AUD">AUD</option>
+        <option value="AZN">AZN</option>
+        <option value="BSD">BSD</option>
+        <option value="BHD">BHD</option>
+        <option value="BDT">BDT</option>
+        <option value="BBD">BBD</option>
+        <option value="BYN">BYN</option>
+        <option value="BZD">BZD</option>
+        <option value="XOF">XOF</option>
+        <option value="BMD">BMD</option>
+        <option value="INR">INR</option>
+        <option value="BTN">BTN</option>
+        <option value="BOB">BOB</option>
+        <option value="BOV">BOV</option>
+        <option value="BAM">BAM</option>
+        <option value="BWP">BWP</option>
+        <option value="NOK">NOK</option>
+        <option value="BRL">BRL</option>
+        <option value="BND">BND</option>
+        <option value="BGN">BGN</option>
+        <option value="BIF">BIF</option>
+        <option value="CVE">CVE</option>
+        <option value="KHR">KHR</option>
+        <option value="XAF">XAF</option>
+        <option value="CAD">CAD</option>
+        <option value="KYD">KYD</option>
+        <option value="CLP">CLP</option>
+        <option value="CLF">CLF</option>
+        <option value="CNY">CNY</option>
+        <option value="COP">COP</option>
+        <option value="COU">COU</option>
+        <option value="KMF">KMF</option>
+        <option value="CDF">CDF</option>
+        <option value="NZD">NZD</option>
+        <option value="CRC">CRC</option>
+        <option value="CUP">CUP</option>
+        <option value="CUC">CUC</option>
+        <option value="ANG">ANG</option>
+        <option value="CZK">CZK</option>
+        <option value="DKK">DKK</option>
+        <option value="DJF">DJF</option>
+        <option value="DOP">DOP</option>
+        <option value="EGP">EGP</option>
+        <option value="SVC">SVC</option>
+        <option value="ERN">ERN</option>
+        <option value="SZL">SZL</option>
+        <option value="ETB">ETB</option>
+        <option value="FKP">FKP</option>
+        <option value="FJD">FJD</option>
+        <option value="XPF">XPF</option>
+        <option value="GMD">GMD</option>
+        <option value="GEL">GEL</option>
+        <option value="GHS">GHS</option>
+        <option value="GIP">GIP</option>
+        <option value="GTQ">GTQ</option>
+        <option value="GBP">GBP</option>
+        <option value="GNF">GNF</option>
+        <option value="GYO">GYO</option>
+        <option value="HTG">HTG</option>
+        <option value="HNL">HNL</option>
+        <option value="HKD">HKD</option>
+        <option value="HUF">HUF</option>
+        <option value="ISK">ISK</option>
+        <option value="IDR">IDR</option>
+        <option value="XDR">XDR</option>
+        <option value="IRR">IRR</option>
+        <option value="IQD">IQD</option>
+        <option value="ILS">ILS</option>
+        <option value="JMD">JMD</option>
+        <option value="JPY">JPY</option>
+        <option value="JOD">JOD</option>
+        <option value="KZT">KZT</option>
+        <option value="KES">KES</option>
+        <option value="KPW">KPW</option>
+        <option value="KRW">KRW</option>
+        <option value="KWD">KWD</option>
+        <option value="KGS">KGS</option>
+        <option value="LAK">LAK</option>
+        <option value="LBP">LBP</option>
+        <option value="LSL">LSL</option>
+        <option value="ZAR">ZAR</option>
+        <option value="LRD">LRD</option>
+        <option value="LYD">LYD</option>
+        <option value="CHF">CHF</option>
+        <option value="MOP">MOP</option>
+        <option value="MKD">MKD</option>
+        <option value="MGA">MGA</option>
+        <option value="MWK">MWK</option>
+        <option value="MYR">MYR</option>
+        <option value="MVR">MVR</option>
+        <option value="MRU">MRU</option>
+        <option value="MUR">MUR</option>
+        <option value="XUA">XUA</option>
+        <option value="MXN">MXN</option>
+        <option value="MXV">MXV</option>
+        <option value="MDL">MDL</option>
+        <option value="MNT">MNT</option>
+        <option value="MAD">MAD</option>
+        <option value="MZN">MZN</option>
+        <option value="MMK">MMK</option>
+        <option value="NAO">NAO</option>
+        <option value="NPR">NPR</option>
+        <option value="NIO">NIO</option>
+        <option value="NGN">NGN</option>
+        <option value="OMR">OMR</option>
+        <option value="PKR">PKR</option>
+        <option value="PAB">PAB</option>
+        <option value="PGK">PGK</option>
+        <option value="PYG">PYG</option>
+        <option value="PEN">PEN</option>
+        <option value="PHP">PHP</option>
+        <option value="PLN">PLN</option>
+        <option value="QAR">QAR</option>
+        <option value="RON">RON</option>
+        <option value="RUB">RUB</option>
+        <option value="RWF">RWF</option>
+        <option value="SHP">SHP</option>
+        <option value="WST">WST</option>
+        <option value="STN">STN</option>
+        <option value="SAR">SAR</option>
+        <option value="RSD">RSD</option>
+        <option value="SCR">SCR</option>
+        <option value="SLE">SLE</option>
+        <option value="SGD">SGD</option>
+        <option value="XSU">XSU</option>
+        <option value="SBO">SBO</option>
+        <option value="SOS">SOS</option>
+        <option value="SSP">SSP</option>
+        <option value="LKR">LKR</option>
+        <option value="SOG">SOG</option>
+        <option value="SRD">SRD</option>
+        <option value="SEK">SEK</option>
+        <option value="CHE">CHE</option>
+        <option value="CHW">CHW</option>
+        <option value="SYP">SYP</option>
+        <option value="TWD">TWD</option>
+        <option value="TJS">TJS</option>
+        <option value="TZS">TZS</option>
+        <option value="THB">THB</option>
+        <option value="TOP">TOP</option>
+        <option value="TTD">TTD</option>
+        <option value="TND">TND</option>
+        <option value="TRY">TRY</option>
+        <option value="TMT">TMT</option>
+        <option value="UGX">UGX</option>
+        <option value="UAH">UAH</option>
+        <option value="AED">AED</option>
+        <option value="USN">USN</option>
+        <option value="UYN">UYN</option>
+        <option value="UYI">UYI</option>
+        <option value="UYW">UYW</option>
+        <option value="UZS">UZS</option>
+        <option value="VUV">VUV</option>
+        <option value="VES">VES</option>
+        <option value="VED">VED</option>
+        <option value="VND">VND</option>
+        <option value="YER">YER</option>
+        <option value="ZMW">ZMW</option>
+        <option value="ZWL">ZWL</option>
+        <option value="XBA">XBA</option>
+        <option value="XBB">XBB</option>
+        <option value="XBC">XBC</option>
+        <option value="XBD">XBD</option>
+        <option value="XTS">XTS</option>
+        <option value="XXX">XXX</option>
+        <option value="XAU">XAU</option>
+        <option value="XPD">XPD</option>
+        <option value="XPT">XPT</option>
+        <option value="XAG">XAG</option>
+        <option value="Others">Others</option>
+    </select>
+</div>
+
 </div>
 
 
@@ -1469,14 +1702,18 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 <!-- Row: Group Head Office Subsidiary & Bank Symbol -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Group Head Office Subsidiary</label>
+   <label class="col-sm-2 col-form-label">Group Head Office/Subsidiary</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
-    </div>
+    <select class="form-control" th:field="*{groupHeadOfficeSubsidiary}">
+        <option value="" disabled selected>-- Select --</option>
+        <option value="Head Office">Head Office</option>
+        <option value="Subsidiary">Subsidiary</option>
+    </select>
+</div>
 
     <label class="col-sm-2 col-form-label">Bank Symbol</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankSymbol}" />
+        <input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly  />
     </div>
 </div>
 
@@ -1484,12 +1721,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Conventional or Islamic</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{conventionalOrIslamic}" />
+        <input type="text" class="form-control" th:field="*{conventionalOrIslamic}" id="conventionalIslamic" readonly />
     </div>
 
     <label class="col-sm-2 col-form-label">Local or Foreign</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{localOrForeign}" />
+        <input type="text" class="form-control" th:field="*{localOrForeign}" id="localForeign" readonly />
     </div>
 </div>
 
@@ -1497,26 +1734,45 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{cbuaeTiering}" />
+        <input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly />
     </div>
 
-    <label class="col-sm-2 col-form-label">Subsidiary</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{subsidiary}" />
-    </div>
+   <label class="col-sm-2 col-form-label">Subsidiary</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{subsidiary}">
+        <option value="">-- Select Subsidiary --</option>
+        <option value="Egypt">Egypt</option>
+        <option value="Iraq">Iraq</option>
+        <option value="Sudan">Sudan</option>
+        <option value="Qatar">Qatar</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <!-- Row: Scenario & GL Level 1 -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Scenario</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{scenario}" />
-    </div>
+   <label class="col-sm-2 col-form-label">Scenario</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{scenario}">
+        <option value="">-- Select Scenario --</option>
+        <option value="Base">Base</option>
+        <option value="Parallel_up">Parallel_up</option>
+        <option value="Parallel_down">Parallel_down</option>
+    </select>
+</div>
 
-    <label class="col-sm-2 col-form-label">GL Level 1</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{glLevel1}" />
-    </div>
+
+   <label class="col-sm-2 col-form-label">GL Level 1</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{glLevel1}">
+        <option value="">Select GL Level 1</option>
+        <option value="Assets">Assets</option>
+        <option value="Liabilities">Liabilities</option>
+        <option value="Equity">Equity</option>
+    </select>
+</div>
 </div>
 
 <!-- Row: GL Level 2 & GL Level 3 -->
@@ -1535,14 +1791,25 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <!-- Row: Option Type & Rate Type -->
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Type</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{optionType}" />
-    </div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{optionType}">
+        <option value="">-- Select Option Type --</option>
+        <option value="Behavioural">Behavioural</option>
+        <option value="Automatic">Automatic</option>
+        <option value="NA">NA</option>
+    </select>
+</div>
 
-    <label class="col-sm-2 col-form-label">Rate Type</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{rateType}" />
-    </div>
+     <label class="col-sm-2 col-form-label">Rate Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{rateType}">
+        <option value="">-- Select Rate Type --</option>
+        <option value="Fixed">Fixed</option>
+        <option value="Floating">Floating</option>
+        <option value="Admin">Admin</option>
+        <option value="NA">NA</option>
+    </select>
+</div>
 </div>
 
 <!-- Row: Reference Rate & Instrument Currency -->
@@ -1552,10 +1819,192 @@ PURPOSE		: IRRBB DATA TEMPLATE
         <input type="text" class="form-control" th:field="*{referenceRate}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Instrument Currency</label>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{instrumentCurrency}" />
-    </div>
+   <label class="col-sm-2 col-form-label">Instrument Currency</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{instrumentCurrency}">
+        <option value="">-- Select Instrument Currency --</option>
+        <option value="AFN">AFN</option>
+        <option value="EUR">EUR</option>
+        <option value="ALL">ALL</option>
+        <option value="DZD">DZD</option>
+        <option value="USD">USD</option>
+        <option value="AOA">AOA</option>
+        <option value="XCD">XCD</option>
+        <option value="ARS">ARS</option>
+        <option value="AMD">AMD</option>
+        <option value="AWG">AWG</option>
+        <option value="AUD">AUD</option>
+        <option value="AZN">AZN</option>
+        <option value="BSD">BSD</option>
+        <option value="BHD">BHD</option>
+        <option value="BDT">BDT</option>
+        <option value="BBD">BBD</option>
+        <option value="BYN">BYN</option>
+        <option value="BZD">BZD</option>
+        <option value="XOF">XOF</option>
+        <option value="BMD">BMD</option>
+        <option value="INR">INR</option>
+        <option value="BTN">BTN</option>
+        <option value="BOB">BOB</option>
+        <option value="BOV">BOV</option>
+        <option value="BAM">BAM</option>
+        <option value="BWP">BWP</option>
+        <option value="NOK">NOK</option>
+        <option value="BRL">BRL</option>
+        <option value="BND">BND</option>
+        <option value="BGN">BGN</option>
+        <option value="BIF">BIF</option>
+        <option value="CVE">CVE</option>
+        <option value="KHR">KHR</option>
+        <option value="XAF">XAF</option>
+        <option value="CAD">CAD</option>
+        <option value="KYD">KYD</option>
+        <option value="CLP">CLP</option>
+        <option value="CLF">CLF</option>
+        <option value="CNY">CNY</option>
+        <option value="COP">COP</option>
+        <option value="COU">COU</option>
+        <option value="KMF">KMF</option>
+        <option value="CDF">CDF</option>
+        <option value="NZD">NZD</option>
+        <option value="CRC">CRC</option>
+        <option value="CUP">CUP</option>
+        <option value="CUC">CUC</option>
+        <option value="ANG">ANG</option>
+        <option value="CZK">CZK</option>
+        <option value="DKK">DKK</option>
+        <option value="DJF">DJF</option>
+        <option value="DOP">DOP</option>
+        <option value="EGP">EGP</option>
+        <option value="SVC">SVC</option>
+        <option value="ERN">ERN</option>
+        <option value="SZL">SZL</option>
+        <option value="ETB">ETB</option>
+        <option value="FKP">FKP</option>
+        <option value="FJD">FJD</option>
+        <option value="XPF">XPF</option>
+        <option value="GMD">GMD</option>
+        <option value="GEL">GEL</option>
+        <option value="GHS">GHS</option>
+        <option value="GIP">GIP</option>
+        <option value="GTQ">GTQ</option>
+        <option value="GBP">GBP</option>
+        <option value="GNF">GNF</option>
+        <option value="GYO">GYO</option>
+        <option value="HTG">HTG</option>
+        <option value="HNL">HNL</option>
+        <option value="HKD">HKD</option>
+        <option value="HUF">HUF</option>
+        <option value="ISK">ISK</option>
+        <option value="IDR">IDR</option>
+        <option value="XDR">XDR</option>
+        <option value="IRR">IRR</option>
+        <option value="IQD">IQD</option>
+        <option value="ILS">ILS</option>
+        <option value="JMD">JMD</option>
+        <option value="JPY">JPY</option>
+        <option value="JOD">JOD</option>
+        <option value="KZT">KZT</option>
+        <option value="KES">KES</option>
+        <option value="KPW">KPW</option>
+        <option value="KRW">KRW</option>
+        <option value="KWD">KWD</option>
+        <option value="KGS">KGS</option>
+        <option value="LAK">LAK</option>
+        <option value="LBP">LBP</option>
+        <option value="LSL">LSL</option>
+        <option value="ZAR">ZAR</option>
+        <option value="LRD">LRD</option>
+        <option value="LYD">LYD</option>
+        <option value="CHF">CHF</option>
+        <option value="MOP">MOP</option>
+        <option value="MKD">MKD</option>
+        <option value="MGA">MGA</option>
+        <option value="MWK">MWK</option>
+        <option value="MYR">MYR</option>
+        <option value="MVR">MVR</option>
+        <option value="MRU">MRU</option>
+        <option value="MUR">MUR</option>
+        <option value="XUA">XUA</option>
+        <option value="MXN">MXN</option>
+        <option value="MXV">MXV</option>
+        <option value="MDL">MDL</option>
+        <option value="MNT">MNT</option>
+        <option value="MAD">MAD</option>
+        <option value="MZN">MZN</option>
+        <option value="MMK">MMK</option>
+        <option value="NAO">NAO</option>
+        <option value="NPR">NPR</option>
+        <option value="NIO">NIO</option>
+        <option value="NGN">NGN</option>
+        <option value="OMR">OMR</option>
+        <option value="PKR">PKR</option>
+        <option value="PAB">PAB</option>
+        <option value="PGK">PGK</option>
+        <option value="PYG">PYG</option>
+        <option value="PEN">PEN</option>
+        <option value="PHP">PHP</option>
+        <option value="PLN">PLN</option>
+        <option value="QAR">QAR</option>
+        <option value="RON">RON</option>
+        <option value="RUB">RUB</option>
+        <option value="RWF">RWF</option>
+        <option value="SHP">SHP</option>
+        <option value="WST">WST</option>
+        <option value="STN">STN</option>
+        <option value="SAR">SAR</option>
+        <option value="RSD">RSD</option>
+        <option value="SCR">SCR</option>
+        <option value="SLE">SLE</option>
+        <option value="SGD">SGD</option>
+        <option value="XSU">XSU</option>
+        <option value="SBO">SBO</option>
+        <option value="SOS">SOS</option>
+        <option value="SSP">SSP</option>
+        <option value="LKR">LKR</option>
+        <option value="SOG">SOG</option>
+        <option value="SRD">SRD</option>
+        <option value="SEK">SEK</option>
+        <option value="CHE">CHE</option>
+        <option value="CHW">CHW</option>
+        <option value="SYP">SYP</option>
+        <option value="TWD">TWD</option>
+        <option value="TJS">TJS</option>
+        <option value="TZS">TZS</option>
+        <option value="THB">THB</option>
+        <option value="TOP">TOP</option>
+        <option value="TTD">TTD</option>
+        <option value="TND">TND</option>
+        <option value="TRY">TRY</option>
+        <option value="TMT">TMT</option>
+        <option value="UGX">UGX</option>
+        <option value="UAH">UAH</option>
+        <option value="AED">AED</option>
+        <option value="USN">USN</option>
+        <option value="UYN">UYN</option>
+        <option value="UYI">UYI</option>
+        <option value="UYW">UYW</option>
+        <option value="UZS">UZS</option>
+        <option value="VUV">VUV</option>
+        <option value="VES">VES</option>
+        <option value="VED">VED</option>
+        <option value="VND">VND</option>
+        <option value="YER">YER</option>
+        <option value="ZMW">ZMW</option>
+        <option value="ZWL">ZWL</option>
+        <option value="XBA">XBA</option>
+        <option value="XBB">XBB</option>
+        <option value="XBC">XBC</option>
+        <option value="XBD">XBD</option>
+        <option value="XTS">XTS</option>
+        <option value="XXX">XXX</option>
+        <option value="XAU">XAU</option>
+        <option value="XPD">XPD</option>
+        <option value="XPT">XPT</option>
+        <option value="XAG">XAG</option>
+        <option value="Others">Others</option>
+    </select>
+</div>
 </div>
 
 
