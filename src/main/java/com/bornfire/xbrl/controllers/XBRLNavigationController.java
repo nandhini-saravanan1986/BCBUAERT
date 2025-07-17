@@ -2008,7 +2008,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "CCR_Data_Templates", method = RequestMethod.GET)
 	public String CCR_Data_Templates(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String siNo, // changed from accountNo to slNo
+			@RequestParam(required = false) String siNo,  @RequestParam(required = false) String tab,// changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
@@ -2029,9 +2029,14 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("repoList1", repoList);
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-		} else {
+		}else {
 			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
+
+		        if ("template".equalsIgnoreCase(tab)) {
+		        	md.addAttribute("tab", "template");
+		        } else {
+		        	md.addAttribute("tab", "datacontrols"); // fallback default
+		        }
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
@@ -2474,7 +2479,11 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		}else {
 			model.addAttribute("formmode", "add");
 		}
-		
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+		md.addAttribute("bankList", bankList);
+		md.addAttribute("countryList", countryList);
 
 		return "RT/Liquidity_Risk_Dashboard_Template";
 	}

@@ -353,7 +353,7 @@ Tested by   : Rajalakshmi
 
 
 					$("#alertmsg").text(response);
-					$("#alert").modal("toggle");
+					$("#alert1").modal("toggle");
 
 				},
 				error: function (xhr, status, error) {
@@ -373,19 +373,22 @@ Tested by   : Rajalakshmi
 
 <script>
 	function navigateToTab(tabId) {
-		$("#loader").modal("toggle");
+	    $("#loader").modal("toggle");
 
-		let url = '';
-		if (tabId === 'data') {
-			url = 'CCR_Data_Templates?formmode=list';
-		} else if (tabId === 'datacontrols') {
-			url = 'CCR_Data_Templates?formmode=add';
-		} else if (tabId === 'template') {
-			url = 'CCR_Data_Templates?formmode=add&tab=template';
-		}
+	    let url = '';
+	    if (tabId === 'data') {
+	        url = 'CCR_Data_Templates?formmode=list';
+	    } else if (tabId === 'datacontrols') {
+	        url = 'CCR_Data_Templates?formmode=add';
+	    } else if (tabId === 'template') {
+	        url = 'CCR_Data_Templates?formmode=add&tab=template';  // ✅ Correct
+	    }
 
-		window.location.href = url;
+	    window.location.href = url;
 	}
+
+
+
 
 
 
@@ -401,18 +404,19 @@ Tested by   : Rajalakshmi
 
 	// On page load, detect formmode and show corresponding tab
 	window.addEventListener('DOMContentLoaded', function () {
-		const params = new URLSearchParams(window.location.search);
-		const formmode = params.get('formmode');
-		const tab = params.get('tab');
+	    const params = new URLSearchParams(window.location.search);
+	    const formmode = params.get('formmode');
+	    const tab = params.get('tab');
 
-		if (tab === 'template') {
-			handleClick('template');
-		} else if (formmode === 'list') {
-			handleClick('data');
-		} else {
-			handleClick('datacontrols');
-		}
+	    if (tab === 'template') {
+	        handleClick('template');
+	    } else if (formmode === 'list') {
+	        handleClick('data');
+	    } else {
+	        handleClick('datacontrols');
+	    }
 	});
+
 </script>
 
 
@@ -491,15 +495,15 @@ Tested by   : Rajalakshmi
 			<div style="padding-right: 10px;padding-left: 20px;"
 				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
 
-
-
-
-
 				<!-- Tabs -->
 				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
 					<button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
 						Controls</button>
+					<!--<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template
+						Instructions</button>-->
+						
 						<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template Instructions</button>
+
 
 					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 					<div class="float-right" style="margin-left:61%">
@@ -515,8 +519,12 @@ Tested by   : Rajalakshmi
 
 
 
-				<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
-					<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+				<div class="tab-content" id="myTabContent" style="margin-top: 15px;">
+					<!--<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">-->
+						
+						
+						<div class="tab-pane fade show active" id="datacontrols" role="tabpanel"
+						     th:if="${formmode == 'add' and (tab == null or tab == 'datacontrols')}">
 
 						<div class="row">
 							<div class="col-sm-12 finuserapply">
@@ -728,25 +736,31 @@ Tested by   : Rajalakshmi
 				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
 				<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
-				<div class="tab-pane fade" id="template" role="tabpanel"
-				     th:if="${formmode == null or formmode == 'add'}">
-									<p>Templates tabs</p>
+			<!--	<div class="tab-pane fade" id="template" role="tabpanel"
+					th:if="${formmode == null or formmode == 'add'}">-->
+					
+					<div class="tab-pane fade show active" id="template" role="tabpanel"
+					     th:if="${formmode == 'add' and tab != null and tab == 'template'}">
+				
+						  
+					<p>Templates tabs</p>
 
-									<div class="card-footer text-center"
-										style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-										<button type="button" class="custom-tab-btn" onclick="home();">
-											<i class="fa fa-home"></i> Home
-										</button>
+					
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<button type="button" class="custom-tab-btn" onclick="home();">
+							<i class="fa fa-home"></i> Home
+						</button>
 
-										<button type="button" class="custom-tab-btn" onclick="submitForm()">
-											Save
-										</button>
+						<button type="button" class="custom-tab-btn" onclick="submitForm()">
+							Save
+						</button>
 
-										<button type="button" class="custom-tab-btn" onclick="back();">
-											<i class="fa fa-arrow-left"></i> Back
-										</button>
-									</div>
-								</div>
+						<button type="button" class="custom-tab-btn" onclick="back();">
+							<i class="fa fa-arrow-left"></i> Back
+						</button>
+					</div>
+				</div>
 
 				<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
@@ -765,11 +779,11 @@ Tested by   : Rajalakshmi
 							style="min-width: 2000px; font-family: calibri;">
 							<thead class="thead-light" style="background-color: #e9ecf0; font-size: 11px;">
 								<tr>
-								       <th rowspan="1"></th>
-								       <th colspan="8">Financial Institution Information</th>
-								       <th colspan="22">Counterparty Information</th>
-								       <th colspan="1">Exposure</th>
-								   </tr>
+									<th rowspan="1"></th>
+									<th colspan="8">Financial Institution Information</th>
+									<th colspan="22">Counterparty Information</th>
+									<th colspan="1">Exposure</th>
+								</tr>
 								<tr>
 									<th>Action</th>
 									<th>Data Date</th>
@@ -945,7 +959,7 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{subsidiary}" id="subsidiary"/>
+									<input type="text" class="form-control" th:field="*{subsidiary}" id="subsidiary" />
 								</div>
 							</div>
 
@@ -972,8 +986,8 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeTiering}"
-										id="cbuaeTiering" readonly/>
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+										readonly />
 
 								</div>
 							</div>
@@ -983,11 +997,13 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label"> Counterparty Name</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyName}"  id="counterpartyName"/>
+									<input type="text" class="form-control" th:field="*{counterpartyName}"
+										id="counterpartyName" />
 								</div>
 								<label class="col-sm-2 col-form-label"> Internal Counterparty Ref</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{internalCounterpartyRef}"  id="internalCounterpartyRef"/>
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRef}"
+										id="internalCounterpartyRef" />
 								</div>
 							</div>
 							<div class="form-group row">
@@ -995,11 +1011,13 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label"> Internal Counterparty Rating</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{internalCounterpartyRating}" id="internalCounterpartyRating"/>
+									<input type="text" class="form-control" th:field="*{internalCounterpartyRating}"
+										id="internalCounterpartyRating" />
 								</div>
 								<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" id="finalRatingCbuae"/>
+									<input type="text" class="form-control" th:field="*{finalRatingCbuae}"
+										id="finalRatingCbuae" />
 								</div>
 
 							</div>
@@ -1044,23 +1062,23 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label">Sector</label>
 								<div class="col-sm-4">
-								
-							   <select class="form-control" th:field="*{sector}" id="sector">
-									<option value="" disabled selected>-- Select --</option>
-									<option value="Communication Services">Communication Services</option>
-									<option value="Consumer Discretionary">Consumer Discretionary</option>
-								    <option value="Consumer Staples">Consumer Staples</option>
-									<option value="Energy">Energy</option>
-									<option value="Financials">Financials</option>
-									<option value="Health Care">Health Care</option>
-									<option value="Industrials">Industrials</option>
-									<option value="Information Technology">Information Technology</option>
-					   				<option value="Materials">Materials</option>
-									<option value="Real Estate">Real Estate</option>
-									<option value="Utilities">Utilities</option>
-									<option value="Other">Other</option>
-								</select>
-								
+
+									<select class="form-control" th:field="*{sector}" id="sector">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Communication Services">Communication Services</option>
+										<option value="Consumer Discretionary">Consumer Discretionary</option>
+										<option value="Consumer Staples">Consumer Staples</option>
+										<option value="Energy">Energy</option>
+										<option value="Financials">Financials</option>
+										<option value="Health Care">Health Care</option>
+										<option value="Industrials">Industrials</option>
+										<option value="Information Technology">Information Technology</option>
+										<option value="Materials">Materials</option>
+										<option value="Real Estate">Real Estate</option>
+										<option value="Utilities">Utilities</option>
+										<option value="Other">Other</option>
+									</select>
+
 								</div>
 							</div>
 							<div class="form-group row">
@@ -1089,13 +1107,13 @@ Tested by   : Rajalakshmi
 
 								<label class="col-sm-2 col-form-label">CSA</label>
 								<div class="col-sm-4">
-									
+
 									<select class="form-control" th:field="*{csa}">
 										<option value="" disabled selected>-- Select --</option>
 										<option value="Y">Y</option>
-									
+
 									</select>
-									
+
 								</div>
 
 							</div>
@@ -1104,12 +1122,12 @@ Tested by   : Rajalakshmi
 								<!-- Collateral Type -->
 								<label class="col-sm-2 col-form-label">Collateral Type</label>
 								<div class="col-sm-4">
-										<select class="form-control" th:field="*{collateralType}" id="collateralType">
+									<select class="form-control" th:field="*{collateralType}" id="collateralType">
 										<option value="" disabled selected>-- Select --</option>
 										<option value="Cash">Cash</option>
 										<option value="Security">Security</option>
-																			
-							 		   </select>
+
+									</select>
 								</div>
 
 								<!-- Threshold -->
@@ -1143,16 +1161,17 @@ Tested by   : Rajalakshmi
 								<!-- Margin Call Frequency -->
 								<label class="col-sm-2 col-form-label">Margin Call Frequency</label>
 								<div class="col-sm-4">
-								
-								<select class="form-control" th:field="*{marginCallFrequency}" id="marginCallFrequency">
+
+									<select class="form-control" th:field="*{marginCallFrequency}"
+										id="marginCallFrequency">
 										<option value="" disabled selected>-- Select --</option>
 										<option value="Daily">Daily</option>
 										<option value="Weekly">Weekly</option>
 										<option value="Monthly">Monthly</option>
 										<option value="Quarterly">Quarterly</option>
-																													
-					 		   </select>
-							   
+
+									</select>
+
 								</div>
 
 								<!-- Net Collateral Outstanding AED -->
@@ -1197,7 +1216,7 @@ Tested by   : Rajalakshmi
 								</div>
 
 							</div>
-							
+
 							<h4 class="section-header">Exposure</h4>
 							<div class="form-group row">
 
@@ -1217,9 +1236,6 @@ Tested by   : Rajalakshmi
 							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
 							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Cancel</a>
 							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
-							<button type="button" class="custom-tab-btn" onclick="home();">
-														<i class="fa fa-home"></i> Home
-													</button>
 						</div>
 					</div>
 				</form>
@@ -1271,8 +1287,11 @@ Tested by   : Rajalakshmi
 					</div>
 					<div class="modal-body" style="text-align: center">
 						<p id="alertmsg"></p>
-						<button type="button" class="custom-tab-btn" onclick="list()"
-							data-dismiss="modal">Close</button>
+						<!--<button type="button" class="custom-tab-btn" onclick="list()"
+							data-dismiss="modal">Close</button>-->
+
+						<button type="button" class="custom-tab-btn" onclick="closeAlertAndRedirect()">Close</button>
+
 					</div>
 				</div>
 			</div>
@@ -1282,19 +1301,17 @@ Tested by   : Rajalakshmi
 			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-							BANK
-							OF
-							BARODA</div>
+						<div class="modal-title" style="text-align: center; color: white;">BANK OF BARODA</div>
 					</div>
 					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg1"></p>
-						<button type="button" class="custom-tab-btn" onclick="trade()"
-							data-dismiss="modal">Close</button>
+						<p id="alertmsg">Update successful!</p>				
+							<!--<button type="button" class="custom-tab-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
+							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Close</a>
 					</div>
 				</div>
 			</div>
 		</div>
+
 		<!-- Loader Modal (Using your existing loader image) -->
 		<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog modal-dialog-centered">
@@ -1504,101 +1521,100 @@ Tested by   : Rajalakshmi
 </script>
 
 <script>
-  const fieldRules = {
-    // VARCHAR2 validations
-    bankName: 100,
-    subsidiary: 50,
-    bankSymbol: 10,
-    conventionalIslamic: 50,
-	localForeign: 10,
-    cbuaeTiering: 10,
-    counterpartyName: 50,
-    internalCounterpartyRef: 50,
-    internalCounterpartyRating: 50,
-    finalRatingCbuae: 50,
-    countryOfRisk: 50,
-    cbuaeGeographicalZone: 50,
-    counterpartyType: 50,
-    sector: 50,
-    csa: 10,
-    collateralType: 50,
-    marginCallFrequency: 50,
+	const fieldRules = {
+		// VARCHAR2 validations
+		bankName: 100,
+		subsidiary: 50,
+		bankSymbol: 10,
+		conventionalIslamic: 50,
+		localForeign: 10,
+		cbuaeTiering: 10,
+		counterpartyName: 50,
+		internalCounterpartyRef: 50,
+		internalCounterpartyRating: 50,
+		finalRatingCbuae: 50,
+		countryOfRisk: 50,
+		cbuaeGeographicalZone: 50,
+		counterpartyType: 50,
+		sector: 50,
+		csa: 10,
+		collateralType: 50,
+		marginCallFrequency: 50,
 
-    // NUMBER(24,2) validations
-    pfe95Aed: "24,2",
-    expectedPositiveExposureAed: "24,2",
-    expectedNegativeExposureAed: "24,2",
-    threshold: "24,2",
-    minimumTransferAmountAed: "24,2",
-    independentAmountAed: "24,2",
-    netCollateralOutstandingAed: "24,2",
-    cvaAed: "24,2",
-    dvaAed: "24,2",
-    bilateralCvaAed: "24,2",
-    fvaAed: "24,2",
-    incrementalPfe: "24,2"
-  };
+		// NUMBER(24,2) validations
+		pfe95Aed: "24,2",
+		expectedPositiveExposureAed: "24,2",
+		expectedNegativeExposureAed: "24,2",
+		threshold: "24,2",
+		minimumTransferAmountAed: "24,2",
+		independentAmountAed: "24,2",
+		netCollateralOutstandingAed: "24,2",
+		cvaAed: "24,2",
+		dvaAed: "24,2",
+		bilateralCvaAed: "24,2",
+		fvaAed: "24,2",
+		incrementalPfe: "24,2"
+	};
 
-  function showError(input, msg) {
-    let span = document.getElementById(input.id + "-error");
-    if (!span) {
-      span = document.createElement("small");
-      span.id = input.id + "-error";
-      span.className = "text-danger";
-      span.style.display = "block";
-      input.parentNode.appendChild(span);
-    }
-    span.innerText = msg;
-  }
+	function showError(input, msg) {
+		let span = document.getElementById(input.id + "-error");
+		if (!span) {
+			span = document.createElement("small");
+			span.id = input.id + "-error";
+			span.className = "text-danger";
+			span.style.display = "block";
+			input.parentNode.appendChild(span);
+		}
+		span.innerText = msg;
+	}
 
-  function clearError(input) {
-    const span = document.getElementById(input.id + "-error");
-    if (span) span.innerText = "";
-  }
+	function clearError(input) {
+		const span = document.getElementById(input.id + "-error");
+		if (span) span.innerText = "";
+	}
 
-  function validateInput(event) {
-    const input = event.target;
-    const rule = fieldRules[input.id];
-    const value = input.value.trim();
+	function validateInput(event) {
+		const input = event.target;
+		const rule = fieldRules[input.id];
+		const value = input.value.trim();
 
-    if (!rule || !value) {
-      clearError(input);
-      return;
-    }
+		if (!rule || !value) {
+			clearError(input);
+			return;
+		}
 
-    if (typeof rule === "number") {
-      // Text field
-      if (value.length > rule) {
-        showError(input, `Max ${rule} characters allowed`);
-      } else {
-        clearError(input);
-      }
-    } else if (typeof rule === "string" && rule.includes(",")) {
-      // Number field
-      const [total, decimal] = rule.split(",").map(Number);
-      const parts = value.split(".");
-      const intLen = parts[0].replace(/^0+/, "").length;
-      const decLen = parts[1] ? parts[1].length : 0;
+		if (typeof rule === "number") {
+			// Text field
+			if (value.length > rule) {
+				showError(input, `Max ${rule} characters allowed`);
+			} else {
+				clearError(input);
+			}
+		} else if (typeof rule === "string" && rule.includes(",")) {
+			// Number field
+			const [total, decimal] = rule.split(",").map(Number);
+			const parts = value.split(".");
+			const intLen = parts[0].replace(/^0+/, "").length;
+			const decLen = parts[1] ? parts[1].length : 0;
 
-      if (intLen + decLen > total || decLen > decimal) {
-        showError(
-          input,
-          `Max ${total - decimal} digits before and ${decimal} after decimal`
-        );
-      } else {
-        clearError(input);
-      }
-    }
-  }
+			if (intLen + decLen > total || decLen > decimal) {
+				showError(
+					input,
+					`Max ${total - decimal} digits before and ${decimal} after decimal`
+				);
+			} else {
+				clearError(input);
+			}
+		}
+	}
 
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const id in fieldRules) {
-      const input = document.getElementById(id);
-      if (input) {
-        input.addEventListener("input", validateInput);
-      }
-    }
-  });
+	document.addEventListener("DOMContentLoaded", () => {
+		for (const id in fieldRules) {
+			const input = document.getElementById(id);
+			if (input) {
+				input.addEventListener("input", validateInput);
+			}
+		}
+	});
 </script>
-
 </html>
