@@ -998,7 +998,7 @@ function downloadMm() {
 
         <label class="col-sm-2 col-form-label">Customer ID</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{customer_id}" />
+            <input type="text" class="form-control number-24-2" th:field="*{customer_id}" />
         </div>
     </div>
 
@@ -1006,12 +1006,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Counterparty Name</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{counterparty_name}" />
+            <input type="text" class="form-control vchar-50" th:field="*{counterparty_name}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{final_rating_banks}" />
+            <input type="text" class="form-control vchar-50" th:field="*{final_rating_banks}" />
         </div>
     </div>
 
@@ -1019,7 +1019,7 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{final_rating_cbuae}" />
+            <input type="text" class="form-control vchar-50" th:field="*{final_rating_cbuae}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Country Of Risk</label>
@@ -1087,12 +1087,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Initial Maturity Period</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{initial_maturity_period}" />
+            <input type="number" class="form-control number-24-2" th:field="*{initial_maturity_period}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Residual Maturity</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{residual_maturity}" />
+            <input type="number" class="form-control number-24-2" th:field="*{residual_maturity}" />
         </div>
     </div>
 
@@ -1398,34 +1398,31 @@ window.onload = function() {
 };
 </script>
 <script>
-  function showError(input, msg) {
-    let span = document.getElementById(input.id + "-error");
-    if (!span) {
-      span = document.createElement("small");
-      span.id = input.id + "-error";
-      span.className = "text-danger";
-      span.style.display = "block";
-      input.parentNode.appendChild(span);
+  function showError(input, message) {
+    let error = document.getElementById(input.id + "-error");
+    if (!error) {
+      error = document.createElement("small");
+      error.id = input.id + "-error";
+      error.className = "text-danger";
+      input.parentNode.appendChild(error);
     }
-    span.innerText = msg;
+    error.innerText = message;
   }
 
   function clearError(input) {
-    const span = document.getElementById(input.id + "-error");
-    if (span) span.innerText = "";
+    const error = document.getElementById(input.id + "-error");
+    if (error) error.innerText = "";
   }
 
-  // Validate VARCHAR2 fields based on vchar-XXX class
+  // VARCHAR2 validation (vchar-XX)
   document.querySelectorAll('[class*="vchar-"]').forEach(input => {
-    const match = input.className.match(/vchar-(\d+)/);
-    if (match) {
-      const maxLength = parseInt(match[1]);
-      input.setAttribute("maxlength", maxLength);
-
+    const limit = input.className.match(/vchar-(\d+)/);
+    if (limit) {
+      const max = parseInt(limit[1]);
+      input.maxLength = max;
       input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val.length > maxLength) {
-          showError(input, `Max ${maxLength} characters allowed`);
+        if (input.value.length > max) {
+          showError(input, `Max ${max} characters allowed`);
         } else {
           clearError(input);
         }
@@ -1433,28 +1430,25 @@ window.onload = function() {
     }
   });
 
-  // Validate NUMBER(24,2) or other number fields
+  // NUMBER(total-decimal) validation (number-24-2)
   document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
+    const parts = input.className.match(/number-(\d+)-(\d+)/);
+    if (parts) {
+      const total = parseInt(parts[1]);
+      const decimal = parseInt(parts[2]);
 
       input.addEventListener("input", () => {
-        const value = input.value.trim();
-        const regex = /^\d+(\.\d+)?$/;
+        const val = input.value.trim();
+        if (val === "") return clearError(input);
+        if (!/^-?\d*(\.\d*)?$/.test(val)) return showError(input, "Only numbers allowed");
 
-        if (!regex.test(value)) {
-          showError(input, `Only numbers allowed with up to ${decimal} decimal places`);
-          return;
-        }
+        const [intPart, decPart = ""] = val.replace("-", "").split(".");
+        const digitCount = intPart.length + decPart.length;
 
-        const [intPart, decPart = ""] = value.split(".");
-        const intLen = intPart.replace(/^0+/, "").length;
-        const decLen = decPart.length;
-
-        if (intLen + decLen > total || decLen > decimal) {
-          showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+        if (digitCount > total) {
+          showError(input, `Max ${total} digits allowed`);
+        } else if (decPart.length > decimal) {
+          showError(input, `Max ${decimal} digits allowed after decimal`);
         } else {
           clearError(input);
         }
@@ -1462,4 +1456,5 @@ window.onload = function() {
     }
   });
 </script>
+
 </html>
