@@ -458,7 +458,10 @@ public class RT_ImpactAnalysisService {
 					
 					
 				}
-
+				// Auto-size all columns
+				for (int i = 0; i <= 43; i++) {
+				    sheet.autoSizeColumn(i);
+				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
 				System.out.println("No Fx Risk data found to generate the Excel file.");

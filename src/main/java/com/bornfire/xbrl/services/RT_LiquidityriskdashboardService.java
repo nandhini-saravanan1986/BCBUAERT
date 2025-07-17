@@ -1233,6 +1233,10 @@ public class RT_LiquidityriskdashboardService {
 
 
                 }
+             // Auto-size all columns
+				for (int i = 0; i <= 156; i++) {
+				    sheet.autoSizeColumn(i);
+				}
 			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 		} else {
 			System.out.println("No Mm data found to generate the Excel file.");

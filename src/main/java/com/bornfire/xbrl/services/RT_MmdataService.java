@@ -308,7 +308,10 @@ public class RT_MmdataService {
                     if (cell27 == null) cell27 = row.createCell(27);
                     cell27.setCellValue(mm[27] == null ? "" : mm[27].toString());
                 }
-
+            	// Auto-size all 31 columns
+				for (int i = 0; i <= 27; i++) {
+				    sheet.autoSizeColumn(i);
+				}
             
 			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 		} else {

@@ -4,6 +4,7 @@
 CREATED BY	: SUJIDHARSHINI V
 CREATED ON	: 04.06.2025
 PURPOSE		: MM  Data Report
+Tested by   : Rajalakshmi R
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -74,12 +75,12 @@ PURPOSE		: MM  Data Report
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: #cc0000;
+  border-color: #161617;
 }
 
 #finusertb {
@@ -992,7 +993,7 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Deal No</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{deal_no}" />
+            <input type="text" class="form-control number-24-2" th:field="*{deal_no}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Customer ID</label>
@@ -1073,12 +1074,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Initial Maturity</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{initial_maturity}" />
+            <input type="number" class="form-control number-24-2" th:field="*{initial_maturity}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{initial_maturity_rounded}" />
+            <input type="number" class="form-control number-24-2" th:field="*{initial_maturity_rounded}" />
         </div>
     </div>
 
@@ -1099,12 +1100,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Residual Maturity Rounded</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{residual_maturity_rounded}" />
+            <input type="number" class="form-control number-24-2" th:field="*{residual_maturity_rounded}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Maturity Period</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{maturity_period}" />
+            <input type="number" class="form-control number-24-2" th:field="*{maturity_period}" />
         </div>
     </div>
 
@@ -1112,12 +1113,12 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Currency</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{currency}" />
+            <input type="text" class="form-control number-24-2" th:field="*{currency}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Principal</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{principal}" />
+            <input type="number" class="form-control number-24-2" th:field="*{principal}" />
         </div>
     </div>
 
@@ -1125,16 +1126,16 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Principal(AED)</label>
         <div class="col-sm-4">
-            <input type="number" class="form-control" th:field="*{principal_aed}" />
+            <input type="number" class="form-control number-24-2" th:field="*{principal_aed}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Interest/Profit Rate</label>
         <div class="col-sm-4">
-            <input type="number" step="0.01" class="form-control" th:field="*{interest_profit_rate}" />
+            <input type="number" step="0.01" class="form-control number-24-2" th:field="*{interest_profit_rate}" />
         </div>
     </div>
 
-
+	</div>
     <!-- Submit -->
    <div class="card-footer text-center"
      style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
@@ -1142,7 +1143,7 @@ function downloadMm() {
 <a th:href="@{/Mm_Data(formmode='list')}" class="custom-tab-btn">Cancel</a>
     </div>
     
-    </div>
+  
   </form>
 </div>
 </div>
@@ -1396,5 +1397,69 @@ window.onload = function() {
     }
 };
 </script>
+<script>
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
+  }
 
+  function clearError(input) {
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
+  }
+
+  // Validate VARCHAR2 fields based on vchar-XXX class
+  document.querySelectorAll('[class*="vchar-"]').forEach(input => {
+    const match = input.className.match(/vchar-(\d+)/);
+    if (match) {
+      const maxLength = parseInt(match[1]);
+      input.setAttribute("maxlength", maxLength);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val.length > maxLength) {
+          showError(input, `Max ${maxLength} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+  // Validate NUMBER(24,2) or other number fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const value = input.value.trim();
+        const regex = /^\d+(\.\d+)?$/;
+
+        if (!regex.test(value)) {
+          showError(input, `Only numbers allowed with up to ${decimal} decimal places`);
+          return;
+        }
+
+        const [intPart, decPart = ""] = value.split(".");
+        const intLen = intPart.replace(/^0+/, "").length;
+        const decLen = decPart.length;
+
+        if (intLen + decLen > total || decLen > decimal) {
+          showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+</script>
 </html>

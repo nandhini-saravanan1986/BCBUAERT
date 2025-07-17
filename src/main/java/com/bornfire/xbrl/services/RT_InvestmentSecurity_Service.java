@@ -481,7 +481,10 @@ public class RT_InvestmentSecurity_Service {
 
 
 			}
-
+			// Auto-size all columns
+			for (int i = 0; i <= 73; i++) {
+			    sheet.autoSizeColumn(i);
+			}
 			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			workbook.write(out);
 
