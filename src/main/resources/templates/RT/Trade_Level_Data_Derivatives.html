@@ -790,8 +790,8 @@ if (tabId === 'data') {
 <th>Subsidiary</th>
 <th>Bank Symbol</th>
 <th>Conventional Islamic</th>
-<th>CBUAE Tiering1</th>
-<th>CBUAE Tiering2</th>
+<th>CBUAE Tiering</th>
+<th>CBUAE Tiering</th>
 <th>Counterparty Name</th>
 <th>Internal Counterparty Ref</th>
 <th>Internal Transaction Ref</th>
@@ -1122,9 +1122,9 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CBUAE Tiering1</label>
+    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering1}" id="localForeign" readonly /></div>
-    <label class="col-sm-2 col-form-label">CBUAE Tiering2</label>
+    <label class="col-sm-2 col-form-label">CBUAE Tiering</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuae_tiering2}" id="cbuaeTiering" readonly /></div>
 </div>
 
@@ -1139,21 +1139,73 @@ if (tabId === 'data') {
     <label class="col-sm-2 col-form-label">Internal Transaction Ref</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{internal_transaction_ref}" /></div>
     <label class="col-sm-2 col-form-label">Underlying Asset Class</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_asset_class}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{underlying_asset_class}">
+        <option value="">-- Select --</option>
+        <option value="Commodity">Commodity</option>
+        <option value="Credit">Credit</option>
+        <option value="Equity">Equity</option>
+        <option value="FX">FX</option>
+        <option value="Inflation">Inflation</option>
+        <option value="Rate">Rate</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Derivatives Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{derivatives_type}" /></div>
-    <label class="col-sm-2 col-form-label">Transaction Rationale</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{transaction_rationale}" /></div>
+<label class="col-sm-2 col-form-label">Derivatives Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{derivatives_type}">
+        <option value="">-- Select --</option>
+        <option value="Cross-Currency Swap">Cross-Currency Swap</option>
+        <option value="Forward Rate Agreement (FRA)">Forward Rate Agreement (FRA)</option>
+        <option value="Future">Future</option>
+        <option value="FX Forward">FX Forward</option>
+        <option value="Option">Option</option>
+        <option value="Interest Rate Swap">Interest Rate Swap</option>
+        <option value="Asset-Swap">Asset-Swap</option>
+        <option value="Credit Default Swap">Credit Default Swap</option>
+        <option value="Total Return Swap">Total Return Swap</option>
+        <option value="Swaption">Swaption</option>
+        <option value="Inflation Swap">Inflation Swap</option>
+        <option value="Zero Coupon Swap">Zero Coupon Swap</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
+<label class="col-sm-2 col-form-label">Transaction Rationale</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{transaction_rationale}">
+        <option value="">-- Select --</option>
+        <option value="Balance Sheet Hedge">Balance Sheet Hedge</option>
+        <option value="Hedge Accounting">Hedge Accounting</option>
+        <option value="Internal Hedge">Internal Hedge</option>
+        <option value="Sales Market-Making">Sales Market-Making</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bundle Transaction</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{bundle_transaction}" /></div>
-    <label class="col-sm-2 col-form-label">Back To Back Transaction</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{back_to_back_transaction}" /></div>
+<label class="col-sm-2 col-form-label">Bundle Transaction</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{bundle_transaction}">
+        <option value="">-- Select --</option>
+        <option value="Y">Y</option>
+    </select>
+</div>
+
+   <label class="col-sm-2 col-form-label">Back To Back Transaction</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{back_to_back_transaction}">
+        <option value="">-- Select --</option>
+        <option value="Y">Y</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1187,22 +1239,52 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Maturity Period</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{maturity_period}" /></div>
-    <label class="col-sm-2 col-form-label">Position</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{position}" /></div>
+   <label class="col-sm-2 col-form-label">Position</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{position}">
+        <option value="">-- Select --</option>
+        <option value="Long">Long</option>
+        <option value="Short">Short</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Notional Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional_type}" /></div>
+<label class="col-sm-2 col-form-label">Notional Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{notional_type}">
+        <option value="">-- Select --</option>
+        <option value="Bullet">Bullet</option>
+        <option value="Amortizing">Amortizing</option>
+        <option value="Step-up">Step-up</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
     <label class="col-sm-2 col-form-label">Cancellable</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cancellable}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{cancellable}">
+        <option value="">-- Select --</option>
+        <option value="Y">Y</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Cancellable Date</label>
     <div class="col-sm-4"><input type="date" class="form-control" th:field="*{cancellable_date}" /></div>
     <label class="col-sm-2 col-form-label">Cancellable Option Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cancellable_option_type}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{cancellable_option_type}">
+        <option value="">-- Select --</option>
+        <option value="European">European</option>
+        <option value="American">American</option>
+        <option value="Bermudean">Bermudean</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1223,12 +1305,34 @@ if (tabId === 'data') {
     <label class="col-sm-2 col-form-label">Margin1</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{margin1}" /></div>
     <label class="col-sm-2 col-form-label">Benchmark Floating Rate1</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_floating_rate1}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{benchmark_floating_rate1}">
+        <option value="">-- Select --</option>
+        <option value="RFR in advance">RFR in advance</option>
+        <option value="RFR in arrears">RFR in arrears</option>
+        <option value="RFR Term">RFR Term</option>
+        <option value="IBOR">IBOR</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Benchmark Rate Tenor1</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_rate_tenor1}" /></div>
+<label class="col-sm-2 col-form-label">Benchmark Rate Tenor1</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{benchmark_rate_tenor1}">
+        <option value="">-- Select --</option>
+        <option value="Overnight">Overnight</option>
+        <option value="1W">1W</option>
+        <option value="1M">1M</option>
+        <option value="3M">3M</option>
+        <option value="6M">6M</option>
+        <option value="9M">9M</option>
+        <option value="12M">12M</option>
+    </select>
+</div>
+
     <label class="col-sm-2 col-form-label">Notional2 Liabilities</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional2_liabilities}" /></div>
 </div>
@@ -1236,8 +1340,15 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Notional2 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{notional2_currency}" /></div>
-    <label class="col-sm-2 col-form-label">Pay Receive2</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{pay_receive2}" /></div>
+<label class="col-sm-2 col-form-label">Pay Receive2</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{pay_receive2}">
+        <option value="">-- Select --</option>
+        <option value="Pay">Pay</option>
+        <option value="Receive">Receive</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1248,10 +1359,32 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Benchmark Floating Rate2</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_floating_rate2}" /></div>
-    <label class="col-sm-2 col-form-label">Benchmark Rate Tenor2</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{benchmark_rate_tenor2}" /></div>
+<label class="col-sm-2 col-form-label">Benchmark Floating Rate2</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{benchmark_floating_rate2}">
+        <option value="">-- Select --</option>
+        <option value="RFR in advance">RFR in advance</option>
+        <option value="RFR in arrears">RFR in arrears</option>
+        <option value="RFR Term">RFR Term</option>
+        <option value="IBOR">IBOR</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
+<label class="col-sm-2 col-form-label">Benchmark Rate Tenor2</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{benchmark_rate_tenor2}">
+        <option value="">-- Select --</option>
+        <option value="Overnight">Overnight</option>
+        <option value="1W">1W</option>
+        <option value="1M">1M</option>
+        <option value="3M">3M</option>
+        <option value="6M">6M</option>
+        <option value="9M">9M</option>
+        <option value="12M">12M</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1300,14 +1433,48 @@ if (tabId === 'data') {
     <label class="col-sm-2 col-form-label">ULeg1 Margin</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_margin}" /></div>
     <label class="col-sm-2 col-form-label">ULeg1 Benchmark</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_benchmark}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{uleg1_benchmark}">
+        <option value="">-- Select --</option>
+        <option value="RFR in advance">RFR in advance</option>
+        <option value="RFR in arrears">RFR in arrears</option>
+        <option value="RFR Term">RFR Term</option>
+        <option value="IBOR">IBOR</option>
+        <option value="Total Return">Total Return</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg1 Tenor</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg1_tenor}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg1</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg1}" /></div>
+<label class="col-sm-2 col-form-label">ULeg1 Tenor</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{uleg1_tenor}">
+        <option value="">-- Select --</option>
+        <option value="Overnight">Overnight</option>
+        <option value="1W">1W</option>
+        <option value="1M">1M</option>
+        <option value="3M">3M</option>
+        <option value="6M">6M</option>
+        <option value="9M">9M</option>
+        <option value="12M">12M</option>
+    </select>
+</div>
+
+<label class="col-sm-2 col-form-label">ULeg1</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{underlying_leg1}">
+        <option value="">-- Select --</option>
+        <option value="Bond">Bond</option>
+        <option value="Equity">Equity</option>
+        <option value="Loan">Loan</option>
+        <option value="Basket of Bonds">Basket of Bonds</option>
+        <option value="Basket of Shares">Basket of Shares</option>
+        <option value="Basket of Loans">Basket of Loans</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1321,7 +1488,14 @@ if (tabId === 'data') {
     <label class="col-sm-2 col-form-label">ULeg2 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_currency}" /></div>
     <label class="col-sm-2 col-form-label">ULeg2 Pay Receive</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_pay_receive}" /></div>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{uleg2_pay_receive}">
+        <option value="">-- Select --</option>
+        <option value="Pay">Pay</option>
+        <option value="Receive">Receive</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1332,15 +1506,49 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_benchmark}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg2 Tenor</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_tenor}" /></div>
+<label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{uleg2_benchmark}">
+        <option value="" disabled selected>-- Select --</option>
+        <option value="RFR in advance">RFR in advance</option>
+        <option value="RFR in arrears">RFR in arrears</option>
+        <option value="RFR Term">RFR Term</option>
+        <option value="IBOR">IBOR</option>
+        <option value="Total Return">Total Return</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
+   <label class="col-sm-2 col-form-label">ULeg2 Tenor</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{uleg2_tenor}">
+        <option value="">-- Select --</option>
+        <option value="Overnight">Overnight</option>
+        <option value="1W">1W</option>
+        <option value="1M">1M</option>
+        <option value="3M">3M</option>
+        <option value="6M">6M</option>
+        <option value="9M">9M</option>
+        <option value="12M">12M</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{underlying_leg2}" /></div>
+<label class="col-sm-2 col-form-label">ULeg2</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{underlying_leg2}">
+        <option value="">-- Select --</option>
+        <option value="Bond">Bond</option>
+        <option value="Equity">Equity</option>
+        <option value="Loan">Loan</option>
+        <option value="Basket of Bonds">Basket of Bonds</option>
+        <option value="Basket of Shares">Basket of Shares</option>
+        <option value="Basket of Loans">Basket of Loans</option>
+    </select>
+</div>
+
     <label class="col-sm-2 col-form-label">ULeg2 Details</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_details}" /></div>
 </div>
@@ -1355,15 +1563,30 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">ULeg2 DV01 AED</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{uleg2_dv01_aed}" /></div>
-    <label class="col-sm-2 col-form-label">CDS Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_type}" /></div>
+  <label class="col-sm-2 col-form-label">CDS Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{cds_type}">
+        <option value="">-- Select --</option>
+        <option value="Single Name">Single Name</option>
+        <option value="Basket">Basket</option>
+        <option value="Index">Index</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CDS Underlyings</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_underlyings}" /></div>
-    <label class="col-sm-2 col-form-label">Quanto</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{quanto}" /></div>
+   <label class="col-sm-2 col-form-label">Quanto</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{quanto}">
+        <option value="" >-- Select --</option>
+        <option value="Y">Y</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
@@ -1409,15 +1632,116 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Options List</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{options_list}" /></div>
-    <label class="col-sm-2 col-form-label">Option Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_type}" /></div>
+<label class="col-sm-2 col-form-label">Options List</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{options_list}">
+        <option value="">-- Select --</option>
+        <option value="Accumulative Forward">Accumulative Forward</option>
+        <option value="Amortizing Forward">Amortizing Forward</option>
+        <option value="Asian">Asian</option>
+        <option value="Auto-Renewal Forward">Auto-Renewal Forward</option>
+        <option value="Basket-Linked Note">Basket-Linked Note</option>
+        <option value="Baskets">Baskets</option>
+        <option value="Best-of">Best-of</option>
+        <option value="Boomerang Forward">Boomerang Forward</option>
+        <option value="Boosted Spot/Forward">Boosted Spot/Forward</option>
+        <option value="Buffered Cross Currency Swap">Buffered Cross Currency Swap</option>
+        <option value="Butterly Forward">Butterly Forward</option>
+        <option value="Call">Call</option>
+        <option value="Cancellable Swap">Cancellable Swap</option>
+        <option value="Cap">Cap</option>
+        <option value="Cliquet">Cliquet</option>
+        <option value="Collar Extra Series">Collar Extra Series</option>
+        <option value="Correlation Swap">Correlation Swap</option>
+        <option value="Corridor Deposit/Loan">Corridor Deposit/Loan</option>
+        <option value="Corridor Swap">Corridor Swap</option>
+        <option value="Corridors">Corridors</option>
+        <option value="Coumpound">Coumpound</option>
+        <option value="Digital">Digital</option>
+        <option value="Double Shark Forward">Double Shark Forward</option>
+        <option value="Double-No-Touch Linked Swap">Double-No-Touch Linked Swap</option>
+        <option value="Dual Asset Range Accrual Note">Dual Asset Range Accrual Note</option>
+        <option value="Dual Currency">Dual Currency</option>
+        <option value="Escalator Ratio Forward">Escalator Ratio Forward</option>
+        <option value="Fade-In Forward">Fade-In Forward</option>
+        <option value="Fader Shark Forward">Fader Shark Forward</option>
+        <option value="Faders">Faders</option>
+        <option value="Flexi Forward/Time Option">Flexi Forward/Time Option</option>
+        <option value="Flip Swap">Flip Swap</option>
+        <option value="Floor">Floor</option>
+        <option value="Forward Start Forward">Forward Start Forward</option>
+        <option value="Forward Start Chooser Forward">Forward Start Chooser Forward</option>
+        <option value="Forward Volatility Agreements (FVAs)">Forward Volatility Agreements (FVAs)</option>
+        <option value="Free Style Forward">Free Style Forward</option>
+        <option value="FX-Express Certificate">FX-Express Certificate</option>
+        <option value="FX-linked Bonds">FX-linked Bonds</option>
+        <option value="Future">Future</option>
+        <option value="Gold Participation">Gold Participation</option>
+        <option value="Hanseatic Swap">Hanseatic Swap</option>
+        <option value="Harmonic Average">Harmonic Average</option>
+        <option value="Hybrid Forward Contracts">Hybrid Forward Contracts</option>
+        <option value="Installments">Installments</option>
+        <option value="Intrinsic Value Ratio Knock-Out Forward">Intrinsic Value Ratio Knock-Out Forward</option>
+        <option value="KIKO">KIKO</option>
+        <option value="Tarn Knock-out Forward">Tarn Knock-out Forward</option>
+        <option value="Leveraged Target Forward">Leveraged Target Forward</option>
+        <option value="Lookback">Lookback</option>
+        <option value="Moving Strike Turbo Spot">Moving Strike Turbo Spot</option>
+        <option value="Limited Multiplicity Power">Limited Multiplicity Power</option>
+        <option value="Outright Participating Collar">Outright Participating Collar</option>
+        <option value="Participating Forward">Participating Forward</option>
+        <option value="Pay-Later">Pay-Later</option>
+        <option value="Performance-Linked">Performance-Linked</option>
+        <option value="Pivot Target Forward (PTF)">Pivot Target Forward (PTF)</option>
+        <option value="Plain Target Forward">Plain Target Forward</option>
+        <option value="Power">Power</option>
+        <option value="Power Reverse Dual Currency Bonds">Power Reverse Dual Currency Bonds</option>
+        <option value="Put">Put</option>
+        <option value="Quanto">Quanto</option>
+        <option value="Range Accrual">Range Accrual</option>
+        <option value="Range Forward">Range Forward</option>
+        <option value="Range Reset Swap">Range Reset Swap</option>
+        <option value="Ratchet Shark Forward">Ratchet Shark Forward</option>
+        <option value="Shark Forward Series">Shark Forward Series</option>
+        <option value="Spread">Spread</option>
+        <option value="Step Down">Step Down</option>
+        <option value="Step Up">Step Up</option>
+        <option value="Strike Leverage Forward">Strike Leverage Forward</option>
+        <option value="Target Profit Forward">Target Profit Forward</option>
+        <option value="Tender Linked Forward">Tender Linked Forward</option>
+        <option value="Tower Deposit/Loan">Tower Deposit/Loan</option>
+        <option value="Tunnel Deposit/Loan">Tunnel Deposit/Loan</option>
+        <option value="Turbo Cross Currency Swap">Turbo Cross Currency Swap</option>
+        <option value="Turbo Deposit/Loan">Turbo Deposit/Loan</option>
+        <option value="Variance Swap">Variance Swap</option>
+        <option value="Volatility Swap">Volatility Swap</option>
+        <option value="Worst-of">Worst-of</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
+  <label class="col-sm-2 col-form-label">Option Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{option_type}">
+        <option value="">-- Select --</option>
+        <option value="European">European</option>
+        <option value="American">American</option>
+        <option value="Bermudean">Bermudean</option>
+    </select>
+</div>
+
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Underlying Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_type}" /></div>
+<label class="col-sm-2 col-form-label">Option Underlying Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{option_underlying_type}">
+        <option value="">-- Select --</option>
+        <option value="Single">Single</option>
+        <option value="Basket">Basket</option>
+    </select>
+</div>
+
     <label class="col-sm-2 col-form-label">Option Underlying Details</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_underlying_details}" /></div>
 </div>
@@ -1430,8 +1754,17 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Barrier Type</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_type}" /></div>
+<label class="col-sm-2 col-form-label">Barrier Type</label>
+<div class="col-sm-4">
+    <select class="form-control" th:field="*{barrier_type}">
+        <option value="">-- Select --</option>
+        <option value="Up and Out (UO)">Up and Out (UO)</option>
+        <option value="Up and Down (UD)">Up and Down (UD)</option>
+        <option value="Down and In (DI)">Down and In (DI)</option>
+        <option value="Down and Up (DU)">Down and Up (DU)</option>
+    </select>
+</div>
+
     <label class="col-sm-2 col-form-label">Barrier Upper Range</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{barrier_upper_range}" /></div>
 </div>
@@ -1461,56 +1794,56 @@ if (tabId === 'data') {
     <label class="col-sm-2 col-form-label">Option Dollar Theta</label>
     <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_dollar_theta}" /></div>
     <label class="col-sm-2 col-form-label">Overall MTM AED</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_mtm_aed}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{overall_mtm_aed}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">IRS Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{irs_positive_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Asset Swap Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{asset_swap_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">CDS Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cds_positive_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Future Contract Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Option Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_positive_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Overall Positive MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_positive_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{overall_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Individual Positive Contribution</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_positive_contribution}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{individual_positive_contribution}" /></div>
     <label class="col-sm-2 col-form-label">IRS Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{irs_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{irs_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Asset Swap Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{asset_swap_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{asset_swap_negative_mtm}" /></div>
     <label class="col-sm-2 col-form-label">CDS Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{cds_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cds_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Contract Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{future_contract_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_negative_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Option Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{option_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Overall Negative MTM</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{overall_negative_mtm}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{overall_negative_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Individual Negative Contribution</label>
-    <div class="col-sm-4"><input type="text" class="form-control" th:field="*{individual_negative_contribution}" /></div>
+    <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{individual_negative_contribution}" /></div>
 </div>
 
 
@@ -1779,6 +2112,74 @@ function handleBankChange(select) {
       handleCountryChange(countrySelect);
     }
   };
+</script>
+
+
+
+<script>
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
+  }
+
+  function clearError(input) {
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
+  }
+
+  // Validate VARCHAR2 fields based on vchar-XXX class
+  document.querySelectorAll('[class*="vchar-"]').forEach(input => {
+    const match = input.className.match(/vchar-(\d+)/);
+    if (match) {
+      const maxLength = parseInt(match[1]);
+      input.setAttribute("maxlength", maxLength);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val.length > maxLength) {
+          showError(input, `Max ${maxLength} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+  // Validate NUMBER(24,2) or other number fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const value = input.value.trim();
+        const regex = /^\d+(\.\d+)?$/;
+
+        if (!regex.test(value)) {
+          showError(input, `Only numbers allowed with up to ${decimal} decimal places`);
+          return;
+        }
+
+        const [intPart, decPart = ""] = value.split(".");
+        const intLen = intPart.replace(/^0+/, "").length;
+        const decLen = decPart.length;
+
+        if (intLen + decLen > total || decLen > decimal) {
+          showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
 </script>
 
 </html>
