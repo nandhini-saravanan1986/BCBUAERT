@@ -26,7 +26,7 @@ public interface RT_RepoDataTemplateRepository extends JpaRepository<RT_RepoData
 	            "CBUAE_GEO_ZONE_2, BOND_SUKUK_NOMINAL, SECURITY_MATURITY_DATE, " +
 	            "SECURITY_RESIDUAL_MATURITY, SECURITY_MATURITY_PERIOD, GMRA_EFFECTIVE_HAIRCUT, " +
 	            "SECURITY_START_PRICE, SECURITY_START_CASH_AMOUNT, START_CASH_AMOUNT, " +
-	            "REPO_INTEREST_RATE_TYPE, FIXED_RATE, FLOATING_RATE_TYPE, REPO_MARGIN, " + // Note: Replaced 'Repo Interest/Profit rate Margin (Only in case of Floating Rate)' with 'REPO_MARGIN' as per entity.
+	            "INTEREST_PROFIT_RATE, FIXED_RATE, FLOATING_RATE_TYPE, REPO_MARGIN, " + // Note: Replaced 'Repo Interest/Profit rate Margin (Only in case of Floating Rate)' with 'REPO_MARGIN' as per entity.
 	            "INTEREST_ACCRUALS, REPO_VALUATION, DIRTY_PRICE, GMRA_COLLATERAL_MTM, " +
 	            "MIN_TRANSFER_AMOUNT, THRESHOLD, MARGIN_CALL_FREQ " +
 	            "FROM BCBUAE_REPO_DATA_TEMPLATE", nativeQuery = true)

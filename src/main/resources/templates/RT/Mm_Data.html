@@ -959,7 +959,7 @@ function downloadMm() {
 
         <label class="col-sm-2 col-form-label">Subsidiary</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{subsidiary}" />
+            <input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
         </div>
     </div>
 
@@ -1113,7 +1113,7 @@ function downloadMm() {
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Currency</label>
         <div class="col-sm-4">
-            <input type="text" class="form-control number-24-2" th:field="*{currency}" />
+            <input type="text" class="form-control vchar-50" th:field="*{currency}" />
         </div>
 
         <label class="col-sm-2 col-form-label">Principal</label>
@@ -1398,28 +1398,43 @@ window.onload = function() {
 };
 </script>
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
   function showError(input, message) {
-    let error = document.getElementById(input.id + "-error");
-    if (!error) {
-      error = document.createElement("small");
-      error.id = input.id + "-error";
-      error.className = "text-danger";
-      input.parentNode.appendChild(error);
-    }
+    // Remove any existing error to prevent duplicates
+    clearError(input);
+
+    const error = document.createElement("small");
+    error.id = input.id + "-error";
+    error.className = "text-danger d-block mt-1";
     error.innerText = message;
+
+    // Insert error message right after the input element
+    input.classList.add("is-invalid");
+    input.parentNode.insertBefore(error, input.nextSibling);
   }
 
   function clearError(input) {
     const error = document.getElementById(input.id + "-error");
-    if (error) error.innerText = "";
+    if (error) {
+      error.remove();
+    }
+    input.classList.remove("is-invalid");
   }
 
-  // VARCHAR2 validation (vchar-XX)
-  document.querySelectorAll('[class*="vchar-"]').forEach(input => {
-    const limit = input.className.match(/vchar-(\d+)/);
-    if (limit) {
-      const max = parseInt(limit[1]);
-      input.maxLength = max;
+  // VARCHAR2 (vchar-<max>) fields
+  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+    let max = null;
+    input.classList.forEach(cls => {
+      if (cls.startsWith("vchar-")) {
+        const limit = parseInt(cls.split("-")[1]);
+        if (!isNaN(limit)) max = limit;
+      }
+    });
+
+    if (max !== null) {
+      input.removeAttribute("maxlength"); // Let JS handle limit
+
       input.addEventListener("input", () => {
         if (input.value.length > max) {
           showError(input, `Max ${max} characters allowed`);
@@ -1430,31 +1445,40 @@ window.onload = function() {
     }
   });
 
-  // NUMBER(total-decimal) validation (number-24-2)
+
+  // NUMBER(p,s) fields
   document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const parts = input.className.match(/number-(\d+)-(\d+)/);
-    if (parts) {
-      const total = parseInt(parts[1]);
-      const decimal = parseInt(parts[2]);
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
 
       input.addEventListener("input", () => {
         const val = input.value.trim();
-        if (val === "") return clearError(input);
-        if (!/^-?\d*(\.\d*)?$/.test(val)) return showError(input, "Only numbers allowed");
+        if (val === "") {
+          clearError(input);
+          return;
+        }
+
+        if (!/^-?\d*(\.\d*)?$/.test(val)) {
+          showError(input, "Only numeric values allowed");
+          return;
+        }
 
         const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const digitCount = intPart.length + decPart.length;
+        const totalDigits = intPart.length + decPart.length;
 
-        if (digitCount > total) {
+        if (totalDigits > total) {
           showError(input, `Max ${total} digits allowed`);
         } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits allowed after decimal`);
+          showError(input, `Max ${decimal} digits after decimal`);
         } else {
           clearError(input);
         }
       });
     }
   });
-</script>
 
+});
+</script>
 </html>

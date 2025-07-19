@@ -752,7 +752,14 @@ public class RT_InvestmentRiskDataDashboard_Service {
             workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             workbook.write(out);
 
-            logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+            String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+            File outputFile = new File(finalPath + "CBUAE_Investment Risk Data_Dashboard_Template.xls");
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                fos.write(out.toByteArray());
+                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+            }
+
+            logger.info("Service: INVESTMENT RISK DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
             return out.toByteArray();
         }
     }

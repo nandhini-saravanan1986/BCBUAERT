@@ -160,7 +160,7 @@ public class RT_RepoService {
 
 	                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-	                outputFile = new File(env.getProperty("output.exportpathfinal") + "RepoDataTemplate.xls");
+	                outputFile = new File(env.getProperty("output.exportpathfinal") + "CBUAE_Repo_Data_Template.xls");
 	                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
 	                    workbook.write(fos);
 	                    System.out.println("Repo Excel generated: " + outputFile.getAbsolutePath());

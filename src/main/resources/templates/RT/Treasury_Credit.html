@@ -1034,7 +1034,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 								</div>
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{subsidiary}" />
+									<input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
 								</div>
 							</div>
 
@@ -1080,11 +1080,11 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Counterparty Risk Rating</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{counterpartyRiskRating}" />
+									<input type="text" class="form-control vchar-20" th:field="*{counterpartyRiskRating}" />
 								</div>
 								<label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+									<input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
 								</div>
 							</div>
 
@@ -1101,7 +1101,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 								<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
+									<input type="text" class="form-control vchar-50" th:field="*{cbuaeGeographicalZone}"
 										id="cbuaeGeographicalZone" readonly />
 								</div>
 							</div>
@@ -1109,7 +1109,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Counterparty Type</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" th:field="*{counterpartyType}" />
+									<input type="text" class="form-control vchar-50" th:field="*{counterpartyType}" />
 								</div>
 							</div>
 
@@ -1117,28 +1117,28 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<!-- Categories - Copy this block per category (MM, Repo, Bonds, etc.) -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">MM Limit</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{limitAedMoneymarket}" /></div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{utilizationAedMoneymarket}" /></div>
 
 								<label class="col-sm-2 col-form-label">%</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{moneymarketPercent}" /></div>
 							</div>
 
 							<!-- REPO -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Repo Limit</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{limitAedRepo}" /></div>
 								<label class="col-sm-2 col-form-label">Utilization</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{utilizationAedRepo}" /></div>
 								<label class="col-sm-2 col-form-label">%</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{repoPercent}" />
 								</div>
 							</div>
@@ -1147,32 +1147,32 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<!-- Example: Bonds -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bonds Limit</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{limitAedBonds}" /></div>
 								<label class="col-sm-2 col-form-label">Utilization</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{utilizationAedBonds}" /></div>
 								<label class="col-sm-2 col-form-label">%</label>
-								<div class="col-sm-2"><input type="number" class="form-control"
+								<div class="col-sm-2"><input type="number" class="form-control number-24-2"
 										th:field="*{bondsPercent}" /></div>
 							</div>
 							<!-- Bonds -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bonds Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedBonds"
+									<input type="text" class="form-control number-24-2" name="limitAedBonds"
 										th:value="${creditData.limitAedBonds}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedBonds"
+									<input type="text" class="form-control number-24-2" name="utilizationAedBonds"
 										th:value="${creditData.utilizationAedBonds}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="bondsPercent"
+									<input type="text" class="form-control number-24-2" name="bondsPercent"
 										th:value="${creditData.bondsPercent}" />
 								</div>
 							</div>
@@ -1180,19 +1180,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Credit Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedCredit"
+									<input type="text" class="form-control number-24-2" name="limitAedCredit"
 										th:value="${creditData.limitAedCredit}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedCredit"
+									<input type="text" class="form-control number-24-2" name="utilizationAedCredit"
 										th:value="${creditData.utilizationAedCredit}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="creditPercent"
+									<input type="text" class="form-control number-24-2" name="creditPercent"
 										th:value="${creditData.creditPercent}" />
 								</div>
 							</div>
@@ -1201,19 +1201,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Other Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedOther"
+									<input type="number" class="form-control number-24-2" name="limitAedOther"
 										th:value="${creditData.limitAedOther}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedOther"
+									<input type="number" class="form-control number-24-2" name="utilizationAedOther"
 										th:value="${creditData.utilizationAedOther}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="otherPercent"
+									<input type="number" class="form-control number-24-2" name="otherPercent"
 										th:value="${creditData.otherPercent}" />
 								</div>
 							</div>
@@ -1222,19 +1222,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Nostro Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedNostro"
+									<input type="number" class="form-control number-24-2" name="limitAedNostro"
 										th:value="${creditData.limitAedNostro}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedNostro"
+									<input type="number" class="form-control number-24-2" name="utilizationAedNostro"
 										th:value="${creditData.utilizationAedNostro}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="nostroPercent"
+									<input type="number" class="form-control number-24-2" name="nostroPercent"
 										th:value="${creditData.nostroPercent}" />
 								</div>
 							</div>
@@ -1243,19 +1243,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Derivatives Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedDerivatives"
+									<input type="number" class="form-control number-24-2" name="limitAedDerivatives"
 										th:value="${creditData.limitAedDerivatives}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedDerivatives"
+									<input type="number" class="form-control number-24-2" name="utilizationAedDerivatives"
 										th:value="${creditData.utilizationAedDerivatives}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="derivativesPercent"
+									<input type="number" class="form-control number-24-2" name="derivativesPercent"
 										th:value="${creditData.derivativesPercent}" />
 								</div>
 							</div>
@@ -1264,19 +1264,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">FX Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedFxsettlement"
+									<input type="number" class="form-control number-24-2" name="limitAedFxsettlement"
 										th:value="${creditData.limitAedFxsettlement}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedFxsettlement"
+									<input type="number" class="form-control number-24-2" name="utilizationAedFxsettlement"
 										th:value="${creditData.utilizationAedFxsettlement}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="fxsettlementPercent"
+									<input type="number" class="form-control number-24-2" name="fxsettlementPercent"
 										th:value="${creditData.fxsettlementPercent}" />
 								</div>
 							</div>
@@ -1285,19 +1285,19 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bond Settlement Limit</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="limitAedBondsettlement"
+									<input type="number" class="form-control number-24-2" name="limitAedBondsettlement"
 										th:value="${creditData.limitAedBondsettlement}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Utilization</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="utilizationAedBondsettlement"
+									<input type="number" class="form-control number-24-2" name="utilizationAedBondsettlement"
 										th:value="${creditData.utilizationAedBondsettlement}" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">%</label>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="bondsettlementPercent"
+									<input type="number" class="form-control number-24-2" name="bondsettlementPercent"
 										th:value="${creditData.bondsettlementPercent}" />
 								</div>
 							</div>
@@ -1311,18 +1311,18 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 								<div class="col-sm-4"><input type="number" class="form-control"
 										th:field="*{treasuryLmtAed}" /></div>
 								<label class="col-sm-2 col-form-label">Treasury Limit (%)</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
+								<div class="col-sm-4"><input type="number" class="form-control number-24-2"
 										th:field="*{treasuryLmt}" />
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Exposure (AED)</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
+								<div class="col-sm-4"><input type="number" class="form-control number-24-2"
 										th:field="*{exposureAed}" />
 								</div>
 								<label class="col-sm-2 col-form-label">Exposure (%)</label>
-								<div class="col-sm-4"><input type="number" class="form-control"
+								<div class="col-sm-4"><input type="number" class="form-control number-24-2"
 										th:field="*{exposure}" />
 								</div>
 							</div>
@@ -1625,6 +1625,89 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 </script>
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+  function showError(input, message) {
+    // Remove any existing error to prevent duplicates
+    clearError(input);
+
+    const error = document.createElement("small");
+    error.id = input.id + "-error";
+    error.className = "text-danger d-block mt-1";
+    error.innerText = message;
+
+    // Insert error message right after the input element
+    input.classList.add("is-invalid");
+    input.parentNode.insertBefore(error, input.nextSibling);
+  }
+
+  function clearError(input) {
+    const error = document.getElementById(input.id + "-error");
+    if (error) {
+      error.remove();
+    }
+    input.classList.remove("is-invalid");
+  }
+
+  // VARCHAR2 (vchar-<max>) fields
+  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+    let max = null;
+    input.classList.forEach(cls => {
+      if (cls.startsWith("vchar-")) {
+        const limit = parseInt(cls.split("-")[1]);
+        if (!isNaN(limit)) max = limit;
+      }
+    });
+
+    if (max !== null) {
+      input.removeAttribute("maxlength"); // Let JS handle limit
+
+      input.addEventListener("input", () => {
+        if (input.value.length > max) {
+          showError(input, `Max ${max} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+
+  // NUMBER(p,s) fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val === "") {
+          clearError(input);
+          return;
+        }
+
+        if (!/^-?\d*(\.\d*)?$/.test(val)) {
+          showError(input, "Only numeric values allowed");
+          return;
+        }
+
+        const [intPart, decPart = ""] = val.replace("-", "").split(".");
+        const totalDigits = intPart.length + decPart.length;
+
+        if (totalDigits > total) {
+          showError(input, `Max ${total} digits allowed`);
+        } else if (decPart.length > decimal) {
+          showError(input, `Max ${decimal} digits after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+});
+</script>
 
 </html>

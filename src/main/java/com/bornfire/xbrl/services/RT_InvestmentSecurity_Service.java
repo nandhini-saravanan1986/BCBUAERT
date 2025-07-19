@@ -1,7 +1,9 @@
 package com.bornfire.xbrl.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -488,9 +490,15 @@ public class RT_InvestmentSecurity_Service {
 			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			workbook.write(out);
 
-			logger.info("Service: Investment Securities Excel data successfully written to memory buffer ({} bytes).",
-					out.size());
-			return out.toByteArray();
+			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+            File outputFile = new File(finalPath + "CBUAE_Investment_Securities_Data_Template_Pillar2.xls");
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                fos.write(out.toByteArray());
+                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+            }
+
+            logger.info("Service: INVESTMENT SECURITIES DATA DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
+            return out.toByteArray();
 		}
 	}
 }

@@ -4,6 +4,7 @@
 CREATED BY	: KRISHNAPANDI MG 
 CREATED ON	: 19.06.2025 (Started)
 PURPOSE		: Repo data Template
+Tested by   : Rajalakshmi R
 -->
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
@@ -75,13 +76,14 @@ PURPOSE		: Repo data Template
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
-}
+.btn-primary:not(:disabled):not(.disabled).active,
+	.btn-primary:not(:disabled):not(.disabled):active,
+	.show>.btn-primary.dropdown-toggle {
+		color: #fff;
+		background-color: #cc0000;
+		/* corrected to a valid red */
+		border-color: #161617;
+	}
 
 #finusertb {
 	width: 460px;
@@ -473,9 +475,7 @@ $(document).ready(function () {
      
      function downloadRepo() {
     		// 1. Show the loader modal
-    		$('#loader').mo
-    		dal('show');
-
+			$('#loader').modal('show');
     		$.ajax({
     			url: './downloadRepoExcel',
     			type: 'GET',
@@ -494,7 +494,7 @@ $(document).ready(function () {
     					const a = document.createElement('a');
     					a.style.display = 'none';
     					a.href = url;
-    					a.download = 'RepoDataTemplate.xls';
+    					a.download = 'CBUAE_Repo_Data_Template.xls';
     					document.body.appendChild(a);
 
     					a.click();
@@ -502,7 +502,7 @@ $(document).ready(function () {
     					window.URL.revokeObjectURL(url);
     					document.body.removeChild(a);
 
-    					message = 'RepoDataTemplate.xls has been downloaded successfully.';
+    					message = 'CBUAE_Repo_Data_Template.xls has been downloaded successfully.';
     				} else {
     					message = 'No data available to download.';
     				}
@@ -517,7 +517,7 @@ $(document).ready(function () {
     				console.error("Download failed:", textStatus, errorThrown);
 
     				// Show error message in your custom alert
-    				$('#alertmsg').text('An error occurred while downloading RepoDataTemplate.xls.');
+    				$('#alertmsg').text('An error occurred while downloading CBUAE_Repo_Data_Template.xls.');
     				$('#alert').modal('show');
     			}
     		});
@@ -984,7 +984,7 @@ $(document).ready(function () {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Data Date</label>
             <div class="col-sm-4">
-              <input type="date" class="form-control" th:field="*{dataDate}" />
+              <input type="date" class="form-control" th:field="*{dataDate}" required readonly/>
             </div>
 
             <label class="col-sm-2 col-form-label">Bank Name</label>
@@ -1000,7 +1000,7 @@ $(document).ready(function () {
             <label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
             <div class="col-sm-4">
               <select class="form-control" th:field="*{headOfficeSubsidiary}">
-                <option value="">-- Select --</option>
+                <option value="" disabled selected>-- Select --</option>
                 <option value="Head Office">Head Office</option>
                 <option value="Subsidiary">Subsidiary</option>
               </select>
@@ -1008,7 +1008,7 @@ $(document).ready(function () {
 
             <label class="col-sm-2 col-form-label">Subsidiary</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{subsidiary}" />
+              <input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
             </div>
           </div>
 
@@ -1039,24 +1039,24 @@ $(document).ready(function () {
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Counterparty Name</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{counterpartyName}" />
+              <input type="text" class="form-control vchar-50" th:field="*{counterpartyName}" />
             </div>
 
             <label class="col-sm-2 col-form-label">Counterparty Internal Ref</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{counterpartyInternalRef}" />
+              <input type="text" class="form-control vchar-50" th:field="*{counterpartyInternalRef}" />
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
+              <input type="text" class="form-control vchar-20" th:field="*{finalRatingBanks}" />
             </div>
 
             <label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+              <input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
             </div>
           </div>
 
@@ -1065,7 +1065,7 @@ $(document).ready(function () {
     <label class="col-sm-2 col-form-label">Country Of Risk</label>
     <div class="col-sm-4">
         <select class="form-control" th:field="*{countryOfRisk}" onchange="handleCountryChange(this)">
-            <option value="">-- Select Country --</option>
+            <option value="" disabled selected>-- Select Country --</option>
             <option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
         </select>
     </div>
@@ -1085,7 +1085,7 @@ $(document).ready(function () {
     <label class="col-sm-2 col-form-label">Transaction Type</label>
     <div class="col-sm-4">
         <select class="form-control" th:field="*{transactionType}" onchange="handleTransactionType(this)">
-            <option value="">-- Select --</option>
+            <option value="" disabled selected>-- Select --</option>
             <option value="Repo">Repo</option>
             <option value="Reverse Repo">Reverse Repo</option>
         </select>
@@ -1113,19 +1113,19 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Initial Maturity</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{initialMaturity}" />
+        <input type="number" step="0.01" class="form-control number-5-2" th:field="*{initialMaturity}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
     <div class="col-sm-4">
-        <input type="number" class="form-control" th:field="*{initialMaturityRounded}" />
+        <input type="number" class="form-control number-5-0" th:field="*{initialMaturityRounded}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Initial Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{initialMaturityPeriod}" />
+        <input type="text" class="form-control number-24-2" th:field="*{initialMaturityPeriod}" />
     </div>
 </div>
 
@@ -1137,19 +1137,19 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{maturityPeriod}" />
+        <input type="text" class="form-control number-24-2" th:field="*{maturityPeriod}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Repo Currency</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{repoCurrency}" />
+        <input type="text" class="form-control  vchar-10" th:field="*{repoCurrency}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Underlying Security ISIN</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{underlyingSecurityIsin}" />
+        <input type="text" class="form-control  vchar-30" th:field="*{underlyingSecurityIsin}" />
     </div>
 </div>
 
@@ -1157,24 +1157,29 @@ $(document).ready(function () {
     <label class="col-sm-2 col-form-label">Rehypothecation Status</label>
     <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{rehypothecationStatus}" />
+		
+		<select class="form-control" th:field="*{rehypothecationStatus}" >
+		           <option value="" disabled selected>-- Select --</option>
+		           <option value="Y">Y</option>
+		       </select>
     </div>
 
     <label class="col-sm-2 col-form-label">Security Currency</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityCurrency}" />
+        <input type="text" class="form-control  vchar-10" th:field="*{securityCurrency}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Obligor</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{obligor}" />
+        <input type="text" class="form-control  vchar-50" th:field="*{obligor}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Issuer Type</label>
     <div class="col-sm-4">
          <select class="form-control" th:field="*{issuerType}" >
-            <option value="">-- Select --</option>
+            <option value="" disabled selected>-- Select --</option>
             <option value="Sovereign">Sovereign</option>
             <option value="Reverse Repo">Corporate</option>
             <option value="FI">FI</option>
@@ -1186,31 +1191,31 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Industry</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{industry}" />
+        <input type="text" class="form-control   vchar-50" th:field="*{industry}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Sector</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{sector}" />
+        <input type="text" class="form-control  vchar-50" th:field="*{sector}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Underlying Bond Details</label>
     <div class="col-sm-4">
-        <textarea class="form-control" th:field="*{underlyingBondDetails}"></textarea>
+        <textarea class="form-control  vchar-50" th:field="*{underlyingBondDetails}"></textarea>
     </div>
 
     <label class="col-sm-2 col-form-label">Security Final Rating</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityFinalRating}" />
+        <input type="text" class="form-control  vchar-20" th:field="*{securityFinalRating}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Final Security Rating (CBUAE)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalSecurityRatingCbuae}" />
+        <input type="text" class="form-control  vchar-20" th:field="*{finalSecurityRatingCbuae}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Security Country of Risk</label>
@@ -1230,7 +1235,7 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Bond/Sukuk Nominal</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{bondSukukNominal}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{bondSukukNominal}" />
     </div>
 </div>
 
@@ -1249,35 +1254,35 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Security Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{securityMaturityPeriod}" />
+        <input type="text" class="form-control number-24-2 no-spinner" th:field="*{securityMaturityPeriod}" />
     </div>
 
     <label class="col-sm-2 col-form-label">GMRA Effective Haircut</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{gmraEffectiveHaircut}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{gmraEffectiveHaircut}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Security Start Price</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{securityStartPrice}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{securityStartPrice}" />
     </div>
 
     <label class="col-sm-2 col-form-label">Security Start Cash Amount</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{securityStartCashAmount}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{securityStartCashAmount}" />
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Start Cash Amount</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{startCashAmount}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{startCashAmount}" />
     </div>
 <label class="col-sm-2 col-form-label">Interest Profit Rate</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{interestProfitRate}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{interestProfitRate}" />
     </div>
     
 </div>
@@ -1287,12 +1292,12 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Fixed Rate</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{fixedRate}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{fixedRate}" />
     </div>
      <label class="col-sm-2 col-form-label">Floating Rate Type</label>
     <div class="col-sm-4">
         <select class="form-control" th:field="*{floatingRateType}">
-                <option value="">-- Select --</option>
+                <option value="" disabled selected>-- Select --</option>
                 <option value="IBOR">IBOR</option>
                 <option value="RFR">RFR</option>
               </select>
@@ -1309,36 +1314,38 @@ $(document).ready(function () {
     
     <label class="col-sm-2 col-form-label">Interest Accruals</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{interestAccruals}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{interestAccruals}" />
     </div>
 </div>
 
-<div class="form-group row">
-    
-
-    <label class="col-sm-2 col-form-label">Repo Valuation</label>
-    <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{repoValuation}" />
-    </div>
-    
+<div class="form-group row">    
+	<label class="col-sm-2 col-form-label">Repo Valuation</label>
+	  <div class="col-sm-4">
+	      <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{repoValuation}" />
+	  </div>
      <label class="col-sm-2 col-form-label">Dirty Price</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{dirtyPrice}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{dirtyPrice}" />
     </div>
     
 </div>
 
 <div class="form-group row">
    
-    <label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
+    <!--<label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{gmraCollateralMtm}" />
+        <input type="number" step="0.01" class="form- number-24-2" th:field="*{gmraCollateralMtm}" />
+    </div>-->
+	<label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
+	<div class="col-sm-4">
+	    <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{gmraCollateralMtm}" />
     </div>
-    
      <label class="col-sm-2 col-form-label">Min Transfer Amount</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{minTransferAmount}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{minTransferAmount}" />
     </div>
+	
+	
     
 </div>
 
@@ -1346,13 +1353,13 @@ $(document).ready(function () {
    
     <label class="col-sm-2 col-form-label">Threshold</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control" th:field="*{threshold}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{threshold}" />
     </div>
     
     <label class="col-sm-2 col-form-label">Margin Call Frequency</label>
     <div class="col-sm-4">
         <select class="form-control" th:field="*{marginCallFreq}">
-                <option value="">-- Select --</option>
+                <option value="" disabled selected>-- Select --</option>
                 <option value="Daily">Daily</option>
                 <option value="Weekly">Weekly</option>
                 <option value="Monthly">Monthly</option>
@@ -1671,5 +1678,99 @@ window.onload = function() {
         }
     }
 </script>
+<style>
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  function showError(input, message) {
+    // Remove any existing error to prevent duplicates
+    clearError(input);
+
+    const error = document.createElement("small");
+    error.id = input.id + "-error";
+    error.className = "text-danger d-block mt-1";
+    error.innerText = message;
+
+    // Insert error message right after the input element
+    input.classList.add("is-invalid");
+    input.parentNode.insertBefore(error, input.nextSibling);
+  }
+
+  function clearError(input) {
+    const error = document.getElementById(input.id + "-error");
+    if (error) {
+      error.remove();
+    }
+    input.classList.remove("is-invalid");
+  }
+
+  // VARCHAR2 (vchar-<max>) fields
+  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+    let max = null;
+    input.classList.forEach(cls => {
+      if (cls.startsWith("vchar-")) {
+        const limit = parseInt(cls.split("-")[1]);
+        if (!isNaN(limit)) max = limit;
+      }
+    });
+
+    if (max !== null) {
+      input.removeAttribute("maxlength"); // Let JS handle limit
+
+      input.addEventListener("input", () => {
+        if (input.value.length > max) {
+          showError(input, `Max ${max} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+
+  // NUMBER(p,s) fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val === "") {
+          clearError(input);
+          return;
+        }
+
+        if (!/^-?\d*(\.\d*)?$/.test(val)) {
+          showError(input, "Only numeric values allowed");
+          return;
+        }
+
+        const [intPart, decPart = ""] = val.replace("-", "").split(".");
+        const totalDigits = intPart.length + decPart.length;
+
+        if (totalDigits > total) {
+          showError(input, `Max ${total} digits allowed`);
+        } else if (decPart.length > decimal) {
+          showError(input, `Max ${decimal} digits after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+});
+</script>
 </html>

@@ -667,7 +667,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "RepoDataTemplate.xls");
+		headersResponse.setContentDispositionFormData("attachment", "CBUAE_Repo_Data_Template.xls");
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}

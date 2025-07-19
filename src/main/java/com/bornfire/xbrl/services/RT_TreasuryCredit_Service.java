@@ -3,6 +3,7 @@ package com.bornfire.xbrl.services;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -428,10 +429,17 @@ public class RT_TreasuryCredit_Service {
 				 * logger.info("Service: Excel file written successfully. Size: {} bytes",
 				 * out.size()); return out.toByteArray();
 				 */
-                
-                logger.info("Service: Investment Securities Excel data successfully written to memory buffer ({} bytes).",
-    					out.size());
-    			return out.toByteArray();
+
+                String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+                File outputFile = new File(finalPath + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
+                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                    fos.write(out.toByteArray());
+                    logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+                }
+
+                logger.info("Service: Treasury Credit Excel data successfully written to memory buffer ({} bytes).", out.size());
+                return out.toByteArray();
+
             }
         }
 

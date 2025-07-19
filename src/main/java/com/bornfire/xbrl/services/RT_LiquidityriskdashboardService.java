@@ -1245,9 +1245,15 @@ public class RT_LiquidityriskdashboardService {
 		// Write the final workbook content to the in-memory stream.
 		workbook.write(out);
 
-		logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+		String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+        File outputFile = new File(finalPath + "CBUAE_Liquidity_Risk_Dashboard_Template.xls");
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            fos.write(out.toByteArray());
+            logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+        }
 
-		return out.toByteArray();
+        logger.info("Service: CCR DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
+        return out.toByteArray();
 	}
 }
 }

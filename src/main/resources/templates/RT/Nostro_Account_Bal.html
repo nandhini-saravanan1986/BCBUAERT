@@ -75,13 +75,14 @@ PURPOSE		: Nostra Account balance Report
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
-}
+.btn-primary:not(:disabled):not(.disabled).active,
+	.btn-primary:not(:disabled):not(.disabled):active,
+	.show>.btn-primary.dropdown-toggle {
+		color: #fff;
+		background-color: #cc0000;
+		/* corrected to a valid red */
+		border-color: #161617;
+	}
 
 #finusertb {
 	width: 460px;
@@ -921,7 +922,7 @@ $(document).ready(function () {
  <div class="form-group row">
   <label class="col-sm-2 col-form-label">Subsidiary</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{subsidiary}" />
+        <input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
       </div>
         <label class="col-sm-2 col-form-label">Bank Symbol</label>
     
@@ -955,11 +956,11 @@ $(document).ready(function () {
  <div class="form-group row">
   <label class="col-sm-2 col-form-label">Counter Party Nostro Account</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyNostroAccount}" />
+        <input type="text" class="form-control vchar-50" th:field="*{counterpartyNostroAccount}" />
       </div>
       <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalRatingBanks}" />
+        <input type="text" class="form-control vchar-20" th:field="*{finalRatingBanks}" />
       </div>
 
       
@@ -967,7 +968,7 @@ $(document).ready(function () {
  <div class="form-group row">
  <label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{finalRatingCbuae}" />
+        <input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
       </div>
   <label class="col-sm-2 col-form-label">Country Of Risk</label>
   <div class="col-sm-4">
@@ -987,7 +988,7 @@ $(document).ready(function () {
   </div>
       <label class="col-sm-2 col-form-label">Currency</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{currency}" />
+        <input type="text" class="form-control vchar-10" th:field="*{currency}" id="currency"/>
       </div>
 
      
@@ -1000,7 +1001,7 @@ $(document).ready(function () {
       </div>
       <label class="col-sm-2 col-form-label">Counter Party Balance</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyBalance}" />
+        <input type="text" class="form-control number-24-2" th:field="*{counterpartyBalance}" />
       </div>
 
       
@@ -1008,7 +1009,7 @@ $(document).ready(function () {
 <div class="form-group row">
 <label class="col-sm-2 col-form-label">Counter Party Balance AED</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{counterpartyBalanceAed}" />
+        <input type="text" class="form-control number-24-2" th:field="*{counterpartyBalanceAed}" />
       </div>
   
     <h4 class="section-header">Bank Information</h4>
@@ -1020,17 +1021,17 @@ $(document).ready(function () {
 
       <label class="col-sm-2 col-form-label">Bank Balance</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankBalance}" />
+        <input type="text" class="form-control number-24-2" th:field="*{bankBalance}" />
       </div>
 </div>   
  <div class="form-group row">
       <label class="col-sm-2 col-form-label">Bank Balance AED</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{bankBalanceAed}" />
+        <input type="text" class="form-control number-24-2" th:field="*{bankBalanceAed}" />
       </div>
  <label class="col-sm-2 col-form-label">Account Number</label>
       <div class="col-sm-4">
- <input type="text" class="form-control" th:field="*{accountNo}" readonly />
+ <input type="text" class="form-control number-24-2" th:field="*{accountNo}" readonly />
  </div>
       
 </div>   
@@ -1040,12 +1041,12 @@ $(document).ready(function () {
 <div class="form-group row">
      <label class="col-sm-2 col-form-label">Gap</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{gap}" />
+        <input type="text" class="form-control number-24-2" th:field="*{gap}" />
       </div>
  </div>
    
  </div>
-
+ </div>
     
 
 
@@ -1056,7 +1057,7 @@ $(document).ready(function () {
       <a th:href="@{/Nostro_Account_Bal}" class="custom-tab-btn">Cancel</a>
     </div>
     
-    </div>
+   
   </form>
 </div>
 </div>
@@ -1349,6 +1350,91 @@ window.onload = function() {
     });
   });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  function showError(input, message) {
+    // Remove any existing error to prevent duplicates
+    clearError(input);
+
+    const error = document.createElement("small");
+    error.id = input.id + "-error";
+    error.className = "text-danger d-block mt-1";
+    error.innerText = message;
+
+    // Insert error message right after the input element
+    input.classList.add("is-invalid");
+    input.parentNode.insertBefore(error, input.nextSibling);
+  }
+
+  function clearError(input) {
+    const error = document.getElementById(input.id + "-error");
+    if (error) {
+      error.remove();
+    }
+    input.classList.remove("is-invalid");
+  }
+
+  // VARCHAR2 (vchar-<max>) fields
+  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+    let max = null;
+    input.classList.forEach(cls => {
+      if (cls.startsWith("vchar-")) {
+        const limit = parseInt(cls.split("-")[1]);
+        if (!isNaN(limit)) max = limit;
+      }
+    });
+
+    if (max !== null) {
+      input.removeAttribute("maxlength"); // Let JS handle limit
+
+      input.addEventListener("input", () => {
+        if (input.value.length > max) {
+          showError(input, `Max ${max} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+
+  // NUMBER(p,s) fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val === "") {
+          clearError(input);
+          return;
+        }
+
+        if (!/^-?\d*(\.\d*)?$/.test(val)) {
+          showError(input, "Only numeric values allowed");
+          return;
+        }
+
+        const [intPart, decPart = ""] = val.replace("-", "").split(".");
+        const totalDigits = intPart.length + decPart.length;
+
+        if (totalDigits > total) {
+          showError(input, `Max ${total} digits allowed`);
+        } else if (decPart.length > decimal) {
+          showError(input, `Max ${decimal} digits after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+});
+</script>
+
 
 
 </html>
