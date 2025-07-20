@@ -467,7 +467,7 @@ PURPOSE		:  Trade Market Risk Report
 					const a = document.createElement('a');
 					a.style.display = 'none';
 					a.href = url;
-					a.download = 'TradeMarketRiskData.xls';
+					a.download = 'CBUAE_Trade_Market_Risk_Data_Template.xls';
 					document.body.appendChild(a);
 
 					a.click();
@@ -1135,18 +1135,28 @@ PURPOSE		:  Trade Market Risk Report
 								<label class="col-sm-2 col-form-label">Report Date</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control"
-										th:value="${#dates.format(data.reportDate, 'dd-MM-yyyy')}" readonly />
+										th:value="${#dates.format(data.reportDate, 'dd-MM-yyyy')}" required readonly />
 								</div>
+								
 								<label class="col-sm-2 col-form-label">Bank Name</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{bankName}" />
-								</div>
+																	<div class="col-sm-4">
+																		<select class="form-control" th:field="*{bankName}"
+																			onchange="handleBankChange(this)">
+																			<option value="" disabled selected>-- Select Bank --</option>
+																			<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+																				th:text="${bank.bankName}"></option>
+																		</select>
+												</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Group/HO/Subsidiary</label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{groupHeadOfficeSubsidiary}" />
-								</div>
+																<div class="col-sm-4">
+																	<select class="form-control" th:field="*{groupHeadOfficeSubsidiary}">
+																		<option value="" disabled selected>-- Select --</option>
+																		<option value="Head Office">Head Office</option>
+																		<option value="Subsidiary">Subsidiary</option>
+																	</select>
+																</div>
 								<label class="col-sm-2 col-form-label">Subsidiary</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{subsidiary}" />
@@ -1155,21 +1165,21 @@ PURPOSE		:  Trade Market Risk Report
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bank Symbol</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{bankSymbol}" />
+									<input type="text" class="form-control" th:field="*{bankSymbol}" readonly/>
 								</div>
 								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{conventionalIslamic}" />
+									<input type="text" class="form-control" th:field="*{conventionalIslamic}" readonly/>
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Local/Foreign</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{localForeign}" />
+									<input type="text" class="form-control" th:field="*{localForeign}" readonly/>
 								</div>
 								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeTiering}" />
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}" readonly/>
 								</div>
 							</div>
 
@@ -1178,33 +1188,33 @@ PURPOSE		:  Trade Market Risk Report
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Trading Book Desks</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{tradingBookDesks}" />
+									<input type="text" class="form-control  vchar-50" th:field="*{tradingBookDesks}" />
 								</div>
 								<label class="col-sm-2 col-form-label">CBUAE Desk Reference</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{cbuaeInternalDeskReference}" />
+									<input type="text" class="form-control  vchar-50" th:field="*{cbuaeInternalDeskReference}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Annual Budget (AED)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{annualBudgetAed}" />
+									<input type="text" class="form-control  number-24-2" th:field="*{annualBudgetAed}" />
 								</div>
 								<label class="col-sm-2 col-form-label">Book Size (Market Value AED)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
+									<input type="text" class="form-control  number-24-2"
 										th:field="*{tradingDeskBookSizeMarketValueAed}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Relative Size (%)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
+									<input type="text" class="form-control  number-24-2"
 										th:field="*{relativeSizePercentTotalAssetsOrPercentTotalTradingBook}" />
 								</div>
 								<label class="col-sm-2 col-form-label">YTD P&L (AED)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{ytdPandLAed}" />
+									<input type="text" class="form-control  number-24-2" th:field="*{ytdPandLAed}" />
 								</div>
 							</div>
 							<div class="form-group row">
@@ -1223,7 +1233,7 @@ PURPOSE		:  Trade Market Risk Report
 								</div>
 								<label class="col-sm-2 col-form-label">Holding Period</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{holdingPeriod}" />
+									<input type="text" class="form-control  number-5-0" th:field="*{holdingPeriod}" />
 								</div>
 							</div>
 							<div class="form-group row">
@@ -1264,42 +1274,42 @@ PURPOSE		:  Trade Market Risk Report
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Modified Duration</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{modifiedDuration}" />
+									<input type="text" class="form-control  number-10-0" th:field="*{modifiedDuration}" />
 								</div>
 								<label class="col-sm-2 col-form-label">Interest Rate Shock (BPS)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{interestRateShockAppliedBps}" />
+									<input type="text" class="form-control  number-10-0" th:field="*{interestRateShockAppliedBps}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Limit (Modified Duration)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{limit1}" />
+									<input type="text" class="form-control  number-24-2" th:field="*{limit1}" />
 								</div>
 								<label class="col-sm-2 col-form-label">Status (Modified Duration)</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{status3}" />
+									<input type="text" class="form-control  vchar-50" th:field="*{status3}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">DV01</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dv01}" />
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{dv01}" />
 								</div>
 								<label class="col-sm-2 col-form-label">DV01 Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit2}" />
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{limit2}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">DV01 Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status4}" />
+								<div class="col-sm-4"><input type="text" class="form-control  vchar-50" th:field="*{status4}" />
 								</div>
 								<label class="col-sm-2 col-form-label">DV01 Tenor <3Yr< /label>
-										<div class="col-sm-4"><input type="text" class="form-control"
+										<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 												th:field="*{dv01TenorGapsLt3Yr}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">DV01 Tenor >3Yr</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{dv01TenorGapsGt3Yr}" /></div>
 							</div>
 
@@ -1307,23 +1317,23 @@ PURPOSE		:  Trade Market Risk Report
 							<!-- Sub-section: Credit Spread (CS01) -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Credit Spread CS01</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{creditSpreadCs01}" /></div>
 								<label class="col-sm-2 col-form-label">Credit Spread Shock (BPS)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-10-0"
 										th:field="*{creditSpreadShockAppliedBps}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">CS01 Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit3}" />
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{limit3}" />
 								</div>
 								<label class="col-sm-2 col-form-label">CS01 Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status5}" />
+								<div class="col-sm-4"><input type="text" class="form-control   vchar-50" th:field="*{status5}" />
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">CS01 Investment Grade</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{creditSpreadCs01InvestmentGrade}" /></div>
 								<label class="col-sm-2 col-form-label">CS01 Sub-Investment</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
@@ -1331,7 +1341,7 @@ PURPOSE		:  Trade Market Risk Report
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">CS01 Unrated</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{creditSpreadCs01Unrated}" /></div>
 							</div>
 
@@ -1498,15 +1508,15 @@ PURPOSE		:  Trade Market Risk Report
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Interest Rate (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{interestRateInTheTradingBookAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR Rate Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{rateSensitiveImpactPercent}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Foreign Exchange (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{foreignExchangeAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR FX Impact (%)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
@@ -1514,18 +1524,18 @@ PURPOSE		:  Trade Market Risk Report
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Equity (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{equityAed}" />
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{equityAed}" />
 								</div>
 								<label class="col-sm-2 col-form-label">SVaR Equity Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{equitySensitiveRelativeImpactPercent}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Commodities (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{commoditiesAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR Commodity Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{commoditySensitiveRelativeImpactPercent}" /></div>
 							</div>
 							<div class="form-group row">
@@ -1533,23 +1543,23 @@ PURPOSE		:  Trade Market Risk Report
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{creditDerivativesAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR CD Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{relativeImpactPercent}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Jump-to-Default (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{jumpToDefaultLossAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR JTD Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{jtdRelativeImpactPercent}" /></div>
 							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">SVaR Overall Impact (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{overallImpactAed}" /></div>
 								<label class="col-sm-2 col-form-label">SVaR Overall Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
+								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 										th:field="*{overallRelativeImpactPercent}" /></div>
 							</div>
 
@@ -1699,4 +1709,150 @@ PURPOSE		:  Trade Market Risk Report
 	}
 </style>
 
+
+<script>
+function handleBankChange(select) {
+    const selectedBank = select.value;
+
+    if (!selectedBank) {
+        // Clear the fields
+        $('#bankSymbol').val('');
+        $('#conventionalIslamic').val('');
+        $('#localForeign').val('');
+        $('#cbuaeTiering').val('');
+        return;
+    }
+
+    $.ajax({
+    	url: '/BCDRS/getBankDetails',
+        type: 'GET',
+        data: { bankName: selectedBank },
+        success: function(data) {
+            $('#bankSymbol').val(data.bankSymbol || '');
+            $('#conventionalIslamic').val(data.conventionalIslamic || '');
+            $('#localForeign').val(data.localForeign || '');
+            $('#cbuaeTiering').val(data.cbuaeTiering || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+          //  alert('Failed to fetch bank details.');
+        }
+    });
+}
+</script>
+<script>
+function handleCountryChange(select) {
+    const selectedCountry = select.value;
+
+    if (!selectedCountry) {
+        $('#cbuaeGeographicalZone').val('');
+        return;
+    }
+
+    $.ajax({
+        url: '/BCDRS/getCountryDetails',
+        type: 'GET',
+        data: { countryName: selectedCountry },
+        success: function(data) {
+            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            alert('Failed to fetch geographical zone.');
+        }
+    });
+}
+
+// Run on page load (for edit mode)
+window.onload = function() {
+    const countrySelect = document.getElementById("countryOfRisk");
+    if (countrySelect && countrySelect.value) {
+        handleCountryChange(countrySelect);
+    }
+};
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  function showError(input, message) {
+    // Remove any existing error to prevent duplicates
+    clearError(input);
+
+    const error = document.createElement("small");
+    error.id = input.id + "-error";
+    error.className = "text-danger d-block mt-1";
+    error.innerText = message;
+
+    // Insert error message right after the input element
+    input.classList.add("is-invalid");
+    input.parentNode.insertBefore(error, input.nextSibling);
+  }
+
+  function clearError(input) {
+    const error = document.getElementById(input.id + "-error");
+    if (error) {
+      error.remove();
+    }
+    input.classList.remove("is-invalid");
+  }
+
+  // VARCHAR2 (vchar-<max>) fields
+  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+    let max = null;
+    input.classList.forEach(cls => {
+      if (cls.startsWith("vchar-")) {
+        const limit = parseInt(cls.split("-")[1]);
+        if (!isNaN(limit)) max = limit;
+      }
+    });
+
+    if (max !== null) {
+      input.removeAttribute("maxlength"); // Let JS handle limit
+
+      input.addEventListener("input", () => {
+        if (input.value.length > max) {
+          showError(input, `Max ${max} characters allowed`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+
+  // NUMBER(p,s) fields
+  document.querySelectorAll('[class*="number-"]').forEach(input => {
+    const match = input.className.match(/number-(\d+)-(\d+)/);
+    if (match) {
+      const total = parseInt(match[1]);
+      const decimal = parseInt(match[2]);
+
+      input.addEventListener("input", () => {
+        const val = input.value.trim();
+        if (val === "") {
+          clearError(input);
+          return;
+        }
+
+        if (!/^-?\d*(\.\d*)?$/.test(val)) {
+          showError(input, "Only numeric values allowed");
+          return;
+        }
+
+        const [intPart, decPart = ""] = val.replace("-", "").split(".");
+        const totalDigits = intPart.length + decPart.length;
+
+        if (totalDigits > total) {
+          showError(input, `Max ${total} digits allowed`);
+        } else if (decPart.length > decimal) {
+          showError(input, `Max ${decimal} digits after decimal`);
+        } else {
+          clearError(input);
+        }
+      });
+    }
+  });
+
+});
+</script>
 </html>

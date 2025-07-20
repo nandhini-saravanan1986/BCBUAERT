@@ -1,14 +1,24 @@
 package com.bornfire.xbrl.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +38,138 @@ public class RT_TradeMarketRiskService {
 	private Environment env;
 
 	@Autowired
-	private RT_TradeMarketriskDataRepository tradeMarketRiskDataRepo;
+	private RT_TradeMarketriskDataRepository trade_market_risk_repo;
 
+	public boolean updateTradeMarketRisk(RT_TradeMarketRiskData updatedEntity) {
+	    Optional<RT_TradeMarketRiskData> existingOpt = trade_market_risk_repo.findById(updatedEntity.getReportDate());
+
+	    if (existingOpt.isPresent()) {
+	    	RT_TradeMarketRiskData existing = existingOpt.get();
+
+	        // Basic Info
+	        existing.setBankName(updatedEntity.getBankName());
+	        existing.setGroupHeadOfficeSubsidiary(updatedEntity.getGroupHeadOfficeSubsidiary());
+	        existing.setSubsidiary(updatedEntity.getSubsidiary());
+	        existing.setBankSymbol(updatedEntity.getBankSymbol());
+	        existing.setConventionalIslamic(updatedEntity.getConventionalIslamic());
+	        existing.setLocalForeign(updatedEntity.getLocalForeign());
+	        existing.setCbuaeTiering(updatedEntity.getCbuaeTiering());
+	        existing.setTradingBookDesks(updatedEntity.getTradingBookDesks());
+	        existing.setCbuaeInternalDeskReference(updatedEntity.getCbuaeInternalDeskReference());
+
+	        // Financials and Risk
+	        existing.setAnnualBudgetAed(updatedEntity.getAnnualBudgetAed());
+	        existing.setTradingDeskBookSizeMarketValueAed(updatedEntity.getTradingDeskBookSizeMarketValueAed());
+	        existing.setRelativeSizePercentTotalAssetsOrPercentTotalTradingBook(updatedEntity.getRelativeSizePercentTotalAssetsOrPercentTotalTradingBook());
+	        existing.setYtdPandLAed(updatedEntity.getYtdPandLAed());
+	        existing.setMaximumLossOverThePeriodAed(updatedEntity.getMaximumLossOverThePeriodAed());
+	        existing.setConfidenceInterval(updatedEntity.getConfidenceInterval());
+	        existing.setHoldingPeriod(updatedEntity.getHoldingPeriod());
+	        existing.setVarExposureAed(updatedEntity.getVarExposureAed());
+	        existing.setVarLimitAed(updatedEntity.getVarLimitAed());
+	        existing.setStatus(updatedEntity.getStatus());
+	        existing.setExpectedShortfallAed(updatedEntity.getExpectedShortfallAed());
+	        existing.setExpectedShortfallLimitAed(updatedEntity.getExpectedShortfallLimitAed());
+	        existing.setStatus2(updatedEntity.getStatus2());
+	        existing.setModifiedDuration(updatedEntity.getModifiedDuration());
+	        existing.setInterestRateShockAppliedBps(updatedEntity.getInterestRateShockAppliedBps());
+	        existing.setLimit1(updatedEntity.getLimit1());
+	        existing.setStatus3(updatedEntity.getStatus3());
+
+	        // Interest Rate Risk
+	        existing.setDv01(updatedEntity.getDv01());
+	        existing.setLimit2(updatedEntity.getLimit2());
+	        existing.setStatus4(updatedEntity.getStatus4());
+	        existing.setDv01TenorGapsLt3Yr(updatedEntity.getDv01TenorGapsLt3Yr());
+	        existing.setDv01TenorGapsGt3Yr(updatedEntity.getDv01TenorGapsGt3Yr());
+
+	        // Credit Spread Risk
+	        existing.setCreditSpreadCs01(updatedEntity.getCreditSpreadCs01());
+	        existing.setCreditSpreadShockAppliedBps(updatedEntity.getCreditSpreadShockAppliedBps());
+	        existing.setLimit3(updatedEntity.getLimit3());
+	        existing.setStatus5(updatedEntity.getStatus5());
+	        existing.setCreditSpreadCs01InvestmentGrade(updatedEntity.getCreditSpreadCs01InvestmentGrade());
+	        existing.setCreditSpreadCs01SubInvestment(updatedEntity.getCreditSpreadCs01SubInvestment());
+	        existing.setCreditSpreadCs01Unrated(updatedEntity.getCreditSpreadCs01Unrated());
+
+	        // Equity Risk
+	        existing.setBetaEquity(updatedEntity.getBetaEquity());
+	        existing.setEquityShockAppliedBps(updatedEntity.getEquityShockAppliedBps());
+	        existing.setLimit4(updatedEntity.getLimit4());
+	        existing.setStatus6(updatedEntity.getStatus6());
+
+	        // Basis Risk
+	        existing.setBr01(updatedEntity.getBr01());
+	        existing.setInterestRateDifferentialShockAppliedBps(updatedEntity.getInterestRateDifferentialShockAppliedBps());
+	        existing.setLimit5(updatedEntity.getLimit5());
+	        existing.setStatus7(updatedEntity.getStatus7());
+
+	        // Option Risk (Greeks)
+	        existing.setDollarDelta(updatedEntity.getDollarDelta());
+	        existing.setShockAppliedBps1(updatedEntity.getShockAppliedBps1());
+	        existing.setLimit6(updatedEntity.getLimit6());
+	        existing.setStatus8(updatedEntity.getStatus8());
+
+	        existing.setDollarGamma(updatedEntity.getDollarGamma());
+	        existing.setShockAppliedBps2(updatedEntity.getShockAppliedBps2());
+	        existing.setLimit7(updatedEntity.getLimit7());
+	        existing.setStatus9(updatedEntity.getStatus9());
+
+	        existing.setDollarVega(updatedEntity.getDollarVega());
+	        existing.setImpliedVolatilityType(updatedEntity.getImpliedVolatilityType());
+	        existing.setShockAppliedBps3(updatedEntity.getShockAppliedBps3());
+	        existing.setLimit8(updatedEntity.getLimit8());
+	        existing.setStatus10(updatedEntity.getStatus10());
+
+	        existing.setDollarTheta(updatedEntity.getDollarTheta());
+	        existing.setLimit9(updatedEntity.getLimit9());
+	        existing.setStatus11(updatedEntity.getStatus11());
+
+	        existing.setDollarRho(updatedEntity.getDollarRho());
+	        existing.setShockAppliedBps4(updatedEntity.getShockAppliedBps4());
+	        existing.setLimit10(updatedEntity.getLimit10());
+	        existing.setStatus12(updatedEntity.getStatus12());
+
+	        existing.setDollarVanna(updatedEntity.getDollarVanna());
+	        existing.setShockAppliedBps5(updatedEntity.getShockAppliedBps5());
+	        existing.setLimit11(updatedEntity.getLimit11());
+	        existing.setStatus13(updatedEntity.getStatus13());
+
+	        existing.setDollarVolga(updatedEntity.getDollarVolga());
+	        existing.setShockAppliedBps6(updatedEntity.getShockAppliedBps6());
+	        existing.setLimit12(updatedEntity.getLimit12());
+	        existing.setStatus14(updatedEntity.getStatus14());
+
+	        // Market Impact
+	        existing.setCreditSpreadAed(updatedEntity.getCreditSpreadAed());
+	        existing.setCreditSensitiveImpactPercent(updatedEntity.getCreditSensitiveImpactPercent());
+	        existing.setInterestRateInTheTradingBookAed(updatedEntity.getInterestRateInTheTradingBookAed());
+	        existing.setRateSensitiveImpactPercent(updatedEntity.getRateSensitiveImpactPercent());
+	        existing.setForeignExchangeAed(updatedEntity.getForeignExchangeAed());
+	        existing.setFxSensitiveImpactPercent(updatedEntity.getFxSensitiveImpactPercent());
+	        existing.setEquityAed(updatedEntity.getEquityAed());
+	        existing.setEquitySensitiveRelativeImpactPercent(updatedEntity.getEquitySensitiveRelativeImpactPercent());
+	        existing.setCommoditiesAed(updatedEntity.getCommoditiesAed());
+	        existing.setCommoditySensitiveRelativeImpactPercent(updatedEntity.getCommoditySensitiveRelativeImpactPercent());
+	        existing.setCreditDerivativesAed(updatedEntity.getCreditDerivativesAed());
+	        existing.setRelativeImpactPercent(updatedEntity.getRelativeImpactPercent());
+	        existing.setJumpToDefaultLossAed(updatedEntity.getJumpToDefaultLossAed());
+	        existing.setJtdRelativeImpactPercent(updatedEntity.getJtdRelativeImpactPercent());
+	        existing.setOverallImpactAed(updatedEntity.getOverallImpactAed());
+	        existing.setOverallRelativeImpactPercent(updatedEntity.getOverallRelativeImpactPercent());
+
+	        trade_market_risk_repo.save(existing);
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
+	
 	public byte[] generateTradeMarketRiskExcel() throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_TradeMarketRiskData> dataList = tradeMarketRiskDataRepo.getlist();
+		List<RT_TradeMarketRiskData> dataList = trade_market_risk_repo.getlist();
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for Trade Market Risk report. Returning empty result.");
@@ -561,9 +697,15 @@ public class RT_TradeMarketRiskService {
 			// Write the final workbook content to the in-memory stream.
 			workbook.write(out);
 
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+            File outputFile = new File(finalPath + "CBUAE_Trade_Market_Risk_Data_Template.xls");
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                fos.write(out.toByteArray());
+                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+            }
 
-			return out.toByteArray();
+            logger.info("Service: Trade market risk Excel data successfully written to memory buffer ({} bytes).", out.size());
+            return out.toByteArray();
 		}
 	}
 }

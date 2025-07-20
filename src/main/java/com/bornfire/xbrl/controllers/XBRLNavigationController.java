@@ -728,7 +728,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	
 	@RequestMapping(value = "/downloadTreasuryCreditExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel() {
-		logger.info("Controller: Received request for Trade Market Risk Excel download.");
+		logger.info("Controller: Received request for Treasury credit Excel download.");
 
 		try {
 			byte[] excelData = treasuryCreditService.generateTreasuryExcel();
@@ -1163,6 +1163,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			model.addAttribute("formmode", "null");
 			System.out.println("Add mode activated");
 		}
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		model.addAttribute("bankList", bankList);
+		model.addAttribute("countryList", countryList);
 
 		return "RT/Trade_Market_Risk";
 	}
@@ -1216,7 +1220,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "TradeMarketRiskData.xls";
+			String filename = "CBUAE_Trade_Market_Risk_Data_Template.xls";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);

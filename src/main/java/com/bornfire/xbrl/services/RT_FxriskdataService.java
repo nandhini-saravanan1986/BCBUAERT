@@ -281,9 +281,15 @@ public class RT_FxriskdataService {
 			// Write the final workbook content to the in-memory stream.
 			workbook.write(out);
 
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
+            File outputFile = new File(finalPath + "CBUAE_FX_Risk_Data_Template.xls");
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                fos.write(out.toByteArray());
+                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+            }
 
-			return out.toByteArray();
+            logger.info("Service: FX RISK DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
+            return out.toByteArray();
 		}
 	}
 }
