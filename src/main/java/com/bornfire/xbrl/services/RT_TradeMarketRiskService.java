@@ -688,6 +688,10 @@ public class RT_TradeMarketRiskService {
 							: 0.0);
 					cell90.setCellStyle(numberStyle);
 				}
+				// Auto-size all 31 columns
+				for (int i = 0; i <= 90; i++) {
+				    sheet.autoSizeColumn(i);
+				}
 
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
