@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -104,8 +105,8 @@ import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
+import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplifiedRepository;
 import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
 import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
@@ -392,69 +393,96 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	    return msg;
 	}
+	
+	@PostMapping("verifyRole")
+	@ResponseBody
+	public String verifyRole(@RequestParam("roleId") String roleId, HttpServletRequest rq) {
+	    String userId = (String) rq.getSession().getAttribute("USERID");
+
+	    Optional<AccessAndRoles> optionalRole = accessandrolesrepository.findById(roleId);
+
+	    if (!optionalRole.isPresent()) {
+	        return "Role not found. Cannot verify.";
+	    }
+
+	    AccessAndRoles role = optionalRole.get();
+
+	    if ("Y".equalsIgnoreCase(role.getEntityFlg())) {
+	        return "Role already verified.";
+	    }
+
+	    role.setEntityFlg("Y");
+	    role.setAuthUser(userId);
+	    role.setAuthTime(new Date());
+
+	    accessandrolesrepository.save(role);
+
+	    return "Role verified successfully.";
+	}
+
+	@GetMapping("/checkRoleExists")
+	@ResponseBody
+	public String checkRoleExists(@RequestParam("roleId") String roleId) {
+	    boolean exists = accessandrolesrepository.findById(roleId).isPresent();
+	    return exists ? "exists" : "not_exists";
+	}
+
 
 	
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String userid,
-			@RequestParam(value = "page", required = false) Optional<Integer> page,
-			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
+	                          @RequestParam(required = false) String userid,
+	                          @RequestParam(value = "page", required = false) Optional<Integer> page,
+	                          @RequestParam(value = "size", required = false) Optional<Integer> size,
+	                          Model md, HttpServletRequest req) {
 
-		int currentPage = page.orElse(0);
-		int pageSize = size.orElse(Integer.parseInt(pagesize));
+	    String loginuserid = (String) req.getSession().getAttribute("USERID");
+	    String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
+	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
+	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
 
-		String loginuserid = (String) req.getSession().getAttribute("USERID");
-		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
-		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
-		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
+//	    System.out.println("work class is : " + WORKCLASSAC);
+//	    System.out.println("role ID" + ROLEIDAC);
 
-		System.out.println("work class is : " + WORKCLASSAC);
-		// Logging Navigation
-		loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(),
-				"ACTIVE");
-		Session hs1 = sessionFactory.getCurrentSession();
-		md.addAttribute("menu", "USER PROFILE"); // To highlight the menu
+	    loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(), "ACTIVE");
+	    Session hs1 = sessionFactory.getCurrentSession();
+	    md.addAttribute("menu", "USER PROFILE");
 
-		if (formmode == null || formmode.equals("list")) {
+	    int currentPage = page.orElse(0);
+	    int pageSize = size.orElse(Integer.parseInt(pagesize));
 
-			md.addAttribute("formmode", "list");// to set which form - valid values are "edit" , "add" & "list"
-			md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-			md.addAttribute("ROLEIDAC", ROLEIDAC);
-			md.addAttribute("loginuserid", loginuserid);
+	    if (formmode == null || formmode.equals("list")) {
+	        md.addAttribute("formmode", "list");
+	        md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+	        md.addAttribute("ROLEIDAC", ROLEIDAC);
+	        md.addAttribute("loginuserid", loginuserid);
 
-			Iterable<UserProfile> user = loginServices.getUsersList();
-
-			md.addAttribute("userProfiles", user);
+	        Iterable<UserProfile> user = loginServices.getUsersList();
+	        md.addAttribute("userProfiles", user);
 
 		} else if (formmode.equals("edit")) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
 
-		}else if (formmode.equals("view")) {
+	    } else if (formmode.equals("add")) {
+	        md.addAttribute("formmode", formmode);
+	        md.addAttribute("userProfile", loginServices.getUser(""));
 
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(userid));
+	    } else if (formmode.equals("verify")) {
+	        md.addAttribute("formmode", formmode);
+	        md.addAttribute("userProfile", loginServices.getUser(userid));
 
-		} else if (formmode.equals("add")) {
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(""));
-		} else if (formmode.equals("verify")) {
+	    } else {
+	        md.addAttribute("formmode", formmode);
+	        md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
+	        md.addAttribute("userProfile", loginServices.getUser(""));
+	    }
 
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(userid));
-
-		} else {
-
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
-			md.addAttribute("userProfile", loginServices.getUser(""));
-
-		}
-
-		return "XBRLUserprofile";
+	    return "XBRLUserprofile";
 	}
+
 	
 	
 	@RequestMapping(value = "verifyUser", method = RequestMethod.POST)

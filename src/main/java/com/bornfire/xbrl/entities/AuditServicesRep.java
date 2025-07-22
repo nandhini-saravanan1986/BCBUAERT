@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Repository
-public interface AuditServicesRep extends JpaRepository<AuditServicesEntity , UUID>{
+public interface AuditServicesRep extends JpaRepository<AuditServicesEntity , String>{
 	@Query(value = "select * from USER_AUDIT ", nativeQuery = true)
 	List<AuditServicesEntity> getauditService();
 

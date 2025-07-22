@@ -26,12 +26,12 @@ public class AuditService {
 	private AuditServicesRep auditServicesRep;
 
 	public List<AuditServicesEntity> getUserServices() {
-		System.out.println(auditServicesRep.getUserAudit());
+//		System.out.println(auditServicesRep.getUserAudit());
 		return auditServicesRep.getUserAudit();
 	}
 
 	public List<AuditServicesEntity> getAuditServices() {
-		System.out.println(auditServicesRep.getServiceAudit());
+//		System.out.println(auditServicesRep.getServiceAudit());
 		return auditServicesRep.getServiceAudit();	
 	}
 
@@ -77,7 +77,7 @@ public class AuditService {
 
 			audit.setReport_id(customerId);
 
-			System.out.println(audit);
+//			System.out.println(audit);
 			auditServicesRep.save(audit);
 
 		} catch (Exception e) {

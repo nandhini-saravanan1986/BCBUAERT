@@ -808,7 +808,7 @@
 						<li class="nav-item"><a class="nav-link" th:href="@{/Dashboard}"
 								style=" text-align: center; color: black;">Home</a>
 						</li>
-						<li class="nav-item dropdown"><a href="#" class="dropdown-toggle"
+						<li class="nav-item dropdown"><a href="#" class="dropdown-toggle" th:if="${menuList.contains('admin')}"
 								style=" text-align: center;">Admin</a>
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/UserProfile}">User
@@ -817,7 +817,7 @@
 										And Roles</a></li>
 							</ul>
 						</li>
-						<li class="nav-item dropdown" style="text-align: center;">
+						<li class="nav-item dropdown" style="text-align: center;" th:if="${menuList.contains('RT_Reports')}">
 							<a href="#" class="dropdown-toggle">RT Reports</a>
 							<ul class="dropdown-menu" style="width: 580px; column-count: 2; column-gap: 20px;">
 
@@ -850,7 +850,7 @@
 							</ul>
 						</li>
 						<li class="nav-item dropdown" style="text-align: center;"><a href="#"
-								class="dropdown-toggle">ASL</a>
+								class="dropdown-toggle" th:if="${menuList.contains('ASL')}">ASL</a>
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/counterparty}">Auth
 										Counterparties</a></li>
@@ -866,7 +866,7 @@
 						</li>
 
 
-						<li class="nav-item dropdown" id="asl-upload-dropdown" style="text-align: center;">
+						<li class="nav-item dropdown" id="asl-upload-dropdown" style="text-align: center;" th:if="${menuList.contains('ASL_UPLOAD')}">
 							<a href="#" class="dropdown-toggle">ASL Upload</a>
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/counterparty_list}"
@@ -878,7 +878,7 @@
 										id="settlement-link" data-name="Upload Exposure">Settlement</a></li>
 							</ul>
 						</li>
-						<li class="nav-item dropdown" id="audit-dropdown" style="text-align: center;">
+						<li class="nav-item dropdown" id="audit-dropdown" style="text-align: center;" th:if="${menuList.contains('AUDIT_US')}">
 							<a href="#" class="dropdown-toggle">Audit</a>
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/User_Audit}" data-name="User Audit">User Audit</a>

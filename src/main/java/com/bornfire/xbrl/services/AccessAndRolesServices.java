@@ -55,72 +55,97 @@ public class AccessAndRolesServices {
 
 	    String msg = "";
 
-	    if (formmode.equals("add")) {
-	        AccessAndRoles up = alertparam;
-	        up.setDelFlg("N");
-	        up.setModifyFlg("N");
-	        up.setEntityFlg("N");
-	        up.setAdmin(adminValue);
-	        up.setRtReports(RT_ReportsValue);
-	        up.setAsl(aslValue);
-	        up.setAsl_upload(aslUploadValue);
-	        up.setAudit_us(auditUsValue);
-	        up.setEntryUser(USERID);
-	        up.setEntryTime(new Date());
-	        up.setMenulist(finalString);
-	        accessandrolesrepository.save(up);
+	    if ("add".equalsIgnoreCase(formmode)) {
+
+	        alertparam.setDelFlg("N");
+	        alertparam.setModifyFlg("N");
+	        alertparam.setEntityFlg("N");
+	        alertparam.setAdmin(adminValue);
+	        alertparam.setRtReports(RT_ReportsValue);
+	        alertparam.setAsl(aslValue);
+	        alertparam.setAsl_upload(aslUploadValue);
+	        alertparam.setAudit_us(auditUsValue);
+	        alertparam.setEntryUser(USERID);
+	        alertparam.setEntryTime(new Date());
+	        alertparam.setMenulist(finalString);
+
+	        accessandrolesrepository.save(alertparam);
 	        msg = "Role Created Successfully";
 
-	    } else if (formmode.equals("edit")) {
-	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
-	        AccessAndRoles user1 = user.get();
+	    } else if ("edit".equalsIgnoreCase(formmode)) {
 
-	        AccessAndRoles up = alertparam;
-	        up.setAdmin(adminValue);
-	        up.setRtReports(RT_ReportsValue);
-	        up.setAsl(aslValue);
-	        up.setAsl_upload(aslUploadValue);
-	        up.setAudit_us(auditUsValue);
-
-	        if (!finalString.equals("")) {
-	            up.setMenulist(finalString);
-	        } else {
-	            up.setMenulist(user1.getMenulist());
+	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
+	            return "Role ID is missing. Cannot edit.";
 	        }
 
-	        up.setDelFlg("N");
-	        up.setModifyFlg("Y");
-	        up.setEntityFlg("N");
-	        up.setEntryUser(user1.getEntryUser());
-	        up.setEntryTime(user1.getEntryTime());
-	        up.setModifyUser(USERID);
-	        up.setModifyTime(new Date());
+	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
+	        if (!user.isPresent()) {
+	            return "Role not found. Cannot edit.";
+	        }
 
-	        accessandrolesrepository.save(up);
+	        AccessAndRoles existing = user.get();
+
+	        alertparam.setAdmin(adminValue);
+	        alertparam.setRtReports(RT_ReportsValue);
+	        alertparam.setAsl(aslValue);
+	        alertparam.setAsl_upload(aslUploadValue);
+	        alertparam.setAudit_us(auditUsValue);
+	        alertparam.setMenulist(finalString.isEmpty() ? existing.getMenulist() : finalString);
+
+	        alertparam.setDelFlg("N");
+	        alertparam.setModifyFlg("Y");
+	        alertparam.setEntityFlg("N");
+	        alertparam.setEntryUser(existing.getEntryUser());
+	        alertparam.setEntryTime(existing.getEntryTime());
+	        alertparam.setModifyUser(USERID);
+	        alertparam.setModifyTime(new Date());
+
+	        accessandrolesrepository.save(alertparam);
 	        msg = "Role Edited Successfully";
 
-	    } else if (formmode.equals("delete")) {
+	    } else if ("delete".equalsIgnoreCase(formmode)) {
+
+	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
+	            return "Role ID is missing. Cannot delete.";
+	        }
+
 	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
+	        if (!user.isPresent()) {
+	            return "Role not found. Cannot delete.";
+	        }
+
 	        AccessAndRoles accessRole = user.get();
 	        accessRole.setDelFlg("Y");
 	        accessRole.setEntityFlg("N");
+
 	        accessandrolesrepository.save(accessRole);
 	        msg = "Role Deleted Successfully";
 
-	    } else if (formmode.equals("verify")) {
+	    } else if ("verify".equalsIgnoreCase(formmode)) {
+
+	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
+	            return "Role ID is missing. Cannot verify.";
+	        }
+
 	        Optional<AccessAndRoles> user = accessandrolesrepository.findById(alertparam.getRoleId());
-	        AccessAndRoles user1 = user.get();
-	        user1.setDelFlg("N");
-	        user1.setModifyFlg("N");
-	        user1.setEntityFlg("Y");
-	        user1.setAuthUser(USERID);
-	        user1.setAuthTime(new Date());
-	        accessandrolesrepository.save(user1);
+	        if (!user.isPresent()) {
+	            return "Role not found. Cannot verify.";
+	        }
+
+	        AccessAndRoles accessRole = user.get();
+	        accessRole.setDelFlg("N");
+	        accessRole.setModifyFlg("N");
+	        accessRole.setEntityFlg("Y");
+	        accessRole.setAuthUser(USERID);
+	        accessRole.setAuthTime(new Date());
+
+	        accessandrolesrepository.save(accessRole);
 	        msg = "Role Verified Successfully";
 	    }
 
 	    return msg;
 	}
+
 
 	public AccessAndRoles getRoleId(String id) {
 		Session session = sessionFactory.getCurrentSession();
@@ -129,6 +154,7 @@ public class AccessAndRolesServices {
 		query.setParameter(1, id);
 		List<AccessAndRoles> result = query.getResultList();
 		if (!result.isEmpty()) {
+			System.out.println(result.get(0).toString());
 			return result.get(0);
 		} else {
 			return new AccessAndRoles();

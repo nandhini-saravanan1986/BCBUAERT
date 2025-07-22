@@ -41,6 +41,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bornfire.xbrl.entities.AccessandRolesRepository;
 import com.bornfire.xbrl.entities.AuditServicesRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
@@ -63,6 +64,10 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Autowired 
 	AuditService auditService;
+	
+	
+	@Autowired
+	AccessandRolesRepository accessRepository;
 	
 	private final Integer SESSION_TIMEOUT_IN_SECONDS = 650000;
 
@@ -226,6 +231,12 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				
 				loginServices.SessionLogging("LOGIN","M1",request.getSession().getId(),user.getUserid(),request.getRemoteAddr(),
 						"ACTIVE");
+				String menus = accessRepository.getMenulist(user.getRole_id());
+				
+//				System.out.println(menus + "MENUS");
+//				System.out.println(user.getRole_id() + "ROLEiD");
+				
+				
 			
 				request.getSession().setMaxInactiveInterval(SESSION_TIMEOUT_IN_SECONDS);
 				request.getSession().setAttribute("USERID", user.getUserid());
@@ -239,7 +250,8 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("ACCESSCODE", user.getAcct_access_code());
 				request.getSession().setAttribute("BRANCHCODE", user.getBranch_code());
 				request.getSession().setAttribute("BRANCHNAME", user.getBranch_name());
-				
+				request.getSession().setAttribute("MENULIST", menus); 
+
 				auditService.createBusinessAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE");				
 				
 				response.sendRedirect("Dashboard");

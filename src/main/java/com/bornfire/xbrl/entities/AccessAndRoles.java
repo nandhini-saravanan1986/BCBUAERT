@@ -443,6 +443,17 @@ public class AccessAndRoles {
 		this.audit_us = audit_us;
 	}
 
+	@Override
+	public String toString() {
+		return "AccessAndRoles [roleId=" + roleId + ", roleDesc=" + roleDesc + ", permissions=" + permissions
+				+ ", workClass=" + workClass + ", domainId=" + domainId + ", admin=" + admin + ", menulist=" + menulist
+				+ ", entryUser=" + entryUser + ", modifyUser=" + modifyUser + ", authUser=" + authUser + ", entryTime="
+				+ entryTime + ", modifyTime=" + modifyTime + ", authTime=" + authTime + ", remarks=" + remarks
+				+ ", newRoleFlg=" + newRoleFlg + ", rtReports=" + rtReports + ", asl=" + asl + ", asl_upload="
+				+ asl_upload + ", audit_us=" + audit_us + ", entityFlg=" + entityFlg + ", authFlg=" + authFlg
+				+ ", modifyFlg=" + modifyFlg + ", delFlg=" + delFlg + "]";
+	}
+
 	
 
 

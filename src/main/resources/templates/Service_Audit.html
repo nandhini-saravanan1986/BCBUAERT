@@ -314,69 +314,69 @@
 			}
 		}
 	}
-	
-	
+
+
 	function navigateToid(element) {
-	    var audit_ref_no = element.getAttribute('data-custid');
-	    console.log(audit_ref_no);
-
-	
-	    $.ajax({
-	        url: './getchanges',
-	        type: 'GET',
-	        data: {
-	            audit_ref_no: audit_ref_no
-	        },
-	        success: function(response) {
-	            
-	            // Split the string using ||| as the delimiter
-	            let splitData = response.split("|||");
-
-	            // Trim whitespace from each part (optional)
-	            splitData = splitData.map(item => item.trim());
-
-	            // Clear existing table rows before appending
-	            $("#usertablemodel tbody").empty();
-
-	            // Access each part individually
-	            splitData.forEach((entry, index) => {
-	                // Use a regular expression to extract the column name, old value, and new value
-	                let regex = /([^:]+): OldValue: ([^,]+), NewValue: (.+)/;
-
-	                // Match the data string against the regex
-	                let match = entry.match(regex);
-
-	                if (match) {
-	                    let columnName = match[1].trim(); // Extract the column name
-	                    let oldValue = match[2].trim();  // Extract the old value
-	                    let newValue = match[3].trim();  // Extract the new value
+		var audit_ref_no = element.getAttribute('data-custid');
+		console.log(audit_ref_no);
 
 
-	                    // Append the extracted values as a new row in the table
-	                    $("#usertablemodel tbody").append(`
+		$.ajax({
+			url: './getchanges',
+			type: 'GET',
+			data: {
+				audit_ref_no: audit_ref_no
+			},
+			success: function (response) {
+
+				// Split the string using ||| as the delimiter
+				let splitData = response.split("|||");
+
+				// Trim whitespace from each part (optional)
+				splitData = splitData.map(item => item.trim());
+
+				// Clear existing table rows before appending
+				$("#usertablemodel tbody").empty();
+
+				// Access each part individually
+				splitData.forEach((entry, index) => {
+					// Use a regular expression to extract the column name, old value, and new value
+					let regex = /([^:]+): OldValue: ([^,]+), NewValue: (.+)/;
+
+					// Match the data string against the regex
+					let match = entry.match(regex);
+
+					if (match) {
+						let columnName = match[1].trim(); // Extract the column name
+						let oldValue = match[2].trim();  // Extract the old value
+						let newValue = match[3].trim();  // Extract the new value
+
+
+						// Append the extracted values as a new row in the table
+						$("#usertablemodel tbody").append(`
 	                        <tr>
 	                            <td>${columnName}</td>
 	                            <td>${oldValue}</td>
 	                            <td>${newValue}</td>
 	                        </tr>
 	                    `);
-	                } else {
-	                    console.log("No match found for entry");
-	                }
-	            });
+					} else {
+						console.log("No match found for entry");
+					}
+				});
 
-	            // Show the modal
-	            $('#exampleModalCenter').modal('show');
-	        },
-	        error: function(xhr, status, error) {
-	            alert("An error occurred while processing the request.");
-	            console.error(xhr, status, error);
-	        },
-	       
-	    });
+				// Show the modal
+				$('#exampleModalCenter').modal('show');
+			},
+			error: function (xhr, status, error) {
+				alert("An error occurred while processing the request.");
+				console.error(xhr, status, error);
+			},
+
+		});
 	}
 
-	
+
 </script>
 
 
@@ -485,15 +485,19 @@
 		/* You can adjust this height */
 		overflow-y: auto;
 	}
-	
-	.truncate-text {
-	white-space: normal; /* Allow text to wrap */
-	word-wrap: nowrap; /* Break long words if necessary */
-	overflow: hidden; /* Hide the overflowing text */
-	text-overflow: ellipsis; /* Add ellipsis (...) for truncated text */
-	max-width: 300px; /* Set a maximum width for the cell */
-}
 
+	.truncate-text {
+		white-space: normal;
+		/* Allow text to wrap */
+		word-wrap: nowrap;
+		/* Break long words if necessary */
+		overflow: hidden;
+		/* Hide the overflowing text */
+		text-overflow: ellipsis;
+		/* Add ellipsis (...) for truncated text */
+		max-width: 300px;
+		/* Set a maximum width for the cell */
+	}
 </style>
 
 </head>
