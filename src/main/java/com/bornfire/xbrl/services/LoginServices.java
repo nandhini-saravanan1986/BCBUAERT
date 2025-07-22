@@ -163,11 +163,10 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 			Date date1 = formatter.parse("28-02-2027"); // <-- note full year!
 			Date Disabledate = formatter.parse("21-12-23"); // <-- note full year!
 								
-			up.setPass_exp_date(date1);
 			up.setAcc_exp_date(date1);
 			
-			up.setLogin_high("00:00");
-			up.setLogin_low("23:59");
+			up.setLogin_low("00:00");
+			up.setLogin_high("23:59");
 			up.setDisable_start_date(Disabledate);
 			up.setDisable_end_date(Disabledate);
 
@@ -178,6 +177,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
             up.setNo_of_attmp(0);
             up.setLog_in_count("0");
             up.setEmp_name(up.getUsername());
+            System.out.println("user name is: "+ up.getUsername());
 
             // Password expiry date
             if (up.getPass_exp_days() != null && !up.getPass_exp_days().trim().isEmpty()) {
@@ -359,7 +359,6 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 					userProfile.setDisable_flg("Y");
 				}
 			    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-				Date date = formatter.parse("28-02-2027"); // <-- note full year!
 				Date Disabledate = formatter.parse("21-12-23"); // <-- note full year!
 				
 				
@@ -368,13 +367,35 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 				userProfile.setLogin_flg("N");
 				userProfile.setAuth_user(inputUser);
 				userProfile.setAuth_time(new Date());
-				userProfile.setPass_exp_date(date);
-				userProfile.setLogin_high("00:00");
-				userProfile.setLogin_low("23:59");
+				userProfile.setLogin_low("00:00");
+				userProfile.setLogin_high("23:59");
 				userProfile.setDisable_start_date(Disabledate);
 				userProfile.setDisable_end_date(Disabledate);
-				 auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"XBRL_USER_PROFILE_TABLE");
+				userProfile.setEmp_name(userProfile.getUsername());
+	           
+				Date date1 = formatter.parse("28-02-2027"); // <-- note full year!
+									
+				userProfile.setAcc_exp_date(date1);
+
+				 // Password expiry date
+	            if (userProfile.getPass_exp_days() != null && !userProfile.getPass_exp_days().trim().isEmpty()) {
+	                String localdateval = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	                LocalDate date = LocalDate.parse(localdateval);
+	                BigDecimal passexpdays = new BigDecimal(userProfile.getPass_exp_days());
+	                LocalDate date2 = date.plusDays(passexpdays.intValue());
+	                userProfile.setPass_exp_date(new SimpleDateFormat("yyyy-MM-dd").parse(date2.toString()));
+	            } else {
+	                // Default expiry period: 90 days (optional)
+	                String localdateval = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	                LocalDate date = LocalDate.parse(localdateval);
+	                LocalDate date2 = date.plusDays(90);
+	                userProfile.setPass_exp_date(new SimpleDateFormat("yyyy-MM-dd").parse(date2.toString()));
+	            }
+
+				
+				auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"XBRL_USER_PROFILE_TABLE");
 				userProfileRep.save(userProfile);
+				
 				
 			}
 

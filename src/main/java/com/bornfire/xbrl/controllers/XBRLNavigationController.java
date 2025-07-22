@@ -442,8 +442,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
 	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
 
-//	    System.out.println("work class is : " + WORKCLASSAC);
-//	    System.out.println("role ID" + ROLEIDAC);
+	    System.out.println("work class is : " + WORKCLASSAC);
+	    System.out.println("role ID" + ROLEIDAC);
 
 	    loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(), "ACTIVE");
 	    Session hs1 = sessionFactory.getCurrentSession();
@@ -469,6 +469,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    } else if (formmode.equals("add")) {
 	        md.addAttribute("formmode", formmode);
 	        md.addAttribute("userProfile", loginServices.getUser(""));
+
+	    } else if (formmode.equals("view")) {
+	        md.addAttribute("formmode", formmode);
+	        md.addAttribute("userProfile", loginServices.getUser(userid));
 
 	    } else if (formmode.equals("verify")) {
 	        md.addAttribute("formmode", formmode);

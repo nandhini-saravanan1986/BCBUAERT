@@ -181,15 +181,17 @@ font-family: verdana;
 	}
 
 	function fnClick(a) {
-		var userid = a.getAttribute("data-userid")
-		var WORKCLASS = a.getAttribute("data-WORKCLASS")
-		
-		if(WORKCLASS != "C" ){
-			alert('You do not have Modification access.');
-		}else{
-			location.href = 'UserProfile?formmode=edit&userid=' + userid
-		}
+	    var userid = a.getAttribute("data-userid");
+	    var WORKCLASS = a.getAttribute("data-WORKCLASS");
+	    var roleid = a.getAttribute("data-roleid");
+
+	    if (WORKCLASS !== "C" && roleid !== "MGR") {
+	        alert('You do not have Modification access.');
+	    } else {
+	        location.href = 'UserProfile?formmode=edit&userid=' + userid;
+	    }
 	}
+
 	
 	function fnView(a) {
 		var userid = a.getAttribute("data-userid")
@@ -201,15 +203,17 @@ font-family: verdana;
 	
 	
 	function fnClick1(a) {
-		var userid = a.getAttribute("data-userid")
-		var WORKCLASS = a.getAttribute("data-WORKCLASS")
-		
-		if(WORKCLASS != "C" ){
-			alert('You do not have verification access.');
-		}else{
-			location.href = 'UserProfile?formmode=verify&userid=' + userid
-		}
+	    var userid = a.getAttribute("data-userid");
+	    var WORKCLASS = a.getAttribute("data-WORKCLASS");
+	    var roleid = a.getAttribute("data-roleid");
+
+	    if (WORKCLASS !== "C" && roleid !== "MGR") {
+	        alert('You do not have verification access.');
+	    } else {
+	        location.href = 'UserProfile?formmode=verify&userid=' + userid;
+	    }
 	}
+
 
 	function adduser() {
 		
@@ -632,14 +636,14 @@ function cancelpop() {
 									<th:block th:switch="${userProfile.entity_flg}">
 										<td th:case="'Y'" style="color: green;">Verified</td>
 										<td th:case="'N'" style="color: red;"
-										th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}"
+										th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC},data-roleid=${ROLEIDAC}"
 										onclick="fnClick1(this);">UnVerified</td>
 									</th:block>
 									<td>
   <i class="fa fa-edit" title="Modify"
      style="cursor: pointer; color: blue; margin-right: 12px;"
      onclick="fnClick(this);"
-     th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}">
+     th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC},data-roleid=${ROLEIDAC}">
   </i>
 
   <i class="fa fa-eye" title="View"
