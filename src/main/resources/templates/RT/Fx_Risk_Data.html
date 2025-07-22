@@ -281,48 +281,6 @@ label.error {
 	    });
 	});
 	
-	
-
-	function submitForm1() {
-		$('#nostroForm').validate({
-	        messages: {
-	            portfolioDate: "Please provide Portfolio Date",
-	            submittingInstitution: "Please provide Submitting Institution"
-	        }
-	    });
-
-	    if ($("#nostroForm").valid()) {
-	    	var formmode = /*[[${formmode}]]*/null;
-
-	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
-	        $("#loader1").modal("toggle");
-
-	        var url = "./createNostroData?report_name=" + report_name;
-
-	        $("#nostroForm").attr('action', url);
-
-	        var options = {
-	            success: showResponse,
-	            error: function (xhr, status, error) {
-	                console.log("Error occurred: ", error);
-	                console.log(xhr.responseText); // for debugging
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Something went wrong while submitting the form.");
-	                $('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#nostroForm").ajaxSubmit(options);
-
-	        function showResponse(responseText, statusText, xhr, $form) {
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text(responseText);
-	            $('#alert').modal("toggle");
-	        }
-	    }
-	};
-	
-	
 	function updateform(event) {
     event.preventDefault();
     
@@ -363,7 +321,36 @@ label.error {
 }
 
 	</script>
-  
+	<script>
+		$(document).ready(function () {
+			$("#fxriskForm").validate({
+				errorClass: "error", // use 'error' class for styling
+				errorElement: "label", // wrap error messages in <label>
+
+				// Place the error after the input field
+				errorPlacement: function (error, element) {
+					if (element.parent('.form-group').length) {
+						error.insertAfter(element); // default
+					} else {
+						error.insertAfter(element);
+					}
+				},
+
+				// Highlight and unhighlight fields
+				highlight: function (element) {
+					$(element).addClass("error");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("error");
+				},
+
+				// On successful validation, run this
+				submitHandler: function (form) {
+					submitForm(); // your custom submit function
+				}
+			});
+		});
+	</script>
 </head>
 
  
@@ -401,11 +388,7 @@ if (tabId === 'data') {
     }
   });
 </script>
-
-
-
-
-     <script>
+<script>
     function downloadFxrisk() {
         // 1. Show loader modal
         $('#loader').modal('show');
@@ -538,7 +521,7 @@ if (tabId === 'data') {
    
 		<div class="row">
 			<div class="col-sm-12 finuserapply" >
-			<form id="fxriskForm"        
+			<form id="fxriskForm"     
           method="post"
           autocomplete="off" > 
 				<div class="card-body" style="max-height:450px; overflow-y:auto">
@@ -621,10 +604,19 @@ if (tabId === 'data') {
    
 
   
-    <div class="form-group col-md-4">
+    <!--<div class="form-group col-md-4">
        <input type="email" id="contactEmployee2Email2" name="contactEmployee2Email2" class="form-control" placeholder=" " required />
       <label for="contactEmployee2Email2" class="form-legend">Email</label>
-    </div>
+    </div>-->
+	
+	
+	<div class="form-group col-md-4">
+															<input type="email" id="contactEmployee1Email1"
+																name="contactEmployee1Email1" class="form-control"
+																placeholder=" " required />
+															<label for="contactEmployee1Email1"
+																class="form-legend">Email</label>
+														</div>
     <div class="col-sm-3">
     </div>
  
