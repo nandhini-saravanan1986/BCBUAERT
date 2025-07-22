@@ -339,6 +339,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 		String msg = "";
 
 		Optional<UserProfile> up = userProfileRep.findById(userProfile.getUserid());
+		
 
 		try {
 
@@ -357,14 +358,24 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 				} else {
 					userProfile.setDisable_flg("Y");
 				}
-
+			    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+				Date date = formatter.parse("28-02-2027"); // <-- note full year!
+				Date Disabledate = formatter.parse("21-12-23"); // <-- note full year!
+				
+				
 				userProfile.setNo_of_attmp(0);
 				userProfile.setEntity_flg("Y");
 				userProfile.setLogin_flg("N");
 				userProfile.setAuth_user(inputUser);
 				userProfile.setAuth_time(new Date());
+				userProfile.setPass_exp_date(date);
+				userProfile.setLogin_high("00:00");
+				userProfile.setLogin_low("23:59");
+				userProfile.setDisable_start_date(Disabledate);
+				userProfile.setDisable_end_date(Disabledate);
 				 auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"XBRL_USER_PROFILE_TABLE");
 				userProfileRep.save(userProfile);
+				
 			}
 
 			msg = "User Verified Successfully";
