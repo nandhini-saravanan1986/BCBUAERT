@@ -265,12 +265,12 @@ label.error {
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Fx_Risk_Data';
+	        window.location.href = './Trade_Level_Data_Derivatives';
 	    });
 	});
 	
-	function fxrisk() {
-		location.href = 'Fx_Risk_Data';
+	function trade() {
+		location.href = 'Trade_Level_Data_Derivatives';
 	}
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
@@ -281,44 +281,6 @@ label.error {
 	
 	
 
-	function submitForm1() {
-		$('#nostroForm').validate({
-	        messages: {
-	            portfolioDate: "Please provide Portfolio Date",
-	            submittingInstitution: "Please provide Submitting Institution"
-	        }
-	    });
-
-	    if ($("#nostroForm").valid()) {
-	    	var formmode = /*[[${formmode}]]*/null;
-
-	    	var report_name = 'CBUAE_Nostro Account_Balance_Data_Template';
-	        $("#loader1").modal("toggle");
-
-	        var url = "./createNostroData?report_name=" + report_name;
-
-	        $("#nostroForm").attr('action', url);
-
-	        var options = {
-	            success: showResponse,
-	            error: function (xhr, status, error) {
-	                console.log("Error occurred: ", error);
-	                console.log(xhr.responseText); // for debugging
-	                $("#loader1").modal("hide");
-	                $("#alertmsg").text("Something went wrong while submitting the form.");
-	                $('#alert').modal("toggle");
-	            }
-	        };
-
-	        $("#nostroForm").ajaxSubmit(options);
-
-	        function showResponse(responseText, statusText, xhr, $form) {
-	            $("#loader1").modal("hide");
-	            $("#alertmsg").text(responseText);
-	            $('#alert').modal("toggle");
-	        }
-	    }
-	};
 	
 	
 	function updateform(event) {
@@ -401,6 +363,38 @@ if (tabId === 'data') {
 </script>
 
 
+<script>
+		$(document).ready(function () {
+			$("#tradelevelForm").validate({
+				errorClass: "error", // use 'error' class for styling
+				errorElement: "label", // wrap error messages in <label>
+
+				// Place the error after the input field
+				errorPlacement: function (error, element) {
+					if (element.parent('.form-group').length) {
+						error.insertAfter(element); // default
+					} else {
+						error.insertAfter(element);
+					}
+				},
+
+				// Highlight and unhighlight fields
+				highlight: function (element) {
+					$(element).addClass("error");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("error");
+				},
+
+				// On successful validation, run this
+				submitHandler: function (form) {
+					submitForm(); // your custom submit function
+				}
+			});
+		});
+	</script>
+
+
 
 
      <script>
@@ -467,7 +461,7 @@ if (tabId === 'data') {
 
         const reportName = 'CBUAE_Trade_Level_Data_Derivative_Template';
         const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
-        const formData = $("#fxriskForm").serialize();
+        const formData = $("#tradelevelForm").serialize();
 	
         $.ajax({
             url: submitUrl,
@@ -537,7 +531,7 @@ if (tabId === 'data') {
    
 		<div class="row">
 			<div class="col-sm-12 finuserapply" >
-			<form id="fxriskForm"        
+			<form id="tradelevelForm"        
           method="post"
           autocomplete="off" > 
 				<div class="card-body" style="max-height:450px; overflow-y:auto">
@@ -781,127 +775,131 @@ if (tabId === 'data') {
     <table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px; font-family:calibri;">
   
       <thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+		  
+		  
+	
       
         <tr>
-												<th style="width: 40px;"></th>
-                                                <th>Bank Date</th>
+<th style="width: 40px;"></th>
+<th>Date</th>
 <th>Bank Name</th>
-<th>Head Office Subsidiary</th>
+<th>Head_Office_Subsidiary</th>
 <th>Subsidiary</th>
 <th>Bank Symbol</th>
-<th>Conventional Islamic</th>
+<th>Conventional/Islamic</th>
 <th>CBUAE Tiering</th>
 <th>CBUAE Tiering</th>
-<th>Counterparty Name</th>
-<th>Internal Counterparty Ref</th>
-<th>Internal Transaction Ref</th>
-<th>Underlying Asset Class</th>
+<th>Cpty Name</th>
+<th>Internal Counterparty Reference</th>
+<th>Internal Transaction Reference</th>
+<th>Underlying asset class</th>
 <th>Derivatives Type</th>
 <th>Transaction Rationale</th>
 <th>Bundle Transaction</th>
-<th>Back To Back Transaction</th>
+<th>Back-to-Back transaction</th>
 <th>Instruments Characteristics</th>
 <th>Currency Valuation</th>
-<th>AED FX Spot Rate Conversion</th>
+<th>AED FX Spot rate conversion</th>
 <th>Start Date</th>
-<th>Effective Delivery Date</th>
+<th>Effective or Delivery Date (applicable to forward starting swap, future and swaption)</th>
 <th>Final Maturity Date</th>
 <th>Residual Maturity</th>
 <th>Residual Maturity Rounded</th>
 <th>Maturity Period</th>
 <th>Position</th>
 <th>Notional Type</th>
-<th>Cancellable</th>
-<th>Cancellable Date</th>
-<th>Cancellable Option Type</th>
-<th>Notional1 Assets</th>
-<th>Notional1 Currency</th>
-<th>Pay Receive1</th>
-<th>Coupon Fixed Rate1</th>
-<th>Margin1</th>
-<th>Benchmark Floating Rate1</th>
-<th>Benchmark Rate Tenor1</th>
-<th>Notional2 Liabilities</th>
-<th>Notional2 Currency</th>
-<th>Pay Receive2</th>
-<th>Coupon Fixed Rate2</th>
-<th>Margin2</th>
-<th>Benchmark Floating Rate2</th>
-<th>Benchmark Rate Tenor2</th>
-<th>Clean Value AED</th>
-<th>Accrued Interest AED</th>
-<th>DV01 AED</th>
-<th>BR01 AED</th>
-<th>Dollar Delta AED</th>
-<th>Dollar Vega AED</th>
-<th>Dollar Gamma AED</th>
-<th>Dollar Theta AED</th>
-<th>ULeg1 Notional</th>
-<th>ULeg1 Currency</th>
-<th>ULeg1 Pay Receive</th>
-<th>ULeg1 Coupon</th>
-<th>ULeg1 Margin</th>
-<th>ULeg1 Benchmark</th>
-<th>ULeg1 Tenor</th>
-<th>ULeg1 </th>
-<th>ULeg1 Details</th>
-<th>ULeg2 Notional</th>
-<th>ULeg2 Currency</th>
-<th>ULeg2 Pay Receive</th>
-<th>ULeg2 Coupon</th>
-<th>ULeg2 Margin</th>
-<th>ULeg2 Benchmark</th>
-<th>ULeg2 Tenor</th>
-<th>ULeg2 </th>
-<th>ULeg2 Details</th>
-<th>ULeg2 Clean Value AED</th>
-<th>ULeg2 Accrued Interest AED</th>
-<th>ULeg2 DV01 AED</th>
+<th>Cancellable (Y) Applicable only to cancellable swap</th>
+<th>Cancellable Date (Applicable only to cancellable swap)</th>
+<th>Cancellable Option Type (Applicable only to cancellable swap)</th>
+<th>Notional 1 (Assets)</th>
+<th>Notional 1 Currency</th>
+<th>Pay/Receive</th>
+<th>Coupon (Fixed Rate)</th>
+<th>Margin (Above Floating Rate)</th>
+<th>Benchmark Floating Rate)</th>
+<th>Benchmark Rate Tenor</th>
+<th>Notional 2 (Liabilities)</th>
+<th>Notional 2 Currency</th>
+<th>Pay/Receive</th>
+<th>Coupon (Fixed Rate)</th>
+<th>Margin (Above Floating Rate)</th>
+<th>Benchmark (Floating Rate)</th>
+<th>Benchmark Rate Tenor</th>
+<th>Clean Value/Fair Value (AED equivalent)</th>
+<th>Accrued Interest/Profit (AED equivalent)</th>
+<th>DV01 (AED equivalent)</th>
+<th>BR01 (AED equivalent)</th>
+<th>Dollar Delta (AED equivalent). Only applicable to swaption</th>
+<th>Dollar Vega (AED equivalent). Only applicable to swaption</th>
+<th>Dollar Gamma (AED equivalent). Only applicable to swaption</th>
+<th>Dollar Theta (AED equivalent). Only applicable to swaption</th>
+<th>Notional 1 (Assets)</th>
+<th>Notional 1 Currency</th>
+<th>Pay/Receive</th>
+<th>Coupon (Fixed Rate)</th>
+<th>Margin (Above Floating Rate)</th>
+<th>Benchmark (Floating Rate)</th>
+<th>Benchmark Rate Tenor</th>
+<th>Underlying Leg 1</th>
+<th>Underlying Leg 1 Details</th>
+<th>Notional 2 (Liabilities)</th>
+<th>Notional 2 Currency</th>
+<th>Pay/Receive</th>
+<th>Coupon (Fixed Rate)</th>
+<th>Margin (Above Floating Rate)</th>
+<th>Benchmark (Floating Rate)</th>
+<th>Benchmark Rate Tenor</th>
+<th>Underlying Leg 2</th>
+<th>Underlying Leg 2 Details</th>
+<th>Clean Value (AED equivalent)</th>
+<th>Accrued Interest/Profit (AED equivalent)</th>
+<th>DV01 (AED equivalent)</th>
 <th>CDS Type</th>
-<th>CDS Underlyings</th>
-<th>Quanto</th>
+<th>CDS Underlying(s)</th>
+<th>Quanto (Y)</th>
 <th>Nominal</th>
-<th>Clean Value AED</th>
-<th>IR DV01 AED</th>
-<th>CS01 AED</th>
+<th>Clean Value (AED equivalent)</th>
+<th>IR DV01 (AED equivalent)</th>
+<th>CS01 (AED equivalent)</th>
 <th>Future Type</th>
-<th>Future Underlying Contract</th>
-<th>Future Qty</th>
-<th>Future Contract Size</th>
-<th>Future Contract Rate</th>
-<th>Future Market Rate</th>
-<th>Future Contract Valuation</th>
-<th>Future Sensitivity AED</th>
+<th>Future underlying Contract</th>
+<th>Qty</th>
+<th>Contract size</th>
+<th>Contract Rate</th>
+<th>Market Rate</th>
+<th>Contract Valuation</th>
+<th>Sensitivity (AED equivalent)</th>
 <th>Options List</th>
-<th>Option Type</th>
-<th>Option Underlying Type</th>
-<th>Option Underlying Details</th>
+<th>Option type</th>
+<th>Underlying Type</th>
+<th>Underlying Details</th>
 <th>Strike</th>
-<th>Option Market Rate</th>
+<th>Market Rate</th>
 <th>Barrier Type</th>
 <th>Barrier Upper Range</th>
 <th>Barrier Lower Range</th>
-<th>Option Fair Value AED</th>
-<th>Option Dollar Delta</th>
-<th>Option Dollar Vega</th>
-<th>Option Dollar Gamma</th>
-<th>Option Dollar Rho</th>
-<th>Option Dollar Theta</th>
-<th>Overall MTM AED</th>
-<th>IRS Positive MTM</th>
-<th>Asset Swap Positive MTM</th>
-<th>CDS Positive MTM</th>
-<th>Future Contract Positive MTM</th>
-<th>Option Positive MTM</th>
+<th>Option Fair Value (AED equivalent)</th>
+<th>Dollar Delta</th>
+<th>Dollar Vega</th>
+<th>Dollar Gamma</th>
+<th>Dollar Rho</th>
+<th>Dollar Theta</th>
+<th>Overall MTM (AED)</th>
+<th>IRS/PRS/CCS Positive MTM</th>
+<th>Asset-Swap/Future positive MTM</th>
+<th>CDS positive MTM</th>
+<th>Future contract positive MTM</th>
+<th>Option positive MTM</th>
 <th>Overall Positive MTM</th>
-<th>Individual Positive Contribution</th>
-<th>IRS Negative MTM</th>
-<th>Asset Swap Negative MTM</th>
-<th>CDS Negative MTM</th>
-<th>Future Contract Negative MTM</th>
-<th>Option Negative MTM</th>
+<th>Individual positive contribution</th>
+<th>IRS/PRS/CCS Negative MTM</th>
+<th>Asset-Swap/Future negative MTM</th>
+<th>CDS negative MTM</th>
+<th>Future contract negative MTM</th>
+<th>Option negative MTM</th>
 <th>Overall Negative MTM</th>
-<th>Individual Negative Contribution</th>
+<th>Individual negative contribution</th>
+
                                                 
 											</tr>
       </thead>
@@ -1087,7 +1085,7 @@ if (tabId === 'data') {
    <input type="hidden" th:field="*{SI_NO}" />
    
    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bank Date</label>
+    <label class="col-sm-2 col-form-label"> Date</label>
     <div class="col-sm-4"><input type="date" class="form-control" th:field="*{bank_date}" readonly /></div>
      <label class="col-sm-2 col-form-label">Bank Name</label>
             <div class="col-sm-4">
@@ -1102,7 +1100,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+      <label class="col-sm-2 col-form-label">Head_Office_Subsidiary</label>
 <div class="col-sm-4">
     <select class="form-control vchar-50" th:field="*{head_office_subsidiary}">
         <option value="">-- Select --</option>
@@ -1117,7 +1115,7 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Bank Symbol</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{bank_symbol}"  id="bankSymbol" readonly/></div>
-    <label class="col-sm-2 col-form-label">Conventional Islamic</label>
+    <label class="col-sm-2 col-form-label">Conventional/Islamic</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{conventional_islamic}" id="conventionalIslamic" readonly /></div>
 </div>
 
@@ -1129,16 +1127,16 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Counterparty Name</label>
+    <label class="col-sm-2 col-form-label">Cpty Name</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{cpty_name}" /></div>
-    <label class="col-sm-2 col-form-label">Internal Counterparty Ref</label>
+    <label class="col-sm-2 col-form-label">Internal Counterparty Reference</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{internal_counterparty_ref}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Internal Transaction Ref</label>
+    <label class="col-sm-2 col-form-label">Internal Transaction Reference</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{internal_transaction_ref}" /></div>
-    <label class="col-sm-2 col-form-label">Underlying Asset Class</label>
+    <label class="col-sm-2 col-form-label">Underlying asset class</label>
 <div class="col-sm-4">
     <select class="form-control vchar-50" th:field="*{underlying_asset_class}">
         <option value="">-- Select --</option>
@@ -1182,7 +1180,10 @@ if (tabId === 'data') {
         <option value="Balance Sheet Hedge">Balance Sheet Hedge</option>
         <option value="Hedge Accounting">Hedge Accounting</option>
         <option value="Internal Hedge">Internal Hedge</option>
-        <option value="Sales Market-Making">Sales Market-Making</option>
+        <option value="Sales ">Sales </option>
+        <option value="Trading ">Trading </option>
+         <option value="Market-Making ">Market-Making</option>
+
         <option value="Other">Other</option>
     </select>
 </div>
@@ -1223,7 +1224,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Effective Delivery Date</label>
+    <label class="col-sm-2 col-form-label">Effective or Delivery Date (applicable to forward starting swap, future and swaption)</label>
     <div class="col-sm-4"><input type="date" class="form-control" th:field="*{effective_delivery_date}" /></div>
     <label class="col-sm-2 col-form-label">Final Maturity Date</label>
     <div class="col-sm-4"><input type="date" class="form-control" th:field="*{final_maturity_date}" /></div>
@@ -1241,7 +1242,7 @@ if (tabId === 'data') {
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{maturity_period}" /></div>
    <label class="col-sm-2 col-form-label">Position</label>
 <div class="col-sm-4">
-    <select class="form-control number-24-2" th:field="*{position}">
+    <select class="form-control vchar-10" th:field="*{position}">
         <option value="">-- Select --</option>
         <option value="Long">Long</option>
         <option value="Short">Short</option>
@@ -1262,7 +1263,7 @@ if (tabId === 'data') {
     </select>
 </div>
 
-    <label class="col-sm-2 col-form-label">Cancellable</label>
+    <label class="col-sm-2 col-form-label">Cancellable (Y) Applicable only to cancellable swap</label>
 <div class="col-sm-4">
     <select class="form-control vchar-1" th:field="*{cancellable}">
         <option value="">-- Select --</option>
@@ -1273,9 +1274,10 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Cancellable Date</label>
+    <label class="col-sm-2 col-form-label">Cancellable Date (Applicable only to cancellable swap)</label>
     <div class="col-sm-4"><input type="date" class="form-control" th:field="*{cancellable_date}" /></div>
-    <label class="col-sm-2 col-form-label">Cancellable Option Type</label>
+    <label class="col-sm-2 col-form-label">Cancellable Option Type (Applicable only to cancellable swap)
+</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{cancellable_option_type}">
         <option value="">-- Select --</option>
@@ -1288,23 +1290,30 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Notional1 Assets</label>
+    <label class="col-sm-2 col-form-label">Notional 1 (Assets)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{notional1_assets}" /></div>
-    <label class="col-sm-2 col-form-label">Notional1 Currency</label>
+    <label class="col-sm-2 col-form-label">Notional 1 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-10" th:field="*{notional1_currency}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Pay Receive1</label>
-    <div class="col-sm-4"><input type="text" class="form-control vchar-10" th:field="*{pay_receive1}" /></div>
-    <label class="col-sm-2 col-form-label">Coupon Fixed Rate1</label>
+<label class="col-sm-2 col-form-label">Pay/Receive</label>
+<div class="col-sm-4">
+    <select class="form-control vchar-10" th:field="*{pay_receive1}">
+        <option value="">--Select--</option>
+        <option value="Pay">Pay</option>
+        <option value="Receive">Receive</option>
+    </select>
+</div>
+
+    <label class="col-sm-2 col-form-label">Coupon (Fixed Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{coupon_fixed_rate1}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Margin1</label>
+    <label class="col-sm-2 col-form-label">Margin (Above Floating Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{margin1}" /></div>
-    <label class="col-sm-2 col-form-label">Benchmark Floating Rate1</label>
+    <label class="col-sm-2 col-form-label">Benchmark Floating Rate)</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{benchmark_floating_rate1}">
         <option value="">-- Select --</option>
@@ -1319,7 +1328,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">Benchmark Rate Tenor1</label>
+<label class="col-sm-2 col-form-label">Benchmark Rate Tenor</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{benchmark_rate_tenor1}">
         <option value="">-- Select --</option>
@@ -1333,14 +1342,14 @@ if (tabId === 'data') {
     </select>
 </div>
 
-    <label class="col-sm-2 col-form-label">Notional2 Liabilities</label>
+    <label class="col-sm-2 col-form-label">Notional 2 (Liabilities)</label>
     <div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{notional2_liabilities}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Notional2 Currency</label>
+    <label class="col-sm-2 col-form-label">Notional 2 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-10" th:field="*{notional2_currency}" /></div>
-<label class="col-sm-2 col-form-label">Pay Receive2</label>
+<label class="col-sm-2 col-form-label">Pay/Receive</label>
 <div class="col-sm-4">
     <select class="form-control vchar-10" th:field="*{pay_receive2}">
         <option value="">-- Select --</option>
@@ -1352,14 +1361,14 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Coupon Fixed Rate2</label>
+    <label class="col-sm-2 col-form-label">Coupon (Fixed Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{coupon_fixed_rate2}" /></div>
-    <label class="col-sm-2 col-form-label">Margin2</label>
+    <label class="col-sm-2 col-form-label">Margin (Above Floating Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{margin2}" /></div>
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">Benchmark Floating Rate2</label>
+<label class="col-sm-2 col-form-label">Benchmark (Floating Rate)</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{benchmark_floating_rate2}">
         <option value="">-- Select --</option>
@@ -1371,7 +1380,7 @@ if (tabId === 'data') {
     </select>
 </div>
 
-<label class="col-sm-2 col-form-label">Benchmark Rate Tenor2</label>
+<label class="col-sm-2 col-form-label">Benchmark Rate Tenor</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{benchmark_rate_tenor2}">
         <option value="">-- Select --</option>
@@ -1388,51 +1397,59 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Clean Value AED</label>
+    <label class="col-sm-2 col-form-label">Clean Value/Fair Value (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{clean_value_aed}" /></div>
-    <label class="col-sm-2 col-form-label">Accrued Interest AED</label>
+    <label class="col-sm-2 col-form-label">Accrued Interest/Profit (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{accrued_interest_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">DV01 AED</label>
+    <label class="col-sm-2 col-form-label">DV01 (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{dv01_aed}" /></div>
-    <label class="col-sm-2 col-form-label">BR01 AED</label>
+    <label class="col-sm-2 col-form-label">BR01 (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{br01_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Dollar Delta AED</label>
+    <label class="col-sm-2 col-form-label">Dollar Delta (AED equivalent). Only applicable to swaption</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{dollar_delta_aed}" /></div>
-    <label class="col-sm-2 col-form-label">Dollar Vega AED</label>
+    <label class="col-sm-2 col-form-label">Dollar Vega (AED equivalent). Only applicable to swaption</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{dollar_vega_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Dollar Gamma AED</label>
+    <label class="col-sm-2 col-form-label">Dollar Gamma (AED equivalent). Only applicable to swaption</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{dollar_gamma_aed}" /></div>
-    <label class="col-sm-2 col-form-label">Dollar Theta AED</label>
+    <label class="col-sm-2 col-form-label">Dollar Theta (AED equivalent). Only applicable to swaption
+</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{dollar_theta_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg1 Notional</label>
+    <label class="col-sm-2 col-form-label">Notional 1 (Assets)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg1_notional}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg1 Currency</label>
+    <label class="col-sm-2 col-form-label">Notional 1 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-10" th:field="*{uleg1_currency}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg1 Pay Receive</label>
-    <div class="col-sm-4"><input type="text" class="form-controlvchar-10" th:field="*{uleg1_pay_receive}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg1 Coupon</label>
+<label class="col-sm-2 col-form-label">Pay/Receive</label>
+<div class="col-sm-4">
+    <select class="form-control vchar-10" th:field="*{uleg1_pay_receive}">
+        <option value="">-- Select --</option>
+        <option value="Pay">Pay</option>
+        <option value="Receive">Receive</option>
+    </select>
+</div>
+
+    <label class="col-sm-2 col-form-label">Coupon (Fixed Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg1_coupon}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg1 Margin</label>
+    <label class="col-sm-2 col-form-label">Margin (Above Floating Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg1_margin}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg1 Benchmark</label>
+    <label class="col-sm-2 col-form-label">Benchmark (Floating Rate)</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{uleg1_benchmark}">
         <option value="">-- Select --</option>
@@ -1448,7 +1465,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">ULeg1 Tenor</label>
+<label class="col-sm-2 col-form-label">Benchmark Rate Tenor</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{uleg1_tenor}">
         <option value="">-- Select --</option>
@@ -1462,7 +1479,7 @@ if (tabId === 'data') {
     </select>
 </div>
 
-<label class="col-sm-2 col-form-label">ULeg1</label>
+<label class="col-sm-2 col-form-label">Underlying Leg 1</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{underlying_leg1}">
         <option value="">-- Select --</option>
@@ -1478,16 +1495,16 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg1 Details</label>
+    <label class="col-sm-2 col-form-label">Underlying Leg 1 Details</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-30" th:field="*{uleg1_details}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg2 Notional</label>
+    <label class="col-sm-2 col-form-label">Notional 2 (Liabilities)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_notional}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2 Currency</label>
+    <label class="col-sm-2 col-form-label">Notional 2 Currency</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-10" th:field="*{uleg2_currency}" /></div>
-    <label class="col-sm-2 col-form-label ">ULeg2 Pay Receive</label>
+    <label class="col-sm-2 col-form-label ">Pay/Receive</label>
 <div class="col-sm-4">
     <select class="form-control vchar-10" th:field="*{uleg2_pay_receive}">
         <option value="">-- Select --</option>
@@ -1499,14 +1516,14 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2 Coupon</label>
+    <label class="col-sm-2 col-form-label">Coupon (Fixed Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_coupon}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg2 Margin</label>
+    <label class="col-sm-2 col-form-label">Margin (Above Floating Rate)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_margin}" /></div>
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">ULeg2 Benchmark</label>
+<label class="col-sm-2 col-form-label">Benchmark (Floating Rate)</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{uleg2_benchmark}">
         <option value="" disabled selected>-- Select --</option>
@@ -1519,7 +1536,7 @@ if (tabId === 'data') {
     </select>
 </div>
 
-   <label class="col-sm-2 col-form-label">ULeg2 Tenor</label>
+   <label class="col-sm-2 col-form-label">Benchmark Rate Tenor</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{uleg2_tenor}">
         <option value="">-- Select --</option>
@@ -1536,7 +1553,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">ULeg2</label>
+<label class="col-sm-2 col-form-label">Underlying Leg 2</label>
 <div class="col-sm-4">
     <select class="form-control vchar-30" th:field="*{underlying_leg2}">
         <option value="">-- Select --</option>
@@ -1549,19 +1566,20 @@ if (tabId === 'data') {
     </select>
 </div>
 
-    <label class="col-sm-2 col-form-label">ULeg2 Details</label>
+    <label class="col-sm-2 col-form-label">Underlying Leg 2 Details</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-30" th:field="*{uleg2_details}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2 Clean Value AED</label>
+    <label class="col-sm-2 col-form-label">Clean Value (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_clean_value_aed}" /></div>
-    <label class="col-sm-2 col-form-label">ULeg2 Accrued Interest AED</label>
+    <label class="col-sm-2 col-form-label">Accrued Interest/Profit (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_accrued_interest_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">ULeg2 DV01 AED</label>
+    <label class="col-sm-2 col-form-label">DV01 (AED equivalent)
+</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{uleg2_dv01_aed}" /></div>
   <label class="col-sm-2 col-form-label">CDS Type</label>
 <div class="col-sm-4">
@@ -1577,9 +1595,9 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CDS Underlyings</label>
+    <label class="col-sm-2 col-form-label">CDS Underlying(s)</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{cds_underlyings}" /></div>
-   <label class="col-sm-2 col-form-label">Quanto</label>
+   <label class="col-sm-2 col-form-label">Quanto (Y)</label>
 <div class="col-sm-4">
     <select class="form-control vchar-1" th:field="*{quanto}">
         <option value="" >-- Select --</option>
@@ -1592,42 +1610,42 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Nominal</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{nominal}" /></div>
-    <label class="col-sm-2 col-form-label">Clean Value AED</label>
+    <label class="col-sm-2 col-form-label">Clean Value (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cleanvalue_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">IR DV01 AED</label>
+    <label class="col-sm-2 col-form-label">IR DV01 (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{ir_dv01_aed}" /></div>
-    <label class="col-sm-2 col-form-label">CS01 AED</label>
+    <label class="col-sm-2 col-form-label">CS01 (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cs01_aed}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Future Type</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{future_type}" /></div>
-    <label class="col-sm-2 col-form-label">Future Underlying Contract</label>
+    <label class="col-sm-2 col-form-label">Future underlying Contract</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{future_underlying_contract}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Future Qty</label>
+    <label class="col-sm-2 col-form-label">Qty</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_qty}" /></div>
-    <label class="col-sm-2 col-form-label">Future Contract Size</label>
+    <label class="col-sm-2 col-form-label">Contract size</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_size}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Future Contract Rate</label>
+    <label class="col-sm-2 col-form-label">Contract Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_rate}" /></div>
-    <label class="col-sm-2 col-form-label">Future Market Rate</label>
+    <label class="col-sm-2 col-form-label">Market Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_market_rate}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Future Contract Valuation</label>
+    <label class="col-sm-2 col-form-label">Contract Valuation</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_valuation}" /></div>
-    <label class="col-sm-2 col-form-label">Future Sensitivity AED</label>
+    <label class="col-sm-2 col-form-label">Sensitivity (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_sensitivity_aed}" /></div>
 </div>
 
@@ -1720,7 +1738,7 @@ if (tabId === 'data') {
     </select>
 </div>
 
-  <label class="col-sm-2 col-form-label">Option Type</label>
+  <label class="col-sm-2 col-form-label">Option type</label>
 <div class="col-sm-4">
     <select class="form-control vchar-20" th:field="*{option_type}">
         <option value="">-- Select --</option>
@@ -1733,7 +1751,7 @@ if (tabId === 'data') {
 </div>
 
 <div class="form-group row">
-<label class="col-sm-2 col-form-label">Option Underlying Type</label>
+<label class="col-sm-2 col-form-label">Underlying Type</label>
 <div class="col-sm-4">
     <select class="form-control vchar-10" th:field="*{option_underlying_type}">
         <option value="">-- Select --</option>
@@ -1742,14 +1760,14 @@ if (tabId === 'data') {
     </select>
 </div>
 
-    <label class="col-sm-2 col-form-label">Option Underlying Details</label>
+    <label class="col-sm-2 col-form-label">Underlying Details</label>
     <div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{option_underlying_details}" /></div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Strike</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{strike}" /></div>
-    <label class="col-sm-2 col-form-label">Option Market Rate</label>
+    <label class="col-sm-2 col-form-label">Market Rate</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_market_rate}" /></div>
 </div>
 
@@ -1772,68 +1790,69 @@ if (tabId === 'data') {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Barrier Lower Range</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{barrier_lower_range}" /></div>
-    <label class="col-sm-2 col-form-label">Option Fair Value AED</label>
+    <label class="col-sm-2 col-form-label">Option Fair Value (AED equivalent)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_fair_value_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Dollar Delta</label>
+    <label class="col-sm-2 col-form-label">Dollar Delta</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_dollar_delta}" /></div>
-    <label class="col-sm-2 col-form-label">Option Dollar Vega</label>
+    <label class="col-sm-2 col-form-label">Dollar Vega</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_dollar_vega}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Dollar Gamma</label>
+    <label class="col-sm-2 col-form-label">Dollar Gamma</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_dollar_gamma}" /></div>
-    <label class="col-sm-2 col-form-label">Option Dollar Rho</label>
+    <label class="col-sm-2 col-form-label">Dollar Rho</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_dollar_rho}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Dollar Theta</label>
+    <label class="col-sm-2 col-form-label">Dollar Theta</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_dollar_theta}" /></div>
-    <label class="col-sm-2 col-form-label">Overall MTM AED</label>
+    <label class="col-sm-2 col-form-label">Overall MTM (AED)</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{overall_mtm_aed}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">IRS Positive MTM</label>
+    <label class="col-sm-2 col-form-label">IRS/PRS/CCS Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{irs_positive_mtm}" /></div>
-    <label class="col-sm-2 col-form-label">Asset Swap Positive MTM</label>
+    <label class="col-sm-2 col-form-label">Asset-Swap/Future positive MTM
+</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{asset_swap_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CDS Positive MTM</label>
+    <label class="col-sm-2 col-form-label">CDS positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cds_positive_mtm}" /></div>
-    <label class="col-sm-2 col-form-label">Future Contract Positive MTM</label>
+    <label class="col-sm-2 col-form-label">Future contract positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Option Positive MTM</label>
+    <label class="col-sm-2 col-form-label">Option positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_positive_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Overall Positive MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{overall_positive_mtm}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Individual Positive Contribution</label>
+    <label class="col-sm-2 col-form-label">Individual positive contribution</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{individual_positive_contribution}" /></div>
-    <label class="col-sm-2 col-form-label">IRS Negative MTM</label>
+    <label class="col-sm-2 col-form-label">IRS/PRS/CCS Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{irs_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Asset Swap Negative MTM</label>
+    <label class="col-sm-2 col-form-label">Asset-Swap/Future negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{asset_swap_negative_mtm}" /></div>
-    <label class="col-sm-2 col-form-label">CDS Negative MTM</label>
+    <label class="col-sm-2 col-form-label">CDS negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{cds_negative_mtm}" /></div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Future Contract Negative MTM</label>
+    <label class="col-sm-2 col-form-label">Future contract negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{future_contract_negative_mtm}" /></div>
     <label class="col-sm-2 col-form-label">Option Negative MTM</label>
     <div class="col-sm-4"><input type="text" class="form-control number-24-2" th:field="*{option_negative_mtm}" /></div>
@@ -1937,7 +1956,7 @@ if (tabId === 'data') {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="custom-tab-btn" onclick="fxrisk()"
+					<button type="button" class="custom-tab-btn" onclick="trade()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>

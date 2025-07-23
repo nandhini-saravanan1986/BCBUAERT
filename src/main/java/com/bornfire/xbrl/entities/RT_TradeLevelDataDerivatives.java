@@ -43,7 +43,7 @@ public class RT_TradeLevelDataDerivatives {
 	private BigDecimal	residual_maturity;
 	private BigDecimal	residual_maturity_rounded;
 	private BigDecimal	maturity_period;
-	private BigDecimal	position;
+	private String	position;
 	private String	notional_type;
 	private String	cancellable;
 	private Date	cancellable_date;
@@ -306,10 +306,10 @@ public class RT_TradeLevelDataDerivatives {
 	public void setMaturity_period(BigDecimal maturity_period) {
 		this.maturity_period = maturity_period;
 	}
-	public BigDecimal getPosition() {
+	public String getPosition() {
 		return position;
 	}
-	public void setPosition(BigDecimal position) {
+	public void setPosition(String position) {
 		this.position = position;
 	}
 	public String getNotional_type() {
@@ -955,7 +955,7 @@ public class RT_TradeLevelDataDerivatives {
 			String bundle_transaction, String back_to_back_transaction, String instruments_characteristics,
 			String currency_valuation, BigDecimal aed_fx_spot_rate_conversion, Date start_date,
 			Date effective_delivery_date, Date final_maturity_date, BigDecimal residual_maturity,
-			BigDecimal residual_maturity_rounded, BigDecimal maturity_period, BigDecimal position, String notional_type,
+			BigDecimal residual_maturity_rounded, BigDecimal maturity_period, String position, String notional_type,
 			String cancellable, Date cancellable_date, String cancellable_option_type, BigDecimal notional1_assets,
 			String notional1_currency, String pay_receive1, BigDecimal coupon_fixed_rate1, BigDecimal margin1,
 			String benchmark_floating_rate1, String benchmark_rate_tenor1, BigDecimal notional2_liabilities,
