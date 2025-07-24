@@ -229,14 +229,21 @@ font-family: verdana;
 	function verify(a) {
 	    var entryuser = a.getAttribute("data-entry_user");
 	    var modifyuser = a.getAttribute("data-modify_user");
+	    
+	    var roleid = a.getAttribute("data-roleid");
 	    var loginuser = /*[[${session.USERID}]]*/ null;
-
-	    if ((modifyuser !== null && modifyuser === loginuser) ||
-	        (modifyuser === null && entryuser === loginuser)) {
-	        $("#alertmsg").text("Same user cannot verify");
-	        $('#alert').modal("toggle");
-	        return;
+		
+	    if (roleid !== "MGR") {
+	        // For non-MGR users, block same-user verification
+	        if ((modifyuser !== null && modifyuser === loginuser) ||
+	            (modifyuser === null && entryuser === loginuser)) {
+	            $("#alertmsg").text("Same user cannot verify");
+	            $('#alert').modal("toggle");
+	            return;
+	        }
 	    }
+
+	  
 
 	    // ✅ Manual basic validation (example: check userid exists)
 	    var userid = $('#userId').val();
@@ -844,9 +851,19 @@ function cancelpop() {
 											readonly/>
 									</div>
 									<div class="col-sm-1"></div>
+									
+									<label class="col-sm-2">Designation <b style="color:red;">*</b></label>
+									<div class="col-sm-3" th:if="${formmode}!='view'">
+										<input type="text" th:field="*{designation}" th:value="${designation}"
+											id="designation" value="" class="form-control form-control-sm"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='view'">
+										<input type="text" th:field="*{designation}"
+											class="form-control form-control-sm" autocomplete="false"
+											readonly/>
+									</div>
 
-
-									<div class="col-sm-1"></div>
 								</div>
 
 
@@ -1239,7 +1256,12 @@ function cancelpop() {
 									</div>
 									<div class="col-sm-1"></div>
 
-									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Designation <b style="color:red;">*</b></label>
+									<div class="col-sm-3">
+										<input type="text" th:field="*{designation}" th:value="${designation}"
+											id="designation" value="" class="form-control form-control-sm"
+											autocomplete="off" required readonly="readonly"/>
+									</div>
 								</div>
 
 
@@ -1430,16 +1452,11 @@ function cancelpop() {
 								onclick="home();">Home</button>
 							<button  th:if="${formmode == 'verify' and userProfile.entity_flg == 'N'}"  type="button"
 								class="custom-tab-btn"
-								th:attr="data-userid=${userProfile.userid},
+								th:attr="data-userid=${userProfile.userid},data-roleid=${ROLEIDAC},
 								data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
 								onclick="verify(this);" id="custom-tab-btnModify">Verify</button>
 
-							<!-- <button  th:if="${formmode == 'verify' and userProfile.entity_flg == 'N'}"  type="button"
-								class="custom-tab-btn custom-tab-btn-xs custom-tab-btn-primary" onclick="deleteuser();"
-									th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},
-									data-modify_user=${userProfile.modify_user},
-									data-userid=${userProfile.userid}"
-								id="delete">Delete User</button> -->
+						
 							<button type="button" class="custom-tab-btn" id="custom-tab-btnBack"
 								onclick="back();">Back</button>
 

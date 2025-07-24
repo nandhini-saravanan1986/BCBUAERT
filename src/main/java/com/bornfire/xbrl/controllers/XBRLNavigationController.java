@@ -336,7 +336,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
-		System.out.println("role id is : " + roleId);
+		//System.out.println("role id is : " + roleId);
 		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
 		if (formmode == null || formmode.equals("list")) {
@@ -442,8 +442,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
 	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
 
-	    System.out.println("work class is : " + WORKCLASSAC);
-	    System.out.println("role ID" + ROLEIDAC);
+	    //System.out.println("work class is : " + WORKCLASSAC);
+	    //System.out.println("role ID" + ROLEIDAC);
 
 	    loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(), "ACTIVE");
 	    Session hs1 = sessionFactory.getCurrentSession();
@@ -475,6 +475,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	        md.addAttribute("userProfile", loginServices.getUser(userid));
 
 	    } else if (formmode.equals("verify")) {
+	    	md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+		    md.addAttribute("ROLEIDAC", ROLEIDAC);
 	        md.addAttribute("formmode", formmode);
 	        md.addAttribute("userProfile", loginServices.getUser(userid));
 
@@ -502,15 +504,16 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	@GetMapping("/getRoleDetails")
 	@ResponseBody
 	public AccessAndRoles getRoleDetails(@RequestParam String roleId) {
-	    System.out.println("role id for fetching is : " + roleId);
+	   // System.out.println("role id for fetching is : " + roleId);
 	    AccessAndRoles access = accessandrolesrepository.findById(roleId).orElse(null);
 
-	    if (access != null) {
-	        System.out.println("roleDesc = " + access.getRoleDesc()); // <== ADD THIS
-	        System.out.println("workClass = " + access.getWorkClass()); // <== ADD THIS
-	        System.out.println("permission = " + access.getPermissions()); // <== ADD THIS
-	        System.out.println("module = " + access.getDomainId()); // <== ADD THIS
-	    }
+		/*
+		 * if (access != null) { System.out.println("roleDesc = " +
+		 * access.getRoleDesc()); // <== ADD THIS System.out.println("workClass = " +
+		 * access.getWorkClass()); // <== ADD THIS System.out.println("permission = " +
+		 * access.getPermissions()); // <== ADD THIS System.out.println("module = " +
+		 * access.getDomainId()); // <== ADD THIS }
+		 */
 
 	    return access;
 	}
@@ -546,7 +549,6 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	public ResponseEntity<Map<String, String>> getBankDetails(@RequestParam String bankName) {
 
 		RT_BankNameMaster bank = bankRepo.findByBankName(bankName);
-		System.out.println("came to controller with bank name ");
 		if (bank == null) {
 			return ResponseEntity.notFound().build();
 		}

@@ -492,22 +492,18 @@ PURPOSE		: Access the Modules by Role
 															<option value="USR-C">USR-C</option>
 														</select>
 													</div>
-													<!--<div class="col-sm-3"
-													th:if="${formmode}=='edit' OR ${formmode}=='view'OR ${formmode}=='verify' OR ${formmode}=='delete'">
-														<input type="text" id="roleId" th:value="*{roleId}"
-															th:field="*{roleId}" class="form-control form-control-sm"
-															readonly />
-													</div> -->
+													
 													<div class="col-sm-3"
 														th:if="${formmode}=='edit' or ${formmode}=='view' or ${formmode}=='verify' or ${formmode}=='delete'">
 														<select id="roleId" name="roleId" th:field="*{roleId}"
 															class="form-control form-control-sm" disabled>
 															<option value="MGR" th:selected="${roleId} == 'MGR'">MGR
 															</option>
-															<option value="ADM" th:selected="${roleId} == 'ADM'">ADM
-															</option>
-															<option value="USR" th:selected="${roleId} == 'USR'">USR
-															</option>
+															<option value="ADM-M" th:selected="${roleId} == 'ADM-M'">ADM-M</option>
+															<option value="ADM-C" th:selected="${roleId} == 'ADM-C'">ADM-C</option>
+															<option value="USR-M" th:selected="${roleId} == 'USR-M'">USR-M</option>
+															<option value="USR-C" th:selected="${roleId} == 'USR-C'">USR-C</option>
+															
 														</select>
 													</div>
 
@@ -527,20 +523,7 @@ PURPOSE		: Access the Modules by Role
 															class="form-control form-control-sm" readonly
 															th:disabled="${formmode}=='view' OR ${formmode}=='verify' OR ${formmode}=='delete'" />
 
-									<!--					<select
-															th:if="${formmode}=='edit' OR ${formmode}=='view' OR ${formmode}=='verify' OR ${formmode}=='delete'"
-															id="roleDesc" th:field="*{roleDesc}"
-															class="form-control form-control-sm"
-															th:disabled="${formmode}=='view' OR ${formmode}=='verify' OR ${formmode}=='delete'">
-															<option value="">-- Select --</option>
-															<option value="MANAGER"
-																th:selected="${roleDesc == 'MANAGER'}">BRANCH</option>
-															<option value="ADMIN" th:selected="${roleDesc == 'ADMIN'}">
-																ADMIN</option>
-															<option value="USER" th:selected="${roleDesc == 'USER'}">
-																USER</option>
-
-														</select>-->
+								
 
 													</div>
 
@@ -635,8 +618,7 @@ PURPOSE		: Access the Modules by Role
 														</select>
 													</div>
 													<div class="col-sm-3" th:if="${formmode}=='view' ">
-														<!-- <input type="text" id="permissions" th:value="*{permissions}"
-												th:field="*{permissions}" class="form-control form-control-sm"    readonly/> -->
+														
 														<input type="text" id="permissions"
 															class="form-control form-control-sm"
 															th:value="${IPSAccessRole.permissions=='W'} ? 'Write' : 'Read'"
@@ -647,6 +629,13 @@ PURPOSE		: Access the Modules by Role
 													<label class="col-sm-2">Menu List<span
 															style="color: red !important">*</span></label>
 
+													<div class="col-sm-3" th:if="${formmode}=='view' OR ${formmode}=='verify'">
+														
+														<input type="text" id="permissions"
+															class="form-control form-control-sm"
+															th:value="${IPSAccessRole.menulist}"
+															readonly>
+													</div>
 													<div class="col-sm-3">
 														<div id="log" style="background-color: #dbdfe2; display: none;">
 														</div>
@@ -658,7 +647,9 @@ PURPOSE		: Access the Modules by Role
 													</div>
 
 													<!-- Search Icon to open Modal -->
-													<div class="col-sm-1">
+													<div class="col-sm-1" th:if="${formmode}=='add' OR ${formmode}=='edit'">
+													
+													
 														<a th:if="${formmode}=='add' OR ${formmode}=='edit'" href="#">
 															<i class="fas fa-search searchico" data-toggle="modal"
 																data-target="#finusers" id="iconacc"></i>
@@ -801,7 +792,7 @@ PURPOSE		: Access the Modules by Role
 					<div class="modal-content">
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
-							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="list()">Close</button>
 
 
 						</div>

@@ -150,7 +150,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
         if ("add".equalsIgnoreCase(formmode)) {
             UserProfile up = userProfile;
 
-            System.out.println("password is : " + up.getPassword());
+           // System.out.println("password is : " + up.getPassword());
 
             // Encrypt password
             String encryptedPassword = PasswordEncryption.getEncryptedPassword(up.getPassword());
@@ -177,7 +177,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
             up.setNo_of_attmp(0);
             up.setLog_in_count("0");
             up.setEmp_name(up.getUsername());
-            System.out.println("user name is: "+ up.getUsername());
+          //  System.out.println("user name is: "+ up.getUsername());
 
             // Password expiry date
             if (up.getPass_exp_days() != null && !up.getPass_exp_days().trim().isEmpty()) {
