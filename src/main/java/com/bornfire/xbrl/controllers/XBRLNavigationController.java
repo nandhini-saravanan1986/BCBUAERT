@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -104,6 +106,8 @@ import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
+import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
+import com.bornfire.xbrl.entities.RT_SLS_ENTITIES;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
@@ -115,6 +119,8 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.TreasuryPlacementRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
+import com.bornfire.xbrl.entities.RT_SLS_Repository;
+import com.bornfire.xbrl.entities.RT_SLS_Detail_Repository;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -148,7 +154,12 @@ public class XBRLNavigationController {
 	/*
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
+	
+	@Autowired
+	RT_SLS_Detail_Repository rt_sls_detail_repository;
 
+	@Autowired
+	RT_SLS_Repository rt_sls_repository;
 	@Autowired 
 	AuditService auditService;
 	@Autowired
@@ -445,6 +456,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    //System.out.println("work class is : " + WORKCLASSAC);
 	    //System.out.println("role ID" + ROLEIDAC);
 
+//	    System.out.println("work class is : " + WORKCLASSAC);
+//	    System.out.println("role ID" + ROLEIDAC);
+
+
 	    loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(), "ACTIVE");
 	    Session hs1 = sessionFactory.getCurrentSession();
 	    md.addAttribute("menu", "USER PROFILE");
@@ -469,10 +484,6 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    } else if (formmode.equals("add")) {
 	        md.addAttribute("formmode", formmode);
 	        md.addAttribute("userProfile", loginServices.getUser(""));
-
-	    } else if (formmode.equals("view")) {
-	        md.addAttribute("formmode", formmode);
-	        md.addAttribute("userProfile", loginServices.getUser(userid));
 
 	    } else if (formmode.equals("verify")) {
 	    	md.addAttribute("WORKCLASSAC", WORKCLASSAC);
@@ -2732,7 +2743,77 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		    }
 		}
+	  
+	  
+	  @RequestMapping(value = "RT", method = { RequestMethod.GET, RequestMethod.POST })
+		public String RT(Model md, HttpServletRequest req) {
+		  List<RT_SLS_ENTITIES>slslist = rt_sls_repository.rtslslist();
+		  md.addAttribute("slslist",slslist);
+		return "RT/RT_SLS";
+		}
+	  
+	  @RequestMapping(value = "SLSREPORT", method = {RequestMethod.GET, RequestMethod.POST})
+	  public String SLSREPORT(@RequestParam(required = false) String currency,@RequestParam(required = false) String reportdate,
+			  @RequestParam(required = false) String formmode, @RequestParam(defaultValue = "0") int page,
+              @RequestParam(defaultValue = "100") int size,
+              
+              
+	          Model md,
+	          HttpServletRequest req) {
+
+	      // Match the input format: 30/04/2025
+	      DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	      Date reportdatefor = null;
+	      
+	      if(formmode==null || formmode.equals("summary")) {
+	    	  try {
+		          reportdatefor = dateFormat.parse(reportdate);
+		      } catch (ParseException e) {
+		          e.printStackTrace();
+		          // Optional: add an error message to the model
+		          md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+		      }
+
+		      List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
+		      md.addAttribute("slslist", slslist);
+		      List<RT_SLS_ENTITIES> currencylist=rt_sls_repository.rtslslistonlydate(reportdatefor);
+		      System.out.println("count"+currencylist.size());
+		      md.addAttribute("currencylist", currencylist);
+		      md.addAttribute("currency", currency);
+		      md.addAttribute("reportdate",reportdate);
+		      md.addAttribute("formmode","summary");
+	      }
+	      else if(formmode.equals("Detail")) {
+	    	  
+	    	  try {
+		          reportdatefor = dateFormat.parse(reportdate);
+		      } catch (ParseException e) {
+		          e.printStackTrace();
+		          // Optional: add an error message to the model
+		          md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+		      }
+	    	  
+	    	  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillist(reportdatefor, page, size);
+	    	  int totalPages=rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+	    	  md.addAttribute("slsdetaillist",slsdetaillist);
+	    	  md.addAttribute("reportdate",reportdate);
+	    	  md.addAttribute("formmode","Detail");
+	    	  
+	    	  md.addAttribute("currentPage", page);
+	    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100));
+	      
+	      }
+
+	     
+
+	      
+	      return "RT/RT_SLSREPORT";
+	  }
+
+
+	  
 	
 	
+	  
 	
 }
