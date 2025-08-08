@@ -428,7 +428,51 @@ function getdetails(){
 	
 }
 
+function downloadfile(button) {
 
+	var reportdate = button.getAttribute('data-reportdate');
+	var currency = button.getAttribute('data-currency');
+	var filename = button.getAttribute('data-filename');
+	//var version = button.getAttribute('data-version');
+
+
+	$('#loader').modal('show');
+	
+	$.ajax({
+		url: './downloadExcel?reportdate='+ reportdate +
+			'&currency=' + currency +
+			'&filename=' + filename,
+		type: 'GET',
+		xhrFields: {
+			responseType: 'blob'
+		},
+		success: function (data) {
+			$('#loader').modal('hide');
+
+			if (data && data.size > 100) {
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', filename + ' downloaded successfully.');
+			} else {
+				showResultModal('Information', 'No data was available to create a download.');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$('#loader').modal('hide');
+			console.error("Download failed:", textStatus, errorThrown);
+			showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+		}
+	});
+}
 
 </script>
   
@@ -501,7 +545,11 @@ function getdetails(){
 						   </select>
 												
 						<button type="button" class="custom-tab-btn" id="custom-tab-btnDetails" onclick="getdetails();">Details</button>
-						<button type="button" class="custom-tab-btn" id="custom-tab-btnAdd" onclick="downloadfile(this);">
+						<button type="button" th:attr="data-reportdate=${reportdate}, 
+                     								   data-currency=${currency},
+                     								   data-filename=SLS.xls"  
+                     								  
+                     		class="custom-tab-btn" id="custom-tab-btnAdd" onclick="downloadfile(this);">
 							<i class="fa fa-download"></i>
 						</button>
 					</div>
@@ -1784,7 +1832,20 @@ function getdetails(){
 
 						</div>	
 		</div>
-</div>										
+</div>	
+
+<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;" alt="Bornfire">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>									
 </body>
 
 </html>

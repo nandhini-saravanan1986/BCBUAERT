@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -146,6 +148,7 @@ import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
+import com.bornfire.xbrl.services.RT_SLSServices;
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -154,6 +157,9 @@ public class XBRLNavigationController {
 	/*
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
+	
+	@Autowired
+	RT_SLSServices RT_SLSServices;
 	
 	@Autowired
 	RT_SLS_Detail_Repository rt_sls_detail_repository;
@@ -2812,7 +2818,50 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 
 	  
-	
+	  @RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
+		@ResponseBody
+		public ResponseEntity<ByteArrayResource> BRFDownload(HttpServletResponse response,
+				@RequestParam("reportdate") String reportdate,
+				@RequestParam("currency") String currency,
+				@RequestParam(value = "version", required = false) String version,
+				@RequestParam(value = "filename", required = false) String filename
+				)
+				throws SQLException, FileNotFoundException {
+
+			response.setContentType("application/octet-stream");
+
+			DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+			try {
+			
+				reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+			
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			try {
+				byte[] excelData = RT_SLSServices.getSlsExcel(filename,reportdate,currency,version);
+
+				if (excelData == null || excelData.length == 0) {
+					logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+					return ResponseEntity.noContent().build();
+				}
+
+				ByteArrayResource resource = new ByteArrayResource(excelData);
+
+				HttpHeaders headers = new HttpHeaders();
+				filename = filename + ".xls";
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+				logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+				return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+						.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+			} catch (Exception e) {
+				logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			}
+		}
+
 	
 	  
 	
