@@ -2761,9 +2761,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	  @RequestMapping(value = "SLSREPORT", method = {RequestMethod.GET, RequestMethod.POST})
 	  public String SLSREPORT(@RequestParam(required = false) String currency,@RequestParam(required = false) String reportdate,
 			  @RequestParam(required = false) String formmode, @RequestParam(defaultValue = "0") int page,
-              @RequestParam(defaultValue = "100") int size,
-              
-              
+              @RequestParam(defaultValue = "100") int size,@RequestParam(required = false) String Rowid,              
 	          Model md,
 	          HttpServletRequest req) {
 
@@ -2799,20 +2797,29 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		          md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
 		      }
 	    	  
-	    	  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillist(reportdatefor, page, size);
-	    	  int totalPages=rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
-	    	  md.addAttribute("slsdetaillist",slsdetaillist);
-	    	  md.addAttribute("reportdate",reportdate);
-	    	  md.addAttribute("formmode","Detail");
-	    	  
-	    	  md.addAttribute("currentPage", page);
-	    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100));
+	    	  if(Rowid!=null) {
+	    		  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,Rowid);
+		    	  int totalPages=rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor,Rowid);
+		    	  md.addAttribute("slsdetaillist",slsdetaillist);
+		    	  md.addAttribute("reportdate",reportdate);
+		    	  md.addAttribute("formmode","Detail");
+		    	  md.addAttribute("currentPage", page);
+		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 
+	    	  }
+	    	  else {
+	    		 
+		    	  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillist(reportdatefor, page, size);
+		    	  int totalPages=rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+		    	  md.addAttribute("slsdetaillist",slsdetaillist);
+		    	  md.addAttribute("reportdate",reportdate);
+		    	  md.addAttribute("formmode","Detail");
+		    	  md.addAttribute("pagination","YES");
+		    	  md.addAttribute("currentPage", page);
+		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 
+	    	  }
 	      
 	      }
-
-	     
-
-	      
+      
 	      return "RT/RT_SLSREPORT";
 	  }
 
@@ -2820,9 +2827,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	  
 	  @RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
 		@ResponseBody
-		public ResponseEntity<ByteArrayResource> BRFDownload(HttpServletResponse response,
+		public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
 				@RequestParam("reportdate") String reportdate,
 				@RequestParam("currency") String currency,
+				@RequestParam("type") String type,
 				@RequestParam(value = "version", required = false) String version,
 				@RequestParam(value = "filename", required = false) String filename
 				)
@@ -2839,7 +2847,14 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				e.printStackTrace();
 			}
 			try {
-				byte[] excelData = RT_SLSServices.getSlsExcel(filename,reportdate,currency,version);
+				byte[] excelData=null;
+				if(type.equals("summary")) {
+					 excelData = RT_SLSServices.getSlsExcel(filename,reportdate,currency,version);
+				}
+				else if(type.equals("detail")) {
+					excelData = RT_SLSServices.getDetailExcel(filename,reportdate,currency,version);
+				}
+				
 
 				if (excelData == null || excelData.length == 0) {
 					logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
@@ -2861,7 +2876,9 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
 		}
-
+	  
+	  
+	 
 	
 	  
 	

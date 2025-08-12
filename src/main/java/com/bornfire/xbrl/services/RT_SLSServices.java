@@ -2,6 +2,8 @@ package com.bornfire.xbrl.services;
 
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +36,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
+import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
+import com.bornfire.xbrl.entities.RT_SLS_Detail_Repository;
 import com.bornfire.xbrl.entities.RT_SLS_ENTITIES;
 import com.bornfire.xbrl.entities.RT_SLS_Repository;
 
@@ -47,6 +50,9 @@ public class RT_SLSServices {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	RT_SLS_Detail_Repository rt_sls_detail_repository;
 	
 	@Autowired
 	RT_SLS_Repository rt_sls_repository;
@@ -193,4 +199,163 @@ public class RT_SLSServices {
 			return out.toByteArray();
 		}
 	}
+	
+	
+	
+	public byte[] getDetailExcel(String filename,String reportdate, String currency,String version){
+		try {
+			logger.info("Generating Excel for SLS Details...");
+			
+			XSSFWorkbook workbook = new XSSFWorkbook();
+			XSSFSheet sheet = workbook.createSheet("SLS_Details");
+
+			// Common border style
+			BorderStyle border = BorderStyle.THIN;
+
+			// Header style (left aligned)
+			CellStyle headerStyle = workbook.createCellStyle();
+			Font headerFont = workbook.createFont();
+			headerFont.setBold(true);
+			headerFont.setFontHeightInPoints((short) 10);
+			headerStyle.setFont(headerFont);
+			headerStyle.setAlignment(HorizontalAlignment.LEFT);
+			headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setBorderTop(border);
+			headerStyle.setBorderBottom(border);
+			headerStyle.setBorderLeft(border);
+			headerStyle.setBorderRight(border);
+
+			// Right-aligned header style for ACCT BALANCE
+			CellStyle rightAlignedHeaderStyle = workbook.createCellStyle();
+			rightAlignedHeaderStyle.cloneStyleFrom(headerStyle);
+			rightAlignedHeaderStyle.setAlignment(HorizontalAlignment.RIGHT);
+
+			// Default data style (left aligned)
+			CellStyle dataStyle = workbook.createCellStyle();
+			dataStyle.setAlignment(HorizontalAlignment.LEFT);
+			dataStyle.setBorderTop(border);
+			dataStyle.setBorderBottom(border);
+			dataStyle.setBorderLeft(border);
+			dataStyle.setBorderRight(border);
+
+			// ACCT BALANCE style (right aligned with 3 decimals)
+			CellStyle balanceStyle = workbook.createCellStyle();
+			balanceStyle.setAlignment(HorizontalAlignment.RIGHT);
+			balanceStyle.setDataFormat(workbook.createDataFormat().getFormat("0.000"));
+			balanceStyle.setBorderTop(border);
+			balanceStyle.setBorderBottom(border);
+			balanceStyle.setBorderLeft(border);
+			balanceStyle.setBorderRight(border);
+
+			// Header row
+			String[] headers = { "CUST ID", "ACCT NO", "ACCT NAME", "ACCT BALANCE", "ROWID",
+					"REPORT_DATE" };
+
+			XSSFRow headerRow = sheet.createRow(0);
+			for (int i = 0; i < headers.length; i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(headers[i]);
+
+				if (i == 3) { // ACCT BALANCE
+					cell.setCellStyle(rightAlignedHeaderStyle);
+				} else {
+					cell.setCellStyle(headerStyle);
+				}
+
+				sheet.setColumnWidth(i, 5000);
+			}
+
+			// Get data
+			Date parsedToDate = new SimpleDateFormat("dd-MMM-yyyy").parse(reportdate);
+			
+			 int batchSize = 5000;
+		     int offset = 0;
+		     int rowIndex = 1;
+		     List<RT_SLS_Detail_Enitity> reportData= new ArrayList<RT_SLS_Detail_Enitity>();
+		     System.out.println("offset=="+offset);
+		     while (true) {
+		    	 
+		    	 System.out.println("offsettest");
+		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,offset,batchSize);
+		    	    if (reportData.isEmpty()) break;  // <-- STOP when there is no more data
+
+		    	    
+		    	    if (reportData != null && !reportData.isEmpty()) {
+						
+						for (RT_SLS_Detail_Enitity item : reportData) {
+							XSSFRow row = sheet.createRow(rowIndex++);
+							
+							if(item.getCustId()!=null) {
+								row.createCell(0).setCellValue(item.getCustId());
+							}
+							else {
+								row.createCell(0).setCellValue(" ");
+							}
+							
+							if(item.getAcid()!=null) {
+								row.createCell(1).setCellValue(item.getAcid());
+							}
+							else {
+								row.createCell(1).setCellValue(" ");
+							}
+							if(item.getAcctName()!=null) {
+								row.createCell(2).setCellValue(item.getAcctName());
+							}
+							else {
+								row.createCell(2).setCellValue("");
+							}
+							
+							
+							
+
+							// ACCT BALANCE (right aligned, 3 decimal places)
+							Cell balanceCell = row.createCell(3);
+							if (item.getAcctBalanceLc() != null) {
+								balanceCell.setCellValue(item.getAcctBalanceLc().doubleValue());
+							} else {
+								balanceCell.setCellValue(0.000);
+							}
+							balanceCell.setCellStyle(balanceStyle);
+
+							row.createCell(4).setCellValue(item.getReportLabel());
+							row.createCell(5)
+									.setCellValue(item.getReportDate() != null ? new SimpleDateFormat("dd-MM-yyyy").format(item.getReportDate()) : "");
+
+							
+							// Apply data style for all other cells
+							for (int j = 0; j < 5; j++) {
+								if (j != 3) {
+									row.getCell(j).setCellStyle(dataStyle);
+								}
+							}
+						}
+					} else {
+						logger.info("No data found for sls — only header will be written.");
+					}
+
+		    	    offset += batchSize;
+		    	   
+		    	}
+		     
+			
+			System.out.println(reportData.size());
+
+			
+
+			// Write to byte[]
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			workbook.write(bos);
+			workbook.close();
+
+			logger.info("Excel generation completed with {} row(s).", reportData != null ? reportData.size() : 0);
+			return bos.toByteArray();
+
+		} catch (Exception e) {
+			logger.error("Error generating sls Excel", e);
+			return new byte[0];
+		}
+	}
+
+	
 }

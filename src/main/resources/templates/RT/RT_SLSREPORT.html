@@ -301,7 +301,7 @@ label.error {
 /* Your existing CSS - this is the correct approach */
 .scrollable-table-container {
     /* This is the key: it creates the scroll context */
-    max-height: 450px; /* Or a suitable height like 80vh for responsive design */
+   	height: calc(100vh);
     overflow-y: auto;
     border: 1px solid #ccc;
 }
@@ -441,7 +441,8 @@ function downloadfile(button) {
 	$.ajax({
 		url: './downloadExcel?reportdate='+ reportdate +
 			'&currency=' + currency +
-			'&filename=' + filename,
+			'&filename=' + filename +
+			'&type=summary',
 		type: 'GET',
 		xhrFields: {
 			responseType: 'blob'
@@ -472,6 +473,60 @@ function downloadfile(button) {
 			showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
 		}
 	});
+}
+
+
+function downloadDetailfile(button) {
+
+	var reportdate = button.getAttribute('data-reportdate');
+	var currency = button.getAttribute('data-currency');
+	var filename = button.getAttribute('data-filename');
+	//var version = button.getAttribute('data-version');
+
+
+	$('#loader').modal('show');
+	
+	$.ajax({
+		url: './downloadExcel?reportdate='+ reportdate +
+			'&currency=' + currency +
+			'&filename=' + filename +
+			'&type=detail',
+		type: 'GET',
+		xhrFields: {
+			responseType: 'blob'
+		},
+		success: function (data) {
+			$('#loader').modal('hide');
+
+			if (data && data.size > 100) {
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', filename + ' downloaded successfully.');
+			} else {
+				showResultModal('Information', 'No data was available to create a download.');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$('#loader').modal('hide');
+			console.error("Download failed:", textStatus, errorThrown);
+			showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+		}
+	});
+}
+
+function getdetailbyfilter(a){
+	var reportdate = document.getElementById("reportDate").innerText;
+	var Rowid=a.getAttribute('data-rowid')
+	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&Rowid='+Rowid
 }
 
 </script>
@@ -518,6 +573,10 @@ function downloadfile(button) {
 					style="background-color: rgb(107, 122, 143); display: flex; align-items: center; justify-content: space-between;">
 					<div style="display: flex; align-items: center;" onclick="back();">
 
+						<div class="left-arrow-circle">
+							<i class="fa fa-arrow-left"></i>
+						</div>
+						
 						<!-- Title -->
 						<h5
 							style="font-family: arial; font-size: 20px; padding-top:10px; font-weight: bold; color: white;">
@@ -545,13 +604,24 @@ function downloadfile(button) {
 						   </select>
 												
 						<button type="button" class="custom-tab-btn" id="custom-tab-btnDetails" onclick="getdetails();">Details</button>
-						<button type="button" th:attr="data-reportdate=${reportdate}, 
+						<button type="button" th:if="${formmode == 'summary'}" th:attr="data-reportdate=${reportdate},  
                      								   data-currency=${currency},
                      								   data-filename=SLS.xls"  
                      								  
                      		class="custom-tab-btn" id="custom-tab-btnAdd" onclick="downloadfile(this);">
 							<i class="fa fa-download"></i>
 						</button>
+						
+						<button type="button" th:attr="data-reportdate=${reportdate}, 
+                     								   data-currency=${currency},
+                     								   data-filename=SlsDetail.xls"  
+                     								  
+                     		class="custom-tab-btn" id="custom-tab-btnAdd" th:if="${formmode == 'Detail'}" onclick="downloadDetailfile(this);">
+							<i class="fa fa-download"></i>
+						</button>
+						
+						
+						
 					</div>
 				</div>
 					
@@ -578,13 +648,13 @@ function downloadfile(button) {
 			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 6 Months and upto 1 year</th>
 			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 1 Year and upto 3 years</th>
 			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 3 Years and upto 5 years</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 5 Years</th>
+			  								<th  style="text-align: center; width:130px;  background-color: #b3b6b9">Over 5 Years</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">Total</th>
 			  								
 			  								</tr>
 			  							</thead>
 			  							<tbody th:each="report: ${slslist}">
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW11'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >1</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R11_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_DAY1}"></td>
@@ -601,7 +671,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R11_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW12'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >2</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R12_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_DAY1}"></td>
@@ -636,7 +706,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW14'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R14_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_DAY1}"></td>
@@ -653,7 +723,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R14_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW15'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R15_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_DAY1}"></td>
@@ -671,7 +741,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW16'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R16_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_DAY1}"></td>
@@ -689,7 +759,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW17'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iv)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R17_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_DAY1}"></td>
@@ -725,7 +795,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW19'" >
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R19_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_DAY1}"></td>
@@ -744,7 +814,7 @@ function downloadfile(button) {
 			  							</tr>
 			  							
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW20'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R20_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_DAY1}"></td>
@@ -762,7 +832,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW21'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R21_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_DAY1}"></td>
@@ -798,7 +868,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW23'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td  Style="background-color:#c1e4f7;text-align: left;" th:text="${report.R23_PRODUCT}"></td>
@@ -835,7 +905,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW25'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R25_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_DAY1}"></td>
@@ -853,9 +923,9 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW26'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R25_PRODUCT}"></td>
+			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R26_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY8_14}"></td>
@@ -871,7 +941,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW27'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R27_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_DAY1}"></td>
@@ -907,7 +977,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW29'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R29_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_DAY1}"></td>
@@ -925,7 +995,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW30'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R30_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_DAY1}"></td>
@@ -943,7 +1013,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW31'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >7</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R31_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_DAY1}"></td>
@@ -961,7 +1031,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW32'">
 			  							<td  Style="background-color: #b3b6b9;text-align: left;" >8</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R32_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_DAY1}"></td>
@@ -979,7 +1049,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW33'">
 			  							<td  Style="background-color: #b3b6b9;text-align: left;" >9</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R33_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_DAY1}"></td>
@@ -997,7 +1067,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW34'">
 			  							<td  Style="background-color: #b3b6b9;text-align: left;" >10</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R34_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_DAY1}"></td>
@@ -1015,7 +1085,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW35'">
 			  							<td  Style="background-color: #b3b6b9;text-align: left;" >11</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R35_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_DAY1}"></td>
@@ -1033,7 +1103,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW36'">
 			  							<td  Style="background-color: #b3b6b9;text-align: left;" >12</td>
 			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R36_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_DAY1}"></td>
@@ -1068,7 +1138,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW38'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td  Style="background-color:#c1e4f7;text-align: left;" th:text="${report.R38_PRODUCT}"></td>
@@ -1087,7 +1157,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr >
 			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >A.</td>
 			  							<td  Style="background-color: #b3b6b9; text-align: left;" th:text="${report.R39_PRODUCT}"></td>
@@ -1151,7 +1221,7 @@ function downloadfile(button) {
 			  								</tr>
 			  								
 			  								
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW47'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >1</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R47_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_DAY1}"></td>
@@ -1168,7 +1238,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R47_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW48'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >2</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R48_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_DAY1}"></td>
@@ -1202,7 +1272,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R49_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW50'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R50_PRODUCT}"></td>
 			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R50_DAY1}"></td>
@@ -1220,7 +1290,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW51'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R51_PRODUCT}"></td>
 			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R51_DAY1}"></td>
@@ -1238,7 +1308,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW52'">
 			  							<td  Style="background-color: #b3b6b9;text-align: center;" >4</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R52_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_DAY1}"></td>
@@ -1272,7 +1342,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R53_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW54'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R54_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_DAY1}"></td>
@@ -1290,7 +1360,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW55'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R55_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_DAY1}"></td>
@@ -1308,7 +1378,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW56'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R56_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_DAY1}"></td>
@@ -1326,7 +1396,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW57'">
 			  							<td  Style="background-color: #b3b6b9;text-align: center;" >6</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R57_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_DAY1}"></td>
@@ -1343,7 +1413,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R57_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW58'">
 			  							<td  Style="background-color: #b3b6b9;text-align: center;" >7</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R58_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_DAY1}"></td>
@@ -1378,7 +1448,7 @@ function downloadfile(button) {
 			  							</tr>
 			  							
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW60'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R60_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_DAY1}"></td>
@@ -1396,7 +1466,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW61'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
 			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R61_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_DAY1}"></td>
@@ -1414,7 +1484,7 @@ function downloadfile(button) {
 			  							
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW62'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >9</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R62_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_DAY1}"></td>
@@ -1431,7 +1501,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R62_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW63'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >10</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R63_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_DAY1}"></td>
@@ -1448,7 +1518,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R63_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW64'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >11</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R64_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_DAY1}"></td>
@@ -1465,7 +1535,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R64_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW65'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >12</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R65_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_DAY1}"></td>
@@ -1482,7 +1552,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R65_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW66'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >13</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R66_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_DAY1}"></td>
@@ -1499,7 +1569,7 @@ function downloadfile(button) {
 			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R66_TOTAL}"></td>
 			  							</tr>
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW67'">
 			  							<td Style="background-color: #b3b6b9;text-align: center;" >14</td>
 			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R67_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_DAY1}"></td>
@@ -1534,7 +1604,7 @@ function downloadfile(button) {
 			  							</tr>
 			  							
 			  							
-			  							<tr>
+			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW69'">
 			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
 			  							<td  Style="background-color:#c1e4f7; text-align: left;" th:text="${report.R69_PRODUCT}"></td>
@@ -1801,7 +1871,7 @@ function downloadfile(button) {
 										</tbody>		
 									</table>
 									
-									<div style="margin-top:20px; text-align:center;">
+									<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
 									   
 									    <a th:if="${currentPage > 0}"
 									       th:href="@{/SLSREPORT(page=${currentPage - 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
@@ -1825,12 +1895,12 @@ function downloadfile(button) {
 						
 						
 						
-						<div class="card-footer text-center" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+						<!-- <div class="card-footer text-center" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 						  	<button type="button" class="custom-tab-btn" onclick="home();"> <i class="fa fa-home"></i> Home</button>    
 						
 							<button type="button" class="custom-tab-btn" onclick="back();"><i class="fa fa-arrow-left"></i> Back</button>
 
-						</div>	
+						</div>	 -->
 		</div>
 </div>	
 
