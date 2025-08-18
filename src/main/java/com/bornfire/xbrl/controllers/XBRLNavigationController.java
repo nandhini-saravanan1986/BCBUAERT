@@ -2813,6 +2813,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		    	  md.addAttribute("slsdetaillist",slsdetaillist);
 		    	  md.addAttribute("reportdate",reportdate);
 		    	  md.addAttribute("formmode","Detail");
+		    	  md.addAttribute("currency", currency);
 		    	  md.addAttribute("pagination","YES");
 		    	  md.addAttribute("currentPage", page);
 		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 

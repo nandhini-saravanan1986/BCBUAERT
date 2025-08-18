@@ -300,11 +300,12 @@ label.error {
 <style>
 /* Your existing CSS - this is the correct approach */
 .scrollable-table-container {
-    /* This is the key: it creates the scroll context */
-   	height: calc(100vh);
+    max-height: calc(100vh - 10px); /* Adjust the 10px if you need more/less gap */
     overflow-y: auto;
     border: 1px solid #ccc;
 }
+
+
 
 /* Your existing sticky header CSS, targeting the tr elements within the thead */
 .scrollable-table-container thead tr:nth-child(1) {
@@ -416,15 +417,18 @@ div.dataTables_wrapper div.dataTables_info {
 
 <script>
 function getreport(){
+	
 	var reportdate = document.getElementById("reportDate").innerText;
-	var currency= document.getElementById("currency").value;
+	var currency= document.getElementById("currencyin").value;
+	alert("hi")
 	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
 	
 }
 
 function getdetails(){
 	var reportdate = document.getElementById("reportDate").innerText;
-	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail'
+	var currency= document.getElementById("currencyin").value;
+	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&currency='+currency
 	
 }
 
@@ -590,6 +594,7 @@ function getdetailbyfilter(a){
 						<span class="white-text"
 							style="color:white !important; font-size: 16px; margin-right: 20px;">Report Date:
 							<span id="reportDate" th:text="${reportdate}" >2025-07-04</span>
+							<input type="hidden" id="currencyin" th:value="${currency}" >
 						</span>
 
 						<!-- Buttons -->
@@ -603,7 +608,9 @@ function getdetailbyfilter(a){
 						       
 						   </select>
 												
-						<button type="button" class="custom-tab-btn" id="custom-tab-btnDetails" onclick="getdetails();">Details</button>
+						<button type="button" class="custom-tab-btn" th:if="${formmode == 'summary'}" id="custom-tab-btnDetails" onclick="getdetails();">Details</button>
+						<button type="button" class="custom-tab-btn" th:if="${formmode == 'Detail'}" id="custom-tab-btnDetails" onclick="getreport();">Summary</button>
+						
 						<button type="button" th:if="${formmode == 'summary'}" th:attr="data-reportdate=${reportdate},  
                      								   data-currency=${currency},
                      								   data-filename=SLS.xls"  
@@ -637,7 +644,7 @@ function getdetailbyfilter(a){
 											<th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
 			  								</tr>
 			  								<tr>
-			  								<th colspan="4" style="text-align: center; width:150px; background-color: #b3b6b9">Outflows</th>
+			  								<th colspan="4" style="text-align: center; width:10px; background-color: #b3b6b9">Outflows</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
@@ -1205,7 +1212,7 @@ function getdetailbyfilter(a){
 											<th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
 			  								</tr>
 			  								<tr>
-			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Outflows</th>
+			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Inflows</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
@@ -1640,23 +1647,7 @@ function getdetailbyfilter(a){
 			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R70_TOTAL}"></th>
 			  							</tr>
 			  							
-			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >C.</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R70_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R70_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R70_TOTAL}"></th>
-			  							</tr>
+			  						
 			  							
 			  							<tr>
 			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
@@ -1749,20 +1740,22 @@ function getdetailbyfilter(a){
 			  							
 			  							<tr>
 			  							
-			  							<th colspan="4" Style="background-color:#b3b6b9; text-align: center;" th:text="${report.R76_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R76_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7"></th>
+			  							<th colspan="4" Style="background-color:#b3b6b9; text-align: center;">Limit Adherence</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
+			  							<th Style="text-align: left;background-color:#c1e4f7"></th>
 			  							</tr>
+			  							
+			  							
 			  							
 			  							<tr>
 			  							<th colspan="16" Style="text-align: left;background-color:#b3b6b9">* Net of provisions, interest suspense and claims received from ECGC / DICGC</th>
@@ -1783,7 +1776,7 @@ function getdetailbyfilter(a){
 											<th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
 			  								</tr>
 			  								<tr>
-			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Outflows</th>
+			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Inflows</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
 			  								<th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
