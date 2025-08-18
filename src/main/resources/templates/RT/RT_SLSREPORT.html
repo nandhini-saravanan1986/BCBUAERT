@@ -416,11 +416,21 @@ div.dataTables_wrapper div.dataTables_info {
 </script>
 
 <script>
+
+
+
+function getreportby(){
+	
+	var reportdate = document.getElementById("reportDate").innerText;
+	var currency= document.getElementById("currency").value;
+	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
+	
+}
+
 function getreport(){
 	
 	var reportdate = document.getElementById("reportDate").innerText;
 	var currency= document.getElementById("currencyin").value;
-	alert("hi")
 	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
 	
 }
@@ -598,7 +608,7 @@ function getdetailbyfilter(a){
 						</span>
 
 						<!-- Buttons -->
-						 <select th:if="${formmode == 'summary'}" id="currency" onchange="getreport()" style="margin-right: 20px; padding: 5px 10px; color: black;font-weight: 600; border-radius: 5px;">
+						 <select th:if="${formmode == 'summary'}" id="currency" onchange="getreportby()" style="margin-right: 20px; padding: 5px 10px; color: black;font-weight: 600; border-radius: 5px;">
 						        <option th:each="clist : ${currencylist}"
 						        th:value="${clist.REPORT_CURRENCY}"
 						        th:selected="${clist.REPORT_CURRENCY == currency}"
