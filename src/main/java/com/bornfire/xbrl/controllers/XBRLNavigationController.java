@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -2852,9 +2855,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				if(type.equals("summary")) {
 					 excelData = RT_SLSServices.getSlsExcel(filename,reportdate,currency,version);
 				}
-				else if(type.equals("detail")) {
-					excelData = RT_SLSServices.getDetailExcel(filename,reportdate,currency,version);
-				}
+				
 				
 
 				if (excelData == null || excelData.length == 0) {
@@ -2879,8 +2880,96 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		}
 	  
 	  
-	 
-	
+	  @RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
+		@ResponseBody
+		public ResponseEntity<ByteArrayResource> detailDownload(HttpServletResponse response,
+				@RequestParam("jobId") String jobId,
+				@RequestParam("filename") String filename
+				)
+				throws SQLException, FileNotFoundException {
+
+			response.setContentType("application/octet-stream");
+
+			
+			try {
+				byte[] excelData=null;
+				
+					excelData = RT_SLSServices.getReport(jobId);;
+				
+				if (excelData == null || excelData.length == 0) {
+					logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+					return ResponseEntity.noContent().build();
+				}
+
+				ByteArrayResource resource = new ByteArrayResource(excelData);
+
+				HttpHeaders headers = new HttpHeaders();
+				filename = filename + ".xls";
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+				logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+				return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+						.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+			} catch (Exception e) {
+				logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			}
+		}
 	  
+	  
+	
+	  @RequestMapping(value = "/startreport", method = { RequestMethod.GET, RequestMethod.POST })
+	    @ResponseBody  // forces raw text instead of HTML view
+	    public String startReport(@RequestParam String filename,
+	                              @RequestParam String reportdate,
+	                              @RequestParam String currency,
+	                              @RequestParam(value = "version", required = false) String version)
+	   {
+	        String jobId = UUID.randomUUID().toString();
+	        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+			try {
+			
+				reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+			
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+	        RT_SLSServices.generateReportAsync(jobId, filename, reportdate, currency,version);
+	        return jobId;
+	    }
+
+	    
+	    // 2️⃣ Check if report is ready
+	    @RequestMapping(value = "/checkreport", method = { RequestMethod.GET, RequestMethod.POST })
+	    @ResponseBody  // forces raw text instead of HTML view
+	    public ResponseEntity<String> checkReport(@RequestParam String jobId) {
+	        byte[] report = RT_SLSServices.getReport(jobId);
+	        //System.out.println("Report generation completed for: " + jobId);
+	        if (report == null) {
+	            return ResponseEntity.ok("PROCESSING");
+	        }
+	        return ResponseEntity.ok("READY");
+	    }
+
+	    
+	    // 3️⃣ Download the report when ready
+	    @GetMapping("/download-report/{jobId}")
+	    public ResponseEntity<byte[]> downloadReport(@PathVariable String jobId) {
+	        byte[] report = RT_SLSServices.getReport(jobId);
+	        if (report == null) {
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	        headers.setContentDispositionFormData("attachment", "report.txt");
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .body(report);
+	    }
+	  
+	 
 	
 }

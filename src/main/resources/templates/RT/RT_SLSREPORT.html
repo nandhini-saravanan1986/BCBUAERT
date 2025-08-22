@@ -407,6 +407,218 @@ td {
 	}
 	</style>
   
+  <script th:inline="javascript">
+	
+	function home() {
+        $("#loader").modal("toggle");
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+        $("#loader").modal("toggle");
+
+		window.history.back();
+	}
+	
+</script>
+
+<script>
+
+
+
+function getreportBY(){
+	
+	var reportdate = document.getElementById("reportDate").innerText;
+	var currency= document.getElementById("currency").value;
+	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
+	
+}
+
+function getreport(){
+	
+	var reportdate = document.getElementById("reportDate").innerText;
+	var currency= document.getElementById("currencyin").value;
+	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
+	
+}
+
+function getdetails(){
+	var reportdate = document.getElementById("reportDate").innerText;
+	var currency= document.getElementById("currencyin").value;
+	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&currency='+currency
+	
+}
+
+function downloadfile(button) {
+
+	var reportdate = button.getAttribute('data-reportdate');
+	var currency = button.getAttribute('data-currency');
+	var filename = button.getAttribute('data-filename');
+	//var version = button.getAttribute('data-version');
+
+
+	$('#loader').modal('show');
+	
+	$.ajax({
+		url: './downloadExcel?reportdate='+ reportdate +
+			'&currency=' + currency +
+			'&filename=' + filename +
+			'&type=summary',
+		type: 'GET',
+		xhrFields: {
+			responseType: 'blob'
+		},
+		success: function (data) {
+			$('#loader').modal('hide');
+
+			if (data && data.size > 100) {
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', filename + ' downloaded successfully.');
+			} else {
+				showResultModal('Information', 'No data was available to create a download.');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$('#loader').modal('hide');
+			console.error("Download failed:", textStatus, errorThrown);
+			showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+		}
+	});
+}
+
+
+
+function startReport(button){
+	const alertMsg = document.getElementById("alertMessage");
+	var reportdate = button.getAttribute('data-reportdate');
+	var currency = button.getAttribute('data-currency');
+	var filename = button.getAttribute('data-filename');
+
+    // Encode all params
+    const params = new URLSearchParams({
+    	reportdate: reportdate,
+    	currency: currency,
+    	filename: filename
+    });
+
+    fetch('startreport?' + params.toString())  // ✅ no invalid characters now
+        .then(res => res.text())
+        .then(jobId => {
+        	alertMsg.innerHTML ='Download request received…';
+       	 	showAlert();
+            sessionStorage.setItem("jobId", jobId);
+            sessionStorage.setItem("filename", filename);
+            checkReport(jobId);
+        });
+}
+
+function checkReport(jobId) {
+	const alertMsg = document.getElementById("alertMessage");
+    fetch('checkreport?jobId=' + encodeURIComponent(jobId))
+        .then(res => res.text())
+        .then(status => {
+            if (status === "READY") {
+            	alertMsg.innerHTML ='Report is ready! Downloading…';
+           	 	showAlert();
+                const filename = sessionStorage.getItem("filename");
+                downloadDetailfile(jobId,filename)
+                sessionStorage.removeItem("jobId");
+                sessionStorage.removeItem("filename");                
+                
+            } else {
+                alertMsg.innerHTML ='Download Is Processing…';
+            	showAlert();
+                setTimeout(() => checkReport(jobId), 60000);
+            }
+        });
+}
+
+
+
+function downloadDetailfile(jobId,filename) {
+	
+	//$('#loader').modal('show');
+	
+	$.ajax({
+		url: './downloaddetailExcel?jobId='+ jobId +
+			'&filename=' + filename,
+		type: 'GET',
+		xhrFields: {
+			responseType: 'blob'
+		},
+		success: function (data) {
+			$('#loader').modal('hide');
+
+			if (data && data.size > 100) {
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+
+				showResultModal('Success', filename + ' downloaded successfully.');
+			} else {
+				showResultModal('Information', 'No data was available to create a download.');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$('#loader').modal('hide');
+			console.error("Download failed:", textStatus, errorThrown);
+			showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+		}
+	});
+}
+
+function getdetailbyfilter(a){
+	var reportdate = document.getElementById("reportDate").innerText;
+	var Rowid=a.getAttribute('data-rowid')
+	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&Rowid='+Rowid
+}
+
+</script>
+  
+<!-- <script>
+  $(document).ready(function () {
+    $('#BRFvalidation').DataTable({
+      "paging": true,
+      "pageLength": 10,
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+      "autoWidth": false,
+      "language": {
+        "search": "Search:"
+      }
+    });
+  });
+</script> -->
+<!-- <script>
+  $(document).ready(function () {
+    $('#BRFvalidation').DataTable({
+      "paging": true,
+      "info": false,       // turn off "Showing x of y"
+      "searching": false,  // turn off search
+      "ordering": false,   // turn off ordering
+      "lengthChange": false // hide "Show x entries"
+    });
+  });
+</script> -->
+  
   
 </head>
 <body>
@@ -462,7 +674,7 @@ td {
 			
 			        <button type="button" th:if="${formmode == 'Detail'}"
 			                th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SlsDetail.xls"
-			                class="custom-tab-btn" onclick="downloadDetailfile(this);">
+			                class="custom-tab-btn" onclick="startReport(this);">
 			          <i class="fa fa-download"></i>
 			        </button>
 			      </div>
@@ -470,7 +682,7 @@ td {
 			    <!-- End Card Header -->
 			
 			    <!-- Card Body -->
-			    <div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;">
+			    <div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode == 'summary'}">
 			      <div class="scrollable-table-container">
 			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports">
 			          <thead class="thead-light">
@@ -1666,13 +1878,12 @@ td {
 			  						</table>
 			  					</div>													
 							</div>
-						</div>
 						
 						
-						<div class="row" th:if="${formmode=='Detail'}">
-							<div class="col-sm-12">
-								<div class="table-responsive scrollable-table-container" >
-			    					<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports" >
+						
+					<div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode=='Detail'}">
+			      	<div class="scrollable-table-container">  
+			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports">	
 										<thead class="thead-light">
 											<tr>
 												<th>CUST ID</th>
@@ -1716,7 +1927,8 @@ td {
 									
 								</div>
 							</div>
-						</div>			
+						</div>	
+						</div>		
 						
 						
 						
@@ -1741,6 +1953,9 @@ td {
 						</div>
 					</div>
 				</div>
-			</div>									
+			</div>	
+			
+											
 </body>
+
 </html>

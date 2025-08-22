@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -273,10 +275,10 @@ public class RT_SLSServices {
 		     int offset = 0;
 		     int rowIndex = 1;
 		     List<RT_SLS_Detail_Enitity> reportData= new ArrayList<RT_SLS_Detail_Enitity>();
-		     System.out.println("offset=="+offset);
+		     //System.out.println("offset=="+offset);
 		     while (true) {
 		    	 
-		    	 System.out.println("offsettest");
+		    	 //System.out.println("offsettest");
 		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,offset,batchSize);
 		    	    if (reportData.isEmpty()) break;  // <-- STOP when there is no more data
 
@@ -353,9 +355,35 @@ public class RT_SLSServices {
 
 		} catch (Exception e) {
 			logger.error("Error generating sls Excel", e);
-			return new byte[0];
+			return null;
 		}
 	}
+	
+	
+	private final ConcurrentHashMap<String, byte[]> jobStorage = new ConcurrentHashMap<>();
 
+	
+    @Async
+    public void generateReportAsync(String jobId, String filename, String reportDate, String currency,String version) {
+        //System.out.println("Starting report generation for: " + filename);
+		        
+		byte[] fileData = getDetailExcel(filename,reportDate,currency, version);
+		if (fileData == null) {
+		    //logger.warn("Excel generation failed or no data for jobId: {}", jobId);
+		    jobStorage.put(jobId, null); 
+		} else {
+		    jobStorage.put(jobId, fileData);
+		}
+
+		//System.out.println("Report generation completed for: " + filename);
+    }
+
+    
+    public byte[] getReport(String jobId) {
+    	 //System.out.println("Report generation completed for: " + jobId);
+        return jobStorage.get(jobId);
+    }
+	
+	
 	
 }
