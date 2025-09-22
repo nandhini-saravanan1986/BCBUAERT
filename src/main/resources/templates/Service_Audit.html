@@ -106,8 +106,9 @@
 
 		// Date filter event
 		$('#searchDate').on('change', function () {
+			alert("hi")
 			var selectedDate = $(this).val(); // yyyy-mm-dd
-
+			
 			var filteredData = userAuditLevelData.filter(function (item) {
 				return item.audit_date_filter === selectedDate;
 			});
@@ -122,7 +123,7 @@
 
 		/* var fromdate;
 		var todate; */
-		var tabledata = /*[[${auditlogss}]]*/ null;
+		var tabledata = /*[[${AuditList}]]*/ null;
 
 
 		var table = $('#auditlogtb').DataTable({
@@ -297,7 +298,8 @@
 	});
 
 	function filterByDate(dateString) {
-		const table = document.getElementById("userAuditLevelTb");
+		
+		const table = document.getElementById("usertable");
 		const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
 
 		for (let row of rows) {
@@ -511,7 +513,7 @@
 				<div class="card mt-5">
 					<div class="card-header d-flex justify-content-between align-items-center"
 						style="background-color: #376275;">
-						<h4 class="mb-0" style="color:white">USER LEVEL AUDIT</h4>
+						<h4 class="mb-0" style="color:white">SERVICE LEVEL AUDIT</h4>
 						<div class="form-inline">
 							<label for="searchDate" class="mr-2 mb-0" style="color:white !important">Search records By
 								Date:</label>
@@ -551,8 +553,11 @@
 									<td
 										th:text="${(auditdata.entry_user ?: 'N/A') + ' / ' + (auditdata.entry_user_name ?: 'N/A')}">
 									</td>
+									
+									
+									
 									<td
-										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'dd-MM-yyyy hh:mm a') : 'N/A'}">
+										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'dd-MM-yyyy') : 'N/A'}">
 									</td>
 									<td
 										th:text="${(auditdata.auth_user ?: 'N/A') + ' / ' + (auditdata.auth_user_name ?: 'N/A')}">
@@ -581,7 +586,7 @@
 					<div class="modal-content">
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
-							<button type="button" class="btn btn-primary" data-dismiss="modal" >Close</button>
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" >Close</button>
 						</div>
 					</div>
 				</div>
@@ -613,7 +618,7 @@
 							</table>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="close();">Close</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="close();">Close</button>
 						</div>
 					</div>
 				</div>
