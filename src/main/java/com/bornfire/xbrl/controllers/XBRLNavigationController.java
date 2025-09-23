@@ -503,7 +503,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    } else {
 	        md.addAttribute("formmode", formmode);
 	        md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
-	        md.addAttribute("userProfile", loginServices.getUser(""));
+	        md.addAttribute("userProfile", loginServices.getUser(userid));
 	    }
 
 	    return "XBRLUserprofile";
