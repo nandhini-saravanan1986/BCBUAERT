@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_IRRBB_Data_EVE_Template_Repository  extends JpaRepository <RT_IRRBB_Data_EVE_Template,Long>{
+public interface RT_IRRBB_Data_EVE_Template_Repository  extends JpaRepository <RT_IRRBB_Data_EVE_Template,String>{
 	
 	@Query(value = "select * from BCBUAE_IRRBB_DATA_TEMPLATE ", nativeQuery = true)
 	List<RT_IRRBB_Data_EVE_Template> getAlldetails();

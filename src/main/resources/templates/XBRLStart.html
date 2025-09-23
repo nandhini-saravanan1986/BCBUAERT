@@ -1,239 +1,269 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BRBS</title>
+    <meta charset="UTF-8">
+    <title>Bank of Baroda - Risk Analysis</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="icon" th:href="@{/images/client_Logo_bkp.png}" type="image/x-icon">
 
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}">
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
 
-<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
 
-<script>
-$(function() {
-var windHeight = $( window ).height();
-var topmargin = (windHeight/2)-(353/2);
-$(".login").css("margin-top",topmargin*0.8+"px");
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-});
+        .logincontainer {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            display: flex;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(173, 216, 230, 0.5) 100%
+            );
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
 
-$(window).resize(function() {
-	var windHeight = $( window ).height();
-	var topmargin = (windHeight/2)-(353/2);
-	$(".login").css("margin-top",topmargin*0.8+"px");
-});
+        /* Left Panel: Login Form */
+        .logincontainer .form-box.login {
+            width: 50%;
+            background: rgba(0, 72, 129, 0.85);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+        }
 
-</script>
-<style>
-body {
-	background-image: url("images/bodyBG.jpg");
-	background-size: cover;
-}
+        .form-box h2 {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
+        .input-box {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            margin: 20px 0;
+        }
 
+        .input-box input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            border-bottom: 2px solid #ffc107;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+        }
 
-</style>
-<style>
-/*
- * Specific styles of signin component
- */
-/*
- * General styles
- */
+        .input-box label {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 16px;
+            color: #ffc107;
+            transition: 0.5s;
+        }
 
+        .input-box input:focus~label,
+        .input-box input:valid~label {
+            top: -10px;
+            font-size: 12px;
+            color: #fff;
+        }
 
-.card-container.card {
-    max-width: 350px;
-    padding: 40px 40px;
-}
+        .input-box i {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #ffc107;
+        }
 
-.btn {
-    font-weight: 700;
-    height: 36px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: default;
-}
+        .btn {
+            width: 100%;
+            height: 45px;
+            background: #ffc107;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #004481;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
 
-/*
- * Card component
- */
-.card {
-    background-color: #F7F7F7;
-    /* just in case there no content*/
-    padding: 20px 25px 30px;
-    margin: 0 auto 25px;
-    margin-top: 50px;
-    /* shadows and rounded borders */
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-}
+        .btn:hover {
+            background: #e6b800;
+        }
 
-.profile-img-card {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 10px;
-    display: block;
-    -moz-border-radius: 50%;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-}
+        .form-box .log-detail {
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            margin-top: 15px;
+        }
 
-/*
- * Form styles
- */
-.profile-name-card {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin: 10px 0 0;
-    min-height: 1em;
-}
+        .form-box .feedback-msg {
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            color: #ff4d4d;
+        }
 
-.reauth-email {
-    display: block;
-    color: #404040;
-    line-height: 2;
-    margin-bottom: 10px;
-    font-size: 14px;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
+        .form-box .feedback-msg span[style] {
+            color: #006600;
+        }
 
-.form-signin #inputEmail,
-.form-signin #inputPassword {
-    direction: ltr;
-    height: 44px;
-    font-size: 16px;
-}
+        /* Right Panel: Logo + Welcome */
+        .logincontainer .right-panel {
+            width: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
 
-.form-signin input[type=email],
-.form-signin input[type=password],
-.form-signin input[type=text],
-.form-signin button {
-    width: 100%;
-    display: block;
-    margin-bottom: 10px;
-    z-index: 1;
-    position: relative;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
+        .right-panel img {
+            width: 120px;
+            margin-bottom: 20px;
+        }
 
-.form-signin .form-control:focus {
-    border-color: rgb(104, 145, 162);
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
-}
+        .right-panel h2 {
+            font-size: 28px;
+            color: #004481;
+            margin-bottom: 10px;
+        }
 
-.btn.btn-signin {
-    /*background-color: #4d90fe; */
-    background-color: rgb(104, 145, 162);
-    /* background-color: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));*/
-    padding: 0px;
-    font-weight: 700;
-    font-size: 14px;
-    height: 36px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    border: none;
-    -o-transition: all 0.218s;
-    -moz-transition: all 0.218s;
-    -webkit-transition: all 0.218s;
-    transition: all 0.218s;
-}
+        .right-panel p {
+            font-size: 16px;
+            color: #333;
+        }
 
-.btn.btn-signin:hover,
-.btn.btn-signin:active,
-.btn.btn-signin:focus {
-    background-color: rgb(12, 97, 33);
-}
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
 
-.forgot-password {
-    color: rgb(104, 145, 162);
-}
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
 
-.forgot-password:hover,
-.forgot-password:active,
-.forgot-password:focus{
-    color: rgb(12, 97, 33);
-};
-</style>
+        @media (max-width: 900px) {
+            .logincontainer {
+                flex-direction: column;
+                width: 90%;
+                height: auto;
+            }
+
+            .logincontainer .form-box.login,
+            .logincontainer .right-panel {
+                width: 100%;
+                padding: 30px;
+            }
+
+            .form-box h2 {
+                font-size: 28px;
+            }
+
+            .right-panel h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-	<!-- <div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-8"></div>
-			<div class="col-sm-4">
-				<div class="card card-primary login">
-					<img class="card-img-top" th:src=@{/images/Bornfire.png} style="width:130px" alt="Bornfire">
-					
-					<div class="card-body">
+    <!-- Video Background -->
+    <video class="video-background" autoplay muted loop>
+        <source th:src="@{/images/bodyBG.mp4}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="overlay"></div>
 
-						<form th:action="@{/login}" method="post" name="Login_Form"	class="form-signin">
-							
-							<div class="form-group">
-							<label for="userid">User Id</label>
-							<input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control" name="userid"	placeholder="User Id" id="userid" required autofocus />
-							</div>
-							
-							<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" class="form-control" name="password"	placeholder="Password" id="password" required />
-							</div>
-							<div style="text-align: center; padding-bottom: 10px;">
-							<span style="color: #cd103c;" th:if="${param.error}" th:text="${param.error}" >test</span>
-							<span style="color: #34af32;" th:if="${param.logout}">You have been logged out.</span>
-							</div>
-							<input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign In" />
-							
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> -->
-	   <div class="container login">
-        <div class="card card-container">
-            <img id="profile-img" class="profile-img-card"  th:src=@{/images/Bornfire.png} />
+    <div class="logincontainer">
+        <!-- Left Side: Login Form -->
+        <div class="form-box login">
+            <h2>Log in</h2>
+            <form th:action="@{/login}" method="post">
+                <div class="input-box">
+                    <input type="text" name="userid" onkeyup="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                    <label>Username</label>
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="password" autocomplete="new-password" required>
+                    <label>Password</label>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" class="btn">Log in</button>
 
-           
+                <!-- Feedback Messages -->
+                <div class="feedback-msg">
+                    <span th:if="${param.error}" th:text="${param.error}">Invalid credentials</span>
+                    <span th:if="${param.logout}">You have been logged out.</span>
+                    <span th:if="${param.expired}">Your session has expired. Please log in again.</span>
+                </div>
 
-            <p id="profile-name" class="profile-name-card">BCDRS Login</p>
-            <form th:action="@{/login}" method="post" name="Login_Form"	 class="form-signin">
-                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control" name="userid"	placeholder="User Id" id="userid" required autofocus>
-                <input type="password" class="form-control"  name="password" placeholder="Password" id="password" required>
-                <div style="text-align: center; padding-bottom: 10px;">
-							<span style="color: #cd103c;" th:if="${param.error}" th:text="${param.error}">test</span>
-							<span style="color: #34af32;" th:if="${param.logout}">You have been logged out.</span>
-							</div>
-                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
-                 <p class="profile-name-card">License to BOB Dubai</p>
-            </form><!-- /form -->
-        </div><!-- /card-container -->
-    </div><!-- /container -->
+                <div class="log-detail">
+					<p> Contact administrator if any issues occur.</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side: Client Logo + Welcome -->
+        <div class="right-panel">
+            <img th:src="@{/images/client_Logo_bkp.png}" alt="Client Logo">
+            <h2>Welcome to BRAS</h2>
+            <p>Bornfire Risk Analysis System</p>
+        </div>
+    </div>
+
+    <!-- Slow Down Video -->
+    <script>
+        const video = document.querySelector('.video-background');
+        video.playbackRate = 0.5; // slower playback
+    </script>
 </body>
+
 </html>
