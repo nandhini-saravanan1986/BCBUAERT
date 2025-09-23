@@ -439,6 +439,11 @@ function modifyCounterparty(id) {
 		location.href = 'counterparty?formmode=edit' +'&id=' +id;
 }
 
+function viewCounterparty(id) {
+    console.log("view clicked for ID:", id);
+		location.href = 'counterparty?formmode=view' +'&id=' +id;
+}
+
 </script>
 
 
@@ -540,6 +545,22 @@ function modify() {
     });
 }
 
+
+</script>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+    	
+    	var formmode=/*[[${formmode}]]*/;
+    	if(formmode=='add'){
+    		 	let today = new Date().toISOString().split('T')[0];
+    	        document.getElementById("expiryDate").value = today;
+    	        document.getElementById("Adhoc_Limit_exp_date").value = today;   
+    	        document.getElementById("earmarkingdate").value = today;   
+    	        
+    	}
+       
+    });
 </script>
 </head>
 <title>BCDRS</title>
@@ -560,7 +581,7 @@ function modify() {
                          onclick="window.location.href='./download/excel?mode=exposure'">
                     Template Download
                 </button>
-                <button type="button" class="custom-tab-btn"
+                <button type="button" class="custom-tab-btn" th:if="${roleId}=='ADM-M'"
                          onclick="adduser();">
                     Add
                 </button>
@@ -590,6 +611,9 @@ function modify() {
 									Limit</th>
 								<th style=" text-align: center;white-space: nowrap;">Adhoc Limit
 									Expiry Date</th>
+									
+								<th style=" text-align: center;white-space: nowrap;">EAR Marking Limit</th>
+								<th style=" text-align: center;white-space: nowrap;">Ear Marking Date</th>
 								<th style=" text-align: center;white-space: nowrap;">Status</th>
 								<th style=" text-align: center;white-space: nowrap;">Expiry Date</th>
 								<th style=" text-align: center;white-space: nowrap;">Action</th>
@@ -613,6 +637,14 @@ function modify() {
 								<td
 									th:text="${#dates.format(lists.Adhoc_Limit_exp_date, 'dd-MM-yyyy')}"
 									style="text-align: center;"></td>
+									
+								<td th:text="${#numbers.formatDecimal(lists.earmarkinglimit, 1, 2)}" style="text-align: right;"></td>	
+									
+								<td
+									th:text="${#dates.format(lists.earmarkingdate, 'dd-MM-yyyy')}"
+									style="text-align: center;"></td>	
+									
+									
 								<td style="text-align: center;"><span
 									th:text="${lists.expiryDate >= currentDate} ? 'Active' : 'Expired'"
 									th:style="${lists.expiryDate >= currentDate} ? 'color:green;' : 'color:red;'">
@@ -620,12 +652,19 @@ function modify() {
 								<td th:text="${#dates.format(lists.expiryDate, 'dd-MM-yyyy')}"
 									style="text-align: center;"></td>
 								 <!-- Modify Button -->
+    
+    
     <td style="text-align: center;">
-        <button type="button" class="custom-tab-btn"
-                th:attr="onclick=|modifyCounterparty('${lists.id}')|">
-            Modify
-        </button>
-    </td>	
+  <i class="fa fa-edit" title="Modify" th:if="${roleId}=='ADM-M'"
+  	th:attr="onclick=|modifyCounterparty('${lists.id}')|"
+     style="cursor: pointer; color: blue; margin-right: 12px;">
+  </i>
+
+  <i class="fa fa-eye" title="View" th:attr="onclick=|viewCounterparty('${lists.id}')|"
+     style="cursor: pointer; color: blue;">
+  </i>
+</td>
+    
 							</tr>
 						</tbody>
 					</table>
@@ -820,6 +859,32 @@ function modify() {
 									
 									<div class="row formline">
 										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">EAR Marking Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="earmarkinglimit" id="earmarkinglimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required />
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="location">Ear Marking Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="date" name="earmarkingdate" id="earmarkingdate"
+												class="form-control form-control-sm" 
+												required />
+										</div>
+										
+										
+									
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
 										<div class="col-sm-2">
 											<label for="location">Trade Finance Limit<b style="color: red;">*</b></label>
 										</div>
@@ -861,7 +926,7 @@ function modify() {
 							style="font-family: verdana;  font-weight: bold; padding-top: 10px;">CounterParty Bank - Modify</h5>
 					</div>
 								<div class="btn-group nav-buttons float-right">
-									<button type="button" class="btn btn-xs  btns"
+									<button type="button" class="custom-tab-btn"
 										 id="btnInq"
 										onclick="list();">List</button>
 								</div>
@@ -1032,6 +1097,30 @@ function modify() {
 									
 									<div class="row formline">
 										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">Money Market Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="date" name="creditLimit" id="creditLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${#dates.format(list.earmarkingdate, 'yyyy-MM-dd')}"/>
+										</div>
+										<div class="col-sm-2">
+											<label for="location">EAR Marking Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required  th:value="${list.earmarkinglimit}"/>
+										</div>
+										
+									
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
 										<div class="col-sm-2">
 											<label for="location">Trade Finance Limit<b style="color: red;">*</b></label>
 										</div>
@@ -1062,6 +1151,247 @@ function modify() {
 				</div>
 		</div>
 	</div>
+	
+	
+	<div th:if="${formmode}=='view'">
+		<div class="row">
+			<div class="col-sm-12 ">
+					<form action="#" method="post" autocomplete="off" id="counterpartys">
+						<div class="card">
+							<div class="card-header">
+								<div class="float-left">
+						<h5 
+							style="font-family: verdana;  font-weight: bold; padding-top: 10px;">CounterParty Bank - View</h5>
+							
+					</div>
+					
+					<div class="btn-group nav-buttons float-right">
+									<button type="button" class="custom-tab-btn"
+										 id="btnInq"
+										onclick="list();">List</button>
+								</div>
+								
+							</div>
+							<div class="card-body">
+
+								<input autocomplete="false" name="hidden" type="text"
+									style="display: none;">
+								<div class="form-group">
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+	                                         <input type="number" id="id" th:value="${list.id}"
+												class="form-control form-control-sm" name="id"
+												autocomplete="off" readonly hidden/>
+										<div class="col-sm-2">
+											<label for="userId">Serial No.<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" id="srlNo" th:value="${list.srlNo}"
+												class="form-control form-control-sm" name="srlNo"
+												autocomplete="off" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label for="counterPartyBankCode">CounterParty Bank Code<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBankCode" th:value="${list.counterPartyBankCode}"
+												id="counterPartyBankCode" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelist(this)" required readonly />
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg_code" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions_code"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+
+									</div>
+									
+									
+										<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="counterPartyBank">CounterParty Bank<b
+												style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3 position-relative">
+											<input type="text" name="counterPartyBank" th:value="${list.counterPartyBank}"
+												id="counterPartyBank" class="form-control form-control-sm"
+												autocomplete="on" oninput="validatelis(this)" required readonly/>
+
+											<!-- Tooltip for already exists -->
+											<small id="bankExistsMsg" style="color: red; display: none;">Already
+												exists!</small>
+
+											<!-- Manual dropdown for matches -->
+											<div id="bankSuggestions"
+												style="position: absolute; background: white; border: 1px solid #ccc; z-index: 1000; width: 100%; display: none;"></div>
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="rating">Rating<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="rating" id="rating" th:value="${list.rating}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required readonly />
+										</div>
+										
+									</div>
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Location<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="text" name="location" id="location" th:value="${list.location}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required readonly />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+													<input type="date" name="expiryDate" id="expiryDate"
+														class="form-control form-control-sm"
+														th:value="${#dates.format(list.expiryDate, 'yyyy-MM-dd')}"
+														required readonly />
+
+												</div>
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Regular Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="regularLimit" id="regularLimit" th:value="${list.regularLimit}"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required readonly />
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="adhocLimit" id="adhocLimit" th:value="${list.adhocLimit}"
+												class="form-control form-control-sm" 
+												required readonly />
+										</div>
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Settlement Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="settlementLimit" id="settlementLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required th:value="${list.settlementLimit}" readonly/>
+										</div>
+										
+										<div class="col-sm-2">
+											<label for="location">Adhoc Limit Expiry Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="Date" name="Adhoc_Limit_exp_date" id="Adhoc_Limit_exp_date"
+												class="form-control form-control-sm" 
+												required th:value="${#dates.format(list.Adhoc_Limit_exp_date, 'yyyy-MM-dd')}" readonly
+												/>
+										</div>
+										
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">Credit Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="creditLimit" id="creditLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${list.creditLimit}" readonly/>
+										</div>
+										<div class="col-sm-2">
+											<label for="location">Money Market Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required  th:value="${list.moneyMarketLimit}" readonly/>
+										</div>
+										
+									
+										
+									</div>
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										
+										<div class="col-sm-2">
+											<label for="location">EAR Marking Date<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="date" name="creditLimit" id="creditLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${#dates.format(list.earmarkingdate, 'yyyy-MM-dd')}" readonly/>
+										</div>
+										<div class="col-sm-2">
+											<label for="location">EAR Marking Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
+												class="form-control form-control-sm" autocomplete="new-text"
+												required  th:value="${list.earmarkinglimit}"readonly/>
+										</div>
+										
+									
+										
+									</div>
+									
+									
+									<div class="row formline">
+										<div class="col-sm-auto"></div>
+										<div class="col-sm-2">
+											<label for="location">Trade Finance Limit<b style="color: red;">*</b></label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" name="tradeFinanceLimit" id="tradeFinanceLimit"
+												class="form-control form-control-sm" 
+												required  th:value="${list.tradeFinanceLimit}" readonly/>
+										</div>
+										</div>
+									
+								</div>
+								
+								<div class="card-footer text-center">
+									<button type="button" class="custom-tab-btn"
+										 id="btnHome"
+										onclick="home();">Home</button>
+									<button type="button" class="custom-tab-btn"
+										 id="btnBack"
+										onclick="back();">Back</button>
+
+								</div>
+							</div>
+						</div>
+					</form>
+
+				</div>
+		</div>
+	</div>
+	
 	
 	
 	

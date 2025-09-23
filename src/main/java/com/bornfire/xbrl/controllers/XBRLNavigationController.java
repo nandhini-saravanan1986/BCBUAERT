@@ -1359,6 +1359,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(required = false) String id, @RequestParam(required = false) String userid, Model md,
 			HttpServletRequest req) {
 		logger.info("Enter controller of counterparty");
+		
+		 String roleId = (String) req.getSession().getAttribute("ROLEID");
+		 md.addAttribute("roleId", roleId);
+		 
 
 		md.addAttribute("menu", "List Of Counterparty Bank"); // To highlight the menu
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
@@ -1375,7 +1379,19 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("counterlist", counterList);
 			List<String> getcode = Counterparty_Reps.getcodes();
 			md.addAttribute("getcode", getcode);
-		} else {
+		}
+		
+		else if (formmode.equals("view")) {
+			md.addAttribute("formmode", formmode);
+			logger.info("modify screen id is: " + id);
+			md.addAttribute("list", Counterparty_Reps.getBYID(Long.valueOf(id)));
+			List<String> counterList = Counterparty_Reps.getall();
+			md.addAttribute("counterlist", counterList);
+			List<String> getcode = Counterparty_Reps.getcodes();
+			md.addAttribute("getcode", getcode);
+		}
+		
+		else {
 			logger.info("Adding new Counterparty Bank form initialization started.");
 			md.addAttribute("menu", "Counterparty Bank - Add");
 			md.addAttribute("formmode", formmode);
@@ -2806,6 +2822,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		    	  md.addAttribute("slsdetaillist",slsdetaillist);
 		    	  md.addAttribute("reportdate",reportdate);
 		    	  md.addAttribute("formmode","Detail");
+		    	  md.addAttribute("currency", currency);
 		    	  md.addAttribute("currentPage", page);
 		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 
 	    	  }
@@ -2953,22 +2970,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    }
 
 	    
-	    // 3️⃣ Download the report when ready
-	    @GetMapping("/download-report/{jobId}")
-	    public ResponseEntity<byte[]> downloadReport(@PathVariable String jobId) {
-	        byte[] report = RT_SLSServices.getReport(jobId);
-	        if (report == null) {
-	            return ResponseEntity.noContent().build();
-	        }
-
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	        headers.setContentDispositionFormData("attachment", "report.txt");
-
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .body(report);
-	    }
+	   
 	  
 	 
 	
