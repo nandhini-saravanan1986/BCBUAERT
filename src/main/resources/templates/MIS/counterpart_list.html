@@ -471,7 +471,7 @@ font-family: verdana;
 	        searching: true,
 	        paging: true,
 	        ordering: false,
-	        scrollY: "350px",
+	        scrollY: "200px",
 	        scrollCollapse: true
 	    });
 
@@ -678,22 +678,22 @@ function get_branch() {
 
 							<!-- Static Branch Buttons -->
 							<div class="col-auto">
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9001' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Dubai" onclick="selectBranch('Dubai')">Dubai</button>
 
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9002' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Abu Dhabi" onclick="selectBranch('Abu Dhabi')">Abu Dhabi</button>
 
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9003' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Deira" onclick="selectBranch('Deira')">Deira</button>
 
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9004' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Sharja" onclick="selectBranch('Sharja')">Sharja</button>
 
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9005' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Ras Alkaima" onclick="selectBranch('Ras Alkaima')">Ras Alkaima</button>
 
-								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button"
+								<button type="button" class="custom-tab-btn btn-sm m-1 branch-button" th:if="${BRANCHCODE == '9006' or ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}"
 									data-branch="Syndication" onclick="selectBranch('Syndication')">Syndication</button>
 							</div>
 
@@ -789,7 +789,7 @@ function get_branch() {
     </div>
 
     <!-- For ADM: editable input with datalist -->
-    <div class="col-sm-3" th:if="${ROLEID == 'ADM'}">
+    <div class="col-sm-3" th:if="${ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}">
         <input type="text" id="iBranchCode" name="iBranchCode"
                class="form-control form-control-sm"
                list="branchCodeList" autocomplete="off"
@@ -800,7 +800,7 @@ function get_branch() {
     </div>
 
     <!-- For non-ADM: readonly input -->
-    <div class="col-sm-3" th:if="${ROLEID != 'ADM'}">
+    <div class="col-sm-3" th:if="${ROLEID != 'ADM-M' AND ROLEID != 'ADM-C' AND ROLEID != 'MGR'}">
         <input type="text" id="iBranchCode" name="iBranchCode"
                class="form-control form-control-sm"
                th:value="${BRANCHCODE}" readonly />

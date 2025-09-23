@@ -583,7 +583,7 @@ function get_branch() {
     </div>
 
     <!-- For ADM: editable input with datalist -->
-    <div class="col-sm-3" th:if="${ROLEID == 'ADM'}">
+    <div class="col-sm-3" th:if="${ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}">
         <input type="text" id="iBranchCode" name="iBranchCode"
                class="form-control form-control-sm"
                list="branchCodeList" autocomplete="off"
@@ -594,7 +594,7 @@ function get_branch() {
     </div>
 
     <!-- For non-ADM: readonly input -->
-    <div class="col-sm-3" th:if="${ROLEID != 'ADM'}">
+    <div class="col-sm-3" th:if="${ROLEID != 'ADM-M' AND ROLEID != 'ADM-C' AND ROLEID != 'MGR'}">
         <input type="text" id="iBranchCode" name="iBranchCode"
                class="form-control form-control-sm"
                th:value="${BRANCHCODE}" readonly />

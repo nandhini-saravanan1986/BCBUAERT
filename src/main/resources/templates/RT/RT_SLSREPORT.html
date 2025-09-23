@@ -437,7 +437,7 @@ function getreportBY(){
 function getreport(){
 	
 	var reportdate = document.getElementById("reportDate").innerText;
-	var currency= document.getElementById("currencyin").value;
+	var currency= '[[${currency}]]'
 	location.href = 'SLSREPORT?currency='+currency+'&reportdate='+reportdate+'&formmode=summary'
 	
 }
@@ -514,7 +514,7 @@ function startReport(button){
     fetch('startreport?' + params.toString())  // ✅ no invalid characters now
         .then(res => res.text())
         .then(jobId => {
-        	alertMsg.innerHTML ='Download request received…';
+        	alertMsg.innerHTML ='Download request received...';
        	 	showAlert();
             sessionStorage.setItem("jobId", jobId);
             sessionStorage.setItem("filename", filename);
@@ -586,8 +586,9 @@ function downloadDetailfile(jobId,filename) {
 
 function getdetailbyfilter(a){
 	var reportdate = document.getElementById("reportDate").innerText;
+	var currency= '[[${currency}]]'
 	var Rowid=a.getAttribute('data-rowid')
-	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&Rowid='+Rowid
+	location.href = 'SLSREPORT?reportdate='+reportdate+'&formmode=Detail&Rowid='+Rowid+'&currency='+currency
 }
 
 </script>
@@ -646,7 +647,7 @@ function getdetailbyfilter(a){
 			
 			      <div class="custom-tab-btn-group nav-buttons"
 			           style="display: flex; color: white; align-items: center;">
-			        <span class="white-text" style="font-size: 16px; margin-right: 20px;">
+			        <span class="white-text" style="font-size: 16px;color: white; margin-right: 20px;">
 			          Report Date:
 			          <span id="reportDate" th:text="${reportdate}">2025-07-04</span>
 			          <input type="hidden" id="currencyin" th:value="${currency}">

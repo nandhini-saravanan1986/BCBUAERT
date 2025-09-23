@@ -1442,6 +1442,10 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("currentDate", currentDate);
 			List<String> branchList = ASL_Report_Reps.getAllBranchNames();
 			md.addAttribute("branches", branchList);
+			md.addAttribute("BRANCHCODE", BRANCHCODE);
+			md.addAttribute("ROLEID", ROLEID);
+			
+			System.out.println("ROLEID--"+ROLEID);
 			md.addAttribute("currentBranch", BRANCHNAME);
 			List<String> branchesl;
 			if ("ADM".equalsIgnoreCase(ROLEID)) {
@@ -1464,7 +1468,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("formmode", "add");
 			md.addAttribute("userid", userid);
 
-			if ("ADM".equalsIgnoreCase(ROLEID)) {
+			if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
 				List<String> codes = UserProfileReps.getallcodes();
 				logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 				md.addAttribute("codes", codes);
@@ -1473,6 +1477,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("BRANCHCODE", BRANCHCODE);
 			md.addAttribute("BRANCHNAME", BRANCHNAME);
 			md.addAttribute("ROLEID", ROLEID);
+			
+			System.out.println("ROLEID--"+ROLEID);
 
 		}
 
@@ -1751,7 +1757,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				md.addAttribute("formmode", "add");
 				md.addAttribute("userid", userid);
 
-				if ("ADM".equalsIgnoreCase(ROLEID)) {
+				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
 					List<String> codes = UserProfileReps.getallcodes();
 					logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 					md.addAttribute("codes", codes);
@@ -1795,7 +1801,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				md.addAttribute("menu", "Upload File Of Swap Settlement");
 				md.addAttribute("formmode", "add");
 				md.addAttribute("userid", userid);
-				if ("ADM".equalsIgnoreCase(ROLEID)) {
+				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
 					List<String> codes = UserProfileReps.getallcodes();
 					logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 					md.addAttribute("codes", codes);
