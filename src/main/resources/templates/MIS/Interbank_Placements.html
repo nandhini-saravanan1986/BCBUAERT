@@ -618,6 +618,22 @@ function get_branch() {
         }
     });
 }
+
+function Branchcodeval() {
+	var code = document.getElementById('iBranchCode').value;
+ 	
+    switch (code) {
+        case '9001': $("#iBranchName").val("Dubai"); break;
+        case '9002': $("#iBranchName").val("Abu Dhabi"); break;
+        case '9003': $("#iBranchName").val("Deira"); break;
+        case '9004': $("#iBranchName").val("Sharja"); break;
+        case '9005': $("#iBranchName").val("Ras Alkaima"); break;
+        case '9008': $("#iBranchName").val("Syndication"); break;
+        case '9010': $("#iBranchName").val("Treasury"); break;
+        case '9019': $("#iBranchName").val("DFC"); break;
+        default: $("#iBranchName").val(""); // clear if not matched
+    }
+}
 </script>
 </head>
 <title>BCDRS</title>
@@ -663,9 +679,16 @@ function get_branch() {
         <input type="text" id="iBranchCode" name="iBranchCode"
                class="form-control form-control-sm"
                list="branchCodeList" autocomplete="off"
-               th:value="${BRANCHCODE}" required onchange="get_branch()" />
+               th:value="${BRANCHCODE}" required   oninput="Branchcodeval()"  />
         <datalist id="branchCodeList">
-            <option th:each="code : ${codes}" th:value="${code}"></option>
+			<option value="9001">9001</option>
+			<option value="9002">9002</option>
+			<option value="9003">9003</option>
+			<option value="9004">9004</option>
+			<option value="9005">9005</option>
+			<option value="9008">9008</option>
+			<option value="9009">9009</option>
+			<option value="9010">9010</option>
         </datalist>
     </div>
 

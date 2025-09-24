@@ -41,6 +41,8 @@ public class ASL_Excel_Services {
 	ASL_Report_Rep ASL_Report_Reps;
     @Autowired
     SessionFactory sessionFactory;
+    @Autowired
+    AuditService auditService;
 
 
     public String addASL(String iBranchCode, String iBranchName, LocalDate reportDate,
@@ -89,7 +91,7 @@ public class ASL_Excel_Services {
 
                 session.save(entity);
             }
-
+            auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF COUNTERPARTY", null,"MIS_ASL_DETAIL_REPORT");
             msg = "File Uploaded and Data Saved Successfully";
             logger.info("Upload successful for Exposure Data..");
 
@@ -145,6 +147,7 @@ public class ASL_Excel_Services {
 
 
                  msg = "File Uploaded and Data Saved Successfully";
+                 auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF TREASURY PLACEMENT", null,"MIS_TREASURY_PLACEMENT");
                  logger.info("Upload successful for placement..");
 
              } catch (Exception e) {
@@ -196,6 +199,7 @@ public class ASL_Excel_Services {
 
 
                  msg = "File Uploaded and Data Saved Successfully";
+                 auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF SWAP SETTLEMENT", null,"MIS_SETTLEMENT");
                  logger.info("Upload successful for Settlement..");
 
              } catch (Exception e) {

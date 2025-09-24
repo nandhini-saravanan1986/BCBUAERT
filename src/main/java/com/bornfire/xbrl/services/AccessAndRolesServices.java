@@ -75,7 +75,51 @@ public class AccessAndRolesServices {
 	        alertparam.setEntryUser(USERID);
 	        alertparam.setEntryTime(new Date());
 	        alertparam.setMenulist(finalString);
-	        auditservice.createBusinessAudit(USERID, "ADD", "ADD", null,"BRF_ACCESS_AND_ROLES_TABLE");
+	        
+	        AccessAndRoles newdata=new AccessAndRoles(); 
+	        Map<String, String> changes = new LinkedHashMap<>();
+
+	        for (Field field : AccessAndRoles.class.getDeclaredFields()) {
+	            field.setAccessible(true);
+	            try {
+	                Object oldValue = field.get(newdata);
+	                Object newValue = field.get(alertparam);    
+	                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+	                    (newValue == null || newValue.toString().trim().isEmpty())) {
+	                    continue; 
+	                }
+
+	                
+
+	                if (oldValue instanceof Date || newValue instanceof Date) {
+	                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+	                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+	                    if (Objects.equals(oldDateStr, newDateStr)) {
+	                        continue; 
+	                    }
+	                } else {
+	                    if (Objects.equals(oldValue, newValue)) {
+	                        continue; 
+	                    }
+	                }
+
+	                if (newValue == null) {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+	                } else {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+	                }
+
+	                if (newValue != null) {
+	                    field.set(newdata, newValue);
+	                }
+
+	            } catch (IllegalAccessException e) {
+	                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+	            }
+	        }               auditservice.createBusinessAudit(USERID,"ADD","ACCESS_AND_ROLE_SCREEN",changes,"BRF_ACCESS_AND_ROLES_TABLE");
+	        
 	        accessandrolesrepository.save(alertparam);
 	        msg = "Role Created Successfully";
 
@@ -179,11 +223,57 @@ public class AccessAndRolesServices {
 	        }
 
 	        AccessAndRoles accessRole = user.get();
-	        accessRole.setDelFlg("Y");
-	        accessRole.setEntityFlg("N");
+	        //accessRole.setDelFlg("Y");
+	        //accessRole.setEntityFlg("N");
+	        
+	        
+	        AccessAndRoles newdata=new AccessAndRoles(); 
+	        Map<String, String> changes = new LinkedHashMap<>();
 
-	        auditservice.createBusinessAudit(USERID, "Delete", "ACCESS_AND_ROLES_Delete", null,"BRF_ACCESS_AND_ROLES_TABLE");
-	        accessandrolesrepository.save(accessRole);
+	        for (Field field : AccessAndRoles.class.getDeclaredFields()) {
+	            field.setAccessible(true);
+	            try {
+	                Object oldValue = field.get(accessRole);
+	                Object newValue = field.get(newdata);    
+	                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+	                    (newValue == null || newValue.toString().trim().isEmpty())) {
+	                    continue; 
+	                }
+
+	                
+
+	                if (oldValue instanceof Date || newValue instanceof Date) {
+	                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+	                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+	                    if (Objects.equals(oldDateStr, newDateStr)) {
+	                        continue; 
+	                    }
+	                } else {
+	                    if (Objects.equals(oldValue, newValue)) {
+	                        continue; 
+	                    }
+	                }
+
+	                if (newValue == null) {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+	                } else {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+	                }
+
+	                if (newValue != null) {
+	                    field.set(newdata, newValue);
+	                }
+
+	            } catch (IllegalAccessException e) {
+	                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+	            }
+	        }               auditservice.createBusinessAudit(USERID,"Delete","ACCESS_AND_ROLES_Delete",changes,"BRF_ACCESS_AND_ROLES_TABLE");
+	        
+	        
+	        //accessandrolesrepository.save(accessRole);
+	        accessandrolesrepository.deleteById(alertparam.getRoleId());
 	        msg = "Role Deleted Successfully";
 
 	    } else if ("verify".equalsIgnoreCase(formmode)) {
@@ -198,6 +288,7 @@ public class AccessAndRolesServices {
 	        }
 
 	        AccessAndRoles accessRole = user.get();
+	        
 	        accessRole.setDelFlg("N");
 	        accessRole.setModifyFlg("N");
 	        accessRole.setEntityFlg("Y");

@@ -74,27 +74,13 @@ ASL_Report_Rep ASL_Report_Reps;
 	        Session hs = sessionFactory.getCurrentSession();
 
 	        if ("edit".equalsIgnoreCase(formmode)) {
+	        	Counterparty_Entity dbUser = Counterparty_Reps.getBYID(as.getId());
+	        	 System.out.println("old"+dbUser.getRating());
 	            Counterparty_Entity old = Counterparty_Reps.getBYID(as.getId());
 
 	            if (old != null) {
-	                old.setCounterPartyBankCode(as.getCounterPartyBankCode());
-	                old.setCounterPartyBank(as.getCounterPartyBank());
-	                old.setLocation(as.getLocation());
-	                old.setExpiryDate(as.getExpiryDate());
-	                old.setRating(as.getRating());
-	                old.setRegularLimit(as.getRegularLimit());
-	                old.setAdhocLimit(as.getAdhocLimit());
-	                old.setCreditLimit(as.getCreditLimit());
-	                old.setSettlementLimit(as.getSettlementLimit());
-	                old.setMoneyMarketLimit(as.getMoneyMarketLimit());
-	                old.setTradeFinanceLimit(as.getTradeFinanceLimit());
-	                old.setAdhoc_Limit_exp_date(as.getAdhoc_Limit_exp_date());
-	                old.setModifyUser(userid);
-	                old.setEarmarkinglimit(as.getEarmarkinglimit());
-	                old.setEarmarkingdate(as.getEarmarkingdate());
-	               
-	                Counterparty_Entity dbUser = Counterparty_Reps.getBYID(as.getId());
-	    	        List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+	            	
+	            	List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
 	    	         
 	    	        Map<String, String> changes = new LinkedHashMap<>();
 
@@ -141,6 +127,30 @@ ASL_Report_Rep ASL_Report_Reps;
 	    	            }
 	    	        }               auditservice.createBusinessAudit(userid,"MODIFY","CounterParty Bank-Modify",changes,"MIS_COUNTER_PARTY_TABLE");
 
+	            	
+	            	
+	            	
+	            	
+	                old.setCounterPartyBankCode(as.getCounterPartyBankCode());
+	                old.setCounterPartyBank(as.getCounterPartyBank());
+	                old.setLocation(as.getLocation());
+	                old.setExpiryDate(as.getExpiryDate());
+	                old.setRating(as.getRating());
+	                old.setRegularLimit(as.getRegularLimit());
+	                old.setAdhocLimit(as.getAdhocLimit());
+	                old.setCreditLimit(as.getCreditLimit());
+	                old.setSettlementLimit(as.getSettlementLimit());
+	                old.setMoneyMarketLimit(as.getMoneyMarketLimit());
+	                old.setTradeFinanceLimit(as.getTradeFinanceLimit());
+	                old.setAdhoc_Limit_exp_date(as.getAdhoc_Limit_exp_date());
+	                old.setModifyUser(userid);
+	                old.setEarmarkinglimit(as.getEarmarkinglimit());
+	                old.setEarmarkingdate(as.getEarmarkingdate());
+	               
+	                System.out.println("as.getEarmarkinglimit="+as.getEarmarkinglimit());
+	               
+	               
+	    	        
 	                
 	                
 	                hs.update(old);
@@ -155,7 +165,54 @@ ASL_Report_Rep ASL_Report_Reps;
 	            as.setCreateUser(userid);
 	            as.setDelFlg("N");
 	            as.setCounterpartyCreatedDate(new Date());
-	            auditservice.createBusinessAudit(userid, "ADD", "Counterparty Bank-Add", null,"MIS_COUNTER_PARTY_TABLE");
+	            
+	            Counterparty_Entity newdata=new Counterparty_Entity(); 
+		        Map<String, String> changes = new LinkedHashMap<>();
+
+		        for (Field field : Counterparty_Entity.class.getDeclaredFields()) {
+		            field.setAccessible(true);
+		            try {
+		                Object oldValue = field.get(newdata);
+		                Object newValue = field.get(as);    
+		                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+		                    (newValue == null || newValue.toString().trim().isEmpty())) {
+		                    continue; 
+		                }
+
+		                
+
+		                if (oldValue instanceof Date || newValue instanceof Date) {
+		                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+		                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+		                    if (Objects.equals(oldDateStr, newDateStr)) {
+		                        continue; 
+		                    }
+		                } else {
+		                    if (Objects.equals(oldValue, newValue)) {
+		                        continue; 
+		                    }
+		                }
+
+		                if (newValue == null) {
+		                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+		                } else {
+		                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+		                }
+
+		                if (newValue != null) {
+		                    field.set(newdata, newValue);
+		                }
+
+		            } catch (IllegalAccessException e) {
+		                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+		            }
+		        }               auditservice.createBusinessAudit(userid,"ADD","Counterparty Bank-Add",changes,"MIS_COUNTER_PARTY_TABLE");
+		        
+	            
+	            
+	            
 	            hs.save(as);
 	            msg = "CounterParty Bank Added Successfully";
 	        }
