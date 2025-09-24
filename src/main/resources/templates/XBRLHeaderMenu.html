@@ -981,15 +981,15 @@
 						<li class="nav-item dropdown" style="text-align: center;"><a href="#"
 								class="dropdown-toggle" th:if="${menuList.contains('ASL')}">ASL</a>
 							<ul class="dropdown-menu">
-								<li><a class="nav-link" th:href="@{/counterparty}">Auth
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/counterparty}">Auth
 										Counterparties</a></li>
 								<li><a class="nav-link" th:href="@{/counterparty_list?formmode=list}">Exposure
 										Data</a></li>
-								<li><a class="nav-link" th:href="@{/Interbank_placement}">Interbank
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/Interbank_placement}">Interbank
 										Placements</a></li>
-								<li><a class="nav-link" th:href="@{/swap_settlement}">Swap
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/swap_settlement}">Swap
 										Settlement</a></li>
-								<li><a class="nav-link" th:href="@{/asl_dashboard}">Final
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/asl_dashboard}">Final
 										Risk View</a></li>
 							</ul>
 						</li>
@@ -1000,10 +1000,10 @@
 							<ul class="dropdown-menu">
 								<li><a class="nav-link" th:href="@{/counterparty_list}"
 										data-name="Upload Exposure">Exposure Data</a></li>
-								<li><a class="nav-link" th:href="@{/Interbank_placement?formmode=add}"
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/Interbank_placement?formmode=add}"
 										data-formmode="add" id="treasury-placement-link"
 										data-name="Upload Exposure">Treasury Placement</a></li>
-								<li><a class="nav-link" th:href="@{/swap_settlement?formmode=add}" data-formmode="add"
+								<li th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C' or session.ROLEID == 'MGR'}"><a class="nav-link" th:href="@{/swap_settlement?formmode=add}" data-formmode="add"
 										id="settlement-link" data-name="Upload Exposure">Settlement</a></li>
 							</ul>
 						</li>

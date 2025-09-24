@@ -432,6 +432,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	    }
 
 	    role.setEntityFlg("Y");
+	    role.setEntityFlg("N");
 	    role.setAuthUser(userId);
 	    role.setAuthTime(new Date());
 

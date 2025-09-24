@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.services;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -7,11 +8,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -29,6 +33,7 @@ import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.entities.ASL_Report_Entity;
 import com.bornfire.xbrl.entities.ASL_Report_Rep;
+import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.BRF39_ENTITYREP;
 import com.bornfire.xbrl.entities.Counterparty_Entity;
 import com.bornfire.xbrl.entities.Counterparty_Rep;
@@ -46,6 +51,8 @@ public class counter_services {
 @PersistenceContext
 private EntityManager entityManager;
 
+@Autowired
+AuditService auditservice;
 @Autowired
 UserProfileRep UserProfileReps;
 @Autowired
@@ -83,7 +90,59 @@ ASL_Report_Rep ASL_Report_Reps;
 	                old.setTradeFinanceLimit(as.getTradeFinanceLimit());
 	                old.setAdhoc_Limit_exp_date(as.getAdhoc_Limit_exp_date());
 	                old.setModifyUser(userid);
+	                old.setEarmarkinglimit(as.getEarmarkinglimit());
+	                old.setEarmarkingdate(as.getEarmarkingdate());
+	               
+	                Counterparty_Entity dbUser = Counterparty_Reps.getBYID(as.getId());
+	    	        List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+	    	         
+	    	        Map<String, String> changes = new LinkedHashMap<>();
 
+	    	        for (Field field : Counterparty_Entity.class.getDeclaredFields()) {
+	    	            field.setAccessible(true);
+	    	            try {
+	    	                Object oldValue = field.get(dbUser);
+	    	                Object newValue = field.get(as);    
+	    	                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+	    	                    (newValue == null || newValue.toString().trim().isEmpty())) {
+	    	                    continue; 
+	    	                }
+
+	    	                if (ignoreFields.contains(field.getName()) && newValue == null) {
+	    	                    continue; 
+	    	                }
+
+	    	                if (oldValue instanceof Date || newValue instanceof Date) {
+	    	                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    	                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+	    	                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+	    	                    if (Objects.equals(oldDateStr, newDateStr)) {
+	    	                        continue; 
+	    	                    }
+	    	                } else {
+	    	                    if (Objects.equals(oldValue, newValue)) {
+	    	                        continue; 
+	    	                    }
+	    	                }
+
+	    	                if (newValue == null) {
+	    	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+	    	                } else {
+	    	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+	    	                }
+
+	    	                if (newValue != null) {
+	    	                    field.set(dbUser, newValue);
+	    	                }
+
+	    	            } catch (IllegalAccessException e) {
+	    	                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+	    	            }
+	    	        }               auditservice.createBusinessAudit(userid,"MODIFY","CounterParty Bank-Modify",changes,"MIS_COUNTER_PARTY_TABLE");
+
+	                
+	                
 	                hs.update(old);
 	                msg = "CounterParty Bank Updated Successfully";
 	            } else {
@@ -96,6 +155,7 @@ ASL_Report_Rep ASL_Report_Reps;
 	            as.setCreateUser(userid);
 	            as.setDelFlg("N");
 	            as.setCounterpartyCreatedDate(new Date());
+	            auditservice.createBusinessAudit(userid, "ADD", "Counterparty Bank-Add", null,"MIS_COUNTER_PARTY_TABLE");
 	            hs.save(as);
 	            msg = "CounterParty Bank Added Successfully";
 	        }

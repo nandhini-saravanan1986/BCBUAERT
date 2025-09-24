@@ -1,10 +1,14 @@
 package com.bornfire.xbrl.services;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
-
-
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -18,6 +22,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.AccessAndRoles;
 import com.bornfire.xbrl.entities.AccessandRolesRepository;
 
@@ -39,6 +44,9 @@ public class AccessAndRolesServices {
 	@Autowired
 	DataSource srcdataSource;
 	
+	@Autowired
+	AuditService auditservice;
+	
 	@SuppressWarnings("unchecked")
 	public List<AccessAndRoles> gettingaccessDetails(String roleid) {
 
@@ -54,7 +62,6 @@ public class AccessAndRolesServices {
 	        String auditUsValue, String finalString, String USERID) {
 
 	    String msg = "";
-
 	    if ("add".equalsIgnoreCase(formmode)) {
 
 	        alertparam.setDelFlg("N");
@@ -68,12 +75,14 @@ public class AccessAndRolesServices {
 	        alertparam.setEntryUser(USERID);
 	        alertparam.setEntryTime(new Date());
 	        alertparam.setMenulist(finalString);
-
+	        auditservice.createBusinessAudit(USERID, "ADD", "ADD", null,"BRF_ACCESS_AND_ROLES_TABLE");
 	        accessandrolesrepository.save(alertparam);
 	        msg = "Role Created Successfully";
 
 	    } else if ("edit".equalsIgnoreCase(formmode)) {
-
+	    	System.out.println(alertparam.getRoleId());
+	    	System.out.println(alertparam.getRoleDesc());
+	    	
 	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
 	            return "Role ID is missing. Cannot edit.";
 	        }
@@ -99,11 +108,66 @@ public class AccessAndRolesServices {
 	        alertparam.setEntryTime(existing.getEntryTime());
 	        alertparam.setModifyUser(USERID);
 	        alertparam.setModifyTime(new Date());
+	        
+
+	        AccessAndRoles dbUser = user.get();
+	        List<String> ignoreFields = Arrays.asList(
+            	    
+            	    "entryUser", "modifyUser", "authUser", "entryTime",
+            	    "modifyTime", "authTime", "remarks","newRoleFlg","rtReports",
+            	    "asl","asl_upload","audit_us","entityFlg","authFlg","modifyFlg","delFlg"
+            	);
+	         
+	        Map<String, String> changes = new LinkedHashMap<>();
+
+	        for (Field field : AccessAndRoles.class.getDeclaredFields()) {
+	            field.setAccessible(true);
+	            try {
+	                Object oldValue = field.get(dbUser);
+	                Object newValue = field.get(alertparam);    
+	                if ((oldValue == null || oldValue.toString().trim().isEmpty()) &&
+	                    (newValue == null || newValue.toString().trim().isEmpty())) {
+	                    continue; 
+	                }
+
+	                if (ignoreFields.contains(field.getName()) && newValue == null) {
+	                    continue; 
+	                }
+
+	                if (oldValue instanceof Date || newValue instanceof Date) {
+	                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                    String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+	                    String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+	                    if (Objects.equals(oldDateStr, newDateStr)) {
+	                        continue; 
+	                    }
+	                } else {
+	                    if (Objects.equals(oldValue, newValue)) {
+	                        continue; 
+	                    }
+	                }
+
+	                if (newValue == null) {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+	                } else {
+	                    changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+	                }
+
+	                if (newValue != null) {
+	                    field.set(dbUser, newValue);
+	                }
+
+	            } catch (IllegalAccessException e) {
+	                System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+	            }
+	        }               auditservice.createBusinessAudit(USERID,"MODIFY","ACCESS_AND_ROLE_SCREEN",changes,"BRF_ACCESS_AND_ROLES_TABLE");
 
 	        accessandrolesrepository.save(alertparam);
 	        msg = "Role Edited Successfully";
 
 	    } else if ("delete".equalsIgnoreCase(formmode)) {
+	    	
 
 	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
 	            return "Role ID is missing. Cannot delete.";
@@ -118,11 +182,12 @@ public class AccessAndRolesServices {
 	        accessRole.setDelFlg("Y");
 	        accessRole.setEntityFlg("N");
 
+	        auditservice.createBusinessAudit(USERID, "Delete", "ACCESS_AND_ROLES_Delete", null,"BRF_ACCESS_AND_ROLES_TABLE");
 	        accessandrolesrepository.save(accessRole);
 	        msg = "Role Deleted Successfully";
 
 	    } else if ("verify".equalsIgnoreCase(formmode)) {
-
+	    		System.out.println("verfy");
 	        if (alertparam.getRoleId() == null || alertparam.getRoleId().trim().isEmpty()) {
 	            return "Role ID is missing. Cannot verify.";
 	        }
@@ -138,7 +203,8 @@ public class AccessAndRolesServices {
 	        accessRole.setEntityFlg("Y");
 	        accessRole.setAuthUser(USERID);
 	        accessRole.setAuthTime(new Date());
-
+	        
+	        auditservice.createBusinessAudit(USERID, "Verify", "ACCESS_AND_ROLES_VERIFY", null,"BRF_ACCESS_AND_ROLES_TABLE");
 	        accessandrolesrepository.save(accessRole);
 	        msg = "Role Verified Successfully";
 	    }
