@@ -282,30 +282,33 @@ $(document).ready(function () {
     <script>
 
     function submitForm() {
-		$("#loader").modal("toggle");
+    	 if ($("#nostroForm").valid()) {
+    		 $("#loader").modal("toggle");
 
-        const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
-        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
-        const formData = $("#nostroForm").serialize();
-	
-        $.ajax({
-            url: submitUrl,
-            type: "POST",
-            data: formData,
-            success: function (response) {
-        		$("#loader").modal("hide");
+    	        const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
+    	        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+    	        const formData = $("#nostroForm").serialize();
+    		
+    	        $.ajax({
+    	            url: submitUrl,
+    	            type: "POST",
+    	            data: formData,
+    	            success: function (response) {
+    	        		$("#loader").modal("hide");
 
-            	$("#alertmsg1").text(response);
-                $("#alert1").modal("toggle");
-                //location.href = 'Nostro_Account_Bal';
-            },
-            error: function (xhr, status, error) {
-        	    $("#loader").modal("hide");
+    	            	$("#alertmsg1").text(response);
+    	                $("#alert1").modal("toggle");
+    	                //location.href = 'Nostro_Account_Bal';
+    	            },
+    	            error: function (xhr, status, error) {
+    	        	    $("#loader").modal("hide");
 
-                console.error("Error:", error);
-                alert("Error occurred: " + error);
-            }
-        });
+    	                console.error("Error:", error);
+    	                alert("Error occurred: " + error);
+    	            }
+    	        });
+    	 }
+		
     }
 
 
@@ -398,13 +401,18 @@ $(document).ready(function () {
   }
 
   function handleClick(tabId) {
+	  alert(tabId)
     // Remove active class from all buttons
     document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId + '-btn').classList.add('active');
-
+    alert(tabId)
+   
     // Hide all panes
     document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
     document.getElementById(tabId).classList.add('show', 'active');
+    
+    
+    
   }
 
   // On page load, detect formmode and show corresponding tab
@@ -488,7 +496,7 @@ $(document).ready(function () {
 		<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }" style="background-color: rgb(107, 122, 143) ; ">
 					<div class="float-left">
 						<h5 
-							style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
+							style="font-family:sans-serif ; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">NOSTRO ACCOUNT BALANCE</h5>
 					</div>
 
 					
@@ -507,7 +515,7 @@ $(document).ready(function () {
   <button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
     	<div class="float-right" style="margin-left:61%">
     		<button th:if="${formmode} =='list'" type="button"
-  class="custom-tab-btn"
+  class="custom-tab-btn" id="downloadbut"
  
   onclick="downloadNostro();">
   <i class="fa fa-download"></i> Download
@@ -527,7 +535,7 @@ $(document).ready(function () {
 			<form id="nostroForm"        
           method="post"
           autocomplete="off" > 
-				<div class="card-body" style="max-height:450px; overflow-y:auto">
+				<div class="card-body" style="max-height:400px; overflow-y:auto">
 
 
 							<input autocomplete="false" name="hidden" type="text"
@@ -708,7 +716,7 @@ $(document).ready(function () {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+ <button th:if="${formmode == 'null' or formmode == 'add'}" id="savebutton"  type="button" class="custom-tab-btn"
                   onclick="submitForm()">Save</button>
        
 
@@ -735,8 +743,8 @@ $(document).ready(function () {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
+<!--  <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button> -->
        
 
 <button type="button" class="custom-tab-btn"
@@ -789,20 +797,20 @@ $(document).ready(function () {
           <th>Conventional/Islamic</th>
           <th>Local/Foreign</th>
           <th>CBUAE Tiering</th>
-          <th>Counterparty Nostro Account</th>
+          <th >Counterparty Nostro Account</th>
           <th>Final Rating (Banks)</th>
           <th>Final Rating (CBUAE)</th>
           <th>Country of Risk</th>
           <th>CBUAE Geographical Zone</th>
           <th>Currency</th>
           <th style="min-width:130px">Counterparty Settlement Date</th>
-          <th>Counterparty Balance</th>
-          <th>Counterparty Balance (AED)</th>
+          <th style="text-align: right;">Counterparty Balance</th>
+          <th style="text-align: right;">Counterparty Balance (AED)</th>
           <th style="min-width:130px">Bank Internal Settlement Date</th>
-          <th>Bank Balance</th>
-          <th>Bank Balance (AED)</th>
+          <th style="text-align: right;">Bank Balance</th>
+          <th style="text-align: right;">Bank Balance (AED)</th>
           <th>Account No</th>
-          <th>Gap</th>
+          <th style="text-align: right;">Gap</th>
          
          
         </tr>
@@ -832,13 +840,13 @@ $(document).ready(function () {
           <td th:text="${data.cbuaeGeographicalZone}"></td>
           <td th:text="${data.currency}"></td>
           <td th:text="${#dates.format(data.counterpartySettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${#numbers.formatDecimal(data.counterpartyBalance, 1, 'COMMA', 2, 'POINT')}"></td>
-		  <td th:text="${#numbers.formatDecimal(data.counterpartyBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
+          <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.counterpartyBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.counterpartyBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
 		  <td th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
-		  <td th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
+          <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.accountNo}"></td>
-          <td th:text="${#numbers.formatDecimal(data.gap, 1, 'COMMA', 2, 'POINT')}"></td>
+          <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.gap, 1, 'COMMA', 2, 'POINT')}"></td>
           
           
         </tr>
@@ -886,7 +894,7 @@ $(document).ready(function () {
 							</div>
 							
 						</div>
-<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+<div class="card-body" style="max-height: 450px; overflow-y: auto;">
 
  
   
@@ -968,7 +976,7 @@ $(document).ready(function () {
  <div class="form-group row">
  <label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
+        <input type="text" class="form-control vchar-20"  th:field="*{finalRatingCbuae}" />
       </div>
   <label class="col-sm-2 col-form-label">Country Of Risk</label>
   <div class="col-sm-4">
