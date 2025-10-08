@@ -772,8 +772,8 @@ Tested by   : Rajalakshmi
 						</button>
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
-							onclick="submitForm()">Save</button>
+					<!--	<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+							onclick="submitForm()">Save</button>-->
 
 
 						<button type="button" class="custom-tab-btn" onclick="back();">
@@ -800,19 +800,19 @@ Tested by   : Rajalakshmi
 									<th style="width: 40px;">Edit</th>
 									<th>Report Date</th>
 									<th>Bank Name</th>
-									<th>Group/HO/Subsidiary</th>
+									<th>Group_Head_Office_Subsidiary</th>
 									<th>Subsidiary</th>
 									<th>Bank Symbol</th>
 									<th>Conventional/Islamic</th>
 									<th>Local/Foreign</th>
 									<th>CBUAE Tiering</th>
-									<th>Trading Book Desks</th>
-									<th>CBUAE Desk Reference</th>
+									<th>Trading Book/Desks</th>
+									<th>CBUAE Internal Desk Reference</th>
 									<th>Annual Budget (AED)</th>
-									<th>Book Size (Market Value AED)</th>
-									<th>Relative Size (%)</th>
+									<th>Trading desk/book Size (Market value AED)</th>
+									<th>Relative size (% Total Assets or % Total Trading Book)</th>
 									<th>YTD P&L (AED)</th>
-									<th>Max Loss (AED)</th>
+									<th>Maximum Loss over the period (AED)</th>
 									<th>Confidence Interval</th>
 									<th>Holding Period</th>
 									<th>VaR Exposure (AED)</th>
@@ -822,67 +822,67 @@ Tested by   : Rajalakshmi
 									<th>Expected Shortfall Limit (AED)</th>
 									<th>Status</th>
 									<th>Modified Duration</th>
-									<th>IR Shock (bps)</th>
+									<th>Interest rate shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>DV01</th>
 									<th>Limit</th>
 									<th>Status</th>
-									<th>DV01 Tenor <3Yr< /th>
+									<th>DV01 Tenor <3Yr </th>
 									<th>DV01 Tenor >3Yr</th>
 									<th>Credit Spread CS01</th>
-									<th>Credit Spread Shock (bps)</th>
+									<th>Credit Spread shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
-									<th>CS01 Investment Grade</th>
-									<th>CS01 Sub-Investment</th>
-									<th>CS01 Unrated</th>
+									<th>Credit Spread CS01 (Investment Grade)</th>
+									<th>Credit Spread CS01 (Sub Investment)</th>
+									<th>Credit Spread CS01 (Unrated)</th>
 									<th>Beta Equity</th>
-									<th>Equity Shock (bps)</th>
+									<th>Equity shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>BR01</th>
-									<th>IR Diff. Shock (bps)</th>
+									<th>Interest rate differential shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Delta</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Gamma</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Vega</th>
 									<th>Implied Volatility Type</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Theta</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Rho</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Vanna</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Dollar Volga</th>
-									<th>Shock (bps)</th>
+									<th>shock applied (bps)</th>
 									<th>Limit</th>
 									<th>Status</th>
 									<th>Credit Spread (AED)</th>
 									<th>Credit Sensitive Impact (%)</th>
-									<th>Interest Rate in Trading Book (AED)</th>
+									<th>Interest Rate in the Trading Book (AED)</th>
 									<th>Rate Sensitive Impact (%)</th>
 									<th>Foreign Exchange (AED)</th>
 									<th>FX Sensitive Impact (%)</th>
 									<th>Equity (AED)</th>
-									<th>Equity Sensitive Impact (%)</th>
+									<th>Equity Sensitive Relative Impact (%)</th>
 									<th>Commodities (AED)</th>
-									<th>Commodity Sensitive Impact (%)</th>
+									<th>Commodity Sensitive Relative Impact (%)</th>
 									<th>Credit Derivatives (AED)</th>
 									<th>Relative Impact (%)</th>
 									<th>Jump-to-Default Loss (AED)</th>
@@ -913,174 +913,175 @@ Tested by   : Rajalakshmi
 									<td th:text="${data.cbuaeTiering}"></td>
 									<td th:text="${data.tradingBookDesks}"></td>
 									<td th:text="${data.cbuaeInternalDeskReference}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.annualBudgetAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.tradingDeskBookSizeMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.relativeSizePercentTotalAssetsOrPercentTotalTradingBook, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.ytdPandLAed, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.ytdPandLAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.maximumLossOverThePeriodAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.confidenceInterval}"></td>
-									<td th:text="${data.holdingPeriod}"></td>
-									<td
+<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.holdingPeriod, 1, 'COMMA', 2, 'POINT')}">
+									</td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.varExposureAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}">
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.status}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.expectedShortfallAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.expectedShortfallLimitAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.status2}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.modifiedDuration, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.interestRateShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit1, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit1, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status3}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dv01, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.limit2, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dv01, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit2, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status4}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.dv01TenorGapsLt3Yr, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.dv01TenorGapsGt3Yr, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadCs01, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit3, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit3, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status5}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadCs01InvestmentGrade, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadCs01SubInvestment, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadCs01Unrated, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.betaEquity, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.betaEquity, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.equityShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit4, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit4, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status6}"></td>
-									<td th:text="${#numbers.formatDecimal(data.br01, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.br01, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.interestRateDifferentialShockAppliedBps, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit5, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.limit5, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status7}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarDelta, 1, 'COMMA', 2, 'POINT')}">
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.dollarDelta, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps1, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit6, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${data.status8}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarGamma, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit6, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${data.status8}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dollarGamma, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps2, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit7, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit7, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status9}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarVega, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dollarVega, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${data.impliedVolatilityType}"></td>
-									<td
+									<td  th:text="${data.impliedVolatilityType}"></td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps3, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit8, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.limit8, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status10}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarTheta, 1, 'COMMA', 2, 'POINT')}">
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.dollarTheta, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit9, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.limit9, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status11}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarRho, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dollarRho, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;" 
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps4, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit10, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit10, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status12}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarVanna, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;"  th:text="${#numbers.formatDecimal(data.dollarVanna, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps5, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit11, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.limit11, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status13}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dollarVolga, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dollarVolga, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.shockAppliedBps6, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.limit12, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.limit12, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.status14}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSpreadAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.interestRateInTheTradingBookAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.rateSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.foreignExchangeAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.fxSensitiveImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.equityAed, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.equityAed, 1, 'COMMA', 2, 'POINT')}">
+									</td> 
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.equitySensitiveRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td
 										th:text="${#numbers.formatDecimal(data.commoditiesAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.commoditySensitiveRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.creditDerivativesAed, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td
+									</td> 
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.relativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.jumpToDefaultLossAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.jtdRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.overallImpactAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.overallRelativeImpactPercent, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 								</tr>
@@ -1150,7 +1151,7 @@ Tested by   : Rajalakshmi
 												</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Group/HO/Subsidiary</label>
+								<label class="col-sm-2 col-form-label">Group_Head_Office_Subsidiary</label>
 																<div class="col-sm-4">
 																	<select class="form-control" th:field="*{groupHeadOfficeSubsidiary}">
 																		<option value="" disabled selected>-- Select --</option>
@@ -1185,15 +1186,15 @@ Tested by   : Rajalakshmi
 							</div>
 
 							<!-- SECTION: Book Size & P&L -->
-							<h4 class="section-header">Trading Book/Desks</h4>
+							<h4 class="section-header">Trading Book Desks</h4>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Trading Book Desks</label>
+								<label class="col-sm-2 col-form-label">Trading Book/Desks</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  vchar-50" th:field="*{tradingBookDesks}" />
 								</div>
-								<label class="col-sm-2 col-form-label">CBUAE Desk Reference</label>
+								<label class="col-sm-2 col-form-label">CBUAE Internal Desk Reference</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control  vchar-50" th:field="*{cbuaeInternalDeskReference}" />
+									<input type="text" class="form-control  vchar-50" th:field="*{cbuaeInternalDeskReference}" readonly/>
 								</div>
 							</div>
 							<div class="form-group row">
@@ -1201,14 +1202,14 @@ Tested by   : Rajalakshmi
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-24-2" th:field="*{annualBudgetAed}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Book Size (Market Value AED)</label>
+								<label class="col-sm-2 col-form-label">Trading desk/book Size  (Market value AED)</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-24-2"
 										th:field="*{tradingDeskBookSizeMarketValueAed}" />
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Relative Size (%)</label>
+								<label class="col-sm-2 col-form-label">Relative size (% Total Assets or % Total Trading Book)</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-24-2"
 										th:field="*{relativeSizePercentTotalAssetsOrPercentTotalTradingBook}" />
@@ -1219,7 +1220,7 @@ Tested by   : Rajalakshmi
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Max Loss (AED)</label>
+								<label class="col-sm-2 col-form-label">Maximum Loss over the period (AED)</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{maximumLossOverThePeriodAed}" />
 								</div>
@@ -1248,7 +1249,7 @@ Tested by   : Rajalakshmi
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Status (VaR)</label>
+								<label class="col-sm-2 col-form-label">Status</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{status}" />
 								</div>
@@ -1262,7 +1263,7 @@ Tested by   : Rajalakshmi
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{expectedShortfallLimitAed}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Status (ES)</label>
+								<label class="col-sm-2 col-form-label">Status</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control" th:field="*{status2}" />
 								</div>
@@ -1277,17 +1278,17 @@ Tested by   : Rajalakshmi
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-10-0" th:field="*{modifiedDuration}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Interest Rate Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">Interest rate shock applied (bps)</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-10-0" th:field="*{interestRateShockAppliedBps}" />
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Limit (Modified Duration)</label>
+								<label class="col-sm-2 col-form-label">Limit</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  number-24-2" th:field="*{limit1}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Status (Modified Duration)</label>
+								<label class="col-sm-2 col-form-label">Status</label>
 								<div class="col-sm-4">
 									<input type="text" class="form-control  vchar-50" th:field="*{status3}" />
 								</div>
@@ -1296,70 +1297,82 @@ Tested by   : Rajalakshmi
 								<label class="col-sm-2 col-form-label">DV01</label>
 								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{dv01}" />
 								</div>
-								<label class="col-sm-2 col-form-label">DV01 Limit</label>
+								<label class="col-sm-2 col-form-label"> Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{limit2}" />
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">DV01 Status</label>
+								<label class="col-sm-2 col-form-label"> Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control  vchar-50" th:field="*{status4}" />
 								</div>
-								<label class="col-sm-2 col-form-label">DV01 Tenor <3Yr< /label>
+								<label class="col-sm-2 col-form-label">DV01 Tenor <3Yr </label>
 										<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
 												th:field="*{dv01TenorGapsLt3Yr}" /></div>
 							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">DV01 Tenor >3Yr</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{dv01TenorGapsGt3Yr}" /></div>
-							</div>
+							<!-- Combined: DV01 Tenor >3Yr and Credit Spread CS01 -->
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">DV01 Tenor >3Yr</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{dv01TenorGapsGt3Yr}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Credit Spread CS01</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{creditSpreadCs01}" />
+	</div>
+</div>
 
+<!-- Credit Spread shock applied (bps) -->
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Credit Spread shock applied (bps)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-10-0" th:field="*{creditSpreadShockAppliedBps}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Limit</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{limit3}" />
+	</div>
+</div>
 
-							<!-- Sub-section: Credit Spread (CS01) -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Credit Spread CS01</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{creditSpreadCs01}" /></div>
-								<label class="col-sm-2 col-form-label">Credit Spread Shock (BPS)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-10-0"
-										th:field="*{creditSpreadShockAppliedBps}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CS01 Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{limit3}" />
-								</div>
-								<label class="col-sm-2 col-form-label">CS01 Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control   vchar-50" th:field="*{status5}" />
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CS01 Investment Grade</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{creditSpreadCs01InvestmentGrade}" /></div>
-								<label class="col-sm-2 col-form-label">CS01 Sub-Investment</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{creditSpreadCs01SubInvestment}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">CS01 Unrated</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{creditSpreadCs01Unrated}" /></div>
-							</div>
+<!-- Status -->
+<!-- Combined: Status and Credit Spread CS01 (Investment Grade) -->
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Status</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control vchar-50" th:field="*{status5}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Credit Spread CS01 (Investment Grade)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{creditSpreadCs01InvestmentGrade}" />
+	</div>
+</div>
+
+<!-- Credit Spread CS01 (Sub Investment) and (Unrated) -->
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Credit Spread CS01 (Sub Investment)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{creditSpreadCs01SubInvestment}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Credit Spread CS01 (Unrated)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{creditSpreadCs01Unrated}" />
+	</div>
+</div>
+
 
 							<!-- Sub-section: Equity -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Beta Equity</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{betaEquity}" /></div>
-								<label class="col-sm-2 col-form-label">Equity Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">Equity shock applied (bps)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{equityShockAppliedBps}" /></div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Equity Limit</label>
+								<label class="col-sm-2 col-form-label">Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit4}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Equity Status</label>
+								<label class="col-sm-2 col-form-label"> Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status6}" />
 								</div>
 							</div>
@@ -1369,15 +1382,15 @@ Tested by   : Rajalakshmi
 								<label class="col-sm-2 col-form-label">BR01</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{br01}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Interest Rate Diff Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">Interest rate differential shock applied (bps)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{interestRateDifferentialShockAppliedBps}" /></div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">BR01 Limit</label>
+								<label class="col-sm-2 col-form-label"> Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit5}" />
 								</div>
-								<label class="col-sm-2 col-form-label">BR01 Status</label>
+								<label class="col-sm-2 col-form-label"> Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status7}" />
 								</div>
 							</div>
@@ -1387,15 +1400,15 @@ Tested by   : Rajalakshmi
 								<label class="col-sm-2 col-form-label">Dollar Delta</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{dollarDelta}" /></div>
-								<label class="col-sm-2 col-form-label">Delta Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">shock applied (bps)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{shockAppliedBps1}" /></div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Delta Limit</label>
+								<label class="col-sm-2 col-form-label"> Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit6}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Delta Status</label>
+								<label class="col-sm-2 col-form-label"> Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status8}" />
 								</div>
 							</div>
@@ -1403,15 +1416,15 @@ Tested by   : Rajalakshmi
 								<label class="col-sm-2 col-form-label">Dollar Gamma</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{dollarGamma}" /></div>
-								<label class="col-sm-2 col-form-label">Gamma Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">shock applied (bps)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{shockAppliedBps2}" /></div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Gamma Limit</label>
+								<label class="col-sm-2 col-form-label"> Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit7}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Gamma Status</label>
+								<label class="col-sm-2 col-form-label">Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status9}" />
 								</div>
 							</div>
@@ -1419,150 +1432,199 @@ Tested by   : Rajalakshmi
 								<label class="col-sm-2 col-form-label">Dollar Vega</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{dollarVega}" /></div>
-								<label class="col-sm-2 col-form-label">Vega Shock (BPS)</label>
+								<label class="col-sm-2 col-form-label">shock applied (bps)</label>
 								<div class="col-sm-4"><input type="text" class="form-control"
 										th:field="*{shockAppliedBps3}" /></div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Vega Limit</label>
+								<label class="col-sm-2 col-form-label"> Limit</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit8}" />
 								</div>
-								<label class="col-sm-2 col-form-label">Vega Status</label>
+								<label class="col-sm-2 col-form-label"> Status</label>
 								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status10}" />
 								</div>
 							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Implied Volatility Type</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{impliedVolatilityType}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Dollar Theta</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{dollarTheta}" /></div>
-								<label class="col-sm-2 col-form-label">Theta Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit9}" />
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Theta Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status11}" />
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Dollar Rho</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dollarRho}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Rho Shock (BPS)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{shockAppliedBps4}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Rho Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit10}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Rho Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status12}" />
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Dollar Vanna</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{dollarVanna}" /></div>
-								<label class="col-sm-2 col-form-label">Vanna Shock (BPS)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{shockAppliedBps5}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Vanna Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit11}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Vanna Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status13}" />
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Dollar Volga</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{dollarVolga}" /></div>
-								<label class="col-sm-2 col-form-label">Volga Shock (BPS)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{shockAppliedBps6}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Volga Limit</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{limit12}" />
-								</div>
-								<label class="col-sm-2 col-form-label">Volga Status</label>
-								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{status14}" />
-								</div>
-							</div>
+							<!-- Implied Volatility Section -->
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Implied Volatility Type</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{impliedVolatilityType}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Dollar Theta</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{dollarTheta}" />
+	</div>
+</div>
 
-							<!-- Sub-section: SVaR Breakdown -->
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Credit Spread (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{creditSpreadAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR Credit Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{creditSensitiveImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Interest Rate (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{interestRateInTheTradingBookAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR Rate Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{rateSensitiveImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Foreign Exchange (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{foreignExchangeAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR FX Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{fxSensitiveImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Equity (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2" th:field="*{equityAed}" />
-								</div>
-								<label class="col-sm-2 col-form-label">SVaR Equity Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{equitySensitiveRelativeImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Commodities (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{commoditiesAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR Commodity Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{commoditySensitiveRelativeImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Credit Derivatives (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control"
-										th:field="*{creditDerivativesAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR CD Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{relativeImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Jump-to-Default (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{jumpToDefaultLossAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR JTD Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{jtdRelativeImpactPercent}" /></div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">SVaR Overall Impact (AED)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{overallImpactAed}" /></div>
-								<label class="col-sm-2 col-form-label">SVaR Overall Impact (%)</label>
-								<div class="col-sm-4"><input type="text" class="form-control  number-24-2"
-										th:field="*{overallRelativeImpactPercent}" /></div>
-							</div>
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Limit</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{limit9}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Status</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{status11}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Dollar Rho</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{dollarRho}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Shock Applied (bps)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{shockAppliedBps4}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Limit</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{limit10}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Status</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{status12}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Dollar Vanna</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{dollarVanna}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Shock Applied (bps)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{shockAppliedBps5}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Limit</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{limit11}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Status</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{status13}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Dollar Volga</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{dollarVolga}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Shock Applied (bps)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{shockAppliedBps6}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Limit</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{limit12}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Status</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{status14}" />
+	</div>
+</div>
+
+<!-- Sub-section: SVaR Breakdown -->
+<hr class="my-4">
+<h5>SVaR Breakdown</h5>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Credit Spread (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{creditSpreadAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Credit Sensitive Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{creditSensitiveImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Interest Rate in the Trading Book (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{interestRateInTheTradingBookAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Rate Sensitive Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{rateSensitiveImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Foreign Exchange (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{foreignExchangeAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">FX Sensitive Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{fxSensitiveImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Equity (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{equityAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Equity Sensitive Relative Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{equitySensitiveRelativeImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Commodities (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{commoditiesAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Commodity Sensitive Relative Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{commoditySensitiveRelativeImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Credit Derivatives (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" th:field="*{creditDerivativesAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Relative Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{relativeImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Jump-to-default Loss (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{jumpToDefaultLossAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">JTD Relative Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{jtdRelativeImpactPercent}" />
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">Overall Impact (AED)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{overallImpactAed}" />
+	</div>
+	<label class="col-sm-2 col-form-label">Overall Relative Impact (%)</label>
+	<div class="col-sm-4">
+		<input type="text" class="form-control number-24-2" th:field="*{overallRelativeImpactPercent}" />
+	</div>
+</div>
+
 
 						</div>
 
@@ -1773,87 +1835,172 @@ window.onload = function() {
 };
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    groupHeadOfficeSubsidiary: 50,
+    subsidiary: 50,
+    bankSymbol: 50,
+    conventionalIslamic: 50,
+    localForeign: 50,
+    cbuaeTiering: 50,
+    tradingBookDesks: 50,
+    cbuaeInternalDeskReference:50,
+    confidenceInterval:50,
+    status:50,
+    status2:50,
+    status3:50,
+    status4:50,
+    status5:50,
+    status6:50,
+    status7:50,
+    status8:50,
+    status9:50,
+    impliedVolatilityType:20,
+    status10:50,
+    status11:50,
+    status12:50,
+    status13:50,
+    status14:50,
 
-  function showError(input, message) {
-    // Remove any existing error to prevent duplicates
-    clearError(input);
+    // NUMBER(24,2) fields
+    annualBudgetAed: "24,2",
+    tradingDeskBookSizeMarketValueAed: "24,2",
+    relativeSizePercentTotalAssetsOrPercentTotalTradingBook: "24,2",
+    ytdPandLAed: "24,2",
+    maximumLossOverThePeriodAed: "24,2",
+    holdingPeriod: "24,2",
+    varExposureAed: "24,2",
+    varLimitAed: "24,2",
+    expectedShortfallAed: "24,2",
+    expectedShortfallLimitAed: "24,2",
+    modifiedDuration: "24,2",
+    interestRateShockAppliedBps: "24,2",
+    limit1: "24,2",
+    dv01: "24,2",
+    limit2: "24,2",
+    dv01TenorGapsLt3Yr: "24,2",
+    dv01TenorGapsGt3Yr: "24,2",
+    creditSpreadCs01: "24,2",
+    creditSpreadShockAppliedBps: "24,2",
+    limit3: "24,2",
+    creditSpreadCs01InvestmentGrade: "24,2",
+    creditSpreadCs01SubInvestment: "24,2",
+    creditSpreadCs01Unrated: "24,2",
+    betaEquity: "24,2",
+    equityShockAppliedBps: "24,2",
+    limit4: "24,2",
+    br01: "24,2",
+    interestRateDifferentialShockAppliedBps: "24,2",
+    limit5: "24,2",
+    dollarDelta: "24,2",
+    shockAppliedBps1: "24,2",
+    limit6: "24,2",
+    dollarGamma: "24,2",
+    shockAppliedBps2: "24,2",
+    limit7: "24,2",
+    dollarVega: "24,2",
+    shockAppliedBps3: "24,2",
+    limit8: "24,2",
+    dollarTheta: "24,2",
+    limit9: "24,2",
+    dollarRho: "24,2",
+    shockAppliedBps4: "24,2",
+    limit10: "24,2",
+    dollarVanna: "24,2",
+    shockAppliedBps5: "24,2",
+    limit11: "24,2",
+    dollarVolga: "24,2",
+    shockAppliedBps6: "24,2",
+    limit12: "24,2",
+    creditSpreadAed: "24,2",
+    creditSensitiveImpactPercent: "24,2",
+    interestRateInTheTradingBookAed: "24,2",
+    rateSensitiveImpactPercent: "24,2",
+    foreignExchangeAed: "24,2",
+    fxSensitiveImpactPercent: "24,2",
+    equityAed: "24,2",
+    equitySensitiveRelativeImpactPercent: "24,2",
+    commoditiesAed: "24,2",
+    commoditySensitiveRelativeImpactPercent: "24,2",
+    creditDerivativesAed: "24,2",
+    relativeImpactPercent: "24,2",
+    jumpToDefaultLossAed: "24,2",
+    jtdRelativeImpactPercent: "24,2",
+    overallImpactAed: "24,2",
+    overallRelativeImpactPercent: "24,2"
+    
+    
+  };
 
-    const error = document.createElement("small");
-    error.id = input.id + "-error";
-    error.className = "text-danger d-block mt-1";
-    error.innerText = message;
-
-    // Insert error message right after the input element
-    input.classList.add("is-invalid");
-    input.parentNode.insertBefore(error, input.nextSibling);
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
   }
 
   function clearError(input) {
-    const error = document.getElementById(input.id + "-error");
-    if (error) {
-      error.remove();
-    }
-    input.classList.remove("is-invalid");
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
   }
 
-  // VARCHAR2 (vchar-<max>) fields
-  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
-    let max = null;
-    input.classList.forEach(cls => {
-      if (cls.startsWith("vchar-")) {
-        const limit = parseInt(cls.split("-")[1]);
-        if (!isNaN(limit)) max = limit;
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || value === "") {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number" || !isNaN(rule)) {
+      // VARCHAR2 Validation (check character length)
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
       }
-    });
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // NUMBER(p,s) validation
+      const [total, decimal] = rule.split(",").map(Number);
+      const regex = /^\d+(\.\d+)?$/;
 
-    if (max !== null) {
-      input.removeAttribute("maxlength"); // Let JS handle limit
+      if (!regex.test(value)) {
+        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+        return;
+      }
 
-      input.addEventListener("input", () => {
-        if (input.value.length > max) {
-          showError(input, `Max ${max} characters allowed`);
-        } else {
-          clearError(input);
+      const [intPart, decPart = ""] = value.split(".");
+      const intLen = intPart.replace(/^0+/, "").length;
+      const decLen = decPart.length;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Add maxlength to VARCHAR2 fields only
+        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+          input.setAttribute("maxlength", fieldRules[id]);
         }
-      });
+      }
     }
   });
-
-
-  // NUMBER(p,s) fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
-
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val === "") {
-          clearError(input);
-          return;
-        }
-
-        if (!/^-?\d*(\.\d*)?$/.test(val)) {
-          showError(input, "Only numeric values allowed");
-          return;
-        }
-
-        const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const totalDigits = intPart.length + decPart.length;
-
-        if (totalDigits > total) {
-          showError(input, `Max ${total} digits allowed`);
-        } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits after decimal`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
-
-});
 </script>
 </html>

@@ -782,8 +782,8 @@ $(document).ready(function () {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
+<!-- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>-->
        
 
 <button type="button" class="custom-tab-btn"
@@ -818,57 +818,60 @@ $(document).ready(function () {
       <th>Action</th>
       <th>Date</th>
       <th>Bank Name</th>
-      <th>Head Office/Subsidiary</th>
+      <th>Head_Office_Subsidiary</th>
       <th>Subsidiary</th>
       <th>Bank Symbol</th>
       <th>Conventional/Islamic</th>
       <th>Local/Foreign</th>
       <th>CBUAE Tiering</th>
       <th>Counterparty Name</th>
-      <th>Counterparty Ref</th>
-      <th>Final Rating (Banks)</th>
-      <th>Final Rating (CBUAE)</th>
+      <th>Counterparty Internal Reference</th>
+      <th>Final Bank Rating</th>
+      <th>Final Bank Rating (CBUAE)</th>
       <th>Country of Risk</th>
-      <th>CBUAE Geo Zone</th>
-      <th>CBUAE Internal Ref</th>
+      <th>CBUAE Geographical zone</th>
+      <th>CBUAE Internal reference</th>
       <th>Transaction Type</th>
       <th>Deal No</th>
       <th>Repo Start Date</th>
       <th>Repo Maturity Date</th>
-      <th>Initial Maturity</th>
+      <th>Initial_Maturity</th>
+      <th>Initial Maturity Rounded</th>
       <th>Initial Maturity Period</th>
       <th>Residual Maturity Date</th>
+      <th>Maturity Period</th>
       <th>Repo Currency</th>
-      <th>ISIN Code</th>
-      <th>Rehypothecation</th>
+      <th>Underlying Security ISIN Code</th>
+      <th>Rehypothecation Status</th>
       <th>Security Currency</th>
       <th>Obligor</th>
       <th>Issuer Type</th>
       <th>Industry</th>
       <th>Sector</th>
-      <th>Underlying Bond</th>
-      <th>Security Rating</th>
-      <th>Final Security Rating (CBUAE)</th>
+      <th>Underlying Bond/Sukuk details</th>
+      <th>Security Final Rating</th>
+      <th>Final Security Rating CBUAE</th>
       <th>Security Country of Risk</th>
-      <th>Geo Zone 2</th>
-      <th>Bond Nominal</th>
+      <th>CBUAE Geographical zone</th>
+      <th>Bonds/Sukuks Nominal</th>
       <th>Security Maturity Date</th>
-      <th>Security Residual Maturity</th>
-      <th>GMRA Haircut</th>
-      <th>Start Price</th>
-      <th>Security Start Cash</th>
-      <th>Start Cash</th>
-      <th>Interest Rate</th>
-      <th>Fixed Rate</th>
+      <th>Security Residual Maturity Date</th>
+      <th>Maturity Period</th>
+      <th>GMRA Effective Haircut</th>
+      <th>Security Start Price</th>
+      <th>Security Start Cash Amount</th>
+      <th>Start Cash Amount</th>
+      <th>Repo Interest/Profit Rate Type</th>
+      <th>Fixed Rate (%)</th>
       <th>Floating Rate Type</th>
-      <th>Repo Margin</th>
-      <th>Interest Accruals</th>
-      <th>Valuation</th>
-      <th>Dirty Price</th>
-      <th>Collateral MtM</th>
-      <th>Min Transfer</th>
+      <th>Repo Interest/Profit rate Margin (Only in case of Floating Rate)</th>
+      <th>Repo Interest rate accruals</th>
+      <th>Repo Valuation</th>
+      <th>Bonds/Sukuk Dirty Price</th>
+      <th>GMRA Collateral MtM Value</th>
+      <th>Minimum Transfer Amount</th>
       <th>Threshold</th>
-      <th>Margin Call Freq</th>
+      <th>Margin Call Frequency</th>
      
     </tr>
   </thead>
@@ -898,10 +901,12 @@ $(document).ready(function () {
   <td th:text="${data.dealNo}"></td>
   <td th:text="${#dates.format(data.repoStartDate, 'dd-MM-yyyy')}"></td>
   <td th:text="${#dates.format(data.repoMaturityDate, 'dd-MM-yyyy')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.initialMaturity, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.initialMaturityPeriod, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.initialMaturity, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.initialMaturityRounded, 1, 'COMMA', 2, 'POINT')}"></td>
+ <td  style="text-align: right;" th:text="${#numbers.formatDecimal(data.initialMaturityPeriod, 1, 'COMMA', 2, 'POINT')}"></td>
   <td th:text="${#dates.format(data.residualMaturityDate, 'dd-MM-yyyy')}"></td>
-  <td th:text="${data.repoCurrency}"></td>
+   <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.maturityPeriod, 1, 'COMMA', 2, 'POINT')}"></td>
+ <td th:text="${data.repoCurrency}"></td>
   <td th:text="${data.underlyingSecurityIsin}"></td>
   <td th:text="${data.rehypothecationStatus}"></td>
   <td th:text="${data.securityCurrency}"></td>
@@ -914,23 +919,24 @@ $(document).ready(function () {
   <td th:text="${data.finalSecurityRatingCbuae}"></td>
   <td th:text="${data.securityCountryOfRisk}"></td>
   <td th:text="${data.cbuaeGeoZone2}"></td>
-  <td th:text="${#numbers.formatDecimal(data.bondSukukNominal, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#dates.format(data.securityMaturityDate, 'dd-MM-yyyy')}"></td>
-  <td th:text="${#dates.format(data.securityResidualMaturity, 'dd-MM-yyyy')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.gmraEffectiveHaircut, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.securityStartPrice, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.securityStartCashAmount, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.startCashAmount, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.interestProfitRate, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.fixedRate, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.bondSukukNominal, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;"  th:text="${#dates.format(data.securityMaturityDate, 'dd-MM-yyyy')}"></td>
+  <td style="text-align: right;" th:text="${#dates.format(data.securityResidualMaturity, 'dd-MM-yyyy')}"></td>
+   <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.securityMaturityPeriod, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.gmraEffectiveHaircut, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.securityStartPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.securityStartCashAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.startCashAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;"  th:text="${#numbers.formatDecimal(data.interestProfitRate, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.fixedRate, 1, 'COMMA', 2, 'POINT')}"></td>
   <td th:text="${data.floatingRateType}"></td>
-  <td th:text="${#numbers.formatDecimal(data.repoMargin, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.interestAccruals, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.repoValuation, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.dirtyPrice, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.gmraCollateralMtm, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.minTransferAmount, 1, 'COMMA', 2, 'POINT')}"></td>
-  <td th:text="${#numbers.formatDecimal(data.threshold, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.repoMargin, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.interestAccruals, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.repoValuation, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dirtyPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.gmraCollateralMtm, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.minTransferAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+  <td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.threshold, 1, 'COMMA', 2, 'POINT')}"></td>
   <td th:text="${data.marginCallFreq}"></td>
 </tr>
 
@@ -982,7 +988,7 @@ $(document).ready(function () {
           <input type="hidden" th:field="*{slNo}" />
 			
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Data Date</label>
+            <label class="col-sm-2 col-form-label"> Date</label>
             <div class="col-sm-4">
               <input type="date" class="form-control" th:field="*{dataDate}" required readonly/>
             </div>
@@ -997,7 +1003,7 @@ $(document).ready(function () {
           </div>
 
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Head Office/Subsidiary</label>
+            <label class="col-sm-2 col-form-label">Head_Office_Subsidiary</label>
             <div class="col-sm-4">
               <select class="form-control" th:field="*{headOfficeSubsidiary}">
                 <option value="" disabled selected>-- Select --</option>
@@ -1042,21 +1048,21 @@ $(document).ready(function () {
               <input type="text" class="form-control vchar-50" th:field="*{counterpartyName}" />
             </div>
 
-            <label class="col-sm-2 col-form-label">Counterparty Internal Ref</label>
+            <label class="col-sm-2 col-form-label">Counterparty Internal reference</label>
             <div class="col-sm-4">
               <input type="text" class="form-control vchar-50" th:field="*{counterpartyInternalRef}" />
             </div>
           </div>
 
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Final Rating (Banks)</label>
+            <label class="col-sm-2 col-form-label">Final Bank Rating</label>
             <div class="col-sm-4">
               <input type="text" class="form-control vchar-20" th:field="*{finalRatingBanks}" />
             </div>
 
-            <label class="col-sm-2 col-form-label">Final Rating (CBUAE)</label>
+            <label class="col-sm-2 col-form-label">Final Bank Rating CBUAE</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
+              <input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" readonly />
             </div>
           </div>
 
@@ -1070,14 +1076,14 @@ $(document).ready(function () {
         </select>
     </div>
 
-    <label class="col-sm-2 col-form-label">CBUAE Geo Zone</label>
+    <label class="col-sm-2 col-form-label">CBUAE Geographical zone</label>
     <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{cbuaeGeoZone}" id="cbuaeGeographicalZone" readonly />
     </div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CBUAE Internal Ref</label>
+    <label class="col-sm-2 col-form-label">CBUAE Internal reference</label>
     <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{cbuaeInternalRef}" id="cbuaeInternalRef" readonly />
     </div>
@@ -1113,31 +1119,31 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Initial Maturity</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control number-5-2" th:field="*{initialMaturity}" />
+        <input type="number" step="0.01" class="form-control number-5-2" th:field="*{initialMaturity}" readonly/>
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Initial Maturity Rounded</label>
     <div class="col-sm-4">
-        <input type="number" class="form-control number-5-0" th:field="*{initialMaturityRounded}" />
+        <input type="number" class="form-control number-5-0" th:field="*{initialMaturityRounded}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">Initial Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control number-24-2" th:field="*{initialMaturityPeriod}" />
+        <input type="text" class="form-control number-24-2" th:field="*{initialMaturityPeriod}" readonly/>
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Residual Maturity Date</label>
     <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{residualMaturityDate}" />
+        <input type="date" class="form-control" th:field="*{residualMaturityDate}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control number-24-2" th:field="*{maturityPeriod}" />
+        <input type="text" class="form-control number-24-2" th:field="*{maturityPeriod}" readonly/>
     </div>
 </div>
 
@@ -1147,7 +1153,7 @@ $(document).ready(function () {
         <input type="text" class="form-control  vchar-10" th:field="*{repoCurrency}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Underlying Security ISIN</label>
+    <label class="col-sm-2 col-form-label">Underlying Security ISIN Code</label>
     <div class="col-sm-4">
         <input type="text" class="form-control  vchar-30" th:field="*{underlyingSecurityIsin}" />
     </div>
@@ -1156,7 +1162,7 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Rehypothecation Status</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control" th:field="*{rehypothecationStatus}" />
+        
 		
 		<select class="form-control" th:field="*{rehypothecationStatus}" >
 		           <option value="" disabled selected>-- Select --</option>
@@ -1201,7 +1207,7 @@ $(document).ready(function () {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Underlying Bond Details</label>
+    <label class="col-sm-2 col-form-label">Underlying Bond/Sukuk details</label>
     <div class="col-sm-4">
         <textarea class="form-control  vchar-50" th:field="*{underlyingBondDetails}"></textarea>
     </div>
@@ -1215,7 +1221,7 @@ $(document).ready(function () {
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Final Security Rating (CBUAE)</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control  vchar-20" th:field="*{finalSecurityRatingCbuae}" />
+        <input type="text" class="form-control  vchar-20" th:field="*{finalSecurityRatingCbuae}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">Security Country of Risk</label>
@@ -1228,12 +1234,12 @@ $(document).ready(function () {
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">CBUAE Geo Zone 2</label>
+    <label class="col-sm-2 col-form-label">CBUAE Geographical zone</label>
     <div class="col-sm-4">
         <input type="text" class="form-control" th:field="*{cbuaeGeoZone2}" id="cbuaeGeographicalZone2" readonly/>
     </div>
 
-    <label class="col-sm-2 col-form-label">Bond/Sukuk Nominal</label>
+    <label class="col-sm-2 col-form-label">Bonds/Sukuks Nominal</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{bondSukukNominal}" />
     </div>
@@ -1245,16 +1251,16 @@ $(document).ready(function () {
         <input type="date" class="form-control" th:field="*{securityMaturityDate}" />
     </div>
 
-    <label class="col-sm-2 col-form-label">Security Residual Maturity</label>
+    <label class="col-sm-2 col-form-label">Security Residual Maturity Date</label>
     <div class="col-sm-4">
-        <input type="date" class="form-control" th:field="*{securityResidualMaturity}" />
+        <input type="date" class="form-control" th:field="*{securityResidualMaturity}" readonly/>
     </div>
 </div>
 
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Security Maturity Period</label>
+    <label class="col-sm-2 col-form-label">Maturity Period</label>
     <div class="col-sm-4">
-        <input type="text" class="form-control number-24-2 no-spinner" th:field="*{securityMaturityPeriod}" />
+        <input type="text" class="form-control number-24-2 no-spinner" th:field="*{securityMaturityPeriod}" readonly/>
     </div>
 
     <label class="col-sm-2 col-form-label">GMRA Effective Haircut</label>
@@ -1271,16 +1277,16 @@ $(document).ready(function () {
 
     <label class="col-sm-2 col-form-label">Security Start Cash Amount</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{securityStartCashAmount}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{securityStartCashAmount}" readonly/>
     </div>
 </div>
 
 <div class="form-group row">
     <label class="col-sm-2 col-form-label">Start Cash Amount</label>
     <div class="col-sm-4">
-        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{startCashAmount}" />
+        <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{startCashAmount}" readonly/>
     </div>
-<label class="col-sm-2 col-form-label">Interest Profit Rate</label>
+<label class="col-sm-2 col-form-label">Repo Interest/Profit Rate Type</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{interestProfitRate}" />
     </div>
@@ -1290,7 +1296,7 @@ $(document).ready(function () {
 <div class="form-group row">
     
 
-    <label class="col-sm-2 col-form-label">Fixed Rate</label>
+    <label class="col-sm-2 col-form-label">Fixed Rate (%)</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{fixedRate}" />
     </div>
@@ -1307,12 +1313,12 @@ $(document).ready(function () {
 <div class="form-group row">
    
 
-    <label class="col-sm-2 col-form-label">Repo Margin</label>
+    <label class="col-sm-2 col-form-label">Repo Interest/Profit rate Margin (Only in case of Floating Rate)</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control" th:field="*{repoMargin}" />
     </div>
     
-    <label class="col-sm-2 col-form-label">Interest Accruals</label>
+    <label class="col-sm-2 col-form-label">Repo Interest rate accruals</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{interestAccruals}" />
     </div>
@@ -1321,9 +1327,9 @@ $(document).ready(function () {
 <div class="form-group row">    
 	<label class="col-sm-2 col-form-label">Repo Valuation</label>
 	  <div class="col-sm-4">
-	      <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{repoValuation}" />
+	      <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{repoValuation}" readonly/>
 	  </div>
-     <label class="col-sm-2 col-form-label">Dirty Price</label>
+     <label class="col-sm-2 col-form-label">Bonds/Sukuk Dirty Price</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{dirtyPrice}" />
     </div>
@@ -1336,11 +1342,11 @@ $(document).ready(function () {
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form- number-24-2" th:field="*{gmraCollateralMtm}" />
     </div>-->
-	<label class="col-sm-2 col-form-label">GMRA Collateral MTM</label>
+	<label class="col-sm-2 col-form-label">GMRA Collateral MtM Value</label>
 	<div class="col-sm-4">
-	    <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{gmraCollateralMtm}" />
+	    <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{gmraCollateralMtm}" readonly/>
     </div>
-     <label class="col-sm-2 col-form-label">Min Transfer Amount</label>
+     <label class="col-sm-2 col-form-label">Minimum Transfer Amount</label>
     <div class="col-sm-4">
         <input type="number" step="0.01" class="form-control number-24-2 no-spinner" th:field="*{minTransferAmount}" />
     </div>
@@ -1690,87 +1696,132 @@ window.onload = function() {
 	}
 </style>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    headOfficeSubsidiary: 50,
+    subsidiary: 50,
+    bankSymbol: 50,
+    conventionalIslamic: 50,
+    localForeign: 50,
+    cbuaeTiering: 50,
+    counterpartyName: 50,
+    counterpartyInternalRef:50,
+    finalRatingBanks:50,
+    finalRatingCbuae:50,
+    countryOfRisk:50,
+    cbuaeGeoZone:50,
+    cbuaeInternalRef:50,
+    transactionType:50,
+    repoCurrency:50,
+    underlyingSecurityIsin:50,
+    rehypothecationStatus:50,
+    securityCurrency:50,
+    obligor:50,
+    issuerType:50,
+    industry:50,
+    sector:50,
+    underlyingBondDetails:50,
+    securityFinalRating:50,
+    finalSecurityRatingCbuae:50,
+    securityCountryOfRisk:50,
+    cbuaeGeoZone2:50,
+    floatingRateType:50,
+    marginCallFreq:50,
 
-  function showError(input, message) {
-    // Remove any existing error to prevent duplicates
-    clearError(input);
+    // NUMBER(24,2) fields
+    initialMaturity: "24,2",
+    initialMaturityRounded: "24,2",
+    initialMaturityPeriod: "24,2",
+    maturityPeriod: "24,2",
+    bondSukukNominal: "24,2",
+    securityMaturityPeriod: "24,2",
+    gmraEffectiveHaircut: "24,2",
+    securityStartPrice: "24,2",
+    securityStartCashAmount: "24,2",
+    startCashAmount: "24,2",
+    interestProfitRate: "24,2",
+    fixedRate: "24,2",
+    repoMargin: "24,2",
+    interestAccruals: "24,2",
+    repoValuation: "24,2",
+    dirtyPrice: "24,2",
+    gmraCollateralMtm: "24,2",
+    minTransferAmount: "24,2",
+    threshold: "24,2"
+    
+    
+    
+  };
 
-    const error = document.createElement("small");
-    error.id = input.id + "-error";
-    error.className = "text-danger d-block mt-1";
-    error.innerText = message;
-
-    // Insert error message right after the input element
-    input.classList.add("is-invalid");
-    input.parentNode.insertBefore(error, input.nextSibling);
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
   }
 
   function clearError(input) {
-    const error = document.getElementById(input.id + "-error");
-    if (error) {
-      error.remove();
-    }
-    input.classList.remove("is-invalid");
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
   }
 
-  // VARCHAR2 (vchar-<max>) fields
-  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
-    let max = null;
-    input.classList.forEach(cls => {
-      if (cls.startsWith("vchar-")) {
-        const limit = parseInt(cls.split("-")[1]);
-        if (!isNaN(limit)) max = limit;
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || value === "") {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number" || !isNaN(rule)) {
+      // VARCHAR2 Validation (check character length)
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
       }
-    });
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // NUMBER(p,s) validation
+      const [total, decimal] = rule.split(",").map(Number);
+      const regex = /^\d+(\.\d+)?$/;
 
-    if (max !== null) {
-      input.removeAttribute("maxlength"); // Let JS handle limit
+      if (!regex.test(value)) {
+        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+        return;
+      }
 
-      input.addEventListener("input", () => {
-        if (input.value.length > max) {
-          showError(input, `Max ${max} characters allowed`);
-        } else {
-          clearError(input);
+      const [intPart, decPart = ""] = value.split(".");
+      const intLen = intPart.replace(/^0+/, "").length;
+      const decLen = decPart.length;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Add maxlength to VARCHAR2 fields only
+        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+          input.setAttribute("maxlength", fieldRules[id]);
         }
-      });
+      }
     }
   });
-
-
-  // NUMBER(p,s) fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
-
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val === "") {
-          clearError(input);
-          return;
-        }
-
-        if (!/^-?\d*(\.\d*)?$/.test(val)) {
-          showError(input, "Only numeric values allowed");
-          return;
-        }
-
-        const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const totalDigits = intPart.length + decPart.length;
-
-        if (totalDigits > total) {
-          showError(input, `Max ${total} digits allowed`);
-        } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits after decimal`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
-
-});
 </script>
 </html>
