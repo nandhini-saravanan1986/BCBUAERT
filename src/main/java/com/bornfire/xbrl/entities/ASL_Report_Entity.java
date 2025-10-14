@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "MIS_ASL_DETAIL_REPORT", schema = "CXBRL")
+@Table(name = "MIS_ASL_DETAIL_REPORT")
 public class ASL_Report_Entity {
 
 	@Id

@@ -3,7 +3,7 @@ package com.bornfire.xbrl.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "MIS_MENU_TABLE", schema = "CXBRL")
+@Table(name = "MIS_MENU_TABLE")
 public class MisMenuTable_Entity {
 
     @Id
