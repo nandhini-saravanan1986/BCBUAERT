@@ -367,7 +367,36 @@
 		}
 
 	</script>
+<script>
+		$(document).ready(function () {
+			$("#fxriskForm").validate({
+				errorClass: "error", // use 'error' class for styling
+				errorElement: "label", // wrap error messages in <label>
 
+				// Place the error after the input field
+				errorPlacement: function (error, element) {
+					if (element.parent('.form-group').length) {
+						error.insertAfter(element); // default
+					} else {
+						error.insertAfter(element);
+					}
+				},
+
+				// Highlight and unhighlight fields
+				highlight: function (element) {
+					$(element).addClass("error");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("error");
+				},
+
+				// On successful validation, run this
+				submitHandler: function (form) {
+					submitForm(); // your custom submit function
+				}
+			});
+		});
+	</script>
 </head>
 
 
@@ -771,8 +800,8 @@
 						</button>
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
-							onclick="submitForm()">Save</button>
+						<!--<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+							onclick="submitForm()">Save</button>-->
 
 
 						<button type="button" class="custom-tab-btn" onclick="back();">
@@ -882,27 +911,27 @@
 									<td th:text="${data.derivativesCptyCountryOfRisk}"></td>
 									<td th:text="${data.cbuaeRegionalZone}"></td>
 									<td th:text="${data.ccyBought}"></td>
-									<td th:text="${#numbers.formatDecimal(data.amountBought, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;"th:text="${#numbers.formatDecimal(data.amountBought, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.dealRate, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dealRate, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.ccySold}"></td>
 									<!--<td th:text="${data.amountSold}"></td>-->
-									<td th:text="${#numbers.formatDecimal(data.amountSold, 1, 'COMMA', 2, 'POINT')}">
+									<td  style="text-align: right;" th:text="${#numbers.formatDecimal(data.amountSold, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${#dates.format(data.valueDate, 'dd-MM-yyyy')}"></td>
 									<td th:text="${#dates.format(data.dealDate, 'dd-MM-yyyy')}"></td>
 									<!--<td th:text="${data.derivativesTenorMonths}"></td>-->
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.derivativesTenorMonths, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.maturityPeriod}"></td>
 									<td th:text="${data.dealerName}"></td>
 									<td th:text="${#dates.format(data.mtmAedEquivalentReportingDate, 'dd-MM-yyyy')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.mtmAedEquivalentPreviousQuarter, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.mtmChange, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.mtmChange, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.fundingOrLoansInternalReference}"></td>
 									<td th:text="${data.onBalanceSheetItemType}"></td>
@@ -910,18 +939,18 @@
 									<td th:text="${data.counterpartyCountryOfRisk}"></td>
 									<td th:text="${data.cbuaeRegionalZne}"></td>
 
-									<td th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
 									<td th:text="${data.currency}"></td>
 									<td th:text="${#numbers.formatDecimal(data.overallImpact, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.accrualImpact, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.accrualImpact, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 									<td th:text="${data.rateType}"></td>
 									<td th:text="${data.depositFixedRateOrAdministrativeRate}"></td>
 									<td th:text="${data.fixedDepositRateEquivalent}"></td>
 									<td th:text="${data.floatingRateType}"></td>
 									<td th:text="${data.benchmarkFloatingRate}"></td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}">
 										< <td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}">
 									</td>
@@ -1488,88 +1517,116 @@
 	}
 </style>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    headOfficeSubsidiary: 20,
+    subsidiary: 50,
+    bankSymbol: 30,
+    conventionalOrIslamic: 50,
+    localOrForeign: 50,
+    cbuaeTiering: 50,
+    dealInternalReference: 50,
+    legType: 50,
+    internalCounterpartyReference: 50,
+    cptyName: 50,
+    derivativesCptyCountryOfRisk: 50,
+    cbuaeRegionalZone: 50,
+    ccyBought: 50,
+    ccySold: 50,
+    maturityPeriod: 50,
+    dealerName: 50,
+    fundingOrLoansInternalReference: 50,
+    onBalanceSheetItemType: 50,
+    onBalanceItemCounterparty: 50,
+    counterpartyCountryOfRisk: 50,
+    cbuaeRegionalZne: 50,
+    currency: 50,
+    rateType: 50,
+    floatingRateType: 50,
+    benchmarkFloatingRate: 50,
+    
 
-  function showError(input, message) {
-    // Remove any existing error to prevent duplicates
-    clearError(input);
+    // NUMBER(p,s) fields
+    amountBought: "24,2",
+    dealRate: "24,2",
+    amountSold: "24,2",
+    derivativesTenorMonths: "24,2",
+    mtmChange: "5,2",
+    nominal: "24,2",
+    overallImpact: "24,2",
+    accrualImpact: "24,2",
+    depositFixedRateOrAdministrativeRate: "24,2",
+    fixedDepositRateEquivalent: "24,2",
+    spreadOverBenchmarkRate: "24,2",
+    tenorMths: "24,2"
+    
+  };
 
-    const error = document.createElement("small");
-    error.id = input.id + "-error";
-    error.className = "text-danger d-block mt-1";
-    error.innerText = message;
-
-    // Insert error message right after the input element
-    input.classList.add("is-invalid");
-    input.parentNode.insertBefore(error, input.nextSibling);
+  function showError(input, msg) {
+    console.log("Showing error for", input.id, msg); // Debug
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
   }
+
 
   function clearError(input) {
-    const error = document.getElementById(input.id + "-error");
-    if (error) {
-      error.remove();
-    }
-    input.classList.remove("is-invalid");
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
   }
 
-  // VARCHAR2 (vchar-<max>) fields
-  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
-    let max = null;
-    input.classList.forEach(cls => {
-      if (cls.startsWith("vchar-")) {
-        const limit = parseInt(cls.split("-")[1]);
-        if (!isNaN(limit)) max = limit;
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || !value) {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number") {
+      // Text field with max length
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
       }
-    });
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // Number field
+      const [total, decimal] = rule.split(",").map(Number);
+      const parts = value.split(".");
+      const intLen = parts[0].replace(/^0+/, "").length;
+      const decLen = parts[1] ? parts[1].length : 0;
 
-    if (max !== null) {
-      input.removeAttribute("maxlength"); // Let JS handle limit
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
 
-      input.addEventListener("input", () => {
-        if (input.value.length > max) {
-          showError(input, `Max ${max} characters allowed`);
-        } else {
-          clearError(input);
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Optional: Add maxlength attribute to text fields
+        if (typeof fieldRules[id] === "number") {
+          input.setAttribute("maxlength", fieldRules[id]);
         }
-      });
+      }
     }
   });
-
-
-  // NUMBER(p,s) fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
-
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val === "") {
-          clearError(input);
-          return;
-        }
-
-        if (!/^-?\d*(\.\d*)?$/.test(val)) {
-          showError(input, "Only numeric values allowed");
-          return;
-        }
-
-        const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const totalDigits = intPart.length + decPart.length;
-
-        if (totalDigits > total) {
-          showError(input, `Max ${total} digits allowed`);
-        } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits after decimal`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
-
-});
 </script>
 
 </html>

@@ -436,6 +436,37 @@ label.error {
 }
 
 	</script>
+	
+	<script>
+		$(document).ready(function () {
+			$("#fxriskForm").validate({
+				errorClass: "error", // use 'error' class for styling
+				errorElement: "label", // wrap error messages in <label>
+
+				// Place the error after the input field
+				errorPlacement: function (error, element) {
+					if (element.parent('.form-group').length) {
+						error.insertAfter(element); // default
+					} else {
+						error.insertAfter(element);
+					}
+				},
+
+				// Highlight and unhighlight fields
+				highlight: function (element) {
+					$(element).addClass("error");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("error");
+				},
+
+				// On successful validation, run this
+				submitHandler: function (form) {
+					submitForm(); // your custom submit function
+				}
+			});
+		});
+	</script>
   
 </head>
 
@@ -829,8 +860,8 @@ label.error {
 </button>
 
 
- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>
+<!-- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>-->
        
 
 <button type="button" class="custom-tab-btn"
@@ -922,19 +953,17 @@ label.error {
          <!-- <td th:text="${data.nominal}"></td>
           <td th:text="${data.nominalInAed}"></td>-->
 		  
-		  <td th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
-		  <td th:text="${#numbers.formatDecimal(data.nominalInAed, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;"  th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.nominalInAed, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.currency}"></td>
           <td th:text="${data.rateType}"></td>
-          <td th:text="${data.depositFixedRateOrAdministrativeRate}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.depositFixedRateOrAdministrativeRate, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${data.benchmarkFloatingRate}"></td>
-          <!--<td th:text="${data.tenorFloatingRate}"></td>-->
-		  <td th:text="${#numbers.formatDecimal(data.tenorFloatingRate, 1, 'COMMA', 2, 'POINT')}"></td>
-          <!--<td th:text="${data.spreadOverBenchmarkRate}"></td>-->
-		  <td th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.tenorFloatingRate, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}"></td>
           <td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
-          <td th:text="${data.tenorMths}"></td>
-          <td th:text="${data.maturityPeriod}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.tenorMths, 1, 'COMMA', 2, 'POINT')}"></td>
+		  <td style="text-align: right;" th:text="${#numbers.formatDecimal(data.maturityPeriod, 1, 'COMMA', 2, 'POINT')}"></td>
 											
 
 		  
@@ -1571,6 +1600,7 @@ window.onload = function() {
     // NUMBER(p,s) fields
     nominal: "24,2",
     nominalInAed: "24,2",
+    depositFixedRateOrAdministrativeRate: "24,2",
     depFixedRateOrAdminisRate: "24,2",
     spreadOverBenchmarkRate: "24,2",
     tenorMths: "5,2",

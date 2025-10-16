@@ -752,9 +752,9 @@ Tested by   : Rajalakshmi
 							<i class="fa fa-home"></i> Home
 						</button>
 
-						<button type="button" class="custom-tab-btn" onclick="submitForm()">
+						<!--<button type="button" class="custom-tab-btn" onclick="submitForm()">
 							Save
-						</button>
+						</button>-->
 
 						<button type="button" class="custom-tab-btn" onclick="back();">
 							<i class="fa fa-arrow-left"></i> Back
@@ -845,38 +845,38 @@ Tested by   : Rajalakshmi
 									<td th:text="${data.sector}"></td>
 
 									<!-- Decimal Format for Amount Fields -->
-									<td th:text="${#numbers.formatDecimal(data.pfe95Aed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.pfe95Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.expectedPositiveExposureAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.expectedNegativeExposureAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 
 									<td th:text="${data.csa}"></td>
 									<td th:text="${data.collateralType}"></td>
 
-									<td th:text="${#numbers.formatDecimal(data.threshold, 1, 'COMMA', 2, 'POINT')}">
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.threshold, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.minimumTransferAmountAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.independentAmountAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 
 									<td th:text="${data.marginCallFrequency}"></td>
 
-									<td
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.netCollateralOutstandingAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.cvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.dvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td
+									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.cvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td  style="text-align: right;"th:text="${#numbers.formatDecimal(data.dvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.bilateralCvaAed, 1, 'COMMA', 2, 'POINT')}">
 									</td>
-									<td th:text="${#numbers.formatDecimal(data.fvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td
+									<td style="text-align: right;"  th:text="${#numbers.formatDecimal(data.fvaAed, 1, 'COMMA', 2, 'POINT')}"></td>
+									<td style="text-align: right;"
 										th:text="${#numbers.formatDecimal(data.incrementalPfe, 1, 'COMMA', 2, 'POINT')}">
 									</td>
 								</tr>
@@ -1234,7 +1234,7 @@ Tested by   : Rajalakshmi
 						<div class="card-footer text-center"
 							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Cancel</a>
+							<a th:href="@{/CCR_Data_Templates (formmode='list')}" class="custom-tab-btn">Cancel</a>
 							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
 						</div>
 					</div>
@@ -1306,7 +1306,7 @@ Tested by   : Rajalakshmi
 					<div class="modal-body" style="text-align: center">
 						<p id="alertmsg">Update successful!</p>				
 							<!--<button type="button" class="custom-tab-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
-							<a th:href="@{/CCR_Data_Templates}" class="custom-tab-btn">Close</a>
+							<a th:href="@{/CCR_Data_Templates(formmode='list')}" class="custom-tab-btn">Close</a>
 					</div>
 				</div>
 			</div>
@@ -1521,87 +1521,113 @@ Tested by   : Rajalakshmi
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const fieldRules = {
+    // VARCHAR2 fields
+    bankName: 100,
+    headOfficeSubsidiary: 20,
+    subsidiary: 50,
+    bankSymbol: 10,
+    conventionalIslamic: 50,
+    cbuaeTiering: 10,
+    localForeign: 10,
+    counterpartyName: 50,
+    internalCounterpartyRef: 50,
+    internalCounterpartyRating: 50,
+    finalRatingCbuae: 50,
+    countryOfRisk: 50,
+    cbuaeGeographicalZone: 50,
+    counterpartyType: 50,
+    sector: 10,
+    csa: 10,
+    collateralType: 50,
+    marginCallFrequency: 50,
+    
+    
+    // NUMBER(24,2) fields
+    pfe95Aed: "24,2",
+    expectedPositiveExposureAed: "24,2",
+    expectedNegativeExposureAed: "24,2",
+    threshold: "24,2",
+    minimumTransferAmountAed: "24,2",
+    internal_short_limit: "24,2",
+    independentAmountAed: "24,2",
+    netCollateralOutstandingAed: "24,2",
+    cvaAed: "24,2",
+    dvaAed: "24,2",
+    bilateralCvaAed: "24,2",
+    fvaAed: "24,2",
+    incrementalPfe: "24,2"
+  };
 
-  function showError(input, message) {
-    // Remove any existing error to prevent duplicates
-    clearError(input);
-
-    const error = document.createElement("small");
-    error.id = input.id + "-error";
-    error.className = "text-danger d-block mt-1";
-    error.innerText = message;
-
-    // Insert error message right after the input element
-    input.classList.add("is-invalid");
-    input.parentNode.insertBefore(error, input.nextSibling);
+  function showError(input, msg) {
+    let span = document.getElementById(input.id + "-error");
+    if (!span) {
+      span = document.createElement("small");
+      span.id = input.id + "-error";
+      span.className = "text-danger";
+      span.style.display = "block";
+      input.parentNode.appendChild(span);
+    }
+    span.innerText = msg;
   }
 
   function clearError(input) {
-    const error = document.getElementById(input.id + "-error");
-    if (error) {
-      error.remove();
-    }
-    input.classList.remove("is-invalid");
+    const span = document.getElementById(input.id + "-error");
+    if (span) span.innerText = "";
   }
 
-  // VARCHAR2 (vchar-<max>) fields
-  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
-    let max = null;
-    input.classList.forEach(cls => {
-      if (cls.startsWith("vchar-")) {
-        const limit = parseInt(cls.split("-")[1]);
-        if (!isNaN(limit)) max = limit;
+  function validateInput(event) {
+    const input = event.target;
+    const rule = fieldRules[input.id];
+    const value = input.value.trim();
+
+    if (!rule || value === "") {
+      clearError(input);
+      return;
+    }
+
+    if (typeof rule === "number" || !isNaN(rule)) {
+      // VARCHAR2 Validation (check character length)
+      if (value.length > rule) {
+        showError(input, `Max ${rule} characters allowed`);
+      } else {
+        clearError(input);
       }
-    });
+    } else if (typeof rule === "string" && rule.includes(",")) {
+      // NUMBER(p,s) validation
+      const [total, decimal] = rule.split(",").map(Number);
+      const regex = /^\d+(\.\d+)?$/;
 
-    if (max !== null) {
-      input.removeAttribute("maxlength"); // Let JS handle limit
+      if (!regex.test(value)) {
+        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+        return;
+      }
 
-      input.addEventListener("input", () => {
-        if (input.value.length > max) {
-          showError(input, `Max ${max} characters allowed`);
-        } else {
-          clearError(input);
+      const [intPart, decPart = ""] = value.split(".");
+      const intLen = intPart.replace(/^0+/, "").length;
+      const decLen = decPart.length;
+
+      if (intLen + decLen > total || decLen > decimal) {
+        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+      } else {
+        clearError(input);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const id in fieldRules) {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener("input", validateInput);
+
+        // Add maxlength to VARCHAR2 fields only
+        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+          input.setAttribute("maxlength", fieldRules[id]);
         }
-      });
+      }
     }
   });
-
-
-  // NUMBER(p,s) fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
-
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val === "") {
-          clearError(input);
-          return;
-        }
-
-        if (!/^-?\d*(\.\d*)?$/.test(val)) {
-          showError(input, "Only numeric values allowed");
-          return;
-        }
-
-        const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const totalDigits = intPart.length + decPart.length;
-
-        if (totalDigits > total) {
-          showError(input, `Max ${total} digits allowed`);
-        } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits after decimal`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
-
-});
 </script>
+
 </html>
