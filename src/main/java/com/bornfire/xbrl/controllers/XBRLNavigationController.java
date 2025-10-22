@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -20,10 +19,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,7 +46,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,6 +76,8 @@ import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
+import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
+import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_rep;
 import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
@@ -112,7 +113,9 @@ import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
+import com.bornfire.xbrl.entities.RT_SLS_Detail_Repository;
 import com.bornfire.xbrl.entities.RT_SLS_ENTITIES;
+import com.bornfire.xbrl.entities.RT_SLS_Repository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
 import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
@@ -124,8 +127,6 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.TreasuryPlacementRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
-import com.bornfire.xbrl.entities.RT_SLS_Repository;
-import com.bornfire.xbrl.entities.RT_SLS_Detail_Repository;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -146,12 +147,12 @@ import com.bornfire.xbrl.services.RT_LiquidityriskdashboardService;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
+import com.bornfire.xbrl.services.RT_SLSServices;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
-import com.bornfire.xbrl.services.RT_SLSServices;
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -337,6 +338,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 		String domainid = (String) req.getSession().getAttribute("DOMAINID");
 		String userid = (String) req.getSession().getAttribute("USERID");
+		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		String BRANCH_NAME = (String) req.getSession().getAttribute("BRANCHNAME");
 
 		md.addAttribute("changepassword", loginServices.checkPasswordChangeReq(userid));
 		md.addAttribute("checkpassExpiry", loginServices.checkpassexpirty(userid));
@@ -344,6 +347,14 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		int completed = 0;
 		int uncompleted = 0;
 
+		
+		if("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
+			md.addAttribute("aslCreditList", Mis_exposure_bill_detail_rep.GetBranchwiseExpcount(BRANCH_NAME));
+		}else {
+			md.addAttribute("aslCreditList", Mis_exposure_bill_detail_rep.GetExposurecountdetail());
+		}
+		
+		
 		md.addAttribute("completed", completed);
 		md.addAttribute("uncompleted", uncompleted);
 		md.addAttribute("menu", "Dashboard");
@@ -1423,8 +1434,13 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	}
 
+	@Autowired
+	Mis_exposure_bill_detail_rep Mis_exposure_bill_detail_rep;
+	
 	@RequestMapping(value = "counterparty_list", method = { RequestMethod.GET, RequestMethod.POST })
-	public String counterparty_list(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+	public String counterparty_list(@RequestParam(required = false) String formmode,
+			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid,
+			Model md, HttpServletRequest req) {
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
@@ -1462,7 +1478,60 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
 			md.addAttribute("listall", list);
 
-		} else {
+		} else if ("Billdetaillist".equalsIgnoreCase(formmode)){
+			
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("menuname", "Bill detail operation - list");
+			
+			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
+
+				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME));
+			}else {
+				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails());
+			}
+			
+		} else if ("Addbilldetail".equalsIgnoreCase(formmode)){
+			
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("menuname", "Bill detail operation - Add");
+			Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity = new Mis_exposure_bill_detail_entity();
+			
+			Mis_exposure_bill_detail_entity.setDate_of_loan(new Date());
+			Mis_exposure_bill_detail_entity.setDue_date(new Date());
+			Mis_exposure_bill_detail_entity.setSrl_no(String.valueOf(Mis_exposure_bill_detail_rep.Generatesrl_no()));
+			
+			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
+
+				Mis_exposure_bill_detail_entity.setBranch_name(BRANCHNAME);
+			}
+			
+			md.addAttribute("billdata", Mis_exposure_bill_detail_entity);
+			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
+			
+		} else if ("Editbilldetail".equalsIgnoreCase(formmode)){
+			
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("menuname", "Bill detail operation - Edit");
+			
+			System.out.println("Edit Exposure Menu Received bill detail is : "+Exposurebillid );
+			
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
+			
+		}else if ("Deletebilldetail".equalsIgnoreCase(formmode)){
+			
+			md.addAttribute("formmode", formmode);
+			
+			md.addAttribute("menuname", "Bill detail operation - Delete");
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
+		}else if ("Verifybilldetail".equalsIgnoreCase(formmode)){
+			
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("menuname", "Bill detail operation - Verify");
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
+		}else {
 			logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);
 			md.addAttribute("menu", "List Of Counterparty"); // Default menu label
 			md.addAttribute("menu", "Upload File Of Counterparty");
@@ -1555,12 +1624,12 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		String formattedDate = sdf.format(reportDate).toUpperCase();
 
 		// Call stored procedure with 1 VARCHAR2 parameter
-		/*
-		 * StoredProcedureQuery query =
-		 * entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
-		 * query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		 * query.setParameter(1, formattedDate); query.execute();
-		 */
+		
+		  StoredProcedureQuery query =
+		  entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
+		  query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		  query.setParameter(1, formattedDate); query.execute();
+		 
 
 		msg = "Reconciliation completed for " + formattedDate;
 

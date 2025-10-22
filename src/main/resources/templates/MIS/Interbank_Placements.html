@@ -1,806 +1,810 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
 
-<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
 
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
-<style>
- body {
-      margin: 0;
-      overflow-x: hidden; /* ⛔ Prevent full-page scroll */
-    }
-.btns {
-	float: right;
-	margin: 5px;
-}
+	<style>
+		body {
+			margin: 0;
+			overflow-x: hidden;
+			/* ⛔ Prevent full-page scroll */
+		}
 
-.col-sm-5 {
-	padding-bottom: 15px;
-}
+		.btns {
+			float: right;
+			margin: 5px;
+		}
 
-.list-body {
-	padding: 0px;
-}
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
 
-.error {
-	color: red;
-	padding-left: 10px;
-}
+		.list-body {
+			padding: 0px;
+		}
 
-.formline {
-	padding-bottom: 15px;
-}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
+		.formline {
+			padding-bottom: 15px;
+		}
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
-}
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
 
-#finusertb {
-	width: 460px;
-}
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
-</style>
-<style>
-        .valids { color: green; }
-        .invalids { color: red; }
-    </style>
-<script th:inline="javascript">
-	/*<![CDATA[*/
+		#finusertb {
+			width: 460px;
+		}
 
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			padding: 0px;
+		}
+	</style>
+	<style>
+		.valids {
+			color: green;
+		}
 
-
-
-	function home() {
-		location.href = 'Dashboard'
-	}
-
-	function back() {
-		window.history.back();
-	}
+		.invalids {
+			color: red;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
 
 
-	
-	function Trasury_Limits() {
-	    var reportDate = $("#report_Date").val();
-	    location.href = 'Interbank_placement?formmode=treasury_list' + '&reportDate=' + reportDate;
-	}
 
-	function Trasury_place(){
-		
-		location.href = 'Interbank_placement?formmode=list';
 
-	}
+		function home() {
+			location.href = 'Dashboard'
+		}
 
-	function list() {
-		location.href = 'Interbank_placement?formmode=list';
-	}
+		function back() {
+			window.history.back();
+		}
 
-	
 
-	/*]]>*/
-</script>
 
-<script>
-	function deleteuser() {
-		
-		var entryuser = document.querySelector('[data-entry_user]');
-		var modifyuser = document.querySelector('[data-modify_user]');
+		function Trasury_Limits() {
+			var reportDate = $("#report_Date").val();
+			location.href = 'Interbank_placement?formmode=treasury_list' + '&reportDate=' + reportDate;
+		}
 
-		if (confirm('Are you sure you want to delete this User?')) {		
-			$("#loader1").modal("toggle");
-			var userid = document.getElementById("userId").value;
+		function Trasury_place() {
+
+			location.href = 'Interbank_placement?formmode=list';
+
+		}
+
+		function list() {
+			location.href = 'Interbank_placement?formmode=list';
+		}
+
+
+
+		/*]]>*/
+	</script>
+
+	<script>
+		function deleteuser() {
+
+			var entryuser = document.querySelector('[data-entry_user]');
+			var modifyuser = document.querySelector('[data-modify_user]');
+
+			if (confirm('Are you sure you want to delete this User?')) {
+				$("#loader1").modal("toggle");
+				var userid = document.getElementById("userId").value;
+				$.ajax({
+					type: 'post',
+					url: './deleteuser?formmode=' + userid,
+					success: function (response) {
+						$("#loader1").modal("hide");
+						$("#alertmsg").text('User Deleted');
+						$('#alert').modal("toggle");
+					},
+					error: function (xhr, status, error) {
+						$("#loader1").modal("hide");
+						alert('Not able to delete contact administrator');
+					}
+				});
+			}
+
+		}
+	</script>
+	<script>
+		function roledesc1() {
+
+			var roleid = $("#roleId").find(':selected').val();
+
+			if (roleid == 'VISAP1') {
+				$("#roleDesc1").val("VISAP1");
+			} else if (roleid == 'VISAR2') {
+				$("#roleDesc1").val("VISAR2");
+			} else if (roleid == 'RFI3') {
+				$("#roleDesc1").val("RFI3");
+			} else if (roleid == 'RFI3') {
+				$("#roleDesc1").val("RFI3");
+			} else if (roleid == 'CURINT4') {
+				$("#roleDesc1").val("CURINT4");
+			}
+			$(this).find(':selected').text();
+
+		}
+
+		function brflogin() {
+
+			var roleid = $("#roleId").find(':selected').val();
+
+			if (roleid == 'VISAP1') {
+				$("#roleDesc1").val("VISAP1");
+			} else if (roleid == 'VISAR2') {
+				$("#roleDesc1").val("VISAR2");
+			} else if (roleid == 'RFI3') {
+				$("#roleDesc1").val("RFI3");
+			} else if (roleid == 'RFI3') {
+				$("#roleDesc1").val("RFI3");
+			} else if (roleid == 'CURINT4') {
+				$("#roleDesc1").val("CURINT4");
+			}
+			$(this).find(':selected').text();
+
+		}
+
+		function home() {
+			location.href = "/BCDRS/Dashboard";
+		}
+
+		function back() {
+			window.history.back();
+		}
+	</script>
+
+	<script>
+
+
+		function submitform() {
+			var iBranchCode = $("#iBranchCode").val().trim();
+			var iBranchName = $("#iBranchName").val().trim();
+			var reportDate = $("#reportDate").val().trim();
+			var fileInput = $("#file")[0].files[0];
+
+			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+				alert("All fields are required.");
+				return;
+			}
+
+			let formData = new FormData();
+			formData.append("iBranchCode", iBranchCode);
+			formData.append("iBranchName", iBranchName);
+			formData.append("reportDate", reportDate);
+			formData.append("file", fileInput);
+			formData.append("uploadedBy", $("#uploadedBy").val());
+
 			$.ajax({
-				type : 'post',
-				url : './deleteuser?formmode=' + userid,
-				success : function(response) {
-					$("#loader1").modal("hide");
-					$("#alertmsg").text('User Deleted');
+				url: "./Add_ASL",
+				type: "POST",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					console.log("Success:", response);
+					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
-	            error: function(xhr, status, error) {
-	            	$("#loader1").modal("hide");
-	                alert('Not able to delete contact administrator');
-	            }
+				error: function (xhr, status, error) {
+					console.error("Error:", error);
+					$("#alertmsg").text("Error occurred: " + error);
+					$('#alert').modal("toggle");
+				}
 			});
 		}
-		
-	}
-</script>
-<script>
-	function roledesc1() {
 
-		var roleid = $("#roleId").find(':selected').val();
 
-		if (roleid == 'VISAP1') {
-			$("#roleDesc1").val("VISAP1");
-		} else if (roleid == 'VISAR2') {
-			$("#roleDesc1").val("VISAR2");
-		} else if (roleid == 'RFI3') {
-			$("#roleDesc1").val("RFI3");
-		} else if (roleid == 'RFI3') {
-			$("#roleDesc1").val("RFI3");
-		} else if (roleid == 'CURINT4') {
-			$("#roleDesc1").val("CURINT4");
+	</script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var counterlist = /*[[${counterlist}]]*/[];
+
+		function validatelis(inputElem) {
+			var inputVal = inputElem.value.trim().toLowerCase();
+			var exists = false;
+			var matches = [];
+
+			// Reset previous suggestions
+			$("#bankSuggestions").empty().hide();
+
+			// Check for match and collect suggestions
+			counterlist.forEach(function (item) {
+				if (item.toLowerCase() === inputVal) {
+					exists = true;
+				} else if (item.toLowerCase().includes(inputVal) && inputVal !== "") {
+					matches.push(item);
+				}
+			});
+
+			// Show tooltip if exists
+			if (exists) {
+				$("#bankExistsMsg").show();
+				$("#generatebtn").hide();
+			} else {
+				$("#bankExistsMsg").hide();
+				$("#generatebtn").show();
+			}
+
+			// Show suggestions dropdown
+			if (matches.length > 0) {
+				matches.forEach(function (suggestion) {
+					$("#bankSuggestions").append(
+						"<div class='suggestion-item' style='padding: 5px; cursor: pointer;'>" +
+						suggestion + "</div>"
+					);
+				});
+				$("#bankSuggestions").show();
+			}
 		}
-		$(this).find(':selected').text();
 
-	}
-	
-	function brflogin() {
+		// Handle click on suggestion
+		$(document).on("click", ".suggestion-item", function () {
+			$("#counterPartyBank").val($(this).text());
+			$("#bankSuggestions").hide();
+			validatelis(document.getElementById("counterPartyBank")); // re-validate after selection
+		});
 
-		var roleid = $("#roleId").find(':selected').val();
-
-		if (roleid == 'VISAP1') {
-			$("#roleDesc1").val("VISAP1");
-		} else if (roleid == 'VISAR2') {
-			$("#roleDesc1").val("VISAR2");
-		} else if (roleid == 'RFI3') {
-			$("#roleDesc1").val("RFI3");
-		} else if (roleid == 'RFI3') {
-			$("#roleDesc1").val("RFI3");
-		} else if (roleid == 'CURINT4') {
-			$("#roleDesc1").val("CURINT4");
+		// Hide suggestions if clicked outside
+		$(document).click(function (e) {
+			if (!$(e.target).closest("#counterPartyBank, #bankSuggestions").length) {
+				$("#bankSuggestions").hide();
+			}
+		});
+		/*]]>*/
+	</script>
+	<style>
+		.page-item.active .page-link {
+			z-index: 1;
+			color: #fff;
+			;
+			border-color: darkorange;
 		}
-		$(this).find(':selected').text();
 
-	}
+		.btn {
+			font-size: unset !important;
+		}
 
-	function home() {
-		location.href = "/BCDRS/Dashboard";
-	}
+		.container-fluid {
 
-	function back() {
-		window.history.back();
-	}
-</script>
+			width: 100%;
+			padding-top: 1px;
+			padding-right: 0px !important;
+			padding-left: 0px !important;
+			margin-right: auto;
+			margin-left: auto;
+		}
 
-<script>
+		label,
+		table {
+			font-family: verdana;
+		}
+	</style>
 
-
-function submitform() {
-    var iBranchCode = $("#iBranchCode").val().trim();
-    var iBranchName = $("#iBranchName").val().trim();
-    var reportDate = $("#reportDate").val().trim();
-    var fileInput = $("#file")[0].files[0];
-
-    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-        alert("All fields are required.");
-        return;
-    }
-
-    let formData = new FormData();
-    formData.append("iBranchCode", iBranchCode);
-    formData.append("iBranchName", iBranchName);
-    formData.append("reportDate", reportDate);
-    formData.append("file", fileInput);
-    formData.append("uploadedBy", $("#uploadedBy").val());
-
-    $.ajax({
-        url: "./Add_ASL",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            console.log("Success:", response);
-            $("#alertmsg").text(response);
-            $('#alert').modal("toggle");
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $("#alertmsg").text("Error occurred: " + error);
-            $('#alert').modal("toggle");
-        }
-    });
-}
-
-
-</script>
-
-<script th:inline="javascript">
-/*<![CDATA[*/
-    var counterlist = /*[[${counterlist}]]*/ [];
-
-    function validatelis(inputElem) {
-        var inputVal = inputElem.value.trim().toLowerCase();
-        var exists = false;
-        var matches = [];
-
-        // Reset previous suggestions
-        $("#bankSuggestions").empty().hide();
-
-        // Check for match and collect suggestions
-        counterlist.forEach(function (item) {
-            if (item.toLowerCase() === inputVal) {
-                exists = true;
-            } else if (item.toLowerCase().includes(inputVal) && inputVal !== "") {
-                matches.push(item);
-            }
-        });
-
-        // Show tooltip if exists
-        if (exists) {
-            $("#bankExistsMsg").show();
-            $("#generatebtn").hide();
-        } else {
-            $("#bankExistsMsg").hide();
-            $("#generatebtn").show();
-        }
-
-        // Show suggestions dropdown
-        if (matches.length > 0) {
-            matches.forEach(function (suggestion) {
-                $("#bankSuggestions").append(
-                    "<div class='suggestion-item' style='padding: 5px; cursor: pointer;'>" +
-                    suggestion + "</div>"
-                );
-            });
-            $("#bankSuggestions").show();
-        }
-    }
-
-    // Handle click on suggestion
-    $(document).on("click", ".suggestion-item", function () {
-        $("#counterPartyBank").val($(this).text());
-        $("#bankSuggestions").hide();
-        validatelis(document.getElementById("counterPartyBank")); // re-validate after selection
-    });
-
-    // Hide suggestions if clicked outside
-    $(document).click(function (e) {
-        if (!$(e.target).closest("#counterPartyBank, #bankSuggestions").length) {
-            $("#bankSuggestions").hide();
-        }
-    });
-/*]]>*/
-</script>
-<style>
-	.page-item.active .page-link {
-    z-index: 1;
-    color: #fff;
-    ;
-    border-color: darkorange;
-}
-.btn{
-font-size: unset !important;
-}
-
-.container-fluid {
-
-    width: 100%;
-    padding-top:1px;
-    padding-right: 0px !important;
-    padding-left: 0px !important;
-    margin-right: auto;
-    margin-left: auto;
-}
-label,table{
-font-family: verdana;
-}
-
-</style>
-
-<script>
-  $(document).ready(function () {
-    const table = $('#usertable').DataTable({
-      pageLength: 10,
-      lengthChange: false,
-      searching: true,
-      paging: true,
-      ordering: false,
-      scrollY: "350px",
-      scrollCollapse: true
-    });
-
-    
-
-  });
-  
-  $(document).ready(function () {
-	  $('#reportDate').on('change', function () {
-	    const reportDate = this.value;
-
-	    $.ajax({
-	      type: 'GET',
-	      url: './getTre_limit_Datas',
-	      data: { reportDate: reportDate },
-	      success: function (data) {
-	        const table = $('#usertable').DataTable();
-	        table.clear();
-
-	        data.forEach(row => {
-	          table.row.add([
-    `<div style="text-align:center;">${row.formattedDate}</div>`,  // Centered date
-				row.bankName || '',
-	            row.counterparty || '',
-	            row.amtAed || '0.00',
-	            row.amtGbp || '0.00',
-	            row.amtUsd || '0.00',
-	            row.amtEur || '0.00',
-	            row.inUsdMn || '0.00'
-	          ]);
-	        });
-
-	        table.draw();
-	      },
-	      error: function (xhr, status, error) {
-	        console.error('AJAX error:', status, error);
-	        //alert('Error fetching data!');
-	      }
-	    });
-	  });
-	});
-  
- 
-
-</script>
-
-<script>
-  let table; // Declare globally
-
-  $(document).ready(function () {
-    // Initialize DataTable ONCE
-    table = $('#reporttable').DataTable({
-      pageLength: 10,
-      lengthChange: false,
-      searching: true,
-      paging: true,
-      ordering: false,
-      scrollY: "350px",
-      scrollCollapse: true,
-      columnDefs: [
-        { className: 'dt-center', targets: 0 } // center-align first column
-      ]
-    });
-
-    // Date change handler
-    $('#report_Date').on('change', function () {
-      const reportDate = this.value;
-
-      $.ajax({
-        type: 'GET',
-        url: './getTre_place_Datas',
-        data: { reportDate: reportDate },
-        success: function (data) {
-          table.clear();
-          data.forEach(row => {
-        	    table.row.add([
-        	        `<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
-        	        row.num_operation,                                            // Num Operation
-        	        row.entiteOperation,                                          // Entite Operation
-        	        row.poste,                                                    // Poste
-        	        row.titre,                                                    // Titre
-        	        row.devise1,                                                  // Devise 1
-        	        row.nominal1,                                                 // Nominal 1
-        	        `<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
-        	        `<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
-        	        `<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
-        	        row.preavis,                                                  // Preavis
-        	        row.entite,                                                   // Entite
-        	        row.portefeuille,                                             // Portefeuille
-        	        row.contrepartie,                                             // Counter Party
-        	        row.valeurTaux1                                               // Valeur Taux 1
-        	    ]);
-        	});
-
-
-          table.draw();
-        },
-        error: function (xhr, status, error) {
-          console.error('AJAX error:', status, error);
-        }
-      });
-    });
-
-    // Optionally load today's data on page load
-   // $('#report_Date').trigger('change');
-  });
-</script>
-<script>
-   
-    document.addEventListener('DOMContentLoaded', function () {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('report_Date').value = today;
-    });
-    
-    function placement() {
-        var ReportDate = $("#report_Date").val().trim();
-    console.log(ReportDate);
-        if (ReportDate === "") {
-            alert("Please enter Report Date.");
-            $("#report_Date").focus();
-            return;
-        }
-        // Download file with selected branch and date
-        window.location.href = './download/Placement?ReportDate=' + ReportDate;
-    }
-    
-    function treasuryLimit() {
-        var ReportDate = $("#reportDate").val().trim();
-    console.log(ReportDate);
-        if (ReportDate === "") {
-            alert("Please enter Report Date.");
-            $("#reportDate").focus();
-            return;
-        }
-        // Download file with selected branch and date
-        window.location.href = './download/treasuryLimit?ReportDate=' + ReportDate;
-    }
-</script>
-<script>
-
-function check_date() {
-    var iBranchCode = $("#iBranchCode").val().trim();
-    var iBranchName = $("#iBranchName").val().trim();
-    var reportDate = $("#reportDate").val().trim();
-    var fileInput = $("#file")[0].files[0];
-
-    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-        alert("All fields are required.");
-        return;
-    }
-
-    $.ajax({
-    	url: "./search_date?reportDate=" + encodeURIComponent(reportDate) + "&iBranchCode=" + encodeURIComponent(iBranchCode)  + "&mode=placement",
-        type: "GET",
-        success: function (response) {
-            console.log("Success:", response);
-            if (response > 0) {
-                $("#alertmsg1").text("Report already exists for the selected date.");
-                $('#alert1').modal("toggle");
-            } else {
-                submitform();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $("#alertmsg").text("Error occurred: " + error);
-            $('#alert').modal("toggle");
-        }
-    });
-}
+	<script>
+		$(document).ready(function () {
+			const table = $('#usertable').DataTable({
+				pageLength: 10,
+				lengthChange: false,
+				searching: true,
+				paging: true,
+				ordering: false,
+				scrollY: "350px",
+				scrollCollapse: true
+			});
 
 
 
-function submitform() {
-    var iBranchCode = $("#iBranchCode").val().trim();
-    var iBranchName = $("#iBranchName").val().trim();
-    var reportDate = $("#reportDate").val().trim();
-    var fileInput = $("#file")[0].files[0];
+		});
 
-    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-        alert("All fields are required.");
-        return;
-    }
+		$(document).ready(function () {
+			$('#reportDate').on('change', function () {
+				const reportDate = this.value;
 
-    let formData = new FormData();
-    formData.append("iBranchCode", iBranchCode);
-    formData.append("iBranchName", iBranchName);
-    formData.append("reportDate", reportDate);
-    formData.append("file", fileInput);
-    formData.append("uploadedBy", $("#uploadedBy").val());
-    $("#loader1").modal("toggle");
-    $.ajax({
-        url: "./Add_ASL?mode=placement",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-        	$("#loader1").modal("hide");
-            console.log("Success:", response);
-            $("#alertmsg").text(response);
-            $('#alert').modal("toggle");
-        },
-        error: function (xhr, status, error) {
-        	$("#loader1").modal("hide");
-            console.error("Error:", error);
-            $("#alertmsg").text("Error occurred: " + error);
-            $('#alert').modal("toggle");
-        }
-    });
-}
+				$.ajax({
+					type: 'GET',
+					url: './getTre_limit_Datas',
+					data: {reportDate: reportDate},
+					success: function (data) {
+						const table = $('#usertable').DataTable();
+						table.clear();
 
-function ignore(){
-	
+						data.forEach(row => {
+							table.row.add([
+								`<div style="text-align:center;">${row.formattedDate}</div>`,  // Centered date
+								row.bankName || '',
+								row.counterparty || '',
+								row.amtAed || '0.00',
+								row.amtGbp || '0.00',
+								row.amtUsd || '0.00',
+								row.amtEur || '0.00',
+								row.inUsdMn || '0.00'
+							]);
+						});
 
-	  $("#alertmsg1").text("");
-	    $("#alert1").modal("hide");
-}
-function replace(){
-	  $("#alertmsg1").text("");
-	    $("#alert1").modal("hide");
+						table.draw();
+					},
+					error: function (xhr, status, error) {
+						console.error('AJAX error:', status, error);
+						//alert('Error fetching data!');
+					}
+				});
+			});
+		});
 
-    var iBranchCode = $("#iBranchCode").val().trim();
-    var iBranchName = $("#iBranchName").val().trim();
-    var reportDate = $("#reportDate").val().trim();
-    var fileInput = $("#file")[0].files[0];
 
-    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-        alert("All fields are required.");
-        return;
-    }
 
-    let formData = new FormData();
-    formData.append("iBranchCode", iBranchCode);
-    formData.append("iBranchName", iBranchName);
-    formData.append("reportDate", reportDate);
-    formData.append("file", fileInput);
-    formData.append("uploadedBy", $("#uploadedBy").val());
-    $("#loader1").modal("toggle");
-    $.ajax({
-        url: "./Replace_data?mode=placement",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-        	$("#loader1").modal("hide");
-            console.log("Success:", response);
-            $("#alertmsg").text(response);
-            $('#alert').modal("toggle");
-        },
-        error: function (xhr, status, error) {
-        	$("#loader1").modal("hide");
-            console.error("Error:", error);
-            $("#alertmsg").text("Error occurred: " + error);
-            $('#alert').modal("toggle");
-        }
-    });
-	
-	
-}
+	</script>
 
-</script>
-<script>
-function get_branch() {
-    var code = document.getElementById('iBranchCode').value;
+	<script>
+		let table; // Declare globally
 
-    $.ajax({
-        type: 'GET',
-        url: './getbranch', // or './getbranch' if that's the actual endpoint
-        data: { selected_branch: code }, // corrected key-value
-        success: function (data) {
-        	//alert(data)
-            document.getElementById('iBranchName').value = data;
-        },
-        error: function () {
-            alert("Failed to fetch branch name.");
-        }
-    });
-}
+		$(document).ready(function () {
+			// Initialize DataTable ONCE
+			table = $('#reporttable').DataTable({
+				pageLength: 10,
+				lengthChange: false,
+				searching: true,
+				paging: true,
+				ordering: false,
+				scrollY: "350px",
+				scrollCollapse: true,
+				columnDefs: [
+					{className: 'dt-center', targets: 0} // center-align first column
+				]
+			});
 
-function Branchcodeval() {
-	var code = document.getElementById('iBranchCode').value;
- 	
-    switch (code) {
-        case '9001': $("#iBranchName").val("Dubai"); break;
-        case '9002': $("#iBranchName").val("Abu Dhabi"); break;
-        case '9003': $("#iBranchName").val("Deira"); break;
-        case '9004': $("#iBranchName").val("Sharja"); break;
-        case '9005': $("#iBranchName").val("Ras Alkaima"); break;
-        case '9008': $("#iBranchName").val("Syndication"); break;
-        case '9010': $("#iBranchName").val("Treasury"); break;
-        case '9019': $("#iBranchName").val("DFC"); break;
-        default: $("#iBranchName").val(""); // clear if not matched
-    }
-}
-</script>
+			// Date change handler
+			$('#report_Date').on('change', function () {
+				const reportDate = this.value;
+
+				$.ajax({
+					type: 'GET',
+					url: './getTre_place_Datas',
+					data: {reportDate: reportDate},
+					success: function (data) {
+						table.clear();
+						data.forEach(row => {
+							table.row.add([
+								`<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
+								row.num_operation,                                            // Num Operation
+								row.entiteOperation,                                          // Entite Operation
+								row.poste,                                                    // Poste
+								row.titre,                                                    // Titre
+								row.devise1,                                                  // Devise 1
+								row.nominal1,                                                 // Nominal 1
+								`<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
+								`<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
+								`<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
+								row.preavis,                                                  // Preavis
+								row.entite,                                                   // Entite
+								row.portefeuille,                                             // Portefeuille
+								row.contrepartie,                                             // Counter Party
+								row.valeurTaux1                                               // Valeur Taux 1
+							]);
+						});
+
+
+						table.draw();
+					},
+					error: function (xhr, status, error) {
+						console.error('AJAX error:', status, error);
+					}
+				});
+			});
+
+			// Optionally load today's data on page load
+			// $('#report_Date').trigger('change');
+		});
+	</script>
+	<script>
+
+		document.addEventListener('DOMContentLoaded', function () {
+			const today = new Date().toISOString().split('T')[0];
+			document.getElementById('report_Date').value = today;
+		});
+
+		function placement() {
+			var ReportDate = $("#report_Date").val().trim();
+			console.log(ReportDate);
+			if (ReportDate === "") {
+				alert("Please enter Report Date.");
+				$("#report_Date").focus();
+				return;
+			}
+			// Download file with selected branch and date
+			window.location.href = './download/Placement?ReportDate=' + ReportDate;
+		}
+
+		function treasuryLimit() {
+			var ReportDate = $("#reportDate").val().trim();
+			console.log(ReportDate);
+			if (ReportDate === "") {
+				alert("Please enter Report Date.");
+				$("#reportDate").focus();
+				return;
+			}
+			// Download file with selected branch and date
+			window.location.href = './download/treasuryLimit?ReportDate=' + ReportDate;
+		}
+	</script>
+	<script>
+
+		function check_date() {
+			var iBranchCode = $("#iBranchCode").val().trim();
+			var iBranchName = $("#iBranchName").val().trim();
+			var reportDate = $("#reportDate").val().trim();
+			var fileInput = $("#file")[0].files[0];
+
+			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+				alert("All fields are required.");
+				return;
+			}
+
+			$.ajax({
+				url: "./search_date?reportDate=" + encodeURIComponent(reportDate) + "&iBranchCode=" + encodeURIComponent(iBranchCode) + "&mode=placement",
+				type: "GET",
+				success: function (response) {
+					console.log("Success:", response);
+					if (response > 0) {
+						$("#alertmsg1").text("Report already exists for the selected date.");
+						$('#alert1').modal("toggle");
+					} else {
+						submitform();
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error("Error:", error);
+					$("#alertmsg").text("Error occurred: " + error);
+					$('#alert').modal("toggle");
+				}
+			});
+		}
+
+
+
+		function submitform() {
+			var iBranchCode = $("#iBranchCode").val().trim();
+			var iBranchName = $("#iBranchName").val().trim();
+			var reportDate = $("#reportDate").val().trim();
+			var fileInput = $("#file")[0].files[0];
+
+			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+				alert("All fields are required.");
+				return;
+			}
+
+			let formData = new FormData();
+			formData.append("iBranchCode", iBranchCode);
+			formData.append("iBranchName", iBranchName);
+			formData.append("reportDate", reportDate);
+			formData.append("file", fileInput);
+			formData.append("uploadedBy", $("#uploadedBy").val());
+			$("#loader1").modal("toggle");
+			$.ajax({
+				url: "./Add_ASL?mode=placement",
+				type: "POST",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					$("#loader1").modal("hide");
+					console.log("Success:", response);
+					$("#alertmsg").text(response);
+					$('#alert').modal("toggle");
+				},
+				error: function (xhr, status, error) {
+					$("#loader1").modal("hide");
+					console.error("Error:", error);
+					$("#alertmsg").text("Error occurred: " + error);
+					$('#alert').modal("toggle");
+				}
+			});
+		}
+
+		function ignore() {
+
+
+			$("#alertmsg1").text("");
+			$("#alert1").modal("hide");
+		}
+		function replace() {
+			$("#alertmsg1").text("");
+			$("#alert1").modal("hide");
+
+			var iBranchCode = $("#iBranchCode").val().trim();
+			var iBranchName = $("#iBranchName").val().trim();
+			var reportDate = $("#reportDate").val().trim();
+			var fileInput = $("#file")[0].files[0];
+
+			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+				alert("All fields are required.");
+				return;
+			}
+
+			let formData = new FormData();
+			formData.append("iBranchCode", iBranchCode);
+			formData.append("iBranchName", iBranchName);
+			formData.append("reportDate", reportDate);
+			formData.append("file", fileInput);
+			formData.append("uploadedBy", $("#uploadedBy").val());
+			$("#loader1").modal("toggle");
+			$.ajax({
+				url: "./Replace_data?mode=placement",
+				type: "POST",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					$("#loader1").modal("hide");
+					console.log("Success:", response);
+					$("#alertmsg").text(response);
+					$('#alert').modal("toggle");
+				},
+				error: function (xhr, status, error) {
+					$("#loader1").modal("hide");
+					console.error("Error:", error);
+					$("#alertmsg").text("Error occurred: " + error);
+					$('#alert').modal("toggle");
+				}
+			});
+
+
+		}
+
+	</script>
+	<script>
+		function get_branch() {
+			var code = document.getElementById('iBranchCode').value;
+
+			$.ajax({
+				type: 'GET',
+				url: './getbranch', // or './getbranch' if that's the actual endpoint
+				data: {selected_branch: code}, // corrected key-value
+				success: function (data) {
+					//alert(data)
+					document.getElementById('iBranchName').value = data;
+				},
+				error: function () {
+					alert("Failed to fetch branch name.");
+				}
+			});
+		}
+
+		function Branchcodeval() {
+			var code = document.getElementById('iBranchCode').value;
+
+			switch (code) {
+				case '9001': $("#iBranchName").val("Dubai"); break;
+				case '9002': $("#iBranchName").val("Abu Dhabi"); break;
+				case '9003': $("#iBranchName").val("Deira"); break;
+				case '9004': $("#iBranchName").val("Sharja"); break;
+				case '9005': $("#iBranchName").val("Ras Alkaima"); break;
+				case '9008': $("#iBranchName").val("Syndication"); break;
+				case '9010': $("#iBranchName").val("Treasury"); break;
+				case '9019': $("#iBranchName").val("DFC"); break;
+				default: $("#iBranchName").val(""); // clear if not matched
+			}
+		}
+	</script>
 </head>
 <title>BCDRS</title>
+
 <body>
-	
-<div class="container-fluid">
+
+	<div class="container-fluid">
 		<div class="row">
-	<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div th:insert="XBRLHeaderMenu :: header"></div>
 			<div class="col-sm-12">
 
-<div th:if="${formmode}=='add'">
-		<div class="row">
-			<div class="col-sm-12 ">
-<form action="#" method="post" autocomplete="off" id="ASL_report" enctype="multipart/form-data">
-						<div class="card">
-							<div class="card-header">
-								<div class="float-left">
-						<h5 th:text="${menu}"
-							style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-					</div>
-									<div class="btn-group nav-buttons float-right">
-											<button type="button" class="custom-tab-btn"
-												style=";"
+				<div th:if="${formmode}=='add'">
+					<div class="row">
+						<div class="col-sm-12 ">
+							<form action="#" method="post" autocomplete="off" id="ASL_report"
+								enctype="multipart/form-data">
+								<div class="card">
+									<div class="card-header">
+										<div class="float-left">
+											<h5 th:text="${menu}"
+												style="font-family: verdana;  font-weight: bold; padding-top: 10px;">
+											</h5>
+										</div>
+										<div class="btn-group nav-buttons float-right">
+											<button type="button" class="custom-tab-btn" style=";"
 												onclick="window.location.href='./download/excel?mode=placement'">
 												Template Download</button>
 										</div>
-							</div>
-							<div class="card-body">
-
-								<input autocomplete="false" name="hidden" type="text"
-									style="display: none;">
-								<div class="form-group">
-																	<!-- Branch Code Row -->
-<div class="row formline">
-    <div class="col-sm-3"></div>
-
-    <div class="col-sm-2">
-        <label for="iBranchCode">Branch Code <b style="color: red;">*</b></label>
-    </div>
-
-    <!-- For ADM: editable input with datalist -->
-    <div class="col-sm-3" th:if="${ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}">
-        <input type="text" id="iBranchCode" name="iBranchCode"
-               class="form-control form-control-sm"
-               list="branchCodeList" autocomplete="off"
-               th:value="${BRANCHCODE}" required   oninput="Branchcodeval()"  />
-        <datalist id="branchCodeList">
-			<option value="9001">9001</option>
-			<option value="9002">9002</option>
-			<option value="9003">9003</option>
-			<option value="9004">9004</option>
-			<option value="9005">9005</option>
-			<option value="9008">9008</option>
-			<option value="9009">9009</option>
-			<option value="9010">9010</option>
-        </datalist>
-    </div>
-
-    <!-- For non-ADM: readonly input -->
-    <div class="col-sm-3" th:if="${ROLEID != 'ADM-M' AND ROLEID != 'ADM-C' AND ROLEID != 'MGR'}">
-        <input type="text" id="iBranchCode" name="iBranchCode"
-               class="form-control form-control-sm"
-               th:value="${BRANCHCODE}" readonly />
-    </div>
-</div>
-
-<!-- Branch Name Row -->
-<div class="row formline">
-    <div class="col-sm-3"></div>
-
-    <div class="col-sm-2">
-        <label for="iBranchName">Branch Name <b style="color: red;">*</b></label>
-    </div>
-
-    <div class="col-sm-3 position-relative">
-        <input type="text" id="iBranchName" name="iBranchName"
-               class="form-control form-control-sm"
-               th:value="${BRANCHNAME}" readonly />
-    </div>
-</div>
-									<div class="row formline">
-										<div class="col-sm-3"></div>
-										<div class="col-sm-2">
-											<label for="file">File<b style="color: red;">*</b></label>
-										</div>
-										<div class="col-sm-3">
-											<input type="file" name="file" id="file"
-												class="form-control form-control-sm" autocomplete="new-text"
-												required />
-										</div>
 									</div>
-									<div class="row formline">
-										<div class="col-sm-3"></div>
-										<div class="col-sm-2">
-											<label for="uploadedBy">Uploaded By<b style="color: red;">*</b></label>
+									<div class="card-body">
+
+										<input autocomplete="false" name="hidden" type="text" style="display: none;">
+										<div class="form-group">
+											<!-- Branch Code Row -->
+											<div class="row formline">
+												<div class="col-sm-3"></div>
+
+												<div class="col-sm-2">
+													<label for="iBranchCode">Branch Code <b
+															style="color: red;">*</b></label>
+												</div>
+
+												<!-- For ADM: editable input with datalist -->
+												<div class="col-sm-3"
+													th:if="${ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR'}">
+													<input type="text" id="iBranchCode" name="iBranchCode"
+														class="form-control form-control-sm" list="branchCodeList"
+														autocomplete="off" th:value="${BRANCHCODE}" required
+														oninput="Branchcodeval()" />
+													<datalist id="branchCodeList">
+														<option value="9001">9001</option>
+														<option value="9002">9002</option>
+														<option value="9003">9003</option>
+														<option value="9004">9004</option>
+														<option value="9005">9005</option>
+														<option value="9008">9008</option>
+														<option value="9009">9009</option>
+														<option value="9010">9010</option>
+													</datalist>
+												</div>
+
+												<!-- For non-ADM: readonly input -->
+												<div class="col-sm-3"
+													th:if="${ROLEID != 'ADM-M' AND ROLEID != 'ADM-C' AND ROLEID != 'MGR'}">
+													<input type="text" id="iBranchCode" name="iBranchCode"
+														class="form-control form-control-sm" th:value="${BRANCHCODE}"
+														readonly />
+												</div>
+											</div>
+
+											<!-- Branch Name Row -->
+											<div class="row formline">
+												<div class="col-sm-3"></div>
+
+												<div class="col-sm-2">
+													<label for="iBranchName">Branch Name <b
+															style="color: red;">*</b></label>
+												</div>
+
+												<div class="col-sm-3 position-relative">
+													<input type="text" id="iBranchName" name="iBranchName"
+														class="form-control form-control-sm" th:value="${BRANCHNAME}"
+														readonly />
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-3"></div>
+												<div class="col-sm-2">
+													<label for="file">File<b style="color: red;">*</b></label>
+												</div>
+												<div class="col-sm-3">
+													<input type="file" name="file" id="file"
+														class="form-control form-control-sm" autocomplete="new-text"
+														required />
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-3"></div>
+												<div class="col-sm-2">
+													<label for="uploadedBy">Uploaded By<b
+															style="color: red;">*</b></label>
+												</div>
+												<div class="col-sm-3">
+													<input type="text" name="uploadedBy" id="uploadedBy"
+														class="form-control form-control-sm" required
+														th:value="${userid}" readonly />
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-3"></div>
+												<div class="col-sm-2">
+													<label for="reportDate">Report Date<b
+															style="color: red;">*</b></label>
+												</div>
+												<div class="col-sm-3">
+													<input type="date" name="reportDate" id="reportDate"
+														class="form-control form-control-sm" required />
+												</div>
+											</div>
 										</div>
-										<div class="col-sm-3">
-											<input type="text" name="uploadedBy" id="uploadedBy"
-												class="form-control form-control-sm" 
-												required th:value="${userid}" readonly  />
-										</div>
-									</div>
-									<div class="row formline">
-										<div class="col-sm-3"></div>
-										<div class="col-sm-2">
-											<label for="reportDate">Report Date<b style="color: red;">*</b></label>
-										</div>
-										<div class="col-sm-3">
-											<input type="date" name="reportDate" id="reportDate"
-												class="form-control form-control-sm" 
-												required />
+										<div class="card-footer text-center">
+											<button type="button" class="custom-tab-btn" style="" id="btnHome"
+												onclick="home();">Home</button>
+											<button type="button" class="custom-tab-btn" id="generatebtn" style=""
+												onclick="check_date();">Submit</button>
+											<button type="button" class="custom-tab-btn" style="" id="btnBack"
+												onclick="back();">Back</button>
+
 										</div>
 									</div>
 								</div>
-								<div class="card-footer text-center">
-									<button type="button" class="custom-tab-btn"
-										style="" id="btnHome"
-										onclick="home();">Home</button>
-									<button type="button" class="custom-tab-btn" id="generatebtn"
-										style="" onclick="check_date();">Submit</button>
-									<button type="button" class="custom-tab-btn"
-										style="" id="btnBack"
-										onclick="back();">Back</button>
-
-								</div>
-							</div>
-						</div>
-					</form>
-
-				</div>
-		</div>
-	</div>
-		<div th:if="${formmode}=='list'">
-
-			<div class="card" >
-				<div class="card-header">
-					<div class="float-left">
-						<h5 th:text="${menu}"
-							style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-					</div>
-					<div class="btn-group nav-buttons float-right">
-						
-						<div class="form-inline">
-						<label for="report_Date" class="mr-2">Report Date:</label> <input
-							type="date" id="report_Date" name="report_Date"
-							class="form-control form-control-sm"
-							value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
-					</div>
-					<div class="d-flex align-items-center gap-1">
-							<button type="button" class="custom-tab-btn"
-								style="" id="btnAdd"
-								onclick="Trasury_Limits();">List Of Treasury Limits</button>
-								
-							<button type="button" class="custom-tab-btn"
-									onclick="placement()">Download</button>
+							</form>
 
 						</div>
 					</div>
 				</div>
+				<div th:if="${formmode}=='list'">
+
+					<div class="card">
+						<div class="card-header">
+							<div class="float-left">
+								<h5 th:text="${menu}"
+									style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+
+								<div class="form-inline">
+									<label for="report_Date" class="mr-2">Report Date:</label> <input type="date"
+										id="report_Date" name="report_Date" class="form-control form-control-sm"
+										value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="d-flex align-items-center gap-1">
+									<!--<button type="button" class="custom-tab-btn" style="" id="btnAdd"
+										onclick="Trasury_Limits();">List Of Treasury Limits</button>-->
+
+									<button type="button" class="custom-tab-btn" onclick="placement()">Download</button>
+
+								</div>
+							</div>
+						</div>
 
 
-				<div class="row">
-				<div class="col-sm-12">
-				
-						<div style=" overflow-y: auto;">
-		<table class="table table-striped table-bordered table-hover" id="reporttable">
-  <thead style="background-color: orange; font-family: verdana;">
+						<div class="row">
+							<div class="col-sm-12">
+
+								<div style=" overflow-y: auto;">
+									<table class="table table-striped table-bordered table-hover" id="reporttable">
+										<thead style="background-color: orange; font-family: verdana;">
 											<tr>
 												<th style="white-space: nowrap;">Report Date</th>
 												<th style="white-space: nowrap;">Num Operation</th>
@@ -821,8 +825,7 @@ function Branchcodeval() {
 										</thead>
 										<tbody style="font-family: verdana;">
 											<tr th:each="lists, iterStat : ${listss}">
-												<td  
-													th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}"></td>
+												<td th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}"></td>
 
 												<td th:text="${lists.num_operation}"></td>
 												<td th:text="${lists.entiteOperation}"></td>
@@ -849,147 +852,139 @@ function Branchcodeval() {
 									</table>
 
 
-						</div>
-					<div class="card-footer text-center"
-						>
-						<button type="button" class="custom-tab-btn" id="btnHome"
-							onclick="home();">Home</button>
-						<button type="button" class="custom-tab-btn"id="btnBack"
-							onclick="back();">Back</button>
-					</div>
-				</div>
-			</div>
-			</div>
-		</div>
-		
-		<div th:if="${formmode}=='treasury_list'">
-
-			<div class="card" >
-				<div class="card-header">
-					<div class="float-left">
-						<h5 th:text="${menu}"
-							style="font-family: verdana; font-weight: bold; padding-top: 10px;"></h5>
-					</div>
-					<div class="btn-group nav-buttons float-right">
-					
-						<div class="form-inline">
-						<label for="reportDate" class="mr-2">Report Date:</label> <input
-							type="date" id="reportDate" name="reportDate"
-							class="form-control form-control-sm"   th:value="${reportdate}"  />
-					</div>
-						<div class="d-flex align-items-center gap-1">
-							<button type="button" class="custom-tab-btn"
-								style="" id="btnAdd"
-								onclick="Trasury_place();">List Of Treasury Placements</button>
-	
-							<button type="button" class="custom-tab-btn"
-									style="border-radius: 8px; "
-									onclick="treasuryLimit()">Download</button>
+								</div>
+								<div class="card-footer text-center">
+									<button type="button" class="custom-tab-btn" id="btnHome"
+										onclick="home();">Home</button>
+									<button type="button" class="custom-tab-btn" id="btnBack"
+										onclick="back();">Back</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				
+
+				<div th:if="${formmode}=='treasury_list'">
+
+					<div class="card">
+						<div class="card-header">
+							<div class="float-left">
+								<h5 th:text="${menu}"
+									style="font-family: verdana; font-weight: bold; padding-top: 10px;"></h5>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+
+								<div class="form-inline">
+									<label for="reportDate" class="mr-2">Report Date:</label> <input type="date"
+										id="reportDate" name="reportDate" class="form-control form-control-sm"
+										th:value="${reportdate}" />
+								</div>
+								<div class="d-flex align-items-center gap-1">
+									<button type="button" class="custom-tab-btn" style="" id="btnAdd"
+										onclick="Trasury_place();">List Of Treasury Placements</button>
+
+									<button type="button" class="custom-tab-btn" style="border-radius: 8px; "
+										onclick="treasuryLimit()">Download</button>
+								</div>
+							</div>
+						</div>
 
 
-				<div class="row">
-				
-					<div style=" overflow-y: auto;">
-    <table class="table table-striped table-bordered table-hover" id="usertable">
-        <thead style="background-color: orange; font-family: verdana;">
-            <tr>
-                <th style="text-align: center;">Report Date</th>
-                <th >Bank Name</th>
-                <th >Counter Party</th>
-                <th >Amount (AED)</th>
-                <th >Amount (GBP)</th>
-                <th >Amount (EUR)</th>
-                <th >Amount (USD)</th>
-                <th >USD MN</th>
-            </tr>
-        </thead>
-        <tbody style="font-family: verdana;">
-            <tr th:each="lists : ${listall}" style="cursor: pointer;">
-                <td style="text-align: center;">[[${#dates.format(lists.reportDate, 'dd-MM-yyyy')}]]</td>
-                <td>[[${lists.bankName}]]</td>
-                <td>[[${lists.counterparty}]]</td>
-     <td>[[${#numbers.formatDecimal(lists.amtAed, 1, '2', '2')}]]</td>
-    <td>[[${#numbers.formatDecimal(lists.amtGbp, 1, '2', '2')}]]</td>
-    <td>[[${#numbers.formatDecimal(lists.amtUsd, 1, '2', '2')}]]</td>
-    <td>[[${#numbers.formatDecimal(lists.amtEur, 1, '2', '2')}]]</td>
-    <td>[[${#numbers.formatDecimal(lists.inUsdMn, 1, '2', '2')}]]</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
-					<div class="card-footer text-center"
-						>
-						<button type="button" class="custom-tab-btn" 
-							onclick="home();">Home</button>
-						<button type="button" class="custom-tab-btn" id="btnBack"
-							onclick="back();">Back</button>
+						<div class="row">
+
+							<div style=" overflow-y: auto;">
+								<table class="table table-striped table-bordered table-hover" id="usertable">
+									<thead style="background-color: orange; font-family: verdana;">
+										<tr>
+											<th style="text-align: center;">Report Date</th>
+											<th>Bank Name</th>
+											<th>Counter Party</th>
+											<th>Amount (AED)</th>
+											<th>Amount (GBP)</th>
+											<th>Amount (EUR)</th>
+											<th>Amount (USD)</th>
+											<th>USD MN</th>
+										</tr>
+									</thead>
+									<tbody style="font-family: verdana;">
+										<tr th:each="lists : ${listall}" style="cursor: pointer;">
+											<td style="text-align: center;">[[${#dates.format(lists.reportDate,
+												'dd-MM-yyyy')}]]</td>
+											<td>[[${lists.bankName}]]</td>
+											<td>[[${lists.counterparty}]]</td>
+											<td>[[${#numbers.formatDecimal(lists.amt_aed, 1, 'COMMA', 2)}]]</td>
+											<td>[[${#numbers.formatDecimal(lists.amt_gbp, 1, 'COMMA', 2)}]]</td>
+											<td>[[${#numbers.formatDecimal(lists.amt_usd, 1, 'COMMA', 2)}]]</td>
+											<td>[[${#numbers.formatDecimal(lists.amt_eur, 1, 'COMMA', 2)}]]</td>
+											<td>[[${#numbers.formatDecimal(lists.in_usd_mn, 1, 'COMMA', 2)}]]</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div class="card-footer text-center">
+								<button type="button" class="custom-tab-btn" onclick="home();">Home</button>
+								<button type="button" class="custom-tab-btn" id="btnBack"
+									onclick="back();">Back</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-			</div>
-		</div>
-	
-	
 
-	
-	<div class="modal fade" id="alert">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-			<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
-				</div>
-				<div class="modal-body" style="text-align: center">
-					<p id="alertmsg"></p>
-					<button type="button" class="custom-tab-btn" onclick="list()"
-						data-dismiss="modal">Close</button>
+
+
+
+			<div class="modal fade" id="alert">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="menu-title-header">
+							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+								BANK OF BARODA</div>
+						</div>
+						<div class="modal-body" style="text-align: center">
+							<p id="alertmsg"></p>
+							<button type="button" class="custom-tab-btn" onclick="list()"
+								data-dismiss="modal">Close</button>
+						</div>
+					</div>
 				</div>
 			</div>
+
+			<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content" style="background: transparent;">
+						<div class="modal-body" style="text-align: center">
+							<div>
+								<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;" alt="Bornfire">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
-	</div>
-	
-	<div class="modal fade" id="loader1" data-backdrop="static"
-			data-keyboard="false">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content" style="background: transparent;">
+		<div class="modal fade" id="alert1">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="menu-title-header">
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
+							OF BARODA</div>
+					</div>
 					<div class="modal-body" style="text-align: center">
-						<div>
-							<img th:src=@{/images/loader.gif} id="bfirelogo"
-								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-								border-color: transparent;"
-								alt="Bornfire">
-						</div>
+						<p id="alertmsg1"></p>
+						<button type="button" class="btn " style="background-color:darkorange" onclick="replace()"
+							data-dismiss="modal">Replace</button>
+						<button type="button" class="btn" style="background-color:darkorange" data-dismiss="modal"
+							onclick="ignore();">Ignore</button>
+
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
-<div class="modal fade" id="alert1">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-			<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
-				</div>
-				<div class="modal-body" style="text-align: center">
-					<p id="alertmsg1"></p>
-					<button type="button" class="btn "style="background-color:darkorange" onclick="replace()"
-						data-dismiss="modal">Replace</button>
-						<button type="button" class="btn" style="background-color:darkorange" data-dismiss="modal"  onclick="ignore();">Ignore</button>
-
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 </body>
+
 </html>

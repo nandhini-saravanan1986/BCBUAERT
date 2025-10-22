@@ -81,6 +81,18 @@ function final_sheet() {
 
     window.location.href = './download/final?ReportDate=' + ReportDate;
 }
+
+function Download_detail_report() {
+    var ReportDate = $("#ReportDate").val().trim();
+    if (ReportDate === "") {
+        alert("Please enter Report Date.");
+        $("#ReportDate").focus();
+        return;
+    }
+
+    window.location.href = './download/Download_detail_report?ReportDate=' + ReportDate;
+}
+
 </script>
 
 	<script>
@@ -231,7 +243,8 @@ function final_sheet() {
 
         <!-- Buttons -->
         <button type="button" class="custom-tab-btn" onclick="calculate()">Calculate</button>
-        <button type="button" class="custom-tab-btn" onclick="final_sheet()">Download</button>
+        <button type="button" class="custom-tab-btn" onclick="final_sheet()">Download Final Report</button>
+		<button type="button" class="custom-tab-btn" onclick="Download_detail_report()">Download Detail Report</button>
     </div>
 </div>
 

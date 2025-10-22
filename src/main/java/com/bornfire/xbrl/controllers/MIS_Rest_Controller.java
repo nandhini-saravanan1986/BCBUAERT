@@ -11,12 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
+import com.bornfire.xbrl.services.counter_services;
 
 @RestController
 public class MIS_Rest_Controller {
@@ -27,6 +33,9 @@ public class MIS_Rest_Controller {
     
     @Autowired
     AuditService auditService;
+    
+    @Autowired
+    counter_services counter_services;
 
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
@@ -84,7 +93,8 @@ public class MIS_Rest_Controller {
             logger.info("Generated file size: {}", fileData.length);
             String userid = (String) req.getSession().getAttribute("USERID");
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Final Sheet.xlsx\"");
+            response.setHeader("Content-Disposition",
+            	    "attachment; filename=\"Counterparty Bank Exposure (ASL) statement " + ReportDate + ".xlsx\"");
             response.getOutputStream().write(fileData);
             response.getOutputStream().flush();
             auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null,"MIS_BANK_LIMITS");
@@ -92,6 +102,25 @@ public class MIS_Rest_Controller {
             logger.error("Error while generating Final sheet Excel file", e);
         }
     }
+    
+    @GetMapping("/download/Download_detail_report")
+    public void Download_detail_report(HttpServletResponse response,HttpServletRequest req,
+            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+        try {
+            byte[] fileData = excelServices.Generate_detail_statement(ReportDate);
+            logger.info("Generated file size: {}", fileData.length);
+            String userid = (String) req.getSession().getAttribute("USERID");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition",
+            	    "attachment; filename=\"Counterparty Bank Exposure (ASL) detail statement " + ReportDate + ".xlsx\"");
+            response.getOutputStream().write(fileData);
+            response.getOutputStream().flush();
+            auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null,"MIS_BANK_LIMITS");
+        } catch (Exception e) {
+            logger.error("Error while generating Final sheet Excel file", e);
+        }
+    }
+    
     @GetMapping("/download/Exposure")
     public void Exposure(HttpServletResponse response,HttpServletRequest req,
             @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate,
@@ -164,6 +193,22 @@ public class MIS_Rest_Controller {
         }
     }
     
+	@PostMapping("/Exposurebillservice")
+	@ResponseBody
+	public String Exposurebillservice(@ModelAttribute Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity, Model md,
+			HttpServletResponse response,HttpServletRequest rq, @RequestParam(required = false) String formmode) {
+		logger.info("==> Entered Exposure bill service api controller");
+		
+		try {
+			
+			String msg = counter_services.Exposurebillservice(Mis_exposure_bill_detail_entity, formmode, rq);
+			logger.info("✅ Returning message to UI: {}", msg);
+			return msg;
+		} catch (Exception e) {
+			logger.error("Error occurred while Add  New Bill: {}", e.getMessage(), e);
+			return e.getMessage();
+		}
+	}
 
 }
 

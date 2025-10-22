@@ -20,6 +20,9 @@ public interface Counterparty_Rep extends CrudRepository<Counterparty_Entity,Lon
 	@Query(value = "select COUNTER_PARTY_BANK from MIS_COUNTER_PARTY_TABLE", nativeQuery = true)
 	List<String> getall();
 	
+	@Query(value = "select Distinct COUNTER_PARTY_BANK from MIS_COUNTER_PARTY_TABLE where REGULAR_LIMIT <> 0 or ADHOC_LIMIT <> 0", nativeQuery = true)
+	List<String> Getcounterpartyname();
+	
 	@Query(value = "SELECT DISTINCT COUNTERPARTY_CODE FROM MIS_COUNTER_PARTY_TABLE WHERE COUNTERPARTY_CODE IS NOT NULL", nativeQuery = true)
 	List<String> getcodes();
 

@@ -324,33 +324,26 @@
 							// --- START Work Class display change ---
 							let displayWorkClass = "";
 							if (data.workClass === "M") {
-								displayWorkClass = "Maker";
+								displayWorkClass = "M";
 							} else if (data.workClass === "C") {
-								displayWorkClass = "Checker";
+								displayWorkClass = "C";
 							} else {
 								displayWorkClass = data.workClass || "";
 							}
 							$("#work_class").val(displayWorkClass);
 							// --- END Work Class display change ---
 
-							// --- START Permissions display change ---
-							let displayPermissions = "";
-							if (data.permissions) {
-								let perms = [];
-								if (data.permissions.includes("R")) perms.push("Read");
-								if (data.permissions.includes("W")) perms.push("Write");
-								displayPermissions = perms.join("/");
-							}
-							$("#permissions").val(displayPermissions);
+							
+							$("#permissions").val(data.permissions);
 							// --- END Permissions display change ---
 
 							// Domain/Access
-							$("#domainId").val(data.menulist || "");
-							if ((data.menulist || "").includes("BRF_Reports")) {
-								$("#acctAccessContainer").show();
-							} else {
-								$("#acctAccessContainer").hide();
-							}
+							$("#domain_id").val(data.menulist);
+						//	if ((data.menulist || "").includes("BRF_Reports")) {
+						//		$("#acctAccessContainer").show();
+						//	} else {
+						//		$("#acctAccessContainer").hide();
+						//	}
 						}
 					},
 					error: function (xhr, status, error) {
@@ -374,9 +367,9 @@
 			} else if (Branchcode == '9003') {
 				$("#branchName").val("Deira");
 			} else if (Branchcode == '9004') {
-				$("#branchName").val("Sharja");
+				$("#branchName").val("Sharjha");
 			} else if (Branchcode == '9005') {
-				$("#branchName").val("Ras Alkaima");
+				$("#branchName").val("Ras Al Khaima");
 			} else if (Branchcode == '9008') {
 				$("#branchName").val("Syndication");
 			} else if (Branchcode == '9010') {
@@ -1119,7 +1112,7 @@
 
 												<label class="col-sm-2">Module<b style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='add'">
-													<input type="text" id="domainId" name="domain_id"
+													<input type="text" id="domain_id" name="domain_id"
 														class="form-control form-control-sm" required readonly />
 
 												</div>
