@@ -196,7 +196,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 
             // Final password set
             up.setPassword(encryptedPassword);
-            auditservice.createBusinessAudit(userProfile.getUserid(), "ADD", "ADD", null,"XBRL_USER_PROFILE_TABLE");
+            auditservice.createBusinessAudit(userProfile.getUserid(), "ADD", "ADD", null,"BRF_USER_PROFILE_TABLE");
             // Save the user
             userProfileRep.save(up);
 
@@ -393,7 +393,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 	            }
 
 				
-				auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"XBRL_USER_PROFILE_TABLE");
+				auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"BRF_USER_PROFILE_TABLE");
 				userProfileRep.save(userProfile);
 				
 				
@@ -424,7 +424,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 				user.setNo_of_attmp(0);
 				user.setLogin_flg("N");
 				user.setUser_locked_flg("N");
-				 auditservice.createBusinessAudit(user.getUserid(), "Password Reset", "UserProfile-Password Reset", null,"XBRL_USER_PROFILE_TABLE");
+				 auditservice.createBusinessAudit(user.getUserid(), "Password Reset", "UserProfile-Password Reset", null,"BRF_USER_PROFILE_TABLE");
 				userProfileRep.save(user);
 			}
 
@@ -506,7 +506,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 						
 						LocalDateTime localDateTime = user.getPass_exp_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 						user.setPass_exp_date(Date.from(localDateTime.plusDays(365).atZone(ZoneId.systemDefault()).toInstant()));
-						auditservice.createBusinessAudit(user.getUserid(), "Password Change", "Userprofile - Password Change", null,"XBRL_USER_PROFILE_TABLE");
+						auditservice.createBusinessAudit(user.getUserid(), "Password Change", "Userprofile - Password Change", null,"BRF_USER_PROFILE_TABLE");
 						userProfileRep.save(user);
 						msg = "Password Changed Successfully";
 						
@@ -558,7 +558,7 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 			if(user.isPresent()) {
 				
 				userProfileRep.deleteById(userid);
-				auditservice.createBusinessAudit(user.get().getUserid(), "Delete User", "UserProfile - Delete User", null,"XBRL_USER_PROFILE_TABLE");
+				auditservice.createBusinessAudit(user.get().getUserid(), "Delete User", "UserProfile - Delete User", null,"BRF_USER_PROFILE_TABLE");
 				msg = "User Id Rejected";
 				
 			}else {

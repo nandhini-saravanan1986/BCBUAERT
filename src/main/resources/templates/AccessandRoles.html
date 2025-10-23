@@ -27,8 +27,7 @@ PURPOSE		: Access the Modules by Role
 
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-	<script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
-
+	
 	<!-- Favicon -->
 	<link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" />
 	<link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
@@ -103,6 +102,33 @@ PURPOSE		: Access the Modules by Role
 		.error {
 			color: red !important;
 		}
+
+		.left-arrow-circle {
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;
+			background-color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.3s, transform 0.2s;
+		}
+
+		.left-arrow-circle i {
+			color: rgb(107, 122, 143);
+		}
+
+		.left-arrow-circle:hover {
+			background-color: rgb(107, 122, 143);
+			cursor: pointer;
+			transform: scale(1.05);
+			border: 2px solid white;
+		}
+
+		.left-arrow-circle:hover i {
+			color: white;
+		}
 	</style>
 	<script th:inline="javascript">
 		function home() {
@@ -114,77 +140,77 @@ PURPOSE		: Access the Modules by Role
 		}
 
 		function submitform(a) {
-				var requiredFields = ["#role_id", "#role_desc", "#permissions", "#domain_id", "#work_class"];
-				var isValid = true;
+			var requiredFields = ["#role_id", "#role_desc", "#permissions", "#domain_id", "#work_class"];
+			var isValid = true;
 
-				requiredFields.forEach(function (selector) {
-					var $field = $(selector);
-					if ($field.length && $field.val().trim() === "") {
-						$field.css("border", "2px solid red");
-						isValid = false;
-					} else {
-						$field.css("border", "");
-					}
-				});
-				// ✅ Check menu list
-				var menuContent = document.getElementById("menulistHidden").value.trim();
-				if (!menuContent) {
-					alert("Please select at least one menu item!");
-					document.getElementById("menucontent-add").style.border = "2px solid red"; // highlight menu container
+			requiredFields.forEach(function (selector) {
+				var $field = $(selector);
+				if ($field.length && $field.val().trim() === "") {
+					$field.css("border", "2px solid red");
 					isValid = false;
 				} else {
-					document.getElementById("menucontent-add").style.border = ""; // remove highlight
+					$field.css("border", "");
 				}
-				if (!isValid) return false;
+			});
+			// ✅ Check menu list
+			var menuContent = document.getElementById("menulistHidden").value.trim();
+			if (!menuContent) {
+				alert("Please select at least one menu item!");
+				document.getElementById("menucontent-add").style.border = "2px solid solid red"; // highlight menu container
+				isValid = false;
+			} else {
+				document.getElementById("menucontent-add").style.border = ""; // remove highlight
+			}
+			if (!isValid) return false;
 
-				var formmode = a.getAttribute("data-formmode") || "";
-				console.log('Form mode:', formmode);
+			var formmode = a.getAttribute("data-formmode") || "";
+			console.log('Form mode:', formmode);
 
-				// ✅ Always read hidden field (already set in getvalue)
-				var menuContent = document.getElementById("menulistHidden").value;
+			// ✅ Always read hidden field (already set in getvalue)
+			var menuContent = document.getElementById("menulistHidden").value;
 
-				console.log("Final Child Menu List:", menuContent);
+			console.log("Final Child Menu List:", menuContent);
 
-				var form = document.getElementById("IPSAccessRole");
-				if (!form) {
-					console.error("Form not found!");
-					return false;
-				}
-
-				var formData = new FormData(form);
-				formData.append("finalString", menuContent);
-
-				$("#loader1").modal("toggle");
-
-				$.ajax({
-					url: "./createAccessRole?formmode=" + encodeURIComponent(formmode),
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						$("#loader1").hide();
-						console.log('Success response:', response);
-						$("#alertmsg").text(response);
-						$('#alert').modal("toggle");
-
-						if (formmode === 'add') {
-							form.reset();
-							requiredFields.forEach(selector => $(selector).css("border", ""));
-							document.getElementById("menucontent-add").innerHTML = ""; // clear menu display
-							document.getElementById("menulistHidden").value = "";
-						}
-					},
-					error: function (xhr, status, error) {
-						$("#loader1").hide();
-						console.error('AJAX error:', status, error);
-						$("#alertmsg").text("Error occurred: " + error);
-						$('#alert').modal("toggle");
-					}
-				});
-
+			var form = document.getElementById("IPSAccessRole");
+			if (!form) {
+				console.error("Form not found!");
 				return false;
 			}
+
+			var formData = new FormData(form);
+			formData.append("finalString", menuContent);
+
+			$("#loader1").modal("toggle");
+
+			$.ajax({
+				url: "./createAccessRole?formmode=" + encodeURIComponent(formmode),
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					$("#loader1").hide();
+					console.log('Success response:', response);
+					$("#alertmsg").text(response);
+					$('#alert').modal("toggle");
+
+					if (formmode === 'add') {
+						form.reset();
+						requiredFields.forEach(selector => $(selector).css("border", ""));
+						document.getElementById("menucontent-add").innerHTML = ""; // clear menu display
+						document.getElementById("menulistHidden").value = "";
+					}
+				},
+				error: function (xhr, status, error) {
+					$("#loader1").hide();
+					console.error('AJAX error:', status, error);
+					$("#alertmsg").text("Error occurred: " + error);
+					$('#alert').modal("toggle");
+				}
+			});
+
+			return false;
+		}
 
 		document
 			.addEventListener(
@@ -378,7 +404,7 @@ PURPOSE		: Access the Modules by Role
 		}
 	</script>
 </head>
-<title>BCDRS</title>
+<title>BRAS</title>
 
 <body>
 	<div class="container-fluid">
@@ -390,18 +416,24 @@ PURPOSE		: Access the Modules by Role
 				<div style="padding-right: 0px; padding-left: 0px;" th:if="${formmode}=='list'">
 
 					<div class="card" style="margin-left: 10px; margin-right: 10px;">
-						<div class="card-header" style="background-color: #376275;">
-							<div class="float-left" style="color: white;">
-
+						<div class="card-header"
+							style="background-color: #376275; display: flex; justify-content: space-between; align-items: center;">
+							<!-- Left: arrow + menu -->
+							<div style="display: flex; align-items: center;" onclick="back();">
+								<div class="left-arrow-circle">
+									<i class="fa fa-arrow-left"></i>
+								</div>
 								<h5 th:text="${menu}"
 									style="font-family: verdana; margin-left: 20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
 								</h5>
 							</div>
-							<div class="btn-group nav-buttons float-right" th:if="${AccessandRoles.size() < 5}">
-								<button type="button" class="custom-tab-btn" onclick="addrole();">Add</button>
 
+							<!-- Right: Add button -->
+							<div class="btn-group nav-buttons" th:if="${AccessandRoles.size() < 5}">
+								<button type="button" class="custom-tab-btn" onclick="addrole();">Add</button>
 							</div>
 						</div>
+
 
 
 						<div class="row">
@@ -464,10 +496,7 @@ PURPOSE		: Access the Modules by Role
 									</table>
 								</div>
 								<div class="card-footer text-center">
-									<button type="button" class="custom-tab-btn" id="btnHome"
-										onclick="home();">Home</button>
-									<button type="button" class="custom-tab-btn" id="btnBack"
-										onclick="back();">Back</button>
+									<!-- Removed Home and Back buttons as requested -->
 								</div>
 							</div>
 						</div>
@@ -483,21 +512,39 @@ PURPOSE		: Access the Modules by Role
 								<div class="col-sm-12 finuserapply">
 									<div class="card" style="margin-left: 10px; margin-right: 10px;">
 										<div class="card-header" style="background-color: #376275;">
-											<div class="float-left">
-												<h6 style="font-size: 1.5rem; color: white;"
-													th:if="${formmode}=='edit'">ACCESS AND ROLE - EDIT</h6>
-												<h6 style="font-size: 1.5rem; color: white;" th:if="${formmode}=='add'">
+											<div class="float-left"
+												style="color: white; display: flex; align-items: center;">
+												<!-- Back Arrow for Edit/Add/View/Verify/Delete -->
+												<div style="display: flex; align-items: center;" onclick="back();">
+													<div class="left-arrow-circle">
+														<i class="fa fa-arrow-left"></i>
+													</div>
+												</div>
+												<!-- Titles, now with left margin -->
+												<h6 style="font-size: 1.5rem; color: white; margin-left:20px;"
+													th:if="${formmode}=='edit'">
+													ACCESS AND ROLE - EDIT</h6>
+												<h6 style="font-size: 1.5rem; color: white; margin-left:20px;"
+													th:if="${formmode}=='add'">
 													ACCESS AND ROLE - ADD</h6>
-												<h6 style="font-size: 1.5rem; color: white;"
-													th:if="${formmode}=='verify'">ACCESS AND ROLE - VERIFY</h6>
-												<h6 style="font-size: 1.5rem; color: white;"
-													th:if="${formmode}=='view'">ACCESS AND ROLE - VIEW</h6>
-												<h6 style="font-size: 1.5rem; color: white;"
-													th:if="${formmode}=='delete'">ACCESS AND ROLE - DELETE</h6>
+												<h6 style="font-size: 1.5rem; color: white; margin-left:20px;"
+													th:if="${formmode}=='verify'">
+													ACCESS AND ROLE - VERIFY</h6>
+												<h6 style="font-size: 1.5rem; color: white; margin-left:20px;"
+													th:if="${formmode}=='view'">
+													ACCESS AND ROLE - VIEW</h6>
+												<h6 style="font-size: 1.5rem; color: white; margin-left:20px;"
+													th:if="${formmode}=='delete'">
+													ACCESS AND ROLE - DELETE</h6>
 											</div>
+											<!-- If you have other buttons on the right of the header, they would go here -->
+											<!-- <div class="btn-group nav-buttons float-right">
+												<button type="button" class="custom-tab-btn" onclick="list();">List</button>
+											</div> -->
 										</div>
 
-										<div class="card-body" style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
+										<div class="card-body"
+											style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
 											<form action="#" th:object="${IPSAccessRole}" method="post"
 												style="margin: 52px;" autocomplete="off" id="IPSAccessRole"
 												th:fragment="finuserapply">
@@ -822,10 +869,16 @@ PURPOSE		: Access the Modules by Role
 
 																<!-- Submit Button -->
 																<div style="float: right;">
-																	<button type="button" th:if="${formmode}=='add'" class="btn btn-primary" style="background-color:orange;color:black"
-																		data-dismiss="modal" onclick="getvalue('add');">SUBMIT</button>
-																	<button type="button" th:if="${formmode}=='edit'" class="btn btn-primary"
-																		style="background-color:orange;color:black" data-dismiss="modal" onclick="getvalue('edit');">SUBMIT</button>
+																	<button type="button" th:if="${formmode}=='add'"
+																		class="btn btn-primary"
+																		style="background-color:orange;color:black"
+																		data-dismiss="modal"
+																		onclick="getvalue('add');">SUBMIT</button>
+																	<button type="button" th:if="${formmode}=='edit'"
+																		class="btn btn-primary"
+																		style="background-color:orange;color:black"
+																		data-dismiss="modal"
+																		onclick="getvalue('edit');">SUBMIT</button>
 																</div>
 															</div>
 														</div>
@@ -835,16 +888,23 @@ PURPOSE		: Access the Modules by Role
 
 										</div>
 										<div class="card-footer text-center">
-											<button type="button" class="custom-tab-btn" id="btnHome" onclick="home();">Home</button>
-											<button th:if="${formmode}=='edit' OR ${formmode}=='add'" type="button" class="custom-tab-btn" form="IPSAccessRole"
-												th:attr="data-formmode=${formmode}" x id="btnSubmit" onclick="submitform(this);">Submit</button>
-											<button th:if="${formmode}=='verify'" type="button" class="custom-tab-btn" form="IPSAccessRole" th:attr="data-formmode='verify',
-											data-entryUser=${IPSAccessRole.entryUser},data-modifyUser=${IPSAccessRole.modifyUser}" id="btnSubmit" onclick="verifySubmit(this);">Submit</button>
-										
-											<button th:if="${formmode}=='delete'" type="button" class="custom-tab-btn" form="IPSAccessRole" th:attr="data-formmode='delete',
-											data-entryUser=${IPSAccessRole.entryUser},data-roleId=${IPSAccessRole.roleId},data-modifyUser=${IPSAccessRole.modifyUser}" id="btnSubmit" onclick="deleteSubmit(this);">Delete</button>
-											<button type="button" class="custom-tab-btn" id="btnBack" onclick="back();">Back</button>
-										
+
+											<button th:if="${formmode}=='edit' OR ${formmode}=='add'" type="button"
+												class="custom-tab-btn" form="IPSAccessRole"
+												th:attr="data-formmode=${formmode}" x id="btnSubmit"
+												onclick="submitform(this);">Submit</button>
+											<button th:if="${formmode}=='verify'" type="button" class="custom-tab-btn"
+												form="IPSAccessRole" th:attr="data-formmode='verify',
+											data-entryUser=${IPSAccessRole.entryUser},data-modifyUser=${IPSAccessRole.modifyUser}" id="btnSubmit"
+												onclick="verifySubmit(this);">Submit</button>
+
+											<button th:if="${formmode}=='delete'" type="button" class="custom-tab-btn"
+												form="IPSAccessRole"
+												th:attr="data-formmode='delete',
+											data-entryUser=${IPSAccessRole.entryUser},data-roleId=${IPSAccessRole.roleId},data-modifyUser=${IPSAccessRole.modifyUser}"
+												id="btnSubmit" onclick="deleteSubmit(this);">Delete</button>
+
+
 										</div>
 									</div>
 								</div>
@@ -1019,64 +1079,64 @@ PURPOSE		: Access the Modules by Role
 </script>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const formmode = /*[[${formmode}]]*/ '';
-    
-    // 1. Array creation and normalization (trim/lowercase) from server-side string
-   const selectedMenus = /*[[${#strings.arraySplit(IPSAccessRole?.menulist ?: '', ',')}]]*/ [];
-    const normalizedMenus = selectedMenus.map(menu => String(menu).trim().toLowerCase());
+	/*<![CDATA[*/
+	const formmode = /*[[${formmode}]]*/ '';
 
-    // Function to update the parent header state (checked if ANY child is checked)
-    function updateHeaderState($header) {
-        const $ul = $header.closest('label').next('ul');
-        const checkedItems = $ul.find('.menu-item:checked').length;
-        
-        $header.prop('checked', checkedItems > 0);
-    }
-    
-    $(document).ready(function() {
+	// 1. Array creation and normalization (trim/lowercase) from server-side string
+	const selectedMenus = /*[[${#strings.arraySplit(IPSAccessRole?.menulist ?: '', ',')}]]*/[];
+	const normalizedMenus = selectedMenus.map(menu => String(menu).trim().toLowerCase());
 
-        // The pre-selection logic only runs when formmode is 'edit'
-       
-            
-            // 2. Initial Pre-selection Loop
-            $(".menu-item").each(function() {
-                const value = $(this).val();
-                const normalizedValue = String(value).trim().toLowerCase();
-                
-                if (normalizedMenus.includes(normalizedValue)) {
-                    $(this).prop("checked", true);
-                }
-            });
+	// Function to update the parent header state (checked if ANY child is checked)
+	function updateHeaderState($header) {
+		const $ul = $header.closest('label').next('ul');
+		const checkedItems = $ul.find('.menu-item:checked').length;
 
-            // 3. Post-selection: Update ALL headers based on pre-selected children
-            $(".menu-header").each(function() {
-                updateHeaderState($(this));
-            });
-        
-        
-        // Runtime Logic (These handlers must always be active for user interaction)
+		$header.prop('checked', checkedItems > 0);
+	}
 
-        // 4. Runtime Logic: Child item change handler
-        $(".menu-item").on('change', function() {
-            const $ul = $(this).closest('ul');
-            const $header = $ul.prev('label').find('.menu-header');
-            
-            updateHeaderState($header);
-        });
+	$(document).ready(function () {
 
-        // 5. Runtime Logic: Parent header change handler (Select/Deselect All)
-        $(".menu-header").on('change', function() {
-            const isChecked = $(this).is(':checked');
-            
-            $(this)
-                .closest('label')
-                .next('ul')
-                .find('.menu-item')
-                .prop('checked', isChecked);
-        });
-    });
-    /*]]>*/
+		// The pre-selection logic only runs when formmode is 'edit'
+
+
+		// 2. Initial Pre-selection Loop
+		$(".menu-item").each(function () {
+			const value = $(this).val();
+			const normalizedValue = String(value).trim().toLowerCase();
+
+			if (normalizedMenus.includes(normalizedValue)) {
+				$(this).prop("checked", true);
+			}
+		});
+
+		// 3. Post-selection: Update ALL headers based on pre-selected children
+		$(".menu-header").each(function () {
+			updateHeaderState($(this));
+		});
+
+
+		// Runtime Logic (These handlers must always be active for user interaction)
+
+		// 4. Runtime Logic: Child item change handler
+		$(".menu-item").on('change', function () {
+			const $ul = $(this).closest('ul');
+			const $header = $ul.prev('label').find('.menu-header');
+
+			updateHeaderState($header);
+		});
+
+		// 5. Runtime Logic: Parent header change handler (Select/Deselect All)
+		$(".menu-header").on('change', function () {
+			const isChecked = $(this).is(':checked');
+
+			$(this)
+				.closest('label')
+				.next('ul')
+				.find('.menu-item')
+				.prop('checked', isChecked);
+		});
+	});
+	/*]]>*/
 </script>
 
 </html>
