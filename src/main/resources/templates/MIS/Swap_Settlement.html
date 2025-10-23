@@ -40,7 +40,60 @@
 <script
 	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<style>
+			/* Red border for invalid inputs */
+			input.error,
+			select.error {
+				border: 2px solid red !important;
+			}
 
+			/* Error message style */
+			label.error {
+				color: red;
+				font-size: 0.85em;
+				margin-top: 5px;
+				display: block;
+			}
+
+			.underline {
+				text-decoration: underline;
+				color: #08a6f1;
+				cursor: pointer;
+			}
+
+			.left-arrow-circle {
+				width: 35px;
+				height: 35px;
+				border-radius: 50%;
+				background-color: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 10px;
+				transition: background-color 0.3s, transform 0.2s;
+			}
+
+			.left-arrow-circle i {
+				color: rgb(107, 122, 143);
+			}
+
+			.left-arrow-circle:hover {
+				background-color: rgb(107, 122, 143);
+				cursor: pointer;
+				transform: scale(1.05);
+				border: 2px solid white;
+			}
+
+			.left-arrow-circle:hover i {
+				color: white;
+			}
+
+			.white-text span {
+				color: white !important;
+
+
+			}
+		</style>
 <style>
  body {
       margin: 0;
@@ -73,13 +126,14 @@
 	border-color: #0c0c0c;
 }
 
-.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
-	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
-	{
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #cc0000;
+    border-color: #161617;
 }
+
 
 #finusertb {
 	width: 460px;
@@ -561,7 +615,7 @@ function Branchcodeval() {
 }
 </script>
 </head>
-<title>BCDRS</title>
+<title>BRAS</title>
 <body>
 	
 	<div class="container-fluid">
@@ -576,9 +630,15 @@ function Branchcodeval() {
 						<div class="card">
 							<div class="card-header">
 								<div class="float-left">
-						<h5 th:text="${menu}"
-							style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-					</div>
+												<div style="display: flex; align-items: center;" onclick="back();">
+													<!-- Back Icon -->
+													<div class="left-arrow-circle">
+														<i class="fa fa-arrow-left"></i>
+													</div>
+													<h5 th:text="${menu}"
+													  style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
+												</div>
+											</div>
 										<div class="btn-group nav-buttons float-right">
 											<button type="button" class="custom-tab-btn"
 												onclick="window.location.href='./download/excel?mode=settlement'">
@@ -673,14 +733,8 @@ function Branchcodeval() {
 									</div>
 								</div>
 								<div class="card-footer text-center">
-									<button type="button" class="custom-tab-btn"
-										id="btnHome"
-										onclick="home();">Home</button>
 									<button type="button" class="custom-tab-btn" id="generatebtn"
 										onclick="check_date();">Submit</button>
-									<button type="button" class="custom-tab-btn"
-										id="btnBack"
-										onclick="back();">Back</button>
 
 								</div>
 							</div>
@@ -694,9 +748,16 @@ function Branchcodeval() {
 
 			<div class="card" >
 				<div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-					<h5 th:text="${menu}"
-						style="font-family: Verdana;  font-weight: bold; margin: 0;">
-					</h5>
+					<div class="float-left">
+									<div style="display: flex; align-items: center;" onclick="back();">
+										<!-- Back Icon -->
+										<div class="left-arrow-circle">
+											<i class="fa fa-arrow-left"></i>
+										</div>
+										<h5 th:text="${menu}"
+										  style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
+									</div>
+								</div>
 
 					<div class="form-inline">
 						<label for="reportDate" class="mr-2">Report Date:</label> <input
@@ -758,13 +819,13 @@ function Branchcodeval() {
     </table>
 </div>
 
-					<div class="card-footer text-center"
+					<!--<div class="card-footer text-center"
 						>
 						<button type="button" class="custom-tab-btn" id="btnHome"
 							onclick="home();">Home</button>
 						<button type="button" class="custom-tab-btn" id="btnBack"
 							onclick="back();">Back</button>
-					</div>
+					</div>-->
 				</div>
 			</div>
 			</div>
