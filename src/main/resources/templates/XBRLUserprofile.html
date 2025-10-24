@@ -720,18 +720,29 @@
 			}
 		}
 	</script>
+	<script>
+	$(document).ready(function () {
+	    $('#usertable').DataTable({
+	        pageLength: 10,
+	        lengthChange: false,
+	        searching: true,
+	        paging: true,
+	        ordering: false,           // set to true if you want column sorting
+	        scrollY: "350px",          // vertical scroll
+	        scrollCollapse: true,
+
+	        // ✅ Custom layout: Search (left) + Pagination (right)
+	        dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+	    });
+
+	    // ✅ Align search & pagination properly
+	    $('.dataTables_filter').css('text-align', 'left');
+	    $('.dataTables_paginate').css('text-align', 'right');
+	});
+	</script>
 
 	<script>
-		$(document).ready(function () {
-			$('#usertable').DataTable({
-				pageLength: 10,
-				lengthChange: false,
-				searching: true,
-				paging: true,
-				ordering: false, // Set to true if you want column sorting
-				scrollY: "350px",
-				scrollCollapse: true
-			});
+		
 
             // If the formmode is 'edit' or 'view', disable userId validation
             // Otherwise, make userId required
