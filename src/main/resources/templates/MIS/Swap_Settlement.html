@@ -378,15 +378,19 @@ font-family: verdana;
 </style>
 <script>
   $(document).ready(function () {
-    const table = $('#usertable').DataTable({
-      pageLength: 10,
-      lengthChange: false,
-      searching: true,
-      paging: true,
-      ordering: false,
-      scrollY: "350px",
-      scrollCollapse: true
-    });
+	$('#usertable').DataTable({
+				     scrollX: true,
+				     autoWidth: false,
+				     paging: true,
+				     searching: true,
+				     lengthChange: false,
+				     ordering: true,
+				     pageLength: 7,
+				     fixedHeader: true,
+
+				     // 👇 Top row: search (left) + pagination (right)
+				     dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+				 });
 
     
 

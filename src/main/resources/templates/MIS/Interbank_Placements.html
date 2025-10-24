@@ -442,66 +442,72 @@
 	</script>
 
 	<script>
-		let table; // Declare globally
+	let table; // Declare globally
 
-		$(document).ready(function () {
-			// Initialize DataTable ONCE
-			table = $('#reporttable').DataTable({
-				pageLength: 10,
-				lengthChange: false,
-				searching: true,
-				paging: true,
-				ordering: false,
-				scrollY: "350px",
-				scrollCollapse: true,
-				columnDefs: [
-					{className: 'dt-center', targets: 0} // center-align first column
-				]
-			});
+	$(document).ready(function () {
 
-			// Date change handler
-			$('#report_Date').on('change', function () {
-				const reportDate = this.value;
+	    // ✅ Initialize DataTable (only once)
+	    table = $('#reporttable').DataTable({
+	        pageLength: 10,
+	        lengthChange: false,
+	        searching: true,
+	        paging: true,
+	        ordering: false,
+	        scrollY: "350px",
+	        scrollCollapse: true,
+	        columnDefs: [
+	            { className: 'dt-center', targets: 0 } // center-align first column
+	        ],
 
-				$.ajax({
-					type: 'GET',
-					url: './getTre_place_Datas',
-					data: {reportDate: reportDate},
-					success: function (data) {
-						table.clear();
-						data.forEach(row => {
-							table.row.add([
-								`<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
-								row.num_operation,                                            // Num Operation
-								row.entiteOperation,                                          // Entite Operation
-								row.poste,                                                    // Poste
-								row.titre,                                                    // Titre
-								row.devise1,                                                  // Devise 1
-								row.nominal1,                                                 // Nominal 1
-								`<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
-								`<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
-								`<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
-								row.preavis,                                                  // Preavis
-								row.entite,                                                   // Entite
-								row.portefeuille,                                             // Portefeuille
-								row.contrepartie,                                             // Counter Party
-								row.valeurTaux1                                               // Valeur Taux 1
-							]);
-						});
+	        // 👇 Top layout: Search box (left) + Pagination (right)
+	        dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+	    });
 
+	    // ✅ Date change handler
+	    $('#report_Date').on('change', function () {
+	        const reportDate = this.value;
 
-						table.draw();
-					},
-					error: function (xhr, status, error) {
-						console.error('AJAX error:', status, error);
-					}
-				});
-			});
+	        $.ajax({
+	            type: 'GET',
+	            url: './getTre_place_Datas',
+	            data: { reportDate: reportDate },
+	            success: function (data) {
+	                // Clear old data
+	                table.clear();
 
-			// Optionally load today's data on page load
-			// $('#report_Date').trigger('change');
-		});
+	                // Add new rows dynamically
+	                data.forEach(row => {
+	                    table.row.add([
+	                        `<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
+	                        row.num_operation,                                            // Num Operation
+	                        row.entiteOperation,                                          // Entite Operation
+	                        row.poste,                                                    // Poste
+	                        row.titre,                                                    // Titre
+	                        row.devise1,                                                  // Devise 1
+	                        row.nominal1,                                                 // Nominal 1
+	                        `<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
+	                        `<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
+	                        `<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
+	                        row.preavis,                                                  // Preavis
+	                        row.entite,                                                   // Entite
+	                        row.portefeuille,                                             // Portefeuille
+	                        row.contrepartie,                                             // Counter Party
+	                        row.valeurTaux1                                               // Valeur Taux 1
+	                    ]);
+	                });
+
+	                // Redraw the table
+	                table.draw();
+	            },
+	            error: function (xhr, status, error) {
+	                console.error('AJAX error:', status, error);
+	            }
+	        });
+	    });
+
+	});
 	</script>
+
 	<script>
 
 		document.addEventListener('DOMContentLoaded', function () {
