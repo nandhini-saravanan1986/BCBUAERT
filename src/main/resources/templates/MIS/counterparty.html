@@ -474,12 +474,14 @@ font-family: verdana;
 $(document).ready(function () {
     $('#usertable').DataTable({
         scrollX: true,
+		scrollY: "450px",              // Vertical scroll height
+		scrollCollapse: true,          // Collapse empty space below table
         autoWidth: false,
         paging: true,
         searching: true,
         lengthChange: false,
         ordering: true,
-        pageLength: 7,
+        pageLength: 10,
         fixedHeader: true,
 
         // 👇 Top row: search (left) + pagination (right)
@@ -656,10 +658,10 @@ function modify() {
 
 				<div class="row">
 					<div class="col-sm-12">
-				<div class="table-responsive" style="overflow-x: auto; overflow-y: auto; ">
-					<table class="table table-striped table-bordered table-hover"
-						id="usertable" style="width: 100%;font-family: verdana;">
-						<thead>
+						<div class="table-responsive" style="overflow: hidden;"> 
+						     <table class="table table-striped table-bordered table-hover"
+						         id="usertable" style="width: 100%; font-family: verdana;">
+						         <thead>
 							<tr>
 								<th  style="white-space: nowrap;">S. No.</th>
 								<th  style="white-space: nowrap;">CounterParty Bank Code</th>
