@@ -110,32 +110,33 @@
 		.invalids {
 			color: red;
 		}
+
 		.left-arrow-circle {
-					width: 35px;
-					height: 35px;
-					border-radius: 50%;
-					background-color: white;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					margin-right: 10px;
-					transition: background-color 0.3s, transform 0.2s;
-				}
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;
+			background-color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.3s, transform 0.2s;
+		}
 
-				.left-arrow-circle i {
-					color: rgb(107, 122, 143);
-				}
+		.left-arrow-circle i {
+			color: rgb(107, 122, 143);
+		}
 
-				.left-arrow-circle:hover {
-					background-color: rgb(107, 122, 143);
-					cursor: pointer;
-					transform: scale(1.05);
-					border: 2px solid white;
-				}
+		.left-arrow-circle:hover {
+			background-color: rgb(107, 122, 143);
+			cursor: pointer;
+			transform: scale(1.05);
+			border: 2px solid white;
+		}
 
-				.left-arrow-circle:hover i {
-					color: white;
-				}
+		.left-arrow-circle:hover i {
+			color: white;
+		}
 	</style>
 	<script th:inline="javascript">
 
@@ -360,17 +361,17 @@
 							$("#work_class").val(displayWorkClass);
 							// --- END Work Class display change ---
 
-							
+
 							$("#permissions").val(data.permissions);
 							// --- END Permissions display change ---
 
 							// Domain/Access
 							$("#domain_id").val(data.menulist);
-						//	if ((data.menulist || "").includes("BRF_Reports")) {
-						//		$("#acctAccessContainer").show();
-						//	} else {
-						//		$("#acctAccessContainer").hide();
-						//	}
+							//	if ((data.menulist || "").includes("BRF_Reports")) {
+							//		$("#acctAccessContainer").show();
+							//	} else {
+							//		$("#acctAccessContainer").hide();
+							//	}
 						}
 					},
 					error: function (xhr, status, error) {
@@ -417,49 +418,49 @@
 			var formmode = $('#btnSubmit').data('formmode');
 			//alert("Form mode is: " + formmode); // Alert the formmode
 
-            // --- IMPORTANT: Run all validations before submitting ---
-            let isValid = true;
-            if (!validateUserId()) isValid = false;
-            // Add other validations here, e.g.:
-            // if (!validateUserName()) isValid = false;
-            // if (!validatePassword()) isValid = false; // Note: validatePassword only gives feedback, doesn't return true/false
+			// --- IMPORTANT: Run all validations before submitting ---
+			let isValid = true;
+			if (!validateUserId()) isValid = false;
+			// Add other validations here, e.g.:
+			// if (!validateUserName()) isValid = false;
+			// if (!validatePassword()) isValid = false; // Note: validatePassword only gives feedback, doesn't return true/false
 
-            // For existing validateMobile and validateEmail, they modify class directly,
-            // you might want to adjust them to return a boolean as well,
-            // or explicitly check their 'is-invalid' class on the input.
-            // Example:
-            const mobNoInput = document.getElementById("mobNo");
-            const emailIdInput = document.getElementById("emailId");
+			// For existing validateMobile and validateEmail, they modify class directly,
+			// you might want to adjust them to return a boolean as well,
+			// or explicitly check their 'is-invalid' class on the input.
+			// Example:
+			const mobNoInput = document.getElementById("mobNo");
+			const emailIdInput = document.getElementById("emailId");
 
-            validateMobile(mobNoInput); // Ensure validation runs
-            if (mobNoInput.classList.contains("is-invalid")) isValid = false;
+			validateMobile(mobNoInput); // Ensure validation runs
+			if (mobNoInput.classList.contains("is-invalid")) isValid = false;
 
-            validateEmail(emailIdInput); // Ensure validation runs
-            if (emailIdInput.classList.contains("is-invalid")) isValid = false;
+			validateEmail(emailIdInput); // Ensure validation runs
+			if (emailIdInput.classList.contains("is-invalid")) isValid = false;
 
-            // Add checks for other required fields
-            if (!$('#userName').val()) {
-                $('label[for="userName"]').addClass('error');
-                isValid = false;
-            } else {
-                $('label[for="userName"]').removeClass('error');
-            }
-            // Repeat for other required fields (bankCode, bankName, branchCode, branchName, empId, designation, password, pass_exp_days, userStatus, loginStatus, roleId)
-            // Example for Branch Code:
-            if (!$('#branchCode').val()) {
-                $('label[for="branchCode"]').addClass('error');
-                isValid = false;
-            } else {
-                $('label[for="branchCode"]').removeClass('error');
-            }
-            // ... and so on for all required fields.
+			// Add checks for other required fields
+			if (!$('#userName').val()) {
+				$('label[for="userName"]').addClass('error');
+				isValid = false;
+			} else {
+				$('label[for="userName"]').removeClass('error');
+			}
+			// Repeat for other required fields (bankCode, bankName, branchCode, branchName, empId, designation, password, pass_exp_days, userStatus, loginStatus, roleId)
+			// Example for Branch Code:
+			if (!$('#branchCode').val()) {
+				$('label[for="branchCode"]').addClass('error');
+				isValid = false;
+			} else {
+				$('label[for="branchCode"]').removeClass('error');
+			}
+			// ... and so on for all required fields.
 
 
-            if (!isValid) {
-                alert("Please fill in all mandatory fields correctly.");
-                return false;
-            }
-            // --- END OF VALIDATION CHECKS ---
+			if (!isValid) {
+				alert("Please fill in all mandatory fields correctly.");
+				return false;
+			}
+			// --- END OF VALIDATION CHECKS ---
 
 
 			var userid = $('#userId').val();
@@ -580,7 +581,7 @@
 
 			const password = document.getElementById("password").value;
 			const feedback = document.getElementById("feedback");
-            const passwordLabel = document.querySelector('label[for="password"]'); // Get password label
+			const passwordLabel = document.querySelector('label[for="password"]'); // Get password label
 
 			const minLength = password.length >= 14;
 			const hasUpperCase = /[A-Z]/.test(password);
@@ -590,17 +591,17 @@
 
 			// Clear previous feedback and remove error class from label
 			feedback.innerHTML = '';
-            if (passwordLabel) {
-                passwordLabel.classList.remove("error");
-            }
-            document.getElementById("password").classList.remove("is-invalid");
+			if (passwordLabel) {
+				passwordLabel.classList.remove("error");
+			}
+			document.getElementById("password").classList.remove("is-invalid");
 
 
 			// Validate password and provide feedback
 			if (minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar) {
 				feedback.innerHTML = "Password is strong!";
 				feedback.className = "valids";
-                return true; // Password is valid
+				return true; // Password is valid
 			} else {
 				feedback.className = "invalids";
 				if (!minLength) feedback.innerHTML += "> Password must be at least 14 characters long.   ";
@@ -608,11 +609,11 @@
 				if (!hasLowerCase) feedback.innerHTML += "> Must contain at least one lowercase letter.   ";
 				if (!hasNumber) feedback.innerHTML += "> Must contain at least one number.<br>";
 				if (!hasSpecialChar) feedback.innerHTML += "> Must contain at least one special character.";
-                if (passwordLabel) {
-                    passwordLabel.classList.add("error"); // Add 'error' class to the label
-                }
-                document.getElementById("password").classList.add("is-invalid");
-                return false; // Password is invalid
+				if (passwordLabel) {
+					passwordLabel.classList.add("error"); // Add 'error' class to the label
+				}
+				document.getElementById("password").classList.add("is-invalid");
+				return false; // Password is invalid
 			}
 		}
 
@@ -621,25 +622,25 @@
 			const userIdInput = document.getElementById("userId");
 			const userIdCHECK = userIdInput.value.trim();
 			const feedbackuser = document.getElementById("feedbackuser");
-            const userIdLabel = document.querySelector('label[for="userId"]'); // Select the label for userId
+			const userIdLabel = document.querySelector('label[for="userId"]'); // Select the label for userId
 
 			const pattern = /^[A-Za-z]{2}[0-9]{6}$/;
 
 			// Clear previous feedback and remove error class from label/input
 			feedbackuser.innerHTML = "";
 			feedbackuser.className = ""; // Clear any previous class
-            if (userIdLabel) {
-                userIdLabel.classList.remove("error"); // Remove red color from label
-            }
-            userIdInput.classList.remove("is-invalid"); // Remove invalid state from input
+			if (userIdLabel) {
+				userIdLabel.classList.remove("error"); // Remove red color from label
+			}
+			userIdInput.classList.remove("is-invalid"); // Remove invalid state from input
 
 			if (userIdCHECK === "") {
 				feedbackuser.innerHTML = "User ID is mandatory";
 				feedbackuser.className = "invalids"; // Keep for text, but 'error' class on label controls color
-                if (userIdLabel) {
-                    userIdLabel.classList.add("error"); // Make label red
-                }
-                userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
+				if (userIdLabel) {
+					userIdLabel.classList.add("error"); // Make label red
+				}
+				userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
 				return false;
 			}
 
@@ -650,10 +651,10 @@
 			} else {
 				feedbackuser.innerHTML = "User ID must start with 2 letters followed by 6 digits. Eg: AB123456";
 				feedbackuser.className = "invalids"; // Keep for text
-                if (userIdLabel) {
-                    userIdLabel.classList.add("error"); // Make label red
-                }
-                userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
+				if (userIdLabel) {
+					userIdLabel.classList.add("error"); // Make label red
+				}
+				userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
 				return false;
 			}
 		}
@@ -663,29 +664,29 @@
 		function validateMobile(input) {
 			const value = input.value;
 			const errorEl = document.getElementById("mobError");
-            const mobLabel = document.querySelector('label[for="mobNo"]'); // Get mobile number label
+			const mobLabel = document.querySelector('label[for="mobNo"]'); // Get mobile number label
 
 			const mobPattern = /^971\d{9}$/; // 971 + 9 digits (total 12)
 
-            // Clear previous errors
+			// Clear previous errors
 			errorEl.textContent = "";
 			input.classList.remove("is-invalid");
-            if (mobLabel) {
-                mobLabel.classList.remove("error");
-            }
+			if (mobLabel) {
+				mobLabel.classList.remove("error");
+			}
 
 
 			if (!mobPattern.test(value)) {
 				errorEl.textContent = "Mobile number must start with 971 and be exactly 12 digits.";
 				input.classList.add("is-invalid");
-                if (mobLabel) {
-                    mobLabel.classList.add("error");
-                }
-                return false;
+				if (mobLabel) {
+					mobLabel.classList.add("error");
+				}
+				return false;
 			} else {
 				errorEl.textContent = "";
 				input.classList.remove("is-invalid");
-                return true;
+				return true;
 			}
 		}
 
@@ -694,157 +695,157 @@
 		function validateEmail(input) {
 			const value = input.value;
 			const errorEl = document.getElementById("emailError");
-            const emailLabel = document.querySelector('label[for="emailId"]'); // Get email ID label
+			const emailLabel = document.querySelector('label[for="emailId"]'); // Get email ID label
 
 			const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-            // Clear previous errors
+			// Clear previous errors
 			errorEl.textContent = "";
 			input.classList.remove("is-invalid");
-            if (emailLabel) {
-                emailLabel.classList.remove("error");
-            }
+			if (emailLabel) {
+				emailLabel.classList.remove("error");
+			}
 
 
 			if (!emailPattern.test(value)) {
 				errorEl.textContent = "Please enter a valid email address.";
 				input.classList.add("is-invalid");
-                if (emailLabel) {
-                    emailLabel.classList.add("error");
-                }
-                return false;
+				if (emailLabel) {
+					emailLabel.classList.add("error");
+				}
+				return false;
 			} else {
 				errorEl.textContent = "";
 				input.classList.remove("is-invalid");
-                return true;
+				return true;
 			}
 		}
 	</script>
 	<script>
-	$(document).ready(function () {
-	    $('#usertable').DataTable({
-	        pageLength: 10,
-	        lengthChange: false,
-	        searching: true,
-	        paging: true,
-	        ordering: false,           // set to true if you want column sorting
-	        scrollY: "350px",          // vertical scroll
-	        scrollCollapse: true,
+		$(document).ready(function () {
+			$('#usertable').DataTable({
+				pageLength: 10,
+				lengthChange: false,
+				searching: true,
+				paging: true,
+				ordering: false,           // set to true if you want column sorting
+				scrollY: "450px",          // vertical scroll
+				scrollCollapse: true,
 
-	        // ✅ Custom layout: Search (left) + Pagination (right)
-	        dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
-	    });
+				// ✅ Custom layout: Search (left) + Pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+			});
 
-	    // ✅ Align search & pagination properly
-	    $('.dataTables_filter').css('text-align', 'left');
-	    $('.dataTables_paginate').css('text-align', 'right');
-	});
+			// ✅ Align search & pagination properly
+			$('.dataTables_filter').css('text-align', 'left');
+			$('.dataTables_paginate').css('text-align', 'right');
+		});
 	</script>
 
 	<script>
-		
-
-            // If the formmode is 'edit' or 'view', disable userId validation
-            // Otherwise, make userId required
-            // You can use jQuery Validate for this
-            if ($('#userProfile').length) { // Check if the form exists
-                // Initialize jQuery Validation
-                $('#userProfile').validate({
-                    rules: {
-                        userid: {
-                            required: function(element) {
-                                return ($("[name='formmode']").val() !== 'edit' && $("[name='formmode']").val() !== 'view');
-                            }
-                        },
-                        username: "required",
-                        bank_code: "required",
-                        bank_name: "required",
-                        branch_code: "required",
-                        branch_name: "required",
-                        empid: "required",
-                        designation: "required",
-                        mob_number: {
-                            required: true,
-                            pattern: /^971\d{9}$/
-                        },
-                        email_id: {
-                            required: true,
-                            email: true
-                        },
-                        password: {
-                            required: function(element) {
-                                return ($("[name='formmode']").val() === 'add');
-                            }
-                            // You might add custom password validation rules here if not handled by your JS
-                        },
-                        pass_exp_days: "required",
-                        user_status: "required",
-                        login_status: "required",
-                        role_id: "required",
-                        role_desc: "required",
-                        work_class: "required",
-                        domain_id: "required",
-                        permissions: "required"
-                    },
-                    messages: {
-                        userid: "User ID is mandatory",
-                        username: "User Name is mandatory",
-                        bank_code: "Bank Code is mandatory",
-                        bank_name: "Bank Name is mandatory",
-                        branch_code: "Branch Code is mandatory",
-                        branch_name: "Branch Name is mandatory",
-                        empid: "Employee ID is mandatory",
-                        designation: "Designation is mandatory",
-                        mob_number: {
-                            required: "Mobile No is mandatory",
-                            pattern: "Mobile number must start with 971 and be exactly 12 digits."
-                        },
-                        email_id: {
-                            required: "Email ID is mandatory",
-                            email: "Please enter a valid email address."
-                        },
-                        password: "Password is mandatory",
-                        pass_exp_days: "Password Expire Days is mandatory",
-                        user_status: "User Status is mandatory",
-                        login_status: "Login Status is mandatory",
-                        role_id: "Role ID is mandatory",
-                        role_desc: "Role Description is mandatory",
-                        work_class: "Work Class is mandatory",
-                        domain_id: "Module is mandatory",
-                        permissions: "Permissions is mandatory"
-                    },
-                    errorClass: 'error', // Use your existing .error class for labels
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass('is-invalid'); // Add bootstrap's invalid class to inputs
-                        $(element).closest('.formline').find('label').addClass(errorClass); // Add error class to the label in the same formline
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid'); // Remove bootstrap's invalid class from inputs
-                        $(element).closest('.formline').find('label').removeClass(errorClass); // Remove error class from the label
-                    },
-                     submitHandler: function(form) {
-                        // This function is called when the form is valid
-                        // Call your submitform function here
-                        submitform();
-                    }
-                });
-
-                // Attach your custom validations to the input fields to work with jQuery Validate's highlight/unhighlight
-                $('#userId').on('change blur', validateUserId);
-                $('#password').on('input', validatePassword); // Use 'input' for real-time feedback
-                $('#mobNo').on('input', function() { validateMobile(this); });
-                $('#emailId').on('input', function() { validateEmail(this); });
 
 
-                // Initial call to set branch name based on existing value if in edit/view mode
-                if ($("#branchCode").val()) {
-                    Branchcodeval();
-                }
-                // Initial call to set role description based on existing value if in edit/view mode
-                if ($("#roleId").val()) {
-                    roledesc();
-                }
-            }
+		// If the formmode is 'edit' or 'view', disable userId validation
+		// Otherwise, make userId required
+		// You can use jQuery Validate for this
+		if ($('#userProfile').length) { // Check if the form exists
+			// Initialize jQuery Validation
+			$('#userProfile').validate({
+				rules: {
+					userid: {
+						required: function (element) {
+							return ($("[name='formmode']").val() !== 'edit' && $("[name='formmode']").val() !== 'view');
+						}
+					},
+					username: "required",
+					bank_code: "required",
+					bank_name: "required",
+					branch_code: "required",
+					branch_name: "required",
+					empid: "required",
+					designation: "required",
+					mob_number: {
+						required: true,
+						pattern: /^971\d{9}$/
+					},
+					email_id: {
+						required: true,
+						email: true
+					},
+					password: {
+						required: function (element) {
+							return ($("[name='formmode']").val() === 'add');
+						}
+						// You might add custom password validation rules here if not handled by your JS
+					},
+					pass_exp_days: "required",
+					user_status: "required",
+					login_status: "required",
+					role_id: "required",
+					role_desc: "required",
+					work_class: "required",
+					domain_id: "required",
+					permissions: "required"
+				},
+				messages: {
+					userid: "User ID is mandatory",
+					username: "User Name is mandatory",
+					bank_code: "Bank Code is mandatory",
+					bank_name: "Bank Name is mandatory",
+					branch_code: "Branch Code is mandatory",
+					branch_name: "Branch Name is mandatory",
+					empid: "Employee ID is mandatory",
+					designation: "Designation is mandatory",
+					mob_number: {
+						required: "Mobile No is mandatory",
+						pattern: "Mobile number must start with 971 and be exactly 12 digits."
+					},
+					email_id: {
+						required: "Email ID is mandatory",
+						email: "Please enter a valid email address."
+					},
+					password: "Password is mandatory",
+					pass_exp_days: "Password Expire Days is mandatory",
+					user_status: "User Status is mandatory",
+					login_status: "Login Status is mandatory",
+					role_id: "Role ID is mandatory",
+					role_desc: "Role Description is mandatory",
+					work_class: "Work Class is mandatory",
+					domain_id: "Module is mandatory",
+					permissions: "Permissions is mandatory"
+				},
+				errorClass: 'error', // Use your existing .error class for labels
+				highlight: function (element, errorClass, validClass) {
+					$(element).addClass('is-invalid'); // Add bootstrap's invalid class to inputs
+					$(element).closest('.formline').find('label').addClass(errorClass); // Add error class to the label in the same formline
+				},
+				unhighlight: function (element, errorClass, validClass) {
+					$(element).removeClass('is-invalid'); // Remove bootstrap's invalid class from inputs
+					$(element).closest('.formline').find('label').removeClass(errorClass); // Remove error class from the label
+				},
+				submitHandler: function (form) {
+					// This function is called when the form is valid
+					// Call your submitform function here
+					submitform();
+				}
+			});
+
+			// Attach your custom validations to the input fields to work with jQuery Validate's highlight/unhighlight
+			$('#userId').on('change blur', validateUserId);
+			$('#password').on('input', validatePassword); // Use 'input' for real-time feedback
+			$('#mobNo').on('input', function () {validateMobile(this);});
+			$('#emailId').on('input', function () {validateEmail(this);});
+
+
+			// Initial call to set branch name based on existing value if in edit/view mode
+			if ($("#branchCode").val()) {
+				Branchcodeval();
+			}
+			// Initial call to set role description based on existing value if in edit/view mode
+			if ($("#roleId").val()) {
+				roledesc();
+			}
+		}
 		});
 	</script>
 	<script>
@@ -917,7 +918,8 @@
 												<td style="width: 125px" th:text="${userProfile.userid}">456</td>
 												<td style="width: 250px" th:text="${userProfile.username}">TEST</td>
 												<td style="text-align:left" th:text="${userProfile.empid}">123</td>
-												<td style="text-align:left" th:text="${userProfile.branch_code}">123</td>
+												<td style="text-align:left" th:text="${userProfile.branch_code}">123
+												</td>
 												<td style="width: 250px" th:text="${userProfile.branch_name}">CHENNAI
 												</td>
 												<th:block th:switch="${userProfile.entity_flg}">
@@ -943,7 +945,7 @@
 										</tbody>
 									</table>
 								</div>
-								
+
 
 							</div>
 						</div>
@@ -956,11 +958,12 @@
 						<div class="col-sm-12 finuserapply">
 							<form action="#" th:object="${userProfile}" method="post" autocomplete="off"
 								id="userProfile" th:fragment="finuserapply">
-                                <!-- Hidden input for formmode, useful for jQuery Validate rules -->
-                                <input type="hidden" name="formmode" th:value="${formmode}" />
+								<!-- Hidden input for formmode, useful for jQuery Validate rules -->
+								<input type="hidden" name="formmode" th:value="${formmode}" />
 								<div class="card" style="margin-left: -26px;">
 									<div class="card-header" style="background-color: #376275;">
-										<div class="float-left" style="color: white; display: flex; align-items: center;">
+										<div class="float-left"
+											style="color: white; display: flex; align-items: center;">
 											<div style="display: flex; align-items: center;" onclick="back();">
 												<!-- ⬅️ Left circular arrow -->
 												<div class="left-arrow-circle">
@@ -1037,7 +1040,8 @@
 
 											<div class="row formline">
 
-												<label class="col-sm-2" for="bankCode">Bank Code<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="bankCode">Bank Code<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" th:field="*{bank_code}" th:value="${bank_code}"
 														id="bankCode" value="" class="form-control form-control-sm"
@@ -1053,7 +1057,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="bankName">Bank Name<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="bankName">Bank Name<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" th:field="*{bank_name}" th:value="${bank_name}"
 														id="bankName" value="" class="form-control form-control-sm"
@@ -1101,7 +1106,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="branchName">Branch Name <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="branchName">Branch Name <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" th:field="*{branch_name}"
 														th:value="${branch_name}" id="branchName" value=""
@@ -1117,7 +1123,8 @@
 											</div>
 											<div class="row formline">
 
-												<label class="col-sm-2" for="empId">Employee Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="empId">Employee Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" th:field="*{empid}" th:value="${empid}"
 														id="empId" value="" class="form-control form-control-sm"
@@ -1130,7 +1137,8 @@
 												</div>
 												<div class="col-sm-1"></div>
 
-												<label class="col-sm-2" for="designation">Designation <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="designation">Designation <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" th:field="*{designation}"
 														th:value="${designation}" id="designation" value=""
@@ -1150,7 +1158,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="mobNo">Mobile No <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="mobNo">Mobile No <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="text" id="mobNo" name="mob_number"
 														class="form-control form-control-sm" th:field="*{mob_number}"
@@ -1171,7 +1180,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="emailId">Email Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="emailId">Email Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<input type="email" id="emailId" name="email_id"
 														class="form-control form-control-sm" th:field="*{email_id}"
@@ -1197,7 +1207,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="password">Password <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="password">Password <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='add'">
 													<input type="password" id="password" name="password"
 														oninput="validatePassword()"
@@ -1245,7 +1256,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="userStatus">User Status <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="userStatus">User Status <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<select th:field="*{user_status}" th:value="${user_status}"
 														id="userStatus" class="form-control form-control-sm"
@@ -1262,7 +1274,8 @@
 												</div>
 
 												<div class="col-sm-1"></div>
-												<label class="col-sm-2" for="loginStatus">Login Status <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="loginStatus">Login Status <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 													<select th:field="*{login_status}" th:value="${login_status}"
 														id="loginStatus" class="form-control form-control-sm"
@@ -1292,7 +1305,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="roleId">Role Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="roleId">Role Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}!='view'">
 
 													<select th:field="*{role_id}" th:value="${role_id}" id="roleId"
@@ -1335,7 +1349,8 @@
 
 
 											<div class="row formline">
-												<label class="col-sm-2" for="work_class">Work Class <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="work_class">Work Class <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='add'">
 													<input type="text" id="work_class" name="work_class"
 														class="form-control form-control-sm" required readonly />
@@ -1356,7 +1371,8 @@
 
 												<div class="col-sm-1"></div>
 
-												<label class="col-sm-2" for="domain_id">Module<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="domain_id">Module<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='add'">
 													<input type="text" id="domain_id" name="domain_id"
 														class="form-control form-control-sm" required readonly />
@@ -1376,7 +1392,8 @@
 											</div>
 											<div class="row formline">
 												<!-- Permissions -->
-												<label class="col-sm-2" for="permissions">Permissions <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="permissions">Permissions <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='view'">
 													<input type="text" class="form-control form-control-sm" required
 														readonly th:name="permissions" th:value="${userProfile.permissions == 'R' ? 'Read' 
@@ -1410,12 +1427,13 @@
 											onclick="deleteuser();" th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},
 										data-modify_user=${userProfile.modify_user},data-userid=${userProfile.userid}" id="delete">Delete
 											User</button>
-										<button th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
-											type="button" class="custom-tab-btn" id="btnpassrst"
-											onclick="passwordReset();">PasswordReset</button>
 										<button type="submit" class="custom-tab-btn" th:if="${formmode} != 'view'"
 											form="userProfile" id="btnSubmit"
 											th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+										<button th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
+											type="button" class="custom-tab-btn" id="btnpassrst"
+											onclick="passwordReset();">PasswordReset</button>
+
 										<!-- Removed Back button -->
 									</div>
 								</div>
@@ -1435,7 +1453,8 @@
 								id="userProfile" th:fragment="finuserapply">
 								<div class="card" style="margin-left: -26px;">
 									<div class="card-header" style="background-color: #376275;">
-										<div class="float-left" style="color: white; display: flex; align-items: center;">
+										<div class="float-left"
+											style="color: white; display: flex; align-items: center;">
 											<div style="display: flex; align-items: center;" onclick="back();">
 												<!-- ⬅️ Left circular arrow -->
 												<div class="left-arrow-circle">
@@ -1485,7 +1504,8 @@
 
 											<div class="row formline">
 
-												<label class="col-sm-2" for="bankCode">Bank Code<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="bankCode">Bank Code<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{bank_code}" th:value="${bank_code}"
 														id="bankCode" value="" class="form-control form-control-sm"
@@ -1495,7 +1515,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="bankName">Bank Name<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="bankName">Bank Name<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{bank_name}" th:value="${bank_name}"
 														id="bankName" value="" class="form-control form-control-sm"
@@ -1529,7 +1550,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="branchName">Branch Name <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="branchName">Branch Name <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{branch_name}"
 														th:value="${branch_name}" id="branchName" value=""
@@ -1540,7 +1562,8 @@
 											</div>
 											<div class="row formline">
 
-												<label class="col-sm-2" for="empid">Employee Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="empid">Employee Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{empid}" th:value="${empid}"
 														id="empId" value="" class="form-control form-control-sm"
@@ -1548,7 +1571,8 @@
 												</div>
 												<div class="col-sm-1"></div>
 
-												<label class="col-sm-2" for="designation">Designation <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="designation">Designation <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{designation}"
 														th:value="${designation}" id="designation" value=""
@@ -1562,7 +1586,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="mobNo">Mobile No <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="mobNo">Mobile No <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{mob_number}"
 														placeholder="Number Must Start with 971"
@@ -1574,7 +1599,8 @@
 												<div class="col-sm-1"></div>
 
 
-												<label class="col-sm-2" for="emailId">Email Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="emailId">Email Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="email" th:field="*{email_id}" th:value="${email_id}"
 														id="emailId" value="" class="form-control form-control-sm"
@@ -1586,7 +1612,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="password">Password <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="password">Password <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3" th:if="${formmode}=='verify'">
 													<input type="text" value="**********" id="password" name="password"
 														readonly="readonly" class="form-control form-control-sm"
@@ -1616,7 +1643,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="userStatus">User Status <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="userStatus">User Status <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<select th:field="*{user_status}" th:value="${user_status}"
 														id="userStatus" class="form-control form-control-sm"
@@ -1627,7 +1655,8 @@
 													</select>
 												</div>
 												<div class="col-sm-1"></div>
-												<label class="col-sm-2" for="loginStatus">Login Status <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="loginStatus">Login Status <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<select th:field="*{login_status}" th:value="${login_status}"
 														id="loginStatus" class="form-control form-control-sm"
@@ -1660,7 +1689,8 @@
 											<div class="row formline">
 
 
-												<label class="col-sm-2" for="role_id">Role Id <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="role_id">Role Id <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 
 													<input type="text" th:field="*{role_id}" th:value="${role_id}"
@@ -1681,7 +1711,8 @@
 
 
 											<div class="row formline">
-												<label class="col-sm-2" for="workClassVerify">Work Class <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="workClassVerify">Work Class <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<select th:field="*{work_class}" th:value="${work_class}"
 														id="workClassVerify" class="form-control form-control-sm"
@@ -1693,7 +1724,8 @@
 												</div>
 												<div class="col-sm-1"></div>
 
-												<label class="col-sm-2" for="domainId">Module<b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="domainId">Module<b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<input type="text" th:field="*{domain_id}" th:value="${domain_id}"
 														id="domainId" class="form-control form-control-sm" required
@@ -1704,7 +1736,8 @@
 											</div>
 											<div class="row formline">
 
-												<label class="col-sm-2" for="permission">Permissions <b style="color:red;">*</b></label>
+												<label class="col-sm-2" for="permission">Permissions <b
+														style="color:red;">*</b></label>
 												<div class="col-sm-3">
 													<select th:field="*{permissions}" th:value="${permissions}"
 														id="permission" class="form-control form-control-sm"
