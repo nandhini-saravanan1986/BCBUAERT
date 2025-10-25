@@ -2,865 +2,672 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
-		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
-
-	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-
-	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-
-	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
-
-	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-
-	<style>
-		label,
-		table {
-			font-family: verdana;
-		}
-
-		.container-fluid {
-
-			width: 100%;
-			padding-top: 1px;
-			padding-right: 0px !important;
-			padding-left: 0px !important;
-			margin-right: auto;
-			margin-left: auto;
-		}
-
-		.custom-tab-btns {
-			float: right;
-			margin: 5px;
-		}
-
-		.col-sm-5 {
-			padding-bottom: 15px;
-		}
-
-		.list-body {
-			padding: 0px;
-		}
-
-		.page-item.active .page-link {
-			z-index: 1;
-			color: #fff;
-			background-color: darkorange;
-			border-color: darkorange;
-		}
-
-		/* This is your existing .error class */
-		.error {
-			color: red;
-			padding-left: 10px;
-		}
-
-		.formline {
-			padding-bottom: 15px;
-		}
-
-		.custom-tab-btn-primary {
-			background-color: #E77400;
-			border-color: #0c0c0c;
-		}
-
-		.custom-tab-btn-primary:not (:disabled):not (.disabled).active,
-		.custom-tab-btn-primary:not (:disabled):not (.disabled):active,
-		.show>.custom-tab-btn-primary.dropdown-toggle {
-			color: #fff;
-			background-color: #cc000000;
-			border-color: #161617;
-		}
-
-		#finusertb {
-			width: 460px;
-		}
-
-		.dataTables_wrapper .dataTables_paginate .paginate_button {
-			padding: 0px;
-		}
-	</style>
-	<style>
-		.valids {
-			color: green;
-		}
-
-		.invalids {
-			color: red;
-		}
-
-		.left-arrow-circle {
-			width: 35px;
-			height: 35px;
-			border-radius: 50%;
-			background-color: white;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin-right: 10px;
-			transition: background-color 0.3s, transform 0.2s;
-		}
-
-		.left-arrow-circle i {
-			color: rgb(107, 122, 143);
-		}
-
-		.left-arrow-circle:hover {
-			background-color: rgb(107, 122, 143);
-			cursor: pointer;
-			transform: scale(1.05);
-			border: 2px solid white;
-		}
-
-		.left-arrow-circle:hover i {
-			color: white;
-		}
-	</style>
-	<script th:inline="javascript">
-
-
-		function getUserlist(mode, num, maxpage) {
-
-			var n = parseInt(num);
-			var max = parseInt(maxpage);
-			var Callurl = 'UserProfile?formmode=list';
-
-			switch (mode) {
-				case "nextpage":
-					n = n + 1;
-					if (n > max) {
-						break;
-					}
-					Callurl = Callurl + "&page=" + n;
-					break;
-				case "prevpage":
-					n = n - 1;
-					if (n < 0) {
-						break;
-					}
-					Callurl = Callurl + "&page=" + n;
-					break;
-				case "givenpage":
-					n = parseInt($("#pageno").val()) - 1;
-					if (n > max || n < 0) {
-						break;
-					}
-					Callurl = Callurl + "&page=" + n;
-			}
-
-			location.href = Callurl;
-		}
-
-		function finuser(a) {
-
-			$
-				.ajax({
-					type: 'get',
-					url: '/MIS/Finuserdata?userid=' + a.id,
-
-					success: function (data) {
-
-						/*<![CDATA[*/
-
-						$('.finuserapply').html(data);
-
-						$(
-							"#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
-							.datepicker({
-								changeMonth: true,
-								changeYear: true,
-								dateFormat: "dd-mm-yy"
-							});
-
-						/*]]>*/
-
-						$("#finusers").modal("hide");
-					}
-
-				})
-
-		}
-
-		function home() {
-			location.href = 'Dashboard'
-		}
-
-		function back() {
-			window.history.back();
-		}
-
-		function fnClick(a) {
-			var userid = a.getAttribute("data-userid");
-			var WORKCLASS = a.getAttribute("data-WORKCLASS");
-			var roleid = a.getAttribute("data-roleid");
-
-			if (WORKCLASS !== "C" && roleid !== "MGR") {
-				alert('You do not have Modification access.');
-			} else {
-				location.href = 'UserProfile?formmode=edit&userid=' + userid;
-			}
-		}
-
-
-		function fnView(a) {
-			var userid = a.getAttribute("data-userid")
-			var WORKCLASS = a.getAttribute("data-WORKCLASS")
-
-			location.href = 'UserProfile?formmode=view&userid=' + userid
-
-		}
-
-
-		function fnClick1(a) {
-			var userid = a.getAttribute("data-userid");
-			var WORKCLASS = a.getAttribute("data-WORKCLASS");
-			var roleid = a.getAttribute("data-roleid");
-
-			if (WORKCLASS !== "C" && roleid !== "MGR") {
-				alert('You do not have verification access.');
-			} else {
-				location.href = 'UserProfile?formmode=verify&userid=' + userid;
-			}
-		}
-
-
-		function adduser() {
-
-
-			location.href = 'UserProfile?formmode=add';
-
-		}
-
-		function list() {
-			location.href = 'UserProfile?formmode=list';
-		}
-
-		function verify(a) {
-			var entryuser = a.getAttribute("data-entry_user");
-			var modifyuser = a.getAttribute("data-modify_user");
-
-			var roleid = a.getAttribute("data-roleid");
-			var loginuser = /*[[${session.USERID}]]*/ null;
-
-			if (roleid !== "MGR") {
-				// For non-MGR users, block same-user verification
-				if ((modifyuser !== null && modifyuser === loginuser) ||
-					(modifyuser === null && entryuser === loginuser)) {
-					$("#alertmsg").text("Same user cannot verify");
-					$('#alert').modal("toggle");
-					return;
-				}
-			}
-
-
-
-			// ✅ Manual basic validation (example: check userid exists)
-			var userid = $('#userId').val();
-			if (!userid || userid.trim() === "") {
-				alert("User ID is required");
-				$('#userid').focus();
-				return;
-			}
-
-			// Show loader
-			$('#loader1').modal("toggle");
-
-			// Build AJAX request
-			$.ajax({
-				url: './verifyUser',
-				type: 'POST',
-				data: $('#userProfile').serialize(), // serialize form data
-				success: function (response) {
-					$('#loader1').modal("hide");
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
-				},
-				error: function (xhr, status, error) {
-					$('#loader1').modal("hide");
-					alert("Verification failed: " + error);
-				}
-			});
-		}
-
-
-		function passwordReset() {
-			var ROLEIDUSER = /*[[${session.ROLEID}]]*/ null;
-
-			if (ROLEIDUSER === 'ADM') {
-				// Show loader
-				$('#loader1').modal("toggle");
-
-				// Prepare data
-				var url = './defaultpasswordReset';
-				var formData = $('#userProfile').serialize(); // Serialize form fields
-
-				// Send AJAX request
-				$.ajax({
-					url: url,
-					type: 'POST',
-					data: formData,
-					success: function (response) {
-						$('#loader1').modal("hide");
-						$("#alertmsg").text(response);
-						$('#alert').modal("toggle");
-					},
-					error: function (xhr, status, error) {
-						$('#loader1').modal("hide");
-						alert("Password reset failed: " + error);
-					}
-				});
-			} else {
-				alert('Unauthorized user');
-			}
-		}
-
-
-		function roledesc() {
-			var roleId = $("#roleId").val();
-			if (roleId) {
-				$.ajax({
-					url: "/BRAS/getRoleDetails",
-					type: "GET",
-					data: {roleId: roleId},
-					success: function (data) {
-						if (data) {
-							// Role Description
-							$("#role_desc").val(data.roleDesc || "");
-
-							// --- START Work Class display change ---
-							let displayWorkClass = "";
-							if (data.workClass === "M") {
-								displayWorkClass = "M";
-							} else if (data.workClass === "C") {
-								displayWorkClass = "C";
-							} else {
-								displayWorkClass = data.workClass || "";
-							}
-							$("#work_class").val(displayWorkClass);
-							// --- END Work Class display change ---
-
-
-							$("#permissions").val(data.permissions);
-							// --- END Permissions display change ---
-
-							// Domain/Access
-							$("#domain_id").val(data.menulist);
-							//	if ((data.menulist || "").includes("BRF_Reports")) {
-							//		$("#acctAccessContainer").show();
-							//	} else {
-							//		$("#acctAccessContainer").hide();
-							//	}
-						}
-					},
-					error: function (xhr, status, error) {
-						console.error("Error fetching role details:", error);
-					}
-				});
-			}
-		}
-
-
-
-		function Branchcodeval() {
-
-
-			var Branchcode = $("#branchCode").find(':selected').val();
-
-			if (Branchcode == '9001') {
-				$("#branchName").val("Dubai");
-			} else if (Branchcode == '9002') {
-				$("#branchName").val("Abu Dhabi");
-			} else if (Branchcode == '9003') {
-				$("#branchName").val("Deira");
-			} else if (Branchcode == '9004') {
-				$("#branchName").val("Sharjha");
-			} else if (Branchcode == '9005') {
-				$("#branchName").val("Ras Al Khaima");
-			} else if (Branchcode == '9008') {
-				$("#branchName").val("Syndication");
-			} else if (Branchcode == '9010') {
-				$("#branchName").val("Treasury");
-			} else if (Branchcode == '9019') {
-				$("#branchName").val("DFC");
-			}
-
-			$(this).find(':selected').text();
-
-		}
-
-
-
-
-		function submitform() {
-			// Get the formmode from the Submit button's data attribute
-			var formmode = $('#btnSubmit').data('formmode');
-			//alert("Form mode is: " + formmode); // Alert the formmode
-
-			// --- IMPORTANT: Run all validations before submitting ---
-			let isValid = true;
-			if (!validateUserId()) isValid = false;
-			// Add other validations here, e.g.:
-			// if (!validateUserName()) isValid = false;
-			// if (!validatePassword()) isValid = false; // Note: validatePassword only gives feedback, doesn't return true/false
-
-			// For existing validateMobile and validateEmail, they modify class directly,
-			// you might want to adjust them to return a boolean as well,
-			// or explicitly check their 'is-invalid' class on the input.
-			// Example:
-			const mobNoInput = document.getElementById("mobNo");
-			const emailIdInput = document.getElementById("emailId");
-
-			validateMobile(mobNoInput); // Ensure validation runs
-			if (mobNoInput.classList.contains("is-invalid")) isValid = false;
-
-			validateEmail(emailIdInput); // Ensure validation runs
-			if (emailIdInput.classList.contains("is-invalid")) isValid = false;
-
-			// Add checks for other required fields
-			if (!$('#userName').val()) {
-				$('label[for="userName"]').addClass('error');
-				isValid = false;
-			} else {
-				$('label[for="userName"]').removeClass('error');
-			}
-			// Repeat for other required fields (bankCode, bankName, branchCode, branchName, empId, designation, password, pass_exp_days, userStatus, loginStatus, roleId)
-			// Example for Branch Code:
-			if (!$('#branchCode').val()) {
-				$('label[for="branchCode"]').addClass('error');
-				isValid = false;
-			} else {
-				$('label[for="branchCode"]').removeClass('error');
-			}
-			// ... and so on for all required fields.
-
-
-			if (!isValid) {
-				alert("Please fill in all mandatory fields correctly.");
-				return false;
-			}
-			// --- END OF VALIDATION CHECKS ---
-
-
-			var userid = $('#userId').val();
-
-			if (!userid) {
-				alert("Please Provide User Id");
-				$('#userId').focus();
-				return false;
-			}
-
-			$("#loader1").modal("toggle");
-
-			var url = "./createUser?formmode=" + formmode;
-
-			$.ajax({
-				url: url,
-				type: 'POST',
-				data: $("#userProfile").serialize(),
-				success: function (response) {
-					$("#loader1").modal("hide");
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
-				},
-				error: function () {
-					$("#loader1").modal("hide");
-					alert('Error submitting form');
-				}
-			});
-		}
-
-
-		/*]]>*/
-	</script>
-	<script>
-		function submitdata() {
-			var domainids = [];
-			$.each($("input[name='dom']:checked"), function () {
-				domainids.push($(this).val());
-			});
-			$("#getDomain").modal('hide');
-			$("#domainId").val(domainids.join(","));
-		}
-	</script>
-	<script>
-		function deleteuser() {
-
-			var entryuser = document.querySelector('[data-entry_user]');
-			var modifyuser = document.querySelector('[data-modify_user]');
-
-			if (confirm('Are you sure you want to delete this User?')) {
-				$("#loader1").modal("toggle");
-				var userid = document.getElementById("userId").value;
-				$.ajax({
-					type: 'post',
-					url: './deleteuser?formmode=' + userid,
-					success: function (response) {
-						$("#loader1").modal("hide");
-						$("#alertmsg").text('User Deleted');
-						$('#alert').modal("toggle");
-					},
-					error: function (xhr, status, error) {
-						$("#loader1").modal("hide");
-						alert('Not able to delete contact administrator');
-					}
-				});
-			}
-
-		}
-	</script>
-	<script>
-		function roledesc1() {
-
-			var roleid = $("#roleId").find(':selected').val();
-
-			if (roleid == 'VISAP1') {
-				$("#roleDesc1").val("VISAP1");
-			} else if (roleid == 'VISAR2') {
-				$("#roleDesc1").val("VISAR2");
-			} else if (roleid == 'RFI3') {
-				$("#roleDesc1").val("RFI3");
-			} else if (roleid == 'RFI3') {
-				$("#roleDesc1").val("RFI3");
-			} else if (roleid == 'CURINT4') {
-				$("#roleDesc1").val("CURINT4");
-			}
-			$(this).find(':selected').text();
-
-		}
-
-		function brflogin() {
-
-			var roleid = $("#roleId").find(':selected').val();
-
-			if (roleid == 'VISAP1') {
-				$("#roleDesc1").val("VISAP1");
-			} else if (roleid == 'VISAR2') {
-				$("#roleDesc1").val("VISAR2");
-			} else if (roleid == 'RFI3') {
-				$("#roleDesc1").val("RFI3");
-			} else if (roleid == 'RFI3') {
-				$("#roleDesc1").val("RFI3");
-			} else if (roleid == 'CURINT4') {
-				$("#roleDesc1").val("CURINT4");
-			}
-			$(this).find(':selected').text();
-
-		}
-
-
-		function back() {
-			window.history.back();
-		}
-	</script>
-
-	<script>
-
-		function validatePassword() {
-
-			const password = document.getElementById("password").value;
-			const feedback = document.getElementById("feedback");
-			const passwordLabel = document.querySelector('label[for="password"]'); // Get password label
-
-			const minLength = password.length >= 14;
-			const hasUpperCase = /[A-Z]/.test(password);
-			const hasLowerCase = /[a-z]/.test(password);
-			const hasNumber = /\d/.test(password);
-			const hasSpecialChar = /[@$!%*?&]/.test(password);
-
-			// Clear previous feedback and remove error class from label
-			feedback.innerHTML = '';
-			if (passwordLabel) {
-				passwordLabel.classList.remove("error");
-			}
-			document.getElementById("password").classList.remove("is-invalid");
-
-
-			// Validate password and provide feedback
-			if (minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar) {
-				feedback.innerHTML = "Password is strong!";
-				feedback.className = "valids";
-				return true; // Password is valid
-			} else {
-				feedback.className = "invalids";
-				if (!minLength) feedback.innerHTML += "> Password must be at least 14 characters long.   ";
-				if (!hasUpperCase) feedback.innerHTML += "> Must contain at least one uppercase letter.<br>";
-				if (!hasLowerCase) feedback.innerHTML += "> Must contain at least one lowercase letter.   ";
-				if (!hasNumber) feedback.innerHTML += "> Must contain at least one number.<br>";
-				if (!hasSpecialChar) feedback.innerHTML += "> Must contain at least one special character.";
-				if (passwordLabel) {
-					passwordLabel.classList.add("error"); // Add 'error' class to the label
-				}
-				document.getElementById("password").classList.add("is-invalid");
-				return false; // Password is invalid
-			}
-		}
-
-
-		function validateUserId() {
-			const userIdInput = document.getElementById("userId");
-			const userIdCHECK = userIdInput.value.trim();
-			const feedbackuser = document.getElementById("feedbackuser");
-			const userIdLabel = document.querySelector('label[for="userId"]'); // Select the label for userId
-
-			const pattern = /^[A-Za-z]{2}[0-9]{6}$/;
-
-			// Clear previous feedback and remove error class from label/input
-			feedbackuser.innerHTML = "";
-			feedbackuser.className = ""; // Clear any previous class
-			if (userIdLabel) {
-				userIdLabel.classList.remove("error"); // Remove red color from label
-			}
-			userIdInput.classList.remove("is-invalid"); // Remove invalid state from input
-
-			if (userIdCHECK === "") {
-				feedbackuser.innerHTML = "User ID is mandatory";
-				feedbackuser.className = "invalids"; // Keep for text, but 'error' class on label controls color
-				if (userIdLabel) {
-					userIdLabel.classList.add("error"); // Make label red
-				}
-				userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
-				return false;
-			}
-
-			if (pattern.test(userIdCHECK)) {
-				feedbackuser.innerHTML = ""; // Valid, so no message
-				feedbackuser.className = "valids"; // Green text for valid if you want
-				return true;
-			} else {
-				feedbackuser.innerHTML = "User ID must start with 2 letters followed by 6 digits. Eg: AB123456";
-				feedbackuser.className = "invalids"; // Keep for text
-				if (userIdLabel) {
-					userIdLabel.classList.add("error"); // Make label red
-				}
-				userIdInput.classList.add("is-invalid"); // Add class for input styling if desired
-				return false;
-			}
-		}
-
-	</script>
-	<script>
-		function validateMobile(input) {
-			const value = input.value;
-			const errorEl = document.getElementById("mobError");
-			const mobLabel = document.querySelector('label[for="mobNo"]'); // Get mobile number label
-
-			const mobPattern = /^971\d{9}$/; // 971 + 9 digits (total 12)
-
-			// Clear previous errors
-			errorEl.textContent = "";
-			input.classList.remove("is-invalid");
-			if (mobLabel) {
-				mobLabel.classList.remove("error");
-			}
-
-
-			if (!mobPattern.test(value)) {
-				errorEl.textContent = "Mobile number must start with 971 and be exactly 12 digits.";
-				input.classList.add("is-invalid");
-				if (mobLabel) {
-					mobLabel.classList.add("error");
-				}
-				return false;
-			} else {
-				errorEl.textContent = "";
-				input.classList.remove("is-invalid");
-				return true;
-			}
-		}
-
-
-
-		function validateEmail(input) {
-			const value = input.value;
-			const errorEl = document.getElementById("emailError");
-			const emailLabel = document.querySelector('label[for="emailId"]'); // Get email ID label
-
-			const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-			// Clear previous errors
-			errorEl.textContent = "";
-			input.classList.remove("is-invalid");
-			if (emailLabel) {
-				emailLabel.classList.remove("error");
-			}
-
-
-			if (!emailPattern.test(value)) {
-				errorEl.textContent = "Please enter a valid email address.";
-				input.classList.add("is-invalid");
-				if (emailLabel) {
-					emailLabel.classList.add("error");
-				}
-				return false;
-			} else {
-				errorEl.textContent = "";
-				input.classList.remove("is-invalid");
-				return true;
-			}
-		}
-	</script>
-	<script>
-		$(document).ready(function () {
-			$('#usertable').DataTable({
-				pageLength: 10,
-				lengthChange: false,
-				searching: true,
-				paging: true,
-				ordering: false,           // set to true if you want column sorting
-				scrollY: "450px",          // vertical scroll
-				scrollCollapse: true,
-
-				// ✅ Custom layout: Search (left) + Pagination (right)
-				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
-			});
-
-			// ✅ Align search & pagination properly
-			$('.dataTables_filter').css('text-align', 'left');
-			$('.dataTables_paginate').css('text-align', 'right');
-		});
-	</script>
-
-	<script>
-
-
-		// If the formmode is 'edit' or 'view', disable userId validation
-		// Otherwise, make userId required
-		// You can use jQuery Validate for this
-		if ($('#userProfile').length) { // Check if the form exists
-			// Initialize jQuery Validation
-			$('#userProfile').validate({
-				rules: {
-					userid: {
-						required: function (element) {
-							return ($("[name='formmode']").val() !== 'edit' && $("[name='formmode']").val() !== 'view');
-						}
-					},
-					username: "required",
-					bank_code: "required",
-					bank_name: "required",
-					branch_code: "required",
-					branch_name: "required",
-					empid: "required",
-					designation: "required",
-					mob_number: {
-						required: true,
-						pattern: /^971\d{9}$/
-					},
-					email_id: {
-						required: true,
-						email: true
-					},
-					password: {
-						required: function (element) {
-							return ($("[name='formmode']").val() === 'add');
-						}
-						// You might add custom password validation rules here if not handled by your JS
-					},
-					pass_exp_days: "required",
-					user_status: "required",
-					login_status: "required",
-					role_id: "required",
-					role_desc: "required",
-					work_class: "required",
-					domain_id: "required",
-					permissions: "required"
-				},
-				messages: {
-					userid: "User ID is mandatory",
-					username: "User Name is mandatory",
-					bank_code: "Bank Code is mandatory",
-					bank_name: "Bank Name is mandatory",
-					branch_code: "Branch Code is mandatory",
-					branch_name: "Branch Name is mandatory",
-					empid: "Employee ID is mandatory",
-					designation: "Designation is mandatory",
-					mob_number: {
-						required: "Mobile No is mandatory",
-						pattern: "Mobile number must start with 971 and be exactly 12 digits."
-					},
-					email_id: {
-						required: "Email ID is mandatory",
-						email: "Please enter a valid email address."
-					},
-					password: "Password is mandatory",
-					pass_exp_days: "Password Expire Days is mandatory",
-					user_status: "User Status is mandatory",
-					login_status: "Login Status is mandatory",
-					role_id: "Role ID is mandatory",
-					role_desc: "Role Description is mandatory",
-					work_class: "Work Class is mandatory",
-					domain_id: "Module is mandatory",
-					permissions: "Permissions is mandatory"
-				},
-				errorClass: 'error', // Use your existing .error class for labels
-				highlight: function (element, errorClass, validClass) {
-					$(element).addClass('is-invalid'); // Add bootstrap's invalid class to inputs
-					$(element).closest('.formline').find('label').addClass(errorClass); // Add error class to the label in the same formline
-				},
-				unhighlight: function (element, errorClass, validClass) {
-					$(element).removeClass('is-invalid'); // Remove bootstrap's invalid class from inputs
-					$(element).closest('.formline').find('label').removeClass(errorClass); // Remove error class from the label
-				},
-				submitHandler: function (form) {
-					// This function is called when the form is valid
-					// Call your submitform function here
-					submitform();
-				}
-			});
-
-			// Attach your custom validations to the input fields to work with jQuery Validate's highlight/unhighlight
-			$('#userId').on('change blur', validateUserId);
-			$('#password').on('input', validatePassword); // Use 'input' for real-time feedback
-			$('#mobNo').on('input', function () {validateMobile(this);});
-			$('#emailId').on('input', function () {validateEmail(this);});
-
-
-			// Initial call to set branch name based on existing value if in edit/view mode
-			if ($("#branchCode").val()) {
-				Branchcodeval();
-			}
-			// Initial call to set role description based on existing value if in edit/view mode
-			if ($("#roleId").val()) {
-				roledesc();
-			}
-		}
-		});
-	</script>
-	<script>
-		$(document).ready(function () {
-			$('#openDomainModal').click(function (e) {
-				e.preventDefault(); // Prevent default <a> link behavior
-				$('#getDomain').modal('show'); // Show the modal manually
-			});
-		});
-	</script>
-	<script>
-		function cancelpop() {
-			$('#getDomain').modal('hide');
-		}
-	</script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+        th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+        th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+        th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+    <link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+        th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+    <script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+        th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+    <script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+        th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+    <script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+        th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+    <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+        th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+    <script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+        th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+    <script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+        th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+
+    <style>
+        label,
+        table {
+            font-family: verdana;
+        }
+
+        .container-fluid {
+            width: 100%;
+            padding-top: 1px;
+            padding-right: 0px !important;
+            padding-left: 0px !important;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .custom-tab-btns {
+            float: right;
+            margin: 5px;
+        }
+
+        .col-sm-5 {
+            padding-bottom: 15px;
+        }
+
+        .list-body {
+            padding: 0px;
+        }
+
+        .page-item.active .page-link {
+            z-index: 1;
+            color: #fff;
+            background-color: darkorange;
+            border-color: darkorange;
+        }
+
+        /* This is your existing .error class */
+        .error {
+            color: red;
+            padding-left: 10px;
+        }
+
+        .formline {
+            padding-bottom: 15px;
+        }
+
+        .custom-tab-btn-primary {
+            background-color: #E77400;
+            border-color: #0c0c0c;
+        }
+
+        .custom-tab-btn-primary:not (:disabled):not (.disabled).active,
+        .custom-tab-btn-primary:not (:disabled):not (.disabled):active,
+        .show>.custom-tab-btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #cc000000;
+            border-color: #161617;
+        }
+
+        #finusertb {
+            width: 460px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0px;
+        }
+
+        .valids {
+            color: green;
+        }
+
+        .invalids {
+            color: red;
+        }
+
+        .left-arrow-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .left-arrow-circle i {
+            color: rgb(107, 122, 143);
+        }
+
+        .left-arrow-circle:hover {
+            background-color: rgb(107, 122, 143);
+            cursor: pointer;
+            transform: scale(1.05);
+            border: 2px solid white;
+        }
+
+        .left-arrow-circle:hover i {
+            color: white;
+        }
+        /* Style for invalid input fields */
+        .form-control.is-invalid {
+            border-color: red;
+        }
+    </style>
+    <script th:inline="javascript">
+        //<![CDATA[
+
+        function getUserlist(mode, num, maxpage) {
+            var n = parseInt(num);
+            var max = parseInt(maxpage);
+            var Callurl = 'UserProfile?formmode=list';
+
+            switch (mode) {
+                case "nextpage":
+                    n = n + 1;
+                    if (n > max) {
+                        break;
+                    }
+                    Callurl = Callurl + "&page=" + n;
+                    break;
+                case "prevpage":
+                    n = n - 1;
+                    if (n < 0) {
+                        break;
+                    }
+                    Callurl = Callurl + "&page=" + n;
+                    break;
+                case "givenpage":
+                    n = parseInt($("#pageno").val()) - 1;
+                    if (n > max || n < 0) {
+                        break;
+                    }
+                    Callurl = Callurl + "&page=" + n;
+            }
+            location.href = Callurl;
+        }
+
+        function finuser(a) {
+            $.ajax({
+                type: 'get',
+                url: '/MIS/Finuserdata?userid=' + a.id,
+                success: function (data) {
+                    $('.finuserapply').html(data);
+                    $("#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill").datepicker({
+                        changeMonth: true,
+                        changeYear: true,
+                        dateFormat: "dd-mm-yy"
+                    });
+                    $("#finusers").modal("hide");
+                }
+            });
+        }
+
+        function home() {
+            location.href = 'Dashboard'
+        }
+
+        function back() {
+            window.history.back();
+        }
+
+        function fnClick(a) {
+            var userid = a.getAttribute("data-userid");
+            var WORKCLASS = a.getAttribute("data-WORKCLASS");
+            var roleid = a.getAttribute("data-roleid");
+
+            if (WORKCLASS !== "C" && roleid !== "MGR") {
+                alert('You do not have Modification access.');
+            } else {
+                location.href = 'UserProfile?formmode=edit&userid=' + userid;
+            }
+        }
+
+        function fnView(a) {
+            var userid = a.getAttribute("data-userid")
+            var WORKCLASS = a.getAttribute("data-WORKCLASS")
+            location.href = 'UserProfile?formmode=view&userid=' + userid
+        }
+
+        function fnClick1(a) {
+            var userid = a.getAttribute("data-userid");
+            var WORKCLASS = a.getAttribute("data-WORKCLASS");
+            var roleid = a.getAttribute("data-roleid");
+
+            if (WORKCLASS !== "C" && roleid !== "MGR") {
+                alert('You do not have verification access.');
+            } else {
+                location.href = 'UserProfile?formmode=verify&userid=' + userid;
+            }
+        }
+
+        function adduser() {
+            location.href = 'UserProfile?formmode=add';
+        }
+
+        function list() {
+            location.href = 'UserProfile?formmode=list';
+        }
+
+        function verify(a) {
+            var entryuser = a.getAttribute("data-entry_user");
+            var modifyuser = a.getAttribute("data-modify_user");
+            var roleid = a.getAttribute("data-roleid");
+            var loginuser = /*[[${session.USERID}]]*/ null;
+
+            if (roleid !== "MGR") {
+                if ((modifyuser !== null && modifyuser === loginuser) ||
+                    (modifyuser === null && entryuser === loginuser)) {
+                    $("#alertmsg").text("Same user cannot verify");
+                    $('#alert').modal("toggle");
+                    return;
+                }
+            }
+
+            var userid = $('#userId').val();
+            if (!userid || userid.trim() === "") {
+                alert("User ID is required");
+                $('#userid').focus();
+                return;
+            }
+
+            $('#loader1').modal("toggle");
+            $.ajax({
+                url: './verifyUser',
+                type: 'POST',
+                data: $('#userProfile').serialize(),
+                success: function (response) {
+                    $('#loader1').modal("hide");
+                    $("#alertmsg").text(response);
+                    $('#alert').modal("toggle");
+                },
+                error: function (xhr, status, error) {
+                    $('#loader1').modal("hide");
+                    alert("Verification failed: " + error);
+                }
+            });
+        }
+
+        function passwordReset() {
+            var ROLEIDUSER = /*[[${session.ROLEID}]]*/ null;
+
+            if (ROLEIDUSER === 'ADM') {
+                $('#loader1').modal("toggle");
+                var url = './defaultpasswordReset';
+                var formData = $('#userProfile').serialize();
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        $('#loader1').modal("hide");
+                        $("#alertmsg").text(response);
+                        $('#alert').modal("toggle");
+                    },
+                    error: function (xhr, status, error) {
+                        $('#loader1').modal("hide");
+                        alert("Password reset failed: " + error);
+                    }
+                });
+            } else {
+                alert('Unauthorized user');
+            }
+        }
+
+        function roledesc() {
+            var roleId = $("#roleId").val();
+            if (roleId) {
+                $.ajax({
+                    url: "/BRAS/getRoleDetails",
+                    type: "GET",
+                    data: { roleId: roleId },
+                    success: function (data) {
+                        if (data) {
+                            $("#role_desc").val(data.roleDesc || "");
+                            let displayWorkClass = "";
+                            if (data.workClass === "M") {
+                                displayWorkClass = "M";
+                            } else if (data.workClass === "C") {
+                                displayWorkClass = "C";
+                            } else {
+                                displayWorkClass = data.workClass || "";
+                            }
+                            $("#work_class").val(displayWorkClass);
+                            $("#permissions").val(data.permissions);
+                            $("#domain_id").val(data.menulist);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching role details:", error);
+                    }
+                });
+            }
+        }
+
+        function Branchcodeval() {
+            var Branchcode = $("#branchCode").find(':selected').val();
+            const branchNames = {
+                '9001': 'Dubai',
+                '9002': 'Abu Dhabi',
+                '9003': 'Deira',
+                '9004': 'Sharjha',
+                '9005': 'Ras Al Khaima',
+                '9008': 'Syndication',
+                '9010': 'Treasury',
+                '9019': 'DFC'
+            };
+            $("#branchName").val(branchNames[Branchcode] || "");
+        }
+
+        // Modified submitform - it only performs the AJAX submission
+        function submitform() {
+            var formmode = $('#btnSubmit').data('formmode');
+            var userid = $('#userId').val();
+
+            // The validation is now handled by jQuery Validate's submitHandler,
+            // so we can assume it's valid if this function is called.
+            $("#loader1").modal("toggle");
+
+            var url = "./createUser?formmode=" + formmode;
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $("#userProfile").serialize(),
+                success: function (response) {
+                    $("#loader1").modal("hide");
+                    $("#alertmsg").text(response);
+                    $('#alert').modal("toggle");
+                },
+                error: function () {
+                    $("#loader1").modal("hide");
+                    alert('Error submitting form');
+                }
+            });
+        }
+
+        function submitdata() {
+            var domainids = [];
+            $.each($("input[name='dom']:checked"), function () {
+                domainids.push($(this).val());
+            });
+            $("#getDomain").modal('hide');
+            $("#domain_id").val(domainids.join(",")); // Ensure this targets the correct ID
+        }
+
+        function deleteuser() {
+            // var entryuser = document.querySelector('[data-entry_user]'); // Not used
+            // var modifyuser = document.querySelector('[data-modify_user]'); // Not used
+
+            if (confirm('Are you sure you want to delete this User?')) {
+                $("#loader1").modal("toggle");
+                var userid = document.getElementById("userId").value;
+                $.ajax({
+                    type: 'post',
+                    url: './deleteuser?formmode=' + userid, // formmode here acts as userid parameter
+                    success: function (response) {
+                        $("#loader1").modal("hide");
+                        $("#alertmsg").text('User Deleted');
+                        $('#alert').modal("toggle");
+                    },
+                    error: function (xhr, status, error) {
+                        $("#loader1").modal("hide");
+                        alert('Not able to delete contact administrator');
+                    }
+                });
+            }
+        }
+
+        function roledesc1() {
+            var roleid = $("#roleId").find(':selected').val();
+            // This function seems to be for another dropdown or legacy logic
+            // Consider updating or removing if not actively used.
+            const roleDescs = {
+                'VISAP1': 'VISAP1',
+                'VISAR2': 'VISAR2',
+                'RFI3': 'RFI3',
+                'CURINT4': 'CURINT4'
+            };
+            $("#roleDesc1").val(roleDescs[roleid] || "");
+        }
+
+        function brflogin() {
+            // This function seems to be a duplicate of roledesc1 or legacy logic
+            roledesc1(); // Call roledesc1 if it's supposed to do the same
+        }
+
+        function cancelpop() {
+            $('#getDomain').modal('hide');
+        }
+
+        $(document).ready(function () {
+            $('#usertable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                searching: true,
+                paging: true,
+                ordering: false,
+                scrollY: "450px",
+                scrollCollapse: true,
+                dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+            });
+
+            $('.dataTables_filter').css('text-align', 'left');
+            $('.dataTables_paginate').css('text-align', 'right');
+
+            // --- jQuery Validate Custom Methods ---
+
+            // Custom method for User ID pattern
+            $.validator.addMethod("userIdPattern", function (value, element) {
+                return this.optional(element) || /^[A-Za-z]{2}[0-9]{6}$/.test(value);
+            }, "User ID must start with 2 letters followed by 6 digits. Eg: AB123456");
+
+            // Custom method for Mobile Number pattern
+            $.validator.addMethod("mobilePattern", function (value, element) {
+                return this.optional(element) || /^971\d{9}$/.test(value);
+            }, "Mobile number must start with 971 and be exactly 12 digits.");
+
+            // Custom method for strong password
+            $.validator.addMethod("strongPassword", function (value, element) {
+                const password = value;
+                const minLength = password.length >= 14;
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecialChar = /[@$!%*?&]/.test(password);
+                return this.optional(element) || (minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar);
+            }, function(params, element) {
+                // Custom message function for strongPassword to give more detailed feedback
+                const password = $(element).val();
+                let message = "";
+                const minLength = password.length >= 14;
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+                if (!minLength) message += "> Password must be at least 14 characters long.<br>";
+                if (!hasUpperCase) message += "> Must contain at least one uppercase letter.<br>";
+                if (!hasLowerCase) message += "> Must contain at least one lowercase letter.<br>";
+                if (!hasNumber) message += "> Must contain at least one number.<br>";
+                if (!hasSpecialChar) message += "> Must contain at least one special character.";
+                return message || "Password is strong!"; // Fallback for when all conditions are met
+            });
+
+
+            // --- jQuery Validate Initialization ---
+            if ($('#userProfile').length) {
+                $('#userProfile').validate({
+                    rules: {
+                        userid: {
+                            required: function (element) {
+                                return ($("[name='formmode']").val() !== 'edit' && $("[name='formmode']").val() !== 'view');
+                            },
+                            userIdPattern: true
+                        },
+                        username: "required",
+                        bank_code: "required",
+                        bank_name: "required",
+                        branch_code: "required",
+                        branch_name: "required",
+                        empid: "required",
+                        designation: "required",
+                        mob_number: {
+                            required: true,
+                            mobilePattern: true
+                        },
+                        email_id: {
+                            required: true,
+                            email: true
+                        },
+                        password: {
+                            required: function (element) {
+                                return ($("[name='formmode']").val() === 'add');
+                            },
+                            strongPassword: true
+                        },
+                        pass_exp_days: "required",
+                        user_status: "required",
+                        login_status: "required",
+                        role_id: "required",
+                        role_desc: "required",
+                        work_class: "required",
+                        domain_id: "required",
+                        permissions: "required"
+                    },
+                    messages: {
+                        userid: {
+                            required: "User ID is mandatory"
+                        },
+                        username: "User Name is mandatory",
+                        bank_code: "Bank Code is mandatory",
+                        bank_name: "Bank Name is mandatory",
+                        branch_code: "Branch Code is mandatory",
+                        branch_name: "Branch Name is mandatory",
+                        empid: "Employee ID is mandatory",
+                        designation: "Designation is mandatory",
+                        mob_number: {
+                            required: "Mobile No is mandatory"
+                        },
+                        email_id: {
+                            required: "Email ID is mandatory",
+                            email: "Please enter a valid email address."
+                        },
+                        password: {
+                            required: "Password is mandatory"
+                        },
+                        pass_exp_days: "Password Expire Days is mandatory",
+                        user_status: "User Status is mandatory",
+                        login_status: "Login Status is mandatory",
+                        role_id: "Role ID is mandatory",
+                        role_desc: "Role Description is mandatory",
+                        work_class: "Work Class is mandatory",
+                        domain_id: "Module is mandatory",
+                        permissions: "Permissions is mandatory"
+                    },
+                    errorClass: 'error',
+                    errorPlacement: function (error, element) {
+                        if (element.attr("id") == "userId") {
+                            error.appendTo("#feedbackuser");
+                        } else if (element.attr("id") == "password") {
+                            error.appendTo("#feedback");
+                        } else if (element.attr("id") == "mobNo") {
+                            error.appendTo("#mobError");
+                        } else if (element.attr("id") == "emailId") {
+                            error.appendTo("#emailError");
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                        $(element).closest('.formline').find('label').addClass(errorClass);
+
+                        if (element.id === "password") {
+                            $('#feedback').addClass('invalids').removeClass('valids');
+                        }
+                        if (element.id === "userId") {
+                            $('#feedbackuser').addClass('invalids').removeClass('valids');
+                        }
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.formline').find('label').removeClass(errorClass);
+
+                        if (element.id === "password") {
+                            $('#feedback').removeClass('invalids').addClass('valids');
+                        }
+                        if (element.id === "userId") {
+                            $('#feedbackuser').removeClass('invalids').addClass('valids');
+                        }
+                    },
+                    submitHandler: function (form) {
+                        submitform();
+                    }
+                });
+
+                // Initial calls for existing values in edit/view mode
+                if ($("#branchCode").val()) {
+                    Branchcodeval();
+                }
+                if ($("#roleId").val()) {
+                    roledesc();
+                }
+
+                // --- Real-time feedback updates for custom fields (visually helpful) ---
+                $('#userId').on('input blur', function () {
+                    const userIdInput = this;
+                    const feedbackuser = document.getElementById("feedbackuser");
+                    // Update immediate feedback text, jQuery Validate will handle classes
+                    if (!/^[A-Za-z]{2}[0-9]{6}$/.test(userIdInput.value.trim())) {
+                        feedbackuser.innerHTML = "User ID must start with 2 letters followed by 6 digits. Eg: AB123456";
+                        feedbackuser.className = "invalids";
+                    } else {
+                        feedbackuser.innerHTML = "";
+                        feedbackuser.className = "valids";
+                    }
+                });
+
+                $('#password').on('input', function () {
+                    const password = this.value;
+                    const feedback = document.getElementById("feedback");
+                    // Update immediate feedback text, jQuery Validate will handle classes
+                    const minLength = password.length >= 14;
+                    const hasUpperCase = /[A-Z]/.test(password);
+                    const hasLowerCase = /[a-z]/.test(password);
+                    const hasNumber = /\d/.test(password);
+                    const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+                    feedback.innerHTML = '';
+                    if (!(minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar)) {
+                        feedback.className = "invalids";
+                        if (!minLength) feedback.innerHTML += "> Password must be at least 14 characters long.<br>";
+                        if (!hasUpperCase) feedback.innerHTML += "> Must contain at least one uppercase letter.<br>";
+                        if (!hasLowerCase) feedback.innerHTML += "> Must contain at least one lowercase letter.<br>";
+                        if (!hasNumber) feedback.innerHTML += "> Must contain at least one number.<br>";
+                        if (!hasSpecialChar) feedback.innerHTML += "> Must contain at least one special character.";
+                    } else {
+                        feedback.innerHTML = "Password is strong!";
+                        feedback.className = "valids";
+                    }
+                });
+
+                $('#mobNo').on('input blur', function () {
+                    const input = this;
+                    const value = input.value;
+                    const errorEl = document.getElementById("mobError");
+                    const mobPattern = /^971\d{9}$/;
+
+                    errorEl.textContent = "";
+                    if (!mobPattern.test(value)) {
+                        errorEl.textContent = "Mobile number must start with 971 and be exactly 12 digits.";
+                    }
+                });
+
+                $('#emailId').on('input blur', function () {
+                    const input = this;
+                    const value = input.value;
+                    const errorEl = document.getElementById("emailError");
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                    errorEl.textContent = "";
+                    if (!emailPattern.test(value)) {
+                        errorEl.textContent = "Please enter a valid email address.";
+                    }
+                });
+            } // End if ($('#userProfile').length)
+
+            $('#openDomainModal').click(function (e) {
+                e.preventDefault();
+                $('#getDomain').modal('show');
+            });
+        });
+        //]]>
+    </script>
 
 </head>
 <title>BRAS</title>
