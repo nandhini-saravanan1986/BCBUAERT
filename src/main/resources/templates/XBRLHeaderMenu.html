@@ -1,1110 +1,255 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
-
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" th:fragment="header">
 <head>
-	<meta charset="UTF-8">
-	<title>BRAS</title>
-
-	<!-- CSS Dependencies -->
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
-
-	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-
-	<!-- JS Dependencies -->
-	<script th:src="@{/js/datatables.min.js}"></script>
-	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-
-
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			font-size: 16px;
-			font-weight: 400;
-		}
-	</style>
-
-
-
-	<style>
-		nav {
-			background-color: #fafafa;
-		}
-
-		#logoutmenu {
-			display: none;
-			position: absolute;
-			z-index: 1031;
-			width: 200px;
-			background-color: #dee2e6;
-			box-shadow: 3px 1px 11px 1px #888888;
-			border-radius: 5px;
-			right: 0px;
-			top: 70px;
-			border: 2px solid #4d8cb9;
-			position: fixed;
-		}
-
-		#ques {
-			margin-top: -54px;
-			float: right;
-			padding: 65px;
-		}
-
-		.logout {
-			color: #2e7bd0;
-		}
-
-		.content {
-			margin-top: 100px;
-		}
-
-		html {
-			zoom: 0.8;
-		}
-
-		label {
-			text-align: left;
-		}
-
-		.modal-backdrop {
-			width: 200vw;
-			height: 200vh;
-		}
-
-		section {
-			padding-left: 15px;
-		}
-
-		.form-control:focus {
-			color: #495057;
-			outline: 0;
-			box-shadow: unset !important;
-		}
-
-		.btn-primary.focus,
-		.btn-primary:focus {
-			box-shadow: unset !important;
-		}
-
-		.nav-link-collapse:after {
-			float: right;
-			content: '\f067';
-			font-family: 'Font Awesome 5 Free';
-			color: red;
-
-			transform: translateY(-50%) rotate(-90deg);
-		}
-
-
-
-		ul {
-			list-style: none
-		}
-
-		li a {
-			color: white;
-		}
-
-		a {
-			text-decoration: none !important;
-		}
-
-		#showmenu1 {
-			width: 50px;
-			height: 50px;
-			/* Maintain the same width and height to create a circular shape */
-			border-radius: 50%;
-			/* Use a border-radius of 50% to create a circle */
-			object-fit: fill;
-			/* Ensure the image covers the circular area without distortion */
-		}
-	</style>
-
-
-	<style>
-		body {
-
-			overflow-y: hidden;
-			overflow-x: hidden;
-		}
-
-		/* First Layer */
-		.first-layer {
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			/*  padding: 10px 20px;
-    border-bottom: 2px solid #ddd; */
-		}
-
-		.logo img {
-			width: 100px;
-			height: 80px;
-		}
-
-		.user-profile {
-			display: flex;
-			align-items: center;
-		}
-
-		.user-profile img {
-			width: 50px;
-			height: 50px;
-			border-radius: 50%;
-			margin-right: 10px;
-			cursor: pointer;
-		}
-
-		.user-details {
-			font-family: Calibri, sans-serif;
-			font-size: 14px;
-			font-weight: bold;
-		}
-
-		/* Second Layer */
-		.second-layer {
-			display: flex;
-			justify-content: flex-end;
-			padding: 3px 31%;
-			margin-left: -215px;
-		}
-
-
-
-		.nav-item {
-			position: relative;
-		}
-
-		.nav-item a {
-			text-decoration: none;
-			color: #333;
-			font-weight: bold;
-		}
-	</style>
-
-
-	<style>
-		.nav-links a {
-			color: #354a5f !important;
-			font-weight: bold;
-
-			/* color: black !important; */
-		}
-
-		label {
-			color: #354a5f !important;
-			font-weight: bold;
-			border-color: black;
-			/* color: black !important; */
-		}
-
-		div span {
-			color: #354a5f !important;
-			font-weight: bold;
-			/* color: black !important; */
-		}
-
-		h3 {
-			color: #354a5f !important;
-			font-weight: bold;
-			/* color: black !important; */
-		}
-
-		/* ✅ Fix: Full navbar stays fixed at top */
-		/* Navbar that stays at the top but pushes content down */
-		nav.navbar.full-navbar {
-			position: sticky;
-			/* instead of fixed */
-			top: 0;
-			z-index: 1050;
-			width: 100%;
-			background: #fff;
-			border-bottom: 2px solid #ddd;
-			display: flex;
-			/* flex behavior */
-			align-items: center;
-			/* vertical align items */
-			justify-content: space-between;
-			/* optional: space for logo + menu */
-		}
-	</style>
-	<script type="text/javascript">
-		document.addEventListener("DOMContentLoaded", function () {
-			let menuTimeout;
-
-			function showMenu(menu) {
-				clearTimeout(menuTimeout);
-				// Hide all other dropdowns first
-				document.querySelectorAll('.dropdown-menu').forEach(m => {
-					if (m !== menu) {
-						m.style.display = "none";
-					}
-				});
-				menu.style.display = "block";
-			}
-
-			function hideMenu(menu) {
-				menuTimeout = setTimeout(() => {
-					menu.style.display = "none";
-				}, 200);
-			}
-
-			// Main dropdowns
-			const mainMenus = document.querySelectorAll('.nav-item.dropdown');
-			mainMenus.forEach(menu => {
-				const dropdownMenu = menu.querySelector(".dropdown-menu");
-
-				menu.addEventListener("mouseenter", function () {
-					if (dropdownMenu) showMenu(dropdownMenu);
-				});
-
-				menu.addEventListener("mouseleave", function () {
-					if (dropdownMenu) hideMenu(dropdownMenu);
-				});
-			});
-
-			// Submenus
-			const submenus = document.querySelectorAll('.dropdown-submenu');
-			submenus.forEach(submenu => {
-				const subMenuElement = submenu.querySelector(".dropdown-menu");
-
-				submenu.addEventListener("mouseenter", function () {
-					if (subMenuElement) showMenu(subMenuElement);
-				});
-
-				submenu.addEventListener("mouseleave", function () {
-					if (subMenuElement) hideMenu(subMenuElement);
-				});
-			});
-
-			// Hide all on outside click
-			document.addEventListener("click", function (e) {
-				if (!e.target.closest(".dropdown")) {
-					document.querySelectorAll('.dropdown-menu').forEach(menu => {
-						menu.style.display = "none";
-					});
-				}
-			});
-		});
-
-
-
-		window.onload = function () {
-			const jobId = sessionStorage.getItem("jobId");
-			//alert(jobId);
-			if (jobId) {
-				startPolling(jobId);  // ✅ restart polling on every page load
-			}
-		};
-
-		function startPolling(jobId) {
-			const alertMsg = document.getElementById("alertMessage");
-			function checkReport() {
-				fetch('checkreport?jobId=' + encodeURIComponent(jobId))
-					.then(res => res.text())
-					.then(status => {
-						if (status === "READY") {
-							alertMsg.innerHTML = 'Report is ready! Downloading...';
-							showAlert();
-							const filename = sessionStorage.getItem("filename");
-							downloadDetailfiles(jobId, filename)
-							sessionStorage.removeItem("jobId");
-							sessionStorage.removeItem("filename");
-						} else {
-
-							alertMsg.innerHTML = 'Download Is Processing…';
-							showAlert();
-							setTimeout(checkReport, 60000);  // ✅ keeps retrying on every page
-						}
-					})
-					.catch(err => {
-						console.error("Error checking report:", err);
-						alertMsg.innerHTML = 'Error checking report:' + err;
-						showAlert();
-						setTimeout(checkReport, 60000);
-					});
-			}
-
-			checkReport();
-		}
-
-		function downloadDetailfiles(jobId, filename) {
-
-			//$('#loader').modal('show');
-			$.ajax({
-				url: './downloaddetailExcel?jobId=' + jobId +
-					'&filename=' + filename,
-				type: 'GET',
-				xhrFields: {
-					responseType: 'blob'
-				},
-				success: function (data) {
-					$('#loader').modal('hide');
-
-					if (data && data.size > 100) {
-						const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-						const url = window.URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.style.display = 'none';
-						a.href = url;
-						a.download = filename;
-						document.body.appendChild(a);
-						a.click();
-						window.URL.revokeObjectURL(url);
-						document.body.removeChild(a);
-
-						showResultModal('Success', filename + ' downloaded successfully.');
-					} else {
-						showResultModal('Information', 'No data was available to create a download.');
-					}
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-					$('#loader').modal('hide');
-					console.error("Download failed:", textStatus, errorThrown);
-					showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
-				}
-			});
-		}
-
-
-
-	</script>
-
-
-	<style>
-		body {
-			display: flex;
-			min-height: 100vh;
-		}
-
-
-
-		.logout-btn {
-			margin-top: auto;
-			padding: 12px 20px;
-		}
-	</style>
-
-
-	<style>
-		.user-details {
-			color: #000;
-			text-align: left;
-			font-size: 0.9rem;
-			line-height: 1.6;
-		}
-
-
-
-		/* Main Navigation Links - Only Visual Effects */
-		.nav-link {
-			display: inline-block;
-			background: linear-gradient(145deg, #ffffff, #f8f9fa);
-			color: white;
-			font-weight: 600;
-			font-size: 14px;
-			border: 2px solid #6B7A8F;
-			padding: 8px 20px;
-			border-radius: 20px;
-			text-decoration: none;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			cursor: pointer;
-			position: relative;
-			overflow: hidden;
-
-			/* NO transform changes to prevent position shifts */
-		}
-
-		/* Shine Effect on Hover */
-		.nav-link::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: -100%;
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-			transition: left 0.5s;
-			z-index: 1;
-		}
-
-		/* Hover Effects - Only Color and Shadow Changes */
-		.nav-link:hover {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white !important;
-
-			border-color: rgb(107, 122, 143);
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-			/* NO transform to prevent movement */
-		}
-
-		.nav-link:hover::before {
-			left: 100%;
-		}
-
-		/* Active/Selected State - 3D Highlight */
-		.nav-link.active {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white;
-			border-color: rgb(107, 122, 143);
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-		}
-
-		/* Dropdown Toggle Styles */
-		.dropdown-toggle {
-			display: inline-block;
-			background: linear-gradient(145deg, #ffffff, #f8f9fa);
-			color: #333;
-			font-weight: 600;
-			font-size: 14px;
-			border: 2px solid #6B7A8F;
-			padding: 8px 20px;
-			border-radius: 20px;
-			text-decoration: none;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			cursor: pointer;
-			position: relative;
-			overflow: hidden;
-
-		}
-
-		.dropdown-toggle::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: -100%;
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			transition: left 0.5s;
-			z-index: 1;
-		}
-
-		.dropdown-toggle::after {
-			content: ' ▾';
-			margin-left: 6px;
-			transition: transform 0.3s;
-			position: relative;
-			z-index: 2;
-			font-size: 10px;
-		}
-
-		/* Dropdown Toggle Hover */
-		.dropdown-toggle:hover {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white !important;
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-		}
-
-		.dropdown-toggle:hover::before {
-			left: 100%;
-		}
-
-		.dropdown:hover .dropdown-toggle::after {
-			transform: rotate(180deg);
-		}
-
-		/* Active Dropdown Toggle */
-		.dropdown-toggle.active {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white !important;
-			border-color: rgb(107, 122, 143);
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-		}
-
-
-		/* Dropdown Menu - Keep Original Positioning */
-		.dropdown-menu {
-			position: absolute;
-			top: 100%;
-			left: 0;
-			background: rgba(255, 255, 255, 0.98);
-			backdrop-filter: blur(10px);
-			border: 2px solid rgb(107, 122, 143);
-			border-radius: 12px;
-			padding: 8px 0;
-			margin-top: 5px;
-			min-width: 200px;
-			display: none;
-
-			z-index: 1000;
-			list-style: none;
-		}
-
-		/* Dropdown Animation When Shown */
-		.dropdown-menu[style*="block"] {
-			animation: fadeInDown 0.3s ease-out;
-		}
-
-		@keyframes fadeInDown {
-			from {
-				opacity: 0;
-				transform: translateY(-5px);
-			}
-
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-
-		/* Dropdown Menu Items */
-		.dropdown-menu .nav-item {
-			margin: 0;
-			padding: 0;
-		}
-
-		.dropdown-menu .nav-link {
-			display: block !important;
-			margin: 2px 8px;
-			padding: 8px 15px;
-			border-radius: 8px;
-			font-size: 13px;
-			font-weight: 500;
-			border: 1px solid transparent;
-			background: transparent;
-			box-shadow: none;
-			transition: all 0.2s ease;
-		}
-
-		.dropdown-menu .nav-link::before {
-			display: none;
-		}
-
-		.dropdown-menu .nav-link:hover {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white;
-			border-color: rgb(107, 122, 143);
-
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-		}
-
-		/* Active Dropdown Menu Item */
-		.dropdown-menu .nav-link.active {
-			background: linear-gradient(145deg, rgb(107, 122, 143), rgb(87, 102, 123));
-			color: white !important;
-			border-color: rgb(107, 122, 143);
-			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-		}
-
-		/* Focus States */
-		.nav-link:focus,
-		.dropdown-toggle:focus {
-			outline: none;
-
-		}
-
-
-		.nav-link.active,
-		.dropdown-toggle.active {
-			animation: subtlePulse 2s ease-in-out infinite;
-		}
-
-		/* Responsive - Keep Layout Intact */
-		@media (max-width: 768px) {
-			.nav-links {
-				gap: 10px;
-				flex-wrap: wrap;
-			}
-
-			.nav-link,
-			.dropdown-toggle {
-				font-size: 13px;
-				padding: 6px 16px;
-			}
-
-			.dropdown-menu {
-				min-width: 180px;
-				margin-top: 3px;
-			}
-		}
-	</style>
-
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const currentPath = window.location.pathname;
-			const urlParams = new URLSearchParams(window.location.search);
-			const currentFormMode = urlParams.get('formmode');
-
-			const navLinks = document.querySelectorAll(".nav-link");
-			const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
-
-			let activeNavLinkFound = null;
-
-			// First, clear all existing 'active' classes to prevent conflicts
-			navLinks.forEach(link => link.classList.remove("active"));
-			dropdownToggles.forEach(toggle => toggle.classList.remove("active"));
-
-			// Loop through nav links to find the currently active one
-			navLinks.forEach(link => {
-				const linkHref = link.getAttribute("href");
-
-				if (linkHref) {
-					const linkUrl = new URL(linkHref, window.location.origin);
-					const linkPath = linkUrl.pathname;
-					// Get formmode from data-formmode or URL search params
-					const linkFormMode = link.getAttribute("data-formmode") || linkUrl.searchParams.get('formmode');
-
-					const cleanCurrentPath = currentPath.split('?')[0];
-					const cleanLinkPath = linkPath.split('?')[0];
-
-					// Check if the base paths match
-					if (cleanCurrentPath === cleanLinkPath) {
-						// Special handling for /counterparty_list to distinguish ASL vs ASL Upload
-						if (cleanCurrentPath === '/counterparty_list') {
-							// Scenario 1: ASL -> Exposure Data (URL: /counterparty_list?formmode=list)
-							if (currentFormMode === 'list' && linkFormMode === 'list') {
-								link.classList.add("active");
-								activeNavLinkFound = link;
-							}
-							// Scenario 2: ASL Upload -> Exposure Data (URL: /counterparty_list, no formmode)
-							// We need to be precise here: current URL has no formmode, and this link is specifically the one in ASL Upload
-							else if (!currentFormMode && !linkFormMode && link.closest('#asl-upload-dropdown')) {
-								link.classList.add("active");
-								activeNavLinkFound = link;
-							}
-						} else {
-							// General logic for other links not specifically /counterparty_list
-							if (currentFormMode) { // If current URL has a formmode
-								if (linkFormMode) { // If link also has a formmode
-									if (currentFormMode === linkFormMode) {
-										link.classList.add("active");
-										activeNavLinkFound = link;
-									}
-								} else { // If link does not have a formmode but current URL does (e.g., /UserProfile?formmode=add matches /UserProfile)
-									// Only activate if the link is a 'base' link and not intended to be distinct by formmode
-									// This might need further refinement depending on your application's formmode usage
-									link.classList.add("active");
-									activeNavLinkFound = link;
-								}
-							} else { // If current URL has no formmode
-								if (!linkFormMode) { // If link also has no formmode
-									link.classList.add("active");
-									activeNavLinkFound = link;
-								}
-							}
-						}
-					}
-				}
-			});
-
-			// Now, activate the parent dropdown based on the activeNavLinkFound
-			if (activeNavLinkFound) {
-				// Find the closest ancestor li.nav-item that contains the dropdown-toggle
-				const parentNavItem = activeNavLinkFound.closest('li.nav-item.dropdown');
-				if (parentNavItem) {
-					const parentDropdownToggle = parentNavItem.querySelector('.dropdown-toggle');
-					if (parentDropdownToggle) {
-						parentDropdownToggle.classList.add("active");
-					}
-				}
-			}
-		});
-	</script>
-	<style>
-		.navbar-container {
-			display: flex;
-			align-items: stretch;
-		}
-
-		.logo-container {
-			background-color: #488f9d;
-			padding: 10px;
-		}
-
-		.logo-img {
-			height: 100%;
-			width: 250px;
-			object-fit: cover;
-			max-height: 150px;
-			/* Adjust based on your actual content height */
-		}
-
-		.right-content {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-
-		}
-
-		.top-row {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-
-		.company-title {
-			font-weight: bold;
-			color: #343a40;
-		}
-
-		.bottom-row {
-			border-top: 1px solid #ddd;
-			margin-top: 4px;
-		}
-
-		.nav-links {
-			list-style: none;
-			padding-left: 0;
-			margin: 0;
-			display: flex;
-			align-items: center;
-		}
-
-		.nav-item {
-			position: relative;
-		}
-
-		.nav-link {
-			text-decoration: none;
-			color: #333;
-			font-weight: 5000;
-			padding: 6px 12px;
-		}
-
-		.dropdown-menu {
-			display: none;
-			position: absolute;
-			top: 100%;
-			left: 0;
-			background: white;
-			list-style: none;
-			padding: 10px 0;
-			margin: 0;
-			border: 1px solid #ccc;
-			z-index: 1000;
-		}
-
-		.nav-item:hover .dropdown-menu {
-			display: block;
-		}
-
-		.logo-container {
-			overflow: hidden;
-			transform: skew(-30deg);
-			/* Skew the container */
-		}
-
-		.logo-img {
-			transform: skew(20deg);
-			/* Re-skew the image to appear normal */
-			height: 100px;
-			/* Adjust height as needed */
-			width: auto;
-			padding: 10px
-		}
-
-		.navbar-container {
-			display: flex;
-			align-items: stretch;
-			width: 100%;
-		}
-
-		.logo-container {
-			background-color: rgb(255, 255, 255);
-			padding: 0;
-			/* Remove extra space */
-			overflow: hidden;
-			transform: skew(-30deg);
-			margin-right: -30px;
-			/* Pull right content to cover the skew gap */
-			z-index: 2;
-		}
-
-		.logo-img {
-			height: 120px;
-			width: auto;
-			padding: 15px;
-			padding-bottom: 0;
-		}
-
-		/* Right side (full height, no space left) */
-		.right-content {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-
-			flex-grow: 1;
-			z-index: 1;
-		}
-
-		/* Skew only top row */
-		.top-row {
-			transform: skew(-30deg);
-			padding: 10px;
-			position: relative;
-		}
-
-		/* Correct skew for content inside */
-		.top-row>* {
-			transform: skew(30deg);
-		}
-
-		/* Bottom menu stays normal */
-		.bottom-row {
-			border-top: 1px solid #ddd;
-			margin-top: 4px;
-		}
-
-		.company-title {
-			transform: skew(30deg) translateX(-50%) translateY(-50%) !important;
-		}
-
-		.nav-link {
-			color: white;
-		}
-
-
-		.custom-alert {
-			position: fixed;
-			top: 20px;
-			right: 20px;
-			min-width: 250px;
-			max-width: 300px;
-			padding: 10px 15px;
-			border-radius: 8px;
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-			z-index: 9999;
-			font-size: 14px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
-
-		.custom-alert p {
-			margin: 0;
-			padding: 0;
-		}
-
-		.custom-alert .close {
-			background: none;
-			border: none;
-			font-size: 18px;
-			line-height: 1;
-			cursor: pointer;
-			color: #000;
-			padding-left: 10px;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Riskinsights - Bank of Baroda</title>
+
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+    <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+	.logo-section {
+	    display: flex;
+	    align-items: center;
+	    gap: 10px;
+	    padding: 5px 10px;
+	}
+
+	.logo-img {
+	    height: 45px;
+	    transition: transform 0.3s ease;
+	}
+
+	.logo-text-highlight {
+	    font-family: "Poppins", sans-serif;
+	    font-size: 24px;
+	    font-weight: 700;
+	    color: #003366;
+	    letter-spacing: 2px;
+	    margin: 0;
+	    position: relative;
+	    display: inline-block;
+	    text-shadow: 0 0 6px rgba(0, 64, 128, 0.4);
+	}
+
+	body {
+	    font-family: 'Segoe UI', Arial, sans-serif;
+	    font-size: 14px;
+	    background-color: #fff;
+	}
+
+	.navbar {
+	    background-color: #ffffff;
+	    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+	    padding: 0 -3px;
+	}
+
+	.menu {
+	    display: flex;
+	    list-style: none;
+	    margin: 0;
+	    padding: 0;
+	    gap: 15px;
+	}
+
+	.menu > li {
+	    position: relative;
+	}
+
+	.menu > li > a {
+	    display: block;
+	    padding: 12px 18px;
+	    color: #004080;
+	    text-decoration: none;
+	    font-weight: 600;
+	    transition: all 0.3s ease;
+	    border-radius: 6px;
+	}
+
+	.menu > li > a:hover {
+	    background-color: #e6f0ff;
+	    color: #000;
+	    border-bottom: 2px solid #004080;
+	}
+
+	.submenu {
+	    display: none;
+	    position: absolute;
+	    top: 45px;
+	    left: 0;
+	    background-color: #f8f9fa;
+	    border: 1px solid #004080;
+	    border-radius: 4px;
+	    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	    min-width: 200px;
+	    z-index: 1000;
+	}
+
+	.submenu li {
+	    border-bottom: 1px solid #ddd;
+	}
+
+	.submenu li:last-child {
+	    border-bottom: none;
+	}
+
+	.submenu a {
+	    display: block;
+	    padding: 10px 15px;
+	    color: #004080;
+	    font-weight: 500;
+	    transition: background 0.3s;
+	    white-space: nowrap;
+	}
+
+	.submenu a:hover {
+	    background-color: #dceeff;
+	    color: #000;
+	}
+
+	.menu > li:hover .submenu {
+	    display: block;
+	}
+
+	.user-info {
+	    margin-left: auto;
+	    display: flex;
+	    align-items: center;
+	    font-size: 14px;
+	    color: #004080;
+	}
+
+	.user-info i {
+	    margin-right: 8px;
+	    font-size: 1.2rem;
+	}
+
+	.username {
+	    font-weight: bold;
+	    margin-right: 15px;
+	    font-size: 14px;
+	}
+
+	.logout-btn button {
+	    background: linear-gradient(135deg, #004080, #0073e6);
+	    color: white;
+	    border: none;
+	    border-radius: 30px;
+	    padding: 6px 16px;
+	    font-size: 13px;
+	    font-weight: 600;
+	    cursor: pointer;
+	    display: flex;
+	    align-items: center;
+	    gap: 6px;
+	    transition: all 0.3s ease;
+	    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+	}
+
+	.logout-btn button:hover {
+	    background: linear-gradient(135deg, #0073e6, #0099ff);
+	    box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
+	    transform: translateY(-1px);
+	}
+
+	.logout-btn button i {
+	    font-size: 14px;
+	}
+
+	html {
+	    zoom: 0.9;
+	}
+    </style>
 </head>
 
 <body>
-	<nav class="navbar full-navbar">
-		<div class="navbar-container d-flex" style="width:100%">
-
-			<!-- Logo -->
-			<div class="logo-container">
-				<img th:src="@{/images/bob.png}" alt="Bornfire" class="logo-img">
-			</div>
-
-			<!-- Right content -->
-			<div class="right-content flex-grow-1">
-				<!-- Top row -->
-				<!-- Top row -->
-				<div class="top-row d-flex justify-content-end align-items-center px-2 py-1 position-relative"
-					th:style="'background-image: url(' + @{/images/rtbg.jpg} + '); background-size: cover; background-position: center; min-height: 35px;'">
-
-					<!-- Centered Title -->
-					<h3 class="company-title position-absolute translate-middle-x"
-						style="top: 50%; left: 40%; font-weight: bold; font-family: 'Arial', cursive; font-size: 1.3rem;">
-						BCBUAE
-					</h3>
-
-					<!-- User info -->
-					<div class="user-section d-flex flex-column align-items-end ms-auto" style="width: fit-content;">
-						<div class="company-small-title text-end"
-							style="font-size: 0.75rem; font-weight: 600; color: #000; margin-right:40px;">
-							Bornfire Innovations Pvt Ltd
-						</div>
-						<div class="d-flex align-items-center gap-1" style="font-size: 0.75rem;">
-							<div class="user-details text-end">
-								<strong>&nbsp;</strong> <span th:text="${session.USERNAME}"></span>
-							</div>
-							<form th:action="@{/logout}" method="post" class="logout-btn m-0">
-								<button class="custom-tab-btn" type="submit" style="font-size: 0.75rem;">
-									<i class="fas fa-sign-out-alt"></i> Logout
-								</button>
-							</form>
-						</div>
-					</div>
-				</div>
-
-
-				<!-- Bottom row: Menu -->
-
-				<div class="bottom-row px-5 py-1" style="height:40px">
-					<ul class="nav-links d-flex gap-4">
-						<li class="nav-item"><a class="nav-link" th:href="@{/Dashboard}"
-								style=" text-align: center; color: black;">Home</a>
-						</li>
-						<li class="nav-item dropdown"><a href="#" class="dropdown-toggle"
-								style=" text-align: center;">Admin</a>
-							<ul class="dropdown-menu">
-								<li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
-									<a class="nav-link" th:href="@{/UserProfile}">User Profile</a>
-								</li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
-									<a class="nav-link" th:href="@{/AccessandRoles}">Access And Roles</a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item dropdown" style="text-align: center;">
-							<a href="#" class="dropdown-toggle">RT Reports</a>
-							<ul class="dropdown-menu" style="width: 580px; column-count: 2; column-gap: 20px;">
-
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}">
-									<a class="nav-link" th:href="@{/Nostro_Account_Bal}">→  Nostro Account Balance</a>
-								</li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}"><a class="nav-link"
-										th:href="@{/Fx_Risk_Data}">→  FX Risk Data</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}"><a class="nav-link"
-										th:href="@{/Trade_Market_Risk}">→  Trade Market Risk</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}"><a class="nav-link"
-										th:href="@{/Mm_Data}">→  MM Data</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}"><a class="nav-link"
-										th:href="@{/Repo_Data_Template}">→  Repo Data Template</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}"><a class="nav-link"
-										th:href="@{/Investment_Risk_Data_Dashboard_Template}">→ 
-										Investment Risk Data Dashboard</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}"><a class="nav-link"
-										th:href="@{/Treasury_Credit_Limit_Management}">→  Treasury
-										Credit Limit Management</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}"><a class="nav-link"
-										th:href="@{/Trade_Level_Data_Derivatives}">→  Trade Level Data
-										Derivatives</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}"><a class="nav-link"
-										th:href="@{/Trade_Level_Data_Derivatives_Simplified}">→  Trade
-										Level Data Derivatives Simplified</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}"><a class="nav-link"
-										th:href="@{/CCR_Data_Templates}">→  CCR Data Templates</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}"><a class="nav-link"
-										th:href="@{/Foreign_Currency_Deposit}">→  Cross Currency Funding
-										Spread </a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}"><a class="nav-link"
-										th:href="@{/Liquidity_Risk_Data}">→  Liquidity Risk Data</a>
-								</li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}"><a class="nav-link"
-										th:href="@{/Investment_Securities_Data}">→  Investment
-										Securities Data</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}"><a class="nav-link"
-										th:href="@{/Liquidity_Risk_Dashboard_Template}">→  Liquidity
-										Risk Dashboard Template</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}"><a class="nav-link"
-										th:href="@{/IRRBB_data_Template}">→  IRRBB Data Template</a>
-								</li>
-
-							</ul>
-						</li>
-						<li class="nav-item dropdown" style="text-align: center;"><a href="#" class="dropdown-toggle">ASL</a>
-							<ul class="dropdown-menu">
-								<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty,')}">
-									<a class="nav-link" th:href="@{/counterparty}">Auth
-										Counterparties</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data,')}">
-									<a class="nav-link" th:href="@{/counterparty_list?formmode=list}">Exposure
-										Data</a></li>
-								<li
-									th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl,')}">
-									<a class="nav-link" th:href="@{/Interbank_placement}">Interbank
-										Placements</a></li>
-								<li 
-									th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl,')}">
-									<a class="nav-link" th:href="@{/swap_settlement}">Swap
-										Settlement</a></li>
-								<li
-									th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt,')}">
-									<a class="nav-link" th:href="@{/asl_dashboard}">Final
-										Risk View</a></li>
-							</ul>
-						</li>
-
-
-						<li class="nav-item dropdown" id="asl-upload-dropdown" style="text-align: center;">
-							<a href="#" class="dropdown-toggle">ASL Upload</a>
-							<ul class="dropdown-menu">
-								<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data,')}">
-									<a class="nav-link" th:href="@{/counterparty_list?formmode=Billdetaillist}"
-										data-name="Upload Exposure">Exposure Data</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data,')}">
-									<a class="nav-link" th:href="@{/Interbank_placement?formmode=add}"
-										data-formmode="add" id="treasury-placement-link"
-										data-name="Upload Exposure">Treasury Placement</a></li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data,')}">
-									<a class="nav-link" th:href="@{/swap_settlement?formmode=add}" data-formmode="add"
-										id="settlement-link" data-name="Upload Exposure">Settlement</a></li>
-							</ul>
-						</li>
-						<li class="nav-item dropdown" id="audit-dropdown" style="text-align: center;">
-							<a href="#" class="dropdown-toggle">Audit</a>
-							<ul class="dropdown-menu">
-								<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
-									<a class="nav-link" th:href="@{/User_Audit}" data-name="User Audit">User Audit</a>
-								</li>
-								<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit,')}">
-									<a class="nav-link" th:href="@{/Service_Audit}" id="treasury-placement-link"
-										data-name="Service Audit">Service Audit</a></li>
-							</ul>
-						</li>
-
-						<!--<li class="nav-item dropdown" id="audit-dropdown" style="text-align: center;">
-							<a href="#" class="dropdown-toggle">Unplanned</a>
-							<ul class="dropdown-menu">
-								<li><a class="nav-link" th:href="@{/RT}" data-name="">SLS</a></li>
-
-							</ul>
-						</li>-->
-
-					</ul>
-
-
-				</div>
-			</div>
-		</div>
-	</nav>
-	<div class="alert alert-danger custom-alert" role="alert" id="autoHideAlert" style="display:none;">
-		<button type="button" class="close" aria-label="Close" onclick="hideAlert()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-		<p id="alertMessage"><i class="fa fa-check-circle"></i> Download request received</p>
+<nav class="navbar d-flex align-items-center">
+	<!-- Logo -->
+	<div class="logo-section">
+	    <img th:src="@{/images/Bank-of-Baroda-icon.png}" alt="Bank of Baroda" class="logo-img">
+	    <h5 class="logo-text-highlight" 		style="height: 25px;">RAS</h5>
 	</div>
 
+	<!-- ✅ Replaced with your actual menus -->
+	<ul class="menu">
+	    <li><a th:href="@{/Dashboard}">Dashboard</a></li>
 
+	    <li>
+	        <a href="#">Admin</a>
+	        <ul class="submenu">
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
+	                <a th:href="@{/UserProfile}">User Profile</a>
+	            </li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
+	                <a th:href="@{/AccessandRoles}">Access and Roles</a>
+	            </li>
+	        </ul>
+	    </li>
+
+	    <li>
+	        <a href="#">RT Reports</a>
+	        <ul class="submenu" style="width: 600px; column-count: 2; column-gap: 20px;">
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}"><a th:href="@{/Nostro_Account_Bal}">Nostro Account Balance</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}"><a th:href="@{/Fx_Risk_Data}">FX Risk Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}"><a th:href="@{/Trade_Market_Risk}">Trade Market Risk</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}"><a th:href="@{/Mm_Data}">MM Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}"><a th:href="@{/Repo_Data_Template}">Repo Data Template</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}"><a th:href="@{/Investment_Risk_Data_Dashboard_Template}">Investment Risk Dashboard</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}"><a th:href="@{/Treasury_Credit_Limit_Management}">Treasury Credit Limit Management</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}"><a th:href="@{/Trade_Level_Data_Derivatives}">Trade Level Data Derivatives</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}"><a th:href="@{/Trade_Level_Data_Derivatives_Simplified}">Trade Level Data Simplified</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}"><a th:href="@{/CCR_Data_Templates}">CCR Data Templates</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}"><a th:href="@{/Foreign_Currency_Deposit}">Cross Currency Funding Spread</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}"><a th:href="@{/Liquidity_Risk_Data}">Liquidity Risk Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}"><a th:href="@{/Investment_Securities_Data}">Investment Securities Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}"><a th:href="@{/Liquidity_Risk_Dashboard_Template}">Liquidity Risk Dashboard</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}"><a th:href="@{/IRRBB_data_Template}">IRRBB Data Template</a></li>
+	        </ul>
+	    </li>
+
+	    <li>
+	        <a href="#">ASL</a>
+	        <ul class="submenu">
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty,')}"><a th:href="@{/counterparty}">Auth Counterparties</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=list}">Exposure Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl,')}"><a th:href="@{/Interbank_placement}">Interbank Placements</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl,')}"><a th:href="@{/swap_settlement}">Swap Settlement</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt,')}"><a th:href="@{/asl_dashboard}">Final Risk View</a></li>
+	        </ul>
+	    </li>
+
+	    <li>
+	        <a href="#">ASL Upload</a>
+	        <ul class="submenu">
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=Billdetaillist}">Exposure Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data,')}"><a th:href="@{/Interbank_placement?formmode=add}">Treasury Placement</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data,')}"><a th:href="@{/swap_settlement?formmode=add}">Settlement</a></li>
+	        </ul>
+	    </li>
+
+	    <li>
+	        <a href="#">Audit</a>
+	        <ul class="submenu">
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}"><a th:href="@{/User_Audit}">User Audit</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit,')}"><a th:href="@{/Service_Audit}">Service Audit</a></li>
+	        </ul>
+	    </li>
+	</ul>
+
+	<!-- Right Side User Info -->
+	<div class="user-info">
+	    <i class="fa-solid fa-user-circle"></i>
+	    <span class="username" th:text="${session.USERNAME}">Username</span>
+	    <form th:action="@{/logout}" method="post" class="logout-btn m-0">
+	        <button type="submit">
+	            <i class="fas fa-sign-out-alt"></i> Logout
+	        </button>
+	    </form>
+	</div>
+</nav>
 </body>
-
-<script>
-
-	function showAlert() {
-		const alertDiv = document.getElementById("autoHideAlert");
-		alertDiv.style.display = "block";   // Show alert
-		setTimeout(() => {
-			hideAlert();                    // Auto-hide after 5 sec
-		}, 7000);
-	}
-
-	function hideAlert() {
-		const alertDiv = document.getElementById("autoHideAlert");
-		alertDiv.style.display = "none";
-	}
-
-</script>
-
-<style>
-	/* Ensure dropdown menu appears on top */
-	.dropdown-menu {
-		z-index: 9999 !important;
-	}
-
-	/* Make sure parent containers don't hide overflow */
-	.navbar,
-	.navbar-container,
-	.right-content,
-	.bottom-row {
-		position: relative;
-		overflow: visible !important;
-		z-index: auto;
-	}
-</style>
-
 </html>
