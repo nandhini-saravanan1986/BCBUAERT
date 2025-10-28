@@ -1,142 +1,272 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<!-- 
+CREATED BY	: KRISHNAPANDI MG 
+CREATED ON	: 25.05.2025
+PURPOSE		: Access the Modules by Role
+ -->
+
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-        th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-    <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
-        th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-    <link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-        th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-    <link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-        th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-    <script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-        th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-        th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-    <script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-        th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-    <script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-        th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-    <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-        th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
-    <script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-        th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-    <script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-        th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<!-- CSS (Bootstrap, FontAwesome, jQuery UI, DataTables) -->
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
 
-    <style>
-        label,
-        table {
-            font-family: verdana;
-        }
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
 
-        .container-fluid {
-            width: 100%;
-            padding-top: 1px;
-            padding-right: 0px !important;
-            padding-left: 0px !important;
-            margin-right: auto;
-            margin-left: auto;
-        }
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
 
-        .custom-tab-btns {
-            float: right;
-            margin: 5px;
-        }
+	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
 
-        .col-sm-5 {
-            padding-bottom: 15px;
-        }
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-        .list-body {
-            padding: 0px;
-        }
+	
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+	<link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
 
-        .page-item.active .page-link {
-            z-index: 1;
-            color: #fff;
-            background-color: darkorange;
-            border-color: darkorange;
-        }
+	<!-- JavaScript: jQuery must come first -->
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-        /* This is your existing .error class */
-        .error {
-            color: red;
-            padding-left: 10px;
-        }
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
 
-        .formline {
-            padding-bottom: 15px;
-        }
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
 
-        .custom-tab-btn-primary {
-            background-color: #E77400;
-            border-color: #0c0c0c;
-        }
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 
-        .custom-tab-btn-primary:not (:disabled):not (.disabled).active,
-        .custom-tab-btn-primary:not (:disabled):not (.disabled):active,
-        .show>.custom-tab-btn-primary.dropdown-toggle {
-            color: #fff;
-            background-color: #cc000000;
-            border-color: #161617;
-        }
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-        #finusertb {
-            width: 460px;
-        }
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
 
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 0px;
-        }
+	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 
-        .valids {
-            color: green;
-        }
+	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+		<style>
+		
+				/* === ROLE PAGE CUSTOM HEADER === */
+				.role-page-header {
+				    background-color: #ffffff;
+				    padding: 15px 20px;
+				    margin-bottom: 20px;
+				}
 
-        .invalids {
-            color: red;
-        }
+				.role-page-title h4 {
+				    color: #003366;
+				    font-family: "Segoe UI", Arial, sans-serif;
+				    font-size: 20px;
+				    font-weight: 700;
+				    margin: 0;
+				}
+.role-page-underline {
+    width: 140px; 
+    height: 2px;
+    background-color: #0073e6;
+    border-radius: 2px;
+    margin-top: 6px;
+    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+}
 
-        .left-arrow-circle {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            transition: background-color 0.3s, transform 0.2s;
-        }
 
-        .left-arrow-circle i {
-            color: rgb(107, 122, 143);
-        }
 
-        .left-arrow-circle:hover {
-            background-color: rgb(107, 122, 143);
-            cursor: pointer;
-            transform: scale(1.05);
-            border: 2px solid white;
-        }
+				/* Add Button Styling */
+				.role-add-btn {
+				    background: linear-gradient(135deg, #005fa3, #007bff);
+				    color: #fff;
+				    border: none;
+				    border-radius: 25px;
+				    padding: 8px 18px;
+				    font-size: 13px;
+				    font-weight: 600;
+				    cursor: pointer;
+				    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+				    transition: all 0.3s ease;
+				}
 
-        .left-arrow-circle:hover i {
-            color: white;
-        }
-        /* Style for invalid input fields */
-        .form-control.is-invalid {
-            border-color: red;
-        }
-    </style>
+				.role-add-btn:hover {
+				    background: linear-gradient(135deg, #007bff, #3399ff);
+				    transform: translateY(-2px);
+				    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+				}
+
+				.role-add-btn i {
+				    margin-right: 5px;
+				}
+
+				
+			</style>
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
+
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
+
+		.list-body {
+			padding: 0px;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.formline {
+			padding-bottom: 15px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		#finusertb {
+			width: 460px;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			padding: 0px;
+		}
+
+		.valids {
+			color: green;
+		}
+
+		.invalids {
+			color: red;
+		}
+
+		.error {
+			color: red !important;
+		}
+
+		.left-arrow-circle {
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;
+			background-color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.3s, transform 0.2s;
+		}
+
+		.left-arrow-circle i {
+			color: rgb(107, 122, 143);
+		}
+
+		.left-arrow-circle:hover {
+			background-color: rgb(107, 122, 143);
+			cursor: pointer;
+			transform: scale(1.05);
+			border: 2px solid white;
+		}
+
+		.left-arrow-circle:hover i {
+			color: white;
+		}
+	</style>
+	<script>
+	function goBack() {
+	    window.history.back();
+	}
+
+	function goForward() {
+	    window.history.forward();
+	}
+
+	// Detect mouse near screen edges
+	document.addEventListener('mousemove', function(e) {
+	    const backBtn = document.getElementById('floatingBackBtn');
+	    const forwardBtn = document.getElementById('floatingForwardBtn');
+	    const screenWidth = window.innerWidth;
+
+	    // Left edge (back)
+	    if (e.clientX < 50) {
+	        backBtn.classList.add('show');
+	    } else {
+	        backBtn.classList.remove('show');
+	    }
+
+	    // Right edge (forward)
+	    if (screenWidth - e.clientX < 50) {
+	        forwardBtn.classList.add('show');
+	    } else {
+	        forwardBtn.classList.remove('show');
+	    }
+	});
+	</script>
+
+	<style>
+	/* Shared styles for both buttons */
+	#floatingBackBtn, 
+	#floatingForwardBtn {
+	    position: fixed;
+	    top: 50%;
+	    background-color: #0073e6;
+	    border: none;
+	    color: white;
+	    font-size: 20px;
+	    border-radius: 50%;
+	    width: 45px;
+	    height: 45px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    opacity: 0;
+	    pointer-events: none;
+	    transition: all 0.4s ease;
+	    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	    z-index: 999;
+	}
+
+	/* Back button */
+	#floatingBackBtn {
+	    left: -50px; /* hidden off-screen */
+	}
+
+	/* Forward button */
+	#floatingForwardBtn {
+	    right: -50px; /* hidden off-screen */
+	}
+
+	/* Show when near edge */
+	#floatingBackBtn.show {
+	    left: 20px;
+	    opacity: 1;
+	    pointer-events: auto;
+	}
+
+	#floatingForwardBtn.show {
+	    right: 20px;
+	    opacity: 1;
+	    pointer-events: auto;
+	}
+
+	/* Hover animation */
+	#floatingBackBtn:hover,
+	#floatingForwardBtn:hover {
+	    background-color: #005bb5;
+	    transform: scale(1.1);
+	}
+	</style>
     <script th:inline="javascript">
         //<![CDATA[
 
@@ -670,7 +800,7 @@
     </script>
 
 </head>
-<title>BRAS</title>
+<title>RiskInsights - User Profile</title>
 
 <body>
 	<div class="container-fluid">
@@ -679,19 +809,14 @@
 			<div class="col-sm-12">
 				<div style="padding-right: 0px;padding-left: 0px;" th:if="${formmode}=='list'">
 
-					<div class="card">
-						<div class="card-header">
-							<div class="float-left" style="color: white; display: flex; align-items: center;">
-								<div style="display: flex; align-items: center;" onclick="back();">
-									<!-- ⬅️ Left circular arrow -->
-									<div class="left-arrow-circle">
-										<i class="fa fa-arrow-left"></i>
-									</div>
-								</div>
-								<h5 th:text="${menu}"
-									style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
-								</h5>
-							</div>
+					<div class="card" >
+						<!-- White Minimal Header Section -->
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+						    <!-- Left: Page Title -->
+						    <div class="role-page-title">
+						        <h4 th:text="${menu}"></h4>
+						        <div class="role-page-underline"></div>
+						    </div>
 							<div class="custom-tab-btn-group nav-buttons float-right">
 								<button type="button" class="custom-tab-btn"
 									th:if="${WORKCLASSAC}=='M' OR ${ROLEIDAC}=='ADM' OR ${ROLEIDAC}=='MGR'"
@@ -704,9 +829,9 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="table-container" style="max-height: 620px; ">
-									<table class="table table-striped table-bordered table-hover" id="usertable">
-										<thead style="background-color:#e9ecf0; font-family: verdana;">
-											<tr>
+									<table class="table table-striped table-bordered table-hover" id="usertable" style="    font-size: 12px;">
+<thead style="background-color: #e9ecf0; font-family: verdana;"
+											class="thead-light">											<tr>
 												<!-- <th></th> -->
 												<th>User Id</th>
 												<th>User Name</th>
@@ -768,30 +893,40 @@
 								<!-- Hidden input for formmode, useful for jQuery Validate rules -->
 								<input type="hidden" name="formmode" th:value="${formmode}" />
 								<div class="card" style="margin-left: -26px;">
-									<div class="card-header" style="background-color: #376275;">
-										<div class="float-left"
-											style="color: white; display: flex; align-items: center;">
-											<div style="display: flex; align-items: center;" onclick="back();">
-												<!-- ⬅️ Left circular arrow -->
-												<div class="left-arrow-circle">
-													<i class="fa fa-arrow-left"></i>
-												</div>
-											</div>
-											<h3 th:if="${formmode}=='add'"
-												style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">
-												USER PROFILE - ADD</h3>
-											<h3 th:if="${formmode}=='view'"
-												style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">
-												USER PROFILE - VIEW</h3>
-											<h3 th:if="${formmode}=='edit'"
-												style="font-family: verdana; margin-left:20px; font-size: 20px; color:white !important; font-weight: bold; padding-top: 10px; ">
-												USER PROFILE - EDIT</h3>
-										</div>
-										<div class="btn-group nav-buttons float-right">
-											<button type="button" class="custom-tab-btn" id="btnInq"
-												onclick="list();">List</button>
-										</div>
-									</div>
+									<!-- White Minimal Header Section -->
+<!-- White Minimal Header Section -->
+<div class="role-page-header d-flex justify-content-between align-items-center">
+    <!-- Left: Page Title -->
+    <div class="role-page-title">
+        <div>
+            <h4 th:if="${formmode}=='add'"
+                style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+                USER PROFILE - ADD
+            </h4>
+            <h4 th:if="${formmode}=='view'"
+                style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+                USER PROFILE - VIEW
+            </h4>
+            <h4 th:if="${formmode}=='edit'"
+                style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+                USER PROFILE - EDIT
+            </h4>
+            <!-- Underline just below the heading -->
+            <div class="role-page-underline" 
+                 style="width: 250px; height: 3px; background-color: #376275; border-radius: 2px;"></div>
+        </div>
+    </div>
+
+    <!-- Right: List Button -->
+    <div>
+        <button type="button" class="role-add-btn" onclick="list();"
+            style="background-color: #376275; color: white; border: none; padding: 6px 16px; border-radius: 5px; font-weight: 500;">
+             List
+        </button>
+    </div>
+</div>
+
+
 									<div class="card-body"
 										style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
 
@@ -1103,10 +1238,18 @@
 											</div>
 
 
-											<div class="row"
-												style="background-color: #6B7A8F; color: white; height: 44px; border-radius: .20rem; padding: 11px 10px; top: 10px;">
-												<h4 style="color: white;">Role and Rights</h4>
-											</div>
+											<!-- White Minimal Header Section -->
+<div class="role-page-header d-flex justify-content-between align-items-center">
+    <!-- Left: Page Title -->
+    <div class="role-page-title">
+        <h4 style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+            Role and Rights
+        </h4>
+        <div class="role-page-underline"
+             style="width: 180px; height: 3px; background-color: #376275; border-radius: 2px;"></div>
+    </div>
+</div>
+
 											<br>
 
 											<div class="row formline">
@@ -1644,6 +1787,8 @@
 						</div>
 					</div>
 				</div>
+				
+				
 
 				<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
 					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1661,6 +1806,15 @@
 			</div>
 
 		</div>
+		
+		<!-- Floating Back Button -->
+			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+				<i class="fa fa-arrow-left"></i>
+			</button>
+			<!-- Floating Forward Button -->
+			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			    <i class="fa fa-arrow-right"></i>
+			</button>
 	</div>
 </body>
 
