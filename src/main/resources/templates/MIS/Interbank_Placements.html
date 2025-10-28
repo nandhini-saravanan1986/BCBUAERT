@@ -34,7 +34,143 @@
 		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-											
+		<style>
+						
+								/* === ROLE PAGE CUSTOM HEADER === */
+								.role-page-header {
+								    background-color: #ffffff;
+								    padding: 15px 20px;
+								    margin-bottom: 20px;
+								}
+
+								.role-page-title h4 {
+								    color: #003366;
+								    font-family: "Segoe UI", Arial, sans-serif;
+								    font-size: 20px;
+								    font-weight: 700;
+								    margin: 0;
+								}
+
+								.role-page-underline {
+								    width: 158px;
+								    height: 3px;
+								    background-color: #0073e6;
+								    border-radius: 2px;
+								    margin-top: 6px;
+								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+								}
+
+
+								/* Add Button Styling */
+								.role-add-btn {
+								    background: linear-gradient(135deg, #005fa3, #007bff);
+								    color: #fff;
+								    border: none;
+								    border-radius: 25px;
+								    padding: 8px 18px;
+								    font-size: 13px;
+								    font-weight: 600;
+								    cursor: pointer;
+								    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+								    transition: all 0.3s ease;
+								}
+
+								.role-add-btn:hover {
+								    background: linear-gradient(135deg, #007bff, #3399ff);
+								    transform: translateY(-2px);
+								    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+								}
+
+								.role-add-btn i {
+								    margin-right: 5px;
+								}
+
+								
+							</style>
+							<script>
+								function goBack() {
+								    window.history.back();
+								}
+
+								function goForward() {
+								    window.history.forward();
+								}
+
+								// Detect mouse near screen edges
+								document.addEventListener('mousemove', function(e) {
+								    const backBtn = document.getElementById('floatingBackBtn');
+								    const forwardBtn = document.getElementById('floatingForwardBtn');
+								    const screenWidth = window.innerWidth;
+
+								    // Left edge (back)
+								    if (e.clientX < 50) {
+								        backBtn.classList.add('show');
+								    } else {
+								        backBtn.classList.remove('show');
+								    }
+
+								    // Right edge (forward)
+								    if (screenWidth - e.clientX < 50) {
+								        forwardBtn.classList.add('show');
+								    } else {
+								        forwardBtn.classList.remove('show');
+								    }
+								});
+								</script>
+
+								<style>
+								/* Shared styles for both buttons */
+								#floatingBackBtn, 
+								#floatingForwardBtn {
+								    position: fixed;
+								    top: 50%;
+								    background-color: #0073e6;
+								    border: none;
+								    color: white;
+								    font-size: 20px;
+								    border-radius: 50%;
+								    width: 45px;
+								    height: 45px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    opacity: 0;
+								    pointer-events: none;
+								    transition: all 0.4s ease;
+								    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+								    z-index: 999;
+								}
+
+								/* Back button */
+								#floatingBackBtn {
+								    left: -50px; /* hidden off-screen */
+								}
+
+								/* Forward button */
+								#floatingForwardBtn {
+								    right: -50px; /* hidden off-screen */
+								}
+
+								/* Show when near edge */
+								#floatingBackBtn.show {
+								    left: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								#floatingForwardBtn.show {
+								    right: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								/* Hover animation */
+								#floatingBackBtn:hover,
+								#floatingForwardBtn:hover {
+								    background-color: #005bb5;
+								    transform: scale(1.1);
+								}
+								</style>									
 		<style>
 			/* Red border for invalid inputs */
 			input.error,
@@ -250,7 +386,7 @@
 		}
 
 		function home() {
-			location.href = "/BRAS/Dashboard";
+			location.href = "/Riskinsights/Dashboard";
 		}
 
 		function back() {
@@ -699,7 +835,7 @@
 		}
 	</script>
 </head>
-<title>BRAS</title>
+<title>Riskinsights - ASL</title>
 
 <body>
 
@@ -714,23 +850,27 @@
 							<form action="#" method="post" autocomplete="off" id="ASL_report"
 								enctype="multipart/form-data">
 								<div class="card">
-									<div class="card-header">
-										<div class="float-left">
-														<div style="display: flex; align-items: center;" onclick="back();">
-															<!-- Back Icon -->
-															<div class="left-arrow-circle">
-																<i class="fa fa-arrow-left"></i>
+									
+									
+									
+									
+									<div class="role-page-header d-flex justify-content-between align-items-center">
+															    <!-- Left: Page Title -->
+															    <div class="role-page-title">
+															        <h4 th:text="${menu}"></h4>
+																		<div style="width: 374px;
+																				    height: 3px;
+																				    background-color: #0073e6;
+																				    border-radius: 2px;
+																				    margin-top: 6px;
+																				    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+																					</div>
+
+															    <!-- Right: Add Button -->
+															    <div >
+																	<button type="button" class="role-add-btn"  onclick="window.location.href='./download/excel?mode=placement'">
+																		Template Download</button>  </div>
 															</div>
-															<h5 th:text="${menu}"
-															  style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-														</div>
-													</div>
-										<div class="btn-group nav-buttons float-right">
-											<button type="button" class="custom-tab-btn" 
-												onclick="window.location.href='./download/excel?mode=placement'">
-												Template Download</button>
-										</div>
-									</div>
 									<div class="card-body">
 
 										<input autocomplete="false" name="hidden" type="text" style="display: none;">
@@ -824,7 +964,7 @@
 										</div>
 										<div class="card-footer text-center">
 											
-											<button type="button" class="custom-tab-btn" id="generatebtn" style=""
+											<button type="button" class="role-add-btn" id="generatebtn" style=""
 												onclick="check_date();">Submit</button>
 											
 
@@ -1003,6 +1143,15 @@
 			</div>
 
 
+						
+							<!-- Floating Back Button -->
+			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+				<i class="fa fa-arrow-left"></i>
+			</button>
+			<!-- Floating Forward Button -->
+			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			    <i class="fa fa-arrow-right"></i>
+			</button>
 
 
 			<div class="modal fade" id="alert">
