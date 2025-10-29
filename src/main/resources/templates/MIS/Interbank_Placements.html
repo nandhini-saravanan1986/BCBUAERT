@@ -34,197 +34,197 @@
 		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-		<style>
-						
-								/* === ROLE PAGE CUSTOM HEADER === */
-								.role-page-header {
-								    background-color: #ffffff;
-								    padding: 15px 20px;
-								    margin-bottom: 20px;
-								}
+	<style>
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			margin-bottom: 20px;
+		}
 
-								.role-page-title h4 {
-								    color: #003366;
-								    font-family: "Segoe UI", Arial, sans-serif;
-								    font-size: 20px;
-								    font-weight: 700;
-								    margin: 0;
-								}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-								.role-page-underline {
-								    width: 158px;
-								    height: 3px;
-								    background-color: #0073e6;
-								    border-radius: 2px;
-								    margin-top: 6px;
-								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-								}
+		.role-page-underline {
+			width: 250px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
 
 
-								/* Add Button Styling */
-								.role-add-btn {
-								    background: linear-gradient(135deg, #005fa3, #007bff);
-								    color: #fff;
-								    border: none;
-								    border-radius: 25px;
-								    padding: 8px 18px;
-								    font-size: 13px;
-								    font-weight: 600;
-								    cursor: pointer;
-								    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
-								    transition: all 0.3s ease;
-								}
+		/* Add Button Styling */
+		.role-add-btn {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+			transition: all 0.3s ease;
+		}
 
-								.role-add-btn:hover {
-								    background: linear-gradient(135deg, #007bff, #3399ff);
-								    transform: translateY(-2px);
-								    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-								}
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #007bff, #3399ff);
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
 
-								.role-add-btn i {
-								    margin-right: 5px;
-								}
+		.role-add-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<script>
+		function goBack() {
+			window.history.back();
+		}
 
-								
-							</style>
-							<script>
-								function goBack() {
-								    window.history.back();
-								}
+		function goForward() {
+			window.history.forward();
+		}
 
-								function goForward() {
-								    window.history.forward();
-								}
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
 
-								// Detect mouse near screen edges
-								document.addEventListener('mousemove', function(e) {
-								    const backBtn = document.getElementById('floatingBackBtn');
-								    const forwardBtn = document.getElementById('floatingForwardBtn');
-								    const screenWidth = window.innerWidth;
-
-								    // Left edge (back)
-								    if (e.clientX < 50) {
-								        backBtn.classList.add('show');
-								    } else {
-								        backBtn.classList.remove('show');
-								    }
-
-								    // Right edge (forward)
-								    if (screenWidth - e.clientX < 50) {
-								        forwardBtn.classList.add('show');
-								    } else {
-								        forwardBtn.classList.remove('show');
-								    }
-								});
-								</script>
-
-								<style>
-								/* Shared styles for both buttons */
-								#floatingBackBtn, 
-								#floatingForwardBtn {
-								    position: fixed;
-								    top: 50%;
-								    background-color: #0073e6;
-								    border: none;
-								    color: white;
-								    font-size: 20px;
-								    border-radius: 50%;
-								    width: 45px;
-								    height: 45px;
-								    display: flex;
-								    align-items: center;
-								    justify-content: center;
-								    opacity: 0;
-								    pointer-events: none;
-								    transition: all 0.4s ease;
-								    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-								    z-index: 999;
-								}
-
-								/* Back button */
-								#floatingBackBtn {
-								    left: -50px; /* hidden off-screen */
-								}
-
-								/* Forward button */
-								#floatingForwardBtn {
-								    right: -50px; /* hidden off-screen */
-								}
-
-								/* Show when near edge */
-								#floatingBackBtn.show {
-								    left: 20px;
-								    opacity: 1;
-								    pointer-events: auto;
-								}
-
-								#floatingForwardBtn.show {
-								    right: 20px;
-								    opacity: 1;
-								    pointer-events: auto;
-								}
-
-								/* Hover animation */
-								#floatingBackBtn:hover,
-								#floatingForwardBtn:hover {
-								    background-color: #005bb5;
-								    transform: scale(1.1);
-								}
-								</style>									
-		<style>
-			/* Red border for invalid inputs */
-			input.error,
-			select.error {
-				border: 2px solid red !important;
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
 			}
 
-			/* Error message style */
-			label.error {
-				color: red;
-				font-size: 0.85em;
-				margin-top: 5px;
-				display: block;
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
 			}
+		});
+	</script>
 
-			.underline {
-				text-decoration: underline;
-				color: #08a6f1;
-				cursor: pointer;
-			}
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #0073e6;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-			.left-arrow-circle {
-				width: 35px;
-				height: 35px;
-				border-radius: 50%;
-				background-color: white;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 10px;
-				transition: background-color 0.3s, transform 0.2s;
-			}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-			.left-arrow-circle i {
-				color: rgb(107, 122, 143);
-			}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-			.left-arrow-circle:hover {
-				background-color: rgb(107, 122, 143);
-				cursor: pointer;
-				transform: scale(1.05);
-				border: 2px solid white;
-			}
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-			.left-arrow-circle:hover i {
-				color: white;
-			}
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-			.white-text span {
-				color: white !important;
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #005bb5;
+			transform: scale(1.1);
+		}
+	</style>
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
+
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
+
+		.underline {
+			text-decoration: underline;
+			color: #08a6f1;
+			cursor: pointer;
+		}
+
+		.left-arrow-circle {
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;
+			background-color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.3s, transform 0.2s;
+		}
+
+		.left-arrow-circle i {
+			color: rgb(107, 122, 143);
+		}
+
+		.left-arrow-circle:hover {
+			background-color: rgb(107, 122, 143);
+			cursor: pointer;
+			transform: scale(1.05);
+			border: 2px solid white;
+		}
+
+		.left-arrow-circle:hover i {
+			color: white;
+		}
+
+		.white-text span {
+			color: white !important;
 
 
-			}
-		</style>
+		}
+	</style>
 	<style>
 		body {
 			margin: 0;
@@ -578,70 +578,70 @@
 	</script>
 
 	<script>
-	let table; // Declare globally
+		let table; // Declare globally
 
-	$(document).ready(function () {
+		$(document).ready(function () {
 
-	    // ✅ Initialize DataTable (only once)
-	    table = $('#reporttable').DataTable({
-	        pageLength: 10,
-	        lengthChange: false,
-	        searching: true,
-	        paging: true,
-	        ordering: false,
-	        scrollY: "450px",
-	        scrollCollapse: true,
-	        columnDefs: [
-	            { className: 'dt-center', targets: 0 } // center-align first column
-	        ],
+			// ✅ Initialize DataTable (only once)
+			table = $('#reporttable').DataTable({
+				pageLength: 10,
+				lengthChange: false,
+				searching: true,
+				paging: true,
+				ordering: false,
+				scrollY: "450px",
+				scrollCollapse: true,
+				columnDefs: [
+					{className: 'dt-center', targets: 0} // center-align first column
+				],
 
-	        // 👇 Top layout: Search box (left) + Pagination (right)
-	        dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
-	    });
+				// 👇 Top layout: Search box (left) + Pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+			});
 
-	    // ✅ Date change handler
-	    $('#report_Date').on('change', function () {
-	        const reportDate = this.value;
+			// ✅ Date change handler
+			$('#report_Date').on('change', function () {
+				const reportDate = this.value;
 
-	        $.ajax({
-	            type: 'GET',
-	            url: './getTre_place_Datas',
-	            data: { reportDate: reportDate },
-	            success: function (data) {
-	                // Clear old data
-	                table.clear();
+				$.ajax({
+					type: 'GET',
+					url: './getTre_place_Datas',
+					data: {reportDate: reportDate},
+					success: function (data) {
+						// Clear old data
+						table.clear();
 
-	                // Add new rows dynamically
-	                data.forEach(row => {
-	                    table.row.add([
-	                        `<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
-	                        row.num_operation,                                            // Num Operation
-	                        row.entiteOperation,                                          // Entite Operation
-	                        row.poste,                                                    // Poste
-	                        row.titre,                                                    // Titre
-	                        row.devise1,                                                  // Devise 1
-	                        row.nominal1,                                                 // Nominal 1
-	                        `<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
-	                        `<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
-	                        `<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
-	                        row.preavis,                                                  // Preavis
-	                        row.entite,                                                   // Entite
-	                        row.portefeuille,                                             // Portefeuille
-	                        row.contrepartie,                                             // Counter Party
-	                        row.valeurTaux1                                               // Valeur Taux 1
-	                    ]);
-	                });
+						// Add new rows dynamically
+						data.forEach(row => {
+							table.row.add([
+								`<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
+								row.num_operation,                                            // Num Operation
+								row.entiteOperation,                                          // Entite Operation
+								row.poste,                                                    // Poste
+								row.titre,                                                    // Titre
+								row.devise1,                                                  // Devise 1
+								row.nominal1,                                                 // Nominal 1
+								`<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
+								`<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
+								`<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
+								row.preavis,                                                  // Preavis
+								row.entite,                                                   // Entite
+								row.portefeuille,                                             // Portefeuille
+								row.contrepartie,                                             // Counter Party
+								row.valeurTaux1                                               // Valeur Taux 1
+							]);
+						});
 
-	                // Redraw the table
-	                table.draw();
-	            },
-	            error: function (xhr, status, error) {
-	                console.error('AJAX error:', status, error);
-	            }
-	        });
-	    });
+						// Redraw the table
+						table.draw();
+					},
+					error: function (xhr, status, error) {
+						console.error('AJAX error:', status, error);
+					}
+				});
+			});
 
-	});
+		});
 	</script>
 
 	<script>
@@ -850,27 +850,29 @@
 							<form action="#" method="post" autocomplete="off" id="ASL_report"
 								enctype="multipart/form-data">
 								<div class="card">
-									
-									
-									
-									
+
+
+
+
 									<div class="role-page-header d-flex justify-content-between align-items-center">
-															    <!-- Left: Page Title -->
-															    <div class="role-page-title">
-															        <h4 th:text="${menu}"></h4>
-																		<div style="width: 327px;
+										<!-- Left: Page Title -->
+										<div class="role-page-title">
+											<h4 th:text="${menu}"></h4>
+											<div style="width: 327px;
 																				    height: 3px;
 																				    background-color: #0073e6;
 																				    border-radius: 2px;
 																				    margin-top: 6px;
 																				    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-																					</div>
+										</div>
 
-															    <!-- Right: Add Button -->
-															    <div >
-																	<button type="button" class="role-add-btn"  onclick="window.location.href='./download/excel?mode=placement'">
-																		Template Download</button>  </div>
-															</div>
+										<!-- Right: Add Button -->
+										<div>
+											<button type="button" class="role-add-btn"
+												onclick="window.location.href='./download/excel?mode=placement'">
+												Template Download</button>
+										</div>
+									</div>
 									<div class="card-body">
 
 										<input autocomplete="false" name="hidden" type="text" style="display: none;">
@@ -963,10 +965,10 @@
 											</div>
 										</div>
 										<div class="card-footer text-center">
-											
+
 											<button type="button" class="role-add-btn" id="generatebtn" style=""
 												onclick="check_date();">Submit</button>
-											
+
 
 										</div>
 									</div>
@@ -979,230 +981,236 @@
 				<div th:if="${formmode}=='list'">
 
 					<div class="card">
-						<div class="card-header">
-							<div class="float-left">
-											<div style="display: flex; align-items: center;" onclick="back();">
-												<!-- Back Icon -->
-												<div class="left-arrow-circle">
-													<i class="fa fa-arrow-left"></i>
-												</div>
-												<h5 th:text="${menu}"
-												  style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-											</div>
-										</div>
-							<div class="btn-group nav-buttons float-right">
+						<div class="role-page-header d-flex justify-content-between align-items-center flex-wrap"
+							style="background-color: white; border: none; padding: 10px 15px;">
 
-								<div class="form-inline">
-									<label for="report_Date" class="mr-2">Report Date:</label> <input type="date"
-										id="report_Date" name="report_Date" class="form-control form-control-sm"
-										value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
-								</div>
-								<div class="d-flex align-items-center gap-1">
-									<!--<button type="button" class="custom-tab-btn" style="" id="btnAdd"
-										onclick="Trasury_Limits();">List Of Treasury Limits</button>-->
-
-									<button type="button" class="custom-tab-btn" onclick="placement()">Download</button>
-
-								</div>
+							<!-- 🔹 Left side: Title + underline -->
+							<div class="role-page-title mb-2 mb-md-0">
+								<h4 th:text="${menu}" class="mb-1" style="font-weight: 600; color: #333;"></h4>
+								<div class="role-page-underline"></div>
 							</div>
+
+							<!-- 🔹 Right side: Report date + Download button -->
+							<div class="d-flex align-items-center flex-wrap gap-2">
+								<div class="form-inline mr-2">
+									<label for="report_Date" class="mr-2 mb-0">Report Date:</label>
+									<input type="date" id="report_Date" name="report_Date"
+										class="form-control form-control-sm"
+										th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+
+								<button type="button" class="role-add-btn" onclick="placement()">Download</button>
+							</div>
+
 						</div>
 
 
 						<div class="row">
 							<div class="col-sm-12">
 
-								<div style=" overflow-y: auto;">
-									<table class="table table-striped table-bordered table-hover" id="reporttable">
-										<thead style="background-color: orange; font-family: verdana;">
-											<tr>
-												<th style="white-space: nowrap;">Report Date</th>
-												<th style="white-space: nowrap;">Num Operation</th>
-												<th style="white-space: nowrap;">Entite Operation</th>
-												<th style="white-space: nowrap;">Poste</th>
-												<th style="white-space: nowrap;">Titre</th>
-												<th style="white-space: nowrap;">Devise 1</th>
-												<th style="white-space: nowrap;">Nominal 1</th>
-												<th style="white-space: nowrap;">Date Operation</th>
-												<th style="white-space: nowrap;">Date Valeur</th>
-												<th style="white-space: nowrap;">Date Echeance</th>
-												<th style="white-space: nowrap;">Preavis</th>
-												<th style="white-space: nowrap;">Entite</th>
-												<th style="white-space: nowrap;">Portefeuille</th>
-												<th style="white-space: nowrap;">Counter Party</th>
-												<th style="white-space: nowrap;">Valeur Taux 1</th>
-											</tr>
-										</thead>
-										<tbody style="font-family: verdana;">
-											<tr th:each="lists, iterStat : ${listss}">
-												<td th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}"></td>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="table-container" style="padding: 0px 15px;">
+											<table class="table table-striped table-bordered table-hover" id="usertable"
+												style="font-size: 12px;">
+												<thead style="background-color: #e9ecf0; font-family: verdana;"
+													class="thead-light">
+													<tr>
+														<th style="white-space: nowrap;">Report Date</th>
+														<th style="white-space: nowrap;">Num Operation</th>
+														<th style="white-space: nowrap;">Entite Operation</th>
+														<th style="white-space: nowrap;">Poste</th>
+														<th style="white-space: nowrap;">Titre</th>
+														<th style="white-space: nowrap;">Devise 1</th>
+														<th style="white-space: nowrap;">Nominal 1</th>
+														<th style="white-space: nowrap;">Date Operation</th>
+														<th style="white-space: nowrap;">Date Valeur</th>
+														<th style="white-space: nowrap;">Date Echeance</th>
+														<th style="white-space: nowrap;">Preavis</th>
+														<th style="white-space: nowrap;">Entite</th>
+														<th style="white-space: nowrap;">Portefeuille</th>
+														<th style="white-space: nowrap;">Counter Party</th>
+														<th style="white-space: nowrap;">Valeur Taux 1</th>
+													</tr>
+												</thead>
+												<tbody style="font-family: verdana;">
+													<tr th:each="lists, iterStat : ${listss}">
+														<td th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}">
+														</td>
 
-												<td th:text="${lists.num_operation}"></td>
-												<td th:text="${lists.entiteOperation}"></td>
-												<td th:text="${lists.poste}"></td>
-												<td th:text="${lists.titre}"></td>
-												<td th:text="${lists.devise1}"></td>
-												<td th:text="${lists.nominal1}"></td>
-												<td style="text-align: center;"
-													th:text="${#dates.format(lists.dateOperation, 'dd-MM-yyyy')}"></td>
-												<td style="text-align: center;"
-													th:text="${#dates.format(lists.dateValeur, 'dd-MM-yyyy')}"></td>
-												<td style="text-align: center;"
-													th:text="${#dates.format(lists.dateEcheance, 'dd-MM-yyyy')}"></td>
-												<td th:text="${lists.preavis}"></td>
-												<td th:text="${lists.entite}"></td>
-												<td th:text="${lists.portefeuille}"></td>
-												<td th:text="${lists.contrepartie}"></td>
-												<td th:text="${lists.valeurTaux1}"></td>
+														<td th:text="${lists.num_operation}"></td>
+														<td th:text="${lists.entiteOperation}"></td>
+														<td th:text="${lists.poste}"></td>
+														<td th:text="${lists.titre}"></td>
+														<td th:text="${lists.devise1}"></td>
+														<td th:text="${lists.nominal1}"></td>
+														<td style="text-align: center;"
+															th:text="${#dates.format(lists.dateOperation, 'dd-MM-yyyy')}">
+														</td>
+														<td style="text-align: center;"
+															th:text="${#dates.format(lists.dateValeur, 'dd-MM-yyyy')}">
+														</td>
+														<td style="text-align: center;"
+															th:text="${#dates.format(lists.dateEcheance, 'dd-MM-yyyy')}">
+														</td>
+														<td th:text="${lists.preavis}"></td>
+														<td th:text="${lists.entite}"></td>
+														<td th:text="${lists.portefeuille}"></td>
+														<td th:text="${lists.contrepartie}"></td>
+														<td th:text="${lists.valeurTaux1}"></td>
 
-											</tr>
+													</tr>
 
 
-										</tbody>
-									</table>
+												</tbody>
+											</table>
 
 
-								</div>
-								<!--<div class="card-footer text-center">
+										</div>
+										<!--<div class="card-footer text-center">
 									<button type="button" class="custom-tab-btn" id="btnHome"
 										onclick="home();">Home</button>
 									<button type="button" class="custom-tab-btn" id="btnBack"
 										onclick="back();">Back</button>
 								</div>-->
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div th:if="${formmode}=='treasury_list'">
-
-					<div class="card">
-						<div class="card-header">
-							<div class="float-left">
-								<h5 th:text="${menu}"
-									style="font-family: verdana; font-weight: bold; padding-top: 10px;"></h5>
-							</div>
-							<div class="btn-group nav-buttons float-right">
-
-								<div class="form-inline">
-									<label for="reportDate" class="mr-2">Report Date:</label> <input type="date"
-										id="reportDate" name="reportDate" class="form-control form-control-sm"
-										th:value="${reportdate}" />
-								</div>
-								<div class="d-flex align-items-center gap-1">
-									<button type="button" class="custom-tab-btn" style="" id="btnAdd"
-										onclick="Trasury_place();">List Of Treasury Placements</button>
-
-									<button type="button" class="custom-tab-btn" style="border-radius: 8px; "
-										onclick="treasuryLimit()">Download</button>
+									</div>
 								</div>
 							</div>
 						</div>
 
+						<div th:if="${formmode}=='treasury_list'">
+
+							<div class="card">
+								<div class="card-header">
+									<div class="float-left">
+										<h5 th:text="${menu}"
+											style="font-family: verdana; font-weight: bold; padding-top: 10px;"></h5>
+									</div>
+									<div class="btn-group nav-buttons float-right">
+
+										<div class="form-inline">
+											<label for="reportDate" class="mr-2">Report Date:</label> <input type="date"
+												id="reportDate" name="reportDate" class="form-control form-control-sm"
+												th:value="${reportdate}" />
+										</div>
+										<div class="d-flex align-items-center gap-1">
+											<button type="button" class="custom-tab-btn" style="" id="btnAdd"
+												onclick="Trasury_place();">List Of Treasury Placements</button>
+
+											<button type="button" class="custom-tab-btn" style="border-radius: 8px; "
+												onclick="treasuryLimit()">Download</button>
+										</div>
+									</div>
+								</div>
 
 
-						<div class="row">
 
-							<div style=" overflow-y: auto;">
-								<table class="table table-striped table-bordered table-hover" id="usertable">
-									<thead style="background-color: orange; font-family: verdana;">
-										<tr>
-											<th style="text-align: center;">Report Date</th>
-											<th>Bank Name</th>
-											<th>Counter Party</th>
-											<th>Amount (AED)</th>
-											<th>Amount (GBP)</th>
-											<th>Amount (EUR)</th>
-											<th>Amount (USD)</th>
-											<th>USD MN</th>
-										</tr>
-									</thead>
-									<tbody style="font-family: verdana;">
-										<tr th:each="lists : ${listall}" style="cursor: pointer;">
-											<td style="text-align: center;">[[${#dates.format(lists.reportDate,
-												'dd-MM-yyyy')}]]</td>
-											<td>[[${lists.bankName}]]</td>
-											<td>[[${lists.counterparty}]]</td>
-											<td>[[${#numbers.formatDecimal(lists.amt_aed, 1, 'COMMA', 2)}]]</td>
-											<td>[[${#numbers.formatDecimal(lists.amt_gbp, 1, 'COMMA', 2)}]]</td>
-											<td>[[${#numbers.formatDecimal(lists.amt_usd, 1, 'COMMA', 2)}]]</td>
-											<td>[[${#numbers.formatDecimal(lists.amt_eur, 1, 'COMMA', 2)}]]</td>
-											<td>[[${#numbers.formatDecimal(lists.in_usd_mn, 1, 'COMMA', 2)}]]</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+								<div class="row">
 
-							<div class="card-footer text-center">
-								<button type="button" class="custom-tab-btn" onclick="home();">Home</button>
-								<button type="button" class="custom-tab-btn" id="btnBack"
-									onclick="back();">Back</button>
+									<div style=" overflow-y: auto;">
+										<table class="table table-striped table-bordered table-hover" id="usertable">
+											<thead style="background-color: orange; font-family: verdana;">
+												<tr>
+													<th style="text-align: center;">Report Date</th>
+													<th>Bank Name</th>
+													<th>Counter Party</th>
+													<th>Amount (AED)</th>
+													<th>Amount (GBP)</th>
+													<th>Amount (EUR)</th>
+													<th>Amount (USD)</th>
+													<th>USD MN</th>
+												</tr>
+											</thead>
+											<tbody style="font-family: verdana;">
+												<tr th:each="lists : ${listall}" style="cursor: pointer;">
+													<td style="text-align: center;">[[${#dates.format(lists.reportDate,
+														'dd-MM-yyyy')}]]</td>
+													<td>[[${lists.bankName}]]</td>
+													<td>[[${lists.counterparty}]]</td>
+													<td>[[${#numbers.formatDecimal(lists.amt_aed, 1, 'COMMA', 2)}]]</td>
+													<td>[[${#numbers.formatDecimal(lists.amt_gbp, 1, 'COMMA', 2)}]]</td>
+													<td>[[${#numbers.formatDecimal(lists.amt_usd, 1, 'COMMA', 2)}]]</td>
+													<td>[[${#numbers.formatDecimal(lists.amt_eur, 1, 'COMMA', 2)}]]</td>
+													<td>[[${#numbers.formatDecimal(lists.in_usd_mn, 1, 'COMMA', 2)}]]
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+
+									<div class="card-footer text-center">
+										<button type="button" class="custom-tab-btn" onclick="home();">Home</button>
+										<button type="button" class="custom-tab-btn" id="btnBack"
+											onclick="back();">Back</button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
 
 
-						
-							<!-- Floating Back Button -->
-			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-				<i class="fa fa-arrow-left"></i>
-			</button>
-			<!-- Floating Forward Button -->
-			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-			    <i class="fa fa-arrow-right"></i>
-			</button>
+
+					<!-- Floating Back Button -->
+					<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+						<i class="fa fa-arrow-left"></i>
+					</button>
+					<!-- Floating Forward Button -->
+					<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+						<i class="fa fa-arrow-right"></i>
+					</button>
 
 
-			<div class="modal fade" id="alert">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="menu-title-header">
-							<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
-								BANK OF BARODA</div>
-						</div>
-						<div class="modal-body" style="text-align: center">
-							<p id="alertmsg"></p>
-							<button type="button" class="custom-tab-btn" onclick="list()"
-								data-dismiss="modal">Close</button>
+					<div class="modal fade" id="alert">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="menu-title-header">
+									<div class="modal-title" id="exampleModalLabel"
+										style="text-align: center; color: white;">
+										BANK OF BARODA</div>
+								</div>
+								<div class="modal-body" style="text-align: center">
+									<p id="alertmsg"></p>
+									<button type="button" class="custom-tab-btn" onclick="list()"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
 
-			<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-					<div class="modal-content" style="background: transparent;">
-						<div class="modal-body" style="text-align: center">
-							<div>
-								<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+					<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content" style="background: transparent;">
+								<div class="modal-body" style="text-align: center">
+									<div>
+										<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
 								border-color: transparent;" alt="Bornfire">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal fade" id="alert1">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="menu-title-header">
+								<div class="modal-title" id="exampleModalLabel"
+									style="text-align: center; color: white;">BANK
+									OF BARODA</div>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<p id="alertmsg1"></p>
+								<button type="button" class="btn " style="background-color:darkorange"
+									onclick="replace()" data-dismiss="modal">Replace</button>
+								<button type="button" class="btn" style="background-color:darkorange"
+									data-dismiss="modal" onclick="ignore();">Ignore</button>
+
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
-		</div>
-		<div class="modal fade" id="alert1">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
-							OF BARODA</div>
-					</div>
-					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg1"></p>
-						<button type="button" class="btn " style="background-color:darkorange" onclick="replace()"
-							data-dismiss="modal">Replace</button>
-						<button type="button" class="btn" style="background-color:darkorange" data-dismiss="modal"
-							onclick="ignore();">Ignore</button>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </body>
 
 </html>
