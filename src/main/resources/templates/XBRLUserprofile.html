@@ -1381,21 +1381,42 @@ PURPOSE		: Access the Modules by Role
 										</div>
 									</div>
 
-									<div class="card-footer text-center">
-										<!-- Removed Home button -->
-										<button type="button" th:if="${formmode}=='edit'" class="custom-tab-btn"
-											onclick="deleteuser();" th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},
-										data-modify_user=${userProfile.modify_user},data-userid=${userProfile.userid}" id="delete">Delete
-											User</button>
-										<button type="submit" class="custom-tab-btn" th:if="${formmode} != 'view'"
-											form="userProfile" id="btnSubmit"
-											th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
-										<button th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
-											type="button" class="custom-tab-btn" id="btnpassrst"
-											onclick="passwordReset();">PasswordReset</button>
+								<div class="card-footer text-center">
 
-										<!-- Removed Back button -->
-									</div>
+    <!-- Submit Button (Add/Edit Mode) -->
+    <button th:if="${formmode}=='edit' OR ${formmode}=='add'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode=${formmode}"
+        id="btnSubmit"
+        onclick="submitform(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Submit
+    </button>
+
+    <!-- Verify Button -->
+    <button th:if="${formmode}=='verify'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode='verify', data-entryUser=${IPSAccessRole.entryUser}, data-modifyUser=${IPSAccessRole.modifyUser}"
+        id="btnSubmit"
+        onclick="verifySubmit(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Submit
+    </button>
+
+    <!-- Delete Button -->
+    <button th:if="${formmode}=='delete'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode='delete', data-entryUser=${IPSAccessRole.entryUser}, data-roleId=${IPSAccessRole.roleId}, data-modifyUser=${IPSAccessRole.modifyUser}"
+        id="btnSubmit"
+        onclick="deleteSubmit(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Delete
+    </button>
+
+</div>
 								</div>
 							</form>
 						</div>

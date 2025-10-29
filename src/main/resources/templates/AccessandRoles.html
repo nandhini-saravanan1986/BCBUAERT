@@ -556,7 +556,7 @@ PURPOSE		: Access the Modules by Role
 	        searching: true,
 	        paging: true,
 	        ordering: false,           // set to true if you want column sorting
-	        scrollY: "350px",				        scrollCollapse: true,
+	        				        scrollCollapse: true,
 
 	        // ✅ Custom layout: Search (left) + Pagination (right)
 	        dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
@@ -661,9 +661,9 @@ PURPOSE		: Access the Modules by Role
 										</tbody>
 									</table>
 								</div>
-								<div class="card-footer text-center">
-									<!-- Removed Home and Back buttons as requested -->
-								</div>
+								<!--<div class="card-footer text-center">
+									 Removed Home and Back buttons as requested 
+								</div>-->
 							</div>
 						</div>
 					</div>
@@ -1075,23 +1075,41 @@ PURPOSE		: Access the Modules by Role
 										</div>
 										<div class="card-footer text-center">
 
-											<button th:if="${formmode}=='edit' OR ${formmode}=='add'" type="button"
-												class="custom-tab-btn" form="IPSAccessRole"
-												th:attr="data-formmode=${formmode}" x id="btnSubmit"
-												onclick="submitform(this);">Submit</button>
-											<button th:if="${formmode}=='verify'" type="button" class="custom-tab-btn"
-												form="IPSAccessRole" th:attr="data-formmode='verify',
-											data-entryUser=${IPSAccessRole.entryUser},data-modifyUser=${IPSAccessRole.modifyUser}" id="btnSubmit"
-												onclick="verifySubmit(this);">Submit</button>
+    <!-- Submit Button (Add/Edit Mode) -->
+    <button th:if="${formmode}=='edit' OR ${formmode}=='add'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode=${formmode}"
+        id="btnSubmit"
+        onclick="submitform(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Submit
+    </button>
 
-											<button th:if="${formmode}=='delete'" type="button" class="custom-tab-btn"
-												form="IPSAccessRole"
-												th:attr="data-formmode='delete',
-											data-entryUser=${IPSAccessRole.entryUser},data-roleId=${IPSAccessRole.roleId},data-modifyUser=${IPSAccessRole.modifyUser}"
-												id="btnSubmit" onclick="deleteSubmit(this);">Delete</button>
+    <!-- Verify Button -->
+    <button th:if="${formmode}=='verify'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode='verify', data-entryUser=${IPSAccessRole.entryUser}, data-modifyUser=${IPSAccessRole.modifyUser}"
+        id="btnSubmit"
+        onclick="verifySubmit(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Submit
+    </button>
 
+    <!-- Delete Button -->
+    <button th:if="${formmode}=='delete'" type="button"
+        class="custom-tab-btn"
+        form="IPSAccessRole"
+        th:attr="data-formmode='delete', data-entryUser=${IPSAccessRole.entryUser}, data-roleId=${IPSAccessRole.roleId}, data-modifyUser=${IPSAccessRole.modifyUser}"
+        id="btnSubmit"
+        onclick="deleteSubmit(this);"
+        style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+        Delete
+    </button>
 
-										</div>
+</div>
+
 									</div>
 								</div>
 							</div>
