@@ -234,10 +234,11 @@
 			}
 		</style>
 <style>
- body {
-      margin: 0;
-      overflow-x: hidden; /* ⛔ Prevent full-page scroll */
-    }
+	body {		font-family: 'Segoe UI', Arial, sans-serif;
+		    font-size: 14px;
+	     margin: 0;
+	     overflow-x: hidden; /* ⛔ Prevent full-page scroll */
+	   }
 .btns {
 	float: right;
 	margin: 5px;
@@ -511,29 +512,33 @@ font-size: unset !important;
     margin-right: auto;
     margin-left: auto;
 }
-label,table{
-font-family: verdana;
-}
 </style>
 <script>
-  $(document).ready(function () {
-	$('#usertable').DataTable({
-				     scrollX: true,
-				     autoWidth: false,
-				     paging: true,
-				     searching: true,
-				     lengthChange: false,
-				     ordering: true,
-				     pageLength: 10,
-				     fixedHeader: true,
+	$(document).ready(function () {
+	  $('#usertable').DataTable({
+	    scrollX: true,
+	    autoWidth: false,
+	    paging: true,
+	    searching: true,
+	    lengthChange: false,
+	    ordering: true,
+	    pageLength: 10,
+	    fixedHeader: true,
 
-				     // 👇 Top row: search (left) + pagination (right)
-				     dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
-				 });
+	    // Layout: search (left) + pagination (right)
+	    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-    
+	    // Optional: language tweak for better label
+	    language: {
+	      search: "Search:"
+	    }
+	  });
 
-  });
+	  // Fix search input alignment
+	  $('div.dataTables_filter label').addClass('d-flex align-items-center gap-2 mb-0');
+	  $('div.dataTables_filter input').addClass('form-control form-control-sm ms-2');
+	});
+
   
   $(document).ready(function () {
 	  $('#reportDate').on('change', function () {
@@ -897,35 +902,43 @@ function Branchcodeval() {
 		<div th:if="${formmode}=='list'">
 
 			<div class="card" >
-				<div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-					<div class="float-left">
-									<div style="display: flex; align-items: center;" onclick="back();">
-										<!-- Back Icon -->
-										<div class="left-arrow-circle">
-											<i class="fa fa-arrow-left"></i>
-										</div>
-										<h5 th:text="${menu}"
-										  style="font-family: verdana;  font-weight: bold; padding-top: 10px;"></h5>
-									</div>
-								</div>
-
-					<div class="form-inline">
-						<label for="reportDate" class="mr-2">Report Date:</label> <input
-							type="date" id="reportDate" name="reportDate"
-							class="form-control form-control-sm"
-							value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
-							
-							<button type="button" class="custom-tab-btn"
-									onclick="SettlementLimit()">Download</button>
-					</div>
+				
+				
+				
+							<div class="role-page-header d-flex justify-content-between align-items-center">
+																										    <!-- Left: Page Title -->
+																										    <div class="role-page-title">
+																										        <h4 th:text="${menu}"></h4>
+																													<div style="width: 172px;
+																															    height: 3px;
+																															    background-color: #0073e6;
+																															    border-radius: 2px;
+																															    margin-top: 6px;
+																															    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+																																</div>
+				<!-- Right: Add Button -->
+				<div class="form-inline">
+				<label for="reportDate" class="mr-2">Report Date:</label> <input
+					type="date" id="reportDate" name="reportDate"
+					class="form-control form-control-sm"
+					value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+					<button type="button" class="role-add-btn ml-3" onclick="SettlementLimit()">
+					 Download</button>
 				</div>
+				</div>
+											
+				
+				
+				
 
 
 				<div class="row">
 				
-				<div class="table-container" style="max-height: 500px; overflow-y: auto;">
-    <table class="table table-striped table-bordered table-hover" id="usertable">
-        <thead style="background-color: orange; font-family: verdana;">
+					<div class="table-container" style="padding: 0px 15px;">
+																<table class="table table-striped table-bordered table-hover" id="usertable">
+
+																	<thead style="background-color: #e9ecf0; "
+																		class="thead-light">
 										<tr>
 											<th style="white-space: nowrap;">Report Date</th>
 											<th style="white-space: nowrap;">Deal ID</th>
@@ -944,7 +957,7 @@ function Branchcodeval() {
 											<th style="white-space: nowrap;">CCF (%)</th>
 										</tr>
 									</thead>
-        <tbody style="font-family: verdana;">
+        <tbody >
             <tr th:each="lists : ${listall}" style="cursor: pointer;">
                 <td style="text-align: center" th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}"></td>
                 <td  th:text="${lists.dealId}"></td>

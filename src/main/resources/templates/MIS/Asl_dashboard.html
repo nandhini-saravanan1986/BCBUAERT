@@ -50,6 +50,143 @@
 
 	<title>BRAS</title>
 	<style>
+					
+							/* === ROLE PAGE CUSTOM HEADER === */
+							.role-page-header {
+							    background-color: #ffffff;
+							    padding: 15px 20px;
+							    margin-bottom: 20px;
+							}
+
+							.role-page-title h4 {
+							    color: #003366;
+							    font-family: "Segoe UI", Arial, sans-serif;
+							    font-size: 20px;
+							    font-weight: 700;
+							    margin: 0;
+							}
+
+							.role-page-underline {
+							    width: 158px;
+							    height: 3px;
+							    background-color: #0073e6;
+							    border-radius: 2px;
+							    margin-top: 6px;
+							    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+							}
+
+
+							/* Add Button Styling */
+							.role-add-btn {
+							    background: linear-gradient(135deg, #005fa3, #007bff);
+							    color: #fff;
+							    border: none;
+							    border-radius: 25px;
+							    padding: 8px 18px;
+							    font-size: 13px;
+							    font-weight: 600;
+							    cursor: pointer;
+							    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+							    transition: all 0.3s ease;
+							}
+
+							.role-add-btn:hover {
+							    background: linear-gradient(135deg, #007bff, #3399ff);
+							    transform: translateY(-2px);
+							    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+							}
+
+							.role-add-btn i {
+							    margin-right: 5px;
+							}
+
+							
+						</style>
+						<script>
+							function goBack() {
+							    window.history.back();
+							}
+
+							function goForward() {
+							    window.history.forward();
+							}
+
+							// Detect mouse near screen edges
+							document.addEventListener('mousemove', function(e) {
+							    const backBtn = document.getElementById('floatingBackBtn');
+							    const forwardBtn = document.getElementById('floatingForwardBtn');
+							    const screenWidth = window.innerWidth;
+
+							    // Left edge (back)
+							    if (e.clientX < 50) {
+							        backBtn.classList.add('show');
+							    } else {
+							        backBtn.classList.remove('show');
+							    }
+
+							    // Right edge (forward)
+							    if (screenWidth - e.clientX < 50) {
+							        forwardBtn.classList.add('show');
+							    } else {
+							        forwardBtn.classList.remove('show');
+							    }
+							});
+							</script>
+
+							<style>
+							/* Shared styles for both buttons */
+							#floatingBackBtn, 
+							#floatingForwardBtn {
+							    position: fixed;
+							    top: 50%;
+							    background-color: #0073e6;
+							    border: none;
+							    color: white;
+							    font-size: 20px;
+							    border-radius: 50%;
+							    width: 45px;
+							    height: 45px;
+							    display: flex;
+							    align-items: center;
+							    justify-content: center;
+							    opacity: 0;
+							    pointer-events: none;
+							    transition: all 0.4s ease;
+							    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+							    z-index: 999;
+							}
+
+							/* Back button */
+							#floatingBackBtn {
+							    left: -50px; /* hidden off-screen */
+							}
+
+							/* Forward button */
+							#floatingForwardBtn {
+							    right: -50px; /* hidden off-screen */
+							}
+
+							/* Show when near edge */
+							#floatingBackBtn.show {
+							    left: 20px;
+							    opacity: 1;
+							    pointer-events: auto;
+							}
+
+							#floatingForwardBtn.show {
+							    right: 20px;
+							    opacity: 1;
+							    pointer-events: auto;
+							}
+
+							/* Hover animation */
+							#floatingBackBtn:hover,
+							#floatingForwardBtn:hover {
+							    background-color: #005bb5;
+							    transform: scale(1.1);
+							}
+							</style>	
+	<style>
 				/* Red border for invalid inputs */
 				input.error,
 				select.error {
@@ -105,7 +242,8 @@
 			</style>
 	<!-- Custom Styles -->
 	<style>
-	 body {
+	 body {		font-family: 'Segoe UI', Arial, sans-serif;
+		    font-size: 14px;
       margin: 0;
       overflow-x: hidden; /* ⛔ Prevent full-page scroll */
     }
@@ -124,9 +262,7 @@
     margin-right: auto;
     margin-left: auto;
 }
-label,table{
-font-family: verdana;
-}
+
 		.btn-primary {
 			background-color: #E77400;
 			border-color: #0c0c0c;
@@ -144,12 +280,7 @@ font-family: verdana;
 		}
 
 
-		thead {
-			position: sticky;
-			top: 0;
-			background-color: orange;
-			z-index: 1;
-		}
+		
 
 		.btn {
 			font-size: inherit !important;
@@ -328,22 +459,28 @@ function Download_detail_report() {
 
 		<div th:if="${formmode}=='list'">
 			<div class="card">
-			<div class="card-header d-flex justify-content-between align-items-center">
-    <!-- Title -->
-    
-	<div class="float-left">
-					<div style="display: flex; align-items: center;" onclick="back();">
-						<!-- Back Icon -->
-						<div class="left-arrow-circle">
-							<i class="fa fa-arrow-left"></i>
-						</div>
-						<h5  style="font-family: verdana;  font-weight: bold; padding-top: 10px;">ASL - Final Sheet</h5>
-					</div>
-				</div>
-    <!-- Action Controls -->
-    <div class="d-flex align-items-center gap-2 me-3">
+				
+		
+
+
+
+
+			<div class="role-page-header d-flex justify-content-between align-items-center">
+																						    <!-- Left: Page Title -->
+																						    <div class="role-page-title">
+																						        <h4 >ASL - Final Sheet</h4>
+																									<div style="width: 160px;
+																											    height: 3px;
+																											    background-color: #0073e6;
+																											    border-radius: 2px;
+																											    margin-top: 6px;
+																											    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+																												</div>
+
+
+ <div class="form-inline">
         <!-- Report Date Label + Input -->
-<label for="ReportDate" class="me-2 mb-0 text-white">Report Date:</label>
+	<label for="reportDate" class="mr-2">Report Date:</label>
 <input type="date"
                name="ReportDate"
                id="ReportDate"
@@ -353,19 +490,27 @@ function Download_detail_report() {
                th:value="${#dates.format(currentDate, 'yyyy-MM-dd')}" />
 
         <!-- Buttons -->
-        <button type="button" class="custom-tab-btn" onclick="calculate()">Calculate</button>
-        <button type="button" class="custom-tab-btn" onclick="final_sheet()">Download Final Report</button>
-		<button type="button" class="custom-tab-btn" onclick="Download_detail_report()">Download Detail Report</button>
+        <button type="button" class="role-add-btn ml-3" onclick="calculate()">Calculate</button>
+        <button type="button" class="role-add-btn ml-3" onclick="final_sheet()">Download Final Report</button>
+		<button type="button" class="role-add-btn ml-3" onclick="Download_detail_report()">Download Detail Report</button>
     </div>
 </div>
+			
+
+
+
+
+
 
 
 				<div class="row">
 					<div class="col-sm-12">
 
-									<div class="table-container" style="max-height: 500px; overflow-y: auto;">
-						<table class="table table-striped table-bordered table-hover" id="usertable">
-						    <thead style="background-color: orange; font-family: verdana;">
+						<div class="table-container" style="padding: 0px 15px;">
+											<table class="table table-striped table-bordered table-hover" id="usertable">
+
+												<thead style="background-color: #e9ecf0; "
+													class="thead-light">
 									<tr>
 										<th style="white-space: nowrap;">S. no.</th>
 										<th style="white-space: nowrap;">Territory Name</th>
@@ -499,7 +644,16 @@ function Download_detail_report() {
 			</div>
 		</div>
 	</div>
-
+				
+				
+					<!-- Floating Back Button -->
+	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+		<i class="fa fa-arrow-left"></i>
+	</button>
+	<!-- Floating Forward Button -->
+	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+	    <i class="fa fa-arrow-right"></i>
+	</button>
 	<!-- Loader Modal -->
 	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered">
