@@ -55,6 +55,115 @@ PURPOSE		: Access the Modules by Role
 
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+		
+		
+
+		<style>
+			
+			
+
+
+			.modal-backdrop {
+					  position: fixed;
+					  top: 0;
+					  left: 0;
+					  width: 120vw !important;              /* 👈 a bit wider than viewport */
+					  height: 120vh  !important;         /* 👈 a bit taller than viewport */
+					  background-color: #000;    /* 👈 solid black base */
+					  opacity: 0.7 !important;   /* 👈 slightly darker overlay */
+					  z-index: 1062;             /* 👈 ensures it sits below modal but above everything else */
+					}
+									body {
+			    font-family: 'Segoe UI', Arial, sans-serif;
+			    font-size: 14px;}
+				
+				
+				
+				.table .thead-light th {
+			    color: #495057;
+			    background-color: #e9ecef;
+			    border-color: #dee2e6;
+			font-family: sans-serif;
+				
+			}
+			:root {
+			  --bob-orange: #0073e6;
+			  --bob-blue: #004080;
+			  --overlay-bg: rgba(255, 255, 255, 0.9);
+			}
+
+			/* Full-screen overlay */
+			.bob-loader {
+			  position: fixed;
+			  inset: 0;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  background: rgba(226, 232, 237, 0.6); /* lighter background */
+			  backdrop-filter: blur(8px); /* ✅ background blur */
+			  -webkit-backdrop-filter: blur(8px); /* Safari support */
+			  z-index: 9999;
+			  transition: opacity 0.25s ease, visibility 0.25s;
+			  opacity: 1;
+			  visibility: visible;
+			}
+
+			/* Hide when not active */
+			.bob-loader[aria-hidden="true"] {
+			  opacity: 0;
+			  visibility: hidden;
+			  pointer-events: none;
+			}
+
+			/* Loader card */
+			.bob-loader-card {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			}
+
+			/* Static logo */
+			.logo-imgs {
+			  height: 90px;
+			  object-fit: contain;
+			  display: block;
+			}
+
+			/* Flowing bar below logo */
+			.flow-bar {
+			  position: relative;
+			  width: 200px; /* ✅ increased width */
+			  height: 8px;  /* slightly thicker for better visibility */
+			  background: #f1f1f1;
+			  border-radius: 4px;
+			  overflow: hidden;
+			  margin-top: 10px;
+			}
+
+			.flow-line {
+			  position: absolute;
+			  left: -40%;
+			  top: 0;
+			  width: 40%;
+			  height: 100%;
+			  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			  border-radius: 4px;
+			  animation: flowMove 1.2s linear infinite;
+			}
+
+			/* Animation for flowing line */
+			@keyframes flowMove {
+			  0% {
+			    left: -40%;
+			  }
+			  100% {
+			    left: 100%;
+			  }
+			}
+
+
+		</style>
+
 		<style>
 
 			  
@@ -283,9 +392,14 @@ PURPOSE		: Access the Modules by Role
 			location.href = 'Dashboard'
 		}
 
-
+		
 		function submitform(a) {
-			var requiredFields = ["#role_id", "#role_desc", "#permissions", "#domain_id", "#work_class"];
+			
+			
+			
+			
+			
+			var requiredFields = ["#roleId", "#roleDesc", "#permissions", "#domainId", "#workClass"];
 			var isValid = true;
 
 			requiredFields.forEach(function (selector) {
@@ -325,7 +439,7 @@ PURPOSE		: Access the Modules by Role
 			var formData = new FormData(form);
 			formData.append("finalString", menuContent);
 
-			$("#loader1").modal("toggle");
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			$.ajax({
 				url: "./createAccessRole?formmode=" + encodeURIComponent(formmode),
@@ -334,7 +448,7 @@ PURPOSE		: Access the Modules by Role
 				processData: false,
 				contentType: false,
 				success: function (response) {
-					$("#loader1").hide();
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.log('Success response:', response);
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
@@ -347,7 +461,7 @@ PURPOSE		: Access the Modules by Role
 					}
 				},
 				error: function (xhr, status, error) {
-					$("#loader1").hide();
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error('AJAX error:', status, error);
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
@@ -355,6 +469,9 @@ PURPOSE		: Access the Modules by Role
 			});
 
 			return false;
+			
+			
+			
 		}
 
 		document
@@ -466,7 +583,7 @@ PURPOSE		: Access the Modules by Role
 			var formData = new FormData();
 			formData.append("roleId", roleId);       // important for alertparam.getRoleId()
 			formData.append("formmode", "verify");   // tells backend to run verify block
-
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$.ajax({
 				url: "./createAccessRole",
 				type: "POST",
@@ -474,10 +591,13 @@ PURPOSE		: Access the Modules by Role
 				processData: false,
 				contentType: false,
 				success: function (response) {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
 				error: function (xhr, status, error) {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
 				}
@@ -493,6 +613,7 @@ PURPOSE		: Access the Modules by Role
 
 			var formData = new FormData(document.getElementById("IPSAccessRole"));
 			//formData.append("roleId", roleid); // attach it manually
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			$
 				.ajax({
@@ -503,10 +624,14 @@ PURPOSE		: Access the Modules by Role
 					processData: false,
 					contentType: false,
 					success: function (response) {
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
 						$("#alertmsg").text(response);
 						$('#alert').modal("toggle");
 					},
 					error: function (xhr, status, error) {
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
 						console.error('AJAX error:', status, error);
 						$("#alertmsg").text("Error occurred: " + error);
 						$('#alert').modal("toggle");
@@ -1057,12 +1182,12 @@ PURPOSE		: Access the Modules by Role
 																<div style="float: right;">
 																	<button type="button" th:if="${formmode}=='add'"
 																		class="btn btn-primary"
-																		style="background-color:orange;color:black"
+																		style="background-color:#0073e6;"
 																		data-dismiss="modal"
 																		onclick="getvalue('add');">SUBMIT</button>
 																	<button type="button" th:if="${formmode}=='edit'"
 																		class="btn btn-primary"
-																		style="background-color:orange;color:black"
+																		style="background-color:#0073e6;"
 																		data-dismiss="modal"
 																		onclick="getvalue('edit');">SUBMIT</button>
 																</div>
@@ -1174,7 +1299,16 @@ PURPOSE		: Access the Modules by Role
 			</div>
 		</div>
 	</div>
+	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+	  <div class="bob-loader-card">
+	    <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+	    <div class="flow-bar">
+	      <div class="flow-line"></div>
+	    </div>
+	  </div>
+	</div>
 
+	
 	<div class="modal fade" id="alert" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
