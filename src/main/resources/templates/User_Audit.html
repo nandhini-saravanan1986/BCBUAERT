@@ -32,7 +32,258 @@
 <script src="/webjars/datatables.net/1.13.4/js/jquery.dataTables.min.js"
 	th:src="@{/webjars/datatables.net/1.13.4/js/jquery.dataTables.min.js}"></script>
 											
-											
+		
+		<style>
+
+									
+									
+									
+									body {
+			    font-family: 'Segoe UI', Arial, sans-serif;
+			    font-size: 14px;}
+				
+				
+				
+				.table .thead-light th {
+			    color: #495057;
+			    background-color: #e9ecef;
+			    border-color: #dee2e6;
+				font-family: sans-serif;
+			}
+								/* === ROLE PAGE CUSTOM HEADER === */
+								.role-page-header {
+								    background-color: #ffffff;
+								    padding: 15px 20px;
+								}
+
+								.role-page-title h4 {
+								    color: #003366;
+								    font-family: "Segoe UI", Arial, sans-serif;
+								    font-size: 20px;
+								    font-weight: 700;
+								    margin: 0;
+								}
+
+								.role-page-underline {
+								    width: 158px;
+								    height: 3px;
+								    background-color: #0073e6;
+								    border-radius: 2px;
+								    margin-top: 6px;
+								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+								}
+
+
+								/* Add Button Styling */
+								.role-add-btn {
+								    background: linear-gradient(135deg, #005fa3, #007bff);
+								    color: #fff;
+								    border: none;
+								    border-radius: 25px;
+								    padding: 8px 18px;
+								    font-size: 13px;
+								    font-weight: 600;
+								    cursor: pointer;
+								    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+								    transition: all 0.3s ease;
+								}
+
+								.role-add-btn:hover {
+								    background: linear-gradient(135deg, #007bff, #3399ff);
+								    transform: translateY(-2px);
+								    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+								}
+
+								.role-add-btn i {
+								    margin-right: 5px;
+								}
+
+								
+							</style>
+							<script>
+								function goBack() {
+								    window.history.back();
+								}
+
+								function goForward() {
+								    window.history.forward();
+								}
+
+								// Detect mouse near screen edges
+								document.addEventListener('mousemove', function(e) {
+								    const backBtn = document.getElementById('floatingBackBtn');
+								    const forwardBtn = document.getElementById('floatingForwardBtn');
+								    const screenWidth = window.innerWidth;
+
+								    // Left edge (back)
+								    if (e.clientX < 50) {
+								        backBtn.classList.add('show');
+								    } else {
+								        backBtn.classList.remove('show');
+								    }
+
+								    // Right edge (forward)
+								    if (screenWidth - e.clientX < 50) {
+								        forwardBtn.classList.add('show');
+								    } else {
+								        forwardBtn.classList.remove('show');
+								    }
+								});
+								</script>
+
+								<style>
+								/* Shared styles for both buttons */
+								#floatingBackBtn, 
+								#floatingForwardBtn {
+								    position: fixed;
+								    top: 50%;
+								    background-color: #0073e6;
+								    border: none;
+								    color: white;
+								    font-size: 20px;
+								    border-radius: 50%;
+								    width: 45px;
+								    height: 45px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    opacity: 0;
+								    pointer-events: none;
+								    transition: all 0.4s ease;
+								    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+								    z-index: 999;
+								}
+
+								/* Back button */
+								#floatingBackBtn {
+								    left: -50px; /* hidden off-screen */
+								}
+
+								/* Forward button */
+								#floatingForwardBtn {
+								    right: -50px; /* hidden off-screen */
+								}
+
+								/* Show when near edge */
+								#floatingBackBtn.show {
+								    left: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								#floatingForwardBtn.show {
+								    right: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								/* Hover animation */
+								#floatingBackBtn:hover,
+								#floatingForwardBtn:hover {
+								    background-color: #005bb5;
+								    transform: scale(1.1);
+								}
+								</style>	
+		<style>
+				/* Red border for invalid inputs */
+				input.error,
+				select.error {
+					border: 2px solid red !important;
+				}
+
+				/* Error message style */
+				label.error {
+					color: red;
+					font-size: 0.85em;
+					margin-top: 5px;
+					display: block;
+				}
+
+				.underline {
+					text-decoration: underline;
+					color: #08a6f1;
+					cursor: pointer;
+				}
+
+				.left-arrow-circle {
+					width: 35px;
+					height: 35px;
+					border-radius: 50%;
+					background-color: white;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-right: 10px;
+					transition: background-color 0.3s, transform 0.2s;
+				}
+
+				.left-arrow-circle i {
+					color: rgb(107, 122, 143);
+				}
+
+				.left-arrow-circle:hover {
+					background-color: rgb(107, 122, 143);
+					cursor: pointer;
+					transform: scale(1.05);
+					border: 2px solid white;
+				}
+
+				.left-arrow-circle:hover i {
+					color: white;
+				}
+
+				.white-text span {
+					color: white !important;
+
+
+				}
+			</style>
+	<style>
+		
+	.btns {
+		float: right;
+		margin: 5px;
+	}
+
+	.col-sm-5 {
+		padding-bottom: 15px;
+	}
+
+	.list-body {
+		padding: 0px;
+	}
+
+	.error {
+		color: red;
+		padding-left: 10px;
+	}
+
+	.formline {
+		padding-bottom: 15px;
+	}
+
+	.btn-primary {
+		background-color: #E77400;
+		border-color: #0c0c0c;
+	}
+
+	.btn-primary:not(:disabled):not(.disabled).active,
+	.btn-primary:not(:disabled):not(.disabled):active,
+	.show > .btn-primary.dropdown-toggle {
+	    color: #fff;
+	    background-color: #cc0000;
+	    border-color: #161617;
+	}
+
+
+	#finusertb {
+		width: 460px;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		padding: 0px;
+	}
+	</style>							
 	<style>
 		/* Red border for invalid inputs */
 		input.error,
@@ -112,6 +363,7 @@
 		});
 
 		var table = $('#userAuditLevelTb').DataTable({
+			
 			destroy: true,
 			scrollCollapse: true,
 			paging: true,
@@ -326,7 +578,7 @@
 	function back() {
 		window.history.back();
 	}
-
+	
 	document.addEventListener("DOMContentLoaded", function () {
 		const dateInput = document.getElementById("searchDate");
 		const today = new Date().toISOString().substr(0, 10);
@@ -371,112 +623,6 @@
 </script>
 
 
-<style>
-	.row1 {
-		padding-bottom: 10px;
-	}
-
-	table.dataTable thead th,
-	table.dataTable tfoot th {
-		font-weight: normal;
-	}
-
-	table.table .thead-light th {
-		font-size: 13px;
-		border-color: #d4d7da;
-	}
-
-	.dataTables_scrollBody {
-		overflow: unset !important;
-	}
-
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		padding: 0px;
-	}
-
-	td.details-control {
-		background: url("images/details_open.png") no-repeat center center;
-		cursor: pointer;
-	}
-
-	tr.shown td.details-control {
-		background: url("images/details_close.png") no-repeat center center;
-	}
-
-	/* Style the DataTable header to match the image */
-	#userAuditLevelTb thead th {
-		/* dark blue-gray */
-		color: BLACK;
-		font-weight: bold;
-		font-size: 16px;
-		text-align: left;
-		border: 1px solid #dee2e6;
-	}
-
-	/* Style for table rows */
-	#userAuditLevelTb tbody td {
-		text-align: left;
-		border: 1px solid #dee2e6;
-		font-size: 15px;
-	}
-
-	/* Zebra striping */
-	#userAuditLevelTb tbody tr:nth-child(odd) {
-		background-color: #f9f9f9;
-	}
-
-	/* No data message color */
-	.dataTables_empty {
-		color: red !important;
-		text-align: center;
-	}
-
-	/* Pagination Button Styles */
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		padding: 4px 8px;
-		margin: 2px;
-		border: 1px solid #ccc;
-		background-color: #3d69fc;
-		border-radius: 4px;
-		font-size: 12px;
-	}
-
-	.table-container {
-		max-height: 400px;
-		overflow-y: auto;
-		margin-top: 10px;
-	}
-
-	table.fixed-header-table {
-		width: 100%;
-		border-collapse: collapse;
-		table-layout: fixed;
-	}
-
-	thead th {
-		position: sticky;
-		top: 0;
-		background: #f8f9fa;
-		/* or white */
-		z-index: 1;
-		border: 1px solid #dee2e6;
-		text-align: center;
-	}
-
-	table.fixed-header-table th,
-	table.fixed-header-table td {
-		padding: 8px;
-		border: 1px solid #dee2e6;
-		text-align: center;
-	}
-
-	.table-container {
-		max-height: 450px;
-		/* You can adjust this height */
-		overflow-y: auto;
-	}
-</style>
-
 </head>
 <title>BRAS</title>
 
@@ -486,27 +632,33 @@
 			<div th:insert="XBRLHeaderMenu :: header"></div>
 			<div class="col-sm-12">
 				<div class="card">
-					<div class="card-header d-flex justify-content-between align-items-center"
-						style="background-color: #376275;">
+			
 
-						<div class="float-left">
-										<div style="display: flex; align-items: center;" onclick="back();">
-											<!-- Back Icon -->
-											<div class="left-arrow-circle">
-												<i class="fa fa-arrow-left"></i>
-											</div>
-											<h5 
-											  style="font-family: verdana;  font-weight: bold; padding-top: 10px;">USER LEVEL AUDIT</h5>
+					
+					<div class="role-page-header d-flex justify-content-between align-items-center">
+										    <!-- Left: Page Title -->
+										    <div class="role-page-title">
+										        <h4 >USER LEVEL AUDIT</h4>
+													<div style="width: 178px;
+															    height: 3px;
+															    background-color: #0073e6;
+															    border-radius: 2px;
+															    margin-top: 6px;
+															    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+																</div>
+																<!-- Right: Add Button -->
+																			<div class="form-inline">
+																			<label for="reportDate" class="mr-2">Report Date:</label> <input
+																				type="date" id="searchDate" name="searchDate"
+																				class="form-control form-control-sm" />
+																				
+																			</div>
+										  
 										</div>
-									</div>
-												
-						<div class="form-inline">
-							<label for="searchDate" class="mr-2 mb-0" style="color:white !important">Search records By
-								Date:</label>
-							<input type="date" id="searchDate" class="form-control form-control-sm" />
-						</div>
-					</div>
-
+										
+					
+					
+					
 					<form class="form-horizontal" method="post" name="CriteriaForm" id="reportform">
 						<div class="form-group">
 							<div class="row row1">
@@ -515,10 +667,17 @@
 						</div>
 					</form>
 
-					<div class="table-container">
-						<table class="table table-striped table-bordered table-hover" id="userAuditLevelTb">
-							<thead>
-								<tr>
+					
+								
+					<div class="table-container" style="
+					     padding: 0 15px;
+					     max-height: 500px;   /* 👈 control height */
+					     overflow-y: auto;    /* 👈 enable vertical scroll */
+					     overflow-x: hidden;
+					">									<table class="table table-striped table-bordered table-hover" id="userAuditLevelTb">
+								
+										<thead style="background-color: #e9ecf0; " class="thead-light">
+											<tr>
 									<th>Audit Ref No</th>
 									<th>Table Name</th>
 									<th>Function</th>
@@ -553,6 +712,17 @@
 					
 				</div>
 			</div>
+			
+						
+						
+							<!-- Floating Back Button -->
+			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+				<i class="fa fa-arrow-left"></i>
+			</button>
+			<!-- Floating Forward Button -->
+			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			    <i class="fa fa-arrow-right"></i>
+			</button>
 			<div class="modal fade" id="alert">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 					<div class="modal-content">
