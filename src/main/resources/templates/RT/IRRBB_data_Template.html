@@ -45,7 +45,272 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
+	<style>
 
+			body {
+	    font-family: 'Segoe UI', Arial, sans-serif;
+	    font-size: 14px;}
+		
+		
+		
+		.table .thead-light th {
+	    color: #495057;
+	    background-color: #e9ecef;
+	    border-color: #dee2e6;
+	font-family: sans-serif;
+		
+	}
+
+
+
+	.modal-backdrop {
+			  position: fixed;
+			  top: 0;
+			  left: 0;
+			  width: 120vw !important;              /* 👈 a bit wider than viewport */
+			  height: 120vh  !important;         /* 👈 a bit taller than viewport */
+			  background-color: #000;    /* 👈 solid black base */
+			  opacity: 0.7 !important;   /* 👈 slightly darker overlay */
+			  z-index: 1062;             /* 👈 ensures it sits below modal but above everything else */
+			}
+					
+							/* === ROLE PAGE CUSTOM HEADER === */
+							.role-page-header {
+							    background-color: #ffffff;
+							    padding: 15px 20px;
+							}
+
+							.role-page-title h4 {
+							    color: #003366;
+							    font-family: "Segoe UI", Arial, sans-serif;
+							    font-size: 20px;
+							    font-weight: 700;
+							    margin: 0;
+							}
+
+							.role-page-underline {
+							    width: 158px;
+							    height: 3px;
+							    background-color: #0073e6;
+							    border-radius: 2px;
+							    margin-top: 6px;
+							    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+							}
+
+
+							/* Add Button Styling */
+							/* Base Button Style */
+							.role-add-btn {
+							  background: #ffffff; /* default white background */
+							  color: #005fa3; /* blue text */
+							  border: 2px solid #005fa3;
+							  border-radius: 25px;
+							  padding: 8px 18px;
+							  font-size: 13px;
+							  font-weight: 600;
+							  cursor: pointer;
+							  box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+							  transition: all 0.3s ease;
+							}
+
+							/* Hover effect */
+							.role-add-btn:hover {
+							  background: linear-gradient(135deg, #005fa3, #007bff);
+							  color: #fff;
+							  transform: translateY(-2px);
+							  box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+							}
+
+							/* Active (clicked or selected) button */
+							.role-add-btn.active {
+							  background: linear-gradient(135deg, #005fa3, #007bff);
+							  color: #fff;
+							  border: none;
+							  box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+							  transform: translateY(-1px);
+							}
+
+							/* Optional: icon spacing */
+							.role-add-btn i {
+							  margin-right: 5px;
+							}
+
+							
+						</style>
+						
+						<style>
+									
+										
+									:root {
+									  --bob-orange: #0073e6;
+									  --bob-blue: #004080;
+									  --overlay-bg: rgba(255, 255, 255, 0.9);
+									}
+
+									/* Full-screen overlay */
+									.bob-loader {
+									  position: fixed;
+									  inset: 0;
+									  display: flex;
+									  align-items: center;
+									  justify-content: center;
+									  background: rgba(226, 232, 237, 0.6); /* lighter background */
+									  backdrop-filter: blur(8px); /* ✅ background blur */
+									  -webkit-backdrop-filter: blur(8px); /* Safari support */
+									  z-index: 9999;
+									  transition: opacity 0.25s ease, visibility 0.25s;
+									  opacity: 1;
+									  visibility: visible;
+									}
+
+									/* Hide when not active */
+									.bob-loader[aria-hidden="true"] {
+									  opacity: 0;
+									  visibility: hidden;
+									  pointer-events: none;
+									}
+
+									/* Loader card */
+									.bob-loader-card {
+									  display: flex;
+									  flex-direction: column;
+									  align-items: center;
+									}
+
+									/* Static logo */
+									.logo-imgs {
+									  height: 90px;
+									  object-fit: contain;
+									  display: block;
+									}
+
+									/* Flowing bar below logo */
+									.flow-bar {
+									  position: relative;
+									  width: 200px; /* ✅ increased width */
+									  height: 8px;  /* slightly thicker for better visibility */
+									  background: #f1f1f1;
+									  border-radius: 4px;
+									  overflow: hidden;
+									  margin-top: 10px;
+									}
+
+									.flow-line {
+									  position: absolute;
+									  left: -40%;
+									  top: 0;
+									  width: 40%;
+									  height: 100%;
+									  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+									  border-radius: 4px;
+									  animation: flowMove 1.2s linear infinite;
+									}
+
+									/* Animation for flowing line */
+									@keyframes flowMove {
+									  0% {
+									    left: -40%;
+									  }
+									  100% {
+									    left: 100%;
+									  }
+									}
+
+
+								</style>
+								
+						<script>
+							function goBack() {
+							    window.history.back();
+							}
+
+							function goForward() {
+							    window.history.forward();
+							}
+
+							// Detect mouse near screen edges
+							document.addEventListener('mousemove', function(e) {
+							    const backBtn = document.getElementById('floatingBackBtn');
+							    const forwardBtn = document.getElementById('floatingForwardBtn');
+							    const screenWidth = window.innerWidth;
+
+							    // Left edge (back)
+							    if (e.clientX < 50) {
+							        backBtn.classList.add('show');
+							    } else {
+							        backBtn.classList.remove('show');
+							    }
+
+							    // Right edge (forward)
+							    if (screenWidth - e.clientX < 50) {
+							        forwardBtn.classList.add('show');
+							    } else {
+							        forwardBtn.classList.remove('show');
+							    }
+							});
+							</script>
+
+							<style>
+							/* Shared styles for both buttons */
+							#floatingBackBtn, 
+							#floatingForwardBtn {
+							    position: fixed;
+							    top: 50%;
+							    background-color: #0073e6;
+							    border: none;
+							    color: white;
+							    font-size: 20px;
+							    border-radius: 50%;
+							    width: 45px;
+							    height: 45px;
+							    display: flex;
+							    align-items: center;
+							    justify-content: center;
+							    opacity: 0;
+							    pointer-events: none;
+							    transition: all 0.4s ease;
+							    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+							    z-index: 999;
+							}
+
+							/* Back button */
+							#floatingBackBtn {
+							    left: -50px; /* hidden off-screen */
+							}
+
+							/* Forward button */
+							#floatingForwardBtn {
+							    right: -50px; /* hidden off-screen */
+							}
+
+							/* Show when near edge */
+							#floatingBackBtn.show {
+							    left: 20px;
+							    opacity: 1;
+							    pointer-events: auto;
+							}
+
+							#floatingForwardBtn.show {
+							    right: 20px;
+							    opacity: 1;
+							    pointer-events: auto;
+							}
+
+							/* Hover animation */
+							#floatingBackBtn:hover,
+							#floatingForwardBtn:hover {
+							    background-color: #005bb5;
+							    transform: scale(1.1);
+							}
+							</style>	
+							
+							
+							
+							
+							
+							
+							
+					
 	<style>
 		.btns {
 			float: right;
@@ -132,12 +397,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			background-color: #f3f6f9;
 		}
 
-		thead th {
-			position: sticky;
-			top: 0;
-			background-color: #e9ecf0;
-			z-index: 1;
-		}
+		
 
 		.card-footer {
 			padding: 10px;
@@ -150,14 +410,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			border-radius: 4px;
 		}
 
-		#usertable th,
-		#usertable td {
-			vertical-align: middle;
-			text-align: left;
-			font-size: 17px;
-			font-family: Verdana, sans-serif;
-		}
-
+		
 		.fa-edit:hover {
 			color: #28a745;
 			transform: scale(1.1);
@@ -253,7 +506,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	
 	<style>
 	
-	.custom-tab-btnl {
+	.role-add-btnl {
     min-width: 150px; /* or a value you prefer */
    
     padding: 8px 12px;
@@ -295,8 +548,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	<script>
 
 		function submitForm() {
-			$("#loader").modal("toggle");
 
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			
 			const reportName = 'CBUAE_IRRBB_Data_Template';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
 			const formData = $("#nostroForm").serialize();
@@ -306,8 +560,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				type: "POST",
 				data: formData,
 				success: function (response) {
-					$("#loader").modal("hide");
-                    $("#alertmsg1").text(response);
+
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");                    $("#alertmsg1").text(response);
 					$("#alert1").modal("toggle");
 					//location.href = 'Nostro_Account_Bal';
 				},
@@ -328,26 +582,33 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
 		function home() {
-			$("#loader").modal("toggle");
-			location.href = 'Dashboard'
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+						location.href = 'Dashboard'
 		}
 
 		function back() {
-			$("#loader").modal("toggle");
 
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			window.history.back();
 		}
 
 		function list() {
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'IRRBB_data_Template?formmode=DiscountRate';
 		}
 
 		function nostro() {
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'Investment_Securities_Data';
 		}
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 				window.location.href = './Investment_Securities_Data';
 			});
 		});
@@ -355,15 +616,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		function updateform(event) {
 
 			event.preventDefault();
-			$("#loader").modal("toggle");
 
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$.ajax({
 				url: `./updateirrbear`,
 				type: 'POST',
 				data: $('#irrbbear').serialize(),
 				success: function (response) {
-					$("#loader").modal("hide");
 
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
@@ -371,8 +632,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					$("#loader").modal("hide");
 
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					alert("Failed to modify. Please try again.");
 				}
 			});
@@ -386,8 +647,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 <script>
 	function navigateToTab(tabId) {
-		$("#loader").modal("show");
 
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		if (tabId === 'data') {
 			window.location.href = 'IRRBB_data_Template?formmode=list';
 		} else if (tabId === 'datacontrols') {
@@ -404,7 +665,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
-		document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
+		document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
 		document.getElementById(tabId + '-btn').classList.add('active');
 
 		// Hide all panes
@@ -436,15 +697,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	function updateformdiscount(event) {
 
 			event.preventDefault();
-			$("#loader").modal("toggle");
 
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$.ajax({
 				url: `./updateirrbdiscount`,
 				type: 'POST',
 				data: $('#irrbbdiscount').serialize(),
 				success: function (response) {
-					$("#loader").modal("hide");
 
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
@@ -452,8 +713,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					$("#loader").modal("hide");
 
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					alert("Failed to modify. Please try again.");
 				}
 			});
@@ -468,8 +729,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 <script>
 	function downloadIrrbbeve() {
-		$('#loader').modal('show');
 
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		$.ajax({
 			url: './downloadIrrbbeveExcel', // This URL must match your controller endpoint
 			type: 'GET',
@@ -477,8 +738,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				responseType: 'blob' // Essential for handling binary file data
 			},
 			success: function (data, textStatus, jqXHR) {
-				$('#loader').modal('hide');
 
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
 					showResultModal('Information', 'No data was available to create the report.');
@@ -504,8 +765,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				$('#loader').modal('hide');
-				console.error("Download failed:", textStatus, errorThrown);
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
+							console.error("Download failed:", textStatus, errorThrown);
 				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
 			}
 		});
@@ -514,15 +776,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	function showResultModal(title, message) {
 		$('#resultModalLabel').text(title);
 		$('#resultModalBody').text(message);
-		$('#resultModal').modal('show');
-	}
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
 </script>
 
 
 <script>
 	function downloadIrrbbear() {
-		$('#loader').modal('show');
 
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		$.ajax({
 			url: './downloadIrrbbearExcel', // This URL must match your controller endpoint
 			type: 'GET',
@@ -530,8 +792,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				responseType: 'blob' // Essential for handling binary file data
 			},
 			success: function (data, textStatus, jqXHR) {
-				$('#loader').modal('hide');
 
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
 					showResultModal('Information', 'No data was available to create the report.');
@@ -557,8 +819,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				$('#loader').modal('hide');
-				console.error("Download failed:", textStatus, errorThrown);
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
+							console.error("Download failed:", textStatus, errorThrown);
 				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
 			}
 		});
@@ -567,15 +830,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	function showResultModal(title, message) {
 		$('#resultModalLabel').text(title);
 		$('#resultModalBody').text(message);
-		$('#resultModal').modal('show');
-	}
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
 </script>
 
 
 <script>
 	function downloadIrrbbdiscount() {
-		$('#loader').modal('show');
 
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		$.ajax({
 			url: './downloadIrrbbdiscountrateExcel', // This URL must match your controller endpoint
 			type: 'GET',
@@ -583,8 +846,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				responseType: 'blob' // Essential for handling binary file data
 			},
 			success: function (data, textStatus, jqXHR) {
-				$('#loader').modal('hide');
 
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
 					showResultModal('Information', 'No data was available to create the report.');
@@ -610,8 +873,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				$('#loader').modal('hide');
-				console.error("Download failed:", textStatus, errorThrown);
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");		
+						console.error("Download failed:", textStatus, errorThrown);
 				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
 			}
 		});
@@ -620,56 +884,57 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	function showResultModal(title, message) {
 		$('#resultModalLabel').text(title);
 		$('#resultModalBody').text(message);
-		$('#resultModal').modal('show');
-	}
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
 </script>
 
-<title>BCDRS</title>
+<title>RiskInsights - IRRBB</title>
 
 <body>
 	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
-		<div class="row">
-
+		
 			<div th:insert="XBRLHeaderMenu :: header"></div>
-
-			<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'}"
-				style="background-color: rgb(107, 122, 143) ; ">
-				<div class="float-left">
-					<h5
-						style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
-						IRRBB DATA TEMPLATE</h5>
+		
+			<div class="role-page-header d-flex justify-content-between align-items-center"
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'}">
+				<div class="float-left role-page-title">
+					<h5>IRRBB DATA TEMPLATE</h5>
+					<div style="width: 212px; height: 3px;background-color: #0073e6;border-radius: 2px;
+		margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 				</div>
-
-
 			</div>
+		
+		
 			<!-- -------------------User List Starts----------------------------------------------------- -->
 			<div style="padding-right: 10px;padding-left: 20px;"
 				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' }">
             <!-- Tabs -->
-				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
-					<button  class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+				<div  class="role-page-header d-flex justify-content-between align-items-center" >
+					<div class="float-left" >
+					<button  class="role-add-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
 						Controls</button>
-					<button  class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template
+					<button  class="role-add-btn" id="template-btn" onclick="handleClick('template')">Template
 						Instructions</button>
-					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
-					<button class="custom-tab-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
-					<button style="white-space:nowrap" class="custom-tab-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
-					<div class="float-right" style="margin-left:40%">
+					<button class="role-add-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
+					<button class="role-add-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
+					<button style="white-space:nowrap" class="role-add-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
+					</div>
+					<div class="float-right" >
 					
 					<!-- ---LIST MEAN--EVE-- -->
-						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
+						<button th:if="${formmode} =='list'" type="button" class="role-add-btn"
 							onclick="downloadIrrbbeve();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---EAR DOWNLOAD-->
-						<button th:if="${formmode} =='EAR'" type="button" class="custom-tab-btn"
+						<button th:if="${formmode} =='EAR'" type="button" class="role-add-btn"
 							onclick="downloadIrrbbear();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---DiscountRate DOWNLOAD-->
-						<button th:if="${formmode} =='DiscountRate'" type="button" class="custom-tab-btn"
+						<button th:if="${formmode} =='DiscountRate'" type="button" class="role-add-btn"
 							onclick="downloadIrrbbdiscount();">
 							<i class="fa fa-download"></i> Download
 						</button>
@@ -687,7 +952,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						<div class="row">
 							<div class="col-sm-12 finuserapply">
 								<form id="nostroForm" method="post" autocomplete="off">
-									<div class="card-body" style="max-height:450px; overflow-y:auto">
+									<div class="card-body" style="max-height:400px; overflow-y:auto">
 
 
 										<input autocomplete="false" name="hidden" type="text" style="display: none;">
@@ -874,22 +1139,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						</div>
 						<div class="card-footer text-center"
 							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="button" class="custom-tab-btn" onclick="home();">
-								<i class="fa fa-home"></i> Home
-							</button>
+							
 
 
-							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="role-add-btn"
                   onclick="submitForm()">Save</button>-->
 
 							<button th:if="${formmode == null or formmode == 'add'}" type="button"
-								class="custom-tab-btn" onclick="submitForm()">Save</button>
+								class="role-add-btn" onclick="submitForm()">Save</button>
 
-
-
-							<button type="button" class="custom-tab-btn" onclick="back();">
-								<i class="fa fa-arrow-left"></i> Back
-							</button>
 
 						</div>
 					</div>
@@ -905,17 +1163,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button>
+						
 
-						<button type="button" class="custom-tab-btn" onclick="submitForm()">
+						<button type="button" class="role-add-btn" onclick="submitForm()">
 							Save
 						</button>
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button>
 					</div>
 				</div>
 
@@ -925,9 +1178,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				<div class="tab-pane fade" id="data" role="tabpanel" th:if="${formmode=='list'}" >
 					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
 						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; font-family:calibri;">
+							style="min-width: 2000px;">
 
-							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+							<thead class="thead-light">
 								 
 								<tr>
 								    <th>Action</th>
@@ -972,7 +1225,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 								</tr>
 							</thead>
-							<tbody style="font-size: 9px;" th:each="data : ${ISList}">
+							<tbody th:each="data : ${ISList}">
 								<tr>
 								<td><a
 											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
@@ -1026,18 +1279,13 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button>
+					
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
 							onclick="submitForm()">Save</button>
 
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button>
 
 					</div>
 
@@ -1051,12 +1299,19 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div class="row">
 <form th:action="@{/updateirrbeve}"  th:object="${irrbbeve}" method="post" >
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
-						<div class="card-header"style="background-color: rgb(166,0,0);">
-							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB EVE - Edit</h3>
-							</div>
+		
+		
+		<div class="role-page-header d-flex justify-content-between align-items-center">
+								    <!-- Left: Page Title -->
+								    <div class="role-page-title">
+								        <h4 >IRRBB EVE - Edit</h4>
+		<div style="width: 156px; height: 3px;background-color: #0073e6;border-radius: 2px;
+		margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+
+								  
+								</div>
+								</div>
 							
-						</div>
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
  
@@ -1536,10 +1791,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
     <!-- Submit -->
-   <div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='list')}" class="custom-tab-btn">Cancel</a>
+   <div class="card-footer text-center">
+   <button type="submit" class="role-add-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='list')}" class="role-add-btn">Cancel</a>
     </div>
     
     </div>
@@ -1554,9 +1808,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				<div class="tab-pane fade" id="ear" role="tabpanel" th:if="${formmode=='EAR'}">
 					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
 						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; font-family:calibri;">
+							style="min-width: 2000px;">
 
-							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+							<thead class="thead-light">
 								 
 								<tr>
 								    <th>Action</th>
@@ -1595,7 +1849,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 								</tr>
 							</thead>
-							<tbody style="font-size: 9px;" th:each="data : ${ISListEar}">
+							<tbody  th:each="data : ${ISListEar}">
 								<tr>
 								<td><a
 											th:href="@{'/IRRBB_data_Template?formmode=editear&SI_NO=' + ${data.SI_NO}}">
@@ -1643,18 +1897,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button>
+						
 
-
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
 							onclick="submitForm()">Save</button>
 
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button>
 
 					</div>
 
@@ -1668,12 +1916,18 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div class="row">
 <form th:action="@{/updateirrbear}" th:object="${irrbbear}" method="post" id="irrbbear">
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
-						<div class="card-header"style="background-color: rgb(166,0,0);">
-							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB EAR - Edit</h3>
-							</div>
-							
-						</div>
+						
+						
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+													    <!-- Left: Page Title -->
+													    <div class="role-page-title">
+													        <h4 >IRRBB EAR - Edit</h4>
+							<div style="width: 156px; height: 3px;background-color: #0073e6;border-radius: 2px;
+							margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+
+													  
+													</div>
+													</div>
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
  
@@ -2109,10 +2363,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
     <!-- Submit -->
-   <div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='EAR')}" class="custom-tab-btn">Cancel</a>
+   <div class="card-footer text-center">
+   <button type="submit" class="role-add-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='EAR')}" class="role-add-btn">Cancel</a>
     </div>
     
     </div>
@@ -2127,9 +2380,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				<div class="tab-pane fade" id="DiscountRate" role="tabpanel" th:if="${formmode=='DiscountRate'}">
 					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
 						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; font-family:calibri;">
+							style="min-width: 2000px; ">
 
-							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+							<thead class="thead-light" >
 								 
 								<tr>
 								    <th>Action</th>
@@ -2158,7 +2411,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 									<th>30Y</th>
 								</tr>
 							</thead>
-							<tbody style="font-size: 9px;" th:each="data : ${ISListDiscount}">
+							<tbody  th:each="data : ${ISListDiscount}">
 								<tr>
 								<td><a
 											th:href="@{'/IRRBB_data_Template?formmode=editdiscount&SI_NO=' + ${data.SI_NO}}">
@@ -2199,18 +2452,13 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button>
+						
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
 							onclick="submitForm()">Save</button>
 
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button>
 
 					</div>
 
@@ -2227,12 +2475,18 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div class="row">
 <form th:action="@{/updateirrbdiscount}" th:object="${irrbbdiscount}" method="post" id="irrbbdiscount">
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
-						<div class="card-header"style="background-color: rgb(166,0,0);">
-							<div class="float-left">
-								<h3 style="font-family: verdana;color: white !important; font-size: 24px; font-weight: bold;">IRRBB DISCOUNT RATE - Edit</h3>
-							</div>
-							
-						</div>
+		<div class="role-page-header d-flex justify-content-between align-items-center">
+															    <!-- Left: Page Title -->
+															    <div class="role-page-title">
+															        <h4 >IRRBB Discount Rate - Edit</h4>
+									<div style="width: 250px; height: 3px;background-color: #0073e6;border-radius: 2px;
+									margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+
+															  
+															</div>
+															</div>
+						
+						
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
  
@@ -2404,10 +2658,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
     <!-- Submit -->
-   <div class="card-footer text-center"
-     style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-   <button type="submit" class="custom-tab-btn" onclick="updateformdiscount(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='DiscountRate')}" class="custom-tab-btn">Cancel</a>
+   <div class="card-footer text-center">
+   <button type="submit" class="role-add-btn" onclick="updateformdiscount(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='DiscountRate')}" class="role-add-btn">Cancel</a>
     </div>
     
     </div>
@@ -2439,13 +2692,23 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
-							<button type="button" class="custom-tab-btn" onclick="list()"
+							<button type="button" class="role-add-btn" onclick="list()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
+						
+						
+							<!-- Floating Back Button -->
+			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+				<i class="fa fa-arrow-left"></i>
+			</button>
+			<!-- Floating Forward Button -->
+			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			    <i class="fa fa-arrow-right"></i>
+			</button>
 			<div class="modal fade" id="alert1">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 					<div class="modal-content">
@@ -2456,7 +2719,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg1"></p>
-							<button type="button" class="custom-tab-btn" onclick="window.location.reload()"
+							<button type="button" class="role-add-btn" onclick="window.location.reload()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
@@ -2476,7 +2739,15 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					</div>
 				</div>
 			</div>
-
+			<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+				  <div class="bob-loader-card">
+				    <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+				    <div class="flow-bar">
+				      <div class="flow-line"></div>
+				    </div>
+				  </div>
+				</div>
+					
 			<!-- Custom Alert/Result Modal (Matches your existing style) -->
 			<div class="modal fade" id="resultModal">
 				<div class="modal-dialog modal-dialog-centered">
@@ -2490,7 +2761,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 							<p id="resultModalBody"></p>
 							<!-- Your custom styled button -->
-							<button type="button" class="custom-tab-btn" onclick="list()"
+							<button type="button" class="role-add-btn" onclick="list()"
 								data-dismiss="modal">OK</button>
 						</div>
 					</div>
@@ -2498,21 +2769,26 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			</div>
 </body>
 <script>
-	$(document).ready(function () {
-		$('#usertable').DataTable({
-			"paging": true,
-			"pageLength": 10,
-			"lengthChange": false,
-			"searching": true,
-			"ordering": true,
-			"info": true,
-			"autoWidth": false,
-			"language": {
-				"search": "Search:"
-			}
-		});
-	});
-	
+	$('#usertable').DataTable({
+				    scrollX: true,
+				    autoWidth: false,
+				    paging: true,
+				    searching: true,
+				    lengthChange: false,
+				    ordering: true,
+				    pageLength: 10,
+				    fixedHeader: true,
+
+				    // Layout: search (left) + pagination (right)
+				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+				    // Optional: language tweak for better label
+				    language: {
+				      search: "Search:"
+				    }
+				  });
+				  
+				  
 	
 
 </script>
@@ -2587,7 +2863,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		}
 
 		$.ajax({
-			url: '/BCDRS/getBankDetails',
+			url: '/Riskinsights/getBankDetails',
 			type: 'GET',
 			data: {bankName: selectedBank},
 			success: function (data) {
