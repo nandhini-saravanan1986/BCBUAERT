@@ -35,6 +35,96 @@
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
+		<style>
+			.modal-backdrop {
+								  position: fixed;
+								  top: 0;
+								  left: 0;
+								  width: 120vw !important;              /* 👈 a bit wider than viewport */
+								  height: 120vh  !important;         /* 👈 a bit taller than viewport */
+								  background-color: #000;    /* 👈 solid black base */
+								  opacity: 0.7 !important;   /* 👈 slightly darker overlay */
+								  z-index: 1062;             /* 👈 ensures it sits below modal but above everything else */
+								}
+					
+				:root {
+				  --bob-orange: #0073e6;
+				  --bob-blue: #004080;
+				  --overlay-bg: rgba(255, 255, 255, 0.9);
+				}
+
+				/* Full-screen overlay */
+				.bob-loader {
+				  position: fixed;
+				  inset: 0;
+				  display: flex;
+				  align-items: center;
+				  justify-content: center;
+				  background: rgba(226, 232, 237, 0.6); /* lighter background */
+				  backdrop-filter: blur(8px); /* ✅ background blur */
+				  -webkit-backdrop-filter: blur(8px); /* Safari support */
+				  z-index: 9999;
+				  transition: opacity 0.25s ease, visibility 0.25s;
+				  opacity: 1;
+				  visibility: visible;
+				}
+
+				/* Hide when not active */
+				.bob-loader[aria-hidden="true"] {
+				  opacity: 0;
+				  visibility: hidden;
+				  pointer-events: none;
+				}
+
+				/* Loader card */
+				.bob-loader-card {
+				  display: flex;
+				  flex-direction: column;
+				  align-items: center;
+				}
+
+				/* Static logo */
+				.logo-imgs {
+				  height: 90px;
+				  object-fit: contain;
+				  display: block;
+				}
+
+				/* Flowing bar below logo */
+				.flow-bar {
+				  position: relative;
+				  width: 200px; /* ✅ increased width */
+				  height: 8px;  /* slightly thicker for better visibility */
+				  background: #f1f1f1;
+				  border-radius: 4px;
+				  overflow: hidden;
+				  margin-top: 10px;
+				}
+
+				.flow-line {
+				  position: absolute;
+				  left: -40%;
+				  top: 0;
+				  width: 40%;
+				  height: 100%;
+				  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+				  border-radius: 4px;
+				  animation: flowMove 1.2s linear infinite;
+				}
+
+				/* Animation for flowing line */
+				@keyframes flowMove {
+				  0% {
+				    left: -40%;
+				  }
+				  100% {
+				    left: 100%;
+				  }
+				}
+
+
+			</style>
+			
 	<style>
 		
 
@@ -123,12 +213,17 @@
 	</style>
 	<script>
 		function goBack() {
-			window.history.back();
-		}
+		   const loader = document.getElementById("bob-loader");
+		   if (loader) loader.setAttribute("aria-hidden", "false");
+		   window.history.back();
+		 }
 
-		function goForward() {
-			window.history.forward();
-		}
+
+		 function goForward() {
+		    const loader = document.getElementById("bob-loader");
+		    if (loader) loader.setAttribute("aria-hidden", "false");
+		    window.history.forward();
+		  }
 
 		// Detect mouse near screen edges
 		document.addEventListener('mousemove', function (e) {
@@ -355,18 +450,18 @@
 			var modifyuser = document.querySelector('[data-modify_user]');
 
 			if (confirm('Are you sure you want to delete this User?')) {
-				$("#loader1").modal("toggle");
+							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 				var userid = document.getElementById("userId").value;
 				$.ajax({
 					type: 'post',
 					url: './deleteuser?formmode=' + userid,
 					success: function (response) {
-						$("#loader1").modal("hide");
+									document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 						$("#alertmsg").text('User Deleted');
 						$('#alert').modal("toggle");
 					},
 					error: function (xhr, status, error) {
-						$("#loader1").modal("hide");
+									document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 						alert('Not able to delete contact administrator');
 					}
 				});
@@ -473,7 +568,7 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			$("#loader1").modal("toggle");
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$.ajax({
 				url: "./Add_ASL?mode=exposure",
 				type: "POST",
@@ -481,13 +576,13 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					$("#loader1").modal("hide");
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
 				error: function (xhr, status, error) {
-					$("#loader1").modal("hide");
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
@@ -521,7 +616,7 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			$("#loader1").modal("toggle");
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$.ajax({
 				url: "./Replace_data?mode=exposure",
 				type: "POST",
@@ -529,13 +624,13 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					$("#loader1").modal("hide");
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
 				error: function (xhr, status, error) {
-					$("#loader1").modal("hide");
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
@@ -968,6 +1063,7 @@
 					return;
 				}
 			}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			location.href = "counterparty_list?formmode=" + formmode;
 		}
@@ -1030,7 +1126,7 @@
 
 			}
 			if ($("#billdataForm").valid()) {
-				$('#loader1').modal("toggle");
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 				// Create FormData object
 				const formData = new FormData(form);
 
@@ -1042,12 +1138,12 @@
 					contentType: false,
 					dataType: "text",
 					success: function (response) {
-						$('#loader1').hide();
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 						alert(response);
 						location.href = "counterparty_list?formmode=Billdetaillist";
 					},
 					error: function (xhr, status, error) {
-						$('#loader1').hide();
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 						alert(status + error);
 
 					}
@@ -1461,17 +1557,14 @@
 					 or ${formmode}=='Verifybilldetail'">
 					<div class="card">
 						<!-- Header Section -->
-						<div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-							<div class="float-left">
-								<div style="display: flex; align-items: center;" onclick="back();">
-									<!-- Back Icon -->
-									<div class="left-arrow-circle">
-										<i class="fa fa-arrow-left"></i>
-									</div>
-									<h5 th:text="${menuname}" style=" font-weight: bold; padding-top: 10px;"></h5>
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+							<div class="role-page-title">
+							 <h4 th:text="${menuname}"></h4>
+									<div style="width: 260px; height: 3px;background-color: #0073e6;border-radius: 2px;
+									margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 								</div>
-							</div>
-							<div class="form-inline">
+
+								<div class="btn-group nav-buttons float-right">
 								<!-- Button to switch to list view -->
 								<button type="button" id="viewListBtn" class="role-add-btn"
 									th:attr="formmode=Billdetaillist" onclick="Exposure_manual_entry(this);">
@@ -1834,17 +1927,14 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content" style="background: transparent;">
-				<div class="modal-body" style="text-align: center">
-					<div>
-						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-								border-color: transparent;" alt="Bornfire">
-					</div>
-				</div>
-			</div>
-		</div>
+
+			<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+	  <div class="bob-loader-card">
+	    <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+	    <div class="flow-bar">
+	      <div class="flow-line"></div>
+	    </div>
+	  </div>
 	</div>
 
 	<!-- Floating Back Button -->

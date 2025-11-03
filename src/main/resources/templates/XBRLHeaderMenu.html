@@ -165,6 +165,92 @@
 	    zoom: 0.9;
 	}
     </style>
+	<!-- ✅ Loader Script -->
+	<script>
+	  function showLoader() {
+	    const loader = document.getElementById("bob-loader");
+	    if (loader) {
+	      loader.setAttribute("aria-hidden", "false");
+	    }
+	  }
+
+	  function hideLoader() {
+	    const loader = document.getElementById("bob-loader");
+	    if (loader) {
+	      loader.setAttribute("aria-hidden", "true");
+	    }
+	  }
+
+	  // Hide loader automatically after page loads
+	  window.addEventListener("load", () => {
+	    setTimeout(hideLoader, 400);
+	  });
+	</script>
+
+	<!-- ✅ Loader Styles -->
+	<style>
+	  :root {
+	    --bob-orange: #0073e6;
+	    --bob-blue: #004080;
+	  }
+
+	  .bob-loader {
+	    position: fixed;
+	    inset: 0;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    background: rgba(226, 232, 237, 0.6);
+	    backdrop-filter: blur(8px);
+	    z-index: 99999; /* 👈 ensures loader stays above header */
+	    opacity: 1;
+	    visibility: visible;
+	    transition: opacity 0.3s ease, visibility 0.3s ease;
+	  }
+
+	  .bob-loader[aria-hidden="true"] {
+	    opacity: 0;
+	    visibility: hidden;
+	    pointer-events: none;
+	  }
+
+	  .bob-loader-card {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	  }
+
+	  .logo-imgs {
+	    height: 90px;
+	    object-fit: contain;
+	  }
+
+	  .flow-bar {
+	    position: relative;
+	    width: 200px;
+	    height: 8px;
+	    background: #f1f1f1;
+	    border-radius: 4px;
+	    overflow: hidden;
+	    margin-top: 10px;
+	  }
+
+	  .flow-line {
+	    position: absolute;
+	    left: -40%;
+	    top: 0;
+	    width: 40%;
+	    height: 100%;
+	    background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+	    border-radius: 4px;
+	    animation: flowMove 1.2s linear infinite;
+	  }
+
+	  @keyframes flowMove {
+	    0% { left: -40%; }
+	    100% { left: 100%; }
+	  }
+	</style>
 </head>
 
 <body>
@@ -177,16 +263,16 @@
 
 	<!-- ✅ Replaced with your actual menus -->
 	<ul class="menu">
-	    <li><a th:href="@{/Dashboard}">Dashboard</a></li>
+	    <li><a th:href="@{/Dashboard}"  onclick="showLoader()">Dashboard</a></li>
 
 	    <li>
 	        <a href="#">Admin</a>
 	        <ul class="submenu">
 	            <li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
-	                <a th:href="@{/UserProfile}">User Profile</a>
+	                <a th:href="@{/UserProfile}"  onclick="showLoader()">User Profile</a>
 	            </li>
 	            <li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
-	                <a th:href="@{/AccessandRoles}">Access and Roles</a>
+	                <a th:href="@{/AccessandRoles}"  onclick="showLoader()">Access and Roles</a>
 	            </li>
 	        </ul>
 	    </li>
@@ -194,49 +280,49 @@
 	    <li>
 	        <a href="#">RT Reports</a>
 	        <ul class="submenu" style="width: 600px; column-count: 2; column-gap: 20px;">
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}"><a th:href="@{/Nostro_Account_Bal}">Nostro Account Balance</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}"><a th:href="@{/Fx_Risk_Data}">FX Risk Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}"><a th:href="@{/Trade_Market_Risk}">Trade Market Risk</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}"><a th:href="@{/Mm_Data}">MM Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}"><a th:href="@{/Repo_Data_Template}">Repo Data Template</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}"><a th:href="@{/Investment_Risk_Data_Dashboard_Template}">Investment Risk Dashboard</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}"><a th:href="@{/Treasury_Credit_Limit_Management}">Treasury Credit Limit Management</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}"><a th:href="@{/Trade_Level_Data_Derivatives}">Trade Level Data Derivatives</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}"><a th:href="@{/Trade_Level_Data_Derivatives_Simplified}">Trade Level Data Simplified</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}"><a th:href="@{/CCR_Data_Templates}">CCR Data Templates</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}"><a th:href="@{/Foreign_Currency_Deposit}">Cross Currency Funding Spread</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}"><a th:href="@{/Liquidity_Risk_Data}">Liquidity Risk Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}"><a th:href="@{/Investment_Securities_Data}">Investment Securities Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}"><a th:href="@{/Liquidity_Risk_Dashboard_Template}">Liquidity Risk Dashboard</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}"><a th:href="@{/IRRBB_data_Template}">IRRBB Data Template</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}"><a th:href="@{/Nostro_Account_Bal}"  onclick="showLoader()">Nostro Account Balance</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}"><a th:href="@{/Fx_Risk_Data}"  onclick="showLoader()">FX Risk Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}"><a th:href="@{/Trade_Market_Risk}"  onclick="showLoader()">Trade Market Risk</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}"><a th:href="@{/Mm_Data}"  onclick="showLoader()">MM Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}"><a th:href="@{/Repo_Data_Template}"  onclick="showLoader()">Repo Data Template</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}"><a th:href="@{/Investment_Risk_Data_Dashboard_Template}"  onclick="showLoader()">Investment Risk Dashboard</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}"><a th:href="@{/Treasury_Credit_Limit_Management}"  onclick="showLoader()">Treasury Credit Limit Management</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}"><a th:href="@{/Trade_Level_Data_Derivatives}"  onclick="showLoader()">Trade Level Data Derivatives</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}"><a th:href="@{/Trade_Level_Data_Derivatives_Simplified}"  onclick="showLoader()">Trade Level Data Simplified</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}"><a th:href="@{/CCR_Data_Templates}"  onclick="showLoader()">CCR Data Templates</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}"><a th:href="@{/Foreign_Currency_Deposit}"  onclick="showLoader()">Cross Currency Funding Spread</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}"><a th:href="@{/Liquidity_Risk_Data}"  onclick="showLoader()">Liquidity Risk Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}"><a th:href="@{/Investment_Securities_Data}"  onclick="showLoader()">Investment Securities Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}"><a th:href="@{/Liquidity_Risk_Dashboard_Template}"  onclick="showLoader()">Liquidity Risk Dashboard</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}"><a th:href="@{/IRRBB_data_Template}"  onclick="showLoader()">IRRBB Data Template</a></li>
 	        </ul>
 	    </li>
 
 	    <li>
 	        <a href="#">ASL</a>
 	        <ul class="submenu">
-	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty,')}"><a th:href="@{/counterparty}">Auth Counterparties</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=list}">Exposure Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl,')}"><a th:href="@{/Interbank_placement}">Interbank Placements</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl,')}"><a th:href="@{/swap_settlement}">Swap Settlement</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt,')}"><a th:href="@{/asl_dashboard}">Final Risk View</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty,')}"><a th:href="@{/counterparty}"  onclick="showLoader()">Auth Counterparties</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=list}"  onclick="showLoader()">Exposure Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl,')}"><a th:href="@{/Interbank_placement}"  onclick="showLoader()">Interbank Placements</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl,')}"><a th:href="@{/swap_settlement}"  onclick="showLoader()">Swap Settlement</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt,')}"><a th:href="@{/asl_dashboard}"  onclick="showLoader()">Final Risk View</a></li>
 	        </ul>
 	    </li>
 
 	    <li>
 	        <a href="#">ASL Upload</a>
 	        <ul class="submenu">
-	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=Billdetaillist}">Exposure Data</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data,')}"><a th:href="@{/Interbank_placement?formmode=add}">Treasury Placement</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data,')}"><a th:href="@{/swap_settlement?formmode=add}">Settlement</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=Billdetaillist}"  onclick="showLoader()">Exposure Data</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data,')}"><a th:href="@{/Interbank_placement?formmode=add}"  onclick="showLoader()">Treasury Placement</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data,')}"><a th:href="@{/swap_settlement?formmode=add}"  onclick="showLoader()">Settlement</a></li>
 	        </ul>
 	    </li>
 
 	    <li>
 	        <a href="#">Audit</a>
 	        <ul class="submenu">
-	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}"><a th:href="@{/User_Audit}">User Audit</a></li>
-	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit,')}"><a th:href="@{/Service_Audit}">Service Audit</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}"><a th:href="@{/User_Audit}"  onclick="showLoader()">User Audit</a></li>
+	            <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit,')}"><a th:href="@{/Service_Audit}"  onclick="showLoader()">Service Audit</a></li>
 	        </ul>
 	    </li>
 	</ul>
@@ -245,12 +331,21 @@
 	<div class="user-info">
 	    <i class="fa-solid fa-user-circle"></i>
 	    <span class="username" th:text="${session.USERNAME}">Username</span>
-	    <form th:action="@{/logout}" method="post" class="logout-btn m-0">
+	    <form th:action="@{/logout}"   onclick="showLoader()" method="post" class="logout-btn m-0">
 	        <button type="submit">
 	            <i class="fas fa-sign-out-alt"></i> Logout
 	        </button>
 	    </form>
 	</div>
 </nav>
+<!-- ✅ Loader -->
+<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+  <div class="bob-loader-card">
+    <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+    <div class="flow-bar">
+      <div class="flow-line"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

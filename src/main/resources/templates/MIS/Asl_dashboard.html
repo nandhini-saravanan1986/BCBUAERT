@@ -48,7 +48,99 @@
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-	<title>BRAS</title>
+	<title>RiskInsights</title>
+	
+
+	<style>
+
+		.modal-backdrop {
+				  position: fixed;
+				  top: 0;
+				  left: 0;
+				  width: 120vw !important;              /* 👈 a bit wider than viewport */
+				  height: 120vh  !important;         /* 👈 a bit taller than viewport */
+				  background-color: #000;    /* 👈 solid black base */
+				  opacity: 0.7 !important;   /* 👈 slightly darker overlay */
+				  z-index: 1062;             /* 👈 ensures it sits below modal but above everything else */
+				}
+				
+			:root {
+			  --bob-orange: #0073e6;
+			  --bob-blue: #004080;
+			  --overlay-bg: rgba(255, 255, 255, 0.9);
+			}
+
+			/* Full-screen overlay */
+			.bob-loader {
+			  position: fixed;
+			  inset: 0;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  background: rgba(226, 232, 237, 0.6); /* lighter background */
+			  backdrop-filter: blur(8px); /* ✅ background blur */
+			  -webkit-backdrop-filter: blur(8px); /* Safari support */
+			  z-index: 9999;
+			  transition: opacity 0.25s ease, visibility 0.25s;
+			  opacity: 1;
+			  visibility: visible;
+			}
+
+			/* Hide when not active */
+			.bob-loader[aria-hidden="true"] {
+			  opacity: 0;
+			  visibility: hidden;
+			  pointer-events: none;
+			}
+
+			/* Loader card */
+			.bob-loader-card {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			}
+
+			/* Static logo */
+			.logo-imgs {
+			  height: 90px;
+			  object-fit: contain;
+			  display: block;
+			}
+
+			/* Flowing bar below logo */
+			.flow-bar {
+			  position: relative;
+			  width: 200px; /* ✅ increased width */
+			  height: 8px;  /* slightly thicker for better visibility */
+			  background: #f1f1f1;
+			  border-radius: 4px;
+			  overflow: hidden;
+			  margin-top: 10px;
+			}
+
+			.flow-line {
+			  position: absolute;
+			  left: -40%;
+			  top: 0;
+			  width: 40%;
+			  height: 100%;
+			  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			  border-radius: 4px;
+			  animation: flowMove 1.2s linear infinite;
+			}
+
+			/* Animation for flowing line */
+			@keyframes flowMove {
+			  0% {
+			    left: -40%;
+			  }
+			  100% {
+			    left: 100%;
+			  }
+			}
+
+
+		</style>
 	<style>
 					
 							/* === ROLE PAGE CUSTOM HEADER === */
@@ -663,17 +755,16 @@ function Download_detail_report() {
 	    <i class="fa fa-arrow-right"></i>
 	</button>
 	<!-- Loader Modal -->
-	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content" style="background: transparent;">
-				<div class="modal-body text-center">
-					<img th:src="@{/images/loader.gif}" style="width: 153px; background-color: transparent;"
-						alt="Loading...">
-				</div>
-			</div>
-		</div>
-	</div>
 
+			<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+	  <div class="bob-loader-card">
+	    <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+	    <div class="flow-bar">
+	      <div class="flow-line"></div>
+	    </div>
+	  </div>
+	</div>
+		
 	
 <!-- Limit Modal -->
 <div id="limitModal" style="
