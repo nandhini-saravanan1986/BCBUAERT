@@ -15,7 +15,248 @@
 		th:href="@{/webjars/datatables/1.10.19/css/dataTables.bootstrap4.min.css}">
 	<link rel="stylesheet" type="text/css" href="/webjars/chartjs/2.8.0/Chart.min.css"
 		th:href="@{/webjars/chartjs/2.8.0/Chart.min.css}">
+		<style>
 
+				body {
+		    font-family: 'Segoe UI', Arial, sans-serif;
+		    font-size: 14px;}
+			
+			
+			
+			.table .thead-light th {
+		    color: #495057;
+		    background-color: #e9ecef;
+		    border-color: #dee2e6;
+		font-family: sans-serif;
+			
+		}
+
+
+
+						
+								/* === ROLE PAGE CUSTOM HEADER === */
+								.role-page-header {
+								    background-color: #ffffff;
+								    padding: 15px 20px;
+								}
+
+								.role-page-title h4 {
+								    color: #003366;
+								    font-family: "Segoe UI", Arial, sans-serif;
+								    font-size: 20px;
+								    font-weight: 700;
+								    margin: 0;
+								}
+
+								.role-page-underline {
+								    width: 158px;
+								    height: 3px;
+								    background-color: #0073e6;
+								    border-radius: 2px;
+								    margin-top: 6px;
+								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+								}
+
+
+								/* Add Button Styling */
+								.role-add-btn {
+								    background: linear-gradient(135deg, #005fa3, #007bff);
+								    color: #fff;
+								    border: none;
+								    border-radius: 25px;
+								    padding: 8px 18px;
+								    font-size: 13px;
+								    font-weight: 600;
+								    cursor: pointer;
+								    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
+								    transition: all 0.3s ease;
+								}
+
+								.role-add-btn:hover {
+								    background: linear-gradient(135deg, #007bff, #3399ff);
+								    transform: translateY(-2px);
+								    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+								}
+
+								.role-add-btn i {
+								    margin-right: 5px;
+								}
+
+								
+							</style>
+							
+							
+			<style>
+					
+						
+					:root {
+					  --bob-orange: #0073e6;
+					  --bob-blue: #004080;
+					  --overlay-bg: rgba(255, 255, 255, 0.9);
+					}
+
+					/* Full-screen overlay */
+					.bob-loader {
+					  position: fixed;
+					  inset: 0;
+					  display: flex;
+					  align-items: center;
+					  justify-content: center;
+					  background: rgba(226, 232, 237, 0.6); /* lighter background */
+					  backdrop-filter: blur(8px); /* ✅ background blur */
+					  -webkit-backdrop-filter: blur(8px); /* Safari support */
+					  z-index: 9999;
+					  transition: opacity 0.25s ease, visibility 0.25s;
+					  opacity: 1;
+					  visibility: visible;
+					}
+
+					/* Hide when not active */
+					.bob-loader[aria-hidden="true"] {
+					  opacity: 0;
+					  visibility: hidden;
+					  pointer-events: none;
+					}
+
+					/* Loader card */
+					.bob-loader-card {
+					  display: flex;
+					  flex-direction: column;
+					  align-items: center;
+					}
+
+					/* Static logo */
+					.logo-imgs {
+					  height: 90px;
+					  object-fit: contain;
+					  display: block;
+					}
+
+					/* Flowing bar below logo */
+					.flow-bar {
+					  position: relative;
+					  width: 200px; /* ✅ increased width */
+					  height: 8px;  /* slightly thicker for better visibility */
+					  background: #f1f1f1;
+					  border-radius: 4px;
+					  overflow: hidden;
+					  margin-top: 10px;
+					}
+
+					.flow-line {
+					  position: absolute;
+					  left: -40%;
+					  top: 0;
+					  width: 40%;
+					  height: 100%;
+					  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+					  border-radius: 4px;
+					  animation: flowMove 1.2s linear infinite;
+					}
+
+					/* Animation for flowing line */
+					@keyframes flowMove {
+					  0% {
+					    left: -40%;
+					  }
+					  100% {
+					    left: 100%;
+					  }
+					}
+
+
+				</style>
+				
+				
+							<script>
+								function goBack() {
+								    window.history.back();
+								}
+
+								function goForward() {
+								    window.history.forward();
+								}
+
+								// Detect mouse near screen edges
+								document.addEventListener('mousemove', function(e) {
+								    const backBtn = document.getElementById('floatingBackBtn');
+								    const forwardBtn = document.getElementById('floatingForwardBtn');
+								    const screenWidth = window.innerWidth;
+
+								    // Left edge (back)
+								    if (e.clientX < 50) {
+								        backBtn.classList.add('show');
+								    } else {
+								        backBtn.classList.remove('show');
+								    }
+
+								    // Right edge (forward)
+								    if (screenWidth - e.clientX < 50) {
+								        forwardBtn.classList.add('show');
+								    } else {
+								        forwardBtn.classList.remove('show');
+								    }
+								});
+								</script>
+
+								<style>
+								/* Shared styles for both buttons */
+								#floatingBackBtn, 
+								#floatingForwardBtn {
+								    position: fixed;
+								    top: 50%;
+								    background-color: #0073e6;
+								    border: none;
+								    color: white;
+								    font-size: 20px;
+								    border-radius: 50%;
+								    width: 45px;
+								    height: 45px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    opacity: 0;
+								    pointer-events: none;
+								    transition: all 0.4s ease;
+								    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+								    z-index: 999;
+								}
+
+								/* Back button */
+								#floatingBackBtn {
+								    left: -50px; /* hidden off-screen */
+								}
+
+								/* Forward button */
+								#floatingForwardBtn {
+								    right: -50px; /* hidden off-screen */
+								}
+
+								/* Show when near edge */
+								#floatingBackBtn.show {
+								    left: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								#floatingForwardBtn.show {
+								    right: 20px;
+								    opacity: 1;
+								    pointer-events: auto;
+								}
+
+								/* Hover animation */
+								#floatingBackBtn:hover,
+								#floatingForwardBtn:hover {
+								    background-color: #005bb5;
+								    transform: scale(1.1);
+								}
+								</style>	
+								
+								
+								
+								
+								
 	<style type="text/css">
 		:root {
 			--dark-bg: #f8f9fa;
@@ -58,7 +299,6 @@
 			flex: 1;
 			/*background-color: #dee2e6;*/
 			border-radius: 6px;
-			border: 1px solid var(--dark-border);
 			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 			overflow-y: auto;
 			padding-right: 10px;
@@ -594,9 +834,17 @@
 	<div th:insert="~{XBRLHeaderMenu :: header}"></div>
 
 	<div class="dashboard-card" style="font-family: sans-serif;">
-		<div class="card-header" style="border: none;text-align: left;">
-			<h4 class="mb-0 text-white">DASHBOARD</h4>
+		
+		<div class="role-page-header d-flex justify-content-between align-items-center">
+			<!-- Left: Page Title -->
+			<div class="role-page-title">
+				<h4>DASHBOARD</h4>
+				<div style="width: 125px; height: 3px;background-color: #0073e6;border-radius: 2px;
+				margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+		
+			</div>
 		</div>
+		
 		<div class="card-body" >
 			<div class="col-md-4 table-wrapper">
 			    <div class="table-title mb-2">
@@ -633,6 +881,17 @@
 
 		</div>
 	</div>
+
+
+				
+					<!-- Floating Back Button -->
+	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+		<i class="fa fa-arrow-left"></i>
+	</button>
+	<!-- Floating Forward Button -->
+	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+	    <i class="fa fa-arrow-right"></i>
+	</button>
 
 
 </body>
