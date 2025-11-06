@@ -49,6 +49,263 @@ TESTED BY   : RAJALAKSHMI R
 
 
 
+<style>
+body {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	font-size: 14px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	font-family: sans-serif;
+}
+
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 120vw !important; /* 👈 a bit wider than viewport */
+	height: 120vh !important; /* 👈 a bit taller than viewport */
+	background-color: #000; /* 👈 solid black base */
+	opacity: 0.7 !important; /* 👈 slightly darker overlay */
+	z-index: 1062;
+	/* 👈 ensures it sits below modal but above everything else */
+}
+
+/* === ROLE PAGE CUSTOM HEADER === */
+.role-page-header {
+	background-color: #ffffff;
+	padding: 15px 20px;
+}
+
+.role-page-title h4 {
+	color: #003366;
+	font-family: "Segoe UI", Arial, sans-serif;
+	font-size: 20px;
+	font-weight: 700;
+	margin: 0;
+}
+
+.role-page-underline {
+	width: 158px;
+	height: 3px;
+	background-color: #0073e6;
+	border-radius: 2px;
+	margin-top: 6px;
+	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+}
+
+/* Add Button Styling */
+/* Base Button Style */
+.role-add-btn {
+	background: #ffffff; /* default white background */
+	color: #005fa3; /* blue text */
+	border: 2px solid #005fa3;
+	border-radius: 25px;
+	padding: 8px 18px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+	transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.role-add-btn:hover {
+	background: linear-gradient(135deg, #005fa3, #007bff);
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+}
+
+/* Active (clicked or selected) button */
+.role-add-btn.active {
+	background: linear-gradient(135deg, #005fa3, #007bff);
+	color: #fff;
+	border: none;
+	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+	transform: translateY(-1px);
+}
+
+/* Optional: icon spacing */
+.role-add-btn i {
+	margin-right: 5px;
+}
+</style>
+
+<style>
+:root {
+	--bob-orange: #0073e6;
+	--bob-blue: #004080;
+	--overlay-bg: rgba(255, 255, 255, 0.9);
+}
+
+/* Full-screen overlay */
+.bob-loader {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(226, 232, 237, 0.6); /* lighter background */
+	backdrop-filter: blur(8px); /* ✅ background blur */
+	-webkit-backdrop-filter: blur(8px); /* Safari support */
+	z-index: 9999;
+	transition: opacity 0.25s ease, visibility 0.25s;
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Hide when not active */
+.bob-loader[aria-hidden="true"] {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* Loader card */
+.bob-loader-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* Static logo */
+.logo-imgs {
+	height: 90px;
+	object-fit: contain;
+	display: block;
+}
+
+/* Flowing bar below logo */
+.flow-bar {
+	position: relative;
+	width: 200px; /* ✅ increased width */
+	height: 8px; /* slightly thicker for better visibility */
+	background: #f1f1f1;
+	border-radius: 4px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+
+.flow-line {
+	position: absolute;
+	left: -40%;
+	top: 0;
+	width: 40%;
+	height: 100%;
+	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+	border-radius: 4px;
+	animation: flowMove 1.2s linear infinite;
+}
+
+/* Animation for flowing line */
+@keyframes flowMove { 0% {
+	left: -40%;
+}
+100%
+{
+left
+
+
+:
+
+
+100%;
+
+
+}
+}
+</style>
+
+<script>
+							function goBack() {
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+							    window.history.back();
+							}
+
+							function goForward() {
+								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+							    window.history.forward();
+							}
+
+							// Detect mouse near screen edges
+							document.addEventListener('mousemove', function(e) {
+							    const backBtn = document.getElementById('floatingBackBtn');
+							    const forwardBtn = document.getElementById('floatingForwardBtn');
+							    const screenWidth = window.innerWidth;
+
+							    // Left edge (back)
+							    if (e.clientX < 50) {
+							        backBtn.classList.add('show');
+							    } else {
+							        backBtn.classList.remove('show');
+							    }
+
+							    // Right edge (forward)
+							    if (screenWidth - e.clientX < 50) {
+							        forwardBtn.classList.add('show');
+							    } else {
+							        forwardBtn.classList.remove('show');
+							    }
+							});
+							</script>
+
+<style>
+/* Shared styles for both buttons */
+#floatingBackBtn, #floatingForwardBtn {
+	position: fixed;
+	top: 50%;
+	background-color: #0073e6;
+	border: none;
+	color: white;
+	font-size: 20px;
+	border-radius: 50%;
+	width: 45px;
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.4s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	z-index: 999;
+}
+
+/* Back button */
+#floatingBackBtn {
+	left: -50px; /* hidden off-screen */
+}
+
+/* Forward button */
+#floatingForwardBtn {
+	right: -50px; /* hidden off-screen */
+}
+
+/* Show when near edge */
+#floatingBackBtn.show {
+	left: 20px;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+#floatingForwardBtn.show {
+	right: 20px;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Hover animation */
+#floatingBackBtn:hover, #floatingForwardBtn:hover {
+	background-color: #005bb5;
+	transform: scale(1.1);
+}
+</style>
+
+
 	<style>
 		.btns {
 			float: right;
@@ -153,13 +410,13 @@ TESTED BY   : RAJALAKSHMI R
 			border-radius: 4px;
 		}
 
-		#usertable th,
+		/* #usertable th,
 		#usertable td {
 			vertical-align: middle;
 			text-align: left;
 			font-size: 17px;
 			font-family: Verdana, sans-serif;
-		}
+		} */
 
 		.fa-edit:hover {
 			color: #28a745;
@@ -287,7 +544,7 @@ TESTED BY   : RAJALAKSHMI R
 	<script>
 
 		function submitForm() {
-			$("#loader").modal("toggle");
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			const reportName = 'CBUAE_Investment_Securities_Data_Template	';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
@@ -298,14 +555,14 @@ TESTED BY   : RAJALAKSHMI R
 				type: "POST",
 				data: formData,
 				success: function (response) {
-					$("#loader").modal("hide");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 					$("#alertmsg1").text(response);
 					$("#alert1").modal("toggle");
 					//location.href = 'Nostro_Account_Bal';
 				},
 				error: function (xhr, status, error) {
-					$("#loader").modal("hide");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 					console.error("Error:", error);
 					alert("Error occurred: " + error);
@@ -320,21 +577,23 @@ TESTED BY   : RAJALAKSHMI R
 
 
 		function home() {
-			$("#loader").modal("toggle");
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'Dashboard'
 		}
 
 		function back() {
-			$("#loader").modal("toggle");
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			window.history.back();
 		}
 
 		function list() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'Investment_Securities_Data?formmode=list';
 		}
 
 		function nostro() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'Investment_Securities_Data';
 		}
 		$(document).ready(function () {
@@ -347,14 +606,14 @@ TESTED BY   : RAJALAKSHMI R
 		function updateform(event) {
 
 			event.preventDefault();
-			$("#loader").modal("toggle");
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 			$.ajax({
 				url: `./updateInvestmentSecurity`,
 				type: 'POST',
 				data: $('#InvestmentData').serialize(),
 				success: function (response) {
-					$("#loader").modal("hide");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 
 					$("#alertmsg").text(response);
@@ -363,7 +622,7 @@ TESTED BY   : RAJALAKSHMI R
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					$("#loader").modal("hide");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 					alert("Failed to modify. Please try again.");
 				}
@@ -378,7 +637,7 @@ TESTED BY   : RAJALAKSHMI R
 
 <script>
 	function navigateToTab(tabId) {
-		$("#loader").modal("show");
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 		if (tabId === 'data') {
 			window.location.href = 'Investment_Securities_Data?formmode=list';
@@ -390,7 +649,7 @@ TESTED BY   : RAJALAKSHMI R
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
-		document.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
+		document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
 		document.getElementById(tabId + '-btn').classList.add('active');
 
 		// Hide all panes
@@ -416,7 +675,7 @@ TESTED BY   : RAJALAKSHMI R
 
 <script>
 	function downloadInvestmentSecurities() {
-		$('#loader').modal('show');
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 		$.ajax({
 			url: './downloadInvestmentSecuritiesExcel', // This URL must match your controller endpoint
@@ -425,7 +684,7 @@ TESTED BY   : RAJALAKSHMI R
 				responseType: 'blob' // Essential for handling binary file data
 			},
 			success: function (data, textStatus, jqXHR) {
-				$('#loader').modal('hide');
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
@@ -452,7 +711,7 @@ TESTED BY   : RAJALAKSHMI R
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				$('#loader').modal('hide');
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				console.error("Download failed:", textStatus, errorThrown);
 				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
 			}
@@ -466,20 +725,22 @@ TESTED BY   : RAJALAKSHMI R
 	}
 </script>
 
-<title>BCDRS</title>
+<title>RiskInsights</title>
 
 <body>
 	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
-		<div class="row">
-
+		<!-- <div class="row">-->
+ 
 			<div th:insert="XBRLHeaderMenu :: header"></div>
 
-			<div class="card-header" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"
-				style="background-color: rgb(107, 122, 143) ; ">
-				<div class="float-left">
-					<h5
-						style="font-family: verdana; margin-left:20px; font-size: 20px; font-weight: bold; padding-top: 10px; ">
-						INVESTMENT SECURITIES DATA</h5>
+			<div class="role-page-header d-flex justify-content-between align-items-center" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"
+				>
+				<div class="float-left role-page-title">
+					<h4>
+						INVESTMENT SECURITIES DATA</h4>
+						<div
+					style="width: 298px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+			</div>
 				</div>
 
 
@@ -493,14 +754,16 @@ TESTED BY   : RAJALAKSHMI R
 
 
 				<!-- Tabs -->
-				<div class="button-tab-group" style="margin-top:5px; margin-bottom:20px;">
-					<button class="custom-tab-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+				<div class="role-page-header d-flex justify-content-between align-items-center">
+				<div class="float-left">
+					<button class="role-add-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
 						Controls</button>
-					<button class="custom-tab-btn" id="template-btn" onclick="handleClick('template')">Template
+					<button class="role-add-btn" id="template-btn" onclick="handleClick('template')">Template
 						Instructions</button>
-					<button class="custom-tab-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
-					<div class="float-right" style="margin-left:61%">
-						<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn"
+					<button class="role-add-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
+					</div>
+					<div class="float-right">
+						<button th:if="${formmode} =='list'" type="button" class="role-add-btn"
 							onclick="downloadInvestmentSecurities();">
 							<i class="fa fa-download"></i> Download
 						</button>
@@ -701,27 +964,26 @@ TESTED BY   : RAJALAKSHMI R
 
 
 								</form>
-							</div>
-						</div>
-						<div class="card-footer text-center"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="button" class="custom-tab-btn" onclick="home();">
+							
+						<div class="card-footer text-center"style="padding-bottom: 18px;">
+							<!-- <button type="button" class="role-add-btn" onclick="home();">
 								<i class="fa fa-home"></i> Home
-							</button>
+							</button> -->
 
 
 							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
                   onclick="submitForm()">Save</button>-->
 
 							<button th:if="${formmode == null or formmode == 'add'}" type="button"
-								class="custom-tab-btn" onclick="submitForm()">Save</button>
+								class="role-add-btn" onclick="submitForm()">Save</button>
 
 
 
-							<button type="button" class="custom-tab-btn" onclick="back();">
+						<!-- 	<button type="button" class="custom-tab-btn" onclick="back();">
 								<i class="fa fa-arrow-left"></i> Back
-							</button>
-
+							</button> -->
+</div>
+						</div>
 						</div>
 					</div>
 				</div>
@@ -736,17 +998,17 @@ TESTED BY   : RAJALAKSHMI R
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
+						<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 							<i class="fa fa-home"></i> Home
-						</button>
+						</button> -->
 
-						<button type="button" class="custom-tab-btn" onclick="submitForm()">
+						<button type="button" class="role-add-btn" onclick="submitForm()">
 							Save
 						</button>
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
+						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
 							<i class="fa fa-arrow-left"></i> Back
-						</button>
+						</button> -->
 					</div>
 				</div>
 
@@ -757,13 +1019,14 @@ TESTED BY   : RAJALAKSHMI R
 
 				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 				<div class="tab-pane fade" id="data" role="tabpanel">
-					<div class="table-responsive" style="max-height: 500px; overflow: auto; border:none;">
+					<div class="table-responsive" style="max-height: 400px; overflow: auto; border:none;">
 						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; font-family:calibri;">
+							style="min-width: 2000px; ">
 
-							<thead class="thead-light" style="background-color:#e9ecf0; font-size: 11px;">
+							<thead class="thead-light" >
 								<tr>
-									<th rowspan="2">Action</th>
+									<th rowspan="2" style="text-align: center;width: 100px;">Action</th>
+
 									<th colspan="8" style="text-align:center;">Financial Institution Information</th>
 									<th colspan="9"></th>
 									<!--<th colspan="6">Counterparty Information</th>-->
@@ -873,9 +1136,9 @@ TESTED BY   : RAJALAKSHMI R
 											<i class="fa fa-edit" style="color: #007bff;"></i>
 										</a>
 									</td>-->
-							<tbody style="font-size: 9px;" th:each="data : ${ISList}">
+							<tbody  th:each="data : ${ISList}">
 								<tr>
-									<td><a
+									<td style="text-align: center;min-width: 100px;"><a
 											th:href="@{'/Investment_Securities_Data?formmode=edit&siNo=' + ${data.siNo}}">
 											<i class="fa fa-edit" style="color: #007bff;"></i></a>
 									</td>
@@ -1030,18 +1293,18 @@ TESTED BY   : RAJALAKSHMI R
 
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="custom-tab-btn" onclick="home();">
+			<!-- 			<button type="button" class="custom-tab-btn" onclick="home();">
 							<i class="fa fa-home"></i> Home
 						</button>
+ -->
 
-
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
 							onclick="submitForm()">Save</button>
 
 
-						<button type="button" class="custom-tab-btn" onclick="back();">
+						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
 							<i class="fa fa-arrow-left"></i> Back
-						</button>
+						</button> -->
 
 					</div>
 
@@ -1065,17 +1328,25 @@ TESTED BY   : RAJALAKSHMI R
 				<form th:action="@{/updateInvestmentSecurity}" th:object="${InvestmentData}" method="post"
 					id="InvestmentData">
 					<div class="card" style="margin: 0 15px;">
-						<div class="card-header" style="background-color: rgb(107, 122, 143);">
-							<h5 class="m-0 font-weight-bold"
-								style="font-family: verdana; margin-left: 20px; font-size: 20px; font-weight: bold; padding-top: 10px;">
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+							<div class="role-page-title" >
+							<h4 >
 								INVESTMENT SECURITIES DATA - EDIT
-							</h5>
+							</h4>
+							<div
+										style="width: 360px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+							
+							</div>
 						</div>
 
 						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 							<input type="hidden" th:field="*{siNo}" />
+							
+							<div class="role-page-title">
+							
 
-							<h4 class="section-header">Financial Institution Information</h4>
+							<h4 style="padding-bottom:10px" >Financial Institution Information</h4>
+							</div>
 							<!-- Bank Info -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Data Date</label>
@@ -1134,7 +1405,10 @@ TESTED BY   : RAJALAKSHMI R
 										readonly />
 								</div>
 							</div>
-							<h4 class="section-header">Accounts Information</h4>
+							<div class="role-page-title">
+							
+							<h4 style="padding-bottom:10px" >Accounts Information</h4>
+							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Accounting Classification</label>
@@ -1218,7 +1492,10 @@ TESTED BY   : RAJALAKSHMI R
 									<input type="text" class="form-control vchar-10" th:field="*{assetCurrency}" />
 								</div>
 							</div>
-							<h4 class="section-header">Counterparty Information</h4>
+							<div class="role-page-title">
+							
+							<h4 style="padding-bottom:10px" >Counterparty Information</h4>
+							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Obligor</label>
 								<div class="col-sm-4">
@@ -1263,8 +1540,11 @@ TESTED BY   : RAJALAKSHMI R
 								</div>
 							</div>
 
+<div class="role-page-title">
 
-							<h4 class="section-header">Fixed Income Information</h4>
+							<h4 style="padding-bottom:10px">Fixed Income Information</h4>
+							</div>
+							
 							<!-- Other -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Issue Size</label>
@@ -1392,8 +1672,10 @@ TESTED BY   : RAJALAKSHMI R
 									<input type="number" class="form-control number-24-2" th:field="*{percentHoldingsFi}" />
 								</div>
 							</div>
+<div class="role-page-title">
 
-							<h4 class="section-header">Other Security Information</h4>
+							<h4 style="padding-bottom:10px" >Other Security Information</h4>
+							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Qty (Equity/Funds)</label>
 								<div class="col-sm-4">
@@ -1459,8 +1741,11 @@ TESTED BY   : RAJALAKSHMI R
 							</div>
 
 							<!-- Overall Treasury -->
+<div class="role-page-title">
 
-							<h4 class="section-header">Overall Portfolio Information</h4>
+							<h4 style="padding-bottom:10px" >Overall Portfolio Information</h4>
+							</div>
+							
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Total NetBook ValueAED</label>
 								<div class="col-sm-4">
@@ -1493,8 +1778,10 @@ TESTED BY   : RAJALAKSHMI R
 									<input type="number" class="form-control number-24-2" th:field="*{percentHoldings}" />
 								</div>
 							</div>
+<div class="role-page-title">
 
-							<h4 class="section-header">Collateralization information</h4>
+							<h4 style="padding-bottom:10px" >Collateralization information</h4>
+							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Existing PledgeStatus</label>
@@ -1547,8 +1834,10 @@ TESTED BY   : RAJALAKSHMI R
 									<input type="text" class="form-control vchar-50" th:field="*{sukukType}" />
 								</div>
 							</div>
+<div class="role-page-title">
 
-							<h4 class="section-header">IFRS Provision information (where applicable)</h4>
+							<h4 style="padding-bottom:10px" >IFRS Provision information (where applicable)</h4>
+							</div>
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">TTC PD</label>
 								<div class="col-sm-4">
@@ -1585,14 +1874,13 @@ TESTED BY   : RAJALAKSHMI R
 									<input type="text" class="form-control number-24-2" th:field="*{ifrs9Staging}" />
 								</div>
 							</div>
-						</div>
+						
 
-						<div class="card-footer text-center"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-							<button type="submit" class="custom-tab-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Investment_Securities_Data}" class="custom-tab-btn">Cancel</a>
+						<div class="card-footer text-center">
+							<button type="submit" class="role-add-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Investment_Securities_Data}" class="role-add-btn" style="text-decoration: none;">Cancel</a>
 						</div>
-
+					</div>
 					</div>
 				</form>
 			</div>
@@ -1607,13 +1895,21 @@ TESTED BY   : RAJALAKSHMI R
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
-							<button type="button" class="custom-tab-btn" onclick="list()"
+							<button type="button" class="role-add-btn" onclick="list()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
-
+<!-- Floating Back Button -->
+	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+		<i class="fa fa-arrow-left"></i>
+	</button>
+	<!-- Floating Forward Button -->
+	<button id="floatingForwardBtn" onclick="goForward()"
+		title="Go Forward">
+		<i class="fa fa-arrow-right"></i>
+	</button>
 			<div class="modal fade" id="alert1">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 					<div class="modal-content">
@@ -1624,14 +1920,23 @@ TESTED BY   : RAJALAKSHMI R
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg1"></p>
-							<button type="button" class="custom-tab-btn" onclick="trade()"
+							<button type="button" class="role-add-btn" onclick="trade()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
-
+<div id="bob-loader" class="bob-loader" aria-hidden="true"
+		role="status" aria-label="Loading">
+		<div class="bob-loader-card">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
+				class="logo-imgs">
+			<div class="flow-bar">
+				<div class="flow-line"></div>
+			</div>
+		</div>
+	</div>
 
 
 			<!-- Loader Modal (Using your existing loader image) -->
@@ -1658,7 +1963,7 @@ TESTED BY   : RAJALAKSHMI R
 						<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 							<p id="resultModalBody"></p>
 							<!-- Your custom styled button -->
-							<button type="button" class="custom-tab-btn" onclick="list()"
+							<button type="button" class="role-add-btn" onclick="list()"
 								data-dismiss="modal">OK</button>
 						</div>
 					</div>
@@ -1666,75 +1971,67 @@ TESTED BY   : RAJALAKSHMI R
 			</div>
 </body>
 <script>
-	$(document).ready(function () {
-		$('#usertable').DataTable({
-			"paging": true,
-			"pageLength": 10,
-			"lengthChange": false,
-			"searching": true,
-			"ordering": true,
-			"info": true,
-			"autoWidth": false,
-			"language": {
-				"search": "Search:"
-			}
-		});
-	});
+	$('#usertable').DataTable({
+				    scrollX: true,
+				    autoWidth: false,
+				    paging: true,
+				    searching: true,
+				    lengthChange: false,
+				    ordering: true,
+				    pageLength: 10,
+				    fixedHeader: true,
+
+				    // Layout: search (left) + pagination (right)
+				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+				    // Optional: language tweak for better label
+				    language: {
+				      search: "Search:"
+				    }
+				  });
+				  
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-	/* Remove top margin/padding from DataTables parent containers */
-	#data {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
-	}
+/* Remove top margin/padding from DataTables parent containers */
+#data {
+	padding-top: 0 !important;
+	margin-top: 0 !important;
+}
 
-	.table-responsive {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
+.table-responsive {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
 
-	/* Ensure DataTables filter (search box) doesn't have spacing above it */
-	div.dataTables_filter {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
+/* Ensure DataTables filter (search box) doesn't have spacing above it */
+div.dataTables_filter {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
 
-	/* FIX: Make search label and box inline */
-	div.dataTables_filter label {
-		display: flex !important;
-		align-items: center;
-		gap: 8px;
-		white-space: nowrap;
-	}
+/* FIX: Make search label and box inline */
+.dataTables_filter label {
+	display: flex !important;
+	align-items: center;
+	gap: 8px; /* space between text and input */
+	margin-bottom: 0 !important;
+}
 
-	/* Style pagination buttons */
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		background-color: white;
-		border: 1px solid rgb(0, 164, 166);
-		color: rgb(0, 164, 166) !important;
-		padding: 5px 10px;
-		margin: 2px;
-		border-radius: 6px;
-		transition: 0.3s;
-		font-weight: 600;
-	}
+/* Style pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
 
-	.dataTables_wrapper .dataTables_paginate .paginate_button.current,
-	.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-		background-color: rgb(0, 164, 166) !important;
-		color: white !important;
-	}
+/* Optional: Style the search input */
+.dataTables_filter input {
+	margin-left: 5px;
+	flex: 1;
+}
 
-	/* Optional: Style the search input */
-	.dataTables_filter input {
-		border: 1px solid rgb(0, 164, 166);
-		border-radius: 4px;
-		padding: 4px 8px;
-	}
 	.no-spinner {
 	  -moz-appearance: textfield;
 	}
