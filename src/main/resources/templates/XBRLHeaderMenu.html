@@ -9,8 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
     <link rel="stylesheet" th:href="@{/css/CustomButton.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    
     <style>
         html {
             zoom: 0.9;
@@ -20,11 +19,11 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             font-size: 14px;
             background-color: #ffffff;
-            overflow: hidden !important;
             margin: 0;
+            overflow: hidden !important;
         }
 
-        /* Header Bar */
+        /* ===================== HEADER BAR ===================== */
         .header-bar {
             display: flex;
             align-items: center;
@@ -37,12 +36,11 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 462px;
+            gap: 460px;
         }
 
         .logo-img {
-            height: 45px;
-            transition: transform 0.3s ease;
+            height: 50px;
         }
 
         .logo-text-highlight {
@@ -51,18 +49,58 @@
             font-weight: 700;
             color: #003366;
             letter-spacing: 1.5px;
-            text-shadow: 0 0 6px rgba(0, 64, 128, 0.4);
-        }
+ text-shadow: 2px 0px 13px rgba(242, 92, 25, 0.4);        }
 
-        /* Navbar */
+        /* ===================== NAVBAR ===================== */
         .navbar {
             background-color: #ffffff;
             box-shadow: 0 3px 4px rgba(0, 0, 0, 0.06);
-            padding: 0 0px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
         }
 
-        .menu {
+        /* === Scrollable Menu Styles === */
+        .menu-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scroll-behavior: smooth;
+            flex: 1;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .menu-scroll-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Arrows */
+        .scroll-arrow {
+            background: #004080;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 18px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+            z-index: 10;
+        }
+
+        .scroll-arrow:hover {
+            background: #0073e6;
+            transform: scale(1.05);
+        }
+
+        /* Keep menu inline */
+        .menu {
+            display: inline-flex;
             list-style: none;
             margin: 0;
             padding: 0;
@@ -83,65 +121,52 @@
             border-radius: 6px;
         }
 
-		/* ======== Menu Hover (Sky Blue Background) ======== */
-		.menu > li > a:hover {
-		    background-color: #87CEEB; /* 🌤 Sky Blue */
-		    color: #000;
-		    border-bottom: 2px solid #004080;
-		}
+        /* Hover */
+        .menu > li > a:hover {
+            background-color: darkorange;
+            color: white;
+            border-bottom: 2px solid #004080;
+        }
 
-		/* ======== Submenu (No Bullet, No Bottom Border) ======== */
-		.submenu {
-		    display: none;
-		    position: absolute;
-		    top: 45px;
-		    left: 0;
-		    background-color: #f8f9fa;
-		    border: 1px solid #004080;
-		    border-radius: 4px;
-		    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-		    min-width: 220px;
-		    z-index: 1000;
-		    list-style: none; /* 🚫 Remove bullets */
-		    padding-left: 0;  /* Align properly */
-		    margin: 0;
-		}
+        /* Submenu */
+        .submenu {
+            display: none;
+			position: fixed; /* ✅ was fixed */
+            background-color: #f8f9fa;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            min-width: 220px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            z-index: 1000;
+        }
 
-		.submenu li {
-		    border-bottom: none; /* 🚫 Remove bottom line */
-		}
+        .submenu a {
+            display: block;
+            padding: 10px 15px;
+            color: #004080;
+            font-weight: 500;
+            transition: background 0.3s;
+            white-space: nowrap;
+            text-decoration: none;
+        }
 
-		.submenu a {
-		    display: block;
-		    padding: 10px 15px;
-		    color: #004080;
-		    font-weight: 500;
-		    transition: background 0.3s;
-		    white-space: nowrap;
-		    text-decoration: none;
-		}
+        .submenu a:hover {
+            background-color: darkorange;
+			color: white;
+        }
 
-		.submenu a:hover {
-		    background-color: #87CEEB;
-		    color: #000;
-		}
+        .menu > li:hover .submenu {
+            display: block;			
+        }
 
-		/* Keep submenu visible on hover */
-		.menu > li:hover .submenu {
-		    display: block;
-		}
-
-        /* User Info Section */
+        /* ===================== USER INFO ===================== */
         .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 14px;
             color: #004080;
-        }
-
-        .user-info i {
-            font-size: 1.4rem;
         }
 
         .username {
@@ -167,11 +192,66 @@
 
         .logout-btn button:hover {
             background: linear-gradient(135deg, #0073e6, #0099ff);
-            box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
             transform: translateY(-1px);
         }
 
-        /* ✅ Loader Styles */
+        /* ===================== DATE TIME ===================== */
+        .datetime-container {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 8px 0;
+        }
+
+        .datetime-card {
+            background: linear-gradient(135deg, #004080, #0073e6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.25);
+        }
+
+        .flip-unit {
+            position: relative;
+            display: inline-block;
+            perspective: 400px;
+            width: 28px;
+            text-align: center;
+        }
+
+        .flip-card {
+            display: block;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .flip-card span {
+            display: block;
+            backface-visibility: hidden;
+            line-height: 1;
+        }
+
+        .flip-card.flip {
+            transform: rotateX(-180deg);
+        }
+
+        .flip-card span.back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotateX(180deg);
+        }
+
+        .date-text {
+            font-size: 14px;
+        }
+
+        /* ===================== LOADER ===================== */
         :root {
             --bob-orange: #0073e6;
             --bob-blue: #004080;
@@ -205,7 +285,6 @@
 
         .logo-imgs {
             height: 90px;
-            object-fit: contain;
         }
 
         .flow-bar {
@@ -233,20 +312,23 @@
             0% { left: -40%; }
             100% { left: 100%; }
         }
+		
+		/* ✅ Active menu highlight */
+		.menu > li > a.active {
+		    background-color: darkorange !important;
+		    color: white !important;
+		    border-bottom: 2px solid #004080;
+		}
+
     </style>
 
-    <!-- ✅ Loader Script -->
     <script>
         function showLoader() {
-            const loader = document.getElementById("bob-loader");
-            if (loader) loader.setAttribute("aria-hidden", "false");
+            document.getElementById("bob-loader")?.setAttribute("aria-hidden", "false");
         }
-
         function hideLoader() {
-            const loader = document.getElementById("bob-loader");
-            if (loader) loader.setAttribute("aria-hidden", "true");
+           // document.getElementById("bob-loader")?.setAttribute("aria-hidden", "true");
         }
-
         window.addEventListener("load", () => setTimeout(hideLoader, 400));
     </script>
 </head>
@@ -255,13 +337,13 @@
     <!-- ✅ Top Header -->
     <header class="header-bar">
         <div class="logo-section">
-            <img th:src="@{/images/bobnew.png}" alt="Bank of Baroda" class="logo-img">
+            <img th:src="@{/images/bob_new.png}" alt="Bank of Baroda" class="logo-img">
             <div class="logo-text-highlight">Risk Analytical System</div>
         </div>
 
         <div class="user-info">
-            <i class="fa-solid fa-user-circle"></i>
-            <span class="username" th:text="${session.USERNAME}">Username</span>
+ <div class="css-user-alt"></div>
+             <span class="username" th:text="${session.USERNAME}">Username</span>
             <form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
                 <button type="submit">
                     <i class="fas fa-sign-out-alt"></i> Logout
@@ -270,9 +352,17 @@
         </div>
     </header>
 
-    <!-- ✅ Navigation Menu -->
-    <nav class="navbar d-flex align-items-center">
-        <ul class="menu">
+    <!-- ✅ Navigation Menu -->	<nav class="navbar d-flex align-items-center position-relative">
+	  
+	  <!-- Left Scroll Arrow -->
+	  <button class="scroll-arrow left-arrow" id="scrollLeft">
+	    &#10094;
+	  </button>
+
+	  <!-- Scrollable Menu Wrapper -->
+	  <div class="menu-scroll-wrapper">
+	    <ul class="menu" id="mainMenu">
+
             <li><a th:href="@{/Dashboard}" onclick="showLoader()">Home</a></li>
 
             <li>
@@ -335,7 +425,14 @@
                     <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit,')}"><a th:href="@{/Service_Audit}" onclick="showLoader()">Service Audit</a></li>
                 </ul>
             </li>
-        </ul>
+				
+            </ul>	
+				</div>
+
+			 <!-- Right Scroll Arrow -->
+			 <button class="scroll-arrow right-arrow" style="margin-right: 15px;" id="scrollRight">
+			   &#10095;
+			 </button>
 
 		<div class="datetime-container">
 		  <div class="datetime-card">
@@ -468,4 +565,80 @@ updateDateTime();
   opacity: 0.95;
 }
 </style>
+
+<style>
+/* ===================== Alternative CSS User Icon ===================== */
+.css-user-alt {
+    position: relative;
+    width: 15px;
+    height: 25px;
+}
+
+/* Head */
+.css-user-alt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: #f25c19;
+    border-radius: 50%;
+}
+
+/* Shoulders */
+.css-user-alt::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 12px;
+    background-color: #f25c19;
+    border-radius: 50% 50% 0 0;
+}
+</style>
+<script>
+const menuWrapper = document.querySelector(".menu-scroll-wrapper");
+
+// Adjust submenu alignment when menu scrolls
+menuWrapper.addEventListener("scroll", () => {
+  const offsetX = menuWrapper.scrollLeft;
+  document.querySelectorAll(".submenu").forEach(sub => {
+    sub.style.transform = `translateX(-${offsetX}px)`; // Shift submenu with scroll
+  });
+});
+</script>
+
+<script>
+const scrollContainer = document.getElementById("mainMenu");
+const wrapper = document.querySelector(".menu-scroll-wrapper");
+const btnLeft = document.getElementById("scrollLeft");
+const btnRight = document.getElementById("scrollRight");
+
+// Scroll amount (in px)
+const scrollAmount = 150;
+
+btnLeft.addEventListener("click", () => {
+  wrapper.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+});
+
+btnRight.addEventListener("click", () => {
+  wrapper.scrollBy({ left: scrollAmount, behavior: "smooth" });
+});
+
+// Show/hide arrows depending on scroll position
+function updateArrowVisibility() {
+  btnLeft.style.display = wrapper.scrollLeft > 5 ? "flex" : "none";
+  const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth - 5;
+  btnRight.style.display = wrapper.scrollLeft < maxScrollLeft ? "flex" : "none";
+}
+
+wrapper.addEventListener("scroll", updateArrowVisibility);
+window.addEventListener("resize", updateArrowVisibility);
+window.addEventListener("load", updateArrowVisibility);
+</script>
+
 </html>
