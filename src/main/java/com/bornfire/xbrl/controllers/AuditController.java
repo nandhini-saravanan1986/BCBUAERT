@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bornfire.xbrl.entities.Service_audit_table_Rep;
 import com.bornfire.xbrl.services.AuditService;
 
 @Controller
@@ -21,7 +22,10 @@ public class AuditController {
 	
 	@Autowired
 	AuditService auditService;
-
+	  @Autowired
+	Service_audit_table_Rep Service_audit_table_Reps;
+		
+	
 	@RequestMapping(value = "User_Audit", method = RequestMethod.GET)
 	public String userAudit(Model md, HttpServletRequest req) {
 		String userid = (String) req.getSession().getAttribute("USERID");
@@ -39,23 +43,24 @@ public class AuditController {
 		return "User_Audit";
 	}
 	
-	@RequestMapping(value = "Service_Audit", method = RequestMethod.GET)
-	public String ServiceAudit(Model md, HttpServletRequest req) {
-		String userid = (String) req.getSession().getAttribute("USERID");
-		System.out.println("The login userid is : " + userid);
+	 	
+				@RequestMapping(value = "Service_Audit", method = RequestMethod.GET)
+			public String ServiceAudit(Model md, HttpServletRequest req) {
+				String userid = (String) req.getSession().getAttribute("USERID");
+				System.out.println("The login userid is : " + userid);
+				md.addAttribute("activeMenu", "Admin");
+				md.addAttribute("activePage", "Service_Audit");
 
-		LocalDateTime localDateTime = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		System.out.println("The time is " + localDateTime);
+				LocalDateTime localDateTime = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+				System.out.println("The time is " + localDateTime);
 
-		md.addAttribute("menu", "Audit");
+				md.addAttribute("menu", "Audit");
 
-		// Add both lists to the model
-		md.addAttribute("AuditList", auditService.getAuditServices());
-		//md.addAttribute("userAuditLevels", auditService.getUserAuditLevelList());
+				// Add both lists to the model
+				md.addAttribute("AuditList", Service_audit_table_Reps.getauditListLocalvalues());
 
-		return "Service_Audit";
-	}
-	
+				return "Service_Audit.html";
+			}
 	@RequestMapping(value = "getchanges", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public String fetchChanges(@RequestParam(required = false) String audit_ref_no) {
