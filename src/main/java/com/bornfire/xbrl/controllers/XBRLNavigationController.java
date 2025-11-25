@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -82,6 +83,7 @@ import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_Chart_pojo;
 import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
 import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
 import com.bornfire.xbrl.entities.RT_DataControl;
@@ -106,10 +108,13 @@ import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template_repository;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
+import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
+import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
+import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
@@ -153,6 +158,7 @@ import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
+
 @Controller
 @ConfigurationProperties("default")
 public class XBRLNavigationController {
@@ -161,16 +167,16 @@ public class XBRLNavigationController {
 	/*
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
-	
+
 	@Autowired
 	RT_SLSServices RT_SLSServices;
-	
+
 	@Autowired
 	RT_SLS_Detail_Repository rt_sls_detail_repository;
 
 	@Autowired
 	RT_SLS_Repository rt_sls_repository;
-	@Autowired 
+	@Autowired
 	AuditService auditService;
 	@Autowired
 	RT_Investment_Risk_Data_Dashboard_TemplateRepository RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS;
@@ -264,64 +270,67 @@ public class XBRLNavigationController {
 	RT_TradeLevelDataDerivativesRepository tradeleveldataderivativesRepo;
 
 	@Autowired
-	 RT_TradeLevelDerivativesService tradeleveldataderivativeService;
+	RT_TradeLevelDerivativesService tradeleveldataderivativeService;
 
 	@Autowired
-	 RT_ForeignCurrencyDepositService foreigncurrencydepositService;
+	RT_ForeignCurrencyDepositService foreigncurrencydepositService;
 
 	@Autowired
 	RT_ForeignCurrencyDepositRepository foreigncurrencydepositRepo;
 
 	@Autowired
 	RT_Investment_Securities_Data_Template_Repo investmentSecuritiesDataTemplateRepo;
-	
+
 	@Autowired
 	private RT_ImpactAnalysisService impactanalysisService;
-	
+
 	@Autowired
-	RT_Liquidity_Risk_Data_Service   liquidityRiskDataService;
-	
+	RT_Liquidity_Risk_Data_Service liquidityRiskDataService;
+
 	@Autowired
-	RT_Liquidity_Risk_Data_Template_Repository   LiquidityRiskDataRepository;
-	
-@Autowired
+	RT_Liquidity_Risk_Data_Template_Repository LiquidityRiskDataRepository;
+
+	@Autowired
 	RT_ImpactAnalysisRepository impactanalysisRepo;
 
-@Autowired 
-RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
+	@Autowired
+	RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 
-@Autowired
+	@Autowired
 
-RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimplifiedRepo;
+	RT_TradeLevelDataDerivativesSimplifiedRepository tradeleveldataderivativessimplifiedRepo;
 
-@Autowired
- RT_TradeLevelDerivativesSimplifiedService tradeleveldataderivativesimplifiedService;
+	@Autowired
+	RT_TradeLevelDerivativesSimplifiedService tradeleveldataderivativesimplifiedService;
 
+	@Autowired
+	RT_InvestmentRiskDataDashboard_Service investmentriskdatadictionaryService;
 
-@Autowired
-RT_InvestmentRiskDataDashboard_Service investmentriskdatadictionaryService;
+	@Autowired
+	RT_IRRBB_Data_EVE_Template_Repository IRRB_EVE_Repo;
+	@Autowired
+	RT_IRRBB_Data_EAR_Repository IRRBB_EAR_Repository;
 
+	@Autowired
+	RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 
-@Autowired
-RT_IRRBB_Data_EVE_Template_Repository IRRB_EVE_Repo;
-@Autowired 
-RT_IRRBB_Data_EAR_Repository IRRBB_EAR_Repository;
+	@Autowired
+	RT_LiquidityriskdashboardService liquidityriskdashboardService;
 
-@Autowired 
-RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
+	@Autowired
+	RT_Irrbb_Eve_Service irrbbeveService;
 
+	@Autowired
+	RT_Irrbb_Ear_Service irrbbearService;
 
-@Autowired
-RT_LiquidityriskdashboardService liquidityriskdashboardService;
+	@Autowired
+	RT_Irrbb_Discount_Rates_Service discountratesService;
 
-@Autowired
-RT_Irrbb_Eve_Service irrbbeveService;
+	@Autowired
+	RT_Matrix_monitoring_rep RT_Matrix_monitoring_rep;
 
-@Autowired
-RT_Irrbb_Ear_Service irrbbearService;
-
-@Autowired
-RT_Irrbb_Discount_Rates_Service discountratesService;
+	@Autowired
+	RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
 
 	private String pagesize;
 
@@ -341,22 +350,21 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
 		String BRANCH_NAME = (String) req.getSession().getAttribute("BRANCHNAME");
 
+		LocalDate today = LocalDate.now(); // Get today's date
+		Date Todaydate = java.sql.Date.valueOf(today.minusDays(0));
+
 		md.addAttribute("changepassword", loginServices.checkPasswordChangeReq(userid));
 		md.addAttribute("checkpassExpiry", loginServices.checkpassexpirty(userid));
 		md.addAttribute("checkAcctExpiry", loginServices.checkAcctexpirty(userid));
 		int completed = 0;
 		int uncompleted = 0;
 
-		
-		if("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
-			md.addAttribute("aslCreditList", Mis_exposure_bill_detail_rep.GetBranchwiseExpcount(BRANCH_NAME));
-		}else {
-			md.addAttribute("aslCreditList", Mis_exposure_bill_detail_rep.GetExposurecountdetail());
-		}
-		
-		
+		// Retrive Current date Matrix data
+		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal(Todaydate);
+
 		md.addAttribute("completed", completed);
 		md.addAttribute("uncompleted", uncompleted);
+		md.addAttribute("Matrixlistdata", Matrixdata);
 		md.addAttribute("menu", "Dashboard");
 		return "XBRLDashboard";
 	}
@@ -367,7 +375,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
-		//System.out.println("role id is : " + roleId);
+		// System.out.println("role id is : " + roleId);
 		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
 		if (formmode == null || formmode.equals("list")) {
@@ -407,122 +415,116 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	@RequestMapping(value = "createAccessRole", method = RequestMethod.POST)
 	@ResponseBody
 	public String createAccessRoleEn(@RequestParam("formmode") String formmode,
-	        @RequestParam(value = "adminValue", required = false) String adminValue,
-	        @RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
-	        @RequestParam(value = "aslValue", required = false) String aslValue,
-	        @RequestParam(value = "aslUploadValue", required = false) String aslUploadValue,
-	        @RequestParam(value = "auditUsValue", required = false) String auditUsValue,
-	        @RequestParam(value = "finalString", required = false) String finalString,
-	        @ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
+			@RequestParam(value = "adminValue", required = false) String adminValue,
+			@RequestParam(value = "RT_ReportsValue", required = false) String RT_ReportsValue,
+			@RequestParam(value = "aslValue", required = false) String aslValue,
+			@RequestParam(value = "aslUploadValue", required = false) String aslUploadValue,
+			@RequestParam(value = "auditUsValue", required = false) String auditUsValue,
+			@RequestParam(value = "finalString", required = false) String finalString,
+			@ModelAttribute AccessAndRoles alertparam, Model md, HttpServletRequest rq) {
 
-	    String userid = (String) rq.getSession().getAttribute("USERID");
-	    String roleId = (String) rq.getSession().getAttribute("ROLEID");
-	    md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
+		String userid = (String) rq.getSession().getAttribute("USERID");
+		String roleId = (String) rq.getSession().getAttribute("ROLEID");
+		md.addAttribute("IPSRoleMenu", AccessRoleService.getRoleMenu(roleId));
 
-	    String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, RT_ReportsValue,
-	            aslValue, aslUploadValue, auditUsValue, finalString, userid);
+		String msg = AccessRoleService.addPARAMETER(alertparam, formmode, adminValue, RT_ReportsValue, aslValue,
+				aslUploadValue, auditUsValue, finalString, userid);
 
-	    return msg;
+		return msg;
 	}
-	
+
 	@PostMapping("verifyRole")
 	@ResponseBody
 	public String verifyRole(@RequestParam("roleId") String roleId, HttpServletRequest rq) {
-	    String userId = (String) rq.getSession().getAttribute("USERID");
+		String userId = (String) rq.getSession().getAttribute("USERID");
 
-	    Optional<AccessAndRoles> optionalRole = accessandrolesrepository.findById(roleId);
+		Optional<AccessAndRoles> optionalRole = accessandrolesrepository.findById(roleId);
 
-	    if (!optionalRole.isPresent()) {
-	        return "Role not found. Cannot verify.";
-	    }
+		if (!optionalRole.isPresent()) {
+			return "Role not found. Cannot verify.";
+		}
 
-	    AccessAndRoles role = optionalRole.get();
+		AccessAndRoles role = optionalRole.get();
 
-	    if ("Y".equalsIgnoreCase(role.getEntityFlg())) {
-	        return "Role already verified.";
-	    }
+		if ("Y".equalsIgnoreCase(role.getEntityFlg())) {
+			return "Role already verified.";
+		}
 
-	    role.setEntityFlg("Y");
-	    role.setEntityFlg("N");
-	    role.setAuthUser(userId);
-	    role.setAuthTime(new Date());
+		role.setEntityFlg("Y");
+		role.setEntityFlg("N");
+		role.setAuthUser(userId);
+		role.setAuthTime(new Date());
 
-	    accessandrolesrepository.save(role);
+		accessandrolesrepository.save(role);
 
-	    return "Role verified successfully.";
+		return "Role verified successfully.";
 	}
 
 	@GetMapping("/checkRoleExists")
 	@ResponseBody
 	public String checkRoleExists(@RequestParam("roleId") String roleId) {
-	    boolean exists = accessandrolesrepository.findById(roleId).isPresent();
-	    return exists ? "exists" : "not_exists";
+		boolean exists = accessandrolesrepository.findById(roleId).isPresent();
+		return exists ? "exists" : "not_exists";
 	}
-
-
-	
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
-	                          @RequestParam(required = false) String userid,
-	                          @RequestParam(value = "page", required = false) Optional<Integer> page,
-	                          @RequestParam(value = "size", required = false) Optional<Integer> size,
-	                          Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String userid,
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
-	    String loginuserid = (String) req.getSession().getAttribute("USERID");
-	    String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
-	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
-	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
+		String loginuserid = (String) req.getSession().getAttribute("USERID");
+		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
+		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
+		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
 
-	    //System.out.println("work class is : " + WORKCLASSAC);
-	    //System.out.println("role ID" + ROLEIDAC);
+		// System.out.println("work class is : " + WORKCLASSAC);
+		// System.out.println("role ID" + ROLEIDAC);
 
 //	    System.out.println("work class is : " + WORKCLASSAC);
 //	    System.out.println("role ID" + ROLEIDAC);
 
+		loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(),
+				"ACTIVE");
+		Session hs1 = sessionFactory.getCurrentSession();
+		md.addAttribute("menu", "USER PROFILE");
 
-	    loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(), "ACTIVE");
-	    Session hs1 = sessionFactory.getCurrentSession();
-	    md.addAttribute("menu", "USER PROFILE");
+		int currentPage = page.orElse(0);
+		int pageSize = size.orElse(Integer.parseInt(pagesize));
 
-	    int currentPage = page.orElse(0);
-	    int pageSize = size.orElse(Integer.parseInt(pagesize));
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+			md.addAttribute("ROLEIDAC", ROLEIDAC);
+			md.addAttribute("loginuserid", loginuserid);
 
-	    if (formmode == null || formmode.equals("list")) {
-	        md.addAttribute("formmode", "list");
-	        md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-	        md.addAttribute("ROLEIDAC", ROLEIDAC);
-	        md.addAttribute("loginuserid", loginuserid);
-
-	        Iterable<UserProfile> user = loginServices.getUsersList();
-	        md.addAttribute("userProfiles", user);
+			Iterable<UserProfile> user = loginServices.getUsersList();
+			md.addAttribute("userProfiles", user);
 
 		} else if (formmode.equals("edit")) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("userProfile", loginServices.getUser(userid));
 
-	    } else if (formmode.equals("add")) {
-	        md.addAttribute("formmode", formmode);
-	        md.addAttribute("userProfile", loginServices.getUser(""));
+		} else if (formmode.equals("add")) {
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("userProfile", loginServices.getUser(""));
 
-	    } else if (formmode.equals("verify")) {
-	    	md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-		    md.addAttribute("ROLEIDAC", ROLEIDAC);
-	        md.addAttribute("formmode", formmode);
-	        md.addAttribute("userProfile", loginServices.getUser(userid));
+		} else if (formmode.equals("verify")) {
+			md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+			md.addAttribute("ROLEIDAC", ROLEIDAC);
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("userProfile", loginServices.getUser(userid));
 
-	    } else {
-	        md.addAttribute("formmode", formmode);
-	        md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
-	        md.addAttribute("userProfile", loginServices.getUser(userid));
-	    }
+		} else {
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
+			md.addAttribute("userProfile", loginServices.getUser(userid));
+		}
 
-	    return "XBRLUserprofile";
+		return "XBRLUserprofile";
 	}
 
-	
-	
 	@RequestMapping(value = "verifyUser", method = RequestMethod.POST)
 	@ResponseBody
 	public String verifyUser(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
@@ -536,8 +538,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	@GetMapping("/getRoleDetails")
 	@ResponseBody
 	public AccessAndRoles getRoleDetails(@RequestParam String roleId) {
-	   // System.out.println("role id for fetching is : " + roleId);
-	    AccessAndRoles access = accessandrolesrepository.findById(roleId).orElse(null);
+		// System.out.println("role id for fetching is : " + roleId);
+		AccessAndRoles access = accessandrolesrepository.findById(roleId).orElse(null);
 
 		/*
 		 * if (access != null) { System.out.println("roleDesc = " +
@@ -547,9 +549,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		 * access.getDomainId()); // <== ADD THIS }
 		 */
 
-	    return access;
+		return access;
 	}
-
 
 	@RequestMapping(value = "createUser", method = RequestMethod.POST)
 	@ResponseBody
@@ -615,20 +616,17 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	@PostMapping("/createDataControl")
 	@ResponseBody
 	public String createDataControl(
-	        @RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
-	        @RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
-	        @ModelAttribute RT_DataControl dto,
-	        HttpServletRequest req
-	) {
-	    System.out.println("Controller: createOrUpdateNostro() called");
-	    System.out.println("report name is: " + report_name);
+			@RequestParam(name = "formmode", required = false, defaultValue = "add") String formmode,
+			@RequestParam(name = "report_name", required = false, defaultValue = "add") String report_name,
+			@ModelAttribute RT_DataControl dto, HttpServletRequest req) {
+		System.out.println("Controller: createOrUpdateNostro() called");
+		System.out.println("report name is: " + report_name);
 
-	    String userid = (String) req.getSession().getAttribute("USERID");
-	    auditService.createBusinessAudit(userid, "ADD", "DATACONTROL", null, "BCBUAE_DATACONTROL");
+		String userid = (String) req.getSession().getAttribute("USERID");
+		auditService.createBusinessAudit(userid, "ADD", "DATACONTROL", null, "BCBUAE_DATACONTROL");
 
-	    return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
+		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
 	}
-
 
 	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
@@ -742,30 +740,27 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	// -------------------------------------Treasury_Credit_Limit_Management---------------------------------------
 
-	 @RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
-	    public String TreasuryCredit(@RequestParam(required = false) String formmode,
-	                                 @RequestParam(required = false) Integer slNo,
-	                                 Model model) {
+	@RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
+	public String TreasuryCredit(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) Integer slNo, Model model) {
 
-	        if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
-	            model.addAttribute("formmode", "edit");
-	            model.addAttribute("creditData", treasuryCreditRepo.findById(slNo)
-	                .orElse(new RT_TreasuryCreditEntity()));
-	        } else if ("list".equalsIgnoreCase(formmode)) {
-	            model.addAttribute("formmode", "list");
-	            model.addAttribute("TClist", treasuryCreditRepo.getTClist());
-	        } else {
-	            model.addAttribute("formmode", "add");
-	        }
+		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			model.addAttribute("formmode", "list");
+			model.addAttribute("TClist", treasuryCreditRepo.getTClist());
+		} else {
+			model.addAttribute("formmode", "add");
+		}
 
-	        List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-	        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
-	        model.addAttribute("bankList", bankList);
-	        model.addAttribute("countryList", countryList);
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		model.addAttribute("bankList", bankList);
+		model.addAttribute("countryList", countryList);
 
-	        return "RT/Treasury_Credit.html";
-	    }
-
+		return "RT/Treasury_Credit.html";
+	}
 
 	@PostMapping("/updateTreasuryCredit")
 	@ResponseBody
@@ -790,8 +785,6 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		}
 	}
 
-	
-	
 	@RequestMapping(value = "/downloadTreasuryCreditExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel() {
 		logger.info("Controller: Received request for Treasury credit Excel download.");
@@ -848,18 +841,17 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "Investment_Securities_Data", method = RequestMethod.GET)
 	public String treasuryCredit(@RequestParam(required = false) String siNo,
-	                             @RequestParam(required = false) String formmode,
-	                             Model model) {
+			@RequestParam(required = false) String formmode, Model model) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
+		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo).orElse(new RT_Investment_Securities_Data_Template()));
-		}else if ("list".equalsIgnoreCase(formmode)) {
-	        List<RT_Investment_Securities_Data_Template> list =
-	            investmentSecuritiesDataTemplateRepo.getsecDatalist();
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
+					.orElse(new RT_Investment_Securities_Data_Template()));
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist();
 
-	        model.addAttribute("formmode", "list");
-	        model.addAttribute("ISList", list); // Used in HTML table
+			model.addAttribute("formmode", "list");
+			model.addAttribute("ISList", list); // Used in HTML table
 		} /*
 			 * else { model.addAttribute("formmode", "add");
 			 * model.addAttribute("securityData", new
@@ -867,13 +859,13 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			 */else {
 			model.addAttribute("formmode", "add");
 		}
- 
-        List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
-        model.addAttribute("bankList", bankList);
-        model.addAttribute("countryList", countryList);
-        
-	    return "RT/Investment_SecurityData";
+
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		model.addAttribute("bankList", bankList);
+		model.addAttribute("countryList", countryList);
+
+		return "RT/Investment_SecurityData";
 	}
 
 	@PostMapping("/updateInvestmentSecurity")
@@ -890,48 +882,45 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		}
 	}
 
-	
-	
-	// -------------------------------------Liquidity_Risk_Data -start---------------------------------------
+	// -------------------------------------Liquidity_Risk_Data
+	// -start---------------------------------------
 
 	@RequestMapping(value = "Liquidity_Risk_Data", method = RequestMethod.GET)
 	public String liquidityData(@RequestParam(required = false) String formmode,
-	                            @RequestParam(required = false) BigDecimal slno,
-	                            Model model) {
+			@RequestParam(required = false) BigDecimal slno, Model model) {
 
-	    if ("edit".equalsIgnoreCase(formmode) && slno != null) {
-	        model.addAttribute("formmode", "edit");
-	        model.addAttribute("liquidityData", LiquidityRiskDataRepository.findById(slno)
-	                                .orElse(new RT_Liquidity_Risk_Data_Template()));
-	    } else if ("list".equalsIgnoreCase(formmode)) {
-	        model.addAttribute("formmode", "list");
-	        model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist());
-	    } else {
-	        model.addAttribute("formmode", "add");
-	        model.addAttribute("liquidityData", new RT_Liquidity_Risk_Data_Template());
-	    }
+		if ("edit".equalsIgnoreCase(formmode) && slno != null) {
+			model.addAttribute("formmode", "edit");
+			model.addAttribute("liquidityData",
+					LiquidityRiskDataRepository.findById(slno).orElse(new RT_Liquidity_Risk_Data_Template()));
+		} else if ("list".equalsIgnoreCase(formmode)) {
+			model.addAttribute("formmode", "list");
+			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist());
+		} else {
+			model.addAttribute("formmode", "add");
+			model.addAttribute("liquidityData", new RT_Liquidity_Risk_Data_Template());
+		}
 
-	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-        List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
-        model.addAttribute("bankList", bankList);
-        model.addAttribute("countryList", countryList);
+		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+		model.addAttribute("bankList", bankList);
+		model.addAttribute("countryList", countryList);
 
-	    return "RT/Liquidity_Risk_Data";
+		return "RT/Liquidity_Risk_Data";
 	}
 
-
 	@PostMapping("/updateLiquidityRiskData")
-    @ResponseBody
-    public String updateLiquidityRiskData(@ModelAttribute RT_Liquidity_Risk_Data_Template LiquidityData) {
-        boolean updated = liquidityRiskDataService.updateLiquidityRisk(LiquidityData);
+	@ResponseBody
+	public String updateLiquidityRiskData(@ModelAttribute RT_Liquidity_Risk_Data_Template LiquidityData) {
+		boolean updated = liquidityRiskDataService.updateLiquidityRisk(LiquidityData);
 
-        if (updated) {
-            return "Updated successfully";
-        } else {
-            return "Record not found for update";
-        }
-    }
-	
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+	}
+
 	@RequestMapping(value = "/downloadLiquidityRiskData", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadLiquidityRiskData() {
 		logger.info("Controller: Received request for Trade Market Risk Excel download.");
@@ -963,8 +952,9 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-		// -------------------------------------Liquidity_Risk_Data End---------------------------------------
-	
+	// -------------------------------------Liquidity_Risk_Data
+	// End---------------------------------------
+
 	@Autowired
 	private RT_InvestmentSecurity_Service rtInvestmentSecuritiesService;
 
@@ -995,7 +985,9 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
 		} catch (FileNotFoundException e) {
-			logger.error("Controller ERROR: The CBUAE_Investment_Securities_Data_Template_Pillar2.xls template file was not found.", e);
+			logger.error(
+					"Controller ERROR: The CBUAE_Investment_Securities_Data_Template_Pillar2.xls template file was not found.",
+					e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} catch (Exception e) {
 			logger.error("Controller ERROR: A critical error occurred during Investment Securities file generation.",
@@ -1013,8 +1005,9 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(required = false) String SI_NO, // changed from accountNo to slNo
 			Model md, HttpServletRequest req) {
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			Long Serialnumber=Long.parseLong(SI_NO);
-			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getParticularDataBySI_NO(Serialnumber);
+			Long Serialnumber = Long.parseLong(SI_NO);
+			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS
+					.getParticularDataBySI_NO(Serialnumber);
 			md.addAttribute("investmentriskdatadashboard", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -1038,13 +1031,13 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 		return "RT/Investment_Risk_Data_Dashboard_Template";
 	}
-	
-	
+
 	@PostMapping("/updateinvestmentriskdatadictionary")
 	@ResponseBody
 	public String updateinvestmentriskdatadictionary(
-			@ModelAttribute RT_Investment_Risk_Data_Dashboard_Template investmentriskdatadashboard ) {
-		boolean updated = investmentriskdatadictionaryService.updateinvestmentriskdatadictionary(investmentriskdatadashboard);
+			@ModelAttribute RT_Investment_Risk_Data_Dashboard_Template investmentriskdatadashboard) {
+		boolean updated = investmentriskdatadictionaryService
+				.updateinvestmentriskdatadictionary(investmentriskdatadashboard);
 
 		if (updated) {
 			return "Updated successfully";
@@ -1151,59 +1144,55 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "/downloadFxriskExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadFxriskExcel() {
-	    logger.info("Controller: Received request for Fx Risk Excel download.");
+		logger.info("Controller: Received request for Fx Risk Excel download.");
 
-	    try {
-	        byte[] excelData = fxriskdataService.generateFxRiskExcel();
+		try {
+			byte[] excelData = fxriskdataService.generateFxRiskExcel();
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			if (excelData.length == 0) {
+				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        HttpHeaders headers = new HttpHeaders();
-	        String filename = "FxriskData.xls";
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			HttpHeaders headers = new HttpHeaders();
+			String filename = "FxriskData.xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: A required template file was not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: A required template file was not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	// For download excel for downloadNostroExcel
 
 	@RequestMapping(value = "downloadNostroExcel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadNostroExcel(HttpServletRequest req) throws IOException {
-	    System.out.println("Entered controller downloadNostroExcel");
+		System.out.println("Entered controller downloadNostroExcel");
 
-	    String userid = (String) req.getSession().getAttribute("USERID");
+		String userid = (String) req.getSession().getAttribute("USERID");
 
-	    auditService.createBusinessAudit(userid, "DOWNLOAD", "NOSTRO_EXCEL", null, "BCBUAE_NOSTRO_BALANCE");
+		auditService.createBusinessAudit(userid, "DOWNLOAD", "NOSTRO_EXCEL", null, "BCBUAE_NOSTRO_BALANCE");
 
-	    // ✅ Generate Excel file and prepare response
-	    File excelFile = nostroService.generateNostroExcel();
-	    byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
+		// ✅ Generate Excel file and prepare response
+		File excelFile = nostroService.generateNostroExcel();
+		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
 
-	    HttpHeaders headersResponse = new HttpHeaders();
-	    headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	    headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xls");
+		HttpHeaders headersResponse = new HttpHeaders();
+		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xls");
 
-	    return ResponseEntity.ok().headers(headersResponse).body(excelData);
+		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
-
 
 	@Autowired
 	private RT_TradeMarketriskDataRepository trade_market_risk_repo;
@@ -1336,34 +1325,31 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "/downloadMmExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadMmExcel() {
-	    logger.info("Controller: Received request for MM Excel download.");
+		logger.info("Controller: Received request for MM Excel download.");
 
-	    try {
-	    	
-	        byte[] excelData = mmdataService.generateMmExcel();
+		try {
 
-        if (excelData.length == 0) {
-	            logger.warn("Controller: MM Excel file has no data. Returning 204.");
-	            return ResponseEntity.noContent().build();
-	        }
+			byte[] excelData = mmdataService.generateMmExcel();
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Mmdata.xls");
+			if (excelData.length == 0) {
+				logger.warn("Controller: MM Excel file has no data. Returning 204.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Mmdata.xls");
 
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: MM template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Error generating MM Excel file.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: MM template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Error generating MM Excel file.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(value = "counterparty", method = { RequestMethod.GET, RequestMethod.POST })
@@ -1371,10 +1357,9 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			@RequestParam(required = false) String id, @RequestParam(required = false) String userid, Model md,
 			HttpServletRequest req) {
 		logger.info("Enter controller of counterparty");
-		
-		 String roleId = (String) req.getSession().getAttribute("ROLEID");
-		 md.addAttribute("roleId", roleId);
-		 
+
+		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		md.addAttribute("roleId", roleId);
 
 		md.addAttribute("menu", "List Of Counterparty Bank"); // To highlight the menu
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
@@ -1392,7 +1377,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			List<String> getcode = Counterparty_Reps.getcodes();
 			md.addAttribute("getcode", getcode);
 		}
-		
+
 		else if (formmode.equals("view")) {
 			md.addAttribute("formmode", formmode);
 			logger.info("modify screen id is: " + id);
@@ -1402,7 +1387,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			List<String> getcode = Counterparty_Reps.getcodes();
 			md.addAttribute("getcode", getcode);
 		}
-		
+
 		else {
 			logger.info("Adding new Counterparty Bank form initialization started.");
 			md.addAttribute("menu", "Counterparty Bank - Add");
@@ -1436,11 +1421,11 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@Autowired
 	Mis_exposure_bill_detail_rep Mis_exposure_bill_detail_rep;
-	
+
 	@RequestMapping(value = "counterparty_list", method = { RequestMethod.GET, RequestMethod.POST })
 	public String counterparty_list(@RequestParam(required = false) String formmode,
-			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid,
-			Model md, HttpServletRequest req) {
+			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid, Model md,
+			HttpServletRequest req) {
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
@@ -1461,8 +1446,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("branches", branchList);
 			md.addAttribute("BRANCHCODE", BRANCHCODE);
 			md.addAttribute("ROLEID", ROLEID);
-			
-			System.out.println("ROLEID--"+ROLEID);
+
+			System.out.println("ROLEID--" + ROLEID);
 			md.addAttribute("currentBranch", BRANCHNAME);
 			List<String> branchesl;
 			if ("ADM".equalsIgnoreCase(ROLEID)) {
@@ -1478,67 +1463,68 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
 			md.addAttribute("listall", list);
 
-		} else if ("Billdetaillist".equalsIgnoreCase(formmode)){
-			
+		} else if ("Billdetaillist".equalsIgnoreCase(formmode)) {
+
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - list");
-			
+
 			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
 
 				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME));
-			}else {
+			} else {
 				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails());
 			}
-			
-		} else if ("Addbilldetail".equalsIgnoreCase(formmode)){
-			
+
+		} else if ("Addbilldetail".equalsIgnoreCase(formmode)) {
+
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Add");
 			Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity = new Mis_exposure_bill_detail_entity();
-			
+
 			Mis_exposure_bill_detail_entity.setDate_of_loan(new Date());
 			Mis_exposure_bill_detail_entity.setDue_date(new Date());
 			Mis_exposure_bill_detail_entity.setSrl_no(String.valueOf(Mis_exposure_bill_detail_rep.Generatesrl_no()));
-			
+
 			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
 
 				Mis_exposure_bill_detail_entity.setBranch_name(BRANCHNAME);
 			}
-			
+
 			md.addAttribute("billdata", Mis_exposure_bill_detail_entity);
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
-			
-		} else if ("Editbilldetail".equalsIgnoreCase(formmode)){
-			
+
+		} else if ("Editbilldetail".equalsIgnoreCase(formmode)) {
+
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Edit");
-			
-			System.out.println("Edit Exposure Menu Received bill detail is : "+Exposurebillid );
-			
+
+			System.out.println("Edit Exposure Menu Received bill detail is : " + Exposurebillid);
+
 			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
-			
-		}else if ("Deletebilldetail".equalsIgnoreCase(formmode)){
-			
+
+		} else if ("Deletebilldetail".equalsIgnoreCase(formmode)) {
+
 			md.addAttribute("formmode", formmode);
-			
+
 			md.addAttribute("menuname", "Bill detail operation - Delete");
 			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
-		}else if ("Verifybilldetail".equalsIgnoreCase(formmode)){
-			
+		} else if ("Verifybilldetail".equalsIgnoreCase(formmode)) {
+
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Verify");
 			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
-		}else {
+		} else {
 			logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);
 			md.addAttribute("menu", "List Of Counterparty"); // Default menu label
 			md.addAttribute("menu", "Upload File Of Counterparty");
 			md.addAttribute("formmode", "add");
 			md.addAttribute("userid", userid);
 
-			if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
+			if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID)
+					|| "MGR".equalsIgnoreCase(ROLEID)) {
 				List<String> codes = UserProfileReps.getallcodes();
 				logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 				md.addAttribute("codes", codes);
@@ -1547,8 +1533,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("BRANCHCODE", BRANCHCODE);
 			md.addAttribute("BRANCHNAME", BRANCHNAME);
 			md.addAttribute("ROLEID", ROLEID);
-			
-			System.out.println("ROLEID--"+ROLEID);
+
+			System.out.println("ROLEID--" + ROLEID);
 
 		}
 
@@ -1624,12 +1610,11 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		String formattedDate = sdf.format(reportDate).toUpperCase();
 
 		// Call stored procedure with 1 VARCHAR2 parameter
-		
-		  StoredProcedureQuery query =
-		  entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
-		  query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		  query.setParameter(1, formattedDate); query.execute();
-		 
+
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.setParameter(1, formattedDate);
+		query.execute();
 
 		msg = "Reconciliation completed for " + formattedDate;
 
@@ -1827,7 +1812,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				md.addAttribute("formmode", "add");
 				md.addAttribute("userid", userid);
 
-				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
+				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID)
+						|| "MGR".equalsIgnoreCase(ROLEID)) {
 					List<String> codes = UserProfileReps.getallcodes();
 					logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 					md.addAttribute("codes", codes);
@@ -1871,7 +1857,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 				md.addAttribute("menu", "Upload File Of Swap Settlement");
 				md.addAttribute("formmode", "add");
 				md.addAttribute("userid", userid);
-				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID) || "MGR".equalsIgnoreCase(ROLEID)) {
+				if ("ADM-M".equalsIgnoreCase(ROLEID) || "ADM-C".equalsIgnoreCase(ROLEID)
+						|| "MGR".equalsIgnoreCase(ROLEID)) {
 					List<String> codes = UserProfileReps.getallcodes();
 					logger.info("Counter party bank code Size: '{}', Role id is :'{}'", codes.size(), ROLEID);
 					md.addAttribute("codes", codes);
@@ -2069,38 +2056,35 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "/downloadTradeleveldataderivativeExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativeExcel() {
-	    logger.info("Controller: Received request for Trade Level Data Derivative Excel download.");
+		logger.info("Controller: Received request for Trade Level Data Derivative Excel download.");
 
-	    try {
-	        byte[] excelData = tradeleveldataderivativeService.generateTradeleveldataderivativeExcel();
+		try {
+			byte[] excelData = tradeleveldataderivativeService.generateTradeleveldataderivativeExcel();
 
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: No data found for Trade Level Data Derivative report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: No data found for Trade Level Data Derivative report. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			String filename = "TradeLevelDataDerivative.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        String filename = "TradeLevelDataDerivative.xls";
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
-
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: Trade Level Data Derivative Excel template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Trade Level Data Derivative Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(value = "Trade_Level_Data_Derivatives", method = RequestMethod.GET)
@@ -2158,11 +2142,13 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	@RequestMapping(value = "CCR_Data_Templates", method = RequestMethod.GET)
 	public String CCR_Data_Templates(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String siNo,  @RequestParam(required = false) String tab,// changed from accountNo to slNo
+			@RequestParam(required = false) String siNo, @RequestParam(required = false) String tab, // changed from
+																										// accountNo to
+																										// slNo
 			Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
-			//RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo);
+			// RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo);
 			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.findById(siNo).orElse(null);
 // make sure entity class matches
 			md.addAttribute("repoData", data);
@@ -2179,14 +2165,14 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			md.addAttribute("repoList1", repoList);
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-		}else {
+		} else {
 			md.addAttribute("formmode", "add");
 
-		        if ("template".equalsIgnoreCase(tab)) {
-		        	md.addAttribute("tab", "template");
-		        } else {
-		        	md.addAttribute("tab", "datacontrols"); // fallback default
-		        }
+			if ("template".equalsIgnoreCase(tab)) {
+				md.addAttribute("tab", "template");
+			} else {
+				md.addAttribute("tab", "datacontrols"); // fallback default
+			}
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
@@ -2220,7 +2206,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			return "Record not found for update";
 		}
 	}
-	
+
 	@Autowired
 	private RT_CCR_DATA_Service rtCCRDataService;
 
@@ -2298,13 +2284,13 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 			return "Record not found for update";
 		}
 	}
-	
+
 	@RequestMapping(value = "Impact_Analysis", method = RequestMethod.GET)
 	public String ImpactAnalysis(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_ImpactAnalysis data= impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
+			RT_ImpactAnalysis data = impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("ImpactAnalysis", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -2328,8 +2314,8 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		md.addAttribute("countryList", countryList);
 
 		return "RT/ImpactAnalysis";
-	} 
-	
+	}
+
 	@PostMapping("/updateImpactAnalysis")
 	@ResponseBody
 	public String updateImpactAnalysis(@ModelAttribute RT_ImpactAnalysis impactanalysis) {
@@ -2340,70 +2326,64 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		} else {
 			return "Record not found for update";
 		}
-	}	
-	
-	
+	}
 
-/*--IRRBB Data template--*/
+	/*--IRRBB Data template--*/
 	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
 	public String IRRBB_data_Template(@RequestParam(required = false) String SI_NO,
-			@RequestParam(required = false) String formmode,Model md) {
+			@RequestParam(required = false) String formmode, Model md) {
 
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
 			RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("irrbbear", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "editear");
-			
-		} 
-		
-		else if ("editeve".equalsIgnoreCase(formmode)) {
-		    System.out.println("EVE is formmode");
-		    RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO); 
-		    md.addAttribute("irrbbeve", data);
-		    md.addAttribute("formmode", "editeve");
+
 		}
 
-		
+		else if ("editeve".equalsIgnoreCase(formmode)) {
+			System.out.println("EVE is formmode");
+			RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
+			md.addAttribute("irrbbeve", data);
+			md.addAttribute("formmode", "editeve");
+		}
+
 		else if ("editdiscount".equalsIgnoreCase(formmode)) {
 			RT_IRRBB_Data_Discount_Rates data = IRRBB_Data_Template_DiscountRate_repo.getParticularDataBySI_NO(SI_NO);
-	        md.addAttribute("irrbbdiscount", data); // Same variable name used, if form is reused
-	        md.addAttribute("formmode", "editdiscount");
+			md.addAttribute("irrbbdiscount", data); // Same variable name used, if form is reused
+			md.addAttribute("formmode", "editdiscount");
 		}
-		
-		
+
 		else if ("list".equalsIgnoreCase(formmode)) {
 			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
-         
-			System.out.println("IRRBB EVE "  +IRRB_EVE_Repo.getAlldetails().size());
+
+			System.out.println("IRRBB EVE " + IRRB_EVE_Repo.getAlldetails().size());
 			md.addAttribute("formmode", "list");
 			md.addAttribute("ISList", list); // Used in HTML table
 		} else if ("EAR".equalsIgnoreCase(formmode)) {
 			System.out.println("THE EAR REPORT START");
 			List<RT_IRRBB_Data_EAR> list = IRRBB_EAR_Repository.getAlldetails();
-            System.out.println("IRRBB EAR "  +IRRBB_EAR_Repository.getAlldetails().size());
+			System.out.println("IRRBB EAR " + IRRBB_EAR_Repository.getAlldetails().size());
 			md.addAttribute("formmode", "EAR");
 			md.addAttribute("ISListEar", list); // Used in HTML table
-			System.out.println("Formmode" +formmode);
-		}
-		else if ("DiscountRate".equalsIgnoreCase(formmode)) {
+			System.out.println("Formmode" + formmode);
+		} else if ("DiscountRate".equalsIgnoreCase(formmode)) {
 			System.out.println("---- Discount Rate---");
 			List<RT_IRRBB_Data_Discount_Rates> list = IRRBB_Data_Template_DiscountRate_repo.getAlldetails();
-            System.out.println("IRRBB EAR "  +IRRBB_Data_Template_DiscountRate_repo.getAlldetails().size());
+			System.out.println("IRRBB EAR " + IRRBB_Data_Template_DiscountRate_repo.getAlldetails().size());
 			md.addAttribute("formmode", "DiscountRate");
 			md.addAttribute("ISListDiscount", list); // Used in HTML table
-			System.out.println("Formmode" +formmode);
+			System.out.println("Formmode" + formmode);
 		}
-		
+
 		/*
-			 * else { model.addAttribute("formmode", "add");
-			 * model.addAttribute("securityData", new
-			 * RT_Investment_Securities_Data_Template()); }
-			 */else {
+		 * else { model.addAttribute("formmode", "add");
+		 * model.addAttribute("securityData", new
+		 * RT_Investment_Securities_Data_Template()); }
+		 */else {
 			md.addAttribute("formmode", "add");
 		}
 
-		
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
 		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
 
@@ -2411,94 +2391,78 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 		md.addAttribute("countryList", countryList);
 		return "RT/IRRBB_data_Template";
 	}
-	
-	
-	
-	
-	
-	
 
 	@RequestMapping(value = "/downloadForeigncurrencyExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel() {
-	    logger.info("Controller: Received request for Foreign Currency Deposit Excel download.");
+		logger.info("Controller: Received request for Foreign Currency Deposit Excel download.");
 
-	    try {
-	        byte[] excelData = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
+		try {
+			byte[] excelData = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: No data found for Foreign Currency report. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			if (excelData.length == 0) {
+				logger.warn("Controller: No data found for Foreign Currency report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        String filename = "CBUAE_Foreign_Currency_Deposit_Template.xls";
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			String filename = "CBUAE_Foreign_Currency_Deposit_Template.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: Foreign Currency Excel template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Foreign Currency Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
-
-	
-	
-	
 	@RequestMapping(value = "/downloadImpactanalysisExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel() {
-	    logger.info("Controller: Received request for Impact Analysis Excel download.");
+		logger.info("Controller: Received request for Impact Analysis Excel download.");
 
-	    try {
-	        byte[] excelData = impactanalysisService.generateImpactAnalysisExcel();
+		try {
+			byte[] excelData = impactanalysisService.generateImpactAnalysisExcel();
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: No data found for Impact Analysis report. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			if (excelData.length == 0) {
+				logger.warn("Controller: No data found for Impact Analysis report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        String filename = "Impactanalysis.xls";
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			String filename = "Impactanalysis.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: Impact Analysis Excel template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Impact Analysis Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
-	
 	@RequestMapping(value = "Trade_Level_Data_Derivatives_Simplified", method = RequestMethod.GET)
 	public String TradeleveldataderivativesSimplified(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_TradeLevelDataDerivativesSimplified data = tradeleveldataderivativessimplifiedRepo.getParticularDataBySI_NO(SI_NO);
+			RT_TradeLevelDataDerivativesSimplified data = tradeleveldataderivativessimplifiedRepo
+					.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("tradeleveldataderivative", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
@@ -2526,113 +2490,100 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 	@ResponseBody
 	public String updatetradeleveldataderivativesimplified(
 			@ModelAttribute RT_TradeLevelDataDerivatives tradeleveldataderivative) {
-		boolean updated = tradeleveldataderivativesimplifiedService.updatetradeleveldataderivative(tradeleveldataderivative);
+		boolean updated = tradeleveldataderivativesimplifiedService
+				.updatetradeleveldataderivative(tradeleveldataderivative);
 
 		if (updated) {
 			return "Updated successfully";
 		} else {
 			return "Record not found for update";
 		}
-		
-		
-		
-		
-		
 
 	}
 
-	
 	@RequestMapping(value = "/downloadTradeleveldataderivativesimplifiedExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel() {
-	    logger.info("Controller: Received request for Trade Level Data Derivative Simplified Excel download.");
+		logger.info("Controller: Received request for Trade Level Data Derivative Simplified Excel download.");
 
-	    try {
-	        byte[] excelData = tradeleveldataderivativesimplifiedService.generateTradeleveldataderivativesimplifiedExcel();
+		try {
+			byte[] excelData = tradeleveldataderivativesimplifiedService
+					.generateTradeleveldataderivativesimplifiedExcel();
 
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: No data found for Trade Level Data Derivative Simplified report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: No data found for Trade Level Data Derivative Simplified report. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			String filename = "TradeLevelDataDerivativeSimplified.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        String filename = "TradeLevelDataDerivativeSimplified.xls";
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
-
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: Trade Level Data Derivative Simplified Excel template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Trade Level Data Derivative Simplified Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
-	
-	
-	
-	
+
 	@RequestMapping(value = "/downloadInvestmentriskdatadashboardExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel() {
-	    logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
+		logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
 
-	    try {
-	        byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel();
+		try {
+			byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel();
 
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: No data found for Investment Risk Data Dashboard report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-	        if (excelData.length == 0) {
-	            logger.warn("Controller: No data found for Investment Risk Data Dashboard report. Responding with 204 No Content.");
-	            return ResponseEntity.noContent().build();
-	        }
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			String filename = "InvestmentRiskDataDashboard.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-	        String filename = "InvestmentRiskDataDashboard.xls";
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-	        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
-
-	    } catch (FileNotFoundException e) {
-	        logger.error("Controller ERROR: Investment Risk Data Dashboard Excel template file not found.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Investment Risk Data Dashboard Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
-	
-	/*iquidity risk Dashboard template*/
+
+	/* iquidity risk Dashboard template */
 	@RequestMapping(value = "Liquidity_Risk_Dashboard_Template", method = RequestMethod.GET)
 	public String Liquidity_Risk_Dashboard_Template(@RequestParam(required = false) String SI_NO,
-			@RequestParam(required = false) String formmode, Model model,Model md) {
+			@RequestParam(required = false) String formmode, Model model, Model md) {
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("liquidityriskdashboard", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
-			
+
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-		}else {
+		} else {
 			model.addAttribute("formmode", "add");
 		}
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
@@ -2643,8 +2594,7 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 		return "RT/Liquidity_Risk_Dashboard_Template";
 	}
-	
-	
+
 	@PostMapping("/updateliquidityriskdashboard")
 	@ResponseBody
 	public String updateliquidityriskdashboard(
@@ -2659,395 +2609,431 @@ RT_Irrbb_Discount_Rates_Service discountratesService;
 
 	}
 
-	
-	
-	  @RequestMapping(value = "/downloadLiquidityriskdashboardExcel",method = RequestMethod.GET) 
-	  public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel() { logger.
-	  info("Controller: Received request for Liquidity Risk Dashboard Template Excel download."
-	  );
-	  
-	  try { byte[] excelData = liquidityriskdashboardService.generateLiquidityriskdashboardExcel();
-	  
-	  
-	  if (excelData.length == 0) { logger.
-	  warn("Controller: No data found for Liquidity Risk Dashboard Template Excel report. Responding with 204 No Content."
-	  ); return ResponseEntity.noContent().build(); }
-	  
-	  ByteArrayResource resource = new ByteArrayResource(excelData);
-	  
-	  String filename = "Liquidityriskdashboard.xls"; HttpHeaders
-	  headers = new HttpHeaders(); headers.add(HttpHeaders.CONTENT_DISPOSITION,
-	  "attachment; filename=" + filename);
-	  
-	  logger.info("Controller: Sending file '{}' to client ({} bytes).", filename,
-	  excelData.length);
-	  
-	  return ResponseEntity.ok() .headers(headers) .contentLength(excelData.length)
-	  .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	  .body(resource);
-	  
-	  } catch (FileNotFoundException e) { logger.
-	  error("Controller ERROR: Liquidity Risk Dashboard Template Excel template file not found."
-	  , e); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	  } catch (Exception e) { logger.error("Controller ERROR: Unexpected error occurred during file generation.",
-	  e); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); }
-	  }
-	 
-	  
-	  @PostMapping("/updateirrbear")
-		@ResponseBody public String updateirrbear(@ModelAttribute RT_IRRBB_Data_EAR irrbbear)
-	  {
-		  boolean updated = irrbbearService.updateirrbbear(irrbbear);
+	@RequestMapping(value = "/downloadLiquidityriskdashboardExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel() {
+		logger.info("Controller: Received request for Liquidity Risk Dashboard Template Excel download.");
 
-			if (updated) {
-				return "Updated successfully";
-			} else {
-				return "Record not found for update";
+		try {
+			byte[] excelData = liquidityriskdashboardService.generateLiquidityriskdashboardExcel();
+
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: No data found for Liquidity Risk Dashboard Template Excel report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
 			}
 
-		}
-	  
-	  @PostMapping("/updateirrbeve")
-		@ResponseBody public String updateirrbeve(@ModelAttribute RT_IRRBB_Data_EVE_Template irrbbeve)
-	  {
-		  boolean updated = irrbbeveService.updateirrbbeve(irrbbeve);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			if (updated) {
-				return "Updated successfully";
-			} else {
-				return "Record not found for update";
+			String filename = "Liquidityriskdashboard.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: Liquidity Risk Dashboard Template Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@PostMapping("/updateirrbear")
+	@ResponseBody
+	public String updateirrbear(@ModelAttribute RT_IRRBB_Data_EAR irrbbear) {
+		boolean updated = irrbbearService.updateirrbbear(irrbbear);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
+	}
+
+	@PostMapping("/updateirrbeve")
+	@ResponseBody
+	public String updateirrbeve(@ModelAttribute RT_IRRBB_Data_EVE_Template irrbbeve) {
+		boolean updated = irrbbeveService.updateirrbbeve(irrbbeve);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
+	}
+
+	@PostMapping("/updateirrbdiscount")
+	@ResponseBody
+	public String updateirrbdiscount(@ModelAttribute RT_IRRBB_Data_Discount_Rates irrbbdiscount) {
+		boolean updated = discountratesService.updateirrbbdiscount(irrbbdiscount);
+
+		if (updated) {
+			return "Updated successfully";
+		} else {
+			return "Record not found for update";
+		}
+
+	}
+
+	@RequestMapping(value = "/downloadIrrbbeveExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel() {
+		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+
+		try {
+			byte[] excelData = irrbbeveService.generateIrrbbeveExcel();
+
+			if (excelData.length == 0) {
+				logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
 			}
 
-		}
-	  
-	  @PostMapping("/updateirrbdiscount")
-		@ResponseBody public String updateirrbdiscount(@ModelAttribute RT_IRRBB_Data_Discount_Rates irrbbdiscount)
-	  {
-		  boolean updated = discountratesService.updateirrbbdiscount(irrbbdiscount);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			if (updated) {
-				return "Updated successfully";
-			} else {
-				return "Record not found for update";
+			String filename = "IrrbbDataEVE.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: IRRBB Data EVE Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel() {
+		logger.info("Controller: Received request for IRRBB Data EAR Excel download.");
+
+		try {
+			byte[] excelData = irrbbearService.generateIrrbbearExcel();
+
+			if (excelData.length == 0) {
+				logger.warn("Controller: No data found for IRRBB Data EAR report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
 			}
 
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			String filename = "IrrbbDataEAR.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: IRRBB Data EAR Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	  
-	  
-	  @RequestMapping(value = "/downloadIrrbbeveExcel", method = RequestMethod.GET)
-		public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel() {
-		    logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+	}
 
-		    try {
-		        byte[] excelData = irrbbeveService.generateIrrbbeveExcel();
+	@RequestMapping(value = "/downloadIrrbbdiscountrateExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel() {
+		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
 
+		try {
+			byte[] excelData = discountratesService.generateIrrbbdiscountrateExcel();
 
-		        if (excelData.length == 0) {
-		            logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
-		            return ResponseEntity.noContent().build();
-		        }
+			if (excelData.length == 0) {
+				logger.warn(
+						"Controller: No data found for IRRBB Data Discount Rate report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
 
-		        ByteArrayResource resource = new ByteArrayResource(excelData);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-		        String filename = "IrrbbDataEVE.xls";
-		        HttpHeaders headers = new HttpHeaders();
-		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+			String filename = "IrrbbDataDiscountRate.xls";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
 
-		        return ResponseEntity.ok()
-		                .headers(headers)
-		                .contentLength(excelData.length)
-		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-		                .body(resource);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-		    } catch (FileNotFoundException e) {
-		        logger.error("Controller ERROR: IRRBB Data EVE Excel template file not found.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    } catch (Exception e) {
-		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    }
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: IRRBB Data Discount Rate Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	
-	
-	  @RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
-		public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel() {
-		    logger.info("Controller: Received request for IRRBB Data EAR Excel download.");
+	}
 
-		    try {
-		        byte[] excelData = irrbbearService.generateIrrbbearExcel();
-
-
-		        if (excelData.length == 0) {
-		            logger.warn("Controller: No data found for IRRBB Data EAR report. Responding with 204 No Content.");
-		            return ResponseEntity.noContent().build();
-		        }
-
-		        ByteArrayResource resource = new ByteArrayResource(excelData);
-
-		        String filename = "IrrbbDataEAR.xls";
-		        HttpHeaders headers = new HttpHeaders();
-		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-
-		        return ResponseEntity.ok()
-		                .headers(headers)
-		                .contentLength(excelData.length)
-		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-		                .body(resource);
-
-		    } catch (FileNotFoundException e) {
-		        logger.error("Controller ERROR: IRRBB Data EAR Excel template file not found.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    } catch (Exception e) {
-		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    }
-		}
-	
-	  
-	  
-	  @RequestMapping(value = "/downloadIrrbbdiscountrateExcel", method = RequestMethod.GET)
-		public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel() {
-		    logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
-
-		    try {
-		        byte[] excelData = discountratesService.generateIrrbbdiscountrateExcel();
-
-
-		        if (excelData.length == 0) {
-		            logger.warn("Controller: No data found for IRRBB Data Discount Rate report. Responding with 204 No Content.");
-		            return ResponseEntity.noContent().build();
-		        }
-
-		        ByteArrayResource resource = new ByteArrayResource(excelData);
-
-		        String filename = "IrrbbDataDiscountRate.xls";
-		        HttpHeaders headers = new HttpHeaders();
-		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-		        logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-
-		        return ResponseEntity.ok()
-		                .headers(headers)
-		                .contentLength(excelData.length)
-		                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-		                .body(resource);
-
-		    } catch (FileNotFoundException e) {
-		        logger.error("Controller ERROR: IRRBB Data Discount Rate Excel template file not found.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    } catch (Exception e) {
-		        logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		    }
-		}
-	  
-	  
-	  @RequestMapping(value = "RT", method = { RequestMethod.GET, RequestMethod.POST })
-		public String RT(Model md, HttpServletRequest req) {
-		  List<RT_SLS_ENTITIES>slslist = rt_sls_repository.rtslslist();
-		  md.addAttribute("slslist",slslist);
+	@RequestMapping(value = "RT", method = { RequestMethod.GET, RequestMethod.POST })
+	public String RT(Model md, HttpServletRequest req) {
+		List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslist();
+		md.addAttribute("slslist", slslist);
 		return "RT/RT_SLS";
-		}
-	  
-	  @RequestMapping(value = "SLSREPORT", method = {RequestMethod.GET, RequestMethod.POST})
-	  public String SLSREPORT(@RequestParam(required = false) String currency,@RequestParam(required = false) String reportdate,
-			  @RequestParam(required = false) String formmode, @RequestParam(defaultValue = "0") int page,
-              @RequestParam(defaultValue = "100") int size,@RequestParam(required = false) String Rowid,              
-	          Model md,
-	          HttpServletRequest req) {
+	}
 
-	      // Match the input format: 30/04/2025
-	      DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	      Date reportdatefor = null;
-	      
-	      if(formmode==null || formmode.equals("summary")) {
-	    	  try {
-		          reportdatefor = dateFormat.parse(reportdate);
-		      } catch (ParseException e) {
-		          e.printStackTrace();
-		          // Optional: add an error message to the model
-		          md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-		      }
+	@RequestMapping(value = "SLSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
+	public String SLSREPORT(@RequestParam(required = false) String currency,
+			@RequestParam(required = false) String reportdate, @RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
+			@RequestParam(required = false) String Rowid, Model md, HttpServletRequest req) {
 
-		      List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
-		      md.addAttribute("slslist", slslist);
-		      List<RT_SLS_ENTITIES> currencylist=rt_sls_repository.rtslslistonlydate(reportdatefor);
-		      System.out.println("count"+currencylist.size());
-		      md.addAttribute("currencylist", currencylist);
-		      md.addAttribute("currency", currency);
-		      md.addAttribute("reportdate",reportdate);
-		      md.addAttribute("formmode","summary");
-	      }
-	      else if(formmode.equals("Detail")) {
-	    	  
-	    	  try {
-		          reportdatefor = dateFormat.parse(reportdate);
-		      } catch (ParseException e) {
-		          e.printStackTrace();
-		          // Optional: add an error message to the model
-		          md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-		      }
-	    	  
-	    	  if(Rowid!=null) {
-	    		  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,Rowid);
-		    	  int totalPages=rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor,Rowid);
-		    	  md.addAttribute("slsdetaillist",slsdetaillist);
-		    	  md.addAttribute("reportdate",reportdate);
-		    	  md.addAttribute("formmode","Detail");
-		    	  md.addAttribute("currency", currency);
-		    	  md.addAttribute("currentPage", page);
-		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 
-	    	  }
-	    	  else {
-	    		 
-		    	  List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillist(reportdatefor, page, size);
-		    	  int totalPages=rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
-		    	  md.addAttribute("slsdetaillist",slsdetaillist);
-		    	  md.addAttribute("reportdate",reportdate);
-		    	  md.addAttribute("formmode","Detail");
-		    	  md.addAttribute("currency", currency);
-		    	  md.addAttribute("pagination","YES");
-		    	  md.addAttribute("currentPage", page);
-		    	  md.addAttribute("totalPages",(int)Math.floor(totalPages / 100)); 
-	    	  }
-	      
-	      }
-      
-	      return "RT/RT_SLSREPORT";
-	  }
+		// Match the input format: 30/04/2025
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date reportdatefor = null;
 
-
-	  
-	  @RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
-		@ResponseBody
-		public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
-				@RequestParam("reportdate") String reportdate,
-				@RequestParam("currency") String currency,
-				@RequestParam("type") String type,
-				@RequestParam(value = "version", required = false) String version,
-				@RequestParam(value = "filename", required = false) String filename
-				)
-				throws SQLException, FileNotFoundException {
-
-			response.setContentType("application/octet-stream");
-
-			DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		if (formmode == null || formmode.equals("summary")) {
 			try {
-			
-				reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
-			
+				reportdatefor = dateFormat.parse(reportdate);
 			} catch (ParseException e) {
 				e.printStackTrace();
+				// Optional: add an error message to the model
+				md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
 			}
+
+			List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
+			md.addAttribute("slslist", slslist);
+			List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
+			System.out.println("count" + currencylist.size());
+			md.addAttribute("currencylist", currencylist);
+			md.addAttribute("currency", currency);
+			md.addAttribute("reportdate", reportdate);
+			md.addAttribute("formmode", "summary");
+		} else if (formmode.equals("Detail")) {
+
 			try {
-				byte[] excelData=null;
-				if(type.equals("summary")) {
-					 excelData = RT_SLSServices.getSlsExcel(filename,reportdate,currency,version);
-				}
-				
-				
-
-				if (excelData == null || excelData.length == 0) {
-					logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-					return ResponseEntity.noContent().build();
-				}
-
-				ByteArrayResource resource = new ByteArrayResource(excelData);
-
-				HttpHeaders headers = new HttpHeaders();
-				filename = filename + ".xls";
-				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-				logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-				return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
-						.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
-
-			} catch (Exception e) {
-				logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-			}
-		}
-	  
-	  
-	  @RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
-		@ResponseBody
-		public ResponseEntity<ByteArrayResource> detailDownload(HttpServletResponse response,
-				@RequestParam("jobId") String jobId,
-				@RequestParam("filename") String filename
-				)
-				throws SQLException, FileNotFoundException {
-
-			response.setContentType("application/octet-stream");
-
-			
-			try {
-				byte[] excelData=null;
-				
-					excelData = RT_SLSServices.getReport(jobId);;
-				
-				if (excelData == null || excelData.length == 0) {
-					logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-					return ResponseEntity.noContent().build();
-				}
-
-				ByteArrayResource resource = new ByteArrayResource(excelData);
-
-				HttpHeaders headers = new HttpHeaders();
-				filename = filename + ".xls";
-				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-				logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-				return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
-						.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
-
-			} catch (Exception e) {
-				logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-			}
-		}
-	  
-	  
-	
-	  @RequestMapping(value = "/startreport", method = { RequestMethod.GET, RequestMethod.POST })
-	    @ResponseBody  // forces raw text instead of HTML view
-	    public String startReport(@RequestParam String filename,
-	                              @RequestParam String reportdate,
-	                              @RequestParam String currency,
-	                              @RequestParam(value = "version", required = false) String version)
-	   {
-	        String jobId = UUID.randomUUID().toString();
-	        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-			try {
-			
-				reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
-			
+				reportdatefor = dateFormat.parse(reportdate);
 			} catch (ParseException e) {
 				e.printStackTrace();
+				// Optional: add an error message to the model
+				md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
 			}
-	        RT_SLSServices.generateReportAsync(jobId, filename, reportdate, currency,version);
-	        return jobId;
-	    }
 
-	    
-	    // 2️⃣ Check if report is ready
-	    @RequestMapping(value = "/checkreport", method = { RequestMethod.GET, RequestMethod.POST })
-	    @ResponseBody  // forces raw text instead of HTML view
-	    public ResponseEntity<String> checkReport(@RequestParam String jobId) {
-	        byte[] report = RT_SLSServices.getReport(jobId);
-	        //System.out.println("Report generation completed for: " + jobId);
-	        if (report == null) {
-	            return ResponseEntity.ok("PROCESSING");
-	        }
-	        return ResponseEntity.ok("READY");
-	    }
+			if (Rowid != null) {
+				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,
+						Rowid);
+				int totalPages = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid);
+				md.addAttribute("slsdetaillist", slsdetaillist);
+				md.addAttribute("reportdate", reportdate);
+				md.addAttribute("formmode", "Detail");
+				md.addAttribute("currency", currency);
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", (int) Math.floor(totalPages / 100));
+			} else {
 
-	    
-	   
-	  
-	 
+				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, page,
+						size);
+				int totalPages = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+				md.addAttribute("slsdetaillist", slsdetaillist);
+				md.addAttribute("reportdate", reportdate);
+				md.addAttribute("formmode", "Detail");
+				md.addAttribute("currency", currency);
+				md.addAttribute("pagination", "YES");
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", (int) Math.floor(totalPages / 100));
+			}
+
+		}
+
+		return "RT/RT_SLSREPORT";
+	}
+
+	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
+			@RequestParam("reportdate") String reportdate, @RequestParam("currency") String currency,
+			@RequestParam("type") String type, @RequestParam(value = "version", required = false) String version,
+			@RequestParam(value = "filename", required = false) String filename)
+			throws SQLException, FileNotFoundException {
+
+		response.setContentType("application/octet-stream");
+
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		try {
+
+			reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		try {
+			byte[] excelData = null;
+			if (type.equals("summary")) {
+				excelData = RT_SLSServices.getSlsExcel(filename, reportdate, currency, version);
+			}
+
+			if (excelData == null || excelData.length == 0) {
+				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			HttpHeaders headers = new HttpHeaders();
+			filename = filename + ".xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public ResponseEntity<ByteArrayResource> detailDownload(HttpServletResponse response,
+			@RequestParam("jobId") String jobId, @RequestParam("filename") String filename)
+			throws SQLException, FileNotFoundException {
+
+		response.setContentType("application/octet-stream");
+
+		try {
+			byte[] excelData = null;
+
+			excelData = RT_SLSServices.getReport(jobId);
+			;
+
+			if (excelData == null || excelData.length == 0) {
+				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			HttpHeaders headers = new HttpHeaders();
+			filename = filename + ".xls";
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (Exception e) {
+			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@RequestMapping(value = "/startreport", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody // forces raw text instead of HTML view
+	public String startReport(@RequestParam String filename, @RequestParam String reportdate,
+			@RequestParam String currency, @RequestParam(value = "version", required = false) String version) {
+		String jobId = UUID.randomUUID().toString();
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		try {
+
+			reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		RT_SLSServices.generateReportAsync(jobId, filename, reportdate, currency, version);
+		return jobId;
+	}
+
+	// 2️⃣ Check if report is ready
+	@RequestMapping(value = "/checkreport", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody // forces raw text instead of HTML view
+	public ResponseEntity<String> checkReport(@RequestParam String jobId) {
+		byte[] report = RT_SLSServices.getReport(jobId);
+		// System.out.println("Report generation completed for: " + jobId);
+		if (report == null) {
+			return ResponseEntity.ok("PROCESSING");
+		}
+		return ResponseEntity.ok("READY");
+	}
+
+	///// Credit Risk Analysis Report
+
+	@RequestMapping(value = "Credit_risk", method = { RequestMethod.GET, RequestMethod.POST })
+	public String Credit_risk_analysis(@RequestParam(required = false) String formmode, Model md,
+			@RequestParam(value = "Report_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,
+			HttpServletRequest req) {
+		
+		System.out.println("Initial Report date : " + Report_date);
+		
+		LocalDate today = LocalDate.now(); // Get today's date
+		
+		if(Report_date != null) {
+			Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+		}else {
+			Report_date = java.sql.Date.valueOf(today.minusDays(0));
+		}
+		
+		System.out.println("After validation Todaydate : " + Report_date);
+
+		if (formmode.equals("Portfolio_analysis")) {
+			List<Object[]> portfolioData = RT_RWA_Fund_base_data_rep.Getbranchwiseportfolio(Report_date);
+			List<RT_Chart_pojo> chartList = new ArrayList<>();
+
+			for (Object[] row : portfolioData) {
+
+				RT_Chart_pojo chart = new RT_Chart_pojo();
+
+				chart.setClassification(row[0] != null ? row[0].toString() : "Un Mapped Accounts");
+
+				chart.setExposurebal(row[1] != null ? new BigDecimal(row[1].toString()) : BigDecimal.ZERO);
+
+				chart.setExposureperc(row[2] != null ? new BigDecimal(row[2].toString()) : BigDecimal.ZERO);
+
+				System.out.println("Classification > "+row[0]+ " and Exposure Balance > "+row[1] + " Exposure Perc > "+row[2]);
+				chartList.add(chart); // ✔ IMPORTANT
+			}
+
+			md.addAttribute("Report_date", Report_date);
+			md.addAttribute("Analysistabledata", chartList);
+			md.addAttribute("formmode", "Portfolio_analysis");
+			md.addAttribute("menuname", "Total Portfolio Exposure");
+			
+		}
+
+		return "RT/RT_Credit_Risk_analysis.html";
+	}
 	
+	
+	public static String normalizeDate(String input) {
+	    DateTimeFormatter targetFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	    // already in correct format?
+	    try {
+	        LocalDate.parse(input, targetFormat);
+	        return input; // return as-is
+	    } catch (Exception ignore) {}
+
+	    // try other known formats
+	    DateTimeFormatter[] formats = {
+	        DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+	        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+	        DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+	        DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH) // Tue Sep 30 00:00:00 GST 2025
+	    };
+
+	    for (DateTimeFormatter f : formats) {
+	        try {
+	            LocalDate date = LocalDate.parse(input, f);
+	            return date.format(targetFormat); // convert to yyyy-MM-dd
+	        } catch (Exception ignore) {}
+	    }
+
+	    throw new IllegalArgumentException("Invalid date format: " + input);
+	}
+
+
 }

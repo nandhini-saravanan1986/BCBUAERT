@@ -1,644 +1,426 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Riskinsights - Bank of Baroda</title>
+	<meta charset="UTF-8">
+	<title>Riskinsights - Bank of Baroda</title>
 
-    <!-- ✅ CSS Dependencies -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
-    <link rel="stylesheet" th:href="@{/css/CustomButton.css}">
-    
-    <style>
-        html {
-            zoom: 0.9;
-        }
+	<!-- CSS Dependencies -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
 
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 14px;
-            background-color: #ffffff;
-            margin: 0;
-            overflow: hidden !important;
-        }
-
-        /* ===================== HEADER BAR ===================== */
-        .header-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
-            padding: 2px 4px;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 460px;
-        }
-
-        .logo-img {
-            height: 50px;
-        }
-
-        .logo-text-highlight {
-            font-family: "Poppins", sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: #003366;
-            letter-spacing: 1.5px;
- text-shadow: 2px 0px 13px rgba(242, 92, 25, 0.4);        }
-
-        /* ===================== NAVBAR ===================== */
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 3px 4px rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-        }
-
-        /* === Scrollable Menu Styles === */
-        .menu-scroll-wrapper {
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            scroll-behavior: smooth;
-            flex: 1;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-
-        .menu-scroll-wrapper::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
-
-        /* Arrows */
-        .scroll-arrow {
-            background: #004080;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s, transform 0.2s;
-            z-index: 10;
-        }
-
-        .scroll-arrow:hover {
-            background: #0073e6;
-            transform: scale(1.05);
-        }
-
-        /* Keep menu inline */
-        .menu {
-            display: inline-flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 15px;
-        }
-
-        .menu > li {
-            position: relative;
-        }
-
-        .menu > li > a {
-            display: block;
-            padding: 12px 18px;
-            color: #004080;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-
-        /* Hover */
-        .menu > li > a:hover {
-            background-color: darkorange;
-            color: white;
-            border-bottom: 2px solid #004080;
-        }
-
-        /* Submenu */
-        .submenu {
-            display: none;
-			position: fixed; /* ✅ was fixed */
-            background-color: #f8f9fa;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            min-width: 220px;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            z-index: 1000;
-        }
-
-        .submenu a {
-            display: block;
-            padding: 10px 15px;
-            color: #004080;
-            font-weight: 500;
-            transition: background 0.3s;
-            white-space: nowrap;
-            text-decoration: none;
-        }
-
-        .submenu a:hover {
-            background-color: darkorange;
-			color: white;
-        }
-
-        .menu > li:hover .submenu {
-            display: block;			
-        }
-
-        /* ===================== USER INFO ===================== */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #004080;
-        }
-
-        .username {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .logout-btn button {
-            background: linear-gradient(135deg, #004080, #0073e6);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 6px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
-        }
-
-        .logout-btn button:hover {
-            background: linear-gradient(135deg, #0073e6, #0099ff);
-            transform: translateY(-1px);
-        }
-
-        /* ===================== DATE TIME ===================== */
-        .datetime-container {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 8px 0;
-        }
-
-        .datetime-card {
-            background: linear-gradient(135deg, #004080, #0073e6);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.25);
-        }
-
-        .flip-unit {
-            position: relative;
-            display: inline-block;
-            perspective: 400px;
-            width: 28px;
-            text-align: center;
-        }
-
-        .flip-card {
-            display: block;
-            transform-style: preserve-3d;
-            transition: transform 0.6s ease-in-out;
-        }
-
-        .flip-card span {
-            display: block;
-            backface-visibility: hidden;
-            line-height: 1;
-        }
-
-        .flip-card.flip {
-            transform: rotateX(-180deg);
-        }
-
-        .flip-card span.back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: rotateX(180deg);
-        }
-
-        .date-text {
-            font-size: 14px;
-        }
-
-        /* ===================== LOADER ===================== */
-        :root {
-            --bob-orange: #0073e6;
-            --bob-blue: #004080;
-        }
-
-        .bob-loader {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(226, 232, 237, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 99999;
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .bob-loader[aria-hidden="true"] {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .bob-loader-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .logo-imgs {
-            height: 90px;
-        }
-
-        .flow-bar {
-            position: relative;
-            width: 200px;
-            height: 8px;
-            background: #f1f1f1;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .flow-line {
-            position: absolute;
-            left: -40%;
-            top: 0;
-            width: 40%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-            border-radius: 4px;
-            animation: flowMove 1.2s linear infinite;
-        }
-
-        @keyframes flowMove {
-            0% { left: -40%; }
-            100% { left: 100%; }
-        }
-		
-		/* ✅ Active menu highlight */
-		.menu > li > a.active {
-		    background-color: darkorange !important;
-		    color: white !important;
-		    border-bottom: 2px solid #004080;
+	<style>
+		/* ===============================
+           GLOBAL
+        ================================ */
+		body {
+			margin: 0;
+			padding: 0;
+			text-decoration: none;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+			background-color: #ffffff;
 		}
 
-    </style>
+		/* ===============================
+           HEADER BAR
+        ================================ */
+		.header-bar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			background:transparent linear-gradient(90deg,#f26522 0%,#fe8639 100%) 0% 0% no-repeat padding-box;
+			height: 60px;
+			position: sticky;
+			top: 0;
+			z-index: 3000;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+		}
 
-    <script>
-        function showLoader() {
-            document.getElementById("bob-loader")?.setAttribute("aria-hidden", "false");
-        }
-        function hideLoader() {
-           // document.getElementById("bob-loader")?.setAttribute("aria-hidden", "true");
-        }
-        window.addEventListener("load", () => setTimeout(hideLoader, 400));
-    </script>
+		.logo-section {
+			display: flex;
+			align-items: center;
+		}
+
+		.logo-img {
+			height: 60px;
+			width: auto;
+			margin-right: 12px;
+		}
+
+		.logo-text-highlight {
+			font-weight: bold;
+			color: #ffffff;
+			letter-spacing: 0.5px;
+			text-align: center;
+			font-size: 2.5em;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+		}
+
+		.user-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			color: #ffffff;
+			font-size: 13px;
+		}
+
+		.user-info .css-user-alt {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			border: 2px solid #ffffff;
+			background: rgba(255, 255, 255, 0.18);
+		}
+
+		.username {
+			font-weight: 600;
+		}
+
+		.logout-btn {
+			margin: 0;
+		}
+
+		.logout-btn button {
+			border: none;
+			background: #ffffff;
+			color: #E67E00;
+			font-size: 13px;
+			font-weight: 600;
+			padding: 8px 14px;
+			border-radius: 20px;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			margin-right: 5px;
+			transition: all 0.2s ease-in-out;
+		}
+
+		.logout-btn button i {
+			font-size: 14px;
+		}
+
+		.logout-btn button:hover {
+			background: tomato;
+			color: white;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+			transform: translateY(-1px);
+		}
+
+		/* ===============================
+           NAVBAR
+        ================================ */
+		.navbar {
+			position: sticky;
+			top: 5px;
+			/* below header-bar */
+			z-index: 2000;
+			background: #ffffff;
+			border-bottom: 2px solid #FEE685;
+			padding: 0 10px;
+			height: 48px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: visible;
+			/* DO NOT CLIP DROPDOWNS */
+		}
+
+		/* MAIN MENU */
+		.menu {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.menu>li {
+			position: relative;
+		}
+
+		.menu>li>a {
+			display: inline-block;
+			padding: 10px 14px;
+			color: #333;
+			font-size: 14px;
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 20px;
+			transition: all 0.3s ease-in-out;
+		}
+
+		/* Top-level hover effect */
+		.menu>li>a:hover {
+			background:transparent linear-gradient(90deg,#f26522 0%,#fe8639 100%) 0% 0% no-repeat padding-box;
+			color: #ffffff;
+			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);
+			transform: translateY(-2px);
+			border-radius: 20px;
+		}
+
+		.menu>li:active>a {
+			transform: scale(0.97);
+		}
+
+		/* SUBMENU */
+		.submenu {
+			position: absolute;
+			left: 0;
+			top: 100%;
+			margin-top: 6px;
+			width: max-content;
+			min-width: 200px;
+			background: #ffffff;
+			border-radius: 6px;
+			box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.18);
+			padding: 8px 0;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(10px);
+			transition: all 0.25s ease-in-out;
+			z-index: 3000;
+			list-style: none !important;
+		}
+
+		.menu>li:hover .submenu {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0px);
+		}
+
+		.submenu li a {
+			display: block;
+			padding: 8px 16px;
+			font-size: 13px;
+			color: #333;
+			text-decoration: none;
+			white-space: normal;
+			transition: all 0.22s ease;
+		}
+
+		.submenu li a:hover {
+			background: #FFF3D1;
+			color: #E67E00;
+			padding-left: 20px;
+		}
+
+		/* RT Reports WIDE SUBMENU (the RT Reports li) */
+		.menu li:nth-child(3) .submenu {
+			width: 600px;
+			column-count: 2;
+			column-gap: 20px;
+		}
+
+		.menu li:nth-child(3) .submenu li {
+			break-inside: avoid;
+		}
+
+		/* ===============================
+           RESPONSIVE
+        ================================ */
+		@media (max-width: 768px) {
+			.header-bar {
+				flex-wrap: wrap;
+				height: auto;
+				padding: 8px 10px;
+			}
+
+			.logo-section {
+				margin-bottom: 6px;
+			}
+
+			.navbar {
+				top: 70px;
+				height: auto;
+				padding: 4px 8px;
+			}
+
+			.menu>li>a {
+				padding: 8px 10px;
+				font-size: 13px;
+			}
+
+			.submenu {
+				min-width: 160px;
+				max-width: 90vw;
+			}
+		}
+	</style>
 </head>
 
 <body>
-    <!-- ✅ Top Header -->
-    <header class="header-bar">
-        <div class="logo-section">
-            <img th:src="@{/images/bob_new.png}" alt="Bank of Baroda" class="logo-img">
-            <div class="logo-text-highlight">Risk Analytical System</div>
-        </div>
-
-        <div class="user-info">
- <div class="css-user-alt"></div>
-             <span class="username" th:text="${session.USERNAME}">Username</span>
-            <form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
-                <button type="submit">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
-        </div>
-    </header>
-
-    <!-- ✅ Navigation Menu -->	<nav class="navbar d-flex align-items-center position-relative">
-	  
-	  <!-- Left Scroll Arrow -->
-	  <button class="scroll-arrow left-arrow" id="scrollLeft">
-	    &#10094;
-	  </button>
-
-	  <!-- Scrollable Menu Wrapper -->
-	  <div class="menu-scroll-wrapper">
-	    <ul class="menu" id="mainMenu">
-
-            <li><a th:href="@{/Dashboard}" onclick="showLoader()">Home</a></li>
-
-            <li>
-                <a href="#">Admin</a>
-                <ul class="submenu">
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
-                        <a th:href="@{/UserProfile}" onclick="showLoader()">User Profile</a>
-                    </li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
-                        <a th:href="@{/AccessandRoles}" onclick="showLoader()">Access and Roles</a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#">RT Reports</a>
-                <ul class="submenu" style="width: 600px; column-count: 2; column-gap: 20px;">
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}"><a th:href="@{/Nostro_Account_Bal}" onclick="showLoader()">Nostro Account Balance</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}"><a th:href="@{/Fx_Risk_Data}" onclick="showLoader()">FX Risk Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}"><a th:href="@{/Trade_Market_Risk}" onclick="showLoader()">Trade Market Risk</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}"><a th:href="@{/Mm_Data}" onclick="showLoader()">MM Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}"><a th:href="@{/Repo_Data_Template}" onclick="showLoader()">Repo Data Template</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}"><a th:href="@{/Investment_Risk_Data_Dashboard_Template}" onclick="showLoader()">Investment Risk Dashboard</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}"><a th:href="@{/Treasury_Credit_Limit_Management}" onclick="showLoader()">Treasury Credit Limit Management</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}"><a th:href="@{/Trade_Level_Data_Derivatives}" onclick="showLoader()">Trade Level Data Derivatives</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}"><a th:href="@{/Trade_Level_Data_Derivatives_Simplified}" onclick="showLoader()">Trade Level Data Simplified</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}"><a th:href="@{/CCR_Data_Templates}" onclick="showLoader()">CCR Data Templates</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}"><a th:href="@{/Foreign_Currency_Deposit}" onclick="showLoader()">Cross Currency Funding Spread</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}"><a th:href="@{/Liquidity_Risk_Data}" onclick="showLoader()">Liquidity Risk Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}"><a th:href="@{/Investment_Securities_Data}" onclick="showLoader()">Investment Securities Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}"><a th:href="@{/Liquidity_Risk_Dashboard_Template}" onclick="showLoader()">Liquidity Risk Dashboard</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}"><a th:href="@{/IRRBB_data_Template}" onclick="showLoader()">IRRBB Data Template</a></li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#">ASL</a>
-                <ul class="submenu">
-                    <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty,')}"><a th:href="@{/counterparty}" onclick="showLoader()">Auth Counterparties</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=list}" onclick="showLoader()">Exposure Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl,')}"><a th:href="@{/Interbank_placement}" onclick="showLoader()">Interbank Placements</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl,')}"><a th:href="@{/swap_settlement}" onclick="showLoader()">Swap Settlement</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt,')}"><a th:href="@{/asl_dashboard}" onclick="showLoader()">Final Risk View</a></li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#">ASL Upload</a>
-                <ul class="submenu">
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data,')}"><a th:href="@{/counterparty_list?formmode=Billdetaillist}" onclick="showLoader()">Exposure Data</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data,')}"><a th:href="@{/Interbank_placement?formmode=add}" onclick="showLoader()">Treasury Placement</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data,')}"><a th:href="@{/swap_settlement?formmode=add}" onclick="showLoader()">Settlement</a></li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#">Audit</a>
-                <ul class="submenu">
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}"><a th:href="@{/User_Audit}" onclick="showLoader()">User Audit</a></li>
-                    <li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit')}"><a th:href="@{/Service_Audit}" onclick="showLoader()">Service Audit</a></li>
-                </ul>
-            </li>
-				
-            </ul>	
-				</div>
-
-			 <!-- Right Scroll Arrow -->
-			 <button class="scroll-arrow right-arrow" style="margin-right: 15px;" id="scrollRight">
-			   &#10095;
-			 </button>
-
-		<div class="datetime-container">
-		  <div class="datetime-card">
-		    <!-- Date First -->
-		    <span class="date-text" id="date"></span> |
-
-		    <!-- Then Time -->
-		    <div class="flip-unit" id="hours">
-		      <div class="flip-card"><span class="front">00</span><span class="back">00</span></div>
-		    </div>
-		    :
-		    <div class="flip-unit" id="minutes">
-		      <div class="flip-card"><span class="front">00</span><span class="back">00</span></div>
-		    </div>
-		    :
-		    <div class="flip-unit" id="seconds">
-		      <div class="flip-card"><span class="front">00</span><span class="back">00</span></div>
-		    </div>
-		  </div>
+	<header class="header-bar">
+		<div class="logo-section">
+			<img th:src="@{/images/Dubaiboblogo.png}" alt="Bank of Baroda" class="logo-img">
+		</div>
+		<div class="logo-text-highlight">Risk Analytical System</div>
+		<div class="user-info">
+			<i class="fas fa-user"></i>
+			<span class="username" th:text="${session.USERNAME}">Username</span>
+			<form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
+				<button type="submit">
+					<i class="fas fa-sign-out-alt"></i> Logout
+				</button>
+			</form>
 		</div>
 
-    </nav>
 
-    <!-- ✅ Loader -->
-    <div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
-        <div class="bob-loader-card">
-            <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
-            <div class="flow-bar">
-                <div class="flow-line"></div>
-            </div>
-        </div>
-    </div>
+	</header>
+
+	<nav class="navbar d-flex align-items-center position-relative">
+		<div class="menu-scroll-wrapper">
+			<ul class="menu" id="mainMenu">
+
+				<li><a th:href="@{/Dashboard}" onclick="showLoader()">Home</a></li>
+
+				<li>
+					<a href="#">Admin</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
+							<a th:href="@{/UserProfile}" onclick="showLoader()">User Profile</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
+							<a th:href="@{/AccessandRoles}" onclick="showLoader()">Access and Roles</a>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="#">RT Reports</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}">
+							<a th:href="@{/Nostro_Account_Bal}" onclick="showLoader()">Nostro Account Balance</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}">
+							<a th:href="@{/Fx_Risk_Data}" onclick="showLoader()">FX Risk Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}">
+							<a th:href="@{/Trade_Market_Risk}" onclick="showLoader()">Trade Market Risk</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}">
+							<a th:href="@{/Mm_Data}" onclick="showLoader()">MM Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}">
+							<a th:href="@{/Repo_Data_Template}" onclick="showLoader()">Repo Data Template</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}">
+							<a th:href="@{/Investment_Risk_Data_Dashboard_Template}" onclick="showLoader()">Investment
+								Risk Dashboard</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}">
+							<a th:href="@{/Treasury_Credit_Limit_Management}" onclick="showLoader()">Treasury Credit
+								Limit Management</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}">
+							<a th:href="@{/Trade_Level_Data_Derivatives}" onclick="showLoader()">Trade Level Data
+								Derivatives</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}">
+							<a th:href="@{/Trade_Level_Data_Derivatives_Simplified}" onclick="showLoader()">Trade Level
+								Data Simplified</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}">
+							<a th:href="@{/CCR_Data_Templates}" onclick="showLoader()">CCR Data Templates</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}">
+							<a th:href="@{/Foreign_Currency_Deposit}" onclick="showLoader()">Cross Currency Funding
+								Spread</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}">
+							<a th:href="@{/Liquidity_Risk_Data}" onclick="showLoader()">Liquidity Risk Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}">
+							<a th:href="@{/Investment_Securities_Data}" onclick="showLoader()">Investment Securities
+								Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}">
+							<a th:href="@{/Liquidity_Risk_Dashboard_Template}" onclick="showLoader()">Liquidity Risk
+								Dashboard</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}">
+							<a th:href="@{/IRRBB_data_Template}" onclick="showLoader()">IRRBB Data Template</a>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="#">ASL</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty')}">
+							<a th:href="@{/counterparty}" onclick="showLoader()">Auth Counterparties</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data')}">
+							<a th:href="@{/counterparty_list?formmode=list}" onclick="showLoader()">Exposure Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl')}">
+							<a th:href="@{/Interbank_placement}" onclick="showLoader()">Interbank Placements</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl')}">
+							<a th:href="@{/swap_settlement}" onclick="showLoader()">Swap Settlement</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt')}">
+							<a th:href="@{/asl_dashboard}" onclick="showLoader()">Final Risk View</a>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="#">ASL Upload</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data')}">
+							<a th:href="@{/counterparty_list?formmode=Billdetaillist}" onclick="showLoader()">Exposure
+								Data</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data')}">
+							<a th:href="@{/Interbank_placement?formmode=add}" onclick="showLoader()">Treasury
+								Placement</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data')}">
+							<a th:href="@{/swap_settlement?formmode=add}" onclick="showLoader()">Settlement</a>
+						</li>
+					</ul>
+				</li>
+				
+				<li>
+					<a href="#">Credit Risk</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
+							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}" onclick="showLoader()">Portfolio Analysis Report</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_Bnk_expo')}">
+							<a th:href="@{/Credit_risk?formmode=Top_Bank_Exposure}" onclick="showLoader()">Bank Top Exposure's</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_cust_expo')}">
+							<a th:href="@{/Credit_risk?formmode=Top_customer_Exposure}" onclick="showLoader()">Customer Top Exposure</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Deposit')}">
+							<a th:href="@{/Credit_risk?formmode=Deposits}" onclick="showLoader()">Deposits </a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Conc_Risk')}">
+							<a th:href="@{/Credit_risk?formmode=Concentration_Risk}" onclick="showLoader()">Concentration Risk</a>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="#">Audit</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
+							<a th:href="@{/User_Audit}" onclick="showLoader()">User Audit</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit')}">
+							<a th:href="@{/Service_Audit}" onclick="showLoader()">Service Audit</a>
+						</li>
+					</ul>
+				</li>
+
+			</ul>
+		</div>
+	</nav>
+
 </body>
-<script>
-function updateFlip(unitId, newValue) {
-  const unit = document.getElementById(unitId);
-  const front = unit.querySelector('.front');
-  const back = unit.querySelector('.back');
-  const card = unit.querySelector('.flip-card');
-
-  if (front.textContent !== newValue) {
-    back.textContent = newValue;
-    card.classList.add('flip');
-    setTimeout(() => {
-      front.textContent = newValue;
-      card.classList.remove('flip');
-    }, 600);
-  }
-}
-
-function updateDateTime() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  
-  updateFlip('hours', hours);
-  updateFlip('minutes', minutes);
-  updateFlip('seconds', seconds);
-  
-  const date = now.toLocaleDateString('en-IN', {
-    day: '2-digit', month: 'short', year: 'numeric'
-  });
-  document.getElementById('date').textContent = date;
-}
-
-setInterval(updateDateTime, 1000);
-updateDateTime();
-</script>
-<style>
-/* Container aligned to right */
-.datetime-container {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 8px 0px;
-}
-
-/* Compact card background */
-.datetime-card {
-  background: linear-gradient(135deg, #004080, #0073e6);
-  color: white;
- padding: 4px 0px 4px 6px;  /* ✅ more left padding */  border-radius: 5px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.25);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Flip clock unit (reduced width) */
-.flip-unit {
-  position: relative;
-  display: inline-block;
-  perspective: 400px;
-  width: 28px; /* reduced width */
-  text-align: center;
-}
-
-/* Flip card base */
-.flip-card {
-  display: block;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s ease-in-out;
-}
-
-.flip-card span {
-  display: block;
-  backface-visibility: hidden;
-  line-height: 1;
-}
-
-.flip-card.flip {
-  transform: rotateX(-180deg);
-}
-
-.flip-card span.back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: rotateX(180deg);
-}
-
-/* Date text first */
-.date-text {
-  font-size: 14px;
-  opacity: 0.95;
-}
-</style>
-
-<style>
-/* ===================== Alternative CSS User Icon ===================== */
-.css-user-alt {
-    position: relative;
-    width: 15px;
-    height: 25px;
-}
-
-/* Head */
-.css-user-alt::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 12px;
-    height: 12px;
-    background-color: #f25c19;
-    border-radius: 50%;
-}
-
-/* Shoulders */
-.css-user-alt::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 12px;
-    background-color: #f25c19;
-    border-radius: 50% 50% 0 0;
-}
-</style>
-<script>
-const menuWrapper = document.querySelector(".menu-scroll-wrapper");
-
-// Adjust submenu alignment when menu scrolls
-menuWrapper.addEventListener("scroll", () => {
-  const offsetX = menuWrapper.scrollLeft;
-  document.querySelectorAll(".submenu").forEach(sub => {
-    sub.style.transform = `translateX(-${offsetX}px)`; // Shift submenu with scroll
-  });
-});
-</script>
-
-<script>
-const scrollContainer = document.getElementById("mainMenu");
-const wrapper = document.querySelector(".menu-scroll-wrapper");
-const btnLeft = document.getElementById("scrollLeft");
-const btnRight = document.getElementById("scrollRight");
-
-// Scroll amount (in px)
-const scrollAmount = 150;
-
-btnLeft.addEventListener("click", () => {
-  wrapper.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-});
-
-btnRight.addEventListener("click", () => {
-  wrapper.scrollBy({ left: scrollAmount, behavior: "smooth" });
-});
-
-// Show/hide arrows depending on scroll position
-function updateArrowVisibility() {
-  btnLeft.style.display = wrapper.scrollLeft > 5 ? "flex" : "none";
-  const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth - 5;
-  btnRight.style.display = wrapper.scrollLeft < maxScrollLeft ? "flex" : "none";
-}
-
-wrapper.addEventListener("scroll", updateArrowVisibility);
-window.addEventListener("resize", updateArrowVisibility);
-window.addEventListener("load", updateArrowVisibility);
-</script>
 
 </html>

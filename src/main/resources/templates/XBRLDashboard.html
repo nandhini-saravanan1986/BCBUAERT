@@ -2,897 +2,870 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Dashboard</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Risk Insights — Dashboard</title>
 
-	<!-- Webjars CSS -->
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
-		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/dataTables.bootstrap4.min.css"
-		th:href="@{/webjars/datatables/1.10.19/css/dataTables.bootstrap4.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/chartjs/2.8.0/Chart.min.css"
-		th:href="@{/webjars/chartjs/2.8.0/Chart.min.css}">
-		<style>
+	<!-- CSS Dependencies -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" th:href="@{/css/all.min.css}">
+	<script th:src="@{/js/chart.js}"></script>
 
-				body {
-		    font-family: 'Segoe UI', Arial, sans-serif;
-		    font-size: 14px;}
-			
-			
-			
-			.table .thead-light th {
-		    color: #495057;
-		    background-color: #e9ecef;
-		    border-color: #dee2e6;
-		font-family: sans-serif;
-			
-		}
-
-
-
-						
-								/* === ROLE PAGE CUSTOM HEADER === */
-								.role-page-header {
-								    background-color: #ffffff;
-								    padding: 15px 20px;
-								}
-
-								.role-page-title h4 {
-								    color: #003366;
-								    font-family: "Segoe UI", Arial, sans-serif;
-								    font-size: 20px;
-								    font-weight: 700;
-								    margin: 0;
-								}
-
-								.role-page-underline {
-								    width: 158px;
-								    height: 3px;
-								    background-color: #0073e6;
-								    border-radius: 2px;
-								    margin-top: 6px;
-								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-								}
-
-
-								/* Add Button Styling */
-								.role-add-btn {
-								    background: linear-gradient(135deg, #005fa3, #007bff);
-								    color: #fff;
-								    border: none;
-								    border-radius: 25px;
-								    padding: 8px 18px;
-								    font-size: 13px;
-								    font-weight: 600;
-								    cursor: pointer;
-								    box-shadow: 0 2px 5px rgba(0, 64, 128, 0.2);
-								    transition: all 0.3s ease;
-								}
-
-								.role-add-btn:hover {
-								    background: linear-gradient(135deg, #007bff, #3399ff);
-								    transform: translateY(-2px);
-								    box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-								}
-
-								.role-add-btn i {
-								    margin-right: 5px;
-								}
-
-								
-							</style>
-							
-							
-			<style>
-					
-						
-					:root {
-					  --bob-orange: #0073e6;
-					  --bob-blue: #004080;
-					  --overlay-bg: rgba(255, 255, 255, 0.9);
-					}
-
-					/* Full-screen overlay */
-					.bob-loader {
-					  position: fixed;
-					  inset: 0;
-					  display: flex;
-					  align-items: center;
-					  justify-content: center;
-					  background: rgba(226, 232, 237, 0.6); /* lighter background */
-					  backdrop-filter: blur(8px); /* ✅ background blur */
-					  -webkit-backdrop-filter: blur(8px); /* Safari support */
-					  z-index: 9999;
-					  transition: opacity 0.25s ease, visibility 0.25s;
-					  opacity: 1;
-					  visibility: visible;
-					}
-
-					/* Hide when not active */
-					.bob-loader[aria-hidden="true"] {
-					  opacity: 0;
-					  visibility: hidden;
-					  pointer-events: none;
-					}
-
-					/* Loader card */
-					.bob-loader-card {
-					  display: flex;
-					  flex-direction: column;
-					  align-items: center;
-					}
-
-					/* Static logo */
-					.logo-imgs {
-					  height: 90px;
-					  object-fit: contain;
-					  display: block;
-					}
-
-					/* Flowing bar below logo */
-					.flow-bar {
-					  position: relative;
-					  width: 200px; /* ✅ increased width */
-					  height: 8px;  /* slightly thicker for better visibility */
-					  background: #f1f1f1;
-					  border-radius: 4px;
-					  overflow: hidden;
-					  margin-top: 10px;
-					}
-
-					.flow-line {
-					  position: absolute;
-					  left: -40%;
-					  top: 0;
-					  width: 40%;
-					  height: 100%;
-					  background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-					  border-radius: 4px;
-					  animation: flowMove 1.2s linear infinite;
-					}
-
-					/* Animation for flowing line */
-					@keyframes flowMove {
-					  0% {
-					    left: -40%;
-					  }
-					  100% {
-					    left: 100%;
-					  }
-					}
-
-
-				</style>
-				
-				
-							<script>
-								function goBack() {
-								    window.history.back();
-								}
-
-								function goForward() {
-								    window.history.forward();
-								}
-
-								// Detect mouse near screen edges
-								document.addEventListener('mousemove', function(e) {
-								    const backBtn = document.getElementById('floatingBackBtn');
-								    const forwardBtn = document.getElementById('floatingForwardBtn');
-								    const screenWidth = window.innerWidth;
-
-								    // Left edge (back)
-								    if (e.clientX < 50) {
-								        backBtn.classList.add('show');
-								    } else {
-								        backBtn.classList.remove('show');
-								    }
-
-								    // Right edge (forward)
-								    if (screenWidth - e.clientX < 50) {
-								        forwardBtn.classList.add('show');
-								    } else {
-								        forwardBtn.classList.remove('show');
-								    }
-								});
-								</script>
-
-								<style>
-								/* Shared styles for both buttons */
-								#floatingBackBtn, 
-								#floatingForwardBtn {
-								    position: fixed;
-								    top: 50%;
-								    background-color: #0073e6;
-								    border: none;
-								    color: white;
-								    font-size: 20px;
-								    border-radius: 50%;
-								    width: 45px;
-								    height: 45px;
-								    display: flex;
-								    align-items: center;
-								    justify-content: center;
-								    opacity: 0;
-								    pointer-events: none;
-								    transition: all 0.4s ease;
-								    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-								    z-index: 999;
-								}
-
-								/* Back button */
-								#floatingBackBtn {
-								    left: -50px; /* hidden off-screen */
-								}
-
-								/* Forward button */
-								#floatingForwardBtn {
-								    right: -50px; /* hidden off-screen */
-								}
-
-								/* Show when near edge */
-								#floatingBackBtn.show {
-								    left: 20px;
-								    opacity: 1;
-								    pointer-events: auto;
-								}
-
-								#floatingForwardBtn.show {
-								    right: 20px;
-								    opacity: 1;
-								    pointer-events: auto;
-								}
-
-								/* Hover animation */
-								#floatingBackBtn:hover,
-								#floatingForwardBtn:hover {
-								    background-color: #005bb5;
-								    transform: scale(1.1);
-								}
-								</style>	
-								
-								
-								
-								
-								
-	<style type="text/css">
+	<style>
 		:root {
-			--dark-bg: #f8f9fa;
-			--dark-text-primary: #212529;
-			--dark-border: #ced4da;
+			--bg: #f9fbff;
+			--surface: #ffffff;
+			--border: #e6eaf0;
+			--text: #0f172a;
+			--muted: #6b7280;
+			--textcolorheaderwhite: white;
+			--processing: #3b82f6;
+			--approved: #16a34a;
+			--rejected: #ef4444;
+			--pending: #f59e0b;
+			--refunded: #8b5cf6;
+
+			/* Primary Colors */
+			--color-primary: #8b5cf6;
+			--color-primary-hover: #7c3aed;
+			--color-primary-50: rgba(139, 92, 246, 0.05);
+			--color-primary-100: rgba(139, 92, 246, 0.1);
+			--color-primary-200: rgba(139, 92, 246, 0.2);
+			/* Semantic Colors */
+			--color-success: #10b981;
+			--color-success-50: rgba(16, 185, 129, 0.05);
+			--color-success-100: rgba(16, 185, 129, 0.1);
+			--color-warning: #f59e0b;
+			--color-warning-50: rgba(245, 158, 11, 0.05);
+			--color-warning-100: rgba(245, 158, 11, 0.1);
+			--color-error: #ef4444;
+			--color-error-50: rgba(239, 68, 68, 0.05);
+			--color-error-100: rgba(239, 68, 68, 0.1);
+			--color-info: #3b82f6;
+			--color-info-50: rgba(59, 130, 246, 0.05);
+			--color-info-100: rgba(59, 130, 246, 0.1);
+			/* Text Colors */
+			--color-text: #1e293b;
+			--color-text-secondary: #475569;
+			--color-text-muted: #94a3b8;
+			/* Background Colors */
+			--color-background: #ffffff;
+			--color-surface: #f8fafc;
+			--color-surface-hover: #f1f5f9;
+			/* Border Colors */
+			--color-border: #e2e8f0;
+			/* Typography */
+			--font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			--text-xs: 0.75rem;
+			--text-sm: 0.875rem;
+			--text-base: 1rem;
+			--text-lg: 1.125rem;
+			--text-xl: 1.25rem;
+			--text-2xl: 1.5rem;
+			--text-3xl: 1.75rem;
+			--text-4xl: 2rem;
+			/* Font Weights */
+			--weight-normal: 400;
+			--weight-medium: 500;
+			--weight-semibold: 600;
+			--weight-bold: 700;
+			/* Spacing */
+			--space-xs: 0.25rem;
+			--space-sm: 0.5rem;
+			--space-base: 0.75rem;
+			--space-md: 1rem;
+			--space-lg: 1.5rem;
+			--space-xl: 2rem;
+			--space-2xl: 3rem;
+			--space-3xl: 4rem;
+			/* Border Radius */
+			--radius-sm: 0.25rem;
+			--radius-md: 0.5rem;
+			--radius-lg: 0.75rem;
+			--radius-xl: 1rem;
+			--radius-full: 9999px;
+			/* Shadows */
+			--shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+			--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+			/* Layout */
+			--sidebar-width: 260px;
+			--sidebar-collapsed-width: 80px;
+			--header-height: 64px;
+			/* Transitions */
+			--transition: 0.2s ease;
 		}
 
-		html,
 		body {
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			background-color: var(--dark-bg);
-			color: var(--dark-text-primary);
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-		}
-
-		body {
-			display: flex;
-			flex-direction: column;
-			font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-			font-size: 0.875rem;
-			overflow: hidden;
-			/* Prevents body scroll if you want only card to scroll */
+			margin-top: 5px;
+			background: var(--bg);
+			font-family: Arial, sans-serif;
 		}
 
 		.container-fluid {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			padding-top: 1px;
-			padding-right: 0;
-			padding-left: 15px;
-			margin: 0 auto;
+			margin-top: 130px;
+		}
+
+		/* Card‐like wrapper for table */
+		.table-wrap {
+			overflow: auto;
+			background: var(--surface);
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 			width: 100%;
+			margin-bottom: 20px;
 		}
 
-		.dashboard-card {
-			flex: 1;
-			/*background-color: #dee2e6;*/
-			border-radius: 6px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-			overflow-y: auto;
-			padding-right: 10px;
-			scroll-behavior: smooth;
-		}
-
-		.dashboard-card>.card-header {
-			background-color: darkgray;
-			color: black;
-			font-weight: 500;
-			border-radius: 5px 5px 0 0;
-			padding: 0.85rem 1.25rem;
-			border-bottom: 1px solid var(--dark-border);
-			text-align: center;
-		}
-
-		.dashboard-card>.card-header h4 {
-			font-size: 1.4rem;
-			font-weight: bold;
-			margin: 0;
-			text-transform: uppercase;
-		}
-
-		.dashboard-card>.card-body {
-			/*background-color: #dee2e6;*/
-			border-radius: 0 0 5px 5px;
-		}
-
-		.navbar {
-			position: fixed;
-			top: 0;
-			width: 100%;
-			z-index: 1000;
-			margin-left: -5px;
-		}
-
-		.content {
-			margin-top: 151px;
-		}
-
-		.container,
-		.container-lg,
-		.container-md,
-		.container-sm,
-		.container-xl,
-		.container-xxl {
-			padding-left: 0;
-			padding-right: 0;
-			margin-left: auto;
-			margin-right: auto;
-			width: 100%;
-		}
-
-		.container-manager {
-			padding-right: 47px;
-			padding-left: 132px;
-		}
-
-		.row {
-			display: flex;
-			flex-wrap: wrap;
-			margin-right: -8px;
-			margin-left: -22px;
-		}
-	</style>
-
-	<script type="text/javascript">
-		$(document).ready(function () {
-			$('.dropdown, .dropdown-submenu').hover(function () {
-				$(this).children('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
-			}, function () {
-				$(this).children('.dropdown-menu').stop(true, true).delay(200).fadeOut(200);
-			});
-		});
-	</script>
-
-	<style>
-		:root {
-			--dark-bg: #101014;
-			/* Main content background */
-			--dark-surface: #18181c;
-			/* Sidebar & Cards background */
-			--dark-surface-alt: #202024;
-			/* Lighter surface for nested elements, hover */
-			--dark-border: #303036;
-			/* Subtle borders, e.g., sidebar right border, card borders */
-			--dark-text-primary: #e6e6e6;
-			/* Primary text color */
-			--dark-text-secondary: #a0a0a8;
-			/* Secondary text color (labels, table headers) */
-			--dark-hover-bg: #28282c;
-			/* Hover background (sidebar links, table rows) */
-			--dark-primary-accent: darkorange;
-			/* Main accent color (buttons, active elements) */
-			--dark-primary-accent-hover: #005ec2;
-			/* Hover for accent color elements */
-			--dark-text-on-accent: #ffffff;
-			/* Text color on accent-colored backgrounds */
-		}
-
-
-		fieldset.custom-fieldset {
-			background-color: #e9ebee !important;
-			/* Blend into parent card body */
-
-			padding: 1.25rem;
-			margin-bottom: 1.25rem;
-		}
-
-		legend.custom-legend {
-			font-size: 1rem;
-			font-weight: 500;
-			padding: 0 0.5rem;
-			width: auto;
-			margin-bottom: 1rem;
-			border-bottom: none;
-		}
-
-		.custom-fieldset .form-label {
-			/*             color: var(--dark-text-secondary) !important;
- */
-			font-weight: 400;
-			font-size: 0.85rem;
-		}
-
-		.summary-box {
-			background-color: #b7bbbf !important;
-			padding: 0.85rem;
-			border-radius: 5px;
-			text-align: center;
-			border: 1px solid dee2e6 !important;
-			min-height: 90px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-		}
-
-		.summary-box:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-		}
-
-		.summary-box label {
-			font-size: 0.75rem;
-			color: black !important;
-			display: block;
-			margin-bottom: 0.3rem;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			line-height: 1.2;
-		}
-
-		.summary-box .value {
-			font-size: 1.25rem;
-			font-weight: 600;
-			color: var(--dark-text-primary) !important;
-			word-wrap: break-word;
-		}
-
-		.chart-container {
-			background-color: var(--dark-surface-alt) !important;
-			border-radius: 5px;
-			padding: 1rem;
-			box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-			margin-top: 0.75rem;
-			position: relative;
-			min-height: 300px;
-			border: 1px solid var(--dark-border) !important;
-		}
-
-		.chart-container h6,
-		.chart-container h5 {
-			color: var(--dark-text-secondary);
-			font-weight: 400;
-			font-size: 0.9rem;
-		}
-
-		.asl-card {
-			background-color: var(--dark-surface-alt) !important;
-			border: 1px solid var(--dark-border) !important;
-			border-radius: 5px;
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-		}
-
-		.asl-card>.card-header {
-			background-color: #b7bbbf !important;
-			color: black !important;
-			font-weight: 500;
-			border: none !important;
-			padding: 0.6rem 1rem;
-			letter-spacing: 0.01em;
-			border-top-left-radius: 4px;
-			border-top-right-radius: 4px;
-		}
-
-		.asl-card>.card-header h6 {
-			font-size: 0.875rem;
+		.table.refund-table {
+			background: var(--surface);
+			color: var(--text);
 			margin-bottom: 0;
 		}
 
-		.asl-card {
-			/*             padding: 0.75rem !important;
- */
-			background-color: #b7bbbf !important;
-			border-bottom-left-radius: 4px;
-			border-bottom-right-radius: 4px;
-		}
-
-		.card-body {
-			padding: 0.75rem !important;
-			/*background-color: #dee2e6 !important;*/
-			border-bottom-left-radius: 4px;
-			border-bottom-right-radius: 4px;
-		}
-
-		/* Removed invalid CSS: .bs-heading-color:white ; */
-
-		.form-control,
-		.form-select {
-			border-radius: 3px;
-			background-color: #dee2e6 !important;
-			color: black !important;
-			border: 1px solid var(--dark-border) !important;
-			font-size: 0.85rem;
-			padding: 0.3rem 0.6rem;
-		}
-
-		.form-select {
-			/* Custom select arrow for dark theme */
-			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a0a0a8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
-		}
-
-		.form-control:focus,
-		.form-select:focus {
-			background-color: var(--dark-hover-bg) !important;
-			box-shadow: 0 0 0 0.15rem rgba(var(--dark-primary-accent-rgb, 0, 123, 255), 0.25) !important;
-			/* Fallback if --dark-primary-accent-rgb is not set */
-			color: var(--dark-text-primary) !important;
-		}
-
-		.btn-primary {
-			background-color: var(--dark-primary-accent) !important;
-			border-color: var(--dark-primary-accent) !important;
-			color: var(--dark-text-on-accent) !important;
-			font-weight: 400;
-			padding: 0.25rem 0.6rem;
-			font-size: 0.85rem;
-			border-radius: 3px;
-		}
-
-		.btn-primary:hover,
-		.btn-primary:focus {
-			background-color: var(--dark-primary-accent-hover) !important;
-			border-color: var(--dark-primary-accent-hover) !important;
-			color: var(--dark-text-on-accent) !important;
-			box-shadow: none;
-		}
-
-		.btn-primary i {
-			margin-right: 0.25em;
-		}
-
-		table.dataTable {
-			border-collapse: collapse !important;
-			width: 100% !important;
-			margin-bottom: 0 !important;
-		}
-
-		#ASL_DATA,
-		#BRF39_DATA,
-		#Counetparty_DATA {
-			color: var(--dark-text-primary) !important;
-			border-color: var(--dark-border) !important;
-			font-size: 0.8rem;
-		}
-
-		#ASL_DATA th,
-		#BRF39_DATA th,
-		#Counetparty_DATA th,
-		#ASL_DATA td,
-		#BRF39_DATA td,
-		#Counetparty_DATA td {
-			border: 1px solid var(--dark-border) !important;
-			padding: 0.4rem 0.6rem;
-			vertical-align: middle;
-		}
-
-		#ASL_DATA thead th,
-		#BRF39_DATA thead th,
-		#Counetparty_DATA thead th {
-			background-color: #dee2e6 !important;
-			color: black !important;
-			font-weight: 500;
+		.table.refund-table thead th {
+			position: sticky;
+			top: 0;
+			background: brown;
+			color: var(--textcolorheaderwhite);
+			font-weight: 700;
+			font-size: 0.65rem;
+			border: 2px solid;
 			text-transform: uppercase;
-			border-bottom-width: 1px !important;
-			font-size: smaller;
 		}
 
-		.table-striped tbody tr:nth-of-type(odd) {
-			background-color: rgba(255, 255, 255, 0.01) !important;
-			/* Extremely subtle striping */
+		.table.refund-table tbody td {
+			font-size: 0.65rem;
+			border: 2px solid;
+			border-color: var(--border);
 		}
 
-		.table-hover tbody tr:hover {
-			background-color: var(--dark-hover-bg) !important;
-			color: var(--dark-text-primary) !important;
+		.table.refund-table tbody tr:hover {
+			background: #f8fafc;
 		}
 
-		.dataTables_wrapper .dataTables_length label,
-		.dataTables_wrapper .dataTables_filter label {
-			color: var(--dark-text-secondary) !important;
-			font-size: 0.8rem;
-			margin-bottom: 0.5rem;
-			font-weight: 400;
+		.badge-status {
+			padding: 0.25rem 0.55rem;
+			border-radius: 12px;
+			font-size: 0.60rem;
+			font-weight: 600;
+			display: inline-flex;
+			gap: 6px;
+			align-items: center;
 		}
 
-		.dataTables_wrapper .dataTables_filter input[type="search"] {
-			margin-left: 0.4em;
-			background-color: #dee2e6 !important;
-			color: black !important;
-			border: 1px solid var(--dark-border) !important;
-			border-radius: 3px;
-			padding: 0.25rem 0.5rem;
-			font-size: 0.8rem;
+		.badge-status.processing {
+			color: var(--processing);
+			background: rgba(59, 130, 246, 0.1);
 		}
 
-		.dataTables_wrapper .dataTables_filter input[type="search"]::placeholder {
-			color: var(--dark-text-secondary) !important;
-			opacity: 0.6;
+		.badge-status.approved {
+			color: var(--approved);
+			background: rgba(22, 163, 74, 0.1);
 		}
 
-		.dataTables_wrapper .dataTables_info {
-			color: var(--dark-text-secondary) !important;
-			font-size: 0.75rem;
-			padding-top: 0.5em !important;
-			font-weight: 400;
+		.badge-status.rejected {
+			color: var(--rejected);
+			background: rgba(239, 68, 68, 0.1);
 		}
 
-		.dataTables_wrapper .dataTables_length select {
-			background-color: #dee2e6 !important;
-			color: black !important;
-			border: 1px solid var(--dark-border) !important;
-			padding: 0.2rem 0.4rem;
-			font-size: 0.8rem;
-			border-radius: 3px;
-			margin: 0 0.25rem;
+		.badge-status.pending {
+			color: var(--pending);
+			background: rgba(245, 158, 11, 0.1);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button {
-			color: var(--dark-text-secondary) !important;
-			/*   background: var(--dark-surface-alt) !important;
-            border: 1px solid var(--dark-border) !important; */
-			box-shadow: none !important;
-			margin: 0 1px !important;
-			padding: 0.25em 0.5em !important;
-			border-radius: 3px;
-			font-size: 0.8rem;
+		.badge-status.refunded {
+			color: var(--refunded);
+			background: rgba(139, 92, 246, 0.1);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-			background: var(--dark-hover-bg) !important;
-			border-color: var(--dark-border) !important;
-			color: var(--dark-text-primary) !important;
+		/* Chart placeholder styling */
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: var(--space-lg);
+			margin-bottom: var(--space-2xl);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
-		.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
-			color: black !important;
-			background: #dee2e6 !important;
-			border-color: var(--dark-border) !important;
-			cursor: default;
-			opacity: 0.5;
+		.stat-card {
+			background: var(--color-background);
+			border: 1px solid var(--color-border);
+			border-radius: var(--radius-xl);
+			padding: var(--space-lg);
+			transition: var(--transition);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button.current,
-		.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-			background: var(--dark-primary-accent) !important;
-			border-color: var(--dark-primary-accent) !important;
-			color: var(--dark-text-on-accent) !important;
+		.stat-card:hover {
+			box-shadow: var(--shadow-md);
+			background-color: #FFE0B2;
+			transform: translateY(-2px);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button.current i,
-		.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover i {
-			color: var(--dark-text-on-accent);
+		.stat-card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: var(--space-md);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button i {
-			color: var(--dark-text-secondary);
+		.stat-card-title {
+			font-size: var(--text-base);
+			color: var(--color-text-secondary);
+			font-weight: var(--weight-medium);
 		}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button:hover i {
-			color: var(--dark-text-primary);
+		.stat-card-value {
+			font-size: var(--text-sm);
+			font-weight: var(--weight-bold);
+			color: var(--color-text);
+			margin-bottom: var(--space-xs);
 		}
 
-		@keyframes fadeInUp {
-			from {
-				opacity: 0;
-				transform: translateY(10px);
-			}
-
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
+		.stat-card-change {
+			display: flex;
+			align-items: center;
+			gap: var(--space-xs);
+			font-size: var(--text-sm);
 		}
 
-		.dashboard-card>.card-body>*:nth-child(1) {
-			opacity: 0;
-			animation: fadeInUp 0.4s ease-out 0.1s forwards;
+		.stat-card-change.positive {
+			color: var(--color-success);
 		}
 
-		.dashboard-card>.card-body>*:nth-child(2) {
-			opacity: 0;
-			animation: fadeInUp 0.4s ease-out 0.2s forwards;
+		.stat-card-change.negative {
+			color: var(--color-error);
 		}
 
-		.dashboard-card>.card-body>*:nth-child(3) {
-			opacity: 0;
-			animation: fadeInUp 0.4s ease-out 0.3s forwards;
+		.chart-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+			gap: var(--space-lg);
+			margin-bottom: var(--space-2xl);
 		}
 
-		.chart-container,
-		.asl-card .table-responsive {
-			opacity: 0;
-			transition: opacity 0.4s ease-in-out 0.1s;
+		.chart-card {
+			background: var(--color-background);
+			border: 1px solid var(--color-border);
+			border-radius: var(--radius-xl);
+			padding: var(--space-lg);
+			margin-bottom: 10px;
 		}
 
-		.loaded {
-			opacity: 1 !important;
+		.chart-card-header {
+			margin-bottom: var(--space-lg);
 		}
 
-		.value-updated .summary-box {
-			animation: pulseHighlight 0.6s ease-in-out 1;
+		.chart-card-title {
+			font-size: var(--text-lg);
+			font-weight: var(--weight-semibold);
+			color: var(--color-text);
+			margin-bottom: var(--space-xs);
 		}
 
-		@keyframes pulseHighlight {
+		.chart-card-subtitle {
+			font-size: var(--text-sm);
+			color: var(--color-text-secondary);
+		}
+
+		.chart-container {
+			position: relative;
+			height: 300px;
+		}
+
+		h4 {
+			text-align: center;
+			margin-bottom: 30px;
+			font-size: 0.70rem;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			padding: 10px;
+		}
+
+		.blink-bg {
+			animation: blinkBackground 0.5s ease-in-out;
+			animation-iteration-count: 30;
+			/* Blink 10 times */
+		}
+
+		@keyframes blinkBackground {
 			0% {
-				background-color: var(--dark-surface-alt);
-				transform: scale(1);
+				background-color: yellow;
 			}
 
 			50% {
-				background-color: var(--dark-hover-bg);
-				transform: scale(1.01);
-				box-shadow: 0 0 6px var(--dark-primary-accent);
+				background-color: red;
 			}
 
 			100% {
-				background-color: var(--dark-surface-alt);
-				transform: scale(1);
+				background-color: yellow;
 			}
 		}
 
-		.page-item.active .page-link {
-			z-index: 1;
-			color: #fff;
-			background-color: darkorange;
-			border-color: darkorange;
-		}
+		@media (max-width: 767.98px) {
+			.table.refund-table thead {
+				display: none;
+			}
 
-		
-	</style>
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			document.getElementById('ASL_DATA_filter').style.display = 'none';
-		});
+			.table.refund-table,
+			.table.refund-table tbody,
+			.table.refund-table tr,
+			.table.refund-table td {
+				display: block;
+				width: 100%;
+			}
 
+			.table.refund-table tr {
+				margin: 0.75rem 0;
+				padding: 1rem;
+				border-radius: 10px;
+				background: var(--surface);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+			}
 
-	</script>
-
-	<style>
-		.rotate-icon {
-			transition: transform 0.3s ease-in-out;
-		}
-
-		button:hover .rotate-icon {
-			transform: rotate(180deg);
-		}
-	</style>
-	<style>
-		/* Make pagination smaller and cleaner */
-		.dataTables_paginate .pagination {
-			font-size: 12px;
-			padding: 0;
-			margin: 0;
-			justify-content: center;
-		}
-
-		.dataTables_paginate .page-link {
-			padding: 2px 6px;
-			margin: 0 2px;
-			border-radius: 4px;
-			font-weight: normal;
-			color: darkorange !important;
-			/* <-- Unselected page numbers in darkorange */
-			border: 1px solid darkorange;
-			background-color: white;
-		}
-
-		.dataTables_paginate .page-item.active .page-link {
-			background-color: darkorange;
-			color: white !important;
-			border-color: darkorange;
-		}
-
-		.dataTables_paginate .page-link:hover {
-			background-color: #ffe5cc;
-			color: darkorange !important;
-			border-color: darkorange;
+			.table.refund-table tbody td::before {
+				content: attr(data-label);
+				font-weight: bold;
+				color: var(--muted);
+				display: block;
+				margin-bottom: 5px;
+			}
 		}
 	</style>
-
-
-	<!-- Webjars JS -->
-	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-	<!-- jQuery UI is often not needed if not using its specific widgets
-    <script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js" th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script> -->
-	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-	<script src="/webjars/chartjs/2.8.0/Chart.min.js" th:src="@{/webjars/chartjs/2.8.0/Chart.min.js}"></script>
-
-
 </head>
 
 <body>
-	<div th:insert="~{XBRLHeaderMenu :: header}"></div>
+	<script>
+		function Getanalyticaldata(a) {
+			var labelnameselected = a.getAttribute("setlabelname");
+			var labelsrlno = a.getAttribute("setlabelsrlno");
+			document.getElementById("Analyticsheadername").innerHTML = labelnameselected;
 
-	<div class="dashboard-card" style="font-family: sans-serif;">
-		
-		<div class="role-page-header d-flex justify-content-between align-items-center">
-			<!-- Left: Page Title -->
-			<div class="role-page-title">
-				<h4>DASHBOARD</h4>
-				<div style="width: 125px; height: 3px;background-color: #0073e6;border-radius: 2px;
-				margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-		
-			</div>
-		</div>
-		
-		<div class="card-body" >
-			<div class="col-md-4 table-wrapper">
-			    <div class="table-title mb-2">
-			        <h5 class="mb-0 text-primary text-center" style="font-weight: 600;">
-			            ASL Credit Statement summary Data
-			        </h5>
-			    </div>
+			// Hide all analytics sections first
+			document.querySelector(".chart-card").style.display = "none";
+			document.querySelector(".chart-container").style.display = "none";
+			document.querySelector(".LiquidAssetsRatio").style.display = "none";
 
-			    <div class="table-responsive">
-			        <table class="table table-bordered table-striped table-hover" id="maintable">
-			            <thead class="table-success text-center">
-			                <tr>
-			                    <th>Branch Name</th>
-			                    <th>Active Bills</th>
-			                    <th>Exp Pending Closure</th>
-			                </tr>
-			            </thead>
-			            <tbody >
-			                <tr th:each="record : ${aslCreditList}">
-			                    <td th:text="${record[0]}" class="text-center"></td>
-			                    <td th:text="${record[1]}" class="text-center"></td>
-			                    <td th:text="${record[2]}" class="text-center"></td>
-			                </tr>
-			                <tr th:if="${#lists.isEmpty(aslCreditList)}">
-			                    <td colspan="3" class="text-center text-muted">
-			                        No data available.
-			                    </td>
-			                </tr>
-			            </tbody>
-			        </table>
-			    </div>
-			</div>
+			// Show sections based on the selected S.No
+			if (labelsrlno === "5") {
+				fetch("./Getbarchart") // your API URL
+					.then(response => response.json())
+					.then(result => {
+
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+
+						console.log(labels);
+						console.log(dataValues);
+
+						initbarChart(labels, dataValues);
+					});
+
+				fetch("./Getprogresschart") // your API URL
+					.then(response => response.json())
+					.then(result => {
+
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+
+						console.log(labels);
+						console.log(dataValues);
+
+						initProgressChart(labels, dataValues);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+			}
+		}
+
+		function updateLiquidAssetsTable(periodKey) {
+
+			const dateParts = periodKey.split("-");
+
+			const selectedDate = `${dateParts[0]}-${dateParts[1]}-20${dateParts[2]}`;
 			
+			if(confirm("Do you want to open ELAR Report : "+selectedDate)){
+			
+			fetch("./GetElarreport?Report_date=" + encodeURIComponent(selectedDate))
+				.then(response => response.json())
+				.then(result => {
 
-		</div>
-	</div>
+					// Example fields returned from backend:
+					// result.r1_nominal_amount
+					// result.r2_nominal_amount
+					// result.total_liquid_assets
 
+					document.getElementById("r1_nominal_amount").textContent =
+						formatNumber(result.r1_nominal_amount);
+
+					document.getElementById("r2_nominal_amount").textContent =
+						formatNumber(result.r2_nominal_amount);
+
+					document.getElementById("r3_nominal_amount").textContent =
+						formatNumber(result.r3_nominal_amount);
+
+					document.getElementById("r4_nominal_amount").textContent =
+						formatNumber(result.r4_nominal_amount);
+
+					document.getElementById("r5_nominal_amount").textContent =
+						formatNumber(result.r5_nominal_amount);
+
+
+					document.getElementById("r6_nominal_amount").textContent =
+						formatNumber(result.r6_nominal_amount);
+					document.getElementById("r6_eligi_liq_assets").textContent =
+						formatNumber(result.r6_eligi_liq_assets);
+
+					document.getElementById("r7_nominal_amount").textContent =
+						formatNumber(result.r7_nominal_amount);
+
+					document.getElementById("r8_nominal_amount").textContent =
+						formatNumber(result.r8_nominal_amount);
+
+					document.getElementById("r9_nominal_amount").textContent =
+						formatNumber(result.r9_nominal_amount);
+
+					document.getElementById("r10_nominal_amount").textContent =
+						formatNumber(result.r10_nominal_amount);
+
+					document.getElementById("r11_nominal_amount").textContent =
+						formatNumber(result.r11_nominal_amount);
+
+					document.getElementById("r11_eligi_liq_assets").textContent =
+						formatNumber(result.r11_eligi_liq_assets);
+
+
+
+					document.getElementById("r12_nominal_amount").textContent =
+						formatNumber(result.r12_nominal_amount);
+
+					document.getElementById("r13_nominal_amount").textContent =
+						formatNumber(result.r13_nominal_amount);
+
+					document.getElementById("r14_eligi_liq_assets").textContent =
+						formatNumber(result.r14_eligi_liq_assets);
+
+					document.getElementById("r15_eligi_liq_assets").textContent =
+						(result.r15_eligi_liq_assets * 100 )+" %";
+				})
+				.catch(err => console.error("Error loading ELAR report:", err));
 
 				
-					<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-	    <i class="fa fa-arrow-right"></i>
-	</button>
+			document.querySelector(".LiquidAssetsRatio").style.display = "block";
+			
+			}
+		}
 
+		// Helper formatting
+		function formatNumber(value) {
+			if (!value) return "0";
+			return Number(value).toLocaleString("en-US", {
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 0
+			});
+		}
+
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+
+			initbarChart(labels, dataValues);
+			initProgressChart(labels, dataValues);
+		});
+
+		function initbarChart(labels, dataValues) {
+			const ctx = document.getElementById("barpercentchart");
+			if (!ctx) return;
+			new Chart(ctx, {
+				type: "bar",
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: "Utilization %",
+							data: dataValues,
+							backgroundColor: "rgba(139, 92, 246, 0.65)",   // bar fill
+							borderColor: "#8b5cf6",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {display: false},
+						tooltip: {
+							callbacks: {
+								label: (ctx) => `${ctx.parsed.y}%`
+							}
+						}
+					},
+					onClick: (evt, elements) => {
+						if (!elements.length) return;
+						const idx = elements[0].index;
+						const period = labels[idx];   // e.g. "Jan"
+						updateLiquidAssetsTable(period);
+					},
+					scales: {
+						x: {
+							grid: {
+								display: false
+							},
+							ticks: {
+								color: "#6b7280",
+								font: {size: 10},
+								maxRotation: 0,
+								minRotation: 0
+							}
+						},
+						y: {
+							beginAtZero: true,
+							max: 100,
+							grid: {
+								color: "#e5e7eb",
+								drawBorder: false
+							},
+							ticks: {
+								color: "#6b7280",
+								font: {size: 10},
+								callback: (value) => value + "%"
+							}
+						}
+					}
+				}
+			});
+		}
+
+		///Progressing chart function for currenct Month
+		function initProgressChart(labels, dataValues) {
+			const ctx = document.getElementById("progressChart");
+			if (!ctx) return;
+
+			new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: labels,          // 🔹 dynamic labels from backend
+					datasets: [
+						{
+							label: "Utilization %",
+							data: dataValues,                        // 🔹 dynamic data
+							borderColor: "#8b5cf6",
+							backgroundColor: "rgba(139, 92, 246, 0.15)",
+							borderWidth: 2,
+							fill: true,
+							tension: 0.35,                           // smooth curve
+							pointRadius: 3,
+							pointHoverRadius: 5,
+							pointBackgroundColor: "#8b5cf6",
+							pointBorderColor: "#ffffff",
+							pointBorderWidth: 1.5
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {display: false},
+						tooltip: {
+							callbacks: {
+								label: (ctx) => `${ctx.parsed.y}%`
+							}
+						}
+					},
+					scales: {
+						x: {
+							grid: {
+								display: false
+							},
+							ticks: {
+								color: "#6b7280",
+								font: {size: 10},
+								maxRotation: 0,
+								minRotation: 0
+							}
+						},
+						y: {
+							beginAtZero: true,
+							max: 100,
+							grid: {
+								color: "#e5e7eb",
+								drawBorder: false
+							},
+							ticks: {
+								color: "#6b7280",
+								font: {size: 10},
+								callback: (value) => value + "%"
+							}
+						}
+					}
+				}
+			});
+		}
+
+	</script>
+
+	<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
+
+	<!-- Use full width of page -->
+	<div class="container-fluid main-content">
+		<div class="row g-3">
+			<!-- LEFT: table uses full left half -->
+			<div class="col-lg-6 col-md-12">
+				<h4>List of all Matrix monitored by Risk Management</h4>
+				<div class="table-wrap">
+					<table class="table refund-table align-middle mb-0">
+						<thead>
+							<tr>
+								<th>S No</th>
+								<th>Regulatory Caps / Limits</th>
+								<th>Guidelines / Policy</th>
+								<th>Limit</th>
+								<th>Today's Position</th>
+								<th>Reporting Date Position (dd-MM-yyyy)</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="font-size: small;" th:each="Matrixlist : ${Matrixlistdata}">
+
+								<td th:text="${Matrixlist.s_no}">1</td>
+
+								<td class="truncate">
+									<a href="#" th:text="${Matrixlist.matrix_label}" onclick="Getanalyticaldata(this);"
+										th:attr="setlabelname=${Matrixlist.matrix_label},setlabelsrlno=${Matrixlist.s_no}"></a>
+								</td>
+
+								<td th:text="${Matrixlist.guidelines_or_policy}">CBUAE</td>
+
+								<!-- 1st percentage -->
+								<td style="text-align: center;">
+									<span class="badge-status">
+										<span
+											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 0, 'COMMA', 2, 'POINT')}">0.00%</span>
+									</span>
+								</td>
+
+								<!-- 2nd percentage -->
+								<td style="text-align: center;">
+									<span class="badge-status">
+										<span
+											th:text="${#numbers.formatDecimal(Matrixlist.position_of_matrix, 0, 'COMMA', 2, 'POINT')}">0.00%</span>
+									</span>
+								</td>
+
+								<!-- Date -->
+								<td style="text-align: center;">
+									<span class="badge-status">
+
+										<span th:text="${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')}"></span>
+									</span>
+								</td>
+								<th:block th:switch="${Matrixlist.status}">
+									<td th:case="'Y'" style="background-color: greenyellow;">Within limit</td>
+									<td th:case="'N'" style="background-color: coral;" class="blink-bg">Breach</td>
+
+								</th:block>
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- RIGHT: graphs use full right half -->
+			<div class="col-lg-6 col-md-12">
+				<h4 id="Analyticsheadername">Analytics</h4>
+				<div class="chart-card">
+					<div class="stats-grid" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Total Projects</div>
+							</div>
+							<div class="stat-card-value">12</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Completed</div>
+							</div>
+							<div class="stat-card-value">48</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Pending</div>
+							</div>
+							<div class="stat-card-value">23</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Team</div>
+							</div>
+							<div class="stat-card-value">8</div>
+						</div>
+					</div>
+					<!-- Chart -->
+					<div class="chart-container" style="display: none;">
+						<canvas id="barpercentchart"></canvas>
+
+					</div>
+
+					<!--Current Month progressing chart-->
+					<div class="chart-container" style="display: none;">
+						<canvas id="progressChart"></canvas>
+
+					</div>
+
+				</div>
+
+				<div class="LiquidAssetsRatio" style="display: none;">
+
+					<table class="table refund-table align-middle mb-0">
+						<thead>
+							<tr style="background-color: #dee2e6">
+								<th style="text-align: right">1</th>
+								<th>High Quality Liquid Assets</th>
+								<th>Nominal amount</th>
+								<th>Eligible Liquid Asset</th>
+							</tr>
+
+
+						</thead>
+						<tbody>
+
+							<tr>
+								<td style="text-align: right">1.1</td>
+								<td>Physical cash in hand at the bank</td>
+								<td style="text-align: right" id="r1_nominal_amount"></td>
+								<td rowspan="5" style="background-color: #747472" th:text="${r1_nominal_amount}"></td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.2</td>
+								<td>Statutory reserves with Central Bank</td>
+								<td style="text-align: right" id="r2_nominal_amount" th:text="${r2_nominal_amount}">
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.3</td>
+								<td>Free and other account balances at the Central Bank (excluding statutory reserves)
+								</td>
+								<td style="text-align: right" id="r3_nominal_amount" th:text="${r3_nominal_amount}">
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.4</td>
+								<td>Central Bank CDs (unencumbered)</td>
+								<td style="text-align: right" id="r4_nominal_amount" th:text="${r4_nominal_amount}">
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.5</td>
+								<td>UAE Federal Government Bonds and Sukuks</td>
+								<td style="text-align: right" id="r5_nominal_amount" th:text="${r5_nominal_amount}">
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9">Sub Total (1.1 to 1.5)</td>
+								<td style="text-align: right; background-color: #b3b6b9" th:text="${r6_nominal_amount}"
+									id="r6_nominal_amount"></td>
+								<td style="text-align: right; background-color: #b3b6b9"
+									th:text="${r6_eligi_liq_assets}" id="r6_eligi_liq_assets"></td>
+
+							</tr>
+
+
+							<tr>
+								<td style="text-align: right">1.6</td>
+								<td>UAE local governments publicly traded debt securities
+									(0% Risk Weighted under BII Standardized Approach)
+									Rated A+ and above</td>
+								<td style="text-align: right" id="r7_nominal_amount" th:text="${r7_nominal_amount}">
+								</td>
+								<td rowspan="4" style="background-color: #747472"></td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.7</td>
+								<td>UAE local governments publicly traded debt securities
+									(0% Risk Weighted under BII Standardized Approach)
+									Rated A and below or unrated</td>
+								<td style="text-align: right" th:text="${r8_nominal_amount}" id="r8_nominal_amount">
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.8</td>
+								<td>UAE Public sector publicly traded debt securities
+									(non commercial, 0% Risk Weighted under BII Standardized Approach)
+									Rated A+ and above</td>
+								<td style="text-align: right" th:text="${r9_nominal_amount}" id="r9_nominal_amount">
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">1.9</td>
+								<td>UAE Public sector publicly traded debt securities
+									(non commercial, 0% Risk Weighted under BII Standardized Approach)
+									Rated A and below or unrated</td>
+								<td style="text-align: right" th:text="${r10_nominal_amount}" id="r10_nominal_amount">
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9">Sub total (1.6 to 1.9)</td>
+								<td style="text-align: right; background-color: #b3b6b9" th:text="${r11_nominal_amount}"
+									id="r11_nominal_amount"></td>
+								<td style="text-align: right; background-color: #b3b6b9"
+									th:text="${r11_eligi_liq_assets}" id="r11_eligi_liq_assets"></td>
+
+							</tr>
+							<tr>
+								<td style="text-align: right">1.10</td>
+								<td>Foreign Sovereign debt instruments or instruments issued by their respective central
+									banks
+									(0% Risk Weighted under Basel II Standardized Approach)</td>
+								<td style="text-align: right" th:text="${r12_nominal_amount}" id="r12_nominal_amount">
+								</td>
+							</tr>
+							<tr>
+								<td>11.1</td>
+								<td style="background-color: #b3b6b9">Total (1.10 + Sub total (1.6 to 1.9) + Sub Total
+									(1.1 to 1.5))</td>
+								<td style="text-align: right; background-color: #b3b6b9" th:text="${r13_nominal_amount}"
+									id="r13_nominal_amount"></td>
+								<td style="text-align: right; background-color: #b3b6b9"
+									th:text="${r13_eligi_liq_assets}" id="r13_eligi_liq_assets"></td>
+
+							</tr>
+							<tr>
+								<td>2</td>
+								<td style="background-color: #b3b6b9">Total liabilities</td>
+								<td rowspan="2" style="background-color: #747472"></td>
+								<td style="text-align: right" id="r14_eligi_liq_assets"
+									th:text="${r14_eligi_liq_assets}"></td>
+
+							</tr>
+							<tr>
+								<td>3</td>
+								<td style="background-color: #b3b6b9">Eligible Liquid Assets Ratio (ELAR)</td>
+
+								<td style="text-align: right;background-color: #b3b6b9" id="r15_eligi_liq_assets"
+									th:text="${r15_eligi_liq_assets}"></td>
+
+							</tr>
+						</tbody>
+
+					</table>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
 
 </body>
 
