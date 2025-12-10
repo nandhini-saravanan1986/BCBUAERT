@@ -70,8 +70,11 @@ import com.bornfire.xbrl.entities.BRF40_Rep2;
 import com.bornfire.xbrl.entities.BRF_095_A_REPORT_ENTITY;
 import com.bornfire.xbrl.entities.BankLimit_Entity;
 import com.bornfire.xbrl.entities.BankLimit_Rep;
+import com.bornfire.xbrl.entities.Capitaladequacyratio_rep;
 import com.bornfire.xbrl.entities.Counterparty_Entity;
 import com.bornfire.xbrl.entities.Counterparty_Rep;
+import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
+import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
@@ -331,6 +334,12 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
+	
+	@Autowired
+	Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
+	
+	@Autowired
+	Capitaladequacyratio_rep Capitaladequacyratio_rep;
 
 	private String pagesize;
 
@@ -360,12 +369,13 @@ public class XBRLNavigationController {
 		int uncompleted = 0;
 
 		// Retrive Current date Matrix data
-		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal(Todaydate);
+		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal();
 
 		md.addAttribute("completed", completed);
 		md.addAttribute("uncompleted", uncompleted);
 		md.addAttribute("Matrixlistdata", Matrixdata);
 		md.addAttribute("menu", "Dashboard");
+		md.addAttribute("CurrentYear_Tier_1_capital", Capitaladequacyratio_rep.GetCurrentyear_tier_1_capital());
 		return "XBRLDashboard";
 	}
 
@@ -3005,6 +3015,27 @@ public class XBRLNavigationController {
 		}
 
 		return "RT/RT_Credit_Risk_analysis.html";
+	}
+	
+	@RequestMapping(value = "CustomerGrp_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
+	public String CustomerGrp_Maintenance(@RequestParam(required = false) String formmode, Model md,
+			@RequestParam(value = "Group_id", required = false) String Group_id,
+			HttpServletRequest req) {
+		
+		if(formmode.equals("list")) {
+			
+			List<Groupexp_cust_maintain_entity> Groupdetails = Groupexp_cust_maintain_rep.Getactivegroupdetails();
+			md.addAttribute("Groupdetails", Groupdetails);
+			md.addAttribute("formmode", "list");
+			md.addAttribute("menuname", "Group Exposure - list");
+		}else if (formmode.equals("add")) {
+			md.addAttribute("Groupdetail", new Groupexp_cust_maintain_entity());
+			md.addAttribute("formmode","add");
+			md.addAttribute("menuname", "Group Exposure - Add");
+			md.addAttribute("customerList", RT_RWA_Fund_base_data_rep.getcustomerdetail());
+		}
+		
+		return "RT/RT_Cust_group_exposure.html";
 	}
 	
 	

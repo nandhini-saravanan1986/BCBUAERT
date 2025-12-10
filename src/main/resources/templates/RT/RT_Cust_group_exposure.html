@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Risk Insights — Group</title>
+
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+    <link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <script th:src="@{/js/echarts.min.js}"></script>
+    <link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/font-awesome/5.9.0/css/all.min.css"
+          th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+
+    <style>
+        :root {
+            --bg: #f9fbff;
+            --surface: #ffffff;
+            --border: #e6eaf0;
+            --text: #0f172a;
+            --muted: #6b7280;
+            --textcolorheaderwhite: white;
+            --processing: #3b82f6;
+            --approved: #16a34a;
+            --rejected: #ef4444;
+            --pending: #f59e0b;
+            --refunded: #8b5cf6;
+
+            --color-primary: #8b5cf6;
+            --color-primary-hover: #7c3aed;
+            --color-primary-50: rgba(139, 92, 246, 0.05);
+            --color-primary-100: rgba(139, 92, 246, 0.1);
+            --color-primary-200: rgba(139, 92, 246, 0.2);
+
+            --color-success: #10b981;
+            --color-success-50: rgba(16, 185, 129, 0.05);
+            --color-success-100: rgba(16, 185, 129, 0.1);
+            --color-warning: #f59e0b;
+            --color-warning-50: rgba(245, 158, 11, 0.05);
+            --color-warning-100: rgba(245, 158, 11, 0.1);
+            --color-error: #ef4444;
+            --color-error-50: rgba(239, 68, 68, 0.05);
+            --color-error-100: rgba(239, 68, 68, 0.1);
+            --color-info: #3b82f6;
+            --color-info-50: rgba(59, 130, 246, 0.05);
+            --color-info-100: rgba(59, 130, 246, 0.1);
+
+            --color-text: #1e293b;
+            --color-text-secondary: #475569;
+            --color-text-muted: #94a3b8;
+
+            --color-background: #ffffff;
+            --color-surface: #f8fafc;
+            --color-surface-hover: #f1f5f9;
+
+            --color-border: #e2e8f0;
+
+            --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.75rem;
+            --text-4xl: 2rem;
+
+            --weight-normal: 400;
+            --weight-medium: 500;
+            --weight-semibold: 600;
+            --weight-bold: 700;
+
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-base: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 80px;
+            --header-height: 64px;
+
+            --transition: 0.2s ease;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            margin-top: 5px;
+            background: var(--bg);
+            font-family: Arial, sans-serif;
+        }
+
+        .container-fluid {
+            margin-top: 130px;
+        }
+
+        .menuname {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            background: rgba(33, 37, 41, 65%);
+            border-bottom: 2px solid #E3E6EF;
+            color: white;
+            font-family: "Inter", Arial, sans-serif;
+        }
+
+        .menuname h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .menuname label {
+            margin: 0;
+            padding-left: 10px;
+            padding-right: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            background: var(--surface);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .table.refund-table {
+            background: var(--surface);
+            color: var(--text);
+            margin-bottom: 0;
+        }
+
+        .table.refund-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: rgba(33, 37, 41, 65%);
+            color: var(--textcolorheaderwhite);
+            font-weight: 700;
+            font-size: 0.65rem;
+            border: 2px solid;
+            text-transform: uppercase;
+        }
+
+        .table.refund-table tbody td {
+            font-size: 0.70rem;
+            border: 2px solid;
+            border-color: var(--border);
+        }
+
+        .table.refund-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        h4 {
+            text-align: left;
+            margin-bottom: 30px;
+            font-size: 0.70rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+        }
+
+        .my-button {
+            background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 5px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-left: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .my-button:hover {
+            background: transparent linear-gradient(90deg, #fe8639 0%, #f26522 100%) 0% 0% no-repeat padding-box;
+            padding-inline: 14px;
+        }
+
+        @media (max-width: 767.98px) {
+            .table.refund-table thead {
+                display: none;
+            }
+
+            .table.refund-table,
+            .table.refund-table tbody,
+            .table.refund-table tr,
+            .table.refund-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table.refund-table tr {
+                margin: 0.75rem 0;
+                padding: 1rem;
+                border-radius: 10px;
+                background: var(--surface);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .table.refund-table tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: var(--muted);
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Core JS helpers -->
+    <script>
+        function Addgroup() {
+            location.href = "CustomerGrp_Maintenance?formmode=add";
+        }
+
+        // Collect all checked customer IDs and push into textarea + hidden field
+        function updateCustomerIds() {
+            var selected = [];
+            document.querySelectorAll('.cust-checkbox:checked').forEach(function (cb) {
+                selected.push(cb.value);
+            });
+
+            var joined = selected.join(',');
+
+            var display = document.getElementById('groupCustomerIdsDisplay');
+            var hidden = document.getElementById('groupCustomerIds');
+
+            if (display) display.value = joined;
+            if (hidden) hidden.value = joined;
+        }
+
+        /**
+         * AJAX search: when user types >= 5 chars, hit backend and rebuild checkbox list.
+         * Endpoint expected to return JSON array of strings (cust_id).
+         */
+		 function searchCustomers(term) {
+		     // only start searching when 5 or more characters are entered
+		     const container   = document.getElementById('customerlistid');
+		     const hiddenField = document.getElementById('groupCustomerIds');
+		     if (!container || !hiddenField) {
+		         return;
+		     }
+
+		     // 1) read already selected IDs from hidden field
+		     const alreadySelected = (hiddenField.value || '')
+		         .split(',')
+		         .map(s => s.trim())
+		         .filter(Boolean);   // e.g. ["123456789", "987654321"]
+
+		     const url = './groupdetail/customer-search?term=' + encodeURIComponent(term);
+
+		     fetch(url)
+		         .then(resp => resp.json())
+		         .then(data => {
+		             // 2) backend result IDs (search result)
+		             const searchResult = Array.isArray(data) ? data : [];
+
+		             // 3) combined list = previously selected + new search results (remove duplicates)
+		             const combinedIds = Array.from(new Set([...alreadySelected, ...searchResult]));
+
+		             // 4) clear old checkboxes
+		             container.innerHTML = '';
+
+		             // 5) rebuild checkbox list
+		             combinedIds.forEach(id => {
+		                 const label = document.createElement('label');
+		                 label.className = 'd-block';
+
+		                 const cb = document.createElement('input');
+		                 cb.type = 'checkbox';
+		                 cb.className = 'cust-checkbox';
+		                 cb.value = id;
+
+		                 // mark previously selected as checked
+		                 if (alreadySelected.includes(id)) {
+		                     cb.checked = true;
+		                     // OPTIONAL: if you don't want them to be uncheckable, uncomment:
+		                     // cb.disabled = true;
+		                 }
+
+		                 // when clicked, update selected IDs
+		                 cb.addEventListener('change', updateCustomerIds);
+
+		                 const span = document.createElement('span');
+		                 span.textContent = ' ' + id;
+
+		                 label.appendChild(cb);
+		                 label.appendChild(span);
+		                 container.appendChild(label);
+		             });
+
+		             // 6) sync textarea + hidden field
+		             updateCustomerIds();
+		         })
+		         .catch(err => {
+		             console.error('Search error', err);
+		         });
+		 }
+    </script>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('customerSearch');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    searchCustomers(this.value);
+                });
+            }
+
+            // Bind checkboxes to keep textarea + hidden field updated (initial Thymeleaf list)
+            document.querySelectorAll('.cust-checkbox').forEach(function (cb) {
+                cb.addEventListener('change', updateCustomerIds);
+            });
+
+            // Initialize selected list in edit mode
+            updateCustomerIds();
+        });
+    </script>
+
+    <div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
+
+    <div class="container-fluid main-content">
+        <div class="menuname">
+            <h3 th:text="${menuname}">Menu Name</h3>
+            <button class="my-button" type="button" onclick="Addgroup();">Add Group</button>
+        </div>
+
+        <!-- LIST MODE -->
+        <div th:if="${formmode}=='list'">
+            <div class="table-wrap" style="padding-top: 10px;">
+                <table class="table refund-table align-middle mb-0" id="Portfolio_summary_table">
+                    <thead>
+                        <tr>
+                            <th>Group Id</th>
+                            <th>Group Name</th>
+                            <th>Customer Id's</th>
+                            <th>Group Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="grpdtl : ${Groupdetails}">
+                            <td th:text="${grpdtl.group_id}"></td>
+                            <td th:text="${grpdtl.group_name}"></td>
+                            <td th:text="${grpdtl.belonging_customer_id}"></td>
+                            <td th:text="${grpdtl.del_flg}"></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FORM MODES -->
+        <div th:if="${formmode}=='view' OR ${formmode}=='add' OR ${formmode}=='cancel' OR
+                    ${formmode}=='edit' OR ${formmode}=='delete' OR ${formmode}=='verify' OR
+                    ${formmode}=='viewnew'">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card-body" style="margin-left: 10px;">
+                        <form action="#"
+                              th:object="${Groupdetail}"
+                              method="post"
+                              autocomplete="off"
+                              id="Groupdetail"
+                              th:fragment="finuserapply">
+
+                            <div class="form-group row mb-1">
+                                <label class="col-sm-2 col-form-label">Group ID</label>
+                                <div class="col-sm-4">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{group_id}"
+                                           th:readonly="${formmode} != 'add' and ${formmode} != 'edit'" />
+                                </div>
+
+                                <label class="col-sm-2 col-form-label">Group Name</label>
+                                <div class="col-sm-4">
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{group_name}"
+                                           th:readonly="${formmode} != 'add' and ${formmode} != 'edit'" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-1">
+                                <!-- Read-only selected IDs -->
+                                <label class="col-sm-2 col-form-label">Group Customer Id's</label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control"
+                                              id="groupCustomerIdsDisplay"
+                                              th:text="*{belonging_customer_id}"
+                                              readonly
+                                              style="height:250px; overflow-y:auto;"
+                                              placeholder="Selected customer Id's"></textarea>
+
+                                    <input type="hidden"
+                                           id="groupCustomerIds"
+                                           th:field="*{belonging_customer_id}" />
+                                </div>
+
+                                <!-- Search + selectable IDs -->
+                                <label class="col-sm-2 col-form-label">Select Customer Id's</label>
+                                <div class="col-sm-4">
+                                    <input type="text"
+                                           id="customerSearch"
+                                           class="form-control mb-1"
+                                           placeholder="Type first 5 digits to search..." />
+
+                                    <div class="form-control"
+                                         style="height:250px; overflow-y:auto;"
+                                         id="customerlistid">
+                                        <!-- Initial 100 (or so) from backend -->
+                                        <div th:each="cust : ${customerList}">
+                                            <label class="d-block">
+                                                <input type="checkbox"
+                                                       class="cust-checkbox"
+                                                       th:value="${cust}" />
+                                                <span th:text="${cust}"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <small class="form-text text-muted">
+                                        Showing max 100 records initially. Type at least 5 digits to search from full list.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Add Save / Cancel buttons here if needed -->
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

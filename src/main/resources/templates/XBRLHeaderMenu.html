@@ -9,6 +9,7 @@
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	
 
 	<style>
 		/* ===============================
@@ -274,10 +275,10 @@
 		<div class="menu-scroll-wrapper">
 			<ul class="menu" id="mainMenu">
 
-				<li><a th:href="@{/Dashboard}" onclick="showLoader()">Home</a></li>
+				<li><a th:href="@{/Dashboard}" onclick="showLoader()"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
 
 				<li>
-					<a href="#">Admin</a>
+					<a href="#"> <i class="fa fa-users" aria-hidden="true"></i> Admin</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
 							<a th:href="@{/UserProfile}" onclick="showLoader()">User Profile</a>
@@ -285,11 +286,14 @@
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
 							<a th:href="@{/AccessandRoles}" onclick="showLoader()">Access and Roles</a>
 						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-CustgrpMain')}">
+							<a th:href="@{/CustomerGrp_Maintenance?formmode=list}" onclick="showLoader()">Customer Group Maintenance</a>
+						</li>
 					</ul>
 				</li>
 
 				<li>
-					<a href="#">RT Reports</a>
+					<a href="#"> <i class="fa fa-file-excel" aria-hidden="true"></i> RT Reports</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}">
 							<a th:href="@{/Nostro_Account_Bal}" onclick="showLoader()">Nostro Account Balance</a>
@@ -347,7 +351,7 @@
 				</li>
 
 				<li>
-					<a href="#">ASL</a>
+					<a href="#"> <i class="fa fa-university" aria-hidden="true"></i> ASL</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty')}">
 							<a th:href="@{/counterparty}" onclick="showLoader()">Auth Counterparties</a>
@@ -368,7 +372,7 @@
 				</li>
 
 				<li>
-					<a href="#">ASL Upload</a>
+					<a href="#"><i class="fa fa-university" aria-hidden="true"></i> ASL Upload</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data')}">
 							<a th:href="@{/counterparty_list?formmode=Billdetaillist}" onclick="showLoader()">Exposure
@@ -385,7 +389,7 @@
 				</li>
 				
 				<li>
-					<a href="#">Credit Risk</a>
+					<a href="#"> <i class="fa fa-bar-chart" aria-hidden="true"></i> Credit Risk</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
 							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}" onclick="showLoader()">Portfolio Analysis Report</a>
@@ -406,7 +410,7 @@
 				</li>
 
 				<li>
-					<a href="#">Audit</a>
+					<a href="#"> <i class="fa fa-eye" aria-hidden="true"></i> Audit</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
 							<a th:href="@{/User_Audit}" onclick="showLoader()">User Audit</a>

@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
 	<title>Risk Insights — Dashboard</title>
 
 	<!-- CSS Dependencies -->
@@ -12,6 +13,11 @@
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<script th:src="@{/js/chart.js}"></script>
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+
+
+
 
 	<style>
 		:root {
@@ -126,7 +132,7 @@
 		.table.refund-table thead th {
 			position: sticky;
 			top: 0;
-			background: brown;
+			background: rgba(33, 37, 41, 65%);
 			color: var(--textcolorheaderwhite);
 			font-weight: 700;
 			font-size: 0.65rem;
@@ -182,7 +188,7 @@
 		/* Chart placeholder styling */
 		.stats-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 			gap: var(--space-lg);
 			margin-bottom: var(--space-2xl);
 		}
@@ -197,8 +203,9 @@
 
 		.stat-card:hover {
 			box-shadow: var(--shadow-md);
-			background-color: #FFE0B2;
+			background-color: aliceblue;
 			transform: translateY(-2px);
+			font-size: var(--text-base);
 		}
 
 		.stat-card-header {
@@ -209,7 +216,7 @@
 		}
 
 		.stat-card-title {
-			font-size: var(--text-base);
+			font-size: var(--text-sm);
 			color: var(--color-text-secondary);
 			font-weight: var(--weight-medium);
 		}
@@ -333,51 +340,849 @@
 </head>
 
 <body>
+	<script th:inline="javascript">
+
+		let progressChartInstance = null;
+		let barChartInstance = null;
+		let Selectedmatrixlabel = 0;
+		var Curr_Tier_1_capital = /*[[${CurrentYear_Tier_1_capital}]]*/0;
+
+	</script>
 	<script>
 		function Getanalyticaldata(a) {
 			var labelnameselected = a.getAttribute("setlabelname");
 			var labelsrlno = a.getAttribute("setlabelsrlno");
+			var labelReport_date = a.getAttribute("setreport_date");
+
+			Selectedmatrixlabel = labelsrlno;
 			document.getElementById("Analyticsheadername").innerHTML = labelnameselected;
 
 			// Hide all analytics sections first
-			document.querySelector(".chart-card").style.display = "none";
-			document.querySelector(".chart-container").style.display = "none";
-			document.querySelector(".LiquidAssetsRatio").style.display = "none";
 
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
+			document.querySelector(".LiquidAssetsRatio").style.display = "none";
+			document.querySelector(".Leverageratiosummblock").style.display = "none";
+			document.querySelector(".Leverageratiodtlblock").style.display = "none";
+			document.querySelector(".Capitaladequacyratio").style.display = "none"; //hide capitalratio block
+			document.querySelector(".Capitaladequacyratiodetail_2").style.display = "none";
+			document.querySelector(".Capitaladequacyratiodetail_1").style.display = "none";
+			document.querySelector(".GroupExposuredetail").style.display = "none";
+			document.querySelector(".Exposure_outside_GCC").style.display = "none";
+			document.querySelector(".CountryExposuredetail").style.display = "none";
+			document.querySelector(".Mortageloan_block").style.display = "none";
+			document.querySelector(".Mortageloan_table").style.display = "none";
+			document.querySelector(".Sector_Industrial").style.display = "none";
+			document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "none");
+			document.querySelector(".Netovernight_noop").style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
-				fetch("./Getbarchart") // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
 					.then(response => response.json())
 					.then(result => {
-
-						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-
-						console.log(labels);
-						console.log(dataValues);
-
-						initbarChart(labels, dataValues);
+						Initiatemonthlychart(labels, dataValues, 10,50);
 					});
 
-				fetch("./Getprogresschart") // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
 					.then(response => response.json())
 					.then(result => {
-
-						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-
-						console.log(labels);
-						console.log(dataValues);
-
-						initProgressChart(labels, dataValues);
+						Initiatedailychart(labels, dataValues, 10,50);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+			} else if (labelsrlno === "4") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 5,50);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5,50);
+					});
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".Leverageratiosummblock").style.display = "grid";
+			} else if (labelsrlno === "6") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10,100);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10,100);
+					});
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+			} else if (labelsrlno === "1") {
+
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 5,50);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5,50);
+					});
+
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("r15_ratios1").textContent =
+								formatNumber(data[0]);
+							document.getElementById("r22_ratios2").textContent =
+								formatNumber(data[1]);
+							document.getElementById("r16_ratios1").textContent =
+								formatNumber(data[2]);
+							document.getElementById("r18_ratios1").textContent =
+								formatNumber(data[3]);
+							document.getElementById("r23_ratios1").textContent =
+								formatNumber(data[4]);
+							document.getElementById("r23_ratios2").textContent =
+								formatNumber(data[5]);
+							document.getElementById("r45_ratios2").textContent =
+								formatNumber(data[6]);
+							document.getElementById("r51_ratios2").textContent =
+								formatNumber(data[7]);
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
+			} else if (labelsrlno === "2") {
+				const Report_dateSelected = '31-10-2025';
+
+				var trHTML = "";
+				document.getElementById("Groupexposurebody").innerHTML = trHTML;
+
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'SingleGroupExposure', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (data[3] || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (data[6] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+						
+						document.getElementById("Tier_1_capital").textContent =formatNumber(Curr_Tier_1_capital);
+
+						// Replace body content
+						document.getElementById("Groupexposurebody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".GroupExposuredetail").style.display = "block";
+			} else if (labelsrlno === "10") {
+				const Report_dateSelected = '30-09-2025';
+
+				var trHTML = "";
+				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposuresummarydata', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("Outside_gcc_exp").textContent =
+								(data[0] + '%');
+							document.getElementById("Only_gcc_Exp").textContent =
+								(data[1] + '%');
+							document.getElementById("Outside_gcc_rwa").textContent =
+								(data[2] + '%');
+							document.getElementById("Gcc_Rwa").textContent =
+								(data[3] + '%');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+
+				document.querySelector(".CountryExposuredetail").style.display = "grid";
+
+			} else if (labelsrlno === "9") {
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Mortageloanappetite', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("Housingloan_Exp").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Topuploan_Expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Total_mortgage_loan").textContent =
+								formatNumber(data[2]);
+							document.getElementById("Total_mortgage_loan_per").textContent =
+								(data[3] + '%');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				//Mortgage loan Graph api
+
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 2,20);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 2,20);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+
+				document.querySelector(".Mortageloan_block").style.display = "grid";
+			} else if (labelsrlno === "7") {
+
+				const Report_dateSelected = '30-09-2025'; // But for this Fetching backend query didn't use date just for api i am placing the date
+
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'FreshslippageQoQ', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("Current_Qtr_sli_per").textContent =
+								(data[0] + ' %');
+							document.getElementById("last_year_slip_hdr").innerHTML =
+								(data[1]);
+							document.getElementById("last_year_slip_bal").textContent =
+								formatNumber(data[2]);
+
+							document.getElementById("First_qtr_slip_hdr").innerHTML =
+								(data[3]);
+							document.getElementById("First_qtr_slip_bal").textContent =
+								formatNumber(data[4]);
+
+							document.getElementById("Second_qtr_slip_hdr").innerHTML =
+								(data[5]);
+							document.getElementById("Second_qtr_slip_bal").textContent =
+								formatNumber(data[6]);
+
+							document.getElementById("Third_qtr_slip_hdr").innerHTML =
+								(data[7]);
+							document.getElementById("Third_qtr_slip_bal").textContent =
+								formatNumber(data[8]);
+
+							document.getElementById("Fourth_qtr_slip_hdr").innerHTML =
+								(data[9]);
+							document.getElementById("Fourth_qtr_slip_bal").textContent =
+								formatNumber(data[10]);
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "grid");
+
+			} else if (labelsrlno === "11") {
+
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Industry', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+			} else if (labelsrlno === "12") {
+
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Trading', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Trading Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+
+			} else if (labelsrlno === "13") {
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Services', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+			} else if (labelsrlno === "14") {
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Banks', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+			} else if (labelsrlno === "15") {
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Real_Estate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+			} else if (labelsrlno === "16") {
+				const Report_dateSelected = '30-09-2025';
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Others', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+			}else if(labelsrlno === "3"){
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 5,50);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5,50);
+					});
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+			} else if (labelsrlno === "8") {
+
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+			}else if(labelsrlno === "24"){
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 200, 2000);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 200, 2000);
+					});
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'NetOvernight_noop', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("OVER_BOUGHT_AMOUNT").textContent =
+								formatNumber(data[1]);
+							document.getElementById("OVER_SOLD_AMOUNT").textContent =
+								formatNumber(data[2]);
+							document.getElementById("NOOP_AMOUNT_IN_INR").textContent =
+								formatNumber(data[3]);
+							document.getElementById("LIMIT_AMOUNT_IN_INR").textContent =
+								formatNumber(data[4]);
+							document.getElementById("HEADROOM_AVAL_AMOUNT_IN_INR").textContent =
+								formatNumber(data[5]);
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
+				document.querySelector(".Netovernight_noop").style.display = "block";
 			}
+		}
+
+		function Getexposuredetail(a) {
+
+
+			const Report_dateSelected = '30-09-2025';
+
+
+
+			if (a === 'Outsidegcc') {
+				var trHTML = "";
+				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureoutsidegcc', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"<td>" + (data[4] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+						document.getElementById("CountryExposuretablename").innerHTML = 'Outside GCC Country Exposure';
+
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Exposure_outside_GCC").style.display = "block";
+			} else if (a === 'OnlyGcc') {
+				var trHTML = "";
+				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureonlygcc', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"<td>" + (data[4] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+						document.getElementById("CountryExposuretablename").innerHTML = 'GCC Country Exposure';
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Exposure_outside_GCC").style.display = "block";
+
+
+			} else if (a === "Toptenhousingloan") {
+
+				var trHTML = "";
+				document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Toptenhousingloandata', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + ((data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+						document.getElementById("Mortageloan_table_name").innerHTML = 'Top 10 Housing loan customer detail';
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Mortageloan_table").style.display = "block";
+
+			} else if (a === "Toptentopuploan") {
+
+
+				var trHTML = "";
+				document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Toptentopuploandata', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + ((data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+						document.getElementById("Mortageloan_table_name").innerHTML = 'Top 10 Baroda Top-up loan customer detail';
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Mortageloan_table").style.display = "block";
+			}
+
+
 		}
 
 		function updateLiquidAssetsTable(periodKey) {
@@ -385,76 +1190,128 @@
 			const dateParts = periodKey.split("-");
 
 			const selectedDate = `${dateParts[0]}-${dateParts[1]}-20${dateParts[2]}`;
-			
-			if(confirm("Do you want to open ELAR Report : "+selectedDate)){
-			
-			fetch("./GetElarreport?Report_date=" + encodeURIComponent(selectedDate))
-				.then(response => response.json())
-				.then(result => {
 
-					// Example fields returned from backend:
-					// result.r1_nominal_amount
-					// result.r2_nominal_amount
-					// result.total_liquid_assets
+			if (Selectedmatrixlabel == "5") {
 
-					document.getElementById("r1_nominal_amount").textContent =
-						formatNumber(result.r1_nominal_amount);
+				fetch("./GetElarreport?Report_date=" + encodeURIComponent(selectedDate))
+					.then(response => response.json())
+					.then(result => {
 
-					document.getElementById("r2_nominal_amount").textContent =
-						formatNumber(result.r2_nominal_amount);
+						// Example fields returned from backend:
+						// result.r1_nominal_amount
+						// result.r2_nominal_amount
+						// result.total_liquid_assets
 
-					document.getElementById("r3_nominal_amount").textContent =
-						formatNumber(result.r3_nominal_amount);
+						document.getElementById("r1_nominal_amount").textContent =
+							formatNumber(result.r1_nominal_amount);
 
-					document.getElementById("r4_nominal_amount").textContent =
-						formatNumber(result.r4_nominal_amount);
+						document.getElementById("r2_nominal_amount").textContent =
+							formatNumber(result.r2_nominal_amount);
 
-					document.getElementById("r5_nominal_amount").textContent =
-						formatNumber(result.r5_nominal_amount);
+						document.getElementById("r3_nominal_amount").textContent =
+							formatNumber(result.r3_nominal_amount);
 
+						document.getElementById("r4_nominal_amount").textContent =
+							formatNumber(result.r4_nominal_amount);
 
-					document.getElementById("r6_nominal_amount").textContent =
-						formatNumber(result.r6_nominal_amount);
-					document.getElementById("r6_eligi_liq_assets").textContent =
-						formatNumber(result.r6_eligi_liq_assets);
-
-					document.getElementById("r7_nominal_amount").textContent =
-						formatNumber(result.r7_nominal_amount);
-
-					document.getElementById("r8_nominal_amount").textContent =
-						formatNumber(result.r8_nominal_amount);
-
-					document.getElementById("r9_nominal_amount").textContent =
-						formatNumber(result.r9_nominal_amount);
-
-					document.getElementById("r10_nominal_amount").textContent =
-						formatNumber(result.r10_nominal_amount);
-
-					document.getElementById("r11_nominal_amount").textContent =
-						formatNumber(result.r11_nominal_amount);
-
-					document.getElementById("r11_eligi_liq_assets").textContent =
-						formatNumber(result.r11_eligi_liq_assets);
+						document.getElementById("r5_nominal_amount").textContent =
+							formatNumber(result.r5_nominal_amount);
 
 
+						document.getElementById("r6_nominal_amount").textContent =
+							formatNumber(result.r6_nominal_amount);
+						document.getElementById("r6_eligi_liq_assets").textContent =
+							formatNumber(result.r6_eligi_liq_assets);
 
-					document.getElementById("r12_nominal_amount").textContent =
-						formatNumber(result.r12_nominal_amount);
+						document.getElementById("r7_nominal_amount").textContent =
+							formatNumber(result.r7_nominal_amount);
 
-					document.getElementById("r13_nominal_amount").textContent =
-						formatNumber(result.r13_nominal_amount);
+						document.getElementById("r8_nominal_amount").textContent =
+							formatNumber(result.r8_nominal_amount);
 
-					document.getElementById("r14_eligi_liq_assets").textContent =
-						formatNumber(result.r14_eligi_liq_assets);
+						document.getElementById("r9_nominal_amount").textContent =
+							formatNumber(result.r9_nominal_amount);
 
-					document.getElementById("r15_eligi_liq_assets").textContent =
-						(result.r15_eligi_liq_assets * 100 )+" %";
+						document.getElementById("r10_nominal_amount").textContent =
+							formatNumber(result.r10_nominal_amount);
+
+						document.getElementById("r11_nominal_amount").textContent =
+							formatNumber(result.r11_nominal_amount);
+
+						document.getElementById("r11_eligi_liq_assets").textContent =
+							formatNumber(result.r11_eligi_liq_assets);
+
+
+
+						document.getElementById("r12_nominal_amount").textContent =
+							formatNumber(result.r12_nominal_amount);
+
+						document.getElementById("r13_nominal_amount").textContent =
+							formatNumber(result.r13_nominal_amount);
+
+						document.getElementById("r14_eligi_liq_assets").textContent =
+							formatNumber(result.r14_eligi_liq_assets);
+
+						document.getElementById("r15_eligi_liq_assets").textContent =
+							(result.r15_eligi_liq_assets * 100) + " %";
+					})
+					.catch(err => console.error("Error loading ELAR report:", err));
+
+
+				document.querySelector(".LiquidAssetsRatio").style.display = "block";
+			} else if (Selectedmatrixlabel === "9") {
+				var trHTML = "";
+				document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Mortgageloantopten', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
 				})
-				.catch(err => console.error("Error loading ELAR report:", err));
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
 
-				
-			document.querySelector(".LiquidAssetsRatio").style.display = "block";
-			
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + ((data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
+						document.getElementById("Mortageloan_table_name").innerHTML = 'Top 10 Mortgage loan customer detail';
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Mortageloan_table").style.display = "block";
+			} else {
+				alert('Sorry invalid operation selected')
+			}
+		}
+
+		function ShowLeverageratiodtlblock(a) {
+			if (a === "4") {
+
+				document.querySelector(".Leverageratiodtlblock").style.display = "grid";
+			} else if (a === "1.1") {
+				document.querySelector(".Capitaladequacyratiodetail_1").style.display = "grid";
+				document.querySelector(".Capitaladequacyratiodetail_2").style.display = "none";
+			} else if (a === "1.2") {
+				document.querySelector(".Capitaladequacyratiodetail_2").style.display = "grid";
+				document.querySelector(".Capitaladequacyratiodetail_1").style.display = "none";
 			}
 		}
 
@@ -471,15 +1328,20 @@
 
 		document.addEventListener("DOMContentLoaded", function () {
 
-			initbarChart(labels, dataValues);
-			initProgressChart(labels, dataValues);
+			Initiatemonthlychart(labels, dataValues, 10,100);
+			Initiatedailychart(labels, dataValues, 10,100);
 		});
 
-		function initbarChart(labels, dataValues) {
-			const ctx = document.getElementById("barpercentchart");
+		function Initiatemonthlychart(labels, dataValues, CalculatedStepSize,yaxismaxsize) {
+			const ctx = document.getElementById("Linechartformonthlyreport");
 			if (!ctx) return;
-			new Chart(ctx, {
-				type: "bar",
+
+			if (barChartInstance) {
+				barChartInstance.destroy();
+			}
+
+			barChartInstance = new Chart(ctx, {
+				type: "line",
 				data: {
 					labels: labels,
 					datasets: [
@@ -521,18 +1383,33 @@
 							ticks: {
 								color: "#6b7280",
 								font: {size: 10},
-								maxRotation: 0,
-								minRotation: 0
+								maxRotation: 45,
+								minRotation: 45
+							},
+							title: {
+								display: true,
+								text: 'Current Year Report (↑)',
+								color: '#6b7280',
+								font: {
+									size: 15,
+									weight: '800'
+								},
+								padding: {
+									top: 8    // space between labels and title
+								}
 							}
+							
 						},
 						y: {
 							beginAtZero: true,
-							max: 100,
+							max: yaxismaxsize,
 							grid: {
 								color: "#e5e7eb",
 								drawBorder: false
 							},
 							ticks: {
+								stepSize: CalculatedStepSize,
+								autoSkip: false,
 								color: "#6b7280",
 								font: {size: 10},
 								callback: (value) => value + "%"
@@ -544,11 +1421,16 @@
 		}
 
 		///Progressing chart function for currenct Month
-		function initProgressChart(labels, dataValues) {
-			const ctx = document.getElementById("progressChart");
+		function Initiatedailychart(labels, dataValues, CalculatedStepSize,yaxismaxsize) {
+			const ctx = document.getElementById("Linechartfordailyreport");
 			if (!ctx) return;
 
-			new Chart(ctx, {
+			if (progressChartInstance) {
+				progressChartInstance.destroy();
+			}
+
+
+			progressChartInstance = new Chart(ctx, {
 				type: "line",
 				data: {
 					labels: labels,          // 🔹 dynamic labels from backend
@@ -588,18 +1470,32 @@
 							ticks: {
 								color: "#6b7280",
 								font: {size: 10},
-								maxRotation: 0,
-								minRotation: 0
+								maxRotation: 45,
+								minRotation: 45
+							},
+							title: {
+								display: true,
+								text: 'Current Month Report (↑)',
+								color: '#6b7280',
+								font: {
+									size: 15,
+									weight: '800'
+								},
+								padding: {
+									top: 8    // space between labels and title
+								}
 							}
 						},
 						y: {
 							beginAtZero: true,
-							max: 100,
+							max: yaxismaxsize,
 							grid: {
 								color: "#e5e7eb",
 								drawBorder: false
 							},
 							ticks: {
+								stepSize: CalculatedStepSize,
+								autoSkip: false,
 								color: "#6b7280",
 								font: {size: 10},
 								callback: (value) => value + "%"
@@ -640,7 +1536,8 @@
 
 								<td class="truncate">
 									<a href="#" th:text="${Matrixlist.matrix_label}" onclick="Getanalyticaldata(this);"
-										th:attr="setlabelname=${Matrixlist.matrix_label},setlabelsrlno=${Matrixlist.s_no}"></a>
+										th:attr="setlabelname=${Matrixlist.matrix_label},setlabelsrlno=${Matrixlist.s_no},
+										setreport_date=${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')}"></a>
 								</td>
 
 								<td th:text="${Matrixlist.guidelines_or_policy}">CBUAE</td>
@@ -684,44 +1581,352 @@
 			<div class="col-lg-6 col-md-12">
 				<h4 id="Analyticsheadername">Analytics</h4>
 				<div class="chart-card">
-					<div class="stats-grid" style="display: none;">
+					<div class="stats-grid Leverageratiosummblock" style="display: none;">
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title">Total Projects</div>
+								<div class="stat-card-title">Tier 1 Capital</div>
 							</div>
-							<div class="stat-card-value">12</div>
+							<div class="stat-card-value" id="r21_total">0.00</div>
 						</div>
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title">Completed</div>
+								<div class="stat-card-title"><a href="#" onclick="ShowLeverageratiodtlblock('4');">Total
+										Exposure</a></div>
 							</div>
-							<div class="stat-card-value">48</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title">Pending</div>
-							</div>
-							<div class="stat-card-value">23</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title">Team</div>
-							</div>
-							<div class="stat-card-value">8</div>
+							<div class="stat-card-value" id="r22_total">0.00</div>
 						</div>
 					</div>
+					<div class="stats-grid Leverageratiodtlblock" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">On Balance Exposure</div>
+							</div>
+							<div class="stat-card-value" id="r3_total">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Derivative Exposure</div>
+							</div>
+							<div class="stat-card-value" id="r12_total">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Off Balance Exposure</div>
+							</div>
+							<div class="stat-card-value" id="r20_total">0.00</div>
+						</div>
+					</div>
+					<!--Capital Adequecy ratio block-->
+					<div class="stats-grid Capitaladequacyratio" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"> <a href="#"
+										onclick="ShowLeverageratiodtlblock('1.1');">Tier 1 Capital</a></div>
+							</div>
+							<div class="stat-card-value" id="r15_ratios1">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"><a href="#"
+										onclick="ShowLeverageratiodtlblock('1.2');">Pillar 1 (Total RWA)</a></div>
+							</div>
+							<div class="stat-card-value" id="r22_ratios2">0.00</div>
+						</div>
+					</div>
+
+					<div class="stats-grid Capitaladequacyratiodetail_1" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Share Capital</div>
+							</div>
+							<div class="stat-card-value" id="r16_ratios1">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Eligible Reserves</div>
+							</div>
+							<div class="stat-card-value" id="r18_ratios1">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Retained Earnings / (-) Loss</div>
+							</div>
+							<div class="stat-card-value" id="r23_ratios1">0.00</div>
+						</div>
+					</div>
+
+					<div class="stats-grid Capitaladequacyratiodetail_2" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Credit Risk Standardised approach (CSA)</div>
+							</div>
+							<div class="stat-card-value" id="r23_ratios2">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Market Risk - Standardised approaches (SA)</div>
+							</div>
+							<div class="stat-card-value" id="r45_ratios2">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Operational Risk</div>
+							</div>
+							<div class="stat-card-value" id="r51_ratios2">0.00</div>
+						</div>
+					</div>
+
+					<!--Exposure to outside Gcc-->
+
+					<div class="stats-grid CountryExposuredetail" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"><a href="#"
+										onclick="Getexposuredetail('Outsidegcc');">Outside GCC Exposure
+										(%)</a></div>
+							</div>
+							<div class="stat-card-value" id="Outside_gcc_exp">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Outside Gcc Rwa</div>
+							</div>
+							<div class="stat-card-value" id="Outside_gcc_rwa">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"><a href="#" onclick="Getexposuredetail('OnlyGcc');">GCC
+										Exposure (%)</a></div>
+							</div>
+							<div class="stat-card-value" id="Only_gcc_Exp">0.00</div>
+						</div>
+
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">GCC RWA</div>
+							</div>
+							<div class="stat-card-value" id="Gcc_Rwa">0.00</div>
+						</div>
+					</div>
+
+					<!--Mortgage Loan Appetite-->
+
+					<div class="stats-grid Mortageloan_block" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"><a href="#"
+										onclick="Getexposuredetail('Toptenhousingloan');">Housing loan</a>
+								</div>
+							</div>
+							<div class="stat-card-value" id="Housingloan_Exp">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title"><a href="#"
+										onclick="Getexposuredetail('Toptentopuploan');">Baroda Topup
+										loan</a></div>
+							</div>
+							<div class="stat-card-value" id="Topuploan_Expo">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Total Mortgage loan</div>
+							</div>
+							<div class="stat-card-value" id="Total_mortgage_loan">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Mortgage Loan Appetite (%)</div>
+							</div>
+							<div class="stat-card-value" id="Total_mortgage_loan_per">0.00</div>
+						</div>
+					</div>
+					<!--Fresh Slippage to Total Advances Ratio (Q on Q)-->
+					<div class="stats-grid Freshslippage_tot_adv" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Current Qtr Slippage (%)</div>
+							</div>
+							<div class="stat-card-value" id="Current_Qtr_sli_per">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="last_year_slip_hdr"></div>
+							</div>
+							<div class="stat-card-value" id="last_year_slip_bal">0.00</div>
+						</div>
+					</div>
+
+					<div class="stats-grid Freshslippage_tot_adv" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="First_qtr_slip_hdr"></div>
+							</div>
+							<div class="stat-card-value" id="First_qtr_slip_bal">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="Second_qtr_slip_hdr"></div>
+							</div>
+							<div class="stat-card-value" id="Second_qtr_slip_bal">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="Third_qtr_slip_hdr"></div>
+							</div>
+							<div class="stat-card-value" id="Third_qtr_slip_bal">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="Fourth_qtr_slip_hdr"></div>
+							</div>
+							<div class="stat-card-value" id="Fourth_qtr_slip_bal">0.00</div>
+						</div>
+					</div>
+
+					<div class="stats-grid Sector_Industrial" style="display: none;">
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="Sector_title_name">Sector Class Title</div>
+							</div>
+							<div class="stat-card-value" id="Sector_classifi_expo">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title">Total Exposure</div>
+							</div>
+							<div class="stat-card-value" id="Total_expo">0.00</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-card-header">
+								<div class="stat-card-title" id="Sector_title_name_per">Sector Class (%)</div>
+							</div>
+							<div class="stat-card-value" id="Sector_classifi_per">0.00</div>
+						</div>
+					</div>
+
 					<!-- Chart -->
 					<div class="chart-container" style="display: none;">
-						<canvas id="barpercentchart"></canvas>
+						<canvas id="Linechartformonthlyreport"></canvas>
 
 					</div>
 
 					<!--Current Month progressing chart-->
 					<div class="chart-container" style="display: none;">
-						<canvas id="progressChart"></canvas>
+						<canvas id="Linechartfordailyreport"></canvas>
 
 					</div>
+					<!--	Group and Single Borrower detail -->
+					<div class="GroupExposuredetail" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="7">
+										BORROWERS EQUAL TO OR ABOVE 10% OF BANK'S TIER 1 CAPITAL
+									</th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Tier 1 Capital</th>
+									<th id="Tier_1_capital">0.00</th>
+									<th colspan="5"></th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Customer Id</th>
+									<th>Name of the Borrower</th>
+									<th>Borrower Type</th>
+									<th>Group Name</th>
+									<th>Currency</th>
+									<th>Balance</th>
+									<th>As % of Tier 1 Capital</th>
+								</tr>
 
+
+							</thead>
+							<tbody id="Groupexposurebody">
+							</tbody>
+						</table>
+					</div>
+
+					<div class="Exposure_outside_GCC" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="5" id="CountryExposuretablename" style="text-align: center;">Table Name
+									</th>
+								</tr>
+								<tr>
+									<th>Country Name</th>
+									<th>Balance</th>
+									<th>RWA</th>
+									<th>Total Exposure (%)</th>
+									<th>Total RWA (%)</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="Exposure_outside_GCC_body">
+							</tbody>
+						</table>
+					</div>
+					<!--	Mortage loan Appetite detail table-->
+					<div class="Mortageloan_table" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="5" id="Mortageloan_table_name" style="text-align: center;">Table Name
+									</th>
+								</tr>
+								<tr>
+									<th>Customer Id</th>
+									<th>Customer Name</th>
+									<th>Balance</th>
+									<th>Loans as a % of total Credit</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="Mortageloan_table_body">
+							</tbody>
+						</table>
+					</div>
+					
+				<!--Net Overnight position Noop calculation-->
+
+				<div class="Netovernight_noop" style="display: none;">
+					<table class="table refund-table align-middle mb-0">
+						<thead>
+							<tr>
+								<th colspan="2" id="Netovernight_noop_table_name" style="text-align: center;">Table Name
+								</th>
+							</tr>
+						</thead>
+						<tbody id="Netovernight_noop_table_body">
+							<tr>
+								<td>Over Bought In (AED)</td>
+								<td id="OVER_BOUGHT_AMOUNT">0.00</td>
+							</tr>
+							<tr>
+								<td>Over Sold In (AED)</td>
+								<td id="OVER_SOLD_AMOUNT">0.00</td>
+							</tr>
+							<tr>
+								<td>Noop Amount in INR</td>
+								<td id="NOOP_AMOUNT_IN_INR">0.00</td>
+							</tr>
+							<tr>
+								<td>Limit Amount in INR</td>
+								<td id="LIMIT_AMOUNT_IN_INR">0.00</td>
+							</tr>
+							<tr>
+								<td>Headroom Amount Available in INR</td>
+								<td id="HEADROOM_AVAL_AMOUNT_IN_INR">0.00</td>
+							</tr>
+							
+							
+						</tbody>
+					</table>
+				</div>
+				
 				</div>
 
 				<div class="LiquidAssetsRatio" style="display: none;">

@@ -11,8 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monitoring_entity, BigDecimal> {
 	
-	@Query(value = "SELECT * FROM RT_MATRIX_MONITORED_TABLE Where report_date =?1 order by s_no asc", nativeQuery = true)
-	List<RT_Matrix_monitoring_entity> Getcurrentdatematrixcal(Date Report_date);
+	@Query(value = "Select * from rt_matrix_monitored_table where (S_NO, REPORT_DATE) in (Select S_NO, Max(REPORT_DATE) from rt_matrix_monitored_table\r\n"
+			+ "Group by S_NO) Order by S_NO Asc", nativeQuery = true)
+	List<RT_Matrix_monitoring_entity> Getcurrentdatematrixcal();
 	
 	@Query(value = "Select To_char(month_end) as month_end,R15_ELIGI_LIQ_ASSETS from (\r\n"
 			+ "With Eligibility_ratio as(\r\n"

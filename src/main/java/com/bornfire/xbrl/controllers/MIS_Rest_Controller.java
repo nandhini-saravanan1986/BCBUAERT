@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +27,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bornfire.xbrl.entities.Capitaladequacyratio_rep;
 import com.bornfire.xbrl.entities.Elar_summary_report_entity;
 import com.bornfire.xbrl.entities.Elar_summary_report_rep;
+import com.bornfire.xbrl.entities.Leverage_ratio_rep;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.RT_Chart_pojo;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
+import com.bornfire.xbrl.entities.RT_Mis_Fund_Based_Adv_Rep;
+import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
+import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.counter_services;
@@ -60,7 +65,25 @@ public class MIS_Rest_Controller {
     
     @Autowired
     RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
+    
+    @Autowired
+    Stableresourcesratio_rep Stableresourcesratio_rep;
+    
+    @Autowired
+    Leverage_ratio_rep Leverage_ratio_rep;
+    
+    @Autowired
+    Capitaladequacyratio_rep Capitaladequacyratio_rep;
 
+    @Autowired
+    RT_Mis_Fund_Based_Adv_Rep RT_Mis_Fund_Based_Adv_Rep;
+    
+    @Autowired
+    RT_Noop_net_position_rep RT_Noop_net_position_rep;
+    
+    @Autowired
+    RT_Noop_net_position_summ_rep RT_Noop_net_position_summ_rep;
+    
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
 
@@ -235,35 +258,109 @@ public class MIS_Rest_Controller {
 	}
 	
 	@GetMapping("/Getbarchart")
-	public List<RT_Chart_pojo> Getbarchart() {
+	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value="Matrix_Srl_no",required=true) String Matrix_Srl_no) {
 		System.out.println("Bar chart Entered");
-	    List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElar_curryear_report();
-
 	    // Convert Object[] → RT_Chart_pojo
-	    List<RT_Chart_pojo> finalList = getchartval.stream()
-	            .map(row -> new RT_Chart_pojo(
-	                    row[0].toString(),          
-	                    (BigDecimal) row[1]         
-	            ))
-	            .collect(Collectors.toList());
-	    System.out.println(finalList.get(0));
+	    List<RT_Chart_pojo> finalList = new ArrayList<>();
+	    if (Matrix_Srl_no.equals("4")) { //Leverage Ratio
+			List<Object[]> getchartval = Leverage_ratio_rep.GetLeverageration_curryear_report();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("5")) {//Eligible Liquid Assets Ratio
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElar_curryear_report();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("6")) {//Advances to Stable Resources Ratio
+			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrr_curryear_report();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("1")) {
+			//Advances to Stable Resources Ratio
+			List<Object[]> getchartval = Capitaladequacyratio_rep.GetCapitalratio_curryear_report();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("9")) {
+			//Mortgage loan appetite ratio
+			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_curryear_report();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("3")) {
+			//Mortgage loan appetite ratio
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentyear_realestate_concen_per();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("8")) {
+			//Mortgage loan appetite ratio
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentyear_prov_cover();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("24")) {
+			//Mortgage loan appetite ratio
+			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentYear_NoopGraph();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		} 
+	    
 	    return finalList;   
 	}
 	
+	@GetMapping("/groupdetail/customer-search")
+	public List<String> GetGroupCustomerlist(@RequestParam(value="term",required=true) String term){
+		List<String> Customerlist = new ArrayList<>();
+		System.out.println("Enterd");
+		Customerlist = RT_RWA_Fund_base_data_rep.Getsortingcustomerlist(term);
+		System.out.println(Customerlist.size());
+		return Customerlist;
+	}
+	
 	@GetMapping("/Getprogresschart")
-	public List<RT_Chart_pojo> Getprogresschart() {
+	public List<RT_Chart_pojo> Getprogresschart(
+			@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no) {
 		System.out.println("Progress Chart Entered");
-	    List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElarcurrentmonthgraph();
+		List<RT_Chart_pojo> finalList = new ArrayList<>();
+		if (Matrix_Srl_no.equals("4")) {//Leverage Ratio
+			List<Object[]> getchartval = Leverage_ratio_rep.GetLeveragerationcurrentmonthgraph();
 
-	    // Convert Object[] → RT_Chart_pojo
-	    List<RT_Chart_pojo> finalList = getchartval.stream()
-	            .map(row -> new RT_Chart_pojo(
-	                    row[0].toString(),          
-	                    (BigDecimal) row[1]         
-	            ))
-	            .collect(Collectors.toList());
-	    System.out.println(finalList.get(0));
-	    return finalList;   
+			// Convert Object[] → RT_Chart_pojo
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("5")) {//Eligible Liquid Assets Ratio
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElarcurrentmonthgraph();
+
+			// Convert Object[] → RT_Chart_pojo
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("6")) {//Advances to Stable Resources Ratio
+			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrrcurrentmonthgraph();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("1")) {
+			//Advances to Stable Resources Ratio
+			List<Object[]> getchartval = Capitaladequacyratio_rep.GetCapitalratio_currentmonthgraph();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("9")) {
+			//Advances to Stable Resources Ratio
+			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_currentmonthgraph();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("3")) {
+			//Real Estate Concentration
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentMonth_realestate_concen_per();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("8")) {
+			//Real Estate Concentration
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentmonth_prov_cover();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("24")) {
+			//Noop 
+			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentMonth_NoopGraph();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		return finalList;
 	}
 	
 	@GetMapping("/GetElarreport")
@@ -303,6 +400,56 @@ public class MIS_Rest_Controller {
 		
 		
 		return chartList;
+		
+	}
+	//This is used to pull the list of data's for the dashboard page
+	@PostMapping("Limitdetaildata")
+	@ResponseBody
+	public List<Object[]> GetSingleandGroupExposurevalue(
+			@RequestParam(value="Report_date",required=true) String Report_date,
+			@RequestParam(value="Data_Type_Used",required=true)String Data_Type_Used) throws ParseException{
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		Date Selecteddate = dateFormat.parse(Report_date);
+		List<Object[]>  Exposuredata = new ArrayList<>();
+		if(Data_Type_Used.equals("SingleGroupExposure")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetGetSingleandGroupBorrower(Selecteddate,"334135.5");
+		}else if (Data_Type_Used.equals("Exposureoutsidegcc")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetoutsideGccExposure(Selecteddate);
+		}else if(Data_Type_Used.equals("Exposureonlygcc")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetGccExposure(Selecteddate);
+		}else if(Data_Type_Used.equals("Exposuresummarydata")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.CountryExpSummary(Selecteddate);
+		}else if (Data_Type_Used.equals("Mortageloanappetite")) {
+			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetMortageloanappetite(Selecteddate);
+		}else if (Data_Type_Used.equals("Toptenhousingloandata")) {
+			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetHousingloantoptencust(Selecteddate);
+		}else if (Data_Type_Used.equals("Toptentopuploandata")) {
+			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetTopuploantoptencust(Selecteddate);
+		}else if (Data_Type_Used.equals("Mortgageloantopten")) {
+			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetMortgageloantencust(Selecteddate);
+		}else if (Data_Type_Used.equals("FreshslippageQoQ")) {
+			//Here it is based in Quaterly Calculation so that i am taking RWA Table
+			Exposuredata = RT_RWA_Fund_base_data_rep.Freshslippage();
+		}else if (Data_Type_Used.equals("Sector_Industry")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Industry_Classifi(Selecteddate);
+		}else if (Data_Type_Used.equals("Sector_Trading")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Trading_Classifi(Selecteddate);
+		}else if (Data_Type_Used.equals("Sector_Services")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Services_Classifi(Selecteddate);
+		}else if (Data_Type_Used.equals("Sector_Banks")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Banks_Classifi(Selecteddate);
+		}else if (Data_Type_Used.equals("Sector_Real_Estate")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.RealEstate_Classifi(Selecteddate);
+		}else if (Data_Type_Used.equals("Sector_Others")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Others_Classifi(Selecteddate);
+		}else if(Data_Type_Used.equals("CapitalAdequacyratio")) {
+			Exposuredata = Capitaladequacyratio_rep.GetCapitalAdequecyvalues(Selecteddate);
+		}else if(Data_Type_Used.equals("NetOvernight_noop")) {
+			Exposuredata = RT_Noop_net_position_summ_rep.Get_Noop_netposition(Selecteddate);
+		}
+		
+		return Exposuredata;
 		
 	}
 	

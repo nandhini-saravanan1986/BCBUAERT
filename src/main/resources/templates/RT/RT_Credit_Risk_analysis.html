@@ -12,7 +12,9 @@
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<script th:src="@{/js/echarts.min.js}"></script>
-
+	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
 	<style>
 		:root {
 			--bg: #f9fbff;
@@ -122,7 +124,7 @@
 			margin-bottom: 10px;
 			/* space below header */
 
-			background: rgba(22, 43, 117, 0.79);
+			background: rgba(33,37,41, 65%);
 			/* light clean background */
 			border-bottom: 2px solid #E3E6EF;
 
@@ -171,7 +173,7 @@
 		.table.refund-table thead th {
 			position: sticky;
 			top: 0;
-			background-color: rgba(22, 43, 117, 0.79);
+			background-color: rgba(33,37,41, 65%);
 			color: var(--textcolorheaderwhite);
 			font-weight: 700;
 			font-size: 0.65rem;
@@ -362,75 +364,104 @@
 		///Branch Wise portfolio exposure 
 		var branchdom = document.getElementById('Branchchart');
 		if (branchdom) {
-			var myChart = echarts.init(branchdom);
+		    var myChart = echarts.init(branchdom);
 
-			// Convert rawData -> ECharts 'data' format
-			// rawData[i] looks like: { classification: "...", exposureperc: 45.0, exposurebal: 123456.78 }
-			var chartData = (rawData || []).map(function (item) {
-				return {
-					value: item.exposureperc,          // numeric percentage
-					name: item.classification,          // label
-					exposureBal: item.exposurebal
-				};
-			});
+		    // Convert rawData -> ECharts 'data' format
+		    var chartData = (rawData || []).map(function (item) {
+		        return {
+		            value: item.exposureperc,   // numeric percentage
+		            name: item.classification,  // label
+		            exposureBal: item.exposurebal
+		        };
+		    });
 
-			var option = {
-				backgroundColor: '#FFFFFF',
-				tooltip: {
-					trigger: 'item',
-					formatter: function (params) {
-						// params.data.exposureBal is your absolute balance (AED)
-						var bal = params.data.exposureBal || 0;
-						// basic number formatting; you can change to your style
-						var balFmt = bal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+		    // === NEW: total exposure balance for center text ===
+		    var totalExposureBal = chartData.reduce(function (sum, item) {
+		        var v = Number(item.exposureBal) || 0;
+		        return sum + v;
+		    }, 0);
 
-						return [
-							'<b>' + params.name + '</b>',
-							'Share: ' + params.percent.toFixed(2) + '%',
-							'Exposure: ' + balFmt + ' AED (Mn)'
-						].join('<br/>');
-					}
-				},
-				title: {
+		    var totalExposureBalFmt = totalExposureBal.toLocaleString('en-US', {
+		        minimumFractionDigits: 2,
+		        maximumFractionDigits: 2
+		    });
 
-					left: 'center',
-					top: 10,
-					textStyle: {color: '#1B4F72', fontSize: 12}
-				},
-				series: [{
-					name: 'Classification',
-					type: 'pie',
-					radius: ['40%', '70%'],
-					avoidLabelOverlap: true,
-					label: {
-						show: true,
-						position: 'outside',
-						formatter: '{b}: {d}%'
-					},
-					labelLine: {show: true},
-					data: chartData
-				}],
-				color: ['#D81B60', '#8E24AA', '#5E35B1', '#3F51B5', '#4CAF50', '#DCE775', '#FFA726', '#FCC6BB']
-			};
+		    var option = {
+		        backgroundColor: '#FFFFFF',
+		        tooltip: {
+		            trigger: 'item',
+		            formatter: function (params) {
+		                var bal = params.data.exposureBal || 0;
+		                var balFmt = bal.toLocaleString('en-US', {
+		                    minimumFractionDigits: 2,
+		                    maximumFractionDigits: 2
+		                });
 
-			myChart.setOption(option);
+		                return [
+		                    '<b>' + params.name + '</b>',
+		                    'Share: ' + params.percent.toFixed(2) + '%',
+		                    'Exposure: ' + balFmt + ' AED (Mn)'
+		                ].join('<br/>');
+		            }
+		        },
+		        title: {
+		            left: 'center',
+		            top: 10,
+		            textStyle: { color: '#1B4F72', fontSize: 12 }
+		        },
 
-			// click event for details panel
-			myChart.on('click', function (params) {
-				var bal = params.data.exposureBal || 0;
-				var balFmt = bal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+		        // === NEW: center label in the donut ===
+		        graphic: {
+		            type: 'text',
+		            left: 'center',
+		            top: 'middle',
+		            style: {
+		                text: 'Total\n' + totalExposureBalFmt + ' AED (Mn)',
+		                textAlign: 'center',
+		                fill: '#333',
+		                fontSize: 12,
+		                fontWeight: 'bold'
+		            }
+		        },
 
-				document.getElementById('segmentName').textContent = params.name;
-				document.getElementById('segmentValue').textContent =
-					params.percent.toFixed(2) + '% ' + balFmt + ' AED (Mn)';
-				// From the Branch Pie chart > to get the category wise data
-				categorywisedata(params.name);
-				BranchPortfoliorisksnapshot('Branchsnapshot');
-			});
+		        series: [{
+		            name: 'Classification',
+		            type: 'pie',
+		            radius: ['40%', '70%'],
+		            avoidLabelOverlap: true,
+		            label: {
+		                show: true,
+		                position: 'outside',
+		                formatter: '{b}: {d}%'
+		            },
+		            labelLine: { show: true },
+		            data: chartData
+		        }],
+		        color: ['#D81B60', '#8E24AA', '#5E35B1', '#3F51B5', '#4CAF50', '#DCE775', '#FFA726', '#FCC6BB']
+		    };
 
-			window.addEventListener('resize', function () {
-				myChart.resize();
-			});
+		    myChart.setOption(option);
+
+		    // click event for details panel
+		    myChart.on('click', function (params) {
+		        var bal = params.data.exposureBal || 0;
+		        var balFmt = bal.toLocaleString('en-US', {
+		            minimumFractionDigits: 2,
+		            maximumFractionDigits: 2
+		        });
+
+		        document.getElementById('segmentName').textContent = params.name;
+		        document.getElementById('segmentValue').textContent =
+		            params.percent.toFixed(2) + '% ' + balFmt + ' AED (Mn)';
+
+		        // From the Branch Pie chart > to get the category wise data
+		        categorywisedata(params.name);
+		        BranchPortfoliorisksnapshot('Branchsnapshot');
+		    });
+
+		    window.addEventListener('resize', function () {
+		        myChart.resize();
+		    });
 		}
 
 		///This is the chart is used to plot the categiry wise Exposure
