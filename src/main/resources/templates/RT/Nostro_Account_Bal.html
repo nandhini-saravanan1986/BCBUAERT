@@ -324,48 +324,70 @@ PURPOSE		: Nostra Account balance Report
 
 	<style>
 		.btns {
-			float: right;
-			margin: 5px;
-		}
+					float: right;
+					margin: 5px;
+				}
 
-		.col-sm-5 {
-			padding-bottom: 15px;
-		}
+				.col-sm-5 {
+					padding-bottom: 15px;
+				}
 
-		.list-body {
-			padding: 0px;
-		}
+				.list-body {
+					padding: 0px;
+				}
 
-		.error {
-			color: red;
-			padding-left: 10px;
-		}
+				.error {
+					color: red;
+					padding-left: 10px;
+				}
 
-		.formline {
-			padding-bottom: 1px;
-		}
+				.formline {
+					padding-bottom: 15px;
+					display: flex;
+					/* Ensure flex for alignment */
+					align-items: center;
+					/* Vertically align items */
+				}
 
-		.btn-primary {
-			background-color: #E77400;
-			border-color: #0c0c0c;
-		}
+				.formline>.col-sm-2,
+				.formline>.col-sm-3 {
+					display: flex;
+					/* Make columns flex containers */
+					align-items: center;
+					/* Vertically align content within columns */
+				}
 
-		.btn-primary:not(:disabled):not(.disabled).active,
-		.btn-primary:not(:disabled):not(.disabled):active,
-		.show>.btn-primary.dropdown-toggle {
-			color: #fff;
-			background-color: #cc0000;
-			/* corrected to a valid red */
-			border-color: #161617;
-		}
+				.formline>.col-sm-2 {
+					justify-content: flex-end;
+					/* Right-align labels */
+					text-align: right;
+					padding-right: 15px;
+					/* Space between label and input */
+				}
 
-		#finusertb {
-			width: 460px;
-		}
+				.formline>.col-sm-3 {
+					padding-left: 0px;
+					/* Remove extra padding if needed */
+				}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button {
-			padding: 0px;
-		}
+				.btn-primary {
+					background-color: #E77400;
+					border-color: #0c0c0c;
+				}
+
+				.btn-primary:not(:disabled):not(.disabled).active,
+				.btn-primary:not(:disabled):not(.disabled):active,
+				.show>.btn-primary.dropdown-toggle {
+					color: #fff;
+					background-color: #cc000000;
+					border-color: #161617;
+				}
+
+				#finusertb {
+					width: 460px;
+				}
+
+				
 	</style>
 
 
@@ -533,59 +555,6 @@ PURPOSE		: Nostra Account balance Report
 			font-weight: bold;
 		}
 	</style>
-
-	<!-- 
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #0073e6;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
-
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
-
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
-
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
-	transform: scale(1.1);
-}
-</style> -->
 	<script>
 
 		$(document).ready(function () {
@@ -842,15 +811,6 @@ PURPOSE		: Nostra Account balance Report
 			<!-- LEFT: Buttons -->
 			<div class="text-left flex-grow-1">
 				<h4 class="m-0">NOSTRO ACCOUNT BALANCE</h4>
-				<div style="
-														     height: 2px;
-														     background-color: #fa7b32;
-														     border-radius: 2px;
-														     margin-top: 6px;
-															 margin-left: 16px;
-														     width: 325px;
-														   "></div>
-
 
 			</div>
 			<div class="d-flex align-items-center gap-2">
@@ -1570,87 +1530,150 @@ PURPOSE		: Nostra Account balance Report
 </body>
 <script>
 	$('#usertable').DataTable({
-		scrollX: false,
-		autoWidth: false,
-		paging: true,
-		searching: true,
-		lengthChange: false,
-		ordering: false,
-		pageLength: 100,
-		fixedHeader: true,
+				scrollX: false,
+				autoWidth: false,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+				ordering: false,
+				pageLength: 100,
+				fixedHeader: true,
 
-		// Layout: search (left) + pagination (right)
-		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+				// Layout: search (left) + pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-		// Optional: language tweak for better label
-		language: {
-			search: "Search:"
-		}
-	});
-
+				// Optional: language tweak for better label
+				language: {
+					search: "Search:"
+				}
+			});
 </script>
 
 <style>
-	/* ACTIVE page number (1) */
-	#usertable_paginate .page-item.active .page-link {
-		background-color: #fa7b32 !important;
-		border-color: #fa7b32 !important;
-		color: #fff !important;
-	}
+			#usertable {
+			    width: 100% !important;
+			    border-collapse: collapse !important;
+			    font-family: Arial, sans-serif !important;
+			    font-size: 12px !important;
+			}
 
-	/* HOVER on other page buttons */
-	#usertable_paginate .page-item .page-link:hover {
-		background-color: #fa7b32 !important;
-		border-color: #fa7b32 !important;
-		color: #fff !important;
-	}
+			/* HEADER */
+			#usertable th {
+			    background-color: #7b6458 !important;   /* brown header */
+			    color: white !important;
+			    text-align: center !important;
+			    padding: 8px 10px !important;
+			    font-weight: bold !important;
+			    border: 1px solid #ffffff !important;   /* thin white separator */
+			    white-space: normal !important;
+			}
 
-	/* Normal page numbers */
-	#usertable_paginate .page-item .page-link {
-		color: #000000 !important;
-	}
-</style>
-<!-- Include this after your DataTable initialization script -->
+			/* BODY CELLS */
+			#usertable td {
+			    padding: 5px 6px !important;
+			    border: 1px solid #e8e8e8 !important;   /* light grey lines */
+			    background: #fafafa;
+			    white-space: normal !important;
+			}
+
+			/* ROW EVEN/ODD */
+			#usertable tbody tr:nth-child(even) {
+			    background-color: #f4f2ef !important;
+			}
+
+			#usertable tbody tr:nth-child(odd) {
+			    background-color: #ffffff !important;
+			}
+
+			/* SEARCH BOX FIX */
+			.dataTables_filter label {
+			    display: flex !important;
+			    gap: 10px;
+			    align-items: center;
+			}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			/* space between text and input */
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
+
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
+
+	</style>
 
 <style>
-	/* Remove top margin/padding from DataTables parent containers */
-	#data {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+	/* Pagination container – keep top-right */
+	.dataTables_wrapper .dataTables_paginate {
+	    float: right !important;
+	    margin-top: 5px !important;
 	}
 
-	.table-responsive {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
-
-	/* Ensure DataTables filter (search box) doesn't have spacing above it */
-	div.dataTables_filter {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
-
-	/* FIX: Make search label and box inline */
-	.dataTables_filter label {
-		display: flex !important;
-		align-items: center;
-		gap: 8px;
-		/* space between text and input */
-		margin-bottom: 0 !important;
-	}
-
-	/* Style pagination buttons */
+	/* Default pagination buttons (Previous | 1 | Next) */
 	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		padding: 0px;
+	    background: #f2f2f2 !important;       /* light grey box */
+	    border: 1px solid #dcdcdc !important; /* light grey border */
+	    color: #555 !important;               /* dark grey text */
+	    padding: 6px 14px !important;
+	    margin: 0 3px !important;
+	    border-radius: 6px !important;
+	    font-size: 14px !important;
+	    text-decoration: none !important;     /* NO underline */
+	    cursor: pointer;
 	}
 
-	/* Optional: Style the search input */
-	.dataTables_filter input {
-		margin-left: 5px;
-		flex: 1;
+	/* Hover (non-active buttons) */
+	.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+	    background: #e5e5e5 !important;
+	    color: #555 !important;
 	}
-</style>
+
+	/* Active page number (Orange + White text) */
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+	    background: #ff7f27 !important;       /* orange */
+	    border-color: #ff7f27 !important;
+	    color: #fff !important;               /* white text */
+	    font-weight: bold !important;
+	}
+
+	/* Disabled buttons (Prev/Next when not available) */
+	.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+	    background: #eeeeee !important;
+	    color: #bbbbbb !important;
+	    border-color: #e1e1e1 !important;
+	    cursor: default !important;
+	}
+
+
+		</style>
+<!-- Include this after your DataTable initialization script -->
+
 
 <script>
 	function handleBankChange(select) {

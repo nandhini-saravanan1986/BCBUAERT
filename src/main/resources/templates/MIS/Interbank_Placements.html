@@ -639,20 +639,25 @@
 	</style>
 
 	<script>
-		$(document).ready(function () {
-			const table = $('#usertable').DataTable({
-				pageLength: 10,
-				lengthChange: false,
-				searching: true,
-				paging: true,
-				ordering: false,
-				scrollY: "350px",
-				scrollCollapse: true
-			});
+		$('#usertable').DataTable({
+					scrollX: false,
+					autoWidth: false,
+					paging: true,
+					searching: true,
+					lengthChange: false,
+					ordering: false,
+					pageLength: 100,
+					fixedHeader: true,
+
+					// Layout: search (left) + pagination (right)
+					dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-
-		});
+					// Optional: language tweak for better label
+					language: {
+						search: "Search:"
+					}
+				});
 
 		$(document).ready(function () {
 			$('#reportDate').on('change', function () {
@@ -957,7 +962,7 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 			<div class="col-sm-12">
 
 				<div th:if="${formmode}=='add'">
@@ -970,7 +975,7 @@
 
 
 
-									<div class="role-page-header d-flex justify-content-between align-items-center">
+									<div  id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center">
 										<!-- Left: Page Title -->
 										<div class="role-page-title">
 											<h4 th:text="${menu}"></h4>
@@ -984,7 +989,7 @@
 
 										<!-- Right: Add Button -->
 										<div>
-											<button type="button" class="role-add-btn"
+											<button type="button" class="role-btn"
 												onclick="window.location.href='./download/excel?mode=placement'">
 												Template Download</button>
 										</div>
@@ -1103,7 +1108,7 @@
 							<!-- 🔹 Left side: Title + underline -->
 							<div class="role-page-title mb-2 mb-md-0">
 								<h4 th:text="${menu}" class="mb-1" style="font-weight: 600; color: #333;"></h4>
-								<div class="role-page-underline"></div>
+								<!--<div class="role-page-underline"></div>-->
 							</div>
 
 							<!-- 🔹 Right side: Report date + Download button -->
@@ -1115,7 +1120,7 @@
 										th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
 								</div>
 
-								<button type="button" class="role-add-btn" onclick="placement()">Download</button>
+								<button type="button" class="role-btn" onclick="placement()">Download</button>
 							</div>
 
 						</div>
@@ -1326,5 +1331,210 @@
 				</div>
 			</div>
 </body>
+<style>
+			/* ACTIVE page number (1) */
+			#usertable_paginate .page-item.active .page-link {
+				background-color: #fa7b32 !important;
+				border-color: #fa7b32 !important;
+				color: #fff !important;
+			}
 
+			/* HOVER on other page buttons */
+			#usertable_paginate .page-item .page-link:hover {
+				background-color: #fa7b32 !important;
+				border-color: #fa7b32 !important;
+				color: #fff !important;
+			}
+
+			/* Normal page numbers */
+			#usertable_paginate .page-item .page-link {
+				color: #555 !important;
+			}
+			
+			/* Pagination Container */
+			#usertable_paginate {
+			    margin-top: 10px;
+			}
+
+			/* Each page button */
+			#usertable_paginate .paginate_button {
+			    border-radius: 4px !important;
+			    padding: 0px 0px !important;
+			    margin: 0 2px !important;
+			    border: 1px solid #ddd !important;
+			    color: #007bff !important;
+			    background: white !important;
+			}
+			/* Hover (non-active buttons) */
+			.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+			    background: #e5e5e5 !important;
+			    color: #555 !important;
+			}
+			/* Active page */
+			#usertable_paginate .paginate_button.current {
+			    background: #fa7b32 !important;
+			    color: #fff !important;
+			    border-color: #fa7b32 !important;
+			}
+
+			/* Hover */
+			#usertable_paginate .paginate_button:hover {
+			    background: #fa7b32 !important;
+			    color: #fff !important;
+			    border-color: #fa7b32 !important;
+			}
+
+			/* Disabled buttons (Previous/Next when not clickable) */
+			#usertable_paginate .paginate_button.disabled,
+			#usertable_paginate .paginate_button.disabled:hover {
+			    color: #999 !important;
+			    background: #f5f5f5 !important;
+			    border-color: #ddd !important;
+			}
+
+		</style>
+		<style>
+					#usertable {
+					    width: 100% !important;
+					    border-collapse: collapse !important;
+					    font-family: Arial, sans-serif !important;
+					    font-size: 12px !important;
+					}
+
+					/* HEADER */
+					#usertable th {
+					    background-color: #7b6458 !important;   /* brown header */
+					    color: white !important;
+					    text-align: center !important;
+					    padding: 8px 10px !important;
+					    font-weight: bold !important;
+					    border: 1px solid #ffffff !important;   /* thin white separator */
+					    white-space: normal !important;
+					}
+
+					/* BODY CELLS */
+					#usertable td {
+					    padding: 5px 6px !important;
+					    border: 1px solid #e8e8e8 !important;   /* light grey lines */
+					    background: #fafafa;
+					    white-space: normal !important;
+					}
+
+					/* ROW EVEN/ODD */
+					#usertable tbody tr:nth-child(even) {
+					    background-color: #f4f2ef !important;
+					}
+
+					#usertable tbody tr:nth-child(odd) {
+					    background-color: #ffffff !important;
+					}
+
+					/* SEARCH BOX FIX */
+					.dataTables_filter label {
+					    display: flex !important;
+					    gap: 10px;
+					    align-items: center;
+					}
+
+				.dataTables_filter label {
+					display: flex !important;
+					align-items: center;
+					gap: 8px;
+					/* space between text and input */
+					margin-bottom: 0 !important;
+				}
+
+				.dataTables_filter input {
+					margin-left: 5px;
+					flex: 1;
+				}
+
+				/* === ROLE PAGE CUSTOM HEADER === */
+				.role-page-header {
+					background-color: #ffffff;
+					padding: 15px 20px;
+					display: flex;
+					/* Added for alignment */
+					justify-content: space-between;
+					/* Added for alignment */
+					align-items: center;
+					/* Added for alignment */
+				}
+
+				.role-page-title h4 {
+					color: #003366;
+					font-family: "Segoe UI", Arial, sans-serif;
+					font-size: 20px;
+					font-weight: 700;
+					margin: 0;
+				}
+
+			</style>
+			<style>
+					.role-btn {
+						background: #ffffff;
+						/* default white */
+						color: #E67E00;
+						/* default orange text */
+						border: 1px solid #E67E00;
+						border-radius: 25px;
+						padding: 8px 18px;
+						font-size: 13px;
+						font-weight: 600;
+						cursor: pointer;
+						box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+						transition: all 0.3s ease;
+					}
+
+					/* Hover effect → pastel orange */
+					.role-btn:hover {
+						background: #FFF3D1;
+						/* pastel orange (same as submenu hover) */
+						color: #E67E00;
+						/* orange text */
+						transform: translateY(-2px);
+						box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+					}
+
+					/* Active (selected tab) */
+					.role-btn.active {
+						background: #E67E00;
+						/* solid orange */
+						color: #fff;
+						/* white text */
+						border-color: #E67E00;
+						transform: translateY(-1px);
+						box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+					}
+
+					/* Optional: icon spacing */
+					.role-btn i {
+						margin-right: 5px;
+					}
+				</style>
+				<style>
+					#pageHeader {
+						position: sticky;
+						top: 110px;
+						z-index: 1050;
+						background: white;
+						padding-top: 10px;
+					}
+
+					#tabHeader {
+						position: sticky;
+						top: 5px;
+						/* just below page header */
+						z-index: 1040;
+						background: white;
+						padding: 5px 0;
+					}
+
+					#mainHeader {
+						position: sticky;
+						top: 0;
+						z-index: 9999;
+						background: white;
+					}
+				</style>
 </html>
