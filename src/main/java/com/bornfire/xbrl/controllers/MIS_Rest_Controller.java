@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bornfire.xbrl.entities.Capitaladequacyratio_rep;
 import com.bornfire.xbrl.entities.Elar_summary_report_entity;
 import com.bornfire.xbrl.entities.Elar_summary_report_rep;
+import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
+import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Leverage_ratio_rep;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.RT_Chart_pojo;
@@ -83,6 +85,9 @@ public class MIS_Rest_Controller {
     
     @Autowired
     RT_Noop_net_position_summ_rep RT_Noop_net_position_summ_rep;
+    
+    @Autowired
+    Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
     
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
@@ -255,6 +260,52 @@ public class MIS_Rest_Controller {
 			logger.error("Error occurred while Add  New Bill: {}", e.getMessage(), e);
 			return e.getMessage();
 		}
+	}
+	///Group detail / Updated Del Flg
+	@GetMapping("/UpdatedCustgroupdetail")
+	public String Groupdetailservice(@RequestParam(value="Group_id",required=true) String Group_id,
+			@RequestParam(value="funtion_code",required=true) String funtion_code,
+			@ModelAttribute Groupexp_cust_maintain_entity Groupdetail_entry) {
+		String response_msg = "";
+		if (funtion_code.equals("00")) {
+			Groupexp_cust_maintain_entity Groupdetail = Groupexp_cust_maintain_rep.Getgroupdetails(Group_id);
+
+			Groupdetail.setDel_flg("Y");
+			Groupexp_cust_maintain_rep.save(Groupdetail);
+			
+			response_msg = "Group " + Group_id + " was successfully marked as Inactive.";
+		}else if(funtion_code.equals("01")) {
+			Groupexp_cust_maintain_entity New_group_entry = new Groupexp_cust_maintain_entity();
+			
+			New_group_entry.setGroup_id(Groupdetail_entry.getGroup_id());
+			New_group_entry.setGroup_name(Groupdetail_entry.getGroup_name());
+			New_group_entry.setBelonging_customer_id(Groupdetail_entry.getBelonging_customer_id());
+			New_group_entry.setDel_flg("N");
+			
+			Groupexp_cust_maintain_rep.save(New_group_entry);
+		}
+		
+		return response_msg;
+		
+	}
+	
+	@PostMapping("/CustomerGrp_Maintenance_Rest")
+	public String CustomerGrp_Maintenance(@RequestParam(value="Group_id",required=false) String Group_id,
+			@ModelAttribute Groupexp_cust_maintain_entity Groupdetail_entry) {
+		String response_msg = "";
+System.out.println("Entered");
+			Groupexp_cust_maintain_entity New_group_entry = new Groupexp_cust_maintain_entity();
+			
+			New_group_entry.setGroup_id(Groupdetail_entry.getGroup_id());
+			New_group_entry.setGroup_name(Groupdetail_entry.getGroup_name());
+			New_group_entry.setBelonging_customer_id(Groupdetail_entry.getBelonging_customer_id());
+			New_group_entry.setDel_flg("N");
+			
+			Groupexp_cust_maintain_rep.save(New_group_entry);
+			response_msg = "Added Successfully";
+		
+		return response_msg;
+		
 	}
 	
 	@GetMapping("/Getbarchart")

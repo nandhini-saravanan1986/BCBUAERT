@@ -3033,6 +3033,11 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode","add");
 			md.addAttribute("menuname", "Group Exposure - Add");
 			md.addAttribute("customerList", RT_RWA_Fund_base_data_rep.getcustomerdetail());
+		}else if(formmode.equals("edit")) {
+			md.addAttribute("formmode",formmode);
+			md.addAttribute("Groupdetail",  Groupexp_cust_maintain_rep.Getgroupdetails(Group_id));
+			md.addAttribute("customerList", RT_RWA_Fund_base_data_rep.getcustomerdetail());
+			md.addAttribute("menuname", "Group Exposure - Modify");
 		}
 		
 		return "RT/RT_Cust_group_exposure.html";

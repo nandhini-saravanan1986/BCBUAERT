@@ -247,6 +247,59 @@
             location.href = "CustomerGrp_Maintenance?formmode=add";
         }
 
+		function GetGroupdetails(el) {
+		    const groupId = el.getAttribute('data-group-id');
+		    if (!groupId) {
+		        console.error('data-group-id not found on element');
+		        return;
+		    }
+		    location.href = "CustomerGrp_Maintenance?formmode=edit&Group_id=" 
+		                    + encodeURIComponent(groupId);
+		}
+		
+		function InactiveGroupdetails(el) {
+				const groupId = el.getAttribute('data-group-id');
+				if (!groupId) {
+					console.error('data-group-id not found on element');
+					return;
+				}
+				fetch("./UpdatedCustgroupdetail?Group_id=" + encodeURIComponent(groupId)+'&funtion_code='+'00')
+				    .then(response => {
+				        if (!response.ok) {
+				            throw new Error("HTTP error " + response.status);
+				        }
+				        return response.text();           // because backend returns String
+				    })
+				    .then(text => {
+				        alert(text);                      // show String response
+				        window.location.reload();
+				    })
+				    .catch(err => {
+				        console.error("Fetch error:", err);
+				        alert("Error: " + err.message);
+				    });
+			}
+			
+			function saveGroup() {
+			    const form = document.getElementById('Groupdetail');
+			    const formData = new FormData(form);
+
+			    // You can append extra values if needed:
+			    // formData.append('status', 'INACTIVE');
+
+			    fetch('./CustomerGrp_Maintenance_Rest', {
+			        method: 'POST',
+			        body: formData   // no explicit Content-Type; browser sets multipart/form-data
+			    })
+			    .then(response => response.text())
+			    .then(msg => alert(msg))
+				
+			    .catch(err => console.error(err));
+				window.location.reload();
+			}
+
+			
+
         // Collect all checked customer IDs and push into textarea + hidden field
         function updateCustomerIds() {
             var selected = [];
@@ -357,7 +410,7 @@
     <div class="container-fluid main-content">
         <div class="menuname">
             <h3 th:text="${menuname}">Menu Name</h3>
-            <button class="my-button" type="button" onclick="Addgroup();">Add Group</button>
+            <button class="my-button" type="button" onclick="Addgroup();" th:if="${formmode} == 'list'">Add Group</button>
         </div>
 
         <!-- LIST MODE -->
@@ -378,8 +431,17 @@
                             <td th:text="${grpdtl.group_id}"></td>
                             <td th:text="${grpdtl.group_name}"></td>
                             <td th:text="${grpdtl.belonging_customer_id}"></td>
-                            <td th:text="${grpdtl.del_flg}"></td>
-                            <td></td>
+							<th:block th:switch="${grpdtl.del_flg}">
+								<td th:case="Y" style="color: white;background-color: tomato;">Inactive Group</td>
+								<td th:case="N" style="color: white;background-color: #10b981;">Active Group</td>
+							</th:block>
+							<td><!--<button style="border: none;border-radius: 2px;background-color: skyblue;"><i class="fas fa-edit"
+										th:attr="data-group-id=${grpdtl.group_id}" onclick="GetGroupdetails(this)"
+										title="Edit Group"></i></button>-->
+								<button style="border: none;border-radius: 2px;background-color: tomato;color: white;"><i class="fas fa-circle-xmark"
+										th:attr="data-group-id=${grpdtl.group_id}" onclick="InactiveGroupdetails(this)"
+										title="Cancel Group"></i></button>
+							</td>
                         </tr>
                     </tbody>
                 </table>
@@ -463,6 +525,7 @@
                             </div>
 
                             <!-- Add Save / Cancel buttons here if needed -->
+							<button class="my-button" onclick="saveGroup()" type="button" style="margin-left: 50%;">Submit</button>
 
                         </form>
                     </div>
