@@ -6,509 +6,535 @@ CREATED ON	: 04.06.2025
 PURPOSE		: Nostra Account balance Report
 -->
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
+	<title>Risk Insights — Nostro Account Balance</title>
 
-<!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
+	<!-- CSS Dependencies -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" th:href="@{/css/all.min.css}">
+	<!--<script th:src="@{/js/chart.js}"></script>-->
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
 
-<!-- JavaScript -->
-<!-- jQuery core (required first) -->
-
-
-<!-- ✅ Your manually placed jQuery validation
+	<!-- ✅ Your manually placed jQuery validation
 	
 	
 	
 	<!-- jQuery (required first)
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
 
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<!-- ✅ jQuery Validation -->
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- ✅ jQuery Validation -->
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<!-- Bootstrap + Others -->
-<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<!--<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>-->
 
 
 
-<style>
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+	<style>
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
 
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
-	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
-}
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
 
-/* === ROLE PAGE CUSTOM HEADER === */
-.role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+		}
 
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
+	</style>
 
-/* Add Button Styling */
-/* Base Button Style */
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
+	<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
 
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
 
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
 
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
-</style>
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<style>
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
 
-<style>
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
+		/* Full-screen overlay */
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			/* lighter background */
+			backdrop-filter: blur(8px);
+			/* ✅ background blur */
+			-webkit-backdrop-filter: blur(8px);
+			/* Safari support */
+			z-index: 9999;
+			transition: opacity 0.25s ease, visibility 0.25s;
+			opacity: 1;
+			visibility: visible;
+		}
 
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
+		/* Hide when not active */
+		.bob-loader[aria-hidden="true"] {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
 
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
+		/* Loader card */
+		.bob-loader-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
 
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
+		/* Flowing bar below logo */
+		.flow-bar {
+			position: relative;
+			width: 200px;
+			/* ✅ increased width */
+			height: 8px;
+			/* slightly thicker for better visibility */
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+		}
 
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
+		.flow-line {
+			position: absolute;
+			left: -40%;
+			top: 0;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			border-radius: 4px;
+			animation: flowMove 1.2s linear infinite;
+		}
 
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
 
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
-
-
-:
-
-
-100%;
-
-
-}
-}
-</style>
-
-<script>
-							function goBack() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.back();
-							}
-
-							function goForward() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.forward();
-							}
-
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
-
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
-
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							</script>
-
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #0073e6;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
-
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
-
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
-
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
-	transform: scale(1.1);
-}
-</style>
+			100% {
+				left:
 
 
-<style>
-.btns {
-	float: right;
-	margin: 5px;
-}
-
-.col-sm-5 {
-	padding-bottom: 15px;
-}
-
-.list-body {
-	padding: 0px;
-}
-
-.error {
-	color: red;
-	padding-left: 10px;
-}
-
-.formline {
-	padding-bottom: 15px;
-}
-
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
-	.show>.btn-primary.dropdown-toggle {
-	color: #fff;
-	background-color: #cc0000;
-	/* corrected to a valid red */
-	border-color: #161617;
-}
-
-#finusertb {
-	width: 460px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
-</style>
+					100%;
 
 
+			}
+		}
+	</style>
+
+	<script>
+		function goBack() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.history.back();
+		}
+
+		function goForward() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.history.forward();
+		}
+
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
+
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
+			}
+
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
+			}
+		});
+	</script>
+
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #0073e6;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
+
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
+
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
+
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #005bb5;
+			transform: scale(1.1);
+		}
+	</style>
 
 
-<style>
-.card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-}
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
 
-.card-header h5 {
-	font-size: 22px;
-	color: #fff;
-	font-weight: 600;
-}
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
 
-.nav-tabs .nav-link {
-	font-weight: 500;
-	border: 1px solid #dee2e6;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	background-color: #f1f1f1;
-	margin-right: 5px;
-}
+		.list-body {
+			padding: 0px;
+		}
 
-.nav-tabs .nav-link.active {
-	background-color: #ffffff;
-	border-color: #dee2e6 #dee2e6 #ffffff;
-}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-.table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		.formline {
+			padding-bottom: 1px;
+		}
 
-.table-hover tbody tr:hover {
-	background-color: #f3f6f9;
-}
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
 
-thead th {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc0000;
+			/* corrected to a valid red */
+			border-color: #161617;
+		}
 
-.card-footer {
-	padding: 10px;
-	border-top: 1px solid #ccc;
-}
+		#finusertb {
+			width: 460px;
+		}
 
-.btn-xs {
-	padding: 4px 12px;
-	font-size: 14px;
-	border-radius: 4px;
-}
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			padding: 0px;
+		}
+	</style>
 
-/* #usertable th, #usertable td {
+
+
+
+	<style>
+		.card {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		.card-header h5 {
+			font-size: 22px;
+			color: #fff;
+			font-weight: 600;
+		}
+
+		.nav-tabs .nav-link {
+			font-weight: 500;
+			border: 1px solid #dee2e6;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			background-color: #f1f1f1;
+			margin-right: 5px;
+		}
+
+		.nav-tabs .nav-link.active {
+			background-color: #ffffff;
+			border-color: #dee2e6 #dee2e6 #ffffff;
+		}
+
+		.table-responsive {
+			border: 1px solid #dee2e6;
+			border-radius: 4px;
+		}
+
+		.table-hover tbody tr:hover {
+			background-color: #f3f6f9;
+		}
+
+		thead th {
+			position: sticky;
+			top: 50;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
+
+
+		.card-footer {
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
+
+		.btn-xs {
+			padding: 4px 12px;
+			font-size: 14px;
+			border-radius: 4px;
+		}
+
+		/* #usertable th, #usertable td {
 	vertical-align: middle;
 	text-align: left;
 	font-size: 17px;
 	font-family: Verdana, sans-serif;
 } */
+		/* Reduce font size */
+		/* Apply font family and smaller font */
+		#usertable {
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
 
-.fa-edit:hover {
-	color: #28a745;
-	transform: scale(1.1);
-}
+		#usertable th {
+			background-color: #7b6458 !important;
+			/* Header background */
+			color: white !important;
+			/* Header text color */
+			padding: 8px 10px !important;
+			/* Same spacing style */
+			text-align: center;
+			/* Center text */
+			font-weight: bold;
+			white-space: normal !important;
+		}
 
-td {
-	border: 1px solid rgb(0, 164, 166);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-</style>
+		#usertable td {
+			padding: 4px 6px !important;
+			white-space: normal !important;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #ffffff !important;
+			/* thin white separators like your screenshot */
+		}
 
 
-<style>
-.form-group {
-	position: relative;
-	margin-bottom: 1.5rem;
-}
+		/* Avoid table taking too much width */
+		#usertable {
+			width: auto !important;
+			max-width: 100% !important;
+		}
 
-.form-control {
-	width: 100%;
-	border: 2px solid #ccc;
-	border-radius: 8px;
-	font-size: 1rem;
-	outline: none;
-	background: transparent;
-	transition: border-color 0.3s ease, padding-top 0.3s ease;
-}
+		/* Control column widths */
+		#usertable th {
+			max-width: 150px;
+		}
 
-.error {
-	color: red;
-	padding-top: 15px;
-}
 
-.form-control:focus {
-	border-color: #007bff;
-}
+		.fa-edit:hover {
+			color: #28a745;
+			transform: scale(1.1);
+		}
 
-.form-legend {
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	transform: translateY(-50%);
-	font-size: 1rem;
-	color: #aaa;
-	background: white;
-	padding: 0 5px;
-	pointer-events: none;
-	transition: 0.3s ease;
-}
+		td {
+			border: 1px solid rgb(0, 164, 166);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</style>
 
-/* When input or select is focused or has a value, move the label up */
-.form-control:focus ~ .form-legend, .form-control:not(:placeholder-shown) 
-	~ .form-legend {
-	top: -8px;
-	font-size: 1rem;
-	color: #007bff;
-}
 
-/* Hover effect when the input/select is focused */
-.form-control:focus:hover ~ .form-legend {
-	color: #0056b3; /* Darker shade of blue on hover */
-}
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
 
-/* Ensure the label returns to the normal color after focus or hover is removed */
-.form-control:not(:focus) ~ .form-legend {
-	color: #aaa; /* Normal label color */
-}
-</style>
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
 
-<style>
-/* Red border for invalid inputs */
-input.error, select.error {
-	border: 2px solid red !important;
-}
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
+	</style>
 
-/* Error message style */
-label.error {
-	color: red;
-	font-size: 0.85em;
-	margin-top: 5px;
-	display: block;
-}
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
 
-.section-header {
-	font-weight: bold;
-}
-</style>
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
 
-<!-- 
+		.section-header {
+			font-weight: bold;
+		}
+	</style>
+
+	<!-- 
 <style>
 /* Shared styles for both buttons */
 #floatingBackBtn, #floatingForwardBtn {
@@ -560,1037 +586,976 @@ label.error {
 	transform: scale(1.1);
 }
 </style> -->
-<script>
-	
-$(document).ready(function () {
-    $("#nostroForm").validate({
-        errorClass: "error", // use 'error' class for styling
-        errorElement: "label", // wrap error messages in <label>
+	<script>
 
-        // Place the error after the input field
-        errorPlacement: function (error, element) {
-            if (element.parent('.form-group').length) {
-                error.insertAfter(element); // default
-            } else {
-                error.insertAfter(element);
-            }
-        },
+		$(document).ready(function () {
+			$("#nostroForm").validate({
+				errorClass: "error", // use 'error' class for styling
+				errorElement: "label", // wrap error messages in <label>
 
-        // Highlight and unhighlight fields
-        highlight: function (element) {
-            $(element).addClass("error");
-        },
-        unhighlight: function (element) {
-            $(element).removeClass("error");
-        },
+				// Place the error after the input field
+				errorPlacement: function (error, element) {
+					if (element.parent('.form-group').length) {
+						error.insertAfter(element); // default
+					} else {
+						error.insertAfter(element);
+					}
+				},
 
-        // On successful validation, run this
-        submitHandler: function (form) {
-            submitForm(); // your custom submit function
-        }
-    });
-});
-</script>
+				// Highlight and unhighlight fields
+				highlight: function (element) {
+					$(element).addClass("error");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("error");
+				},
 
-<script>
+				// On successful validation, run this
+				submitHandler: function (form) {
+					submitForm(); // your custom submit function
+				}
+			});
+		});
+	</script>
 
-    function submitForm() {
-    	 if ($("#nostroForm").valid()) {
-    		 document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	<script>
 
-    	        const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
-    	        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
-    	        const formData = $("#nostroForm").serialize();
-    		
-    	        $.ajax({
-    	            url: submitUrl,
-    	            type: "POST",
-    	            data: formData,
-    	            success: function (response) {
-    	            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		function submitForm() {
+			if ($("#nostroForm").valid()) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    	            	$("#alertmsg1").text(response);
-    	                $("#alert1").modal("toggle");
-    	                //location.href = 'Nostro_Account_Bal';
-    	            },
-    	            error: function (xhr, status, error) {
-    	            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+				const reportName = 'CBUAE_Nostro Account_Balance_Data_Template';
+				const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+				const formData = $("#nostroForm").serialize();
 
-    	                console.error("Error:", error);
-    	                alert("Error occurred: " + error);
-    	            }
-    	        });
-    	 }
-		
-    }
+				$.ajax({
+					url: submitUrl,
+					type: "POST",
+					data: formData,
+					success: function (response) {
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
+						$("#alertmsg1").text(response);
+						$("#alert1").modal("toggle");
+						//location.href = 'Nostro_Account_Bal';
+					},
+					error: function (xhr, status, error) {
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-</script>
+						console.error("Error:", error);
+						alert("Error occurred: " + error);
+					}
+				});
+			}
 
-<script th:inline="javascript">
-	
-
-	function home() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		location.href = 'Dashboard'
-	}
-
-	function back() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
-		window.history.back();
-	}
-
-	function list() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		location.href = 'Nostro_Account_Bal?formmode=list';
-	}
-	
-	function nostro() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		location.href = 'Nostro_Account_Bal';
-	}
-	$(document).ready(function () {
-	    // On modal close, redirect to your controller method path
-	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Nostro_Account_Bal';
-	    });
-	});
-
-
-	
-	function updateform(event) {
-		  event.preventDefault();	
-		  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
-		  // 🧹 Remove commas from numeric inputs before submit
-		  const fieldsToUnformat = [
-		    'counterpartyBalance', 'counterpartyBalanceAed',
-		    'bankBalance', 'bankBalanceAed', 'gap'
-		  ];
-
-		  fieldsToUnformat.forEach(function(fieldName) {
-		    const input = document.querySelector(`[name="${fieldName}"]`);
-		    if (input) {
-		      input.value = input.value.replace(/,/g, '');
-		    }
-		  });
-
-		  $.ajax({
-		    url: `./updateNostro`,
-		    type: 'POST',
-		    data: $('#nostroData').serialize(),
-		    success: function(response) {
-		    	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
-		      $("#alertmsg").text(response);
-		      $("#alert").modal("toggle");
-		    },
-		    error: function(xhr, status, error) {
-		      console.error("Error in modify:", error);
-		      document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
-		      alert("Failed to modify. Please try again.");
-		    }
-		  });
 		}
 
-	
-    </script>
+
+	</script>
+
+	<script th:inline="javascript">
+
+
+		function home() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'Dashboard'
+		}
+
+		function back() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
+			window.history.back();
+		}
+
+		function list() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'Nostro_Account_Bal?formmode=list';
+		}
+
+		function nostro() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'Nostro_Account_Bal';
+		}
+		$(document).ready(function () {
+			// On modal close, redirect to your controller method path
+			$('#alert').on('hidden.bs.modal', function () {
+				window.location.href = './Nostro_Account_Bal';
+			});
+		});
+
+
+
+		function updateform(event) {
+			event.preventDefault();
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
+			// 🧹 Remove commas from numeric inputs before submit
+			const fieldsToUnformat = [
+				'counterpartyBalance', 'counterpartyBalanceAed',
+				'bankBalance', 'bankBalanceAed', 'gap'
+			];
+
+			fieldsToUnformat.forEach(function (fieldName) {
+				const input = document.querySelector(`[name="${fieldName}"]`);
+				if (input) {
+					input.value = input.value.replace(/,/g, '');
+				}
+			});
+
+			$.ajax({
+				url: `./updateNostro`,
+				type: 'POST',
+				data: $('#nostroData').serialize(),
+				success: function (response) {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#alertmsg").text(response);
+					$("#alert").modal("toggle");
+				},
+				error: function (xhr, status, error) {
+					console.error("Error in modify:", error);
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					alert("Failed to modify. Please try again.");
+				}
+			});
+		}
+
+
+	</script>
 
 </head>
 
 
 <script>
-  function navigateToTab(tabId) {
-	  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	function navigateToTab(tabId) {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    if (tabId === 'data') {
-    	window.location.href = 'Nostro_Account_Bal?formmode=list';
-    	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		if (tabId === 'data') {
+			window.location.href = 'Nostro_Account_Bal?formmode=list';
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-    } else if (tabId === 'datacontrols') {
-      window.location.href = 'Nostro_Account_Bal?formmode=add';
-      document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		} else if (tabId === 'datacontrols') {
+			window.location.href = 'Nostro_Account_Bal?formmode=add';
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-      
-    }
-  }
 
-  function handleClick(tabId) {
-	 // alert(tabId)
-    // Remove active class from all buttons
-    document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tabId + '-btn').classList.add('active');
-    //alert(tabId)
-   
-    // Hide all panes
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
-    document.getElementById(tabId).classList.add('show', 'active');
-    
-    
-    
-  }
+		}
+	}
 
-  // On page load, detect formmode and show corresponding tab
-  window.addEventListener('DOMContentLoaded', function () {
-    const params = new URLSearchParams(window.location.search);
-    const formmode = params.get('formmode');
+	function handleClick(tabId) {
+		// alert(tabId)
+		// Remove active class from all buttons
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+		document.getElementById(tabId + '-btn').classList.add('active');
+		//alert(tabId)
 
-    if (formmode === 'list') {
-      handleClick('data');
-    } else {
-      handleClick('datacontrols'); // default or formmode=add
-    }
-  });
+		// Hide all panes
+		document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+		document.getElementById(tabId).classList.add('show', 'active');
+
+
+
+	}
+
+	// On page load, detect formmode and show corresponding tab
+	window.addEventListener('DOMContentLoaded', function () {
+		const params = new URLSearchParams(window.location.search);
+		const formmode = params.get('formmode');
+
+		if (formmode === 'list') {
+			handleClick('data');
+		} else {
+			handleClick('datacontrols'); // default or formmode=add
+		}
+	});
 </script>
 
 
 
 
 <script>
-     
-     function downloadNostro() {
-    		// 1. Show the loader modal
-    		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    		$.ajax({
-    			url: './downloadNostroExcel',
-    			type: 'GET',
-    			xhrFields: {
-    				responseType: 'blob'
-    			},
-    			success: function (data) {
-    				// Always hide loader first
-    				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+	function downloadNostro() {
+		// 1. Show the loader modal
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    				let message = '';
+		$.ajax({
+			url: './downloadNostroExcel',
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob'
+			},
+			success: function (data) {
+				// Always hide loader first
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-    				if (data && data.size > 100) {
-    					const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
-    					const url = window.URL.createObjectURL(blob);
-    					const a = document.createElement('a');
-    					a.style.display = 'none';
-    					a.href = url;
-    					a.download = 'NostroAccBalance.xls';
-    					document.body.appendChild(a);
+				let message = '';
 
-    					a.click();
+				if (data && data.size > 100) {
+					const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.style.display = 'none';
+					a.href = url;
+					a.download = 'NostroAccBalance.xls';
+					document.body.appendChild(a);
 
-    					window.URL.revokeObjectURL(url);
-    					document.body.removeChild(a);
+					a.click();
 
-    					message = 'NostroAccBalance.xls has been downloaded successfully.';
-    				} else {
-    					message = 'No data available to download.';
-    				}
+					window.URL.revokeObjectURL(url);
+					document.body.removeChild(a);
 
-    				// Show custom alert modal with the message
-    				$('#alertmsg').text(message);
-    				$('#alert').modal('show');
-    			},
-    			error: function (jqXHR, textStatus, errorThrown) {
-    				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+					message = 'NostroAccBalance.xls has been downloaded successfully.';
+				} else {
+					message = 'No data available to download.';
+				}
 
-    				console.error("Download failed:", textStatus, errorThrown);
+				// Show custom alert modal with the message
+				$('#alertmsg').text(message);
+				$('#alert').modal('show');
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-    				// Show error message in your custom alert
-    				$('#alertmsg').text('An error occurred while downloading NostroAccBalance.xls.');
-    				$('#alert').modal('show');
-    			}
-    		});
-    	}
+				console.error("Download failed:", textStatus, errorThrown);
+
+				// Show error message in your custom alert
+				$('#alertmsg').text('An error occurred while downloading NostroAccBalance.xls.');
+				$('#alert').modal('show');
+			}
+		});
+	}
 
 
 </script>
 <title>RiskInsights</title>
+
 <body>
-	<div class="container-fluid"
-		style="padding-left: 0px; padding-right: 0px;">
+	<div class="container-fluid" style="padding-left: 0px; padding-right: 0px; margin-left: 0px;  width: 1521px;">
 		<!-- <div class="row"> -->
 
-			<div th:insert="XBRLHeaderMenu :: header"></div>
-			<div
-				class="role-page-header d-flex justify-content-between align-items-center"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode == 'null'}"
-				>
-				<!-- 1 inch = ~96px -->
 
-				<!-- Left: Page Title -->
-				<div class="float-left role-page-title">
-					<div>
-						<h4>
-							NOSTRO ACCOUNT BALANCE</h4>
-						<!-- Underline below the heading -->
-						<div class="role-page-underline"
-							style="width: 280px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);">
-						</div>
-					</div>
-				</div>
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+	
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
+
+
+			<!-- LEFT: Buttons -->
+			<div class="text-left flex-grow-1">
+				<h4 class="m-0">NOSTRO ACCOUNT BALANCE</h4>
+				<div style="
+														     height: 2px;
+														     background-color: #fa7b32;
+														     border-radius: 2px;
+														     margin-top: 6px;
+															 margin-left: 16px;
+														     width: 325px;
+														   "></div>
+
 
 			</div>
+			<div class="d-flex align-items-center gap-2">
+
+				<!-- Data Controls Button -->
+				<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
+					Data Controls</button>
+
+				<!-- Template Instructions Button -->
+				<button class="role-btn" id="template-btn" onclick="handleClick('template')">
+					Template Instructions</button>
+
+				<!-- Data Button -->
+				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
+					Data</button>
+			</div>
+
+			<!-- CENTER: Title -->
 
 
-			<!-- -------------------User List Starts----------------------------------------------------- -->
-			<div style="padding-right: 10px; padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+			<!-- RIGHT: Download Button -->
+			<div>
+				<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
+					onclick="downloadNostro();">
+					<i class="fa fa-download"></i> Download
+				</button>
+			</div>
+
+		</div>
 
 
+		<!-- -------------------User List Starts----------------------------------------------------- -->
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+			<!-- Tabs -->
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='null'">
+				<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+
+					<div class="row">
+						<div class="col-sm-12 finuserapply">
+							<form id="nostroForm" method="post" autocomplete="off">
+								<div class="card-body" style="max-height: 100px; ">
 
 
-
-				<!-- Tabs -->
-				<div class="role-page-header d-flex justify-content-between align-items-center">
-
-					<div class="float-left">
-					<!-- Data Controls Button -->
-					<button class="role-add-btn" id="datacontrols-btn"
-						onclick="navigateToTab('datacontrols')">
-						Data Controls</button>
-
-					<!-- Template Instructions Button -->
-					<button class="role-add-btn" id="template-btn"
-						onclick="handleClick('template')">
-						Template Instructions</button>
-
-					<!-- Data Button -->
-					<button class="role-add-btn" id="data-btn"
-						onclick="navigateToTab('data')">
-						Data</button>
-							</div>
-
-					<!-- Download Button (Right Aligned) -->
-					<div class="float-right">
-						<button th:if="${formmode} =='list'" type="button"
-							class="role-add-btn" id="downloadbut"
-							onclick="downloadNostro();">
-							<i class="fa fa-download"></i> Download
-						</button>
-					</div>
-
-				</div>
-
-
-
-
-
-
-
-				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
-					th:if="${formmode} =='null'">
-					<div class="tab-pane fade show active" id="datacontrols"
-						role="tabpanel">
-
-						<div class="row">
-							<div class="col-sm-12 finuserapply">
-								<form id="nostroForm" method="post" autocomplete="off">
-									<div class="card-body"
-										style="max-height: 400px; overflow-y: auto">
-
-
-										<input autocomplete="false" name="hidden" type="text"
-											style="display: none;">
-										<div class="form-group" style="border: none">
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<select id="submittingInstitution"
-														name="submittingInstitution" class="form-control" required>
-														<option value="">-- Select Institution --</option>
-														<option value="Bank of Baroda">Bank of Baroda</option>
-													</select> <label for="submittingInstitution" class="form-legend">Submitting
-														Institution</label>
-												</div>
-
-
-												<div class="col-sm-1"></div>
-
-												<div class="form-group col-md-4">
-													<input type="date" id="portfolioDate" name="portfolioDate"
-														class="form-control" placeholder=" " required /> <label
-														for="portfolioDate" class="form-legend">Portfolio
-														date</label>
-												</div>
+									<input autocomplete="false" name="hidden" type="text" style="display: none;">
+									<div class="form-group" style="border: none">
+										<div class="row formline">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-2">
+												<select id="submittingInstitution" name="submittingInstitution"
+													class="form-control" required>
+													<option value="">-- Select Institution --</option>
+													<option value="Bank of Baroda">Bank of Baroda</option>
+												</select> <label for="submittingInstitution"
+													class="form-legend">Submitting
+													Institution</label>
 											</div>
 
-											<!-- Contact Employee 1 Name / Title -->
-											<!-- Contact Employee 1 Group -->
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-												<div class="row formline">
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Contact
-															Details(Employee 1)</label>
-													</div>
-												</div>
-												<div class="row formline">
-													<div class="form-group col-md-4">
-														<input type="text" id="contactEmployee1Name1"
-															name="contactEmployee1Name1" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee1Name1" class="form-legend">Name</label>
-													</div>
 
+											<div class="col-sm-1"></div>
 
-													<div class="form-group col-md-4">
-														<input type="text" id="contactEmployee1Title1"
-															name="contactEmployee1Title1" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee1Title1" class="form-legend">Title</label>
-													</div>
-
-
-
-													<div class="form-group col-md-4">
-														<input type="email" id="contactEmployee1Email1"
-															name="contactEmployee1Email1" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee1Email1" class="form-legend">Email</label>
-													</div>
-													<div class="col-sm-3"></div>
-
-												</div>
+											<div class="form-group col-md-2">
+												<input type="date" id="portfolioDate" name="portfolioDate"
+													class="form-control" placeholder=" " required /> <label
+													for="portfolioDate" class="form-legend">Portfolio
+													date</label>
 											</div>
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-												<div class="row formline">
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Contact
-															Details(Employee 2)</label>
-													</div>
-												</div>
-												<div class="row formline">
-													<div class="form-group col-md-4">
-														<input type="text" id="contactEmployee2Name2"
-															name="contactEmployee2Name2" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee2Name2" class="form-legend">Name</label>
-													</div>
-
-
-													<div class="form-group col-md-4">
-														<input type="text" id="contactEmployee2Title2"
-															name="contactEmployee2Title2" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee2Title2" class="form-legend">Title</label>
-													</div>
-
-
-
-													<div class="form-group col-md-4">
-														<input type="email" id="contactEmployee2Email2"
-															name="contactEmployee2Email2" class="form-control"
-															placeholder=" " required /> <label
-															for="contactEmployee2Email2" class="form-legend">Email</label>
-													</div>
-													<div class="col-sm-3"></div>
-
-												</div>
-												<!-- Contact Employee 2 Group -->
-											</div>
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-												<div class="row formline">
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Sign
-															Off</label>
-													</div>
-												</div>
-
-												<!-- Sign-off CRO Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="text" id="signOffCroName"
-															name="signOffCroName" class="form-control"
-															placeholder=" " required /> <label for="signOffCroName"
-															class="form-legend">CRO Name</label>
-													</div>
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="email" id="signOffCroEmail"
-															name="signOffCroEmail" class="form-control"
-															placeholder=" " required /> <label for="signOffCroEmail"
-															class="form-legend">CRO Email</label>
-													</div>
-
-												</div>
-
-												<!-- Sign-off CFO Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="text" id="signOffCfoName"
-															name="signOffCfoName" class="form-control"
-															placeholder=" " required /> <label for="signOffCfoName"
-															class="form-legend">CFO Name</label>
-													</div>
-
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="email" id="signOffCfoEmail"
-															name="signOffCfoEmail" class="form-control"
-															placeholder=" " required /> <label for="signOffCfoEmail"
-															class="form-legend">CFO Email</label>
-													</div>
-
-												</div>
-
-												<!-- Sign-off Head of Treasury Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="text" id="signOffHeadOfTreasuryName"
-															name="signOffHeadOfTreasuryName" class="form-control"
-															placeholder=" " required /> <label
-															for="signOffHeadOfTreasuryName" class="form-legend">Head
-															of Treasury Name</label>
-													</div>
-
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="email" id="signOffHeadOfTreasuryEmail"
-															name="signOffHeadOfTreasuryEmail" class="form-control"
-															placeholder=" " required /> <label
-															for="signOffHeadOfTreasuryEmail" class="form-legend">Head
-															of Treasury Email</label>
-													</div>
-												</div>
-											</div>
-
 										</div>
-								</form>
-							
-						<div class="card-footer text-center"
-							style="padding-bottom: 18px;">
+
+										<!-- Contact Employee 1 Name / Title -->
+										<!-- Contact Employee 1 Group -->
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Contact
+														Details(Employee 1)</label>
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee1Name1"
+														name="contactEmployee1Name1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Name1"
+														class="form-legend">Name</label>
+												</div>
+
+
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee1Title1"
+														name="contactEmployee1Title1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Title1"
+														class="form-legend">Title</label>
+												</div>
 
 
 
-							<button th:if="${formmode == 'null' or formmode == 'add'}"
-								id="savebutton" type="button" class="role-add-btn"
-								onclick="submitForm()">Save</button>
-								</div>
+												<div class="form-group col-md-3">
+													<input type="email" id="contactEmployee1Email1"
+														name="contactEmployee1Email1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Email1"
+														class="form-legend">Email</label>
+												</div>
+												<div class="col-sm-3"></div>
+
+											</div>
+										</div>
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Contact
+														Details(Employee 2)</label>
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee2Name2"
+														name="contactEmployee2Name2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Name2"
+														class="form-legend">Name</label>
+												</div>
+
+
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee2Title2"
+														name="contactEmployee2Title2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Title2"
+														class="form-legend">Title</label>
+												</div>
+
+
+
+												<div class="form-group col-md-3">
+													<input type="email" id="contactEmployee2Email2"
+														name="contactEmployee2Email2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Email2"
+														class="form-legend">Email</label>
+												</div>
+												<div class="col-sm-3"></div>
+
+											</div>
+											<!-- Contact Employee 2 Group -->
+										</div>
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: -16px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Sign
+														Off</label>
+												</div>
+											</div>
+
+											<!-- Sign-off CRO Name / Email -->
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCroName" name="signOffCroName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroName" class="form-legend">CRO Name</label>
+												</div>
+												
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCroEmail" name="signOffCroEmail"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroEmail" class="form-legend">CRO Email</label>
+												</div>
+												
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCfoName" name="signOffCfoName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoName" class="form-legend">CFO Name</label>
+												</div>
+												<div class="col-sm-1"></div>
+
+											</div>
+
+											
+
+										
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+																								<div class="form-group col-md-3">
+																									<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
+																										class="form-control" placeholder=" " required /> <label
+																										for="signOffCfoEmail" class="form-legend">CFO Email</label>
+																								</div>
+												
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffHeadOfTreasuryName"
+														name="signOffHeadOfTreasuryName" class="form-control"
+														placeholder=" " required /> <label
+														for="signOffHeadOfTreasuryName" class="form-legend">Head
+														of Treasury Name</label>
+												</div>
+
+												
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffHeadOfTreasuryEmail"
+														name="signOffHeadOfTreasuryEmail" class="form-control"
+														placeholder=" " required /> <label
+														for="signOffHeadOfTreasuryEmail" class="form-legend">Head
+														of Treasury Email</label>
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+										</div>
+
+									</div>
+							</form>
+
+							<div class="card-footer text-center" style="padding-bottom: 1px;">
+
+
+
+								<button th:if="${formmode == 'null' or formmode == 'add'}" id="savebutton" type="button"
+									class="role-btn" onclick="submitForm()">Save</button>
+							</div>
 						</div>
 
 
-						</div>
 					</div>
 				</div>
+			</div>
 
-				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
+			<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
-				<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-				<div class="tab-pane fade" id="template" role="tabpanel"
-					th:if="${formmode == 'null'}">
-					<p>Templates tabs</p>
-					<div class="card-footer text-center"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
+				<p>Templates tabs</p>
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 
-					</div>
 				</div>
+			</div>
 
-				<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
+			<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
 
 
-				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-				<div class="tab-pane fade" id="data" role="tabpanel">
-					<!-- Move your existing table content here -->
+			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
+			<div class="tab-pane fade" id="data" role="tabpanel">
+				<!-- Move your existing table content here -->
 
-					<!-- 	<div class="row">
+				<!-- 	<div class="row">
 				<div class="col-sm-12">
 					<div class="container-fluid">
    -->
+				<div class="table-responsive" style="border: none;">
+					<table id="usertable" class="table table-bordered table-striped table-hover">
+
+						<thead class="thead-light">
+
+							<tr>
+								<th style="text-align: center; width:90px"></th>
+								<th colspan="8" style="text-align: center;">CBUAE
+									information</th>
+								<th colspan="9" style="text-align: center;">Counterparty
+									information</th>
+								<th colspan="4" style="text-align: center;">Bank
+									information</th>
+								<th style="text-align: center;">Reconciliation</th>
+							</tr>
 
 
+							<tr>
+								<th style="text-align: center;width: 50px;">Action</th>
+
+								<th style="min-width: 90px">Date</th>
+								<th>Bank Name</th>
+								<th>Head Office/Subsidiary</th>
+								<th>Subsidiary</th>
+								<th>Bank Symbol</th>
+								<th>Conventional/Islamic</th>
+								<th>Local/Foreign</th>
+								<th>CBUAE Tiering</th>
+								<th>Counterparty Nostro Account</th>
+								<th>Final Rating (Banks)</th>
+								<th>Final Rating (CBUAE)</th>
+								<th>Country of Risk</th>
+								<th>CBUAE Geographical Zone</th>
+								<th>Currency</th>
+								<th style="min-width: 130px">Counterparty Settlement Date</th>
+								<th style="text-align: right;">Counterparty Balance</th>
+								<th style="text-align: right;">Counterparty Balance (AED)</th>
+								<th style="min-width: 130px">Bank Internal Settlement Date</th>
+								<th style="text-align: right;">Bank Balance</th>
+								<th style="text-align: right;">Bank Balance (AED)</th>
+								<th>Account No</th>
+								<th style="text-align: right;">Gap</th>
 
 
-					<div class="table-responsive"
-						style="max-height: 400px; overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; ">
+							</tr>
+						</thead>
+						<tbody>
 
-							<thead class="thead-light">
-
-								<tr>
-									<th style="text-align: center; width:100px"></th>
-									<th colspan="8" style="text-align: center;">CBUAE
-										information</th>
-									<th colspan="9" style="text-align: center;">Counterparty
-										information</th>
-									<th colspan="4" style="text-align: center;">Bank
-										information</th>
-									<th style="text-align: center;">Reconciliation</th>
-								</tr>
-
-
-								<tr>
-									<th style="text-align: center;width: 100px;">Action</th>
-
-									<th style="min-width: 100px">Date</th>
-									<th>Bank Name</th>
-									<th>Head Office/Subsidiary</th>
-									<th>Subsidiary</th>
-									<th>Bank Symbol</th>
-									<th>Conventional/Islamic</th>
-									<th>Local/Foreign</th>
-									<th>CBUAE Tiering</th>
-									<th>Counterparty Nostro Account</th>
-									<th>Final Rating (Banks)</th>
-									<th>Final Rating (CBUAE)</th>
-									<th>Country of Risk</th>
-									<th>CBUAE Geographical Zone</th>
-									<th>Currency</th>
-									<th style="min-width: 130px">Counterparty Settlement Date</th>
-									<th style="text-align: right;">Counterparty Balance</th>
-									<th style="text-align: right;">Counterparty Balance (AED)</th>
-									<th style="min-width: 130px">Bank Internal Settlement Date</th>
-									<th style="text-align: right;">Bank Balance</th>
-									<th style="text-align: right;">Bank Balance (AED)</th>
-									<th>Account No</th>
-									<th style="text-align: right;">Gap</th>
-
-
-								</tr>
-							</thead>
-							<tbody >
-
-								<!-- Loop to render data dynamically -->
-								<tr th:each="data : ${branchList}">
-									<td style="text-align: center;min-width: 100px;"><a 
+							<!-- Loop to render data dynamically -->
+							<tr th:each="data : ${branchList}">
+								<td style="text-align: center;min-width: 100px;"><a
 										th:href="@{'/Nostro_Account_Bal?formmode=edit&accountNo=' + ${data.accountNo}}">
-											<i class="fa fa-edit" style="color: #007bff; text-align:center;"></i>
+										<i class="fa fa-edit" style="color: #fa7b32; text-align:center;"></i>
 									</a></td>
 
-									<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
-									<td th:text="${data.bankName}"></td>
-									<td th:text="${data.headOfficeSubsidiary}"></td>
-									<td th:text="${data.subsidiary}"></td>
-									<td th:text="${data.bankSymbol}"></td>
-									<td th:text="${data.conventionalIslamic}"></td>
-									<td th:text="${data.localForeign}"></td>
-									<td th:text="${data.cbuaeTiering}"></td>
-									<td th:text="${data.counterpartyNostroAccount}"></td>
-									<td th:text="${data.finalRatingBanks}"></td>
-									<td th:text="${data.finalRatingCbuae}"></td>
-									<td th:text="${data.countryOfRisk}"></td>
-									<td th:text="${data.cbuaeGeographicalZone}"></td>
-									<td th:text="${data.currency}"></td>
-									<td
-										th:text="${#dates.format(data.counterpartySettlementDate, 'dd-MM-yyyy')}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.counterpartyBalance, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.counterpartyBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td
-										th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${data.accountNo}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.gap, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
+								<td th:text="${data.bankName}"></td>
+								<td th:text="${data.headOfficeSubsidiary}"></td>
+								<td th:text="${data.subsidiary}"></td>
+								<td th:text="${data.bankSymbol}"></td>
+								<td th:text="${data.conventionalIslamic}"></td>
+								<td th:text="${data.localForeign}"></td>
+								<td th:text="${data.cbuaeTiering}"></td>
+								<td th:text="${data.counterpartyNostroAccount}"></td>
+								<td th:text="${data.finalRatingBanks}"></td>
+								<td th:text="${data.finalRatingCbuae}"></td>
+								<td th:text="${data.countryOfRisk}"></td>
+								<td th:text="${data.cbuaeGeographicalZone}"></td>
+								<td th:text="${data.currency}"></td>
+								<td th:text="${#dates.format(data.counterpartySettlementDate, 'dd-MM-yyyy')}"></td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(data.counterpartyBalance, 1, 'COMMA', 2, 'POINT')}">
+								</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(data.counterpartyBalanceAed, 1, 'COMMA', 2, 'POINT')}">
+								</td>
+								<td th:text="${#dates.format(data.bankInternalSettlementDate, 'dd-MM-yyyy')}"></td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(data.bankBalance, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(data.bankBalanceAed, 1, 'COMMA', 2, 'POINT')}">
+								</td>
+								<td th:text="${data.accountNo}"></td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(data.gap, 1, 'COMMA', 2, 'POINT')}"></td>
 
 
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
-
-					<div class="card-footer text-center"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-
-
-
-						<button th:if="${formmode == 'null' or formmode == 'add'}"
-							type="button" class="role-add-btn" onclick="submitForm()">Save</button>
-
-
-
-
-					</div>
-
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
 
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+
+
+
+					<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
+						onclick="submitForm()">Save</button>
+
+
+
+
+				</div>
 
 			</div>
 
-			<!------------------ edit starts-------------------------------------------------------------->
 
-			<div th:if="${formmode}=='edit'" style="align-items: center">
 
-				<div class="row">
-					<form th:action="@{/updateNostro}" th:object="${nostroData}"
-						method="post" id="nostroData">
-						<div class="card" style="margin-left: 15px; margin-right: 15px;">
-							<div
-								class="role-page-header d-flex justify-content-between align-items-center">
+		</div>
 
-								<!-- Left: Page Title -->
+		<!------------------ edit starts-------------------------------------------------------------->
+
+		<div th:if="${formmode}=='edit'" style="align-items: center">
+
+			<div class="row">
+				<form th:action="@{/updateNostro}" th:object="${nostroData}" method="post" id="nostroData">
+					<div class="card" style="margin-left: 15px; margin-right: 15px;">
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+
+							<!-- Left: Page Title -->
+							<div class="role-page-title">
+								<div>
+									<h4>
+										NOSTRO ACCOUNT BALANCE - EDIT</h4>
+									<!-- Underline below the heading -->
+									<div class="role-page-underline"
+										style="width: 342px; height: 3px; background-color: #fa7b32; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);">
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="card-body" style="max-height: 450px; overflow-y: auto;">
+
+
+
+							<div class="role-page-title">
+								<h4 style="padding-bottom:10px">CBUAE Information</h4>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bank Name</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{bankName}"
+										onchange="handleBankChange(this)">
+										<option value="">-- Select Bank --</option>
+										<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+											th:text="${bank.bankName}">
+										</option>
+									</select>
+									<!-- Add more banks if needed -->
+
+								</div>
+
+								<label class="col-sm-2 col-form-label">Head Office
+									Subsidiary</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{headOfficeSubsidiary}">
+										<option value="">-- Select --</option>
+										<option value="Head Office">Head Office</option>
+										<option value="Subsidiary">Subsidiary</option>
+									</select>
+
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Subsidiary</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Bank Symbol</label>
+
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+										readonly />
+
+								</div>
+
+
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Conventional
+									Islamic</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+										id="conventionalIslamic" readonly />
+								</div>
+
+								<label class="col-sm-2 col-form-label">Local Foreign</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+										readonly />
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+										readonly />
+								</div>
+							</div>
+
+
+							<div class="role-page-title">
+								<h4 style="padding-bottom:10px">Counterparty Information</h4>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Counter Party
+									Nostro Account</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control vchar-50"
+										th:field="*{counterpartyNostroAccount}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Final Rating
+									(Banks)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control vchar-20" th:field="*{finalRatingBanks}" />
+								</div>
+
+
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Final Rating
+									CBUAE</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Country Of Risk</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{countryOfRisk}" id="countryOfRisk"
+										onchange="handleCountryChange(this)">
+										<option value="">-- Select Country --</option>
+										<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
+											th:text="${c.countryOfRisk}"></option>
+									</select>
+								</div>
+
+
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CBUAE
+									Geographical Zone</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
+										id="cbuaeGeographicalZone" readonly />
+								</div>
+								<label class="col-sm-2 col-form-label">Currency</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control vchar-10" th:field="*{currency}"
+										id="currency" />
+								</div>
+
+
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Counter Party
+									Settlement Date</label>
+								<div class="col-sm-4">
+									<input type="date" class="form-control" th:field="*{counterpartySettlementDate}" />
+								</div>
+								<label class="col-sm-2 col-form-label">Counter Party
+									Balance</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control number-24-2"
+										th:field="*{counterpartyBalance}" />
+								</div>
+
+
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Counter Party
+									Balance AED</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control number-24-2"
+										th:field="*{counterpartyBalanceAed}" />
+								</div>
+
 								<div class="role-page-title">
-									<div>
-										<h4>
-											NOSTRO ACCOUNT BALANCE - EDIT</h4>
-										<!-- Underline below the heading -->
-										<div class="role-page-underline"
-											style="width: 342px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);">
-										</div>
+									<h4 style="padding-top:15px;padding-bottom:10px">Bank Information</h4>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Bank Internal
+										Settlement Date</label>
+									<div class="col-sm-4">
+										<input type="date" class="form-control"
+											th:field="*{bankInternalSettlementDate}" />
+									</div>
+
+									<label class="col-sm-2 col-form-label">Bank Balance</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control number-24-2" th:field="*{bankBalance}" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Bank Balance
+										AED</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control number-24-2"
+											th:field="*{bankBalanceAed}" />
+									</div>
+									<label class="col-sm-2 col-form-label">Account Number</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control number-24-2" th:field="*{accountNo}"
+											readonly />
+									</div>
+
+								</div>
+
+
+								<div class="role-page-title">
+									<h4 style="padding-bottom:10px">Reconciliation</h4>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Gap</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control number-24-2" th:field="*{gap}" />
 									</div>
 								</div>
 
 							</div>
 
-							<div class="card-body"
-								style="max-height: 450px; overflow-y: auto;">
-
-
-
-								<div class="role-page-title">
-								<h4 style="padding-bottom:10px">CBUAE Information</h4>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Bank Name</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{bankName}"
-											onchange="handleBankChange(this)">
-											<option value="">-- Select Bank --</option>
-											<option th:each="bank : ${bankList}"
-												th:value="${bank.bankName}" th:text="${bank.bankName}">
-											</option>
-										</select>
-
-										<!-- Add more banks if needed -->
-
-
-									</div>
-
-									<label class="col-sm-2 col-form-label">Head Office
-										Subsidiary</label>
-									<div class="col-sm-4">
-										<select class="form-control"
-											th:field="*{headOfficeSubsidiary}">
-											<option value="">-- Select --</option>
-											<option value="Head Office">Head Office</option>
-											<option value="Subsidiary">Subsidiary</option>
-										</select>
-
-									</div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Subsidiary</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control vchar-50"
-											th:field="*{subsidiary}" />
-									</div>
-									<label class="col-sm-2 col-form-label">Bank Symbol</label>
-
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{bankSymbol}" id="bankSymbol" readonly />
-
-									</div>
-
-
-								</div>
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Conventional
-										Islamic</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{conventionalIslamic}" id="conventionalIslamic"
-											readonly />
-									</div>
-
-									<label class="col-sm-2 col-form-label">Local Foreign</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{localForeign}" id="localForeign" readonly />
-									</div>
-								</div>
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly />
-									</div>
-								</div>
-
-
-								<div class="role-page-title">
-								<h4 style="padding-bottom:10px">Counterparty Information</h4>
-								</div>
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Counter Party
-										Nostro Account</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control vchar-50"
-											th:field="*{counterpartyNostroAccount}" />
-									</div>
-									<label class="col-sm-2 col-form-label">Final Rating
-										(Banks)</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control vchar-20"
-											th:field="*{finalRatingBanks}" />
-									</div>
-
-
-								</div>
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Final Rating
-										CBUAE</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control vchar-20"
-											th:field="*{finalRatingCbuae}" />
-									</div>
-									<label class="col-sm-2 col-form-label">Country Of Risk</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{countryOfRisk}"
-											id="countryOfRisk" onchange="handleCountryChange(this)">
-											<option value="">-- Select Country --</option>
-											<option th:each="c : ${countryList}"
-												th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
-										</select>
-									</div>
-
-
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CBUAE
-										Geographical Zone</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"
-											th:field="*{cbuaeGeographicalZone}"
-											id="cbuaeGeographicalZone" readonly />
-									</div>
-									<label class="col-sm-2 col-form-label">Currency</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control vchar-10"
-											th:field="*{currency}" id="currency" />
-									</div>
-
-
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Counter Party
-										Settlement Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control"
-											th:field="*{counterpartySettlementDate}" />
-									</div>
-									<label class="col-sm-2 col-form-label">Counter Party
-										Balance</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control number-24-2"
-											th:field="*{counterpartyBalance}" />
-									</div>
-
-
-								</div>
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Counter Party
-										Balance AED</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control number-24-2"
-											th:field="*{counterpartyBalanceAed}" />
-									</div>
-
-									<div class="role-page-title">
-									<h4 style="padding-top:15px;padding-bottom:10px">Bank Information</h4>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">Bank Internal
-											Settlement Date</label>
-										<div class="col-sm-4">
-											<input type="date" class="form-control"
-												th:field="*{bankInternalSettlementDate}" />
-										</div>
-
-										<label class="col-sm-2 col-form-label">Bank Balance</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control number-24-2"
-												th:field="*{bankBalance}" />
-										</div>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">Bank Balance
-											AED</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control number-24-2"
-												th:field="*{bankBalanceAed}" />
-										</div>
-										<label class="col-sm-2 col-form-label">Account Number</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control number-24-2"
-												th:field="*{accountNo}" readonly />
-										</div>
-
-									</div>
-
-
-									<div class="role-page-title">
-									<h4 style="padding-bottom:10px" >Reconciliation</h4>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">Gap</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control number-24-2"
-												th:field="*{gap}" />
-										</div>
-									</div>
-
-								</div>
-							
 
 
 
 							<!-- Submit -->
 							<div class="card-footer text-center">
-								<button type="submit" class="role-add-btn"
-									onclick="updateform(event)">Update</button>
-								<a th:href="@{/Nostro_Account_Bal(formmode='list')}"
-									class="role-add-btn" style="text-decoration: none;">Cancel</a>
+								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+								<a th:href="@{/Nostro_Account_Bal(formmode='list')}" class="role-add-btn"
+									style="text-decoration: none;">Cancel</a>
 							</div>
-							</div>
-					</form>
+						</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="datadelete">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
-
-
-		<div class="modal fade" id="datadelete">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-body"
-						style="margin-top: 8px; text-align: center; color: #f15362;">
-						<button type="button" class="close" data-dismiss="modal">×</button>
-						Are you Sure want to delete?
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary"
-							onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
+	</div>
+	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
 			<div class="flow-bar">
 				<div class="flow-line"></div>
 			</div>
 		</div>
 	</div>
-		<div class="modal fade" id="formmsg">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-body"
-						style="margin-top: 8px; text-align: center; color: aliceblue;">
-						<button type="button" class="close" data-dismiss="modal">×</button>
-						<a th:value="${msg}"></a>
+	<div class="modal fade" id="formmsg">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<a th:value="${msg}"></a>
+				</div>
+				<div class="modal-footer"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="role-add-btn" onclick="list()" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="role-add-btn" onclick="nostro()" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo"
+							style="width: 153px; height: auto; margin-left: 18px; background-color: transparent; border-color: transparent;"
+							alt="Bornfire">
 					</div>
-					<div class="modal-footer"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="btn btn-primary"
-							onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+		aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+						Processing...</h5>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Download Message -->
+	<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog" aria-labelledby="customAlertModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+				</div>
+				<div class="modal-body" id="customAlertBody"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
 				</div>
 			</div>
 		</div>
 
-		<div class="modal fade" id="alert">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel"
-							style="text-align: center; color: white;">BANK OF BARODA</div>
-					</div>
-					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg"></p>
-						<button type="button" class="role-add-btn" onclick="list()"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
 
-		<div class="modal fade" id="alert1">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel"
-							style="text-align: center; color: white;">BANK OF BARODA</div>
-					</div>
-					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg1"></p>
-						<button type="button" class="role-add-btn" onclick="nostro()"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="loader" data-backdrop="static"
-			data-keyboard="false">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content" style="background: transparent;">
-					<div class="modal-body" style="text-align: center">
-						<div>
-							<img th:src=@{/images/loader.gif} id="bfirelogo"
-								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent; border-color: transparent;"
-								alt="Bornfire">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
-			role="dialog" aria-labelledby="downloadProcessingModalLabel"
-			aria-hidden="true">
-			<div
-				class="modal-dialog modal-dialog-centered d-flex align-items-center"
-				role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="downloadProcessingModalLabel">Download
-							Processing...</h5>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Download Message -->
-		<div class="modal fade" id="customAlertModal" tabindex="-1"
-			role="dialog" aria-labelledby="customAlertModalLabel"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
-					</div>
-					<div class="modal-body" id="customAlertBody"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-dismiss="modal"
-							onclick="list()">OK</button>
-					</div>
-				</div>
-			</div>
-
-
-		</div>
+	</div>
 
 	</div>
 	<!-- Floating Back Button -->
@@ -1598,261 +1563,305 @@ $(document).ready(function () {
 		<i class="fa fa-arrow-left"></i>
 	</button>
 	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
+	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
 		<i class="fa fa-arrow-right"></i>
 	</button>
 
 </body>
 <script>
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
-				  
+
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
+
 </script>
 
+<style>
+	/* ACTIVE page number (1) */
+	#usertable_paginate .page-item.active .page-link {
+		background-color: #fa7b32 !important;
+		border-color: #fa7b32 !important;
+		color: #fff !important;
+	}
 
+	/* HOVER on other page buttons */
+	#usertable_paginate .page-item .page-link:hover {
+		background-color: #fa7b32 !important;
+		border-color: #fa7b32 !important;
+		color: #fff !important;
+	}
+
+	/* Normal page numbers */
+	#usertable_paginate .page-item .page-link {
+		color: #000000 !important;
+	}
+</style>
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-/* Remove top margin/padding from DataTables parent containers */
-#data {
-	padding-top: 0 !important;
-	margin-top: 0 !important;
-}
+	/* Remove top margin/padding from DataTables parent containers */
+	#data {
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
 
-.table-responsive {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	.table-responsive {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	/* Ensure DataTables filter (search box) doesn't have spacing above it */
+	div.dataTables_filter {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-/* FIX: Make search label and box inline */
-.dataTables_filter label {
-	display: flex !important;
-	align-items: center;
-	gap: 8px; /* space between text and input */
-	margin-bottom: 0 !important;
-}
+	/* FIX: Make search label and box inline */
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
 
-/* Style pagination buttons */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
+	/* Style pagination buttons */
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		padding: 0px;
+	}
 
-/* Optional: Style the search input */
-.dataTables_filter input {
-	margin-left: 5px;
-	flex: 1;
-}
+	/* Optional: Style the search input */
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
 </style>
 
 <script>
-function handleBankChange(select) {
-    const selectedBank = select.value;
+	function handleBankChange(select) {
+		const selectedBank = select.value;
 
-    if (!selectedBank) {
-        // Clear the fields
-        $('#bankSymbol').val('');
-        $('#conventionalIslamic').val('');
-        $('#localForeign').val('');
-        $('#cbuaeTiering').val('');
-        return;
-    }
+		if (!selectedBank) {
+			// Clear the fields
+			$('#bankSymbol').val('');
+			$('#conventionalIslamic').val('');
+			$('#localForeign').val('');
+			$('#cbuaeTiering').val('');
+			return;
+		}
 
-    $.ajax({
-    	url: '/BCDRS/getBankDetails',
-        type: 'GET',
-        data: { bankName: selectedBank },
-        success: function(data) {
-            $('#bankSymbol').val(data.bankSymbol || '');
-            $('#conventionalIslamic').val(data.conventionalIslamic || '');
-            $('#localForeign').val(data.localForeign || '');
-            $('#cbuaeTiering').val(data.cbuaeTiering || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-            alert('Failed to fetch bank details.');
-        }
-    });
-}
+		$.ajax({
+			url: './getBankDetails',
+			type: 'GET',
+			data: {bankName: selectedBank},
+			success: function (data) {
+				$('#bankSymbol').val(data.bankSymbol || '');
+				$('#conventionalIslamic').val(data.conventionalIslamic || '');
+				$('#localForeign').val(data.localForeign || '');
+				$('#cbuaeTiering').val(data.cbuaeTiering || '');
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				alert('Failed to fetch bank details.');
+			}
+		});
+	}
 </script>
 <script>
-function handleCountryChange(select) {
-    const selectedCountry = select.value;
+	function handleCountryChange(select) {
+		const selectedCountry = select.value;
 
-    if (!selectedCountry) {
-        $('#cbuaeGeographicalZone').val('');
-        return;
-    }
+		if (!selectedCountry) {
+			$('#cbuaeGeographicalZone').val('');
+			return;
+		}
 
-    $.ajax({
-        url: '/BCDRS/getCountryDetails',
-        type: 'GET',
-        data: { countryName: selectedCountry },
-        success: function(data) {
-            $('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-            //alert('Failed to fetch geographical zone.');
-        }
-    });
-}
+		$.ajax({
+			url: '/BCDRS/getCountryDetails',
+			type: 'GET',
+			data: {countryName: selectedCountry},
+			success: function (data) {
+				$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				//alert('Failed to fetch geographical zone.');
+			}
+		});
+	}
 
-// Run on page load (for edit mode)
-window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect && countrySelect.value) {
-        handleCountryChange(countrySelect);
-    }
-};
+	// Run on page load (for edit mode)
+	window.onload = function () {
+		const countrySelect = document.getElementById("countryOfRisk");
+		if (countrySelect && countrySelect.value) {
+			handleCountryChange(countrySelect);
+		}
+	};
 </script>
 <script>
-  function formatNumberInput(input) {
-    let value = input.value.replace(/,/g, '');
-    if (!isNaN(value) && value !== '') {
-      input.value = parseFloat(value).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
-  }
+	function formatNumberInput(input) {
+		let value = input.value.replace(/,/g, '');
+		if (!isNaN(value) && value !== '') {
+			input.value = parseFloat(value).toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+	}
 
-  function removeFormatting(input) {
-    input.value = input.value.replace(/,/g, '');
-  }
+	function removeFormatting(input) {
+		input.value = input.value.replace(/,/g, '');
+	}
 
-  document.addEventListener('DOMContentLoaded', function () {
-    const fieldsToFormat = [
-      'counterpartyBalance', 'counterpartyBalanceAed',
-      'bankBalance', 'bankBalanceAed', 'gap'
-    ];
+	document.addEventListener('DOMContentLoaded', function () {
+		const fieldsToFormat = [
+			'counterpartyBalance', 'counterpartyBalanceAed',
+			'bankBalance', 'bankBalanceAed', 'gap'
+		];
 
-    fieldsToFormat.forEach(function(fieldName) {
-      const input = document.querySelector(`[name="${fieldName}"]`);
-      if (input && input.value) {
-        // Apply formatting immediately on page load
-        formatNumberInput(input);
+		fieldsToFormat.forEach(function (fieldName) {
+			const input = document.querySelector(`[name="${fieldName}"]`);
+			if (input && input.value) {
+				// Apply formatting immediately on page load
+				formatNumberInput(input);
 
-        // Apply formatting on blur
-        input.addEventListener('blur', function () {
-          formatNumberInput(this);
-        });
+				// Apply formatting on blur
+				input.addEventListener('blur', function () {
+					formatNumberInput(this);
+				});
 
-        // Remove formatting on focus (so user can edit)
-        input.addEventListener('focus', function () {
-          removeFormatting(this);
-        });
-      }
-    });
-  });
+				// Remove formatting on focus (so user can edit)
+				input.addEventListener('focus', function () {
+					removeFormatting(this);
+				});
+			}
+		});
+	});
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+	document.addEventListener("DOMContentLoaded", function () {
 
-  function showError(input, message) {
-    // Remove any existing error to prevent duplicates
-    clearError(input);
+		function showError(input, message) {
+			// Remove any existing error to prevent duplicates
+			clearError(input);
 
-    const error = document.createElement("small");
-    error.id = input.id + "-error";
-    error.className = "text-danger d-block mt-1";
-    error.innerText = message;
+			const error = document.createElement("small");
+			error.id = input.id + "-error";
+			error.className = "text-danger d-block mt-1";
+			error.innerText = message;
 
-    // Insert error message right after the input element
-    input.classList.add("is-invalid");
-    input.parentNode.insertBefore(error, input.nextSibling);
-  }
+			// Insert error message right after the input element
+			input.classList.add("is-invalid");
+			input.parentNode.insertBefore(error, input.nextSibling);
+		}
 
-  function clearError(input) {
-    const error = document.getElementById(input.id + "-error");
-    if (error) {
-      error.remove();
-    }
-    input.classList.remove("is-invalid");
-  }
+		function clearError(input) {
+			const error = document.getElementById(input.id + "-error");
+			if (error) {
+				error.remove();
+			}
+			input.classList.remove("is-invalid");
+		}
 
-  // VARCHAR2 (vchar-<max>) fields
-  document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
-    let max = null;
-    input.classList.forEach(cls => {
-      if (cls.startsWith("vchar-")) {
-        const limit = parseInt(cls.split("-")[1]);
-        if (!isNaN(limit)) max = limit;
-      }
-    });
+		// VARCHAR2 (vchar-<max>) fields
+		document.querySelectorAll('input[class*="vchar-"]').forEach(input => {
+			let max = null;
+			input.classList.forEach(cls => {
+				if (cls.startsWith("vchar-")) {
+					const limit = parseInt(cls.split("-")[1]);
+					if (!isNaN(limit)) max = limit;
+				}
+			});
 
-    if (max !== null) {
-      input.removeAttribute("maxlength"); // Let JS handle limit
+			if (max !== null) {
+				input.removeAttribute("maxlength"); // Let JS handle limit
 
-      input.addEventListener("input", () => {
-        if (input.value.length > max) {
-          showError(input, `Max ${max} characters allowed`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
+				input.addEventListener("input", () => {
+					if (input.value.length > max) {
+						showError(input, `Max ${max} characters allowed`);
+					} else {
+						clearError(input);
+					}
+				});
+			}
+		});
 
 
-  // NUMBER(p,s) fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
+		// NUMBER(p,s) fields
+		document.querySelectorAll('[class*="number-"]').forEach(input => {
+			const match = input.className.match(/number-(\d+)-(\d+)/);
+			if (match) {
+				const total = parseInt(match[1]);
+				const decimal = parseInt(match[2]);
 
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val === "") {
-          clearError(input);
-          return;
-        }
+				input.addEventListener("input", () => {
+					const val = input.value.trim();
+					if (val === "") {
+						clearError(input);
+						return;
+					}
 
-        if (!/^-?\d*(\.\d*)?$/.test(val)) {
-          showError(input, "Only numeric values allowed");
-          return;
-        }
+					if (!/^-?\d*(\.\d*)?$/.test(val)) {
+						showError(input, "Only numeric values allowed");
+						return;
+					}
 
-        const [intPart, decPart = ""] = val.replace("-", "").split(".");
-        const totalDigits = intPart.length + decPart.length;
+					const [intPart, decPart = ""] = val.replace("-", "").split(".");
+					const totalDigits = intPart.length + decPart.length;
 
-        if (totalDigits > total) {
-          showError(input, `Max ${total} digits allowed`);
-        } else if (decPart.length > decimal) {
-          showError(input, `Max ${decimal} digits after decimal`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
+					if (totalDigits > total) {
+						showError(input, `Max ${total} digits allowed`);
+					} else if (decPart.length > decimal) {
+						showError(input, `Max ${decimal} digits after decimal`);
+					} else {
+						clearError(input);
+					}
+				});
+			}
+		});
 
-});
+	});
 </script>
+<style>
+	#pageHeader {
+		position: sticky;
+		top: 110px;
+		z-index: 1050;
+		background: white;
+		padding-top: 10px;
+	}
 
+	#tabHeader {
+		position: sticky;
+		top: 5px;
+		/* just below page header */
+		z-index: 1040;
+		background: white;
+		padding: 5px 0;
+	}
+
+	#mainHeader {
+		position: sticky;
+		top: 0;
+		z-index: 9999;
+		background: white;
+	}
+</style>
 
 
 </html>
