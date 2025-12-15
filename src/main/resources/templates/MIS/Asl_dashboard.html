@@ -14,11 +14,14 @@
 		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+		
+		<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
 		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+		<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+			th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
 	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
 		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
 
@@ -32,6 +35,7 @@
 		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
 	<!-- Stylesheets -->
 	<link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
@@ -220,10 +224,10 @@
 			}
 
 			.role-page-title h4 {
-				color: #003366;
+				color: #212529;
 				font-family: "Segoe UI", Arial, sans-serif;
-				font-size: 20px;
-				font-weight: 700;
+				font-size: 26px;
+				font-weight: 500;
 				margin: 0;
 			}
 
@@ -461,15 +465,61 @@
 			max-height: calc(100vh - 205px);
 			overflow: auto;
 		}
-
-
-
-
 		.btn {
 			font-size: inherit !important;
 		}
-	</style>
+		
+		/* FORCE right alignment for DataTables body cells */
+				#usertable tbody td.text-end {
+					text-align: right !important;
+				}
 
+				/* Right align ONLY header columns 1, 6, 14 */
+				#usertable thead th:nth-child(6),
+				#usertable thead th:nth-child(7),
+				#usertable thead th:nth-child(8),
+				#usertable thead th:nth-child(9),
+				#usertable thead th:nth-child(10),
+				#usertable thead th:nth-child(11),
+				#usertable thead th:nth-child(12),
+				#usertable thead th:nth-child(13),
+				#usertable thead th:nth-child(14),
+				#usertable thead th:nth-child(15) {
+					text-align: right !important;
+				}
+				.table-container {
+				    width: 100%;
+				    overflow-x: auto;
+				}
+
+				
+
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
 	<script>
 		function final_sheet() {
 			var ReportDate = $("#ReportDate").val().trim();
@@ -608,26 +658,27 @@
 
 			}
 		}
-		$(document).ready(function () {
-			$('#usertable').DataTable({
-				scrollY: '400px',
-				scrollCollapse: true,   // Collapse table height when fewer rows
-				scrollX: true,
-				autoWidth: false,
-				paging: true,
-				searching: true,
-				lengthChange: false,
-				ordering: true,
-				pageLength: 10,
-				fixedHeader: true,
+		$('#usertable').DataTable({
+					scrollX: true,
+					autoWidth: false,
+					paging: true,
+					searching: true,
+					lengthChange: false,
+					ordering: false,
+					pageLength: 100,
+					fixedHeader: true,
+						   
+					// Layout: search (left) + pagination (right)
+					 dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+					columnDefs: [
+					        { targets: [2, 3, 4, 5, 6, 7, 8, 9, 10], className: 'text-end' } // right align columns
+					    ],
 
-				// 👇 Top row: search (left) + pagination (right)
-				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
-			});
-
-
-
-		});
+					// Optional: language tweak for better label
+					language: {
+						search: "Search:"
+					}
+				});
 		/*]]>*/
 	</script>
 
@@ -637,24 +688,14 @@
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 			<div class="col-sm-12">
-
-
 				<div th:if="${formmode}=='list'">
 					<div class="card">
-
-
-
-
-
-
-						<div class="role-page-header d-flex justify-content-between align-items-center">
+						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center">
 							<!-- Left: Page Title -->
 							<div class="role-page-title">
 								<h4>ASL - Final Sheet</h4></div>
-
-
 							<div class="form-inline">
 								<!-- Report Date Label + Input -->
 								<label for="reportDate" class="mr-2">Report Date:</label>
@@ -671,18 +712,14 @@
 							</div>
 						</div>
 
-
-
-
-
-
-
-
 						<div class="row">
 							<div class="col-sm-12">
 
-								<div class="table-container" style="padding: 0px 15px;">
-									<table class="table table-striped table-bordered table-hover" id="usertable">
+								<!--<div class="table-container" style="padding: 0px 15px;">
+									<table class="table table-striped table-bordered table-hover" id="usertable">-->
+										
+										<div class="table-container">
+										    <table class="table table-striped table-bordered table-hover" id="usertable">
 
 										<thead style="background-color: #e9ecf0; " class="thead-light">
 											<tr>
