@@ -42,6 +42,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,6 +76,8 @@ import com.bornfire.xbrl.entities.Counterparty_Entity;
 import com.bornfire.xbrl.entities.Counterparty_Rep;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
+import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY;
+import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
@@ -156,11 +159,15 @@ import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_SLSServices;
+import com.bornfire.xbrl.services.RT_SLS_BEHAVIOURAL_PER_SERVICES;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @ConfigurationProperties("default")
@@ -334,12 +341,15 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
-	
+
 	@Autowired
 	Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
-	
+
 	@Autowired
 	Capitaladequacyratio_rep Capitaladequacyratio_rep;
+
+	@Autowired
+	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
 
 	private String pagesize;
 
@@ -2976,17 +2986,17 @@ public class XBRLNavigationController {
 	public String Credit_risk_analysis(@RequestParam(required = false) String formmode, Model md,
 			@RequestParam(value = "Report_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,
 			HttpServletRequest req) {
-		
+
 		System.out.println("Initial Report date : " + Report_date);
-		
+
 		LocalDate today = LocalDate.now(); // Get today's date
-		
-		if(Report_date != null) {
+
+		if (Report_date != null) {
 			Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		}else {
+		} else {
 			Report_date = java.sql.Date.valueOf(today.minusDays(0));
 		}
-		
+
 		System.out.println("After validation Todaydate : " + Report_date);
 
 		if (formmode.equals("Portfolio_analysis")) {
@@ -3003,7 +3013,8 @@ public class XBRLNavigationController {
 
 				chart.setExposureperc(row[2] != null ? new BigDecimal(row[2].toString()) : BigDecimal.ZERO);
 
-				System.out.println("Classification > "+row[0]+ " and Exposure Balance > "+row[1] + " Exposure Perc > "+row[2]);
+				System.out.println("Classification > " + row[0] + " and Exposure Balance > " + row[1]
+						+ " Exposure Perc > " + row[2]);
 				chartList.add(chart); // ✔ IMPORTANT
 			}
 
@@ -3011,65 +3022,160 @@ public class XBRLNavigationController {
 			md.addAttribute("Analysistabledata", chartList);
 			md.addAttribute("formmode", "Portfolio_analysis");
 			md.addAttribute("menuname", "Total Portfolio Exposure");
-			
+
 		}
 
 		return "RT/RT_Credit_Risk_analysis.html";
 	}
-	
+
 	@RequestMapping(value = "CustomerGrp_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
 	public String CustomerGrp_Maintenance(@RequestParam(required = false) String formmode, Model md,
-			@RequestParam(value = "Group_id", required = false) String Group_id,
-			HttpServletRequest req) {
-		
-		if(formmode.equals("list")) {
-			
+			@RequestParam(value = "Group_id", required = false) String Group_id, HttpServletRequest req) {
+
+		if (formmode.equals("list")) {
+
 			List<Groupexp_cust_maintain_entity> Groupdetails = Groupexp_cust_maintain_rep.Getactivegroupdetails();
 			md.addAttribute("Groupdetails", Groupdetails);
 			md.addAttribute("formmode", "list");
 			md.addAttribute("menuname", "Group Exposure - list");
-		}else if (formmode.equals("add")) {
+		} else if (formmode.equals("add")) {
 			md.addAttribute("Groupdetail", new Groupexp_cust_maintain_entity());
-			md.addAttribute("formmode","add");
+			md.addAttribute("formmode", "add");
 			md.addAttribute("menuname", "Group Exposure - Add");
 			md.addAttribute("customerList", RT_RWA_Fund_base_data_rep.getcustomerdetail());
-		}else if(formmode.equals("edit")) {
-			md.addAttribute("formmode",formmode);
-			md.addAttribute("Groupdetail",  Groupexp_cust_maintain_rep.Getgroupdetails(Group_id));
+		} else if (formmode.equals("edit")) {
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("Groupdetail", Groupexp_cust_maintain_rep.Getgroupdetails(Group_id));
 			md.addAttribute("customerList", RT_RWA_Fund_base_data_rep.getcustomerdetail());
 			md.addAttribute("menuname", "Group Exposure - Modify");
 		}
-		
+
 		return "RT/RT_Cust_group_exposure.html";
 	}
-	
-	
+
 	public static String normalizeDate(String input) {
-	    DateTimeFormatter targetFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter targetFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	    // already in correct format?
-	    try {
-	        LocalDate.parse(input, targetFormat);
-	        return input; // return as-is
-	    } catch (Exception ignore) {}
+		// already in correct format?
+		try {
+			LocalDate.parse(input, targetFormat);
+			return input; // return as-is
+		} catch (Exception ignore) {
+		}
 
-	    // try other known formats
-	    DateTimeFormatter[] formats = {
-	        DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-	        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
-	        DateTimeFormatter.ofPattern("dd-MM-yyyy"),
-	        DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH) // Tue Sep 30 00:00:00 GST 2025
-	    };
+		// try other known formats
+		DateTimeFormatter[] formats = { DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+				DateTimeFormatter.ofPattern("MM-dd-yyyy"), DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+				DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH) // Tue Sep 30 00:00:00 GST
+																							// 2025
+		};
 
-	    for (DateTimeFormatter f : formats) {
-	        try {
-	            LocalDate date = LocalDate.parse(input, f);
-	            return date.format(targetFormat); // convert to yyyy-MM-dd
-	        } catch (Exception ignore) {}
-	    }
+		for (DateTimeFormatter f : formats) {
+			try {
+				LocalDate date = LocalDate.parse(input, f);
+				return date.format(targetFormat); // convert to yyyy-MM-dd
+			} catch (Exception ignore) {
+			}
+		}
 
-	    throw new IllegalArgumentException("Invalid date format: " + input);
+		throw new IllegalArgumentException("Invalid date format: " + input);
 	}
 
+	@Autowired
+	private RT_SLS_BEHAVIOURAL_PER_SERVICES rtSlsService;
 
+	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
+	public String getUploadPage(Model model, HttpServletRequest request) {
+		logger.info("Accessing SLS Behavioural Scorecard Upload Page");
+		return "RT_SLS_Upload";
+	}
+
+	@RequestMapping(value = "rt-sls/uploadFile", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("reportDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate,
+			HttpServletRequest request) {
+
+		String username = (String) request.getSession().getAttribute("USERNAME");
+		if (username == null)
+			username = "SYSTEM";
+
+		logger.info("Initiating SLS File Upload. User: {}, Date: {}", username, reportDate);
+
+		try {
+			if (file.isEmpty()) {
+				logger.warn("Upload failed: File is empty");
+				return ResponseEntity.badRequest().body("Please select a valid file.");
+			}
+
+			rtSlsService.processAndSaveFile(file, reportDate, username);
+
+			logger.info("SLS File processed and saved successfully");
+			return ResponseEntity.ok("File uploaded and data saved successfully!");
+		} catch (Exception e) {
+			logger.error("Exception during SLS File Upload", e);
+			return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+		}
+	}
+
+	@RequestMapping(value = "rt-sls/downloadTemplate", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadTemplate() {
+		logger.info("Generating dynamic SLS Excel Template");
+
+		try {
+			byte[] excelContent = rtSlsService.generateSlsTemplate();
+			ByteArrayResource resource = new ByteArrayResource(excelContent);
+
+			return ResponseEntity.ok()
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"SLS_Scorecard_Template.xlsx\"")
+					.body(resource);
+
+		} catch (Exception e) {
+			logger.error("Error generating template", e);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@RequestMapping(value = "/saveDetails", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveDetails(@RequestParam("adhocDetailsJson") String json, 
+	                          @RequestParam("srlNo") String srlNo,
+	                          @RequestParam("bankName") String bankName,
+	                          HttpServletRequest request) {
+	    try {
+	        // Retrieve User ID from session (Ensure attribute name matches your login logic)
+	        String userId = (String) request.getSession().getAttribute("USER_ID");
+	        if (userId == null) userId = "SYSTEM";
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        
+	        // Convert JSON string from AJAX into Entity List
+	        List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> details = mapper.readValue(json, 
+	                new TypeReference<List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY>>(){});
+
+	        if (details != null && !details.isEmpty()) {
+	            for (MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY detail : details) {
+	                // Link to the Master record
+	                detail.setSrlNo(srlNo);
+	                detail.setCounterPartyBank(bankName);
+	                
+	                // Set Audit and Status fields
+	                detail.setCreateUser(userId);
+	                detail.setCreateTime(new Date());
+	                detail.setEntityFlg("N");
+	                detail.setModifyFlg("N");
+	                detail.setDelFlg("N");
+
+	                // Save to MIS_COUNTER_PARTY_LIMIT_DETAILS table
+	                misCounterPartyLimitDetailsRepo.save(detail);
+	            }
+	        }
+	        return "Details Saved Successfully";
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Error saving Details: " + e.getMessage();
+	    }
+	}
 }

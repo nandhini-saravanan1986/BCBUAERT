@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>RiskInsights | Data Ingestion</title>
+
+	<!-- CSS DEPENDENCIES -->
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+
+	<!-- JS DEPENDENCIES -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<style>
+		body {
+			font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+			font-size: 14px;
+			background-color: #f0f2f5;
+		}
+
+		/* Professional Card Styling */
+		.card {
+			border: none;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+			margin-top: 2rem;
+		}
+
+		.card-header-professional {
+			background-color: #004085;
+			/* Corporate Blue */
+			color: white;
+			padding: 15px 25px;
+			border-radius: 8px 8px 0 0;
+			font-weight: 600;
+			font-size: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.card-body {
+			padding: 40px;
+			background-color: #ffffff;
+			border-radius: 0 0 8px 8px;
+		}
+
+		/* Form Label Styling */
+		.col-form-label {
+			color: #495057;
+			font-weight: 600;
+		}
+
+		.form-text {
+			font-size: 12px;
+		}
+
+		/* Buttons */
+		.btn-corporate {
+			background-color: #0056b3;
+			border-color: #0056b3;
+			color: white;
+		}
+
+		.btn-corporate:hover {
+			background-color: #004494;
+			border-color: #004494;
+			color: white;
+		}
+
+		.btn-download-template {
+			background-color: transparent;
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			color: white;
+			font-size: 13px;
+			padding: 6px 12px;
+			border-radius: 4px;
+			transition: all 0.3s;
+		}
+
+		.btn-download-template:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			color: white;
+			text-decoration: none;
+			border-color: white;
+		}
+
+		.custom-file-label::after {
+			content: "Browse";
+			background-color: #e9ecef;
+		}
+
+		/* Loader */
+		.loader-overlay {
+			display: none;
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		.loader-text {
+			color: #004085;
+			font-weight: 600;
+			margin-top: 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-md-9 col-lg-7">
+
+				<div class="card">
+					<div class="card-header-professional">
+						<div>
+							<i class="fas fa-file-import mr-2"></i>
+							<span>Regulatory Data Ingestion</span>
+						</div>
+						<button type="button" class="btn btn-download-template" onclick="downloadTemplate()">
+							<i class="fas fa-download mr-1"></i> Download Format
+						</button>
+					</div>
+
+					<div class="card-body">
+						<form id="uploadForm" enctype="multipart/form-data">
+
+							<!-- 1. Report Selection -->
+							<div class="form-group row">
+								<label for="reportId" class="col-sm-4 col-form-label text-right">Regulatory
+									Return</label>
+								<div class="col-sm-8">
+									<select class="form-control" id="reportId" name="reportType"
+										onchange="updateFormatOptions()" required>
+										<option value="" selected disabled>-- Select Return --</option>
+										<option value="SLS">SLS - Structural Liquidity Statement</option>
+										<option value="LCR">LCR - Liquidity Coverage Ratio</option>
+										<option value="NSFR">NSFR - Net Stable Funding Ratio</option>
+										<option value="ALE">ALE - Asset Liability Exposure</option>
+									</select>
+								</div>
+							</div>
+
+							<!-- 2. Submission Format -->
+							<div class="form-group row">
+								<label for="submissionFormat" class="col-sm-4 col-form-label text-right">Submission
+									Format</label>
+								<div class="col-sm-8">
+									<select class="form-control" id="submissionFormat" name="fileFormat"
+										onchange="updateFileConstraints()" required>
+										<option value="" selected disabled>-- Select Format --</option>
+										<!-- Options populated by JS based on Report selection -->
+									</select>
+								</div>
+							</div>
+
+							<!-- 3. Reporting Period -->
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label text-right">Reporting Period</label>
+								<div class="col-sm-4">
+									<label class="sr-only" for="fromDate">From</label>
+									<input type="date" class="form-control" id="fromDate" name="fromDate"
+										title="Period Start Date" required>
+									<small class="form-text text-muted">Start Date</small>
+								</div>
+								<div class="col-sm-4">
+									<label class="sr-only" for="toDate">To</label>
+									<input type="date" class="form-control" id="toDate" name="toDate"
+										title="Reference Date" required>
+									<small class="form-text text-muted">Reference Date (Report Date)</small>
+								</div>
+							</div>
+
+							<!-- 4. File Attachment -->
+							<div class="form-group row mt-4 border-top pt-4">
+								<label for="fileInput" class="col-sm-4 col-form-label text-right">Source File</label>
+								<div class="col-sm-8">
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="fileInput" name="file"
+											required>
+										<label class="custom-file-label" for="fileInput">Choose file...</label>
+									</div>
+									<small class="form-text text-muted" id="fileConstraints">Supported formats: Select
+										Format first</small>
+								</div>
+							</div>
+
+							<div class="row mt-4">
+								<div class="col-12 text-right">
+									<button type="button" class="btn btn-secondary mr-2"
+										onclick="window.location.href='/Dashboard'">
+										<i class="fas fa-times mr-1"></i> Cancel
+									</button>
+									<button type="button" class="btn btn-corporate" onclick="submitIngestion()">
+										<i class="fas fa-upload mr-1"></i> Upload Data
+									</button>
+								</div>
+							</div>
+						</form>
+
+						<!-- Loader Status -->
+						<div id="loader" class="loader-overlay">
+							<div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+								<span class="sr-only">Loading...</span>
+							</div>
+							<p class="loader-text">Processing data submission...</p>
+						</div>
+
+						<!-- Feedback Area -->
+						<div id="uploadResult" class="mt-3"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Notification Modal -->
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header bg-warning text-white">
+					<h5 class="modal-title"><i class="fas fa-exclamation-circle"></i> Validation Alert</h5>
+					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body font-weight-bold" id="alertMsg"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function () {
+			// Update filename label
+			$(".custom-file-input").on("change", function () {
+				var fileName = $(this).val().split("\\").pop();
+				$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+			});
+
+			// Date Logic: Auto-validate
+			$("#toDate, #fromDate").change(function () {
+				var from = $("#fromDate").val();
+				var to = $("#toDate").val();
+				if (from && to && from > to) {
+					$("#alertMsg").text("Start Date cannot be greater than Reference Date.");
+					$("#alertModal").modal('show');
+					$(this).val("");
+				}
+			});
+		});
+
+		// 1. Dynamic Dropdown Logic
+		function updateFormatOptions() {
+			var report = $("#reportId").val();
+			var formatSelect = $("#submissionFormat");
+			formatSelect.empty();
+			formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
+
+			// Define allowed formats per report
+			if (report === "SLS") {
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
+			} else if (report === "LCR" || report === "NSFR") {
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+				formatSelect.append('<option value="XML">XML Data (.xml)</option>');
+			} else {
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+			}
+
+			// Reset file input
+			$("#fileInput").val("");
+			$(".custom-file-label").html("Choose file...");
+			$("#fileConstraints").text("Supported formats: Select Format first");
+		}
+
+		// 2. Dynamic File Constraints
+		function updateFileConstraints() {
+			var format = $("#submissionFormat").val();
+			var input = $("#fileInput");
+			var help = $("#fileConstraints");
+
+			input.val("");
+			$(".custom-file-label").html("Choose file...");
+
+			if (format === "EXCEL") {
+				input.attr("accept", ".xlsx, .xls");
+				help.text("Allowed extensions: .xlsx, .xls");
+			} else if (format === "TEXT") {
+				input.attr("accept", ".txt, .csv, .dat");
+				help.text("Allowed extensions: .txt, .csv, .dat");
+			} else if (format === "XML") {
+				input.attr("accept", ".xml");
+				help.text("Allowed extensions: .xml");
+			}
+		}
+
+		// 3. Download Logic
+		function downloadTemplate() {
+			var report = $("#reportId").val();
+			var format = $("#submissionFormat").val();
+
+			if (!report || !format) {
+				$("#alertMsg").text("Please select a Regulatory Return and Submission Format first.");
+				$("#alertModal").modal('show');
+				return;
+			}
+
+			window.location.href = "upload/downloadCommonTemplate?reportType=" + report + "&fileFormat=" + format;
+		}
+
+		// 4. Submission Logic
+		function submitIngestion() {
+			var form = $('#uploadForm')[0];
+			var data = new FormData(form);
+			var format = $("#submissionFormat").val();
+			var fileVal = $('#fileInput').val().toLowerCase();
+
+			// Validate Fields
+			if (!$("#reportId").val() || !format || !$("#fromDate").val() || !$("#toDate").val() || !fileVal) {
+				$("#alertMsg").text("All fields are mandatory. Please complete the form.");
+				$("#alertModal").modal('show');
+				return;
+			}
+
+			// Validate Extension
+			var isValid = false;
+			if (format === "EXCEL" && (fileVal.endsWith(".xlsx") || fileVal.endsWith(".xls"))) isValid = true;
+			else if (format === "TEXT" && (fileVal.endsWith(".txt") || fileVal.endsWith(".csv"))) isValid = true;
+			else if (format === "XML" && fileVal.endsWith(".xml")) isValid = true;
+
+			if (!isValid) {
+				$("#alertMsg").text("File extension does not match selected Submission Format.");
+				$("#alertModal").modal('show');
+				return;
+			}
+
+			// UI Updates
+			$('#uploadResult').html("");
+			$('#loader').show();
+			$(".btn-corporate").prop("disabled", true);
+
+			// AJAX Upload
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "upload/commonUploadFile",
+				data: data,
+				processData: false,
+				contentType: false,
+				cache: false,
+				timeout: 600000,
+				success: function (response) {
+					$('#loader').hide();
+					$(".btn-corporate").prop("disabled", false);
+					$('#uploadResult').html('<div class="alert alert-success shadow-sm"><i class="fas fa-check-circle mr-2"></i>' + response + '</div>');
+					$('#uploadForm')[0].reset();
+					$(".custom-file-label").html("Choose file...");
+				},
+				error: function (e) {
+					$('#loader').hide();
+					$(".btn-corporate").prop("disabled", false);
+					var msg = e.responseText || "System encountered an error during processing.";
+					$('#uploadResult').html('<div class="alert alert-danger shadow-sm"><i class="fas fa-exclamation-triangle mr-2"></i>' + msg + '</div>');
+				}
+			});
+		}
+	</script>
+
+</body>
+
+</html>

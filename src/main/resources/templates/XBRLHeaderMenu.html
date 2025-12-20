@@ -9,7 +9,7 @@
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
-	
+
 
 	<style>
 		/* ===============================
@@ -30,7 +30,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			background:transparent linear-gradient(90deg,#f26522 0%,#fe8639 100%) 0% 0% no-repeat padding-box;
+			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
 			height: 60px;
 			position: sticky;
 			top: 0;
@@ -155,7 +155,7 @@
 
 		/* Top-level hover effect */
 		.menu>li>a:hover {
-			background:transparent linear-gradient(90deg,#f26522 0%,#fe8639 100%) 0% 0% no-repeat padding-box;
+			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
 			color: #ffffff;
 			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);
 			transform: translateY(-2px);
@@ -275,7 +275,8 @@
 		<div class="menu-scroll-wrapper">
 			<ul class="menu" id="mainMenu">
 
-				<li><a th:href="@{/Dashboard}" onclick="showLoader()"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+				<li><a th:href="@{/Dashboard}" onclick="showLoader()"><i class="fa fa-home" aria-hidden="true"></i>
+						Home</a></li>
 
 				<li>
 					<a href="#"> <i class="fa fa-users" aria-hidden="true"></i> Admin</a>
@@ -287,7 +288,8 @@
 							<a th:href="@{/AccessandRoles}" onclick="showLoader()">Access and Roles</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-CustgrpMain')}">
-							<a th:href="@{/CustomerGrp_Maintenance?formmode=list}" onclick="showLoader()">Customer Group Maintenance</a>
+							<a th:href="@{/CustomerGrp_Maintenance?formmode=list}" onclick="showLoader()">Customer Group
+								Maintenance</a>
 						</li>
 					</ul>
 				</li>
@@ -387,33 +389,44 @@
 						</li>
 					</ul>
 				</li>
-				
+
 				<li>
 					<a href="#"> <i class="fa fa-bar-chart" aria-hidden="true"></i> Credit Risk</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
-							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}" onclick="showLoader()">Portfolio Analysis Report</a>
+							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}" onclick="showLoader()">Portfolio
+								Analysis Report</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_Bnk_expo')}">
-							<a th:href="@{/Credit_risk?formmode=Top_Bank_Exposure}" onclick="showLoader()">Bank Top Exposure's</a>
+							<a th:href="@{/Credit_risk?formmode=Top_Bank_Exposure}" onclick="showLoader()">Bank Top
+								Exposure's</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_cust_expo')}">
-							<a th:href="@{/Credit_risk?formmode=Top_customer_Exposure}" onclick="showLoader()">Customer Top Exposure</a>
+							<a th:href="@{/Credit_risk?formmode=Top_customer_Exposure}" onclick="showLoader()">Customer
+								Top Exposure</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Deposit')}">
 							<a th:href="@{/Credit_risk?formmode=Deposits}" onclick="showLoader()">Deposits </a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Conc_Risk')}">
-							<a th:href="@{/Credit_risk?formmode=Concentration_Risk}" onclick="showLoader()">Concentration Risk</a>
+							<a th:href="@{/Credit_risk?formmode=Concentration_Risk}"
+								onclick="showLoader()">Concentration Risk</a>
 						</li>
 					</ul>
 				</li>
-				
+
+
+
 				<li>
 					<a href="#"><i class="fa fa-exclamation-triangle"></i>Unplanned</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
 							<a th:href="@{/RT}" onclick="showLoader()">SLS</a>
+						</li>
+						<li>
+							<a th:href="@{/SLSUPLOAD}" onclick="showLoader()"> <i class="fa fa-upload"
+									aria-hidden="true"></i>
+								File Upload</a>
 						</li>
 					</ul>
 				</li>
