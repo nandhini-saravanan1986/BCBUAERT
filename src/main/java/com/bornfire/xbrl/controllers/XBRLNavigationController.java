@@ -104,6 +104,10 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
+import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
+import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
 import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_Template;
@@ -147,6 +151,7 @@ import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
+import com.bornfire.xbrl.services.RT_IRSService;
 import com.bornfire.xbrl.services.RT_ImpactAnalysisService;
 import com.bornfire.xbrl.services.RT_InvestmentRiskDataDashboard_Service;
 import com.bornfire.xbrl.services.RT_InvestmentSecurity_Service;
@@ -180,6 +185,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_SLSServices RT_SLSServices;
+	
+	@Autowired
+    RT_IRSService rtIrsService;
 
 	@Autowired
 	RT_SLS_Detail_Repository rt_sls_detail_repository;
@@ -347,6 +355,12 @@ public class XBRLNavigationController {
 
 	@Autowired
 	Capitaladequacyratio_rep Capitaladequacyratio_rep;
+	
+	@Autowired
+	RT_IRS_REPOSITORY RT_irs_repository;
+	
+	@Autowired
+	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
 
 	@Autowired
 	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
@@ -2804,6 +2818,13 @@ public class XBRLNavigationController {
 		md.addAttribute("slslist", slslist);
 		return "RT/RT_SLS";
 	}
+	
+	@RequestMapping(value = "IRS", method = { RequestMethod.GET, RequestMethod.POST })
+	public String IRS(Model md, HttpServletRequest req) {
+		List<RT_IRS_ENTITY> irsList = RT_irs_repository.rtirslist();
+		md.addAttribute("irsList", irsList);
+		return "RT/RT_IRS";
+	}
 
 	@RequestMapping(value = "SLSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
 	public String SLSREPORT(@RequestParam(required = false) String currency,
@@ -2871,6 +2892,43 @@ public class XBRLNavigationController {
 		return "RT/RT_SLSREPORT";
 	}
 
+	@RequestMapping(value = "IRSREPORT", method = RequestMethod.GET)
+	public String RT_IRSREPORT(
+	        @RequestParam String reportdate,
+	        @RequestParam String currency,
+	        @RequestParam(defaultValue = "summary") String formmode,
+	        Model md) {
+
+	    Date reportDateFor = null;
+	    try {
+	        reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
+	    } catch (Exception e) {
+	        md.addAttribute("error", "Invalid date format");
+	        return "RT/RT_IRS";
+	    }
+
+	    List<RT_IRS_ENTITY> irslist =
+	            RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+
+	    List<RT_IRS_ENTITY2> irsList2 =
+	    		RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+	    
+	    List<RT_IRS_ENTITY> currencyList =
+	            RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
+
+	    md.addAttribute("irslist", irslist);
+	    md.addAttribute("irsList2", irsList2);
+	    md.addAttribute("currencylist", currencyList);
+	    md.addAttribute("currency", currency);
+	    md.addAttribute("reportdate", reportdate);
+	    md.addAttribute("formmode", "summary");
+
+	    return "RT/RT_IRSREPORT";
+	}
+
+
+
+
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
@@ -2894,6 +2952,9 @@ public class XBRLNavigationController {
 			if (type.equals("summary")) {
 				excelData = RT_SLSServices.getSlsExcel(filename, reportdate, currency, version);
 			}
+			if (type.equals("summary")) {
+	            excelData = rtIrsService.getIrsExcel(filename, reportdate, currency, version);
+	        }
 
 			if (excelData == null || excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
