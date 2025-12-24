@@ -157,7 +157,7 @@ public class counter_services {
 					old.setModifyUser(userid);
 					old.setEarmarkinglimit(as.getEarmarkinglimit());
 					old.setEarmarkingdate(as.getEarmarkingdate());
-
+					old.setCountryRating(as.getCountryRating());
 					System.out.println("as.getEarmarkinglimit=" + as.getEarmarkinglimit());
 
 					hs.update(old);

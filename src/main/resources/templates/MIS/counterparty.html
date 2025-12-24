@@ -718,23 +718,27 @@
 		}
 
 		// Detect mouse near screen edges
+		// Detect mouse near screen edges with protection against null elements
 		document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
 			const screenWidth = window.innerWidth;
 
-			// Left edge (back)
-			if (e.clientX < 50) {
-				backBtn.classList.add('show');
-			} else {
-				backBtn.classList.remove('show');
-			}
+			// Only run logic if buttons actually exist on the current page
+			if (backBtn && forwardBtn) {
+				// Left edge (back)
+				if (e.clientX < 50) {
+					backBtn.classList.add('show');
+				} else {
+					backBtn.classList.remove('show');
+				}
 
-			// Right edge (forward)
-			if (screenWidth - e.clientX < 50) {
-				forwardBtn.classList.add('show');
-			} else {
-				forwardBtn.classList.remove('show');
+				// Right edge (forward)
+				if (screenWidth - e.clientX < 50) {
+					forwardBtn.classList.add('show');
+				} else {
+					forwardBtn.classList.remove('show');
+				}
 			}
 		});
 	</script>
@@ -794,11 +798,11 @@
 				$("#counterPartyBank").focus();
 				return;
 			}
-			<!--if (expiryDate === "") {
+			/*if (expiryDate === "") {
 				alert("Please enter Expiry Date.");
 				$("#expiryDate").focus();
 				return;
-			}-->
+			}*/
 			if (rating === "") {
 				alert("Please enter Rating .");
 				$("#rating").focus();
@@ -954,26 +958,25 @@
 		}
 	</style>
 	<script>
-		$('#usertable').DataTable({
-			scrollX: false,
-			autoWidth: false,
-			paging: true,
-			searching: true,
-			lengthChange: false,
-			ordering: false,
-			pageLength: 50,
-			fixedHeader: true,
-
-			// Layout: search (left) + pagination (right)
-			dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
-
-
-			// Optional: language tweak for better label
-			language: {
-				search: "Search:"
+		$(document).ready(function () {
+			if ($.fn.DataTable.isDataTable('#usertable')) {
+				$('#usertable').DataTable().destroy();
 			}
-		});
 
+			$('#usertable').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": true,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false,
+				"pageLength": 10,
+				"language": {
+					"search": "Search Table:"
+				},
+				"dom": '<"top"f>rt<"bottom"ip><"clear">' // Search top right, pagination bottom
+			});
+		});
 	</script>
 
 
@@ -1050,11 +1053,11 @@
 				$("#counterPartyBank").focus();
 				return;
 			}
-			<!--if (expiryDate === "") {
+			/*if (expiryDate === "") {
 				alert("Please enter Expiry Date.");
 				$("#expiryDate").focus();
 				return;
-			}-->
+			}*/
 			if (rating === "") {
 				alert("Please enter Rating .");
 				$("#rating").focus();
@@ -1102,121 +1105,121 @@
 	</script>
 
 	<script th:inline="javascript">
-	/*<![CDATA[*/
+		/*<![CDATA[*/
 
-	// Global flag to prevent duplicate loading in modal
-	var isAdhocDataLoaded = false;
+		// Global flag to prevent duplicate loading in modal
+		var isAdhocDataLoaded = false;
 
-	// 1. MAIN SUBMIT FUNCTION (ADD MODE)
-	function submitform() {
-	    if (!validateMainForm()) return;
+		// 1. MAIN SUBMIT FUNCTION (ADD MODE)
+		function submitform() {
+			if (!validateMainForm()) return;
 
-	    var formData = $("#counterpartys").serialize();
-	    $.ajax({
-	        url: "./Addcounter",
-	        type: "POST",
-	        data: formData,
-	        success: function (response) {
-	            // After master is saved, save the modal details
-	            saveDetailsSequentially();
-	            $("#alertmsg").text(response);
-	            $('#alert').modal("show");
-	        },
-	        error: function (xhr) {
-	            alert("Error saving master record: " + xhr.statusText);
-	        }
-	    });
-	}
+			var formData = $("#counterpartys").serialize();
+			$.ajax({
+				url: "./Addcounter",
+				type: "POST",
+				data: formData,
+				success: function (response) {
+					// After master is saved, save the modal details
+					saveDetailsSequentially();
+					$("#alertmsg").text(response);
+					$('#alert').modal("show");
+				},
+				error: function (xhr) {
+					alert("Error saving master record: " + xhr.statusText);
+				}
+			});
+		}
 
-	// 2. MAIN MODIFY FUNCTION (EDIT MODE)
-	function modify() {
-	    if (!validateMainForm()) return;
+		// 2. MAIN MODIFY FUNCTION (EDIT MODE)
+		function modify() {
+			if (!validateMainForm()) return;
 
-	    var formData = $("#counterpartys").serialize();
-	    $.ajax({
-	        url: "./Addcounter?formmode=edit",
-	        type: "POST",
-	        data: formData,
-	        success: function (response) {
-	            saveDetailsSequentially();
-	            $("#alertmsg").text(response);
-	            $('#alert').modal("show");
-	        },
-	        error: function (xhr) {
-	            alert("Error modifying record: " + xhr.statusText);
-	        }
-	    });
-	}
+			var formData = $("#counterpartys").serialize();
+			$.ajax({
+				url: "./Addcounter?formmode=edit",
+				type: "POST",
+				data: formData,
+				success: function (response) {
+					saveDetailsSequentially();
+					$("#alertmsg").text(response);
+					$('#alert').modal("show");
+				},
+				error: function (xhr) {
+					alert("Error modifying record: " + xhr.statusText);
+				}
+			});
+		}
 
-	// 3. VALIDATION HELPER
-	function validateMainForm() {
-	    var bankCode = $("#counterPartyBankCode").val().trim();
-	    var bankName = $("#counterPartyBank").val().trim();
-	    var country = $("#location").val().trim();
-	    var rating = $("#rating").val().trim();
-	    var adhocExp = $("#Adhoc_Limit_exp_date").val();
+		// 3. VALIDATION HELPER
+		function validateMainForm() {
+			var bankCode = $("#counterPartyBankCode").val().trim();
+			var bankName = $("#counterPartyBank").val().trim();
+			var country = $("#location").val().trim();
+			var rating = $("#rating").val().trim();
+			var adhocExp = $("#Adhoc_Limit_exp_date").val();
 
-	    if (bankCode === "") { alert("Please enter Bank Code."); return false; }
-	    if (bankName === "") { alert("Please enter Bank Name."); return false; }
-	    if (country === "") { alert("Please enter Country."); return false; }
-	    if (rating === "") { alert("Please enter Rating."); return false; }
-	    if (adhocExp === "") { alert("Please enter Adhoc Limit Expiry Date."); return false; }
-	    return true;
-	}
+			if (bankCode === "") {alert("Please enter Bank Code."); return false;}
+			if (bankName === "") {alert("Please enter Bank Name."); return false;}
+			if (country === "") {alert("Please enter Country."); return false;}
+			if (rating === "") {alert("Please enter Rating."); return false;}
+			if (adhocExp === "") {alert("Please enter Adhoc Limit Expiry Date."); return false;}
+			return true;
+		}
 
-	// 4. MODAL LOGIC
-	function openAdhocModal() {
-	    var bankCode = $("#counterPartyBankCode").val();
-	    var srlNo = $("#srlNo").val();
-	    var formmode = /*[[${formmode}]]*/ 'add';
+		// 4. MODAL LOGIC
+		function openAdhocModal() {
+			var bankCode = $("#counterPartyBankCode").val();
+			var srlNo = $("#srlNo").val();
+			var formmode = /*[[${formmode}]]*/ 'add';
 
-	    if (!bankCode) {
-	        alert("Please enter CounterParty Bank Code first.");
-	        return;
-	    }
+			if (!bankCode) {
+				alert("Please enter CounterParty Bank Code first.");
+				return;
+			}
 
-	    $('#adhocDetailModal').modal('show');
+			$('#adhocDetailModal').modal('show');
 
-	    if (!isAdhocDataLoaded) {
-	        if (formmode === 'edit' || formmode === 'view') {
-	            $.ajax({
-	                url: "./getAdhocDetails",
-	                type: "GET",
-	                data: { srlNo: srlNo },
-	                success: function (data) {
-	                    $("#adhocDetailTable tbody").empty();
-	                    if (data && data.length > 0) {
-	                        data.forEach(item => addAdhocDetailRow(item));
-	                        calculateAdhocSum();
-	                    } else {
-	                        addAdhocDetailRow();
-	                    }
-	                    isAdhocDataLoaded = true;
-	                }
-	            });
-	        } else {
-	            if ($("#adhocDetailTable tbody tr").length === 0) {
-	                addAdhocDetailRow();
-	            }
-	            isAdhocDataLoaded = true;
-	        }
-	    }
-	}
+			if (!isAdhocDataLoaded) {
+				if (formmode === 'edit' || formmode === 'view') {
+					$.ajax({
+						url: "./getAdhocDetails",
+						type: "GET",
+						data: {srlNo: srlNo},
+						success: function (data) {
+							$("#adhocDetailTable tbody").empty();
+							if (data && data.length > 0) {
+								data.forEach(item => addAdhocDetailRow(item));
+								calculateAdhocSum();
+							} else {
+								addAdhocDetailRow();
+							}
+							isAdhocDataLoaded = true;
+						}
+					});
+				} else {
+					if ($("#adhocDetailTable tbody tr").length === 0) {
+						addAdhocDetailRow();
+					}
+					isAdhocDataLoaded = true;
+				}
+			}
+		}
 
-	function addAdhocDetailRow(data = null) {
-	    var bankCode = $("#counterPartyBankCode").val();
-	    var today = new Date().toISOString().split('T')[0];
+		function addAdhocDetailRow(data = null) {
+			var bankCode = $("#counterPartyBankCode").val();
+			var today = new Date().toISOString().split('T')[0];
 
-	    var limitType = data ? data.limit_type : "Credit Limit";
-	    var adhocAmt = data ? data.adhocLimit : 0;
-	    var adhocDate = data ? formatDate(data.adhocLimitDate) : today;
-	    var expDate = data ? formatDate(data.adhocLimitExpDate) : today;
-	    var earLimit = data ? data.earMarkingLimit : 0;
-	    var earDate = data ? formatDate(data.earMarkingDate) : today;
-	    var refNo = data ? data.referenceNo : "";
-	    var rollOverVal = data ? data.rollOver : "No";
+			var limitType = data ? data.limit_type : "Credit Limit";
+			var adhocAmt = data ? data.adhocLimit : 0;
+			var adhocDate = data ? formatDate(data.adhocLimitDate) : today;
+			var expDate = data ? formatDate(data.adhocLimitExpDate) : today;
+			var earLimit = data ? data.earMarkingLimit : 0;
+			var earDate = data ? formatDate(data.earMarkingDate) : today;
+			var refNo = data ? data.referenceNo : "";
+			var rollOverVal = data ? data.rollOver : "No";
 
-	    var row = `<tr>
+			var row = `<tr>
 	        <td><input type="text" class="form-control form-control-sm d-bank" value="${bankCode}" readonly></td>
 	        <td>
 	            <select class="form-control form-control-sm d-limit-type">
@@ -1237,67 +1240,104 @@
 	            </select>
 	        </td>
 	    </tr>`;
-	    $("#adhocDetailTable tbody").append(row);
-	}
+			$("#adhocDetailTable tbody").append(row);
+		}
 
-	function validateAdhocDate(input) {
-	    var today = new Date().toISOString().split('T')[0];
-	    if (input.value < today) {
-	        alert("Expiry Date cannot be less than the current date.");
-	        input.value = today;
-	    }
-	}
+		function validateAdhocDate(input) {
+			var today = new Date();
+			var dd = String(today.getDate()).padStart(2, '0');
+			var mm = String(today.getMonth() + 1).padStart(2, '0');
+			var yyyy = today.getFullYear();
+			var todayStr = yyyy + '-' + mm + '-' + dd;
 
-	function calculateAdhocSum() {
-	    var total = 0;
-	    $(".d-limit").each(function () {
-	        var val = parseFloat($(this).val()) || 0;
-	        total += val;
-	    });
-	    $("#adhocRunningTotal").text(total.toFixed(2));
-	    $("#adhocLimit").val(total.toFixed(2));
-	}
+			// Calculate one year from now
+			var nextYear = new Date();
+			nextYear.setFullYear(today.getFullYear() + 1);
+			var yyyyNext = nextYear.getFullYear();
+			var mmNext = String(nextYear.getMonth() + 1).padStart(2, '0');
+			var ddNext = String(nextYear.getDate()).padStart(2, '0');
+			var maxDateStr = yyyyNext + '-' + mmNext + '-' + ddNext;
 
-	function confirmAdhocDetails() {
-	    calculateAdhocSum();
-	    $('#adhocDetailModal').modal('hide');
-	}
+			if (input.value < todayStr) {
+				alert("Expiry Date cannot be less than the current date.");
+				input.value = todayStr;
+			} else if (input.value > maxDateStr) {
+				alert("Expiry Date cannot be more than one year from today (" + maxDateStr + ").");
+				input.value = maxDateStr;
+			}
+		}
 
-	function saveDetailsSequentially() {
-	    var adhocDetails = [];
-	    $("#adhocDetailTable tbody tr").each(function() {
-	        var row = $(this);
-	        adhocDetails.push({
-	            limit_type: row.find(".d-limit-type").val(),
-	            adhocLimit: row.find(".d-limit").val(),
-	            adhocLimitDate: row.find(".d-date").val(),
-	            adhocLimitExpDate: row.find(".d-exp").val(),
-	            earMarkingLimit: row.find(".d-ear-limit").val(),
-	            earMarkingDate: row.find(".d-ear-date").val(),
-	            referenceNo: row.find(".d-ref").val(),
-	            rollOver: row.find(".d-roll").val()
-	        });
-	    });
+		function calculateAdhocSum() {
+			var total = 0;
+			$(".d-limit").each(function () {
+				var val = parseFloat($(this).val()) || 0;
+				total += val;
+			});
+			$("#adhocRunningTotal").text(total.toFixed(2));
+			$("#adhocLimit").val(total.toFixed(2));
+		}
 
-	    $.ajax({
-	        url: "./saveDetailsRecord",
-	        type: "POST",
-	        data: {
-	            adhocDetailsJson: JSON.stringify(adhocDetails),
-	            srlNo: $("#srlNo").val(),
-	            bankName: $("#counterPartyBank").val()
-	        },
-	        success: function(res) { console.log("Adhoc Details saved"); }
-	    });
-	}
+		function confirmAdhocDetails() {
+			var totalAdhoc = 0;
+			var totalCreditLimit = 0;
+			var totalSettlementLimit = 0;
 
-	function formatDate(dateString) {
-	    if (!dateString) return new Date().toISOString().split('T')[0];
-	    var d = new Date(dateString);
-	    return d.toISOString().split('T')[0];
-	}
+			$("#adhocDetailTable tbody tr").each(function () {
+				var limitType = $(this).find(".d-limit-type").val();
+				var limitVal = parseFloat($(this).find(".d-limit").val()) || 0;
 
-	/*]]>*/
+				totalAdhoc += limitVal;
+
+				if (limitType === "Credit Limit") {
+					totalCreditLimit += limitVal;
+				} else if (limitType === "Settlement Limit") {
+					totalSettlementLimit += limitVal;
+				}
+			});
+
+			// Update main form fields
+			$("#adhocLimit").val(totalAdhoc.toFixed(2));
+			$("#creditLimit").val(totalCreditLimit.toFixed(2));
+			$("#settlementLimit").val(totalSettlementLimit.toFixed(2));
+
+			$('#adhocDetailModal').modal('hide');
+		}
+
+		function saveDetailsSequentially() {
+			var adhocDetails = [];
+			$("#adhocDetailTable tbody tr").each(function () {
+				var row = $(this);
+				adhocDetails.push({
+					limit_type: row.find(".d-limit-type").val(),
+					adhocLimit: row.find(".d-limit").val(),
+					adhocLimitDate: row.find(".d-date").val(),
+					adhocLimitExpDate: row.find(".d-exp").val(),
+					earMarkingLimit: row.find(".d-ear-limit").val(),
+					earMarkingDate: row.find(".d-ear-date").val(),
+					referenceNo: row.find(".d-ref").val(),
+					rollOver: row.find(".d-roll").val()
+				});
+			});
+
+			$.ajax({
+				url: "./saveDetailsRecord",
+				type: "POST",
+				data: {
+					adhocDetailsJson: JSON.stringify(adhocDetails),
+					srlNo: $("#srlNo").val(),
+					bankName: $("#counterPartyBank").val()
+				},
+				success: function (res) {console.log("Adhoc Details saved");}
+			});
+		}
+
+		function formatDate(dateString) {
+			if (!dateString) return new Date().toISOString().split('T')[0];
+			var d = new Date(dateString);
+			return d.toISOString().split('T')[0];
+		}
+
+		/*]]>*/
 	</script>
 </head>
 <title>RiskInsights</title>
@@ -1539,7 +1579,7 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="Countryrating" id="Countryrating"
+													<input type="text" name="countryRating" id="countryRating"
 														class="form-control form-control-sm" required />
 												</div>
 
@@ -1802,7 +1842,8 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="Countryrating" id="Countryrating"
+													<input type="text" name="countryRating" id="countryRating"
+														th:value="${list.countryRating}"
 														class="form-control form-control-sm" required />
 												</div>
 
@@ -2082,8 +2123,9 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="Countryrating" id="Countryrating"
-														class="form-control form-control-sm" required />
+													<input type="text" name="countryRating" id="countryRating"
+														th:value="${list.countryRating}"
+														class="form-control form-control-sm" readonly />
 												</div>
 											</div>
 
