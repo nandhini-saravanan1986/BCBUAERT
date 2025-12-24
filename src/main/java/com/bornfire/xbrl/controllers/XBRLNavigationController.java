@@ -85,6 +85,7 @@ import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_rep;
+import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 import com.bornfire.xbrl.entities.RT_BankNameMaster;
 import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
@@ -139,7 +140,6 @@ import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
 import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
-import com.bornfire.xbrl.entities.TreasuryPlacementRep;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
@@ -218,7 +218,7 @@ public class XBRLNavigationController {
 	@Autowired
 	private BRF39_ENTITYREP brf39_entityrep;
 	@Autowired
-	TreasuryPlacementRep TreasuryPlacementReps;
+	Mis_treasury_placement_repo Mis_treasury_placement_repo;
 	@Autowired
 	ASL_Excel_Services ASL_Excel_Servicess;
 	@Autowired
@@ -364,7 +364,8 @@ public class XBRLNavigationController {
 
 	@Autowired
 	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
-
+	
+ 
 	private String pagesize;
 
 	public String getPagesize() {
@@ -1594,7 +1595,7 @@ public class XBRLNavigationController {
 			List<ASL_Report_Entity> Exposure = ASL_Report_Reps.getAllListByDate(currentDate);
 			md.addAttribute("Exposure_size", Exposure.size());
 			// List Of Treasury Placements
-			List<MIS_TREASURY_PLACEMENT_ENTITY> placements = TreasuryPlacementReps.getAllListByDate(currentDate);
+			List<MIS_TREASURY_PLACEMENT_ENTITY> placements = Mis_treasury_placement_repo.getAllListByDate(currentDate);
 			md.addAttribute("placements_size", placements.size());
 			/// List Of Treasury Limits
 			// List<MIS_TREASURY_LIMITS_ENTITY> limits =
@@ -1615,7 +1616,7 @@ public class XBRLNavigationController {
 			List<ASL_Report_Entity> Exposure = ASL_Report_Reps.getAllListByDate(reportDateConverted);
 			md.addAttribute("Exposure_size", Exposure.size());
 			// List Of Treasury Placements
-			List<MIS_TREASURY_PLACEMENT_ENTITY> placements = TreasuryPlacementReps
+			List<MIS_TREASURY_PLACEMENT_ENTITY> placements = Mis_treasury_placement_repo
 					.getAllListByDate(reportDateConverted);
 			md.addAttribute("placements_size", placements.size());
 			/// List Of Treasury Limits
@@ -1813,32 +1814,35 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Interbank_placement", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Interbank_placement(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String reportDate, Model md, HttpServletRequest req) {
+			@RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,
+			Model md, HttpServletRequest req) {
+		
+		///From Attributes 
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		
+		LocalDate today = LocalDate.now(); // Get today's date
 
-		md.addAttribute("dom_ids", domIds); // To highlight the menu
-		logger.info("Accessing Interbank_placement with formmode: {}", formmode);
-
+		if (Report_date != null) {
+			Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+		} else {
+			Report_date = java.sql.Date.valueOf(today.minusDays(0));
+		}
+		
 		try {
+			
 			if (formmode == null || "list".equalsIgnoreCase(formmode)) {
 				md.addAttribute("menu", "List Of Treasury Placements");
 				md.addAttribute("formmode", "list");
-				List<?> placements = counter_servicess.getTreasury_placement();
-				md.addAttribute("listss", placements);
-				logger.info("Fetched {} treasury placements.", placements.size());
-			} else if ("treasury_list".equalsIgnoreCase(formmode)) {
-				md.addAttribute("formmode", formmode);
-				System.out.println("Reportdate is" + reportDate);
-				md.addAttribute("reportdate", reportDate);
-				md.addAttribute("menu", "List Of Treasury Limits");
-				List<?> limits = counter_servicess.getTreasury_limit(reportDate);
-				md.addAttribute("listall", limits);
-				logger.info("Fetched {} treasury limits.", limits.size());
-			} else if ("add".equalsIgnoreCase(formmode)) {
+				//Fecth Treasury detail as per date 
+				List<MIS_TREASURY_PLACEMENT_ENTITY> Treasurydata = Mis_treasury_placement_repo.Gettreasurydata(Report_date);
+				md.addAttribute("listss", Treasurydata);
+				md.addAttribute("Report_date", Report_date);
+				logger.info("Fetched {} treasury placements.",Report_date+" "+ Treasurydata.size());
+			}else if ("add".equalsIgnoreCase(formmode)) {
 				logger.info("Opening file upload mode for Treasury Placement. User: '{}', Branch: '{}'", userid,
 						BRANCHNAME);
 				md.addAttribute("menu", "List Of Treasury Placement"); // Default menu label
@@ -1856,11 +1860,14 @@ public class XBRLNavigationController {
 				md.addAttribute("BRANCHCODE", BRANCHCODE);
 				md.addAttribute("BRANCHNAME", BRANCHNAME);
 				md.addAttribute("ROLEID", ROLEID);
+				md.addAttribute("Report_date", Report_date);
 			}
+			
 		} catch (Exception e) {
 			logger.error("Error in Interbank_placement controller for formmode: {}", formmode, e);
 		}
-
+		
+		
 		return "MIS/Interbank_Placements.html";
 	}
 
@@ -1974,25 +1981,6 @@ public class XBRLNavigationController {
 		return result;
 	}
 
-	@GetMapping("/getTre_place_Datas")
-	@ResponseBody
-	public List<Map<String, Object>> getTre_place_Datas(
-			@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate) {
-		Logger logger = LoggerFactory.getLogger(this.getClass());
-		logger.info("Received request to fetch Placement Limit Data for report date: {}", reportDate);
-
-		Date reportDateConverted = java.sql.Date.valueOf(reportDate);
-
-		List<Map<String, Object>> result = new ArrayList<>();
-		try {
-			result = counter_servicess.getTre_place_Datas(reportDateConverted);
-			logger.info("Fetched {} Placement limit records for report date {}", result.size(), reportDate);
-		} catch (Exception e) {
-			logger.error("Error fetching Placement limit data for report date: {}", reportDate, e);
-		}
-		return result;
-	}
-
 	@GetMapping("/getSwap_Datas")
 	@ResponseBody
 	public List<Map<String, Object>> getSwap_Datas(
@@ -2034,7 +2022,7 @@ public class XBRLNavigationController {
 			}
 		} else if (mode.equals("placement")) {
 			try {
-				List<MIS_TREASURY_PLACEMENT_ENTITY> list = TreasuryPlacementReps
+				List<MIS_TREASURY_PLACEMENT_ENTITY> list = Mis_treasury_placement_repo
 						.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
 				size = list.size();
 				logger.info("Number of records found for placement: {}", size);

@@ -27,7 +27,7 @@ import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
-import com.bornfire.xbrl.entities.TreasuryPlacementRep;
+import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 
 @Service
 @Transactional
@@ -38,7 +38,7 @@ public class Excel_Services {
 	@Autowired
 	MIS_TREASURY_LIMITS_ENTITY_REP MIS_TREASURY_LIMITS_ENTITY_REPs;
 	@Autowired
-	TreasuryPlacementRep TreasuryPlacementReps;
+	Mis_treasury_placement_repo TreasuryPlacementReps;
 	@Autowired
 	ASL_Report_Rep ASL_Report_Reps;
 	@Autowired
@@ -591,40 +591,40 @@ public class Excel_Services {
 				XSSFRow row = sheet.createRow(rowIndex++);
 				int col = 0;
 
-				row.createCell(col++).setCellValue(formatDecimalString(b.getNumOperation()));
-				row.createCell(col++).setCellValue(formatDecimalString(b.getEntiteOperation()));
+				row.createCell(col++).setCellValue(formatDecimalString(b.getNum_operation()));
+				row.createCell(col++).setCellValue(formatDecimalString(b.getEntite_operation()));
 				row.createCell(col++).setCellValue(nullSafe(b.getPoste()));
 				row.createCell(col++).setCellValue(nullSafe(b.getTitre()));
-				row.createCell(col++).setCellValue(nullSafe(b.getDevise1()));
-				row.createCell(col++).setCellValue(formatDecimal(b.getNominal1()));
-				row.createCell(col++).setCellValue(formatDate(b.getDateOperation()));
-				row.createCell(col++).setCellValue(formatDate(b.getDateValeur()));
-				row.createCell(col++).setCellValue(formatDate(b.getDateEcheance()));
+				row.createCell(col++).setCellValue(nullSafe(b.getDevise_1()));
+				row.createCell(col++).setCellValue(formatDecimalString(b.getNominal_1().toString()));
+				row.createCell(col++).setCellValue(formatDate(b.getDate_operation()));
+				row.createCell(col++).setCellValue(formatDate(b.getDate_valeur()));
+				row.createCell(col++).setCellValue(formatDate(b.getDate_echeance()));
 				row.createCell(col++).setCellValue(nullSafe(b.getPreavis()));
 				row.createCell(col++).setCellValue(nullSafe(b.getEntite()));
 				row.createCell(col++).setCellValue(nullSafe(b.getPortefeuille()));
 				row.createCell(col++).setCellValue(nullSafe(b.getContrepartie()));
 				row.createCell(col++).setCellValue(nullSafe(b.getStatut()));
-				row.createCell(col++).setCellValue(formatDecimal(b.getValeurTaux1()));
-				row.createCell(col++).setCellValue(nullSafe(b.getTaux1()));
-				row.createCell(col++).setCellValue(nullSafe(b.getPeriodicite1()));
+				row.createCell(col++).setCellValue(nullSafe(b.getValeur_taux_1() == null ? "" : b.getValeur_taux_1().toString()));
+				row.createCell(col++).setCellValue(nullSafe(b.getTaux_1()));
+				row.createCell(col++).setCellValue(nullSafe(b.getPeriodicite_1()));
 				row.createCell(col++).setCellValue(nullSafe(b.getAffaire()));
 
 				row.createCell(col++).setCellValue(
-						String.format("%.2f", b.getDureeInit() != null ? (double) b.getDureeInit() : 0.00));
+						String.format("%.2f", b.getDuree_init() != null ?  b.getDuree_init() : 0.00));
 
 				row.createCell(col++).setCellValue(
-						String.format("%.2f", b.getDureeRestant() != null ? (double) b.getDureeRestant() : 0.00));
+						String.format("%.2f", b.getDuree_restant() != null ?  b.getDuree_restant() : 0.00));
 
-				row.createCell(col++).setCellValue(nullSafe(b.getTri1()));
-				row.createCell(col++).setCellValue(nullSafe(b.getTri2()));
-				row.createCell(col++).setCellValue(nullSafe(b.getTri3()));
-				row.createCell(col++).setCellValue(nullSafe(b.getOpReference()));
+				row.createCell(col++).setCellValue(nullSafe(b.getTri_1()));
+				row.createCell(col++).setCellValue(nullSafe(b.getTri_2()));
+				row.createCell(col++).setCellValue(nullSafe(b.getTri_3()));
+				row.createCell(col++).setCellValue(nullSafe(b.getOp_finance()));
 				row.createCell(col++).setCellValue(nullSafe(b.getFiltrage()));
 				row.createCell(col++).setCellValue(formatDecimalString(b.getSigne()));
-				row.createCell(col++).setCellValue(formatDate(b.getDateFin()));
-				row.createCell(col++).setCellValue(formatDate(b.getDateDebut()));
-				row.createCell(col++).setCellValue(formatDecimalString(b.getOpFinance()));
+				row.createCell(col++).setCellValue(formatDate(b.getDate_fin()));
+				row.createCell(col++).setCellValue(formatDate(b.getDate_debut()));
+				row.createCell(col++).setCellValue(formatDecimalString(b.getOp_finance()));
 
 				/*
 				 * row.createCell(col++).setCellValue(nullSafe(b.getCreateUser()));
@@ -637,12 +637,10 @@ public class Excel_Services {
 				 * row.createCell(col++).setCellValue(nullSafe(b.getModifyFlg()));
 				 */
 
-				row.createCell(col++).setCellValue(formatDate(b.getReportDate()));
-				row.createCell(col++).setCellValue(nullSafe(b.getBranchCode()));
-				row.createCell(col++).setCellValue(nullSafe(b.getBranchName()));
+				row.createCell(col++).setCellValue(formatDate(b.getReport_date()));
+				row.createCell(col++).setCellValue(nullSafe(b.getBranch_code()));
+				row.createCell(col++).setCellValue(nullSafe(b.getBranch_name()));
 			}
-
-			sheet.protectSheet(""); // Optional
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			workbook.write(bos);

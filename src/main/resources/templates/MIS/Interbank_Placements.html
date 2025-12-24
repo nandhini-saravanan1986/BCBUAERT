@@ -412,8 +412,8 @@
 
 
 		function Trasury_Limits() {
-			var reportDate = $("#report_Date").val();
-			location.href = 'Interbank_placement?formmode=treasury_list' + '&reportDate=' + reportDate;
+			var Report_date = $("#Report_date").val();
+			location.href = 'Interbank_placement?formmode=list' + '&Report_date=' + Report_date;
 		}
 
 		function Trasury_place() {
@@ -725,48 +725,6 @@
 				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
 			});
 
-			// ✅ Date change handler
-			$('#report_Date').on('change', function () {
-				const reportDate = this.value;
-
-				$.ajax({
-					type: 'GET',
-					url: './getTre_place_Datas',
-					data: {reportDate: reportDate},
-					success: function (data) {
-						// Clear old data
-						table.clear();
-
-						// Add new rows dynamically
-						data.forEach(row => {
-							table.row.add([
-								`<div style="text-align:center;">${row.formattedDate}</div>`, // Report Date
-								row.num_operation,                                            // Num Operation
-								row.entiteOperation,                                          // Entite Operation
-								row.poste,                                                    // Poste
-								row.titre,                                                    // Titre
-								row.devise1,                                                  // Devise 1
-								row.nominal1,                                                 // Nominal 1
-								`<div style="text-align:center;">${row.dateOperation}</div>`, // Date Operation
-								`<div style="text-align:center;">${row.dateValeur}</div>`,    // Date Valeur
-								`<div style="text-align:center;">${row.dateEcheance}</div>`,  // Date Echeance
-								row.preavis,                                                  // Preavis
-								row.entite,                                                   // Entite
-								row.portefeuille,                                             // Portefeuille
-								row.contrepartie,                                             // Counter Party
-								row.valeurTaux1                                               // Valeur Taux 1
-							]);
-						});
-
-						// Redraw the table
-						table.draw();
-					},
-					error: function (xhr, status, error) {
-						console.error('AJAX error:', status, error);
-					}
-				});
-			});
-
 		});
 	</script>
 
@@ -774,19 +732,19 @@
 
 		document.addEventListener('DOMContentLoaded', function () {
 			const today = new Date().toISOString().split('T')[0];
-			document.getElementById('report_Date').value = today;
+			document.getElementById('Report_date').value = today;
 		});
 
 		function placement() {
-			var ReportDate = $("#report_Date").val().trim();
-			console.log(ReportDate);
+			var ReportDate = $("#Report_date").val();
+
 			if (ReportDate === "") {
-				alert("Please enter Report Date.");
+				alert("Please Select Report Date.");
 				$("#report_Date").focus();
 				return;
 			}
 			// Download file with selected branch and date
-			window.location.href = './download/Placement?ReportDate=' + ReportDate;
+			window.location.href = './download/Placement?Report_date=' + ReportDate;
 		}
 
 		function treasuryLimit() {
@@ -1086,7 +1044,8 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="date" name="reportDate" id="reportDate"
+													<input type="date" name="Report_date" id="Report_date"
+														th:value="${#dates.format(Report_date, 'yyyy-MM-dd')}"
 														class="form-control form-control-sm" required />
 												</div>
 											</div>
@@ -1120,10 +1079,11 @@
 							<!-- 🔹 Right side: Report date + Download button -->
 							<div class="d-flex align-items-center flex-wrap gap-2">
 								<div class="form-inline mr-2">
-									<label for="report_Date" class="mr-2 mb-0">Report Date:</label>
-									<input type="date" id="report_Date" name="report_Date"
+									<label for="Report_date" class="mr-2 mb-0">Report Date:</label>
+									<input type="date" id="Report_date" name="Report_date"
 										class="form-control form-control-sm"
-										th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+										th:value="${#dates.format(Report_date, 'yyyy-MM-dd')}"
+										onchange="Trasury_Limits();" />
 								</div>
 
 								<button type="button" class="role-btn" onclick="placement()">Download</button>
@@ -1163,23 +1123,31 @@
 												<tbody style="font-family: verdana;">
 													<tr th:each="lists : ${listss}">
 
-														<td th:text="${lists['reportDate']}"></td>
+														<td
+															th:text="${#dates.format(lists['report_date'],'dd-MM-yyyy')}">
+														</td>
 														<td th:text="${lists['num_operation']}"></td>
-														<td th:text="${lists['entiteOperation']}"></td>
+														<td th:text="${lists['entite_operation']}"></td>
 														<td th:text="${lists['poste']}"></td>
 														<td th:text="${lists['titre']}"></td>
-														<td th:text="${lists['devise1']}"></td>
-														<td th:text="${lists['nominal1']}"></td>
+														<td th:text="${lists['devise_1']}"></td>
+														<td th:text="${lists['nominal_1']}"></td>
 
-														<td th:text="${lists['dateOperation']}"></td>
-														<td th:text="${lists['dateValeur']}"></td>
-														<td th:text="${lists['dateEcheance']}"></td>
+														<td
+															th:text="${#dates.format(lists['date_operation'],'dd-MM-yyyy')}">
+														</td>
+														<td
+															th:text="${#dates.format(lists['date_valeur'],'dd-MM-yyyy')}">
+														</td>
+														<td
+															th:text="${#dates.format(lists['date_echeance'],'dd-MM-yyyy')}">
+														</td>
 
 														<td th:text="${lists['preavis']}"></td>
 														<td th:text="${lists['entite']}"></td>
 														<td th:text="${lists['portefeuille']}"></td>
 														<td th:text="${lists['contrepartie']}"></td>
-														<td th:text="${lists['valeurTaux1']}"></td>
+														<td th:text="${lists['valeur_taux_1']}"></td>
 
 													</tr>
 												</tbody>

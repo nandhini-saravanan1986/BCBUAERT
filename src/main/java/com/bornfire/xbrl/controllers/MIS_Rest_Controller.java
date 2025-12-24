@@ -194,10 +194,10 @@ public class MIS_Rest_Controller {
     
     @GetMapping("/download/Placement")
     public void Placement(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+            @RequestParam("Report_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate Report_date) {
     	
         try {
-            byte[] fileData = excelServices.generate_Placement(ReportDate);
+            byte[] fileData = excelServices.generate_Placement(Report_date);
             logger.info("Generated file size: {}", fileData.length);
             String userid = (String) req.getSession().getAttribute("USERID");
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

@@ -16,7 +16,7 @@ import com.bornfire.xbrl.entities.ASL_Report_Rep;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
-import com.bornfire.xbrl.entities.TreasuryPlacementRep;
+import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -36,7 +36,7 @@ public class ASL_Excel_Services {
 	@Autowired
 	MIS_SETTLEMENT_ENTITY_REP MIS_SETTLEMENT_ENTITY_REPs;
 	@Autowired
-	TreasuryPlacementRep TreasuryPlacementReps;
+	Mis_treasury_placement_repo Mis_treasury_placement_repo;
 	@Autowired
 	ASL_Report_Rep ASL_Report_Reps;
     @Autowired
@@ -128,19 +128,19 @@ public class ASL_Excel_Services {
                 	    BigDecimal id = (BigDecimal) session.createNativeQuery("SELECT PLACEMENT_ID.NEXTVAL FROM DUAL").getSingleResult();
                 	    if (id == null) throw new RuntimeException("Failed to retrieve PLACEMENT_ID.NEXTVAL from database");
 
-                	    entity.setNumOperation(String.valueOf(id));
-                	    entity.setTitre(titreValue);
-                	    entity.setDevise1(getCellValue(row.getCell(1)));
-                	    entity.setNominal1(getNumericValue(row.getCell(2)));
-                	    entity.setDateOperation(getExcelSqlDate(row.getCell(3)));
-                	    entity.setDateValeur(getExcelSqlDate(row.getCell(4)));
-                	    entity.setDateEcheance(getExcelSqlDate(row.getCell(5)));
-                	    entity.setPortefeuille(getCellValue(row.getCell(6)));
-                	    entity.setContrepartie(getCellValue(row.getCell(7)));
-                	    entity.setBranchCode(iBranchCode);
-                	    entity.setBranchName(iBranchName);
-                	    entity.setCreateUser(uploadedBy);
-                	    entity.setReportDate(java.sql.Date.valueOf(reportDate));
+						/*
+						 * entity.setNumOperation(String.valueOf(id)); entity.setTitre(titreValue);
+						 * entity.setDevise1(getCellValue(row.getCell(1)));
+						 * entity.setNominal1(getNumericValue(row.getCell(2)));
+						 * entity.setDateOperation(getExcelSqlDate(row.getCell(3)));
+						 * entity.setDateValeur(getExcelSqlDate(row.getCell(4)));
+						 * entity.setDateEcheance(getExcelSqlDate(row.getCell(5)));
+						 * entity.setPortefeuille(getCellValue(row.getCell(6)));
+						 * entity.setContrepartie(getCellValue(row.getCell(7)));
+						 * entity.setBranchCode(iBranchCode); entity.setBranchName(iBranchName);
+						 * entity.setCreateUser(uploadedBy);
+						 * entity.setReportDate(java.sql.Date.valueOf(reportDate));
+						 */
 
                 	    session.save(entity);
                 	}
@@ -315,7 +315,7 @@ public String Replace_data(String iBranchCode, String iBranchName, LocalDate rep
     	        Session session = sessionFactory.getCurrentSession();
 
     	        // Delete existing records for the same report date
-    	        TreasuryPlacementReps.deleteByReportDate(java.sql.Date.valueOf(reportDate),iBranchName);
+    	        Mis_treasury_placement_repo.deleteByReportDate(java.sql.Date.valueOf(reportDate),iBranchName);
     	        logger.info("Deleted existing records for for placement Data the report date: {}", reportDate);
 
     	        while (rowIterator.hasNext()) {
@@ -334,19 +334,19 @@ public String Replace_data(String iBranchCode, String iBranchName, LocalDate rep
             	    BigDecimal id = (BigDecimal) session.createNativeQuery("SELECT PLACEMENT_ID.NEXTVAL FROM DUAL").getSingleResult();
             	    if (id == null) throw new RuntimeException("Failed to retrieve PLACEMENT_ID.NEXTVAL from database");
 
-            	    entity.setNumOperation(String.valueOf(id));
-            	    entity.setTitre(titreValue);
-            	    entity.setDevise1(getCellValue(row.getCell(1)));
-            	    entity.setNominal1(getNumericValue(row.getCell(2)));
-            	    entity.setDateOperation(getExcelSqlDate(row.getCell(3)));
-            	    entity.setDateValeur(getExcelSqlDate(row.getCell(4)));
-            	    entity.setDateEcheance(getExcelSqlDate(row.getCell(5)));
-            	    entity.setPortefeuille(getCellValue(row.getCell(6)));
-            	    entity.setContrepartie(getCellValue(row.getCell(7)));
-            	    entity.setBranchCode(iBranchCode);
-            	    entity.setBranchName(iBranchName);
-            	    entity.setCreateUser(uploadedBy);
-            	    entity.setReportDate(java.sql.Date.valueOf(reportDate));
+					/*
+					 * entity.setnum(String.valueOf(id)); entity.setTitre(titreValue);
+					 * entity.setDevise1(getCellValue(row.getCell(1)));
+					 * entity.setNominal1(getNumericValue(row.getCell(2)));
+					 * entity.setDateOperation(getExcelSqlDate(row.getCell(3)));
+					 * entity.setDateValeur(getExcelSqlDate(row.getCell(4)));
+					 * entity.setDateEcheance(getExcelSqlDate(row.getCell(5)));
+					 * entity.setPortefeuille(getCellValue(row.getCell(6)));
+					 * entity.setContrepartie(getCellValue(row.getCell(7)));
+					 * entity.setBranchCode(iBranchCode); entity.setBranchName(iBranchName);
+					 * entity.setCreateUser(uploadedBy);
+					 * entity.setReportDate(java.sql.Date.valueOf(reportDate));
+					 */
 
             	    session.save(entity);
             	}

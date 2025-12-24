@@ -45,7 +45,7 @@ import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_rep;
-import com.bornfire.xbrl.entities.TreasuryPlacementRep;
+import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 
@@ -70,7 +70,7 @@ public class counter_services {
 	@Autowired
 	ASL_Report_Rep ASL_Report_Reps;
 	@Autowired
-	TreasuryPlacementRep TreasuryPlacementReps;
+	Mis_treasury_placement_repo TreasuryPlacementReps;
 	@Autowired
 	SessionFactory sessionFactory;
 
@@ -228,80 +228,6 @@ public class counter_services {
 		}
 
 		return msg;
-	}
-
-	public List<Map<String, Object>> getTreasury_placement() {
-		logger.info("Fetching Treasury Placement data");
-
-		Date currentDate = new Date(); // current system date
-		List<MIS_TREASURY_PLACEMENT_ENTITY> listss = new ArrayList<>();
-
-		try {
-
-			LocalDate today = LocalDate.now();
-			java.sql.Date sqlDate = java.sql.Date.valueOf(today);
-			listss = TreasuryPlacementReps.getAllListByDate(sqlDate);
-			logger.info("Retrieved {} treasury placement records for date: {}", listss.size(), sqlDate);
-		} catch (Exception e) {
-			logger.error("Error retrieving treasury placement records", e);
-			return Collections.emptyList(); // Return empty list in case of failure
-		}
-
-		DecimalFormat decimalFormat = new DecimalFormat("#.00"); // Always show 2 decimal places
-		List<Map<String, Object>> formattedList = new ArrayList<>();
-
-		for (MIS_TREASURY_PLACEMENT_ENTITY entity : listss) {
-			try {
-				Map<String, Object> map = new HashMap<>();
-				map.put("poste", entity.getPoste() != null ? entity.getPoste() : "");
-				map.put("reportDate", entity.getReportDate() != null ? entity.getReportDate() : "");
-				map.put("titre", entity.getTitre() != null ? entity.getTitre() : "");
-				map.put("dateOperation", entity.getDateOperation() != null ? entity.getDateOperation() : "");
-				map.put("dateValeur", entity.getDateValeur() != null ? entity.getDateValeur() : "");
-				map.put("dateEcheance", entity.getDateEcheance() != null ? entity.getDateEcheance() : "");
-				map.put("portefeuille", entity.getPortefeuille() != null ? entity.getPortefeuille() : "");
-				map.put("contrepartie", entity.getContrepartie() != null ? entity.getContrepartie() : "");
-				map.put("devise1", entity.getDevise1() != null ? entity.getDevise1() : "");
-				map.put("entiteOperation", entity.getEntiteOperation() != null ? entity.getEntiteOperation() : "");
-				map.put("nominal1", entity.getNominal1() != null ? decimalFormat.format(entity.getNominal1()) : "0.00");
-				map.put("valeurTaux1",
-						entity.getValeurTaux1() != null ? decimalFormat.format(entity.getValeurTaux1()) : "0.00");
-
-				map.put("num_operation", entity.getNumOperation() != null ? entity.getNumOperation() : "");
-				map.put("preavis", entity.getPreavis() != null ? entity.getPreavis() : "");
-				map.put("entite", entity.getEntite() != null ? entity.getEntite() : "");
-
-				formattedList.add(map);
-			} catch (Exception ex) {
-				logger.warn("Error processing record: {}", entity, ex);
-			}
-		}
-
-		logger.info("Formatted treasury placement data: {} records ready for response", formattedList.size());
-		return formattedList;
-	}
-
-	public List<MIS_TREASURY_LIMITS_ENTITY> getTreasury_limit(String reportDate) {
-		logger.info("Fetching Treasury Limits for date: {}", reportDate);
-
-		List<MIS_TREASURY_LIMITS_ENTITY> deals = new ArrayList<>();
-
-		try {
-			// Convert String to java.util.Date
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Date parsedDate = sdf.parse(reportDate);
-
-			deals = entityManager
-					.createQuery("SELECT d FROM MIS_TREASURY_LIMITS_ENTITY d WHERE d.reportDate = :reportDate",
-							MIS_TREASURY_LIMITS_ENTITY.class)
-					.setParameter("reportDate", parsedDate).getResultList();
-
-			logger.info("Retrieved {} treasury limit records", deals.size());
-		} catch (Exception e) {
-			logger.error("Error while fetching Treasury Limits", e);
-		}
-
-		return deals;
 	}
 
 	public List<Map<String, Object>> getSwap() {
@@ -503,50 +429,6 @@ public class counter_services {
 		}
 
 		return result;
-	}
-
-	public List<Map<String, Object>> getTre_place_Datas(Date reportDate) {
-
-		Logger logger = LoggerFactory.getLogger(this.getClass());
-		logger.info("Fetching Treasury Placement Data for report date: {}", reportDate);
-
-		List<MIS_TREASURY_PLACEMENT_ENTITY> deals = new ArrayList<>();
-		try {
-			deals = entityManager
-					.createQuery("SELECT d FROM MIS_TREASURY_PLACEMENT_ENTITY d WHERE d.reportDate = :reportDate",
-							MIS_TREASURY_PLACEMENT_ENTITY.class)
-					.setParameter("reportDate", reportDate).getResultList();
-
-			logger.info("Found {} Treasury Placement records for report date {}", deals.size(), reportDate);
-
-		} catch (Exception e) {
-			logger.error("Error while fetching Treasury Placement Data for report date: {}", reportDate, e);
-		}
-
-		return deals.stream().map(item -> {
-			Map<String, Object> row = new HashMap<>();
-			java.sql.Date sqlDate = (java.sql.Date) item.getReportDate();
-			LocalDate localDate = sqlDate.toLocalDate();
-
-			row.put("formattedDate", localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-			row.put("num_operation", item.getNumOperation() != null ? item.getNumOperation() : "");
-			row.put("entiteOperation", item.getEntiteOperation());
-			row.put("poste", item.getPoste() != null ? item.getPoste() : "");
-			row.put("titre", item.getTitre() != null ? item.getTitre() : "");
-			row.put("dateOperation", item.getDateOperation() != null ? item.getDateOperation() : "");
-			row.put("dateValeur", item.getDateValeur() != null ? item.getDateValeur() : "");
-			row.put("dateEcheance", item.getDateEcheance() != null ? item.getDateEcheance() : "");
-			row.put("portefeuille", item.getPortefeuille() != null ? item.getPortefeuille() : "");
-
-			row.put("contrepartie", item.getContrepartie());
-			row.put("devise1", item.getDevise1());
-			row.put("nominal1", item.getNominal1());
-			row.put("valeurTaux1", item.getValeurTaux1());
-			row.put("preavis", item.getPreavis() != null ? item.getPreavis() : "");
-			row.put("entite", item.getEntite() != null ? item.getEntite() : "");
-
-			return row;
-		}).collect(Collectors.toList());
 	}
 
 	public List<Map<String, Object>> getSwap_Datas(Date reportDate) {
