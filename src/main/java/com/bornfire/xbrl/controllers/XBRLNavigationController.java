@@ -3199,44 +3199,49 @@ public class XBRLNavigationController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RequestMapping(value = "/saveDetails", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/getAdhocDetails", method = RequestMethod.GET)
 	@ResponseBody
-	public String saveDetails(@RequestParam("adhocDetailsJson") String json, 
-	                          @RequestParam("srlNo") String srlNo,
-	                          @RequestParam("bankName") String bankName,
-	                          HttpServletRequest request) {
+	public List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> getAdhocDetails(@RequestParam String srlNo) {
+		return misCounterPartyLimitDetailsRepo.findBySrlNo(srlNo);
+	}
+
+	// 2. Updated Save Details with Alert Logic
+	@RequestMapping(value = "/saveDetailsRecord", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveDetailsRecord(@RequestParam("adhocDetailsJson") String json, 
+	                                @RequestParam("srlNo") String srlNo,
+	                                @RequestParam("bankName") String bankName,
+	                                HttpServletRequest request) {
 	    try {
-	        // Retrieve User ID from session (Ensure attribute name matches your login logic)
 	        String userId = (String) request.getSession().getAttribute("USER_ID");
 	        if (userId == null) userId = "SYSTEM";
 
 	        ObjectMapper mapper = new ObjectMapper();
-	        
-	        // Convert JSON string from AJAX into Entity List
 	        List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> details = mapper.readValue(json, 
 	                new TypeReference<List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY>>(){});
 
-	        if (details != null && !details.isEmpty()) {
+	        // Delete existing details for this SrlNo to perform a clean update
+	        List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> existing = misCounterPartyLimitDetailsRepo.findBySrlNo(srlNo);
+	        if(!existing.isEmpty()) {
+	            misCounterPartyLimitDetailsRepo.deleteAll(existing);
+	        }
+
+	        if (details != null) {
 	            for (MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY detail : details) {
-	                // Link to the Master record
 	                detail.setSrlNo(srlNo);
 	                detail.setCounterPartyBank(bankName);
-	                
-	                // Set Audit and Status fields
 	                detail.setCreateUser(userId);
 	                detail.setCreateTime(new Date());
 	                detail.setEntityFlg("N");
 	                detail.setModifyFlg("N");
 	                detail.setDelFlg("N");
-
-	                // Save to MIS_COUNTER_PARTY_LIMIT_DETAILS table
 	                misCounterPartyLimitDetailsRepo.save(detail);
 	            }
 	        }
-	        return "Details Saved Successfully";
+	        return "SUCCESS";
 	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "Error saving Details: " + e.getMessage();
+	        return "ERROR: " + e.getMessage();
 	    }
 	}
 }

@@ -16,7 +16,7 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "MIS_COUNTER_PARTY_LIMIT_DETAILS")
+@Table(name = "MIS_COUNTER_PARTY_ADHOC_LIMIT_DETAILS")
 public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "adhoc_detail_seq")
@@ -28,6 +28,9 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 
 	@Column(name = "COUNTER_PARTY_BANK")
 	private String counterPartyBank;
+
+	@Column(name = "LIMIT_TYPE")
+	private String limit_type;
 
 	@Column(name = "ADHOC_LIMIT")
 	private BigDecimal adhocLimit;
@@ -53,8 +56,8 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 	@Column(name = "REFERENCE_NO")
 	private String referenceNo;
 
-	@Column(name = "ROLL_OVER_AMT")
-	private BigDecimal rollOverAmt;
+	@Column(name = "ROLL_OVER")
+	private String rollOver;
 
 	@Column(name = "CREATE_USER")
 	private String createUser;
@@ -106,6 +109,14 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 		this.counterPartyBank = counterPartyBank;
 	}
 
+	public String getLimit_type() {
+		return limit_type;
+	}
+
+	public void setLimit_type(String limit_type) {
+		this.limit_type = limit_type;
+	}
+
 	public BigDecimal getAdhocLimit() {
 		return adhocLimit;
 	}
@@ -154,12 +165,12 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 		this.referenceNo = referenceNo;
 	}
 
-	public BigDecimal getRollOverAmt() {
-		return rollOverAmt;
+	public String getRollOver() {
+		return rollOver;
 	}
 
-	public void setRollOverAmt(BigDecimal rollOverAmt) {
-		this.rollOverAmt = rollOverAmt;
+	public void setRollOver(String rollOver) {
+		this.rollOver = rollOver;
 	}
 
 	public String getCreateUser() {
@@ -258,22 +269,23 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 		this.branchName = branchName;
 	}
 
-	public MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY(Long id, String srlNo, String counterPartyBank, BigDecimal adhocLimit,
-			Date adhocLimitDate, Date adhocLimitExpDate, BigDecimal earMarkingLimit, Date earMarkingDate,
-			String referenceNo, BigDecimal rollOverAmt, String createUser, Date createTime, String modifyUser,
-			Date modifyTime, String verifyUser, Date verifyTime, String entityFlg, String modifyFlg, String delFlg,
-			Date reportDate, String branchCode, String branchName) {
+	public MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY(Long id, String srlNo, String counterPartyBank, String limit_type,
+			BigDecimal adhocLimit, Date adhocLimitDate, Date adhocLimitExpDate, BigDecimal earMarkingLimit,
+			Date earMarkingDate, String referenceNo, String rollOver, String createUser, Date createTime,
+			String modifyUser, Date modifyTime, String verifyUser, Date verifyTime, String entityFlg, String modifyFlg,
+			String delFlg, Date reportDate, String branchCode, String branchName) {
 		super();
 		this.id = id;
 		this.srlNo = srlNo;
 		this.counterPartyBank = counterPartyBank;
+		this.limit_type = limit_type;
 		this.adhocLimit = adhocLimit;
 		this.adhocLimitDate = adhocLimitDate;
 		this.adhocLimitExpDate = adhocLimitExpDate;
 		this.earMarkingLimit = earMarkingLimit;
 		this.earMarkingDate = earMarkingDate;
 		this.referenceNo = referenceNo;
-		this.rollOverAmt = rollOverAmt;
+		this.rollOver = rollOver;
 		this.createUser = createUser;
 		this.createTime = createTime;
 		this.modifyUser = modifyUser;
@@ -292,5 +304,4 @@ public class MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
 }
