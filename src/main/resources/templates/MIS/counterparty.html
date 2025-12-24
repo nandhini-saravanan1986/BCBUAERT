@@ -143,15 +143,22 @@
 	<style>
 		#usertable {
 			width: 100% !important;
-			border-collapse: collapse !important;
+
 			font-family: Arial, sans-serif !important;
 			font-size: 12px !important;
+			border-collapse: separate !important;
+			/* Required for sticky borders to work */
+			border-spacing: 0;
 		}
 
 		/* HEADER */
 		#usertable th {
 			background-color: #7b6458 !important;
 			/* brown header */
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			/* Keeps header above the body rows */
 			color: white !important;
 			/*text-align: center !important;*/
 			padding: 8px 10px !important;
@@ -461,7 +468,12 @@
 			align-items: center;
 			/* Added for alignment */
 		}
-
+		html, body {
+		    height: 100%;
+		    overflow: hidden; /* This removes both X and Y window scrollbars */
+		    margin: 0;
+		    padding: 0;
+		}
 		.card-body {
 			padding: 20px;
 		}
@@ -959,23 +971,23 @@
 	</style>
 	<script>
 		$(document).ready(function () {
-			if ($.fn.DataTable.isDataTable('#usertable')) {
-				$('#usertable').DataTable().destroy();
-			}
+		    if ($.fn.DataTable.isDataTable('#usertable')) {
+		        $('#usertable').DataTable().destroy();
+		    }
 
-			$('#usertable').DataTable({
-				"paging": true,
-				"lengthChange": false,
-				"searching": true,
-				"ordering": true,
-				"info": true,
-				"autoWidth": false,
-				"pageLength": 10,
-				"language": {
-					"search": "Search Table:"
-				},
-				"dom": '<"top"f>rt<"bottom"ip><"clear">' // Search top right, pagination bottom
-			});
+		    $('#usertable').DataTable({
+		        "paging": true,
+		        "lengthChange": false,
+		        "searching": true,
+		        "ordering": true,
+		        "info": true,
+		        "autoWidth": false, // Set this to false
+		        "pageLength": 10,   // You can increase this since the body scrolls now
+		        "language": {
+		            "search": "Search Table:"
+		        },
+		        "dom": '<"top"f>rt<"bottom"ip><"clear">'
+		    });
 		});
 	</script>
 
@@ -2367,6 +2379,11 @@
 	.table-responsive {
 		margin-top: 0 !important;
 		padding-top: 0 !important;
+		max-height: 500px;
+		/* Adjust this height as per your need (e.g., 60vh) */
+		overflow-y: auto;
+		overflow-x: auto;
+		border: 1px solid #e8e8e8;
 	}
 
 	/* Ensure DataTables filter (search box) doesn't have spacing above it */
