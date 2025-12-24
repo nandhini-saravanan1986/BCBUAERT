@@ -68,31 +68,31 @@ public class RT_IRSService {
 
 	    logger.info("Service: Starting IRS Excel generation process.");
 
+	    /* ================= TABLE 1 : R7 to R60 ================= */
 	    List<RT_IRS_ENTITY> dataList =
 	            rt_irs_repository.rtirslistbydate(dateformat.parse(reportdate), currency);
-	    RT_IRS_ENTITY record1 = dataList.get(0);
-	    
-	    List<RT_IRS_ENTITY2> dataList2 =
-	    		rt_Irs2_Repository.rtirslistbydate(dateformat.parse(reportdate), currency);
-	    RT_IRS_ENTITY2 record2 = dataList2.get(0);
-
 
 	    if (dataList == null || dataList.isEmpty()) {
 	        logger.warn("Service: No data found for IRS report. Returning empty result.");
 	        return new byte[0];
 	    }
 
+	    RT_IRS_ENTITY record1 = dataList.get(0);
+
+	    /* ================= TABLE 2 : R61 to R87 ================= */
+	    List<RT_IRS_ENTITY2> dataList2 =
+	            rt_Irs2_Repository.rtirslistbydate(dateformat.parse(reportdate), currency);
+
+	    RT_IRS_ENTITY2 record2 = null;
+	    if (dataList2 != null && !dataList2.isEmpty()) {
+	        record2 = dataList2.get(0);
+	    }
+
 	    String templateDir = env.getProperty("output.exportpathtemp");
 	    Path templatePath = Paths.get(templateDir, filename);
 
-	    logger.info("Service: Loading template from {}", templatePath.toAbsolutePath());
-
 	    if (!Files.exists(templatePath)) {
 	        throw new FileNotFoundException("Template file not found: " + templatePath.toAbsolutePath());
-	    }
-
-	    if (!Files.isReadable(templatePath)) {
-	        throw new SecurityException("Template file is not readable: " + templatePath.toAbsolutePath());
 	    }
 
 	    try (InputStream templateInputStream = Files.newInputStream(templatePath);
@@ -100,7 +100,6 @@ public class RT_IRSService {
 	         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
 	        Sheet sheet = workbook.getSheetAt(0);
-	        RT_IRS_ENTITY record = dataList.get(0);
 
 	        String[] fieldSuffixes = {
 	                "DAY1_28", "DAY29_3M", "OVER3M_TO_6M", "OVER6M_TO_1Y",
@@ -109,37 +108,29 @@ public class RT_IRSService {
 	                "NON_SENSITIVE", "TOTAL_RSL", "TOTAL"
 	        };
 
-	        /* ========= MAIN LOOP ========= */
+	        /* ================= TABLE 1 LOOP (R7–R60) ================= */
 	        for (int rowIndex = 6; rowIndex < 59; rowIndex++) {
 
-	            // Skip non-data rows
 	            if (rowIndex == 45 || rowIndex == 46 ||
 	                rowIndex == 47 || rowIndex == 48) {
 	                continue;
 	            }
 
 	            Row row = sheet.getRow(rowIndex);
-	            if (row == null) {
-	                row = sheet.createRow(rowIndex);
-	            }
+	            if (row == null) row = sheet.createRow(rowIndex);
 
 	            for (int colIndex = 0; colIndex < fieldSuffixes.length; colIndex++) {
 
 	                Cell cell = row.getCell(colIndex + 2);
-	                if (cell == null) {
-	                    cell = row.createCell(colIndex + 2);
-	                }
+	                if (cell == null) cell = row.createCell(colIndex + 2);
 
-	                
-	                
 	                String fieldName =
 	                        ("r" + (rowIndex + 1) + "_" + fieldSuffixes[colIndex]).toLowerCase();
 
 	                try {
 	                    Field field = RT_IRS_ENTITY.class.getDeclaredField(fieldName);
 	                    field.setAccessible(true);
-
-	                    Object value = field.get(record);
+	                    Object value = field.get(record1);
 
 	                    if (value instanceof BigDecimal) {
 	                        cell.setCellValue(((BigDecimal) value).doubleValue());
@@ -147,14 +138,42 @@ public class RT_IRSService {
 	                        cell.setCellValue(0.00);
 	                    }
 
-	                } catch (NoSuchFieldException e) {
-	                    // Field does not exist in entity – safe to ignore
+	                } catch (Exception e) {
 	                    cell.setCellValue("");
-	                    logger.warn("Field not found in entity: {}", fieldName);
+	                }
+	            }
+	        }
 
-	                } catch (IllegalAccessException e) {
-	                    cell.setCellValue("");
-	                    logger.warn("Field not accessible: {}", fieldName);
+	        /* ================= TABLE 2 LOOP (R61–R87) ================= */
+	        if (record2 != null) {
+
+	            for (int rowIndex = 60; rowIndex < 87; rowIndex++) {
+
+	                Row row = sheet.getRow(rowIndex);
+	                if (row == null) row = sheet.createRow(rowIndex);
+
+	                for (int colIndex = 0; colIndex < fieldSuffixes.length; colIndex++) {
+
+	                    Cell cell = row.getCell(colIndex + 2);
+	                    if (cell == null) cell = row.createCell(colIndex + 2);
+
+	                    String fieldName =
+	                            ("r" + (rowIndex + 1) + "_" + fieldSuffixes[colIndex]).toLowerCase();
+
+	                    try {
+	                        Field field = RT_IRS_ENTITY2.class.getDeclaredField(fieldName);
+	                        field.setAccessible(true);
+	                        Object value = field.get(record2);
+
+	                        if (value instanceof BigDecimal) {
+	                            cell.setCellValue(((BigDecimal) value).doubleValue());
+	                        } else {
+	                            cell.setCellValue(0.00);
+	                        }
+
+	                    } catch (Exception e) {
+	                        cell.setCellValue("");
+	                    }
 	                }
 	            }
 	        }
@@ -166,6 +185,7 @@ public class RT_IRSService {
 	        return out.toByteArray();
 	    }
 	}
+
 	
 	
 	public byte[] getDetailExcel(String filename,String reportdate, String currency,String version){
