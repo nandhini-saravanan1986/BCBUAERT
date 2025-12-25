@@ -343,7 +343,62 @@ label.error {
 
 </style>
 
+<style>
+		/* Reduce font size */
+		/* ===== TABLE STYLE MATCHING IMAGE ===== */
 
+		#usertable {
+		    font-family: Arial, sans-serif;
+		    font-size: 12px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		/* Header rows */
+		#usertable thead th {
+		    background-color: #7b6458;   /* brown header */
+		    color: #ffffff;
+		    text-align: center;
+		    font-weight: bold;
+		    padding: 8px 6px;
+		    border: 1px solid #ffffff;   /* white grid lines */
+		    vertical-align: middle;
+		}
+
+		/* Group header row (CBUAE / Counterparty) */
+		#usertable thead tr:first-child th {
+		    font-size: 13px;
+		}
+
+		/* Body cells */
+		#usertable tbody td {
+		    padding: 6px 6px;
+		    border: 1px solid #ffffff;
+		    white-space: nowrap;
+		    vertical-align: middle;
+		}
+
+		/* Alternate row shading */
+		#usertable tbody tr:nth-child(even) {
+		    background-color: #f2f2f2;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+		    background-color: #ffffff;
+		}
+
+		/* Action icon */
+		#usertable .fa-edit {
+		    color: #ff6a00;
+		    cursor: pointer;
+		}
+
+		/* Hover effect */
+		#usertable tbody tr:hover {
+		    background-color: #e6e6e6;
+		}
+
+	</style>
 <style>
 .inner {
     max-height: 600px; /* Adjust height as needed */
@@ -394,6 +449,55 @@ div.dataTables_wrapper div.dataTables_info {
 }
 </style>
     
+<style>
+	/* ===== CARD HEADER STYLE LIKE IMAGE ===== */
+
+	.ras-card-header {
+	    background: linear-gradient(90deg, rgb(255, 255, 255), rgb(255, 255, 255));
+	    padding: 14px 20px;
+	    border-radius: 6px 6px 0 0;
+	}
+
+	.ras-header-content {
+	    display: flex;
+	    align-items: center;
+	    gap: 12px;
+	}
+
+	/* Keep your existing left-arrow-circle styles */
+	.ras-card-header h5 {
+	    margin: 0;
+	    font-size: 22px;
+	    font-weight: 500;
+	    color: #000;
+	}
+
+</style>
+<style>
+	#pageHeader {
+		position: sticky;
+		top: 110px;
+		z-index: 1050;
+		background: white;
+		padding-top: 10px;
+	}
+
+	#tabHeader {
+		position: sticky;
+		top: 5px;
+		/* just below page header */
+		z-index: 1040;
+		background: white;
+		padding: 5px 0;
+	}
+
+	#mainHeader {
+		position: sticky;
+		top: 0;
+		z-index: 9999;
+		background: white;
+	}
+</style>
 
 <script th:inline="javascript">
 	
@@ -409,7 +513,27 @@ div.dataTables_wrapper div.dataTables_info {
 	}
 	
 </script>
+<script>
+	$('#usertable').DataTable({
+				scrollX: false,
+				autoWidth: false,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+				ordering: false,
+				pageLength: 100,
+				fixedHeader: true,
 
+				// Layout: search (left) + pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+
+				// Optional: language tweak for better label
+				language: {
+					search: "Search:"
+				}
+			});
+</script>
 <script>
 function getreport(a){
 	var reportdate=a.getAttribute('data-reportdate');
@@ -446,42 +570,39 @@ function getreport(a){
     });
   });
 </script> -->
-  
+<title>RT</title>
 </head>
 
  
      
-<title>RT</title>
+
 <body> 
 <div class="container-fluid" style="padding-left:0px; padding-right:0px;">
 		<div class="row">
 			<div th:insert="XBRLHeaderMenu :: header"></div>
 		</div>
-		<div class="card">
-					<div class="card-header" style="background-color: rgb(107, 122, 143) ; ">
-						<div style="display: flex; align-items: center;" onclick="back();">
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
-						<div class="left-arrow-circle">
-							<i class="fa fa-arrow-left"></i>
-						</div>
-						
-						<!-- Title -->
-						<h5
-							style="font-family: arial; font-size: 20px; padding-top:10px; font-weight: bold; color: white;">
-							Statement Of Interest Rate Sensitivity (USD)
-						</h5>
-					</div>
-										
-					</div>
+
+		<div class="card-header ras-card-header">
+		    <div class="ras-header-content" onclick="back();">
+		        <!--<div class="left-arrow-circle">
+		            <i class="fa fa-arrow-left"></i>
+		        </div>-->
+		        <h5>Statement Of Interest Rate Sensitivity (USD)</h5>
+		    </div>
+		</div>
+		</div>
+
 					
 					<div class="row" >
 							<div class="col-sm-12">
 								<div class="table-responsive scrollable-table-container" >
-			    					<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports" >
+			    					<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed"  id="usertable">
 										<thead class="thead-light">
 			  								<tr>
-			  								<td>Report Date</td>
-			  								<td>Report Currency</td>
+			  								<th>Report Date</th>
+			  								<th>Report Currency</th>
 			  								</tr>
 			  							</thead>
 			  							<tbody>
