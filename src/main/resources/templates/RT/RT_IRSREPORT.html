@@ -561,8 +561,34 @@
 			#usertable td.product-col {
 			    text-align: left !important;
 			}
+			/* ===== FULL TABLE BORDER ===== */
+			    #usertable {
+			        border-collapse: collapse !important;
+			        width: 100%;
+			        border: 1px solid #b0b0b0; 
+			    }
+
+			    #usertable th,
+			    #usertable td {
+			        border: 1px solid #b0b0b0 !important; 
+			    }
 		</style>
-		
+		<!--<style>
+		    .orange-row {
+		        background-color: #ffa500; /* orange */
+		    }
+		</style>-->
+		<style>
+		    /* Force orange background for the entire row */
+		    #usertable tbody tr.orange-row > td {
+		        background-color: #f7a47c !important;
+		    }
+			/* Force orange background for the entire row */
+				    #usertable tbody tr.orange-rows > td {
+				        background-color: #c2ffff !important;
+				    }
+		</style>
+
 		<script>
 		$('#usertable').DataTable({
 		    scrollX: false,
@@ -1027,8 +1053,11 @@
 							<td  class="amt-right" th:text="${row.r8_total != null ? #numbers.formatDecimal(row.r8_total,1,2) : '0.00'}">
 							</td>
 						</tr>
-						<tr th:each="row, stat : ${irslist}" style="background:#a8d4ff;">
-							<td>(i)</td>
+						<!--<tr th:each="row, stat : ${irslist}" style="background:#a8d4ff;">-->
+							
+							<tr th:each="row, stat : ${irslist}" class="orange-row">
+
+							<td>3</td>
 
 							<td th:text="${row.r9_product}">Capital instrument other than equity (i+ii)</td>
 
@@ -1073,7 +1102,7 @@
 						</tr>
 
 						<tr th:each="row, stat : ${irslist}" style="background:#a8d4ff;">
-							<td>(ii)</td>
+							<td>(i)</td>
 
 							<td th:text="${row.r10_product}">Perpetual Non-Cumulative Preference Shares(Tier I)</td>
 
@@ -1118,7 +1147,7 @@
 						</tr>
 						<!-- R11 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>4</td>
+							<td>(ii)</td>
 							<td th:text="${row.r11_product}">R11 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r11_day1_28 != null ? #numbers.formatDecimal(row.r11_day1_28,1,2) : '0.00'}">
@@ -1161,8 +1190,8 @@
 						</tr>
 
 						<!-- R12 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>(i)</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>4</td>
 							<td th:text="${row.r12_product}">R12 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r12_day1_28 != null ? #numbers.formatDecimal(row.r12_day1_28,1,2) : '0.00'}">
@@ -1206,7 +1235,7 @@
 
 						<!-- R13 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(ii)</td>
+							<td>(i)</td>
 							<td th:text="${row.r13_product}">R13 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r13_day1_28 != null ? #numbers.formatDecimal(row.r13_day1_28,1,2) : '0.00'}">
@@ -1250,7 +1279,7 @@
 
 						<!-- R14 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iii)</td>
+							<td>(ii)</td>
 							<td th:text="${row.r14_product}">R14 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r14_day1_28 != null ? #numbers.formatDecimal(row.r14_day1_28,1,2) : '0.00'}">
@@ -1294,7 +1323,7 @@
 
 						<!-- R15 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iv)</td>
+							<td>(iii)</td>
 							<td th:text="${row.r15_product}">R15 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r15_day1_28 != null ? #numbers.formatDecimal(row.r15_day1_28,1,2) : '0.00'}">
@@ -1338,7 +1367,7 @@
 
 						<!-- R16 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(v)</td>
+							<td>(iv)</td>
 							<td th:text="${row.r16_product}">R16 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r16_day1_28 != null ? #numbers.formatDecimal(row.r16_day1_28,1,2) : '0.00'}">
@@ -1382,7 +1411,7 @@
 
 						<!-- R17 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>5</td>
+							<td>(iv)</td>
 							<td th:text="${row.r17_product}">R17 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r17_day1_28 != null ? #numbers.formatDecimal(row.r17_day1_28,1,2) : '0.00'}">
@@ -1425,8 +1454,8 @@
 						</tr>
 
 						<!-- R18 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>(i)</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>5</td>
 							<td th:text="${row.r18_product}">R18 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r18_day1_28 != null ? #numbers.formatDecimal(row.r18_day1_28,1,2) : '0.00'}">
@@ -1470,7 +1499,7 @@
 
 						<!-- R19 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(ii)</td>
+							<td>(i)</td>
 							<td th:text="${row.r19_product}">R19 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r19_day1_28 != null ? #numbers.formatDecimal(row.r19_day1_28,1,2) : '0.00'}">
@@ -1515,7 +1544,7 @@
 						<!-- R20 Row -->
 						<!-- R20 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iii)</td>
+							<td>(ii)</td>
 							<td th:text="${row.r20_product}">R20 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r20_day1_28 != null ? #numbers.formatDecimal(row.r20_day1_28,1,2) : '0.00'}">
@@ -1559,7 +1588,7 @@
 
 						<!-- R21 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iv)</td>
+							<td>(iii)</td>
 							<td th:text="${row.r21_product}">R21 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r21_day1_28 != null ? #numbers.formatDecimal(row.r21_day1_28,1,2) : '0.00'}">
@@ -1603,7 +1632,7 @@
 
 						<!-- R22 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(v)</td>
+							<td>(iv)</td>
 							<td th:text="${row.r22_product}">R22 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r22_day1_28 != null ? #numbers.formatDecimal(row.r22_day1_28,1,2) : '0.00'}">
@@ -1647,7 +1676,7 @@
 
 						<!-- R23 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>6</td>
+							<td>(v)</td>
 							<td th:text="${row.r23_product}">R23 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r23_day1_28 != null ? #numbers.formatDecimal(row.r23_day1_28,1,2) : '0.00'}">
@@ -1690,8 +1719,8 @@
 						</tr>
 
 						<!-- R24 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>(i)</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>6</td>
 							<td th:text="${row.r24_product}">R24 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r24_day1_28 != null ? #numbers.formatDecimal(row.r24_day1_28,1,2) : '0.00'}">
@@ -1734,7 +1763,7 @@
 						</tr>
 						<!-- R25 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(ii)</td>
+							<td>(i)</td>
 							<td th:text="${row.r25_product}">R25 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r25_day1_28 != null ? #numbers.formatDecimal(row.r25_day1_28,1,2) : '0.00'}">
@@ -1778,7 +1807,7 @@
 
 						<!-- R26 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iii)</td>
+							<td>(ii)</td>
 							<td th:text="${row.r26_product}">R26 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r26_day1_28 != null ? #numbers.formatDecimal(row.r26_day1_28,1,2) : '0.00'}">
@@ -1822,7 +1851,7 @@
 
 						<!-- R27 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iv)</td>
+							<td>(iii)</td>
 							<td th:text="${row.r27_product}">R27 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r27_day1_28 != null ? #numbers.formatDecimal(row.r27_day1_28,1,2) : '0.00'}">
@@ -1866,7 +1895,7 @@
 
 						<!-- R28 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>7</td>
+							<td>(iv)</td>
 							<td th:text="${row.r28_product}">R28 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r28_day1_28 != null ? #numbers.formatDecimal(row.r28_day1_28,1,2) : '0.00'}">
@@ -1909,8 +1938,8 @@
 						</tr>
 
 						<!-- R29 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>(i)</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>7</td>
 							<td th:text="${row.r29_product}">R29 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r29_day1_28 != null ? #numbers.formatDecimal(row.r29_day1_28,1,2) : '0.00'}">
@@ -1954,7 +1983,7 @@
 
 						<!-- R30 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(ii)</td>
+							<td>(i)</td>
 							<td th:text="${row.r30_product}">R30 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r30_day1_28 != null ? #numbers.formatDecimal(row.r30_day1_28,1,2) : '0.00'}">
@@ -1997,7 +2026,7 @@
 						</tr>
 						<!-- R31 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iii)</td>
+							<td>(ii)</td>
 							<td th:text="${row.r31_product}">R31 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r31_day1_28 != null ? #numbers.formatDecimal(row.r31_day1_28,1,2) : '0.00'}">
@@ -2041,7 +2070,7 @@
 
 						<!-- R32 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(iv)</td>
+							<td>(iii)</td>
 							<td th:text="${row.r32_product}">R32 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r32_day1_28 != null ? #numbers.formatDecimal(row.r32_day1_28,1,2) : '0.00'}">
@@ -2085,7 +2114,7 @@
 
 						<!-- R33 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>8</td>
+							<td>(iv)</td>
 							<td th:text="${row.r33_product}">R33 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r33_day1_28 != null ? #numbers.formatDecimal(row.r33_day1_28,1,2) : '0.00'}">
@@ -2128,7 +2157,7 @@
 						</tr>
 						<!-- R34 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>9</td>
+							<td>8</td>
 							<td th:text="${row.r34_product}">R34 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r34_day1_28 != null ? #numbers.formatDecimal(row.r34_day1_28,1,2) : '0.00'}">
@@ -2172,7 +2201,7 @@
 
 						<!-- R35 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>29</td>
+							<td>9</td>
 							<td th:text="${row.r35_product}">R35 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r35_day1_28 != null ? #numbers.formatDecimal(row.r35_day1_28,1,2) : '0.00'}">
@@ -2216,7 +2245,7 @@
 
 						<!-- R36 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>30</td>
+							<td>10</td>
 							<td th:text="${row.r36_product}">R36 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r36_day1_28 != null ? #numbers.formatDecimal(row.r36_day1_28,1,2) : '0.00'}">
@@ -2259,8 +2288,8 @@
 						</tr>
 
 						<!-- R37 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>31</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-rows">
+							<td>11</td>
 							<td th:text="${row.r37_product}">R37 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r37_day1_28 != null ? #numbers.formatDecimal(row.r37_day1_28,1,2) : '0.00'}">
@@ -2303,8 +2332,8 @@
 						</tr>
 
 						<!-- R38 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>32</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>A</td>
 							<td th:text="${row.r38_product}">R38 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r38_day1_28 != null ? #numbers.formatDecimal(row.r38_day1_28,1,2) : '0.00'}">
@@ -2347,8 +2376,8 @@
 						</tr>
 
 						<!-- R39 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>33</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>B</td>
 							<td th:text="${row.r39_product}">R39 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r39_day1_28 != null ? #numbers.formatDecimal(row.r39_day1_28,1,2) : '0.00'}">
@@ -2392,7 +2421,7 @@
 
 						<!-- R40 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>34</td>
+							<td>(i)</td>
 							<td th:text="${row.r40_product}">R40 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r40_day1_28 != null ? #numbers.formatDecimal(row.r40_day1_28,1,2) : '0.00'}">
@@ -2435,7 +2464,7 @@
 						</tr>
 						<!-- R41 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>35</td>
+							<td>(ii)</td>
 							<td th:text="${row.r41_product}">R41 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r41_day1_28 != null ? #numbers.formatDecimal(row.r41_day1_28,1,2) : '0.00'}">
@@ -2479,7 +2508,7 @@
 
 						<!-- R42 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>36</td>
+							<td>(iii)</td>
 							<td th:text="${row.r42_product}">R42 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r42_day1_28 != null ? #numbers.formatDecimal(row.r42_day1_28,1,2) : '0.00'}">
@@ -2523,7 +2552,7 @@
 
 						<!-- R43 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>37</td>
+							<td>(iv)</td>
 							<td th:text="${row.r43_product}">R43 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r43_day1_28 != null ? #numbers.formatDecimal(row.r43_day1_28,1,2) : '0.00'}">
@@ -2566,8 +2595,8 @@
 						</tr>
 
 						<!-- R44 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>38</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-rows">
+							<td>(v)</td>
 							<td th:text="${row.r44_product}">R44 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r44_day1_28 != null ? #numbers.formatDecimal(row.r44_day1_28,1,2) : '0.00'}">
@@ -2610,8 +2639,8 @@
 						</tr>
 
 						<!-- R45 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>39</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>C</td>
 							<td th:text="${row.r45_product}">R45 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r45_day1_28 != null ? #numbers.formatDecimal(row.r45_day1_28,1,2) : '0.00'}">
@@ -2706,228 +2735,10 @@
 					</thead>
 
 					<tbody>
-						<!-- R46 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>40</td>
-							<td th:text="${row.r46_product}">R46 Product</td>
-							<td   class="amt-right"
-								th:text="${row.r46_day1_28 != null ? #numbers.formatDecimal(row.r46_day1_28,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_day29_3m != null ? #numbers.formatDecimal(row.r46_day29_3m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over3m_to_6m != null ? #numbers.formatDecimal(row.r46_over3m_to_6m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over6m_to_1y != null ? #numbers.formatDecimal(row.r46_over6m_to_1y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over1y_to_3y != null ? #numbers.formatDecimal(row.r46_over1y_to_3y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over3y_to_5y != null ? #numbers.formatDecimal(row.r46_over3y_to_5y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over5y_to_7y != null ? #numbers.formatDecimal(row.r46_over5y_to_7y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over7y_to_10y != null ? #numbers.formatDecimal(row.r46_over7y_to_10y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over10y_to_15y != null ? #numbers.formatDecimal(row.r46_over10y_to_15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_over15y != null ? #numbers.formatDecimal(row.r46_over15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_non_sensitive != null ? #numbers.formatDecimal(row.r46_non_sensitive,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r46_total_rsl != null ? #numbers.formatDecimal(row.r46_total_rsl,1,2) : '0.00'}">
-							</td>
-							<td    class="amt-right" th:text="${row.r46_total != null ? #numbers.formatDecimal(row.r46_total,1,2) : '0.00'}">
-							</td>
-						</tr>
-
-						<!-- R47 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>41</td>
-							<td th:text="${row.r47_product}">R47 Product</td>
-							<td   class="amt-right"
-								th:text="${row.r47_day1_28 != null ? #numbers.formatDecimal(row.r47_day1_28,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_day29_3m != null ? #numbers.formatDecimal(row.r47_day29_3m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over3m_to_6m != null ? #numbers.formatDecimal(row.r47_over3m_to_6m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over6m_to_1y != null ? #numbers.formatDecimal(row.r47_over6m_to_1y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over1y_to_3y != null ? #numbers.formatDecimal(row.r47_over1y_to_3y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over3y_to_5y != null ? #numbers.formatDecimal(row.r47_over3y_to_5y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over5y_to_7y != null ? #numbers.formatDecimal(row.r47_over5y_to_7y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over7y_to_10y != null ? #numbers.formatDecimal(row.r47_over7y_to_10y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over10y_to_15y != null ? #numbers.formatDecimal(row.r47_over10y_to_15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_over15y != null ? #numbers.formatDecimal(row.r47_over15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_non_sensitive != null ? #numbers.formatDecimal(row.r47_non_sensitive,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r47_total_rsl != null ? #numbers.formatDecimal(row.r47_total_rsl,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right" th:text="${row.r47_total != null ? #numbers.formatDecimal(row.r47_total,1,2) : '0.00'}">
-							</td>
-						</tr>
-
-						<!-- R48 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>42</td>
-							<td th:text="${row.r48_product}">R48 Product</td>
-							<td   class="amt-right"
-								th:text="${row.r48_day1_28 != null ? #numbers.formatDecimal(row.r48_day1_28,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_day29_3m != null ? #numbers.formatDecimal(row.r48_day29_3m,1,2) : '0.00'}">
-							</td> 
-							<td   class="amt-right"
-								th:text="${row.r48_over3m_to_6m != null ? #numbers.formatDecimal(row.r48_over3m_to_6m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over6m_to_1y != null ? #numbers.formatDecimal(row.r48_over6m_to_1y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over1y_to_3y != null ? #numbers.formatDecimal(row.r48_over1y_to_3y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over3y_to_5y != null ? #numbers.formatDecimal(row.r48_over3y_to_5y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over5y_to_7y != null ? #numbers.formatDecimal(row.r48_over5y_to_7y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over7y_to_10y != null ? #numbers.formatDecimal(row.r48_over7y_to_10y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over10y_to_15y != null ? #numbers.formatDecimal(row.r48_over10y_to_15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_over15y != null ? #numbers.formatDecimal(row.r48_over15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_non_sensitive != null ? #numbers.formatDecimal(row.r48_non_sensitive,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r48_total_rsl != null ? #numbers.formatDecimal(row.r48_total_rsl,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right" th:text="${row.r48_total != null ? #numbers.formatDecimal(row.r48_total,1,2) : '0.00'}">
-							</td>
-						</tr>
-
-						<!-- R49 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>43</td>
-							<td th:text="${row.r49_product}">R49 Product</td>
-							<td   class="amt-right"
-								th:text="${row.r49_day1_28 != null ? #numbers.formatDecimal(row.r49_day1_28,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_day29_3m != null ? #numbers.formatDecimal(row.r49_day29_3m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over3m_to_6m != null ? #numbers.formatDecimal(row.r49_over3m_to_6m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over6m_to_1y != null ? #numbers.formatDecimal(row.r49_over6m_to_1y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over1y_to_3y != null ? #numbers.formatDecimal(row.r49_over1y_to_3y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over3y_to_5y != null ? #numbers.formatDecimal(row.r49_over3y_to_5y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over5y_to_7y != null ? #numbers.formatDecimal(row.r49_over5y_to_7y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over7y_to_10y != null ? #numbers.formatDecimal(row.r49_over7y_to_10y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over10y_to_15y != null ? #numbers.formatDecimal(row.r49_over10y_to_15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_over15y != null ? #numbers.formatDecimal(row.r49_over15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_non_sensitive != null ? #numbers.formatDecimal(row.r49_non_sensitive,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r49_total_rsl != null ? #numbers.formatDecimal(row.r49_total_rsl,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right" th:text="${row.r49_total != null ? #numbers.formatDecimal(row.r49_total,1,2) : '0.00'}">
-							</td>
-						</tr>
-
-						<!-- R50 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>44</td>
-							<td th:text="${row.r50_product}">R50 Product</td>
-							<td   class="amt-right"
-								th:text="${row.r50_day1_28 != null ? #numbers.formatDecimal(row.r50_day1_28,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_day29_3m != null ? #numbers.formatDecimal(row.r50_day29_3m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over3m_to_6m != null ? #numbers.formatDecimal(row.r50_over3m_to_6m,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over6m_to_1y != null ? #numbers.formatDecimal(row.r50_over6m_to_1y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over1y_to_3y != null ? #numbers.formatDecimal(row.r50_over1y_to_3y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over3y_to_5y != null ? #numbers.formatDecimal(row.r50_over3y_to_5y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over5y_to_7y != null ? #numbers.formatDecimal(row.r50_over5y_to_7y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over7y_to_10y != null ? #numbers.formatDecimal(row.r50_over7y_to_10y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over10y_to_15y != null ? #numbers.formatDecimal(row.r50_over10y_to_15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_over15y != null ? #numbers.formatDecimal(row.r50_over15y,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_non_sensitive != null ? #numbers.formatDecimal(row.r50_non_sensitive,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right"
-								th:text="${row.r50_total_rsl != null ? #numbers.formatDecimal(row.r50_total_rsl,1,2) : '0.00'}">
-							</td>
-							<td   class="amt-right" th:text="${row.r50_total != null ? #numbers.formatDecimal(row.r50_total,1,2) : '0.00'}">
-							</td>
-						</tr>
+						
 						<!-- R51 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>45</td>
+							<td>1</td>
 							<td th:text="${row.r51_product}">R51 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r51_day1_28 != null ? #numbers.formatDecimal(row.r51_day1_28,1,2) : '0.00'}">
@@ -2971,7 +2782,7 @@
 
 						<!-- R52 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>46</td>
+							<td>2</td>
 							<td th:text="${row.r52_product}">R52 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r52_day1_28 != null ? #numbers.formatDecimal(row.r52_day1_28,1,2) : '0.00'}">
@@ -3014,8 +2825,8 @@
 						</tr>
 
 						<!-- R53 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>47</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>3</td>
 							<td th:text="${row.r53_product}">R53 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r53_day1_28 != null ? #numbers.formatDecimal(row.r53_day1_28,1,2) : '0.00'}">
@@ -3059,7 +2870,7 @@
 
 						<!-- R54 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>48</td>
+							<td>(i)</td>
 							<td th:text="${row.r54_product}">R54 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r54_day1_28 != null ? #numbers.formatDecimal(row.r54_day1_28,1,2) : '0.00'}">
@@ -3103,7 +2914,7 @@
 
 						<!-- R55 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>49</td>
+							<td>(ii)</td>
 							<td th:text="${row.r55_product}">R55 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r55_day1_28 != null ? #numbers.formatDecimal(row.r55_day1_28,1,2) : '0.00'}">
@@ -3146,7 +2957,7 @@
 						</tr>
 						<!-- R56 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>50</td>
+							<td>(iii)</td>
 							<td th:text="${row.r56_product}">R56 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r56_day1_28 != null ? #numbers.formatDecimal(row.r56_day1_28,1,2) : '0.00'}">
@@ -3189,8 +3000,8 @@
 						</tr>
 
 						<!-- R57 Row -->
-						<tr th:each="row, stat : ${irslist}">
-							<td>51</td>
+						<tr th:each="row, stat : ${irslist}"  class="orange-row">
+							<td>4</td>
 							<td th:text="${row.r57_product}">R57 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r57_day1_28 != null ? #numbers.formatDecimal(row.r57_day1_28,1,2) : '0.00'}">
@@ -3234,7 +3045,7 @@
 
 						<!-- R58 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td th:text="${50+stat.index * 3 + 2}"></td>
+							<td>(i)</td>
 							<td th:text="${row.r58_product}">R58 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r58_day1_28 != null ? #numbers.formatDecimal(row.r58_day1_28,1,2) : '0.00'}">
@@ -3278,7 +3089,7 @@
 
 						<!-- R59 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>53</td>
+							<td>(ii)</td>
 							<td th:text="${row.r59_product}">R59 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r59_day1_28 != null ? #numbers.formatDecimal(row.r59_day1_28,1,2) : '0.00'}">
@@ -3322,7 +3133,7 @@
 
 						<!-- R60 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>54</td>
+							<td>(iii)</td>
 							<td th:text="${row.r60_product}">R60 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r60_day1_28 != null ? #numbers.formatDecimal(row.r60_day1_28,1,2) : '0.00'}">
@@ -3363,11 +3174,10 @@
 							<td   class="amt-right" th:text="${row.r60_total != null ? #numbers.formatDecimal(row.r60_total,1,2) : '0.00'}">
 							</td>
 						</tr>
-					</tbody>
-					<tbody>
-						<trtr th:each="row, stat : ${irsList2}">
+					
+						<tr th:each="row, stat : ${irsList2}">
 							<!-- R61 -->
-							<td>55</td>
+							<td>(iv)</td>
 							<td th:text="${row.r61_product}"></td>
 							<td   class="amt-right"
 								th:text="${row.r61_day1_28 != null ? #numbers.formatDecimal(row.r61_day1_28,1,2) : '0.00'}">
@@ -3408,9 +3218,9 @@
 							<td   class="amt-right" th:text="${row.r61_total != null ? #numbers.formatDecimal(row.r61_total,1,2) : '0.00'}">
 							</td>
 							</tr>
-							<trtr th:each="row, stat : ${irsList2}">
+							<tr th:each="row, stat : ${irsList2}">
 								<!-- R62 -->
-								<td>56</td> <!-- 2, 5, 8 ... -->
+								<td>(v)</td> <!-- 2, 5, 8 ... -->
 								<td th:text="${row.r62_product}"></td>
 								<td   class="amt-right"
 									th:text="${row.r62_day1_28 != null ? #numbers.formatDecimal(row.r62_day1_28,1,2) : '0.00'}">
@@ -3452,9 +3262,9 @@
 									th:text="${row.r62_total != null ? #numbers.formatDecimal(row.r62_total,1,2) : '0.00'}">
 								</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
+								<tr th:each="row, stat : ${irsList2}"  class="orange-row">
 									<!-- R63 -->
-									<td>57</td>
+									<td>5</td>
 									<td th:text="${row.r63_product}"></td>
 									<td   class="amt-right"
 										th:text="${row.r63_day1_28 != null ? #numbers.formatDecimal(row.r63_day1_28,1,2) : '0.00'}">
@@ -3500,7 +3310,7 @@
 
 								<tr th:each="row, stat : ${irsList2}">
 									<!-- Serial No -->
-									<td>58</td>
+									<td>(i)</td>
 
 									<!-- Product -->
 									<td th:text="${row.r64_product}">R64 Product</td>
@@ -3546,7 +3356,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>59</td>
+									<td>(ii)</td>
 									<td th:text="${row.r65_product}">R65 Product</td>
 
 									<td   class="amt-right"
@@ -3590,7 +3400,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>60</td>
+									<td>(iii)</td>
 									<td th:text="${row.r66_product}"></td>
 
 									<td   class="amt-right"
@@ -3634,7 +3444,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 1}">61</td>
+									<td>6</td>
 									<td th:text="${row.r67_product}">R67 Product</td>
 
 									<td   class="amt-right"
@@ -3678,7 +3488,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 2}">62</td>
+									<td>7</td>
 									<td th:text="${row.r68_product}">R68 Product</td>
 
 									<td   class="amt-right"
@@ -3721,8 +3531,8 @@
 										th:text="${row.r68_total != null ? #numbers.formatDecimal(row.r68_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 3}">63</td>
+								<tr th:each="row, stat : ${irsList2}"  class="orange-row">
+									<td>8</td>
 									<td th:text="${row.r69_product}">R69 Product</td>
 
 									<td   class="amt-right"
@@ -3766,7 +3576,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 4}">64</td>
+									<td>(i)</td>
 									<td th:text="${row.r70_product}">R70 Product</td>
 
 									<td   class="amt-right"
@@ -3810,7 +3620,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 5}">65</td>
+									<td>(ii)</td>
 									<td th:text="${row.r71_product}">R71 Product</td>
 
 									<td   class="amt-right"
@@ -3854,7 +3664,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td th:text="${60+stat.index * 3 + 6}">66</td>
+									<td>(iii)</td>
 									<td th:text="${row.r72_product}">R72 Product</td>
 
 									<td   class="amt-right"
@@ -3898,7 +3708,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>67</td>
+									<td>9</td>
 									<td th:text="${row.r73_product}">R73 Product</td>
 
 									<td  class="amt-right"
@@ -3943,7 +3753,7 @@
 								</tr>
 
 								<tr th:each="row, stat : ${irsList2}">
-									<td>68</td>
+									<td>10</td>
 									<td th:text="${row.r74_product}">R74 Product</td>
 
 									<td  class="amt-right"
@@ -3988,7 +3798,7 @@
 								</tr>
 
 								<tr th:each="row, stat : ${irsList2}">
-									<td>69</td>
+									<td>11</td>
 									<td th:text="${row.r75_product}"></td>
 
 									<td  class="amt-right"
@@ -4032,7 +3842,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>70</td>
+									<td>12</td>
 									<td th:text="${row.r76_product}">R76 Product</td>
 
 									<td  class="amt-right"
@@ -4075,8 +3885,8 @@
 										th:text="${row.r76_total != null ? #numbers.formatDecimal(row.r76_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>71</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td>D</td>
 									<td th:text="${row.r77_product}">R77 Product</td>
 
 									<td  class="amt-right"
@@ -4119,8 +3929,8 @@
 										th:text="${row.r77_total != null ? #numbers.formatDecimal(row.r77_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>72</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td>E</td>
 									<td th:text="${row.r78_product}">R78 Product</td>
 
 									<td  class="amt-right"
@@ -4164,7 +3974,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>73</td>
+									<td>(i)</td>
 									<td th:text="${row.r79_product}">R79 Product</td>
 
 									<td  class="amt-right"
@@ -4208,7 +4018,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>74</td>
+									<td>(ii)</td>
 									<td th:text="${row.r80_product}">R80 Product</td>
 
 									<td  class="amt-right"
@@ -4252,7 +4062,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>75</td>
+									<td>(iii)</td>
 									<td th:text="${row.r81_product}">R81 Product</td>
 
 									<td  class="amt-right"
@@ -4296,7 +4106,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>76</td>
+									<td>(iv)</td>
 									<td th:text="${row.r82_product}">R82 Product</td>
 
 									<td  class="amt-right"
@@ -4339,8 +4149,8 @@
 										th:text="${row.r82_total != null ? #numbers.formatDecimal(row.r82_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>77</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-rows">
+									<td>(v)</td>
 									<td th:text="${row.r83_product}">R83 Product</td>
 
 									<td  class="amt-right"
@@ -4383,8 +4193,8 @@
 										th:text="${row.r83_total != null ? #numbers.formatDecimal(row.r83_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>78</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td>F</td>
 									<td th:text="${row.r84_product}">R84 Product</td>
 
 									<td  class="amt-right"
@@ -4427,8 +4237,8 @@
 										th:text="${row.r84_total != null ? #numbers.formatDecimal(row.r84_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>79</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td></td>
 									<td th:text="${row.r85_product}">R85 Product</td>
 
 									<td  class="amt-right"
@@ -4471,8 +4281,8 @@
 										th:text="${row.r85_total != null ? #numbers.formatDecimal(row.r85_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>80</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td></td>
 									<td th:text="${row.r86_product}">R86 Product</td>
 
 									<td  class="amt-right"
@@ -4515,8 +4325,8 @@
 										th:text="${row.r86_total != null ? #numbers.formatDecimal(row.r86_total,1,2) : '0.00'}">
 									</td>
 								</tr>
-								<tr th:each="row, stat : ${irsList2}">
-									<td>81</td>
+								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
+									<td></td>
 									<td th:text="${row.r87_product}">R87 Product</td>
 
 									<td  class="amt-right"
