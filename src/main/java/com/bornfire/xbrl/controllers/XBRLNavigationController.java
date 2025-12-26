@@ -2885,36 +2885,49 @@ public class XBRLNavigationController {
 	        @RequestParam String reportdate,
 	        @RequestParam String currency,
 	        @RequestParam(defaultValue = "summary") String formmode,
+	        @RequestParam(required = false) String rowid,
 	        Model md) {
 
-	    Date reportDateFor = null;
+	    Date reportDateFor;
 	    try {
 	        reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
 	    } catch (Exception e) {
 	        md.addAttribute("error", "Invalid date format");
-	        return "RT/RT_IRS";
+	        return "RT/RT_IRSREPORT";
 	    }
 
-	    List<RT_IRS_ENTITY> irslist =
-	            RT_irs_repository.rtirslistbydate(reportDateFor, currency);
-
-	    List<RT_IRS_ENTITY2> irsList2 =
-	    		RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
-	    
-	    List<RT_IRS_ENTITY> currencyList =
-	            RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
-
-	    md.addAttribute("irslist", irslist);
-	    md.addAttribute("irsList2", irsList2);
-	    md.addAttribute("currencylist", currencyList);
+	 
 	    md.addAttribute("currency", currency);
 	    md.addAttribute("reportdate", reportdate);
-	    md.addAttribute("formmode", "summary");
+	    md.addAttribute("formmode", formmode);
+	    
+	    if ("summary".equalsIgnoreCase(formmode)) {
 
-	    return "RT/RT_IRSREPORT";
+	        List<RT_IRS_ENTITY> irslist =
+	                RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+
+	        List<RT_IRS_ENTITY2> irsList2 =
+	                RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+
+	        List<RT_IRS_ENTITY> currencyList =
+	                RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
+
+	        md.addAttribute("irslist", irslist);
+	        md.addAttribute("irsList2", irsList2);
+	        md.addAttribute("currencylist", currencyList);
+	    }
+
+	    if ("Detail".equalsIgnoreCase(formmode)) {
+
+	       
+	      //  md.addAttribute("rowid", rowid);
+
+	        // optional: fetch detail-specific data here
+	        // md.addAttribute("detailsList", detailsList);
+	    }
+
+	    return "RT/RT_IRSREPORT"; // SAME SCREEN
 	}
-
-
 
 
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })

@@ -796,7 +796,7 @@
 			var reportdate = document.getElementById("reportDate").innerText;
 			var currency = '[[${currency}]]'
 			var Rowid = a.getAttribute('data-rowid')
-			location.href = 'SLSREPORT?reportdate=' + reportdate + '&formmode=Detail&Rowid=' + Rowid + '&currency=' + currency
+			location.href = 'IRSREPORT?reportdate=' + reportdate + '&formmode=Detail&Rowid=' + Rowid + '&currency=' + currency
 		}
 
 	</script>
@@ -838,7 +838,7 @@
 
 
 		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
-
+		<div class="card" style="height:100%; display:flex; flex-direction:column;">
 		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
 
@@ -920,7 +920,7 @@
 						<!-- Column Headings -->
 						<tr>
 							<th></th>
-							<th style="background:#d0d0d0;">Liabilities</th>
+							<th style="background:#d0d0d0; text-align:left">Liabilities</th>
 							<th class="text-end">1 to 28 days</th>
 							<th  class="text-end">29 days to 3 months</th>
 							<th  class="text-end">Over 3 months upto 6 months</th>
@@ -938,28 +938,28 @@
 
 						<!-- Column Numbers -->
 						<tr>
-							<th>1</th>
-							<th>2</th>
-							<th>3</th>
-							<th>4</th>
-							<th>5</th>
-							<th>6</th>
-							<th>7</th>
-							<th>8</th>
-							<th>9</th>
-							<th>10</th>
-							<th>11</th>
-							<th>12</th>
-							<th>13</th>
-							<th>14</th>
-							<th>15</th>
+							<th  style=" text-align:left">1</th>
+							<th style=" text-align:left">2</th>
+							<th  class="text-end">3</th>
+							<th  class="text-end">4</th>
+							<th  class="text-end">5</th>
+							<th  class="text-end">6</th>
+							<th  class="text-end">7</th>
+							<th  class="text-end">8</th>
+							<th  class="text-end">9</th>
+							<th  class="text-end">10</th>
+							<th  class="text-end">11</th>
+							<th  class="text-end">12</th>
+							<th  class="text-end">13</th>
+							<th  class="text-end">14</th>
+							<th  class="text-end">15</th>
 						</tr>
 					</thead>
 
 					<tbody>
 						<!-- Capital – Equity Shares -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>1</td>
+							<td  style=" text-align:center">1</td>
 
 							<td th:text="${row.r7_product}">Liabilities</td>
 
@@ -1010,7 +1010,7 @@
 							</td>
 						</tr>
 						<tr th:each="row, stat : ${irslist}">
-							<td>2</td>
+							<td  style=" text-align:center">2</td>
 
 							<td th:text="${row.r8_product}">Reserves and Surplus</td>
 
@@ -1053,11 +1053,10 @@
 							<td  class="amt-right" th:text="${row.r8_total != null ? #numbers.formatDecimal(row.r8_total,1,2) : '0.00'}">
 							</td>
 						</tr>
-						<!--<tr th:each="row, stat : ${irslist}" style="background:#a8d4ff;">-->
-							
+						
 							<tr th:each="row, stat : ${irslist}" class="orange-row">
 
-							<td>3</td>
+							<td  style=" text-align:center">3</td>
 
 							<td th:text="${row.r9_product}">Capital instrument other than equity (i+ii)</td>
 
@@ -1102,7 +1101,7 @@
 						</tr>
 
 						<tr th:each="row, stat : ${irslist}" style="background:#a8d4ff;">
-							<td>(i)</td>
+							<td  style=" text-align:center">(i)</td>
 
 							<td th:text="${row.r10_product}">Perpetual Non-Cumulative Preference Shares(Tier I)</td>
 
@@ -1147,7 +1146,7 @@
 						</tr>
 						<!-- R11 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(ii)</td>
+							<td  style=" text-align:center">(ii)</td>
 							<td th:text="${row.r11_product}">R11 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r11_day1_28 != null ? #numbers.formatDecimal(row.r11_day1_28,1,2) : '0.00'}">
@@ -1191,7 +1190,7 @@
 
 						<!-- R12 Row -->
 						<tr th:each="row, stat : ${irslist}"  class="orange-row">
-							<td>4</td>
+							<td  style=" text-align:center">4</td>
 							<td th:text="${row.r12_product}">R12 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r12_day1_28 != null ? #numbers.formatDecimal(row.r12_day1_28,1,2) : '0.00'}">
@@ -1235,7 +1234,7 @@
 
 						<!-- R13 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>(i)</td>
+							<td  style=" text-align:center">(i)</td>
 							<td th:text="${row.r13_product}">R13 Product</td>
 							<td  class="amt-right"
 								th:text="${row.r13_day1_28 != null ? #numbers.formatDecimal(row.r13_day1_28,1,2) : '0.00'}">
@@ -2698,7 +2697,7 @@
 						<!-- Column Headings -->
 						<tr>
 							<th></th>
-							<th style="background:#d0d0d0;">Liabilities</th>
+							<th style="background:#d0d0d0;  text-align:left">Assets</th>
 							<th  class="text-end">1 to 28 days</th>
 							<th  class="text-end">29 days to 3 months</th>
 							<th  class="text-end">Over 3 months upto 6 months</th>
@@ -2716,21 +2715,21 @@
 
 						<!-- Column Numbers -->
 						<tr>
-							<th>1</th>
-							<th>2</th>
-							<th>3</th>
-							<th>4</th>
-							<th>5</th>
-							<th>6</th>
-							<th>7</th>
-							<th>8</th>
-							<th>9</th>
-							<th>10</th>
-							<th>11</th>
-							<th>12</th>
-							<th>13</th>
-							<th>14</th>
-							<th>15</th>
+							<th  style=" text-align:left">1</th>
+							<th  style=" text-align:left">2</th>
+							<th  class="text-end">3</th>
+							<th  class="text-end">4</th>
+							<th  class="text-end">5</th>
+							<th  class="text-end">6</th>
+							<th  class="text-end">7</th>
+							<th  class="text-end">8</th>
+							<th  class="text-end">9</th>
+							<th  class="text-end">10</th>
+							<th  class="text-end">11</th>
+							<th  class="text-end">12</th>
+							<th  class="text-end">13</th>
+							<th  class="text-end">14</th>
+							<th  class="text-end">15</th>
 						</tr>
 					</thead>
 
@@ -2738,7 +2737,7 @@
 						
 						<!-- R51 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>1</td>
+							<td  style=" text-align:center">1</td>
 							<td th:text="${row.r51_product}">R51 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r51_day1_28 != null ? #numbers.formatDecimal(row.r51_day1_28,1,2) : '0.00'}">
@@ -2782,7 +2781,7 @@
 
 						<!-- R52 Row -->
 						<tr th:each="row, stat : ${irslist}">
-							<td>2</td>
+							<td  style=" text-align:center">2</td>
 							<td th:text="${row.r52_product}">R52 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r52_day1_28 != null ? #numbers.formatDecimal(row.r52_day1_28,1,2) : '0.00'}">
@@ -2826,7 +2825,7 @@
 
 						<!-- R53 Row -->
 						<tr th:each="row, stat : ${irslist}"  class="orange-row">
-							<td>3</td>
+							<td  style=" text-align:center">3</td>
 							<td th:text="${row.r53_product}">R53 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r53_day1_28 != null ? #numbers.formatDecimal(row.r53_day1_28,1,2) : '0.00'}">
@@ -3001,7 +3000,7 @@
 
 						<!-- R57 Row -->
 						<tr th:each="row, stat : ${irslist}"  class="orange-row">
-							<td>4</td>
+							<td  style=" text-align:center">4</td>
 							<td th:text="${row.r57_product}">R57 Product</td>
 							<td   class="amt-right"
 								th:text="${row.r57_day1_28 != null ? #numbers.formatDecimal(row.r57_day1_28,1,2) : '0.00'}">
@@ -3264,7 +3263,7 @@
 								</tr>
 								<tr th:each="row, stat : ${irsList2}"  class="orange-row">
 									<!-- R63 -->
-									<td>5</td>
+									<td  style=" text-align:center">5</td>
 									<td th:text="${row.r63_product}"></td>
 									<td   class="amt-right"
 										th:text="${row.r63_day1_28 != null ? #numbers.formatDecimal(row.r63_day1_28,1,2) : '0.00'}">
@@ -3444,7 +3443,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>6</td>
+									<td  style=" text-align:center">6</td>
 									<td th:text="${row.r67_product}">R67 Product</td>
 
 									<td   class="amt-right"
@@ -3488,7 +3487,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>7</td>
+									<td  style=" text-align:center">7</td>
 									<td th:text="${row.r68_product}">R68 Product</td>
 
 									<td   class="amt-right"
@@ -3532,7 +3531,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}"  class="orange-row">
-									<td>8</td>
+									<td  style=" text-align:center">8</td>
 									<td th:text="${row.r69_product}">R69 Product</td>
 
 									<td   class="amt-right"
@@ -3708,7 +3707,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>9</td>
+									<td  style=" text-align:center">9</td>
 									<td th:text="${row.r73_product}">R73 Product</td>
 
 									<td  class="amt-right"
@@ -3753,7 +3752,7 @@
 								</tr>
 
 								<tr th:each="row, stat : ${irsList2}">
-									<td>10</td>
+									<td  style=" text-align:center">10</td>
 									<td th:text="${row.r74_product}">R74 Product</td>
 
 									<td  class="amt-right"
@@ -3798,7 +3797,7 @@
 								</tr>
 
 								<tr th:each="row, stat : ${irsList2}">
-									<td>11</td>
+									<td  style=" text-align:center">11</td>
 									<td th:text="${row.r75_product}"></td>
 
 									<td  class="amt-right"
@@ -3842,7 +3841,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}">
-									<td>12</td>
+									<td  style=" text-align:center">12</td>
 									<td th:text="${row.r76_product}">R76 Product</td>
 
 									<td  class="amt-right"
@@ -3886,7 +3885,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
-									<td>D</td>
+									<td  style=" text-align:center">D</td>
 									<td th:text="${row.r77_product}">R77 Product</td>
 
 									<td  class="amt-right"
@@ -3930,7 +3929,7 @@
 									</td>
 								</tr>
 								<tr th:each="row, stat : ${irsList2}"   class="orange-row">
-									<td>E</td>
+									<td  style=" text-align:center">E</td>
 									<td th:text="${row.r78_product}">R78 Product</td>
 
 									<td  class="amt-right"
@@ -4377,7 +4376,7 @@
 		</div>
 
 
-		<!--	<div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode=='Detail'}">
+			<div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode=='Detail'}">
 			      	<div class="scrollable-table-container">  
 			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports">	
 										<thead class="thead-light">
@@ -4390,7 +4389,7 @@
 												<th>REPORT_DATE</th>
 											</tr>
 										</thead>
-										<tbody>
+										<!--<tbody>
 										<tr th:each="detaillist : ${slsdetaillist}">
 										<td th:text="${detaillist.custId}"></td>
 										<td th:text="${detaillist.foracid}"></td>
@@ -4401,13 +4400,13 @@
 										
 										</tr>
 										
-										</tbody>		
+										</tbody>-->		
 									</table>
 									
-									<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
+									<!--<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
 									   
 									    <a th:if="${currentPage > 0}"
-									       th:href="@{/SLSREPORT(page=${currentPage - 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
+									       th:href="@{/IRSREPORT(page=${currentPage - 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
 									       Previous
 									    </a>
 									
@@ -4416,13 +4415,13 @@
 									
 									    
 									    <a th:if="${currentPage < (totalPages - 1) * 100}"
-									       th:href="@{/SLSREPORT(page=${currentPage + 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
+									       th:href="@{/IRSREPORT(page=${currentPage + 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
 									       Next
 									    </a>
-									</div>
+									</div>-->
 									
 								</div>
-							</div>-->
+							</div>
 	</div>
 	</div>
 
