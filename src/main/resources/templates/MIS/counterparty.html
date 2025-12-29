@@ -390,7 +390,7 @@
 		}
 
 		.formline {
-			padding-bottom: 15px;
+			padding-bottom: 10px;
 			display: flex;
 			/* Ensure flex for alignment */
 			align-items: center;
@@ -468,12 +468,16 @@
 			align-items: center;
 			/* Added for alignment */
 		}
-		html, body {
-		    height: 100%;
-		    overflow: hidden; /* This removes both X and Y window scrollbars */
-		    margin: 0;
-		    padding: 0;
+
+		html,
+		body {
+			height: 100%;
+			overflow: hidden;
+			/* This removes both X and Y window scrollbars */
+			margin: 0;
+			padding: 0;
 		}
+
 		.card-body {
 			padding: 20px;
 		}
@@ -642,6 +646,7 @@
 
 
 
+
 		/*]]>*/
 	</script>
 
@@ -711,10 +716,12 @@
 		}
 
 		function home() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = "/MIS/Dashboard";
 		}
 
 		function back() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			window.history.back();
 		}
 	</script>
@@ -771,6 +778,7 @@
 			var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
 			var earmarkinglimit = $("#earmarkinglimit").val().trim(); // Added
 			var earmarkingdate = $("#earmarkingdate").val().trim(); // Added
+			var countryRating = $("#countryRating").val().trim();
 
 
 			if (counterPartyBankCode === "") {
@@ -809,6 +817,11 @@
 				alert("Please enter counterparty bank name.");
 				$("#counterPartyBank").focus();
 				return;
+			}
+			if (countryRating === "") {
+				alert("Please enter Country Rating.");
+				$("#countryRating").focus();
+				return false;
 			}
 			/*if (expiryDate === "") {
 				alert("Please enter Expiry Date.");
@@ -971,23 +984,29 @@
 	</style>
 	<script>
 		$(document).ready(function () {
-		    if ($.fn.DataTable.isDataTable('#usertable')) {
-		        $('#usertable').DataTable().destroy();
-		    }
+			$('#usertable').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": true,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false,
+				"pageLength": 10,
+				"language": {
+					"search": "Search:",
+					"paginate": {"previous": "Previous", "next": "Next"}
+				},
+				// 'f' is search (left), 'p' is pagination (right) inside the top div
+				"dom": '<"d-flex justify-content-between align-items-center mt-2 mb-2"fp>rt<"bottom"i><"clear">'
+			});
+		});
+		var originalCreditLimit = 0;
+		var originalSettlementLimit = 0;
 
-		    $('#usertable').DataTable({
-		        "paging": true,
-		        "lengthChange": false,
-		        "searching": true,
-		        "ordering": true,
-		        "info": true,
-		        "autoWidth": false, // Set this to false
-		        "pageLength": 10,   // You can increase this since the body scrolls now
-		        "language": {
-		            "search": "Search Table:"
-		        },
-		        "dom": '<"top"f>rt<"bottom"ip><"clear">'
-		    });
+		$(document).ready(function () {
+			// Capture the initial values loaded in the inputs (Edit Mode)
+			originalCreditLimit = parseFloat($("#creditLimit").val()) || 0;
+			originalSettlementLimit = parseFloat($("#settlementLimit").val()) || 0;
 		});
 	</script>
 
@@ -1026,7 +1045,7 @@
 			var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
 			var earmarkinglimit = $("#earmarkinglimit").val().trim(); // Added
 			var earmarkingdate = $("#earmarkingdate").val().trim(); // Added
-
+			var countryRating = $("#countryRating").val().trim();
 
 			if (counterPartyBankCode === "") {
 				alert("Please enter counterParty Bank Code.");
@@ -1065,6 +1084,12 @@
 				$("#counterPartyBank").focus();
 				return;
 			}
+			if (countryRating === "") {
+				alert("Please enter Country Rating.");
+				$("#countryRating").focus();
+				return false;
+			}
+
 			/*if (expiryDate === "") {
 				alert("Please enter Expiry Date.");
 				$("#expiryDate").focus();
@@ -1170,12 +1195,15 @@
 			var country = $("#location").val().trim();
 			var rating = $("#rating").val().trim();
 			var adhocExp = $("#Adhoc_Limit_exp_date").val();
+			var countryRating = $("#countryRating").val().trim();
 
 			if (bankCode === "") {alert("Please enter Bank Code."); return false;}
 			if (bankName === "") {alert("Please enter Bank Name."); return false;}
 			if (country === "") {alert("Please enter Country."); return false;}
 			if (rating === "") {alert("Please enter Rating."); return false;}
 			if (adhocExp === "") {alert("Please enter Adhoc Limit Expiry Date."); return false;}
+			if (countryRating === "") {alert("Please enter Country Rating."); $("#countryRating").focus(); return false;}
+
 			return true;
 		}
 
@@ -1291,9 +1319,10 @@
 
 		function confirmAdhocDetails() {
 			var totalAdhoc = 0;
-			var totalCreditLimit = 0;
-			var totalSettlementLimit = 0;
+			var adhocCreditSum = 0;
+			var adhocSettlementSum = 0;
 
+			// Loop through modal rows to sum up the NEW adhoc entries
 			$("#adhocDetailTable tbody tr").each(function () {
 				var limitType = $(this).find(".d-limit-type").val();
 				var limitVal = parseFloat($(this).find(".d-limit").val()) || 0;
@@ -1301,16 +1330,23 @@
 				totalAdhoc += limitVal;
 
 				if (limitType === "Credit Limit") {
-					totalCreditLimit += limitVal;
+					adhocCreditSum += limitVal;
 				} else if (limitType === "Settlement Limit") {
-					totalSettlementLimit += limitVal;
+					adhocSettlementSum += limitVal;
 				}
 			});
 
-			// Update main form fields
+			// 1. Update Adhoc Limit Total
 			$("#adhocLimit").val(totalAdhoc.toFixed(2));
-			$("#creditLimit").val(totalCreditLimit.toFixed(2));
-			$("#settlementLimit").val(totalSettlementLimit.toFixed(2));
+
+			// 2. Update Credit Limit (Original Base + Modal Sum)
+			// If original was 100 and modal has 5, this sets it to 105
+			var finalCredit = originalCreditLimit + adhocCreditSum;
+			$("#creditLimit").val(finalCredit.toFixed(2));
+
+			// 3. Update Settlement Limit (Original Base + Modal Sum)
+			var finalSettlement = originalSettlementLimit + adhocSettlementSum;
+			$("#settlementLimit").val(finalSettlement.toFixed(2));
 
 			$('#adhocDetailModal').modal('hide');
 		}
@@ -1412,9 +1448,9 @@
 												</th>
 												<th style=" text-align: center;white-space: nowrap;">Ear Marking Date
 												</th>
-												<th style=" text-align: center;white-space: nowrap;">Status</th>
+												<!--<th style=" text-align: center;white-space: nowrap;">Status</th>
 												<th style=" width:5%; text-align: center;white-space: nowrap;">Expiry
-													Date</th>
+													Date</th>-->
 												<th style=" text-align: center;white-space: nowrap;">Action</th>
 											</tr>
 										</thead>
@@ -1450,12 +1486,12 @@
 													style="text-align: center;"></td>
 
 
-												<td style="text-align: center;"><span
+												<!--<td style="text-align: center;"><span
 														th:text="${lists.expiryDate >= currentDate} ? 'Active' : 'Expired'"
 														th:style="${lists.expiryDate >= currentDate} ? 'color:green;' : 'color:red;'">
 													</span></td>
 												<td th:text="${#dates.format(lists.expiryDate, 'dd-MM-yyyy')}"
-													style="text-align: center;"></td>
+													style="text-align: center;"></td>-->
 												<!-- Modify Button -->
 
 
@@ -1492,12 +1528,12 @@
 										<!-- Left: Page Title -->
 										<div class="role-page-title">
 											<h4 th:text="${menu}"></h4>
-											<div style="width: 240px;
+											<!--<div style="width: 240px;
 												    height: 3px;
 												    background-color: #0073e6;
 												    border-radius: 2px;
 												    margin-top: 6px;
-												    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+												    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>-->
 										</div>
 
 										<div class="btn-group nav-buttons float-right">
@@ -1716,12 +1752,11 @@
 												</div>
 											</div>
 
-										</div>
-										<div class="card-footer text-center">
 
-											<button type="button" class="custom-tab-btn" id="generatebtn"
-												onclick="submitform();">Submit</button>
-
+											<div class="card-footer text-center">
+												<button type="button" class="role-btn" id="generatebtn"
+													onclick="submitform();">Submit</button>
+											</div>
 										</div>
 
 									</div>
@@ -1742,12 +1777,12 @@
 										<!-- Left: Page Title -->
 										<div class="role-page-title">
 											<h4>CounterParty Bank - Modify</h4>
-											<div style="width: 327px;
+											<!--<div style="width: 327px;
 																								    height: 3px;
 																								    background-color: #0073e6;
 																								    border-radius: 2px;
 																								    margin-top: 6px;
-																								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+																								    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>-->
 										</div>
 										<div class="btn-group nav-buttons float-right">
 											<button type="button" class="role-add-btn" id="btnInq"
@@ -1984,14 +2019,12 @@
 												</div>
 											</div>
 
-										</div>
-
-										<div class="card-footer text-center">
-
-											<button type="button" class="custom-tab-btn" id="generatebtn"
-												onclick="modify();">Submit</button>
 
 
+											<div class="card-footer text-center">
+												<button type="button" class="role-btn" id="generatebtn"
+													onclick="modify();">Submit</button>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -2379,10 +2412,11 @@
 	.table-responsive {
 		margin-top: 0 !important;
 		padding-top: 0 !important;
-		max-height: 500px;
-		/* Adjust this height as per your need (e.g., 60vh) */
-		overflow-y: auto;
-		overflow-x: auto;
+		/* Height calculation: Viewport height minus headers and margins */
+		max-height: calc(100vh - 180px) !important;
+		overflow-y: auto !important;
+		overflow-x: hidden !important;
+		/* Removes horizontal scroll */
 		border: 1px solid #e8e8e8;
 	}
 
