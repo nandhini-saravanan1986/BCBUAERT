@@ -151,6 +151,7 @@ import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
 import com.bornfire.xbrl.services.RT_DataControlService;
+import com.bornfire.xbrl.services.RT_FX_Position_Service;
 import com.bornfire.xbrl.services.RT_ForeignCurrencyDepositService;
 import com.bornfire.xbrl.services.RT_FxriskdataService;
 import com.bornfire.xbrl.services.RT_IRSService;
@@ -3137,36 +3138,58 @@ public class XBRLNavigationController {
 	@Autowired
 	private RT_SLS_BEHAVIOURAL_PER_SERVICES rtSlsService;
 
+	@Autowired
+	private RT_FX_Position_Service rtFxPositionService;
+
+	// Page for SLS
 	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
-	public String getUploadPage(Model model, HttpServletRequest request) {
-		logger.info("Accessing SLS Behavioural Scorecard Upload Page");
+	public String getSlsPage(Model model) {
 		return "RT_SLS_Upload";
 	}
 
-	@RequestMapping(value = "rt-sls/uploadFile", method = RequestMethod.POST)
+	// Page for FX
+	@RequestMapping(value = "FXUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
+	public String getFxPage(Model model) {
+		return "RT_FX_Upload";
+	}
+
+	// THE COMMON UPLOAD METHOD
+	@PostMapping("/commonUploadFile")
 	@ResponseBody
-	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
-			@RequestParam("reportDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate,
-			HttpServletRequest request) {
+	public ResponseEntity<String> commonUploadFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("reportType") String reportType,
+			@RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+			@RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate, HttpServletRequest request) {
 
 		String username = (String) request.getSession().getAttribute("USERNAME");
 		if (username == null)
 			username = "SYSTEM";
 
-		logger.info("Initiating SLS File Upload. User: {}, Date: {}", username, reportDate);
+		logger.info("Initiating Common Upload. Type: {}, User: {}, Reference Date: {}", reportType, username, toDate);
 
 		try {
 			if (file.isEmpty()) {
-				logger.warn("Upload failed: File is empty");
 				return ResponseEntity.badRequest().body("Please select a valid file.");
 			}
 
-			rtSlsService.processAndSaveFile(file, reportDate, username);
+			String resultMsg = "";
 
-			logger.info("SLS File processed and saved successfully");
-			return ResponseEntity.ok("File uploaded and data saved successfully!");
+			if ("FXP".equals(reportType)) {
+				// 1. Process FX (The image data)
+				resultMsg = rtFxPositionService.uploadFxData(file, fromDate, toDate, username);
+			} else if ("SLS".equals(reportType)) {
+				// 2. Process SLS (Your existing service)
+				// Note: Using toDate as the reportDate for your SLS service
+				rtSlsService.processAndSaveFile(file, toDate, username);
+				resultMsg = "SLS data uploaded and saved successfully!";
+			} else {
+				return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
+			}
+
+			return ResponseEntity.ok(resultMsg);
+
 		} catch (Exception e) {
-			logger.error("Exception during SLS File Upload", e);
+			logger.error("Upload Error", e);
 			return ResponseEntity.badRequest().body("Error: " + e.getMessage());
 		}
 	}

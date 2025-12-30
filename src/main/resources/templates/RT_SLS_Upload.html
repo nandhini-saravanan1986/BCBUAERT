@@ -144,9 +144,7 @@
 										onchange="updateFormatOptions()" required>
 										<option value="" selected disabled>-- Select Return --</option>
 										<option value="SLS">SLS - Structural Liquidity Statement</option>
-										<option value="LCR">LCR - Liquidity Coverage Ratio</option>
-										<option value="NSFR">NSFR - Net Stable Funding Ratio</option>
-										<option value="ALE">ALE - Asset Liability Exposure</option>
+										<option value="FXP">FXP - Foreign Exchange Position</option>
 									</select>
 								</div>
 							</div>
@@ -270,12 +268,12 @@
 			formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
 
 			// Define allowed formats per report
-			if (report === "SLS") {
+			if (report === "FXP") {
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+			}
+			else if (report === "SLS") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
-			} else if (report === "LCR" || report === "NSFR") {
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-				formatSelect.append('<option value="XML">XML Data (.xml)</option>');
 			} else {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
@@ -356,7 +354,7 @@
 			$.ajax({
 				type: "POST",
 				enctype: 'multipart/form-data',
-				url: "upload/commonUploadFile",
+				url: "commonUploadFile",
 				data: data,
 				processData: false,
 				contentType: false,
