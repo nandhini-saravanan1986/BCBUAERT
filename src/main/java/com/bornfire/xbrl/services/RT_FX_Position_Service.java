@@ -1,14 +1,17 @@
 package com.bornfire.xbrl.services;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.xbrl.entities.RT_FX_Position_Entity;
@@ -20,25 +23,47 @@ public class RT_FX_Position_Service {
 	@Autowired
 	RT_FX_Position_Rep rtFxPositionRep;
 
+	@Transactional
 	public String uploadFxData(MultipartFile file, Date fromDate, Date toDate, String user) throws Exception {
-		Workbook workbook = new XSSFWorkbook(file.getInputStream());
-		Sheet sheet = workbook.getSheetAt(2);
-		List<RT_FX_Position_Entity> list = new ArrayList<>();
-		DataFormatter formatter = new DataFormatter(); // Use formatter to avoid nulls
 
-		// Row indices: FxSwap=1, Spot=5, Total=9
+		Workbook workbook = new XSSFWorkbook(file.getInputStream());
+		// As per your requirement: Sheet index 2
+		Sheet sheet = workbook.getSheetAt(2);
+		DataFormatter formatter = new DataFormatter();
+
+		// As per your requirement: Row indices 3, 10, 17
 		int[] rowIndices = { 3, 10, 17 };
 		String[] types = { "FxSwap Position", "Spot Position", "Total" };
 
+		// Logic for generating new Serial Numbers if record doesn't exist
+		Integer maxSrl = rtFxPositionRep.findMaxSrlNo();
+		int nextSrl = (maxSrl == null) ? 1 : maxSrl + 1;
+
 		for (int i = 0; i < rowIndices.length; i++) {
 			Row row = sheet.getRow(rowIndices[i]);
-			if (row == null) continue;
+			if (row == null)
+				continue;
 
-			RT_FX_Position_Entity entity = new RT_FX_Position_Entity();
-			entity.setSrl_no(String.valueOf(i + 1));
+			// 1. Check if a record for this Date and Type already exists (Replace Logic)
+			RT_FX_Position_Entity entity = rtFxPositionRep.findExistingRecord(toDate, types[i]);
+
+			if (entity == null) {
+				// APPEND LOGIC: Create new record
+				entity = new RT_FX_Position_Entity();
+				entity.setSrl_no(String.valueOf(nextSrl++));
+				entity.setCreate_user(user);
+				entity.setCreate_time(new Date());
+			} else {
+				// REPLACE LOGIC: Use the existing record's SRL_NO to trigger an Update
+				entity.setModify_user(user);
+				entity.setModify_time(new Date());
+			}
+
+			// 2. Map the Excel Data to the Entity
 			entity.setPosition_type(types[i]);
 
-			// Mapping values from columns C, E, G, I, K, M, O, Q, S, U, W (2,4,6,8,10,12,14,16,18,20,22)
+			// Columns: C(2), E(4), G(6), I(8), K(10), M(12), O(14), Q(16), S(18), U(20),
+			// W(22)
 			entity.setGbp(getSafeBigDecimal(row, 2, formatter));
 			entity.setUsd(getSafeBigDecimal(row, 4, formatter));
 			entity.setJpy(getSafeBigDecimal(row, 6, formatter));
@@ -51,24 +76,29 @@ public class RT_FX_Position_Service {
 			entity.setKwd(getSafeBigDecimal(row, 20, formatter));
 			entity.setQar(getSafeBigDecimal(row, 22, formatter));
 
+			// Standard Reporting Fields
 			entity.setReport_from_date(fromDate);
 			entity.setReport_to_date(toDate);
 			entity.setReport_date(toDate);
-			entity.setCreate_user(user);
-			entity.setCreate_time(new Date());
+
+			// Flags
 			entity.setEntity_flg("N");
 			entity.setModify_flg("N");
 			entity.setDel_flg("N");
 
-			list.add(entity);
+			// 3. Save to Database (JPA automatically Updates if ID exists, otherwise
+			// Inserts)
+			rtFxPositionRep.save(entity);
 		}
 
-		rtFxPositionRep.saveAll(list);
 		workbook.close();
-		return "FX Position data processed successfully!";
+		return "FX Position data processed successfully: Records for " + toDate + " updated/appended.";
 	}
 
-	// This method is now robust against null cells and NumberFormatExceptions
+	/**
+	 * Safely extracts numeric values from Excel cells. Handles nulls, empty
+	 * strings, and formatted numbers (with commas).
+	 */
 	private BigDecimal getSafeBigDecimal(Row row, int colIdx, DataFormatter formatter) {
 		Cell cell = row.getCell(colIdx);
 		if (cell == null) {
@@ -76,19 +106,20 @@ public class RT_FX_Position_Service {
 		}
 
 		try {
-			// formatCellValue never returns null; it returns empty string if cell is blank
+			// Get visible value as string
 			String val = formatter.formatCellValue(cell);
-			
-			// Clean the string (remove commas from Indian numbering system and spaces)
+
+			// Clean value: remove commas and trim whitespace
 			val = val.replaceAll(",", "").trim();
 
 			if (val.isEmpty() || val.equalsIgnoreCase("null")) {
 				return BigDecimal.ZERO;
 			}
 
+			// Return parsed number
 			return new BigDecimal(val);
 		} catch (Exception e) {
-			// Log error if needed: System.out.println("Error at col " + colIdx + ": " + e.getMessage());
+			// Return zero if parsing fails to prevent entire upload from crashing
 			return BigDecimal.ZERO;
 		}
 	}
