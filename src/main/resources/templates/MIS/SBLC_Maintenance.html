@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+	<style>
+		/* --- CORE PAGE STYLE --- */
+		html,
+		body {
+			height: 100%;
+			overflow: hidden;
+			/* Prevents double scrollbars */
+			margin: 0;
+			padding: 0;
+			font-family: "Segoe UI", Arial, sans-serif;
+		}
+
+		.container-fluid {
+			width: 100%;
+			padding: 0 15px !important;
+		}
+
+		/* --- TABLE & SCROLLING (STAY FIXED HEADER) --- */
+		.table-responsive {
+			max-height: calc(100vh - 220px) !important;
+			/* Only body scrolls */
+			overflow-y: auto !important;
+			overflow-x: auto;
+			border: 1px solid #e8e8e8;
+		}
+
+		#usertable {
+			width: 100% !important;
+			font-size: 12px !important;
+			border-collapse: separate !important;
+			border-spacing: 0;
+		}
+
+		#usertable th {
+			background-color: #7b6458 !important;
+			/* Brown Header */
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			color: white !important;
+			padding: 10px !important;
+			font-weight: bold !important;
+			border: 1px solid #ffffff !important;
+			white-space: nowrap;
+		}
+
+		#usertable td {
+			padding: 8px !important;
+			border: 1px solid #e8e8e8 !important;
+			background: #fafafa;
+		}
+
+		#usertable tbody tr:nth-child(even) {
+			background-color: #f4f2ef !important;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+			background-color: #ffffff !important;
+		}
+
+		/* --- BUTTONS & HOVER --- */
+		.role-btn {
+			background: #ffffff;
+			color: #E67E00;
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.role-btn:hover {
+			background: #FFF3D1 !important;
+			/* Pastel Orange Hover */
+			color: #E67E00 !important;
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* --- ORANGE PAGINATION --- */
+		.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+			background: #E67E00 !important;
+			color: white !important;
+			border: none !important;
+			border-radius: 50% !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			border-radius: 50% !important;
+			margin: 2px;
+		}
+
+		/* --- ALIGNMENT --- */
+		.formline {
+			padding-bottom: 10px;
+			display: flex;
+			align-items: center;
+		}
+
+		.formline>.col-sm-2 {
+			text-align: right;
+			padding-right: 15px;
+			font-weight: 500;
+		}
+
+		.role-page-header {
+			background: white;
+			padding: 15px 0;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		/* --- LOADER --- */
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			backdrop-filter: blur(8px);
+			z-index: 9999;
+			visibility: hidden;
+			opacity: 0;
+			transition: 0.3s;
+		}
+
+		.bob-loader.show {
+			visibility: visible;
+			opacity: 1;
+		}
+
+		.flow-bar {
+			width: 200px;
+			height: 8px;
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+			position: relative;
+		}
+
+		.flow-line {
+			position: absolute;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, #0073e6, #004080);
+			animation: flowMove 1.2s linear infinite;
+		}
+
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
+
+			100% {
+				left: 100%;
+			}
+		}
+
+		/* --- FLOATING BUTTONS --- */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #0073e6;
+			color: white;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			transition: 0.4s;
+			z-index: 999;
+			border: none;
+		}
+
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+		}
+
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+		}
+	</style>
+
+	<script>
+		$(document).ready(function () {
+			// DataTable init
+			$('#usertable').DataTable({
+				"paging": true,
+				"pageLength": 10,
+				"dom": '<"d-flex justify-content-between align-items-center mb-2"f p>t'
+			});
+
+			// Floating buttons logic
+			document.addEventListener('mousemove', function (e) {
+				const backBtn = document.getElementById('floatingBackBtn');
+				const forwardBtn = document.getElementById('floatingForwardBtn');
+				if (e.clientX < 50) backBtn.classList.add('show'); else backBtn.classList.remove('show');
+				if (window.innerWidth - e.clientX < 50) forwardBtn.classList.add('show'); else forwardBtn.classList.remove('show');
+			});
+		});
+
+		function showLoader() {document.getElementById("bob-loader").classList.add("show");}
+		function hideLoader() {document.getElementById("bob-loader").classList.remove("show");}
+
+		function list() {showLoader(); location.href = 'sblc_maintenance?formmode=list';}
+		function addForm() {showLoader(); location.href = 'sblc_maintenance?formmode=add';}
+		function editForm(id) {showLoader(); location.href = 'sblc_maintenance?formmode=edit&id=' + id;}
+		function viewForm(id) {showLoader(); location.href = 'sblc_maintenance?formmode=view&id=' + id;}
+
+		// Corrected SUBMIT LOGIC
+		function submitSblc() {
+			// Basic Validation
+			if ($("#sol_id").val().trim() === "") {alert("Enter Sol ID"); return;}
+			if ($("#account_no").val().trim() === "") {alert("Enter Account No"); return;}
+
+			showLoader();
+
+			// Get the current formmode from the Thymeleaf variable
+			var currentMode = "[[${formmode}]]";
+			var formData = $("#sblcForm").serialize();
+
+			$.ajax({
+				// Fixed: Removed the extra single quote at the end of the URL
+				// Added: Ensuring formmode is sent as a param
+				url: "./sblc_save?formmode=" + currentMode,
+				type: "POST",
+				data: formData,
+				success: function (res) {
+					hideLoader();
+					$("#alertmsg").text(res);
+					$('#alertModal').modal("show");
+				},
+				error: function (xhr) {
+					hideLoader();
+					alert("Error: " + xhr.responseText);
+				}
+			});
+		}
+
+		// Corrected DELETE LOGIC
+		function deleteForm(id) {
+			if (confirm("Are you sure you want to delete this record?")) {
+				showLoader();
+				$.ajax({
+					type: 'POST',
+					url: './sblc_save?formmode=delete',
+					// Pass 'id' as a parameter so the Controller can find it
+					data: {id: id},
+					success: function (res) {
+						// No need for alert if reloading, but good for UX
+						location.reload();
+					},
+					error: function () {
+						hideLoader();
+						alert("Error deleting record");
+					}
+				});
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+
+	<div class="container-fluid">
+		<!-- LIST VIEW -->
+		<div th:if="${formmode}=='list'">
+			<div class="role-page-header">
+				<div class="role-page-title">
+					<h4 style="font-size: 26px; font-weight: 500;">SBLC Maintenance</h4>
+				</div>
+				<button type="button" class="role-btn"  onclick="addForm()">Add New</button>
+			</div>
+
+			<div class="table-responsive">
+				<table class="table" id="usertable">
+					<thead>
+						<tr>
+							<th>Srl No</th>
+							<th>Sol ID</th>
+							<th>Account No</th>
+							<th>GL Subhead</th>
+							<th>Customer Name</th>
+							<th>Bank Name</th>
+							<th>Report Date</th>
+							<!--<th>Branch Name</th>-->
+							<th style="text-align: center;">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="sblc : ${listall}">
+							<td th:text="${sblc.srl_no}"></td>
+							<td th:text="${sblc.sol_id}"></td>
+							<td th:text="${sblc.account_no}"></td>
+							<td th:text="${sblc.gl_subhead}"></td>
+							<td th:text="${sblc.customer_name}"></td>
+							<td th:text="${sblc.bank_name}"></td>
+							<td th:text="${#dates.format(sblc.report_date, 'dd-MM-yyyy')}"></td>
+							<!--<td th:text="${sblc.branch_name}"></td>-->
+							<td style="text-align: center; white-space: nowrap;">
+								<!--<i class="fa fa-edit" style="cursor:pointer; color: blue; margin-right:12px;"
+									title="Modify" th:onclick="'editForm('+${sblc.id}+')'"></i>-->
+								<i class="fa fa-eye" style="cursor:pointer; color: blue; margin-right:12px;"
+									title="View" th:onclick="'viewForm('+${sblc.id}+')'"></i>
+								<i class="fa fa-trash" style="cursor:pointer; color: red;" title="Delete"
+									th:onclick="'deleteForm('+${sblc.id}+')'"></i>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- ADD / EDIT / VIEW MODES -->
+		<div th:if="${formmode} != 'list'">
+			<div class="role-page-header">
+				<div class="role-page-title">
+					<h4
+						th:text="${formmode == 'add' ? 'SBLC Maintenance - Add' : (formmode == 'edit' ? 'SBLC Maintenance - Modify' : 'SBLC Maintenance - View')}">
+					</h4>
+				</div>
+				<button type="button" class="role-btn" onclick="list()">List</button>
+			</div>
+
+			<div class="card bg-white mt-2">
+				<form id="sblcForm" method="POST">
+					<input type="hidden" name="id" th:value="${formmode == 'add' ? nextId : list?.id}" />
+					<div class="card-body">
+						<div class="row formline">
+							<div class="col-sm-2"><label>Srl No</label></div>
+							<div class="col-sm-3"><input type="text" name="srl_no"
+									th:value="${formmode == 'add' ? nextId : list.srl_no}"
+									class="form-control form-control-sm" readonly></div>
+							<div class="col-sm-2"><label>Sol ID</label></div>
+							<div class="col-sm-3"><input type="text" id="sol_id" name="sol_id"
+									th:value="${list?.sol_id}" class="form-control form-control-sm"
+									th:readonly="${formmode == 'view'}"></div>
+						</div>
+						<div class="row formline">
+							<div class="col-sm-2"><label>Account No</label></div>
+							<div class="col-sm-3"><input type="text" id="account_no" name="account_no"
+									th:value="${list?.account_no}" class="form-control form-control-sm"
+									th:readonly="${formmode == 'view'}"></div>
+							<div class="col-sm-2"><label>Customer Name</label></div>
+							<div class="col-sm-3"><input type="text" name="customer_name"
+									th:value="${list?.customer_name}" class="form-control form-control-sm"
+									th:readonly="${formmode == 'view'}"></div>
+						</div>
+						<div class="row formline">
+							<div class="col-sm-2"><label>GL Subhead</label></div>
+							<div class="col-sm-3"><input type="text" name="gl_subhead" th:value="${list?.gl_subhead}"
+									class="form-control form-control-sm" th:readonly="${formmode == 'view'}"></div>
+							<div class="col-sm-2"><label>Bank Name</label></div>
+							<div class="col-sm-3"><input type="text" name="bank_name" th:value="${list?.bank_name}"
+									class="form-control form-control-sm" th:readonly="${formmode == 'view'}"></div>
+						</div>
+						<div class="row formline">
+							<div class="col-sm-2"><label>Branch Name</label></div>
+							<div class="col-sm-3"><input type="text" name="branch_name" th:value="${list?.branch_name}"
+									class="form-control form-control-sm" th:readonly="${formmode == 'view'}"></div>
+							<div class="col-sm-2"><label>Report Date</label></div>
+							<div class="col-sm-3"><input type="date" id="report_date" name="report_date"
+									th:value="${#dates.format(list?.report_date, 'yyyy-MM-dd')}"
+									class="form-control form-control-sm" th:readonly="${formmode == 'view'}"></div>
+						</div>
+					</div>
+					<div class="card-footer text-center" th:if="${formmode != 'view'}">
+						<button type="button" class="role-btn" onclick="submitSblc()">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- NOTIFICATION MODAL -->
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="background-color: #7b6458; color: white;">
+					<h5 class="modal-title">Bank of Baroda</h5>
+				</div>
+				<div class="modal-body text-center">
+					<p id="alertmsg" style="font-weight: 500;"></p>
+					<button type="button" class="role-btn" onclick="list()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- LOADER -->
+	<div id="bob-loader" class="bob-loader">
+		<div class="bob-loader-card">
+			<img th:src="@{/images/bobn.png}" style="height: 90px;">
+			<div class="flow-bar">
+				<div class="flow-line"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- NAVIGATION BUTTONS -->
+	<button id="floatingBackBtn" onclick="window.history.back()"><i class="fa fa-arrow-left"></i></button>
+	<button id="floatingForwardBtn" onclick="window.history.forward()"><i class="fa fa-arrow-right"></i></button>
+
+</body>
+
+</html>

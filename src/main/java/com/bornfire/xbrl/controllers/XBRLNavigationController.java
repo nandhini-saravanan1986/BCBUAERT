@@ -27,6 +27,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -42,7 +43,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,6 +78,8 @@ import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO;
+import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Entity;
+import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Repo;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
@@ -171,7 +173,6 @@ import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.counter_services;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
@@ -185,9 +186,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_SLSServices RT_SLSServices;
-	
+
 	@Autowired
-    RT_IRSService rtIrsService;
+	RT_IRSService rtIrsService;
 
 	@Autowired
 	RT_SLS_Detail_Repository rt_sls_detail_repository;
@@ -355,17 +356,16 @@ public class XBRLNavigationController {
 
 	@Autowired
 	Capitaladequacyratio_rep Capitaladequacyratio_rep;
-	
+
 	@Autowired
 	RT_IRS_REPOSITORY RT_irs_repository;
-	
+
 	@Autowired
 	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
 
 	@Autowired
 	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
-	
- 
+
 	private String pagesize;
 
 	public String getPagesize() {
@@ -1814,16 +1814,16 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Interbank_placement", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Interbank_placement(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,
-			Model md, HttpServletRequest req) {
-		
-		///From Attributes 
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date, Model md,
+			HttpServletRequest req) {
+
+		/// From Attributes
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String BRANCHNAME = (String) req.getSession().getAttribute("BRANCHNAME");
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
-		
+
 		LocalDate today = LocalDate.now(); // Get today's date
 
 		if (Report_date != null) {
@@ -1831,18 +1831,19 @@ public class XBRLNavigationController {
 		} else {
 			Report_date = java.sql.Date.valueOf(today.minusDays(0));
 		}
-		
+
 		try {
-			
+
 			if (formmode == null || "list".equalsIgnoreCase(formmode)) {
 				md.addAttribute("menu", "List Of Treasury Placements");
 				md.addAttribute("formmode", "list");
-				//Fecth Treasury detail as per date 
-				List<MIS_TREASURY_PLACEMENT_ENTITY> Treasurydata = Mis_treasury_placement_repo.Gettreasurydata(Report_date);
+				// Fecth Treasury detail as per date
+				List<MIS_TREASURY_PLACEMENT_ENTITY> Treasurydata = Mis_treasury_placement_repo
+						.Gettreasurydata(Report_date);
 				md.addAttribute("listss", Treasurydata);
 				md.addAttribute("Report_date", Report_date);
-				logger.info("Fetched {} treasury placements.",Report_date+" "+ Treasurydata.size());
-			}else if ("add".equalsIgnoreCase(formmode)) {
+				logger.info("Fetched {} treasury placements.", Report_date + " " + Treasurydata.size());
+			} else if ("add".equalsIgnoreCase(formmode)) {
 				logger.info("Opening file upload mode for Treasury Placement. User: '{}', Branch: '{}'", userid,
 						BRANCHNAME);
 				md.addAttribute("menu", "List Of Treasury Placement"); // Default menu label
@@ -1862,12 +1863,11 @@ public class XBRLNavigationController {
 				md.addAttribute("ROLEID", ROLEID);
 				md.addAttribute("Report_date", Report_date);
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Error in Interbank_placement controller for formmode: {}", formmode, e);
 		}
-		
-		
+
 		return "MIS/Interbank_Placements.html";
 	}
 
@@ -2806,7 +2806,7 @@ public class XBRLNavigationController {
 		md.addAttribute("slslist", slslist);
 		return "RT/RT_SLS";
 	}
-	
+
 	@RequestMapping(value = "IRS", method = { RequestMethod.GET, RequestMethod.POST })
 	public String IRS(Model md, HttpServletRequest req) {
 		List<RT_IRS_ENTITY> irsList = RT_irs_repository.rtirslist();
@@ -2881,54 +2881,45 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "IRSREPORT", method = RequestMethod.GET)
-	public String RT_IRSREPORT(
-	        @RequestParam String reportdate,
-	        @RequestParam String currency,
-	        @RequestParam(defaultValue = "summary") String formmode,
-	        @RequestParam(required = false) String rowid,
-	        Model md) {
+	public String RT_IRSREPORT(@RequestParam String reportdate, @RequestParam String currency,
+			@RequestParam(defaultValue = "summary") String formmode, @RequestParam(required = false) String rowid,
+			Model md) {
 
-	    Date reportDateFor;
-	    try {
-	        reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
-	    } catch (Exception e) {
-	        md.addAttribute("error", "Invalid date format");
-	        return "RT/RT_IRSREPORT";
-	    }
+		Date reportDateFor;
+		try {
+			reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
+		} catch (Exception e) {
+			md.addAttribute("error", "Invalid date format");
+			return "RT/RT_IRSREPORT";
+		}
 
-	 
-	    md.addAttribute("currency", currency);
-	    md.addAttribute("reportdate", reportdate);
-	    md.addAttribute("formmode", formmode);
-	    
-	    if ("summary".equalsIgnoreCase(formmode)) {
+		md.addAttribute("currency", currency);
+		md.addAttribute("reportdate", reportdate);
+		md.addAttribute("formmode", formmode);
 
-	        List<RT_IRS_ENTITY> irslist =
-	                RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+		if ("summary".equalsIgnoreCase(formmode)) {
 
-	        List<RT_IRS_ENTITY2> irsList2 =
-	                RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+			List<RT_IRS_ENTITY> irslist = RT_irs_repository.rtirslistbydate(reportDateFor, currency);
 
-	        List<RT_IRS_ENTITY> currencyList =
-	                RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
+			List<RT_IRS_ENTITY2> irsList2 = RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
 
-	        md.addAttribute("irslist", irslist);
-	        md.addAttribute("irsList2", irsList2);
-	        md.addAttribute("currencylist", currencyList);
-	    }
+			List<RT_IRS_ENTITY> currencyList = RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
 
-	    if ("Detail".equalsIgnoreCase(formmode)) {
+			md.addAttribute("irslist", irslist);
+			md.addAttribute("irsList2", irsList2);
+			md.addAttribute("currencylist", currencyList);
+		}
 
-	       
-	      //  md.addAttribute("rowid", rowid);
+		if ("Detail".equalsIgnoreCase(formmode)) {
 
-	        // optional: fetch detail-specific data here
-	        // md.addAttribute("detailsList", detailsList);
-	    }
+			// md.addAttribute("rowid", rowid);
 
-	    return "RT/RT_IRSREPORT"; // SAME SCREEN
+			// optional: fetch detail-specific data here
+			// md.addAttribute("detailsList", detailsList);
+		}
+
+		return "RT/RT_IRSREPORT"; // SAME SCREEN
 	}
-
 
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
@@ -2954,8 +2945,8 @@ public class XBRLNavigationController {
 				excelData = RT_SLSServices.getSlsExcel(filename, reportdate, currency, version);
 			}
 			if (type.equals("summary")) {
-	            excelData = rtIrsService.getIrsExcel(filename, reportdate, currency, version);
-	        }
+				excelData = rtIrsService.getIrsExcel(filename, reportdate, currency, version);
+			}
 
 			if (excelData == null || excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
@@ -3210,39 +3201,107 @@ public class XBRLNavigationController {
 	// 2. Updated Save Details with Alert Logic
 	@RequestMapping(value = "/saveDetailsRecord", method = RequestMethod.POST)
 	@ResponseBody
-	public String saveDetailsRecord(@RequestParam("adhocDetailsJson") String json, 
-	                                @RequestParam("srlNo") String srlNo,
-	                                @RequestParam("bankName") String bankName,
-	                                HttpServletRequest request) {
-	    try {
-	        String userId = (String) request.getSession().getAttribute("USER_ID");
-	        if (userId == null) userId = "SYSTEM";
+	public String saveDetailsRecord(@RequestParam("adhocDetailsJson") String json, @RequestParam("srlNo") String srlNo,
+			@RequestParam("bankName") String bankName, HttpServletRequest request) {
+		try {
+			String userId = (String) request.getSession().getAttribute("USER_ID");
+			if (userId == null)
+				userId = "SYSTEM";
 
-	        ObjectMapper mapper = new ObjectMapper();
-	        List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> details = mapper.readValue(json, 
-	                new TypeReference<List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY>>(){});
+			ObjectMapper mapper = new ObjectMapper();
+			List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> details = mapper.readValue(json,
+					new TypeReference<List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY>>() {
+					});
 
-	        // Delete existing details for this SrlNo to perform a clean update
-	        List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> existing = misCounterPartyLimitDetailsRepo.findBySrlNo(srlNo);
-	        if(!existing.isEmpty()) {
-	            misCounterPartyLimitDetailsRepo.deleteAll(existing);
-	        }
+			// Delete existing details for this SrlNo to perform a clean update
+			List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> existing = misCounterPartyLimitDetailsRepo.findBySrlNo(srlNo);
+			if (!existing.isEmpty()) {
+				misCounterPartyLimitDetailsRepo.deleteAll(existing);
+			}
 
-	        if (details != null) {
-	            for (MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY detail : details) {
-	                detail.setSrlNo(srlNo);
-	                detail.setCounterPartyBank(bankName);
-	                detail.setCreateUser(userId);
-	                detail.setCreateTime(new Date());
-	                detail.setEntityFlg("N");
-	                detail.setModifyFlg("N");
-	                detail.setDelFlg("N");
-	                misCounterPartyLimitDetailsRepo.save(detail);
-	            }
-	        }
-	        return "SUCCESS";
-	    } catch (Exception e) {
-	        return "ERROR: " + e.getMessage();
-	    }
+			if (details != null) {
+				for (MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY detail : details) {
+					detail.setSrlNo(srlNo);
+					detail.setCounterPartyBank(bankName);
+					detail.setCreateUser(userId);
+					detail.setCreateTime(new Date());
+					detail.setEntityFlg("N");
+					detail.setModifyFlg("N");
+					detail.setDelFlg("N");
+					misCounterPartyLimitDetailsRepo.save(detail);
+				}
+			}
+			return "SUCCESS";
+		} catch (Exception e) {
+			return "ERROR: " + e.getMessage();
+		}
+	}
+
+	@Autowired
+	MIS_SBLC_Maintenance_Repo sblcRepo;
+
+	@RequestMapping(value = "/sblc_maintenance", method = RequestMethod.GET)
+	public String sblcMaint(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) BigDecimal id, Model model) {
+
+		String mode = (formmode == null) ? "list" : formmode;
+		model.addAttribute("formmode", mode);
+
+		if (mode.equals("list")) {
+			model.addAttribute("listall", sblcRepo.getalllist());
+		} else if (mode.equals("add")) {
+			model.addAttribute("nextId", sblcRepo.getNextId());
+			// Add an empty entity to the model for form binding
+			model.addAttribute("list", new MIS_SBLC_Maintenance_Entity());
+		} else if (mode.equals("edit") || mode.equals("view")) {
+			model.addAttribute("list", sblcRepo.findById(id).orElse(new MIS_SBLC_Maintenance_Entity()));
+		}
+		return "MIS/SBLC_Maintenance";
+	}
+
+	@RequestMapping(value = "/sblc_save", method = RequestMethod.POST)
+	@ResponseBody
+	public String sblcSave(@ModelAttribute("list") MIS_SBLC_Maintenance_Entity sblc, @RequestParam String formmode,
+			@RequestParam(required = false) BigDecimal id, // ID comes from query param for delete
+			HttpSession session) {
+
+		String user = (String) session.getAttribute("USERID");
+
+		// Case 1: DELETE (Soft Delete)
+		if ("delete".equals(formmode)) {
+			if (id == null)
+				return "ID is required for deletion";
+			Optional<MIS_SBLC_Maintenance_Entity> existing = sblcRepo.findById(id);
+			if (existing.isPresent()) {
+				MIS_SBLC_Maintenance_Entity entity = existing.get();
+				entity.setDel_flg("Y");
+				entity.setModify_user(user);
+				entity.setModify_time(new Date());
+				sblcRepo.save(entity);
+				return "Record Deleted Successfully";
+			}
+			return "Record Not Found";
+		}
+
+		// Case 2: ADD
+		if ("add".equals(formmode)) {
+			sblc.setCreate_user(user);
+			sblc.setCreate_time(new Date());
+			sblc.setDel_flg("N");
+			sblcRepo.save(sblc);
+			return "Record Added Successfully";
+		}
+
+		// Case 3: EDIT
+		if ("edit".equals(formmode)) {
+			// In JPA, save() updates if the ID property is set in the entity
+			sblc.setModify_user(user);
+			sblc.setModify_time(new Date());
+			sblc.setDel_flg("N"); // Ensure flag stays N
+			sblcRepo.save(sblc);
+			return "Record Modified Successfully";
+		}
+
+		return "Invalid Request";
 	}
 }
