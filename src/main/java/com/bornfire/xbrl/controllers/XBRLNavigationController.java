@@ -172,6 +172,7 @@ import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
+import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.counter_services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -3140,6 +3141,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	private RT_FX_Position_Service rtFxPositionService;
+	
+	@Autowired
+	RwaDataUploadService rwaService;
 
 	// Page for SLS
 	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3174,7 +3178,9 @@ public class XBRLNavigationController {
 
 			String resultMsg = "";
 
-			if ("FXP".equals(reportType)) {
+			 if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
+		            resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
+		        } else if ("FXP".equals(reportType)) {
 				// 1. Process FX (The image data)
 				resultMsg = rtFxPositionService.uploadFxData(file, fromDate, toDate, username);
 			} else if ("SLS".equals(reportType)) {

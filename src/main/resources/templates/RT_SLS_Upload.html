@@ -145,6 +145,8 @@
 										<option value="" selected disabled>-- Select Return --</option>
 										<option value="SLS">SLS - Structural Liquidity Statement</option>
 										<option value="FXP">FXP - Foreign Exchange Position</option>
+										<option value="RWAFUND">RWA - Fund Based Data</option>
+										<option value="RWANONFUND">RWA - Non-Fund Based Data</option>
 									</select>
 								</div>
 							</div>
@@ -268,7 +270,11 @@
 			formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
 
 			// Define allowed formats per report
-			if (report === "FXP") {
+			if (report === "RWAFUND" || report === "RWANONFUND") {
+				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+			}
+			else if (report === "FXP") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
 			else if (report === "SLS") {
