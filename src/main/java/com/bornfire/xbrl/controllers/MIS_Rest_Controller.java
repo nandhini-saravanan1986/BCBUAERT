@@ -7,9 +7,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -458,13 +460,16 @@ System.out.println("Entered");
 	@ResponseBody
 	public List<Object[]> GetSingleandGroupExposurevalue(
 			@RequestParam(value="Report_date",required=true) String Report_date,
-			@RequestParam(value="Data_Type_Used",required=true)String Data_Type_Used) throws ParseException{
+			@RequestParam(value="Data_Type_Used",required=true)String Data_Type_Used,
+			@RequestParam(value="Tier1capital",required=false)String Tier1capital) throws ParseException{
+		
+		System.out.println(Tier1capital);
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(Report_date);
 		List<Object[]>  Exposuredata = new ArrayList<>();
 		if(Data_Type_Used.equals("SingleGroupExposure")) {
-			Exposuredata = RT_RWA_Fund_base_data_rep.GetGetSingleandGroupBorrower(Selecteddate,"334135.5");
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetGetSingleandGroupBorrower(Selecteddate,Tier1capital);
 		}else if (Data_Type_Used.equals("Exposureoutsidegcc")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetoutsideGccExposure(Selecteddate);
 		}else if(Data_Type_Used.equals("Exposureonlygcc")) {
@@ -615,6 +620,34 @@ System.out.println("Entered");
 		}
 		return RT_RWA_Fund_base;
 
+	}
+	
+	public static String normalizeDate(String input) {
+		DateTimeFormatter targetFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		// already in correct format?
+		try {
+			LocalDate.parse(input, targetFormat);
+			return input; // return as-is
+		} catch (Exception ignore) {
+		}
+
+		// try other known formats
+		DateTimeFormatter[] formats = { DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+				DateTimeFormatter.ofPattern("MM-dd-yyyy"), DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+				DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH) // Tue Sep 30 00:00:00 GST
+																							// 2025
+		};
+
+		for (DateTimeFormatter f : formats) {
+			try {
+				LocalDate date = LocalDate.parse(input, f);
+				return date.format(targetFormat); // convert to yyyy-MM-dd
+			} catch (Exception ignore) {
+			}
+		}
+
+		throw new IllegalArgumentException("Invalid date format: " + input);
 	}
 
 }

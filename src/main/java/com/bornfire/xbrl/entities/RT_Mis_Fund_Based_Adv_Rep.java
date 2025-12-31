@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_Mis_Fund_Based_Adv_Rep extends JpaRepository<RT_Mis_Fund_based_Advances_entity, String> {
+public interface RT_Mis_Fund_Based_Adv_Rep extends JpaRepository<RT_Mis_Fund_based_Advances_entity, RT_Mis_Fund_based_Advances_Id_Class> {
 	
 	@Query(value="With Top_up_loan_exp As(Select SCHM_CODE,ABS(Sum(ACT_BALANCE_AMT_LC)) as Mortgage_Loans_Exp from BRF_MIS_FUND_BASED_ADVANCES\r\n"
 			+ "								Where report_date = ?1 and SCHM_CODE in ('LA110') group by SCHM_CODE),\r\n"

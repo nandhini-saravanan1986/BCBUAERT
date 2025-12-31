@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_Noop_net_position_rep extends JpaRepository<RT_Noop_net_position_entity, String> {
+public interface RT_Noop_net_position_rep extends JpaRepository<RT_Noop_net_position_entity, RT_Noop_net_position_id_class> {
 
 	@Query(value="Select * from RT_NET_POSITION_LIMIT_NOOP",nativeQuery=true)
 	List<Object[]> GetNoopcalculationdetail();

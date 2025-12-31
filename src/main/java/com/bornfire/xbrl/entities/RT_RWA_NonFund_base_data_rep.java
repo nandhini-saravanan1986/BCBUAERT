@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_RWA_NonFund_base_data_rep extends JpaRepository<RT_RWA_NonFund_base_data_entity, String> {
+public interface RT_RWA_NonFund_base_data_rep extends JpaRepository<RT_RWA_NonFund_base_data_entity, RT_RWA_NonFund_base_id_class> {
 
 	// 1. Logic for "Replace": Delete all records for the selected report date
 	@Transactional

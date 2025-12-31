@@ -494,12 +494,13 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (labelsrlno === "2") {
-				const Report_dateSelected = '31-10-2025';
+				
 
 				var trHTML = "";
 				document.getElementById("Groupexposurebody").innerHTML = trHTML;
 
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'SingleGroupExposure', {
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'SingleGroupExposure'+'&Tier1capital='
+				+Curr_Tier_1_capital, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -1189,7 +1190,7 @@
 
 			const dateParts = periodKey.split("-");
 
-			const selectedDate = `${dateParts[0]}-${dateParts[1]}-20${dateParts[2]}`;
+			const selectedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
 
 			if (Selectedmatrixlabel == "5") {
 
@@ -1297,7 +1298,50 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".Mortageloan_table").style.display = "block";
-			} else {
+			} else if (Selectedmatrixlabel === "1") {
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("r15_ratios1").textContent =
+								formatNumber(data[0]);
+							document.getElementById("r22_ratios2").textContent =
+								formatNumber(data[1]);
+							document.getElementById("r16_ratios1").textContent =
+								formatNumber(data[2]);
+							document.getElementById("r18_ratios1").textContent =
+								formatNumber(data[3]);
+							document.getElementById("r23_ratios1").textContent =
+								formatNumber(data[4]);
+							document.getElementById("r23_ratios2").textContent =
+								formatNumber(data[5]);
+							document.getElementById("r45_ratios2").textContent =
+								formatNumber(data[6]);
+							document.getElementById("r51_ratios2").textContent =
+								formatNumber(data[7]);
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
+			}else {
 				alert('Sorry invalid operation selected')
 			}
 		}
@@ -1546,7 +1590,7 @@
 								<td style="text-align: center;">
 									<span class="badge-status">
 										<span
-											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 0, 'COMMA', 2, 'POINT')}">0.00%</span>
+											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 1, 'COMMA', 2, 'POINT')}">0.00%</span>
 									</span>
 								</td>
 
@@ -1554,7 +1598,7 @@
 								<td style="text-align: center;">
 									<span class="badge-status">
 										<span
-											th:text="${#numbers.formatDecimal(Matrixlist.position_of_matrix, 0, 'COMMA', 2, 'POINT')}">0.00%</span>
+											th:text="${#numbers.formatDecimal(Matrixlist.position_of_matrix, 1, 'COMMA', 2, 'POINT')}">0.00%</span>
 									</span>
 								</td>
 

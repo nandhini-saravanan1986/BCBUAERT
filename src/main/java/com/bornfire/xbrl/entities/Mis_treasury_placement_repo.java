@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Mis_treasury_placement_repo extends JpaRepository<MIS_TREASURY_PLACEMENT_ENTITY,String > {
+public interface Mis_treasury_placement_repo extends JpaRepository<MIS_TREASURY_PLACEMENT_ENTITY,MIS_Treasury_placement_id_class > {
 
 	@Query(value="Select * from MIS_TREASURY_PLACEMENT where report_date =?1",nativeQuery=true)
 	List<MIS_TREASURY_PLACEMENT_ENTITY> Gettreasurydata(Date Report_date);
