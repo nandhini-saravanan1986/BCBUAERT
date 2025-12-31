@@ -125,28 +125,10 @@ PURPOSE		:
     border-color: #dee2e6 #dee2e6 #ffffff;
   }
 
-  .table-responsive {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-  }
-
-  .table-hover tbody tr:hover {
-    background-color: #f3f6f9;
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
-  
 .table td{
 	background-color: #FFFFFF;
 
 }
-  
-  
 
   .card-footer {
     padding: 10px;
@@ -174,7 +156,7 @@ PURPOSE		:
 
 
 td {
-  border: 1px solid rgb(0,164,166);
+  border: 1px solid rgb(255, 255, 255);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -352,12 +334,7 @@ label.error {
 }
 
 /* Sticky thead */
-#reports thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa; /* Match Bootstrap thead-light */
-    z-index: 2;
-}
+
 
 div.dataTables_wrapper div.dataTables_paginate {
     text-align: right !important;
@@ -393,8 +370,97 @@ div.dataTables_wrapper div.dataTables_info {
     width: auto;
 }
 </style>
-    
+<style>
+		#pageHeader {
+				position: sticky;
+				top: 110px;
+				z-index: 1050;
+				background: white;
+				padding-top: 10px;
+			}
+</style>
 
+<style>
+	/* ===== CARD HEADER STYLE LIKE IMAGE ===== */
+
+	.ras-card-header {
+	    background: linear-gradient(90deg, rgb(255, 255, 255), rgb(255, 255, 255));
+	    padding: 14px 20px;
+	    border-radius: 6px 6px 0 0;
+	}
+
+	.ras-header-content {
+	    display: flex;
+	    align-items: center;
+	    gap: 12px;
+	}
+
+	/* Keep your existing left-arrow-circle styles */
+	.ras-card-header h5 {
+	    margin: 0;
+	    font-size: 22px;
+	    font-weight: 500;
+	    color: #000;
+	}
+
+</style>
+
+<style>
+		/* Reduce font size */
+		/* ===== TABLE STYLE MATCHING IMAGE ===== */
+
+		#usertable {
+		    font-family: Arial, sans-serif;
+		    font-size: 12px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		/* Header rows */
+		#usertable thead th {
+		    background-color: #7b6458;   /* brown header */
+		    color: #ffffff;
+		    text-align: center;
+		    font-weight: bold;
+		    padding: 8px 6px;
+		    border: 1px solid #ffffff;   /* white grid lines */
+		    vertical-align: middle;
+		}
+
+		/* Group header row (CBUAE / Counterparty) */
+		#usertable thead tr:first-child th {
+		    font-size: 13px;
+		}
+
+		/* Body cells */
+		#usertable tbody td {
+		    padding: 6px 6px;
+		    border: 1px solid rgb(128, 128, 128);
+		    white-space: nowrap;
+		    vertical-align: middle;
+		}
+
+		/* Alternate row shading */
+		#usertable tbody tr:nth-child(even) {
+		    background-color: #f2f2f2;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+		    background-color: #ffffff;
+		}
+
+		/* Action icon */
+		#usertable .fa-edit {
+		    color: #ff6a00;
+		    cursor: pointer;
+		}
+
+		/* Hover effect */
+		#usertable tbody tr:hover {
+		    background-color: #e6e6e6;
+		}
+
+	</style>
 <script th:inline="javascript">
 	
 	function home() {
@@ -408,6 +474,28 @@ div.dataTables_wrapper div.dataTables_info {
 		window.history.back();
 	}
 	
+</script>
+
+<script>
+	$('#usertable').DataTable({
+				scrollX: false,
+				autoWidth: false,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+				ordering: false,
+				pageLength: 100,
+				fixedHeader: true,
+
+				// Layout: search (left) + pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+
+				// Optional: language tweak for better label
+				language: {
+					search: "Search:"
+				}
+			});
 </script>
 
 <script>
@@ -457,31 +545,28 @@ function getreport(a){
 		<div class="row">
 			<div th:insert="XBRLHeaderMenu :: header"></div>
 		</div>
-		<div class="card">
-					<div class="card-header" style="background-color: rgb(107, 122, 143) ; ">
-						<div style="display: flex; align-items: center;" onclick="back();">
+					<div class="card">
+						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
-						<div class="left-arrow-circle">
-							<i class="fa fa-arrow-left"></i>
+
+						<div class="card-header ras-card-header">
+						    <div class="ras-header-content" onclick="back();">
+						        <!--<div class="left-arrow-circle">
+						            <i class="fa fa-arrow-left"></i>
+						        </div>-->
+						        <h5>Structural Liquidity Statements</h5>
+						    </div>
 						</div>
-						
-						<!-- Title -->
-						<h5
-							style="font-family: arial; font-size: 20px; padding-top:10px; font-weight: bold; color: white;">
-							Structural Liquidity Statements
-						</h5>
-					</div>
-										
-					</div>
+						</div>
 					
 					<div class="row" >
 							<div class="col-sm-12">
-								<div class="table-responsive scrollable-table-container" >
-			    					<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports" >
+								<div class="scrollable-table-container" >
+			    					<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed"  id="usertable" >
 										<thead class="thead-light">
 			  								<tr>
-			  								<td>Report Date</td>
-			  								<td>Report Currency</td>
+												<th style="text-align:left;">Report Date</th>
+											    <th style="text-align:left;">Report Currency</th>
 			  								</tr>
 			  							</thead>
 			  							<tbody>

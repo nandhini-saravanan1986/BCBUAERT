@@ -108,6 +108,8 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
 import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_DETAIL_ENTITY;
+import com.bornfire.xbrl.entities.RT_IRS_DETAIL_REPO;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
 import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
@@ -364,6 +366,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
+	
+	@Autowired
+	RT_IRS_DETAIL_REPO RT_IRS_DETAIL_REPO;
 
 	@Autowired
 	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
@@ -2882,45 +2887,83 @@ public class XBRLNavigationController {
 		return "RT/RT_SLSREPORT";
 	}
 
-	@RequestMapping(value = "IRSREPORT", method = RequestMethod.GET)
-	public String RT_IRSREPORT(@RequestParam String reportdate, @RequestParam String currency,
-			@RequestParam(defaultValue = "summary") String formmode, @RequestParam(required = false) String rowid,
-			Model md) {
+	@RequestMapping(value = "IRSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
+	public String IRSREPORT(
+	        @RequestParam String reportdate,
+	        @RequestParam String currency,
+	        @RequestParam(defaultValue = "summary") String formmode,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "100") int size,
+	        @RequestParam(required = false) String rowid,
+	        Model md) {
 
-		Date reportDateFor;
-		try {
-			reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
-		} catch (Exception e) {
-			md.addAttribute("error", "Invalid date format");
-			return "RT/RT_IRSREPORT";
-		}
+	    Date reportDateFor;
 
-		md.addAttribute("currency", currency);
-		md.addAttribute("reportdate", reportdate);
-		md.addAttribute("formmode", formmode);
+	    try {
+	        reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
+	    } catch (Exception e) {
+	        md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+	        return "RT/RT_IRSREPORT";
+	    }
 
-		if ("summary".equalsIgnoreCase(formmode)) {
+	    /* ===================== COMMON ATTRIBUTES ===================== */
+	    md.addAttribute("reportdate", reportdate);
+	    md.addAttribute("currency", currency);
+	    md.addAttribute("formmode", formmode);
 
-			List<RT_IRS_ENTITY> irslist = RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+	    /* ===================== SUMMARY ===================== */
+	    if ("summary".equalsIgnoreCase(formmode)) {
 
-			List<RT_IRS_ENTITY2> irsList2 = RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+	        List<RT_IRS_ENTITY> irslist =
+	                RT_irs_repository.rtirslistbydate(reportDateFor, currency);
 
-			List<RT_IRS_ENTITY> currencyList = RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
+	        List<RT_IRS_ENTITY2> irsList2 =
+	                RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
 
-			md.addAttribute("irslist", irslist);
-			md.addAttribute("irsList2", irsList2);
-			md.addAttribute("currencylist", currencyList);
-		}
+	        List<RT_IRS_ENTITY> currencyList =
+	                RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
 
-		if ("Detail".equalsIgnoreCase(formmode)) {
+	        md.addAttribute("irslist", irslist);
+	        md.addAttribute("irsList2", irsList2);
+	        md.addAttribute("currencylist", currencyList);
+	    }
 
-			// md.addAttribute("rowid", rowid);
+	    /* ===================== DETAIL ===================== */
+	    else if ("Detail".equalsIgnoreCase(formmode)) {
 
-			// optional: fetch detail-specific data here
-			// md.addAttribute("detailsList", detailsList);
-		}
+	        if (rowid != null && !rowid.trim().isEmpty()) {
 
-		return "RT/RT_IRSREPORT"; // SAME SCREEN
+	            // 🔹 Detail by ROWID
+	            List<RT_IRS_DETAIL_ENTITY> detailsList =
+	                    RT_IRS_DETAIL_REPO.IRSdetaillistrowid(reportDateFor, rowid);
+
+	            int totalCount =
+	                    RT_IRS_DETAIL_REPO.IRSdetaillistcountROWID(reportDateFor, rowid);
+
+	            md.addAttribute("detailsList", detailsList);
+	            md.addAttribute("rowid", rowid);
+	            md.addAttribute("currentPage", page);
+	            md.addAttribute("totalPages",
+	                    (int) Math.ceil((double) totalCount / size));
+	        }
+	        else {
+
+	            // 🔹 Normal paginated detail
+	            List<RT_IRS_DETAIL_ENTITY> detailsList =
+	                    RT_IRS_DETAIL_REPO.irsdetaillist(reportDateFor, page, size);
+
+	            int totalCount =
+	                    RT_IRS_DETAIL_REPO.IRSdetaillistcount(reportDateFor);
+
+	            md.addAttribute("detailsList", detailsList);
+	            md.addAttribute("pagination", "YES");
+	            md.addAttribute("currentPage", page);
+	            md.addAttribute("totalPages",
+	                    (int) Math.ceil((double) totalCount / size));
+	        }
+	    }
+
+	    return "RT/RT_IRSREPORT"; // SAME SCREEN
 	}
 
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3035,6 +3078,33 @@ public class XBRLNavigationController {
 		return ResponseEntity.ok("READY");
 	}
 
+	@RequestMapping(value = "/startIRSDetailReport", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody // forces raw text instead of HTML view
+	public String startIRSDetailReport(@RequestParam String filename, @RequestParam String reportdate,
+			@RequestParam String currency, @RequestParam(value = "version", required = false) String version) {
+		String jobId = UUID.randomUUID().toString();
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		try {
+
+			reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		rtIrsService.generateReportAsync(jobId, filename, reportdate, currency, version);
+		return jobId;
+	}
+	
+	@RequestMapping(value = "/checkirsreport", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody // forces raw text instead of HTML view
+	public ResponseEntity<String> checkirsreport(@RequestParam String jobId) {
+		byte[] report = rtIrsService.getReport(jobId);
+		// System.out.println("Report generation completed for: " + jobId);
+		if (report == null) {
+			return ResponseEntity.ok("PROCESSING");
+		}
+		return ResponseEntity.ok("READY");
+	}
 	///// Credit Risk Analysis Report
 
 	@RequestMapping(value = "Credit_risk", method = { RequestMethod.GET, RequestMethod.POST })

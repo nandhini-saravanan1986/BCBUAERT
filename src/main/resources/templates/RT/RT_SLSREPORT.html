@@ -84,7 +84,7 @@
  <style>
  	div span {
     font-weight: bold;
-    color: white !important;
+    
 	}
   .card {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -120,12 +120,7 @@
     background-color: #f3f6f9;
   }
 
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #e9ecf0;
-    z-index: 1;
-  }
+  
   
 .table td{
 	background-color: #FFFFFF;
@@ -161,7 +156,6 @@
 
 td {
   border: 1px solid rgb(0,164,166);
-  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -313,7 +307,7 @@ td {
 
     .scrollable-table-container {
       height: 100%;       /* take full body height */
-      overflow-y: auto;   /* ✅ scrollbar appears here */
+  /* ✅ scrollbar appears here */
       border: 1px solid #ccc;
     }
 
@@ -321,55 +315,132 @@ td {
 	.scrollable-table-container thead tr:nth-child(1) {
 	    position: sticky;
 	    top: 0;
-	    background-color: #b3b6b9;
+	  
 	    z-index: 5;
 	}
 	
 	.scrollable-table-container thead tr:nth-child(2) {
 	    position: sticky;
 	    top: 36px; /* adjust based on row height */
-	    background-color: #b3b6b9;
+	   
 	    z-index: 4;
 	}
-	
-	
-	
-	.scrollable-table-container thead tr:nth-child(3) {
-	    position: sticky;
-	    top: 72px; /* Adjust based on row height */
-	    background-color: #b3b6b9;
-	    z-index: 3;
+  </style>
+  <style>
+  	/* Reduce font size */
+  	/* Apply font family and smaller font */
+  	#usertable {
+  		font-family: Arial, sans-serif !important;
+  		font-size: 12px !important;
+  	}
+
+  	#usertable th {
+  		background-color: #7b6458 !important;
+  		color: white !important;
+  		padding: 8px 10px !important;
+  		text-align: center;
+  		font-weight: bold;
+  		white-space: normal !important;
+  	}
+
+  	#usertable td {
+  		padding: 4px 6px !important;
+  		white-space: normal !important;
+  	}
+
+  	#usertable th,
+  	#usertable td {
+  		border: 1px solid #ffffff !important;
+  		/* thin white separators like your screenshot */
+  	}
+
+
+  	/* Avoid table taking too much width */
+  	#usertable {
+  		/*width: auto !important;*/
+  		max-width: 100% !important;
+  	}
+
+  	/* Control column widths */
+  	#usertable th {
+  		max-width: 150px;
+  		text-align: center;
+  		vertical-align: middle;
+  	}
+
+  	#usertable {
+  		border-collapse: separate;
+  		border-spacing: 0;
+  	}
+
+	#usertable thead tr:nth-child(1) th {
+	    top: 0;
 	}
-	
-	.scrollable-table-container thead tr:nth-child(4) {
-	    position: sticky;
-	    top: 100px; /* Adjust based on row height */
-	    background-color: #b3b6b9;
-	    z-index: 2;
+	#usertable thead tr:nth-child(2) th {
+	    top: 38px; /* height of first header row */
+	    background: #d0d0d0;
 	}
-	
-	.scrollable-table-container thead tr:nth-child(5) {
-	    position: sticky;
-	    top: 135px; /* Adjust based on row height */
-	    background-color: #b3b6b9;
-	    z-index: 1;
-	}
-   
   </style>
   
+  <style>
+	/* Full screen layout */
+	.container-fluid {
+	    height: 100vh;
+	    overflow: hidden;
+	}
+
+	.card {
+	    height: 100%;
+	    display: flex;
+	    flex-direction: column;
+	}
+
+	/* Header area should NOT scroll */
+	#mainHeader {
+	    position: sticky;
+	    top: 0;
+	    z-index: 3000;
+	    background: white;
+	}
+
+	#pageHeader {
+	    position: sticky;
+	    top: 60px;   /* height of mainHeader */
+	    z-index: 2500;
+	    background: white;
+	}
+
+	/* ONLY table body scrolls */
+	.table-scroll-container {
+	    flex: 1;
+	    overflow-y: auto;
+	    max-height: calc(100vh - 140px); 
+	    /* mainHeader + pageHeader height */
+	}
+	#usertable thead th {
+	    position: sticky;
+	    top: 0;
+	    z-index: 2000;
+	    background: #7b6458;
+	    color: white;
+	}
+
+
+	.role-page-header {
+				background-color: #ffffff;
+				padding: 15px 20px;
+				display: flex;
+				/* Added for alignment */
+				justify-content: space-between;
+				/* Added for alignment */
+				align-items: center;
+				/* Added for alignment */
+			}
+	</style>
 	  <style>
 	.inner {
 	    max-height: 600px; /* Adjust height as needed */
-	    overflow: auto;
 	    border: 1px solid #dee2e6;
-	}
-	
-	/* Sticky thead */
-	#reports thead th {
-	    position: sticky;
-	    top: 0;
-	    background-color: #f8f9fa; /* Match Bootstrap thead-light */
-	    z-index: 2;
 	}
 	
 	div.dataTables_wrapper div.dataTables_paginate {
@@ -406,7 +477,48 @@ td {
 	    width: auto;
 	}
 	</style>
-  
+  <style>
+			.role-btn {
+				background: #ffffff;
+				/* default white */
+				color: #E67E00;
+				/* default orange text */
+				border: 1px solid #E67E00;
+				border-radius: 25px;
+				padding: 8px 18px;
+				font-size: 13px;
+				font-weight: 600;
+				cursor: pointer;
+				box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+				transition: all 0.3s ease;
+			}
+
+			/* Hover effect → pastel orange */
+			.role-btn:hover {
+				background: #FFF3D1;
+				/* pastel orange (same as submenu hover) */
+				color: #E67E00;
+				/* orange text */
+				transform: translateY(-2px);
+				box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+			}
+
+			/* Active (selected tab) */
+			.role-btn.active {
+				background: #E67E00;
+				/* solid orange */
+				color: #fff;
+				/* white text */
+				border-color: #E67E00;
+				transform: translateY(-1px);
+				box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+			}
+
+			/* Optional: icon spacing */
+			.role-btn i {
+				margin-right: 5px;
+			}
+  </style>
   <script th:inline="javascript">
 	
 	function home() {
@@ -422,6 +534,31 @@ td {
 	
 </script>
 
+<script>
+		$('#usertable').DataTable({
+		    scrollX: false,
+		    autoWidth: false,
+		    paging: true,
+		    searching: true,
+		    lengthChange: false,
+		    ordering: false,
+		    pageLength: 100,
+		    fixedHeader: true,
+
+		    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+		    columnDefs: [
+		        {
+		            targets: [2,3,4,5,6,7,8,9,10,11,12,13,14],
+		            className: 'amt-right'
+		        }
+		    ],
+
+		    language: {
+		        search: "Search:"
+		    }
+		});
+		</script>
 <script>
 
 
@@ -627,55 +764,50 @@ function getdetailbyfilter(a){
 				<div class="container-fluid" style="padding-left:0px; padding-right:0px; height:100vh;">
 			  	
 			  	
-			  	<div class="row">
-					<div th:insert="XBRLHeaderMenu :: header"></div>
-				</div>
+			  	<!--<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>-->
 			
-			  <div class="card" style="height:100%; display:flex; flex-direction:column;">
-			    
-			    <!-- Card Header -->
-			    <div class="card-header"
-			         style="background-color: rgb(107, 122, 143); display: flex; align-items: center; justify-content: space-between;">
-			      <div style="display: flex; align-items: center;" onclick="back();">
-			        <div class="left-arrow-circle">
-			          <i class="fa fa-arrow-left"></i>
-			        </div>
-			        <h5 style="font-family: arial; font-size: 20px; padding-top:10px; font-weight: bold; color: white;">
-			          SLS
-			        </h5>
-			      </div>
+
+				<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>		
+					<div class="card" style="height:100%; display:flex; flex-direction:column;">
+						<div id="pageHeader"
+						     class="role-page-header d-flex justify-content-between align-items-center w-100">
+						<!-- LEFT: Buttons -->
+						<div class="text-left flex-grow-1">
+							<h4 style="padding-right:12px;">Structural Liquidity Statements</h4>
+
+						</div>
 			
 			      <div class="custom-tab-btn-group nav-buttons"
-			           style="display: flex; color: white; align-items: center;">
-			        <span class="white-text" style="font-size: 16px;color: white; margin-right: 20px;">
+			           style="display: flex; align-items: center;">
+			        <span  style="font-size: 16px; margin-right: 20px;">
 			          Report Date:
 			          <span id="reportDate" th:text="${reportdate}">2025-07-04</span>
 			          <input type="hidden" id="currencyin" th:value="${currency}">
 			        </span>
 			
-			        <select th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()"
-			                style="margin-right: 20px; padding: 5px 10px; color: black; font-weight: 600; border-radius: 5px;">
+			        <select      class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()"
+			                style="margin-right: 20px; padding: 5px 10px;  font-weight: 600; border-radius: 5px;">
 			          <option th:each="clist : ${currencylist}"
 			                  th:value="${clist.REPORT_CURRENCY}"
 			                  th:selected="${clist.REPORT_CURRENCY == currency}"
 			                  th:text="${clist.REPORT_CURRENCY}">
 			          </option>
 			        </select>
-			
-			        <button type="button" class="custom-tab-btn" th:if="${formmode == 'summary'}"
-			                onclick="getdetails();">Details</button>
-			        <button type="button" class="custom-tab-btn" th:if="${formmode == 'Detail'}"
-			                onclick="getreport();">Summary</button>
+
+					<button type="button" class="role-btn" th:if="${formmode == 'summary'}"
+						style="margin-right: 20px; padding: 5px 10px;" onclick="getdetails();">Details</button>
+					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
+						onclick="getreport();">Summary</button>
 			
 			        <button type="button" th:if="${formmode == 'summary'}"
 			                th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SLS.xls"
-			                class="custom-tab-btn" onclick="downloadfile(this);">
+			                 class="role-btn"  onclick="downloadfile(this);">
 			          <i class="fa fa-download"></i>
 			        </button>
 			
 			        <button type="button" th:if="${formmode == 'Detail'}"
 			                th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SlsDetail.xls"
-			                class="custom-tab-btn" onclick="startReport(this);">
+			                 class="role-btn"  onclick="startReport(this);">
 			          <i class="fa fa-download"></i>
 			        </button>
 			      </div>
@@ -683,33 +815,38 @@ function getdetailbyfilter(a){
 			    <!-- End Card Header -->
 			
 			    <!-- Card Body -->
-			    <div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode == 'summary'}">
-			      <div class="scrollable-table-container">
-			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports">
-			          <thead class="thead-light">
+				<!--	<div class="card-body" style="min-height:0; padding:0;"  th:if="${formmode == 'summary'}">
+			      <div>
+			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="usertable" >-->
+			          
+						<div class="card-body p-0"  th:if="${formmode == 'summary'}">
+						  <div class="table-scroll-container">
+						    <table id="usertable">
+
+						<thead class="thead-light">
 			            <tr>
-			              <th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
+			              <th colspan="16" style="text-align: center;">Residual Maturity</th>
 			            </tr>
 			            <tr>
-			              <th colspan="4" style="text-align: center; background-color: #b3b6b9">Outflows</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
-			              <th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
-			              <th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
-			              <th style="text-align: center; background-color: #b3b6b9">15-30 Days</th>
-			              <th style="text-align: center; background-color: #b3b6b9">31 Days & upto 2 months</th>
-			              <th style="text-align: center; background-color: #b3b6b9">More than 2 months and upto 3 months</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Over 3 Months and upto 6 months</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Over 6 Months and upto 1 year</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Over 1 Year and upto 3 years</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Over 3 Years and upto 5 years</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Over 5 Years</th>
-			              <th style="text-align: center; background-color: #b3b6b9">Total</th>
+			              <th colspan="4" style="text-align: center;">Outflows</th>
+			              <th style="text-align: center;">Day - 1</th>
+			              <th style="text-align: center;">2-7 Days</th>
+			              <th style="text-align: center;">8-14 Days</th>
+			              <th style="text-align: center;">15-30 Days</th>
+			              <th style="text-align: center;">31 Days & upto 2 months</th>
+			              <th style="text-align: center;">More than 2 months and upto 3 months</th>
+			              <th style="text-align: center;">Over 3 Months and upto 6 months</th>
+			              <th style="text-align: center;">Over 6 Months and upto 1 year</th>
+			              <th style="text-align: center;">Over 1 Year and upto 3 years</th>
+			              <th style="text-align: center;">Over 3 Years and upto 5 years</th>
+			              <th style="text-align: center;">Over 5 Years</th>
+			              <th style="text-align: center;">Total</th>
 			            </tr>
 			          </thead>
 			          <tbody th:each="report: ${slslist}">
 													<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW11'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >1</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R11_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >1</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R11_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_DAY8_14}"></td>
@@ -721,12 +858,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R11_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R11_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R11_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R11_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW12'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >2</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R12_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >2</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R12_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_DAY8_14}"></td>
@@ -738,30 +875,30 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R12_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R12_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R12_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R12_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="5" Style="background-color: #b3b6b9;text-align: center;" >3</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R13_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R13_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R13_TOTAL}"></td>
+			  							<td rowspan="5" Style="text-align: center;" >3</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R13_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R13_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R13_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW14'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R14_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R14_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_DAY8_14}"></td>
@@ -773,12 +910,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R14_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R14_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R14_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R14_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW15'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R15_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R15_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_DAY8_14}"></td>
@@ -790,13 +927,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R15_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R15_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R15_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R15_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW16'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R16_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(iii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R16_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_DAY8_14}"></td>
@@ -808,13 +945,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R16_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R16_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R16_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R16_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW17'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iv)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R17_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(iv)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R17_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_DAY8_14}"></td>
@@ -826,31 +963,31 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R17_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R17_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R17_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R17_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td  rowspan="5" Style="background-color: #b3b6b9;text-align: center;" >4</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R18_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7 " th:text="${report.R18_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R18_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R18_TOTAL}"></td>
+			  							<td  rowspan="5" Style="text-align: center;" >4</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R18_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c " th:text="${report.R18_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R18_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R18_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW19'" >
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R19_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R19_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_DAY8_14}"></td>
@@ -862,14 +999,14 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R19_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R19_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R19_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R19_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW20'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R20_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R20_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_DAY8_14}"></td>
@@ -881,13 +1018,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R20_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R20_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R20_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R20_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW21'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R21_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(iii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R21_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_DAY8_14}"></td>
@@ -899,32 +1036,32 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R21_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R21_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R21_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R21_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iv)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R22_PRODUCT}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R22_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R22_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R22_TOTAL}"></td>
+			  							<td Style="text-align: left;" >(iv)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R22_PRODUCT}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R22_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R22_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R22_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW23'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td  Style="background-color:#c1e4f7;text-align: left;" th:text="${report.R23_PRODUCT}"></td>
+			  							<td Style="text-align: left;" ></td>
+			  							<td colspan="2"  Style="text-align: left;" ></td>
+			  							<td  Style="background-color:#f7a47c;text-align: left;" th:text="${report.R23_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R23_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R23_DAY2_7}"></td>
 			  							<td Style="text-align: right; " th:text="${report.R23_DAY8_14}"></td>
@@ -936,31 +1073,31 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R23_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R23_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R23_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R23_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R23_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="4" Style="background-color: #b3b6b9;text-align: left;" >5</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R24_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7 " th:text="${report.R24_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R24_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R24_TOTAL}"></td>
+			  							<td rowspan="4" Style="text-align: left;" >5</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R24_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c " th:text="${report.R24_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R24_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R24_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW25'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R25_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R25_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_DAY8_14}"></td>
@@ -972,13 +1109,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R25_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R25_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R25_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R25_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW26'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R26_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R26_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_DAY8_14}"></td>
@@ -990,13 +1127,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R26_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R26_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R26_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R26_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW27'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R27_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(iii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R27_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_DAY8_14}"></td>
@@ -1008,31 +1145,31 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R27_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R27_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R27_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R27_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="3" Style="background-color: #b3b6b9;text-align: left;" >6</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R28_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7 " th:text="${report.R28_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7" th:text="${report.R28_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R28_TOTAL}"></td>
+			  							<td rowspan="3" Style="text-align: left;" >6</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R28_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c " th:text="${report.R28_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c" th:text="${report.R28_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R28_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW29'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R29_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R29_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_DAY8_14}"></td>
@@ -1044,13 +1181,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R29_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R29_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R29_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R29_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW30'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R30_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R30_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_DAY8_14}"></td>
@@ -1062,13 +1199,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R30_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R30_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R30_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R30_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW31'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >7</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R31_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >7</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R31_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_DAY8_14}"></td>
@@ -1080,13 +1217,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R31_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R31_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R31_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R31_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW32'">
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >8</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R32_PRODUCT}"></td>
+			  							<td  Style="text-align: left;" >8</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R32_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_DAY8_14}"></td>
@@ -1098,13 +1235,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R32_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R32_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R32_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R32_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW33'">
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >9</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R33_PRODUCT}"></td>
+			  							<td  Style="text-align: left;" >9</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R33_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_DAY8_14}"></td>
@@ -1116,13 +1253,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R33_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R33_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R33_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R33_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW34'">
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >10</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R34_PRODUCT}"></td>
+			  							<td  Style="text-align: left;" >10</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R34_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_DAY8_14}"></td>
@@ -1134,13 +1271,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R34_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R34_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R34_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R34_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW35'">
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >11</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R35_PRODUCT}"></td>
+			  							<td  Style="text-align: left;" >11</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R35_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_DAY8_14}"></td>
@@ -1152,13 +1289,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R35_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R35_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R35_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R35_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW36'">
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >12</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R36_PRODUCT}"></td>
+			  							<td  Style="text-align: left;" >12</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R36_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_DAY8_14}"></td>
@@ -1170,31 +1307,31 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R36_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R36_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R36_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R36_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td  Style="background-color: #b3b6b9;text-align: left;" >13</td>
-			  							<td colspan="3" Style="background-color:#b3b6b9;text-align: left;" th:text="${report.R37_PRODUCT}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_DAY1}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_DAY2_7}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_DAY8_14}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_DAY15_30}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R37_TOTAL}"></td>
+			  							<td  Style="text-align: left;" >13</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R37_PRODUCT}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_DAY1}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_DAY2_7}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_DAY8_14}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_DAY15_30}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R37_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW38'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td  Style="background-color:#c1e4f7;text-align: left;" th:text="${report.R38_PRODUCT}"></td>
+			  							<td Style="text-align: left;" ></td>
+			  							<td colspan="2"  Style="text-align: left;" ></td>
+			  							<td  Style="background-color:#f7a47c;text-align: left;" th:text="${report.R38_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R38_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R38_DAY2_7}"></td>
 			  							<td Style="text-align: right; " th:text="${report.R38_DAY8_14}"></td>
@@ -1206,44 +1343,44 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R38_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R38_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R38_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R38_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R38_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr >
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >A.</td>
-			  							<td  Style="background-color: #b3b6b9; text-align: left;" th:text="${report.R39_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7; " th:text="${report.R39_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R39_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R39_TOTAL}"></td>
+			  							<td Style="text-align: left;" ></td>
+			  							<td colspan="2"  Style="text-align: left;" >A.</td>
+			  							<td  Style=" text-align: left;" th:text="${report.R39_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c; " th:text="${report.R39_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R39_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >B.</td>
-			  							<td  Style="background-color: #b3b6b9; text-align: left;" th:text="${report.R40_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R40_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R40_TOTAL}"></td>
+			  							<td Style="text-align: left;" ></td>
+			  							<td colspan="2"  Style="text-align: left;" >B.</td>
+			  							<td  Style=" text-align: left;" th:text="${report.R40_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R40_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R40_TOTAL}"></td>
 			  							</tr>
 			  							<tr Style="hight:100px;">
 			  								<td colspan="16"></td>
@@ -1255,28 +1392,28 @@ function getdetailbyfilter(a){
 			  							
 			  							
 			  								<tr>
-											<th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
+											<th colspan="16" style="text-align: center;">Residual Maturity</th>
 			  								</tr>
 			  								<tr>
-			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Inflows</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">15-30 Days</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">31 Days & upto 2 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">More than 2 months and upto 3 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 3 Months and upto 6 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 6 Months and upto 1 year</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 1 Year and upto 3 years</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 3 Years and upto 5 years</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 5 Years</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">Total</th>
+			  								<th colspan="4" style="text-align: center;">Inflows</th>
+			  								<th style="text-align: center;">Day - 1</th>
+			  								<th style="text-align: center;">2-7 Days</th>
+			  								<th style="text-align: center;">8-14 Days</th>
+			  								<th style="text-align: center;">15-30 Days</th>
+			  								<th style="text-align: center; width:130px;">31 Days & upto 2 months</th>
+			  								<th style="text-align: center; width:130px;">More than 2 months and upto 3 months</th>
+			  								<th style="text-align: center; width:130px;">Over 3 Months and upto 6 months</th>
+			  								<th style="text-align: center; width:130px;">Over 6 Months and upto 1 year</th>
+			  								<th style="text-align: center; width:130px;">Over 1 Year and upto 3 years</th>
+			  								<th style="text-align: center; width:130px;">Over 3 Years and upto 5 years</th>
+			  								<th style="text-align: center; width:130px;">Over 5 Years</th>
+			  								<th style="text-align: center;">Total</th>
 			  								</tr>
 			  								
 			  								
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW47'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >1</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R47_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >1</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R47_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_DAY8_14}"></td>
@@ -1288,12 +1425,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R47_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R47_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R47_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R47_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW48'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >2</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R48_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >2</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R48_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_DAY8_14}"></td>
@@ -1305,12 +1442,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R48_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R48_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R48_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R48_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="3" Style="background-color: #b3b6b9;text-align: center;" >3</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R49_PRODUCT}"></td>
+			  							<td rowspan="3" Style="text-align: center;" >3</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R49_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R49_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R49_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R49_DAY8_14}"></td>
@@ -1322,48 +1459,48 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R49_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R49_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R49_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R49_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R49_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW50'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R50_PRODUCT}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R50_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R50_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R50_TOTAL}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R50_PRODUCT}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R50_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R50_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R50_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW51'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R51_PRODUCT}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R51_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R51_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R51_TOTAL}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R51_PRODUCT}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R51_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R51_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R51_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW52'">
-			  							<td  Style="background-color: #b3b6b9;text-align: center;" >4</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R52_PRODUCT}"></td>
+			  							<td  Style="text-align: center;" >4</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R52_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_DAY8_14}"></td>
@@ -1375,29 +1512,29 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R52_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R52_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R52_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R52_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="4" Style="background-color: #b3b6b9;text-align: center;" >5</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R53_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R53_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R53_TOTAL}"></td>
+			  							<td rowspan="4" Style="text-align: center;" >5</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R53_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R53_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R53_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW54'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R54_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R54_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_DAY8_14}"></td>
@@ -1409,13 +1546,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R54_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R54_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R54_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R54_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW55'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R55_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R55_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_DAY8_14}"></td>
@@ -1427,13 +1564,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R55_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R55_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R55_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R55_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW56'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(iii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R56_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(iii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R56_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_DAY8_14}"></td>
@@ -1445,13 +1582,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R56_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R56_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R56_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R56_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW57'">
-			  							<td  Style="background-color: #b3b6b9;text-align: center;" >6</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R57_PRODUCT}"></td>
+			  							<td  Style="text-align: center;" >6</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R57_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_DAY8_14}"></td>
@@ -1463,12 +1600,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R57_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R57_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R57_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R57_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW58'">
-			  							<td  Style="background-color: #b3b6b9;text-align: center;" >7</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R58_PRODUCT}"></td>
+			  							<td  Style="text-align: center;" >7</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R58_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_DAY8_14}"></td>
@@ -1480,30 +1617,30 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R58_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R58_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R58_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R58_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td rowspan="3" Style="background-color: #b3b6b9;text-align: center;" >8</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R59_PRODUCT}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_DAY1}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_DAY2_7}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_DAY8_14}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_DAY15_30}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7;" th:text="${report.R59_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R59_TOTAL}"></td>
+			  							<td rowspan="3" Style="text-align: center;" >8</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R59_PRODUCT}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_DAY1}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_DAY2_7}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_DAY8_14}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_DAY15_30}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c;" th:text="${report.R59_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R59_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW60'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(i)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R60_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(i)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R60_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_DAY8_14}"></td>
@@ -1515,13 +1652,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R60_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R60_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R60_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R60_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW61'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" >(ii)</td>
-			  							<td colspan="2" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R61_PRODUCT}"></td>
+			  							<td Style="text-align: left;" >(ii)</td>
+			  							<td colspan="2" Style="text-align: left;" th:text="${report.R61_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_DAY8_14}"></td>
@@ -1533,13 +1670,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R61_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R61_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R61_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R61_TOTAL}"></td>
 			  							
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW62'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >9</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R62_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >9</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R62_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_DAY8_14}"></td>
@@ -1551,12 +1688,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R62_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R62_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R62_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R62_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW63'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >10</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R63_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >10</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R63_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_DAY8_14}"></td>
@@ -1568,12 +1705,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R63_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R63_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R63_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R63_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW64'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >11</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R64_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >11</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R64_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_DAY8_14}"></td>
@@ -1585,12 +1722,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R64_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R64_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R64_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R64_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW65'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >12</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R65_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >12</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R65_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_DAY8_14}"></td>
@@ -1602,12 +1739,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R65_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R65_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R65_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R65_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW66'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >13</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R66_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >13</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R66_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_DAY8_14}"></td>
@@ -1619,12 +1756,12 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R66_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R66_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R66_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R66_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW67'">
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >14</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R67_PRODUCT}"></td>
+			  							<td Style="text-align: center;" >14</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R67_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_DAY8_14}"></td>
@@ -1636,31 +1773,31 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R67_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R67_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R67_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R67_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: center;" >15</td>
-			  							<td colspan="3" Style="background-color: #b3b6b9;text-align: left;" th:text="${report.R68_PRODUCT}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_DAY1}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_DAY2_7}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_DAY8_14}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_DAY15_30}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_DAY31_TO_2M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_MORE2M_TO_3M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_OVER3M_TO_6M}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_OVER6M_TO_1Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_OVER1Y_TO_3Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_OVER3Y_TO_5Y}"></td>
-			  							<td Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R68_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R68_TOTAL}"></td>
+			  							<td Style="text-align: center;" >15</td>
+			  							<td colspan="3" Style="text-align: left;" th:text="${report.R68_PRODUCT}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_DAY1}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_DAY2_7}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_DAY8_14}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_DAY15_30}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_DAY31_TO_2M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_MORE2M_TO_3M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_OVER3M_TO_6M}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_OVER6M_TO_1Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_OVER1Y_TO_3Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_OVER3Y_TO_5Y}"></td>
+			  							<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R68_OVER5Y}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R68_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							
 			  							<tr onclick="getdetailbyfilter(this)" th:attr="data-rowid='ROW69'">
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td colspan="2"  Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<td  Style="background-color:#c1e4f7; text-align: left;" th:text="${report.R69_PRODUCT}"></td>
+			  							<td Style="text-align: left;" ></td>
+			  							<td colspan="2"  Style="text-align: left;" ></td>
+			  							<td  Style="background-color:#f7a47c; text-align: left;" th:text="${report.R69_PRODUCT}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R69_DAY1}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R69_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R69_DAY8_14}"></td>
@@ -1672,13 +1809,13 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R69_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R69_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R69_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R69_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R69_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >C</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R70_PRODUCT}"></th>
+			  							<td Style="text-align: left;" ></td>
+			  							<th colspan="2"  Style="text-align: left;" >C</th>
+			  							<th  Style=" text-align: left;" th:text="${report.R70_PRODUCT}"></th>
 			  							<th Style="text-align: right;" th:text="${report.R70_DAY1}"></th>
 			  							<th Style="text-align: right;" th:text="${report.R70_DAY2_7}"></th>
 			  							<th Style="text-align: right;" th:text="${report.R70_DAY8_14}"></th>
@@ -1690,121 +1827,121 @@ function getdetailbyfilter(a){
 			  							<th Style="text-align: right;" th:text="${report.R70_OVER1Y_TO_3Y}"></th>
 			  							<th Style="text-align: right;" th:text="${report.R70_OVER3Y_TO_5Y}"></th>
 			  							<th Style="text-align: right;" th:text="${report.R70_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R70_TOTAL}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R70_TOTAL}"></th>
 			  							</tr>
 			  							
 			  						
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >D.</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R71_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R71_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R71_TOTAL}"></th>
+			  							<td Style="text-align: left;" ></td>
+			  							<th colspan="2"  Style="text-align: left;" >D.</th>
+			  							<th  Style=" text-align: left;" th:text="${report.R71_PRODUCT}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_DAY1}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_DAY2_7}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_DAY8_14}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_DAY15_30}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_DAY31_TO_2M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_MORE2M_TO_3M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_OVER3M_TO_6M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_OVER6M_TO_1Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_OVER1Y_TO_3Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_OVER3Y_TO_5Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R71_OVER5Y}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R71_TOTAL}"></th>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >E.</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R72_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R72_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R72_TOTAL}"></th>
+			  							<td Style="text-align: left;" ></td>
+			  							<th colspan="2"  Style="text-align: left;" >E.</th>
+			  							<th  Style=" text-align: left;" th:text="${report.R72_PRODUCT}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_DAY1}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_DAY2_7}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_DAY8_14}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_DAY15_30}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_DAY31_TO_2M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_MORE2M_TO_3M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_OVER3M_TO_6M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_OVER6M_TO_1Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_OVER1Y_TO_3Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_OVER3Y_TO_5Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R72_OVER5Y}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R72_TOTAL}"></th>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >F.</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R73_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R73_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R73_TOTAL}"></th>
+			  							<td Style="text-align: left;" ></td>
+			  							<th colspan="2"  Style="text-align: left;" >F.</th>
+			  							<th  Style=" text-align: left;" th:text="${report.R73_PRODUCT}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_DAY1}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_DAY2_7}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_DAY8_14}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_DAY15_30}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_DAY31_TO_2M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_MORE2M_TO_3M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_OVER3M_TO_6M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_OVER6M_TO_1Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_OVER1Y_TO_3Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_OVER3Y_TO_5Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R73_OVER5Y}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R73_TOTAL}"></th>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<td Style="background-color: #b3b6b9;text-align: left;" ></td>
-			  							<th colspan="2"  Style="background-color: #b3b6b9;text-align: left;" >G.</th>
-			  							<th  Style="background-color:#b3b6b9; text-align: left;" th:text="${report.R74_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R74_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7" th:text="${report.R74_TOTAL}"></th>
-			  							</tr>
-			  							
-			  							<tr>
-			  							
-			  							<th colspan="4" Style="background-color:#b3b6b9; text-align: center;" th:text="${report.R75_PRODUCT}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_DAY1}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_DAY2_7}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_DAY8_14}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_DAY15_30}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_DAY31_TO_2M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_MORE2M_TO_3M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_OVER3M_TO_6M}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_OVER6M_TO_1Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_OVER1Y_TO_3Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_OVER3Y_TO_5Y}"></th>
-			  							<th Style="text-align: right; background-color:#c1e4f7;" th:text="${report.R75_OVER5Y}"></th>
-			  							<th Style="text-align: right;background-color:#c1e4f7"></th>
+			  							<td Style="text-align: left;" ></td>
+			  							<th colspan="2"  Style="text-align: left;" >G.</th>
+			  							<th  Style=" text-align: left;" th:text="${report.R74_PRODUCT}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_DAY1}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_DAY2_7}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_DAY8_14}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_DAY15_30}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_DAY31_TO_2M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_MORE2M_TO_3M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_OVER3M_TO_6M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_OVER6M_TO_1Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_OVER1Y_TO_3Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_OVER3Y_TO_5Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R74_OVER5Y}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R74_TOTAL}"></th>
 			  							</tr>
 			  							
 			  							<tr>
 			  							
-			  							<th colspan="4" Style="background-color:#b3b6b9; text-align: center;">Limit Adherence</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left; background-color:#c1e4f7;">NO BREACH</th>
-			  							<th Style="text-align: left;background-color:#c1e4f7"></th>
+			  							<th colspan="4" Style=" text-align: center;" th:text="${report.R75_PRODUCT}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY1}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY2_7}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY8_14}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY15_30}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY31_TO_2M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_MORE2M_TO_3M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER3M_TO_6M}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER6M_TO_1Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER1Y_TO_3Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER3Y_TO_5Y}"></th>
+			  							<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER5Y}"></th>
+			  							<th Style="text-align: right;background-color:#f7a47c"></th>
+			  							</tr>
+			  							
+			  							<tr>
+			  							
+			  							<th colspan="4" Style=" text-align: center;">Limit Adherence</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+			  							<th Style="text-align: left;background-color:#f7a47c"></th>
 			  							</tr>
 			  							
 			  							
 			  							
 			  							<tr>
-			  							<th colspan="16" Style="text-align: left;background-color:#b3b6b9">* Net of provisions, interest suspense and claims received from ECGC / DICGC</th>
+			  							<th colspan="16" Style="text-align: left;">* Net of provisions, interest suspense and claims received from ECGC / DICGC</th>
 			  							</tr>
 			  							
 			  							<tr Style="hight:100px;">
@@ -1819,27 +1956,27 @@ function getdetailbyfilter(a){
 			  							</tr>
 			  							
 			  								<tr>
-											<th colspan="16" style="text-align: center; background-color: #b3b6b9">Residual Maturity</th>
+											<th colspan="16" style="text-align: center;">Residual Maturity</th>
 			  								</tr>
 			  								<tr>
-			  								<th colspan="4" style="text-align: center; background-color: #b3b6b9">Inflows</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">Day - 1</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">2-7 Days</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">8-14 Days</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">15-30 Days</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">31 Days & upto 2 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">More than 2 months and upto 3 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 3 Months and upto 6 months</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 6 Months and upto 1 year</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 1 Year and upto 3 years</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 3 Years and upto 5 years</th>
-			  								<th style="text-align: center; width:130px; background-color: #b3b6b9">Over 5 Years</th>
-			  								<th style="text-align: center; background-color: #b3b6b9">Total</th>
+			  								<th colspan="4" style="text-align: center;">Inflows</th>
+			  								<th style="text-align: center;">Day - 1</th>
+			  								<th style="text-align: center;">2-7 Days</th>
+			  								<th style="text-align: center;">8-14 Days</th>
+			  								<th style="text-align: center;">15-30 Days</th>
+			  								<th style="text-align: center; width:130px;">31 Days & upto 2 months</th>
+			  								<th style="text-align: center; width:130px;">More than 2 months and upto 3 months</th>
+			  								<th style="text-align: center; width:130px;">Over 3 Months and upto 6 months</th>
+			  								<th style="text-align: center; width:130px;">Over 6 Months and upto 1 year</th>
+			  								<th style="text-align: center; width:130px;">Over 1 Year and upto 3 years</th>
+			  								<th style="text-align: center; width:130px;">Over 3 Years and upto 5 years</th>
+			  								<th style="text-align: center; width:130px;">Over 5 Years</th>
+			  								<th style="text-align: center;">Total</th>
 			  								</tr>
 			  								
 			  							<tr>
 			  						
-			  							<th colspan="4"  Style="background-color: #b3b6b9; width:10px;text-align: left;" th:text="${report.R84_PRODUCT}"></th>
+			  							<th colspan="4"  Style=" width:10px;text-align: left;" th:text="${report.R84_PRODUCT}"></th>
 			  							<td Style="text-align: right;" th:text="${report.R84_DAY1}"></td>
 			  							<td Style="text-align: right; " th:text="${report.R84_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R84_DAY8_14}"></td>
@@ -1851,11 +1988,11 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R84_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R84_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R84_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R84_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R84_TOTAL}"></td>
 			  							</tr>
 			  							
 			  							<tr>
-			  							<th colspan="4"  Style="background-color: #b3b6b9;  width:10px; text-align: left;" th:text="${report.R85_PRODUCT}"></th>
+			  							<th colspan="4"  Style="  width:10px; text-align: left;" th:text="${report.R85_PRODUCT}"></th>
 			  							<td Style="text-align: right;" th:text="${report.R85_DAY1}"></td>
 			  							<td Style="text-align: right; " th:text="${report.R85_DAY2_7}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R85_DAY8_14}"></td>
@@ -1867,11 +2004,11 @@ function getdetailbyfilter(a){
 			  							<td Style="text-align: right;" th:text="${report.R85_OVER1Y_TO_3Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R85_OVER3Y_TO_5Y}"></td>
 			  							<td Style="text-align: right;" th:text="${report.R85_OVER5Y}"></td>
-			  							<td Style="text-align: right;background-color:#c1e4f7" th:text="${report.R85_TOTAL}"></td>
+			  							<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R85_TOTAL}"></td>
 			  							</tr>
 			  								
 			  							<!-- <tr Style="width:100px;">
-			  							<td  Style="text-align: left;background-color:#b3b6b9;width:10px;font-size:10px;">Note : This statement is required to be prepared country wise. Banks should also report figures in respect of subsidiaries/joint ventures in the same format on a stand-alone basis, i.e. these figures should not be reckoned while preparing country-wise reports. In respect of joint ventures where more than one bank has equity stake, the bank having the largest stake only need to report the figures. If, however, banks have equal stake, the responsibility for filing the return would rest with the bank having the largest presence in the region. All amounts to be indicated in US dollars. For uniformity, banks should use the London Inter branch closing rate on the last working day of the reporting quarter for their currency conversion. However, in the absence London Inter branch closing rate, banks may use other rates like Reuters / Bloomberg trading screen exchange rate.</td>
+			  							<td  Style="text-align: left;width:10px;font-size:10px;">Note : This statement is required to be prepared country wise. Banks should also report figures in respect of subsidiaries/joint ventures in the same format on a stand-alone basis, i.e. these figures should not be reckoned while preparing country-wise reports. In respect of joint ventures where more than one bank has equity stake, the bank having the largest stake only need to report the figures. If, however, banks have equal stake, the responsibility for filing the return would rest with the bank having the largest presence in the region. All amounts to be indicated in US dollars. For uniformity, banks should use the London Inter branch closing rate on the last working day of the reporting quarter for their currency conversion. However, in the absence London Inter branch closing rate, banks may use other rates like Reuters / Bloomberg trading screen exchange rate.</td>
 			  							</tr>	 -->
 			  								
 			  							</tbody>
@@ -1882,7 +2019,7 @@ function getdetailbyfilter(a){
 						
 						
 						
-					<div class="card-body" style="flex:1 1 auto; min-height:0; padding:0;" th:if="${formmode=='Detail'}">
+					<div class="card-body" style=" min-height:0; padding:0;" th:if="${formmode=='Detail'}">
 			      	<div class="scrollable-table-container">  
 			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="reports">	
 										<thead class="thead-light">

@@ -36,6 +36,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_DETAIL_ENTITY;
+import com.bornfire.xbrl.entities.RT_IRS_DETAIL_REPO;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
 import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
@@ -60,6 +62,9 @@ public class RT_IRSService {
 	
 	@Autowired
 	RT_IRS2_REPOSITORY rt_Irs2_Repository;
+	
+	@Autowired
+	RT_IRS_DETAIL_REPO RT_IRS_DETAIL_REPO;
 
 	
 	SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy");
@@ -190,10 +195,10 @@ public class RT_IRSService {
 	
 	public byte[] getDetailExcel(String filename,String reportdate, String currency,String version){
 		try {
-			logger.info("Generating Excel for SLS Details...");
+			logger.info("Generating Excel for IRS Details...");
 			
 			XSSFWorkbook workbook = new XSSFWorkbook();
-			XSSFSheet sheet = workbook.createSheet("SLS_Details");
+			XSSFSheet sheet = workbook.createSheet("IRS_Details");
 
 			// Common border style
 			BorderStyle border = BorderStyle.THIN;
@@ -258,18 +263,18 @@ public class RT_IRSService {
 			 int batchSize = 5000;
 		     int offset = 0;
 		     int rowIndex = 1;
-		     List<RT_SLS_Detail_Enitity> reportData= new ArrayList<RT_SLS_Detail_Enitity>();
+		     List<RT_IRS_DETAIL_ENTITY> reportData= new ArrayList<RT_IRS_DETAIL_ENTITY>();
 		     //System.out.println("offset=="+offset);
 		     while (true) {
 		    	 
 		    	 //System.out.println("offsettest");
-		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,offset,batchSize);
+		    	  reportData = RT_IRS_DETAIL_REPO.irsdetaillist(parsedToDate,offset,batchSize);
 		    	    if (reportData.isEmpty()) break;  // <-- STOP when there is no more data
 
 		    	    
 		    	    if (reportData != null && !reportData.isEmpty()) {
 						
-						for (RT_SLS_Detail_Enitity item : reportData) {
+						for (RT_IRS_DETAIL_ENTITY item : reportData) {
 							XSSFRow row = sheet.createRow(rowIndex++);
 							
 							if(item.getCustId()!=null) {
