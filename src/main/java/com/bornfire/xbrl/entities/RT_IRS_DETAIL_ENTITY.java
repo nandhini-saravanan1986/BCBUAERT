@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "RT_IRS_DETAIL_TABLE")
+@Table(name = "RT_IRS_DETAILTABLE")
 public class RT_IRS_DETAIL_ENTITY {
 
 	    @Id

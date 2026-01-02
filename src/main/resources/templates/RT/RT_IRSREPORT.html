@@ -840,52 +840,49 @@
 
 	</script>
 	<script>
-	function downloadDetailExcel() {
+		function downloadDetailExcel() {
+		    var reportdate = document.getElementById("reportDate").innerText.trim();
+		    var currency = document.getElementById("currencyin").value;
+		    var filename = "IRS_DETAIL_REPORT_" + reportdate;
 
-	    var reportdate = document.getElementById("reportdate").value; 
-	    // OR if it's text:
-	    // var reportdate = document.getElementById("reportdate").innerText;
+		    $('#loader').modal('show');
 
-	    var filename = "IRS_DETAIL_REPORT";
+		    // Step 1: Start report generation
+		    $.ajax({
+		        url: 'startIRSDetailReport',
+		        type: 'GET',
+		        data: {
+		            filename: filename,
+		            reportdate: reportdate,
+		            currency: currency
+		        },
+		        success: function (jobId) {
+		            checkIRSDetailReport(jobId, filename);
+		        },
+		        error: function () {
+		            $('#loader').modal('hide');
+		            alert("Failed to start report generation");
+		        }
+		    });
+		}
 
-	    // Step 1: start report generation
-	    $.ajax({
-	        url: 'startIRSDetailReport',
-	        type: 'GET',
-	        data: {
-	            filename: filename,
-	            reportdate: reportdate
-	        },
-	        success: function (jobId) {
-	            checkIRSDetailReport(jobId, filename);
-	        },
-	        error: function () {
-	            alert("Failed to start report generation");
-	        }
-	    });
-	}
-
-	function checkIRSDetailReport(jobId, filename) {
-
-	    var interval = setInterval(function () {
-
-	        $.ajax({
-	            url: 'checkirsreport',
-	            type: 'GET',
-	            data: { jobId: jobId },
-	            success: function (status) {
-
-	                if (status === 'READY') {
-	                    clearInterval(interval);
-
-	                    window.location.href =
-	                        'downloaddetailExcel?jobId=' + jobId + '&filename=' + filename;
-	                }
-	            }
-	        });
-
-	    }, 2000);
-	}
+		function checkIRSDetailReport(jobId, filename) {
+		    var interval = setInterval(function () {
+		        $.ajax({
+		            url: 'checkirsreport',
+		            type: 'GET',
+		            data: { jobId: jobId },
+		            success: function (status) {
+		                if (status === 'READY') {
+		                    clearInterval(interval);
+		                    $('#loader').modal('hide');
+		                    // Step 2: Call download with type=IRS
+		                    window.location.href = 'downloaddetailExcel?jobId=' + jobId + '&filename=' + filename + '&type=IRS';
+		                }
+		            }
+		        });
+		    }, 3000);
+		}
 	</script>
 
 	<!-- <script>
@@ -4557,7 +4554,7 @@
 								<td style="text-align:right;" th:text="${detaillist.acctBalanceLc}"></td>
 								<td style="text-align:left;" th:text="${detaillist.reportLabel}"></td>
 								<td style="text-align:left;"
-									th:text="${#dates.format(detaillist.reportdate, 'dd-MM-yyyy')}"></td>
+									th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
 
 							</tr>
 

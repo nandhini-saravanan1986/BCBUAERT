@@ -3016,37 +3016,45 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public ResponseEntity<ByteArrayResource> detailDownload(HttpServletResponse response,
-			@RequestParam("jobId") String jobId, @RequestParam("filename") String filename)
-			throws SQLException, FileNotFoundException {
+	public ResponseEntity<ByteArrayResource> detailDownload(
+	        HttpServletResponse response,
+	        @RequestParam("jobId") String jobId, 
+	        @RequestParam("filename") String filename,
+	        @RequestParam(value = "type", required = false) String type) { // Added type param
 
-		response.setContentType("application/octet-stream");
+	    try {
+	        byte[] excelData = null;
 
-		try {
-			byte[] excelData = null;
+	        // Routing logic based on type
+	        if ("IRS".equalsIgnoreCase(type)) {
+	            excelData = rtIrsService.getReport(jobId);
+	        } else {
+	            // Default to SLS if no type or type is SLS
+	            excelData = RT_SLSServices.getReport(jobId);
+	        }
 
-			excelData = RT_SLSServices.getReport(jobId);
-			;
+	        if (excelData == null || excelData.length == 0) {
+	            return ResponseEntity.noContent().build();
+	        }
 
-			if (excelData == null || excelData.length == 0) {
-				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-				return ResponseEntity.noContent().build();
-			}
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
+	        HttpHeaders headers = new HttpHeaders();
+	        
+	        // Ensure filename has extension
+	        String finalFileName = filename.endsWith(".xls") ? filename : filename + ".xls";
+	        
+	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + finalFileName);
 
-			ByteArrayResource resource = new ByteArrayResource(excelData);
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	                .body(resource);
 
-			HttpHeaders headers = new HttpHeaders();
-			filename = filename + ".xls";
-			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
-					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
-
-		} catch (Exception e) {
-			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+	    } catch (Exception e) {
+	        logger.error("Controller ERROR: Detail download failed", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	@RequestMapping(value = "/startreport", method = { RequestMethod.GET, RequestMethod.POST })
