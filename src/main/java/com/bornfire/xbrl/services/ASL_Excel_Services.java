@@ -128,19 +128,21 @@ public class ASL_Excel_Services {
                 	    BigDecimal id = (BigDecimal) session.createNativeQuery("SELECT PLACEMENT_ID.NEXTVAL FROM DUAL").getSingleResult();
                 	    if (id == null) throw new RuntimeException("Failed to retrieve PLACEMENT_ID.NEXTVAL from database");
 
-						/*
-						 * entity.setNumOperation(String.valueOf(id)); entity.setTitre(titreValue);
-						 * entity.setDevise1(getCellValue(row.getCell(1)));
-						 * entity.setNominal1(getNumericValue(row.getCell(2)));
-						 * entity.setDateOperation(getExcelSqlDate(row.getCell(3)));
-						 * entity.setDateValeur(getExcelSqlDate(row.getCell(4)));
-						 * entity.setDateEcheance(getExcelSqlDate(row.getCell(5)));
-						 * entity.setPortefeuille(getCellValue(row.getCell(6)));
-						 * entity.setContrepartie(getCellValue(row.getCell(7)));
-						 * entity.setBranchCode(iBranchCode); entity.setBranchName(iBranchName);
-						 * entity.setCreateUser(uploadedBy);
-						 * entity.setReportDate(java.sql.Date.valueOf(reportDate));
-						 */
+						
+						  entity.setNum_operation(String.valueOf(id));
+						  entity.setTitre(titreValue);
+						  entity.setDevise_1(getCellValue(row.getCell(1)));
+						  entity.setNominal_1(new BigDecimal(getNumericValue(row.getCell(2))));
+						  entity.setDate_operation(getExcelSqlDate(row.getCell(3)));
+						  entity.setDate_valeur(getExcelSqlDate(row.getCell(4)));
+						  entity.setDate_echeance(getExcelSqlDate(row.getCell(5)));
+						  entity.setPortefeuille(getCellValue(row.getCell(6)));
+						  entity.setContrepartie(getCellValue(row.getCell(7)));
+						  entity.setBranch_code(iBranchCode);
+						  entity.setBranch_name(iBranchName);
+						  entity.setCreate_user(uploadedBy);
+						  entity.setReport_date(java.sql.Date.valueOf(reportDate));
+						 
 
                 	    session.save(entity);
                 	}

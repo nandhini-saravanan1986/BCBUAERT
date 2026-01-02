@@ -511,7 +511,7 @@
 		function submitform() {
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#reportDate").val().trim();
+			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
 
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
@@ -665,7 +665,7 @@
 
 
 		$(document).ready(function () {
-			$('#reportDate').on('change', function () {
+			$('#Report_date').on('change', function () {
 				const reportDate = this.value;
 
 				$.ajax({
@@ -748,11 +748,11 @@
 		}
 
 		function treasuryLimit() {
-			var ReportDate = $("#reportDate").val().trim();
+			var ReportDate = $("#Report_date").val().trim();
 			console.log(ReportDate);
 			if (ReportDate === "") {
 				alert("Please enter Report Date.");
-				$("#reportDate").focus();
+				$("Report_date").focus();
 				return;
 			}
 			// Download file with selected branch and date
@@ -762,16 +762,17 @@
 	<script>
 
 		function check_date() {
+			
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#reportDate").val().trim();
+			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
 
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
 				alert("All fields are required.");
 				return;
 			}
-
+			
 			$.ajax({
 				url: "./search_date?reportDate=" + encodeURIComponent(reportDate) + "&iBranchCode=" + encodeURIComponent(iBranchCode) + "&mode=placement",
 				type: "GET",
@@ -797,9 +798,9 @@
 		function submitform() {
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#reportDate").val().trim();
+			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
-
+			
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
 				alert("All fields are required.");
 				return;
@@ -811,7 +812,9 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			
+		//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			
 			$.ajax({
 				url: "./Add_ASL?mode=placement",
 				type: "POST",
@@ -819,13 +822,13 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
 				error: function (xhr, status, error) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
@@ -845,7 +848,7 @@
 
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#reportDate").val().trim();
+			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
 
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
@@ -859,7 +862,7 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			
 			$.ajax({
 				url: "./Replace_data?mode=placement",
 				type: "POST",
@@ -867,13 +870,13 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
 					$('#alert').modal("toggle");
 				},
 				error: function (xhr, status, error) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
 					$('#alert').modal("toggle");
