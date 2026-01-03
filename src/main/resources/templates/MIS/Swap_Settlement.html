@@ -4,36 +4,55 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
-		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" type="text/css"
+	      href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	      th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+
+	<link rel="stylesheet" type="text/css"
+	      href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	      th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+
+	<link rel="stylesheet" type="text/css"
+	      href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	      th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+
+	<link rel="stylesheet" type="text/css"
+	      href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	      th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<!-- jQuery (FIRST) -->
+	<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	        th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
+	<!-- Popper (SECOND) -->
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	        th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+
+	<!-- Bootstrap JS (THIRD - THIS WAS MISSING ❗) -->
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	        th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+	<!-- jQuery UI -->
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	        th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<!-- Other plugins -->
 	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	        th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
 
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	        th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
 	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	        th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	        th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
 
 
 	<style>
@@ -397,18 +416,14 @@
 
 
 		function adduser() {
-
-
 			location.href = 'counterparty_list?formmode=add';
 
 		}
-
 		function list() {
-			location.href = 'swap_settlement';
-		}
-
-
-
+					var Report_date = $("#Report_date").val();
+					location.href = 'swap_settlement?formmode=list' + '&Report_date=' + Report_date;
+					$("#alert").modal("hide");
+				}
 		/*]]>*/
 	</script>
 
@@ -514,16 +529,24 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					console.log("Success:", response);
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
+				    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
+				    $("#alertmsg").text(response);   // backend message
+				    $("#alert").modal("show");       // show popup
 				},
-				error: function (xhr, status, error) {
-					console.error("Error:", error);
-					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
+				error: function () {
+				    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
+				    $("#alertmsg").text("Upload failed. Please contact administrator.");
+				    $("#alert").modal("show");
 				}
+
 			});
+		}
+		
+		function showAlert(msg) {
+		    document.getElementById("alertmsg").innerText = msg;
+		    $("#alert").modal("show");
 		}
 
 
@@ -918,37 +941,50 @@
 
 	</script>
 	<script>
-
 		function check_date() {
-			var iBranchCode = $("#iBranchCode").val().trim();
-			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#reportDate").val().trim();
-			var fileInput = $("#file")[0].files[0];
 
-			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-				alert("All fields are required.");
-				return;
-			}
+		    var iBranchCode = $("#iBranchCode").val().trim();
+		    var iBranchName = $("#iBranchName").val().trim();
+		    var reportDate  = $("#reportDate").val().trim();
+		    var fileInput   = $("#file")[0].files[0];
 
-			$.ajax({
-				url: "./search_date?reportDate=" + encodeURIComponent(reportDate) + "&iBranchCode=" + encodeURIComponent(iBranchCode) + "&mode=settlement",
-				type: "GET",
-				success: function (response) {
-					console.log("Success:", response);
-					if (response > 0) {
-						$("#alertmsg1").text("Report already exists for the selected date.");
-						$('#alert1').modal("toggle");
-					} else {
-						submitform();
-					}
-				},
-				error: function (xhr, status, error) {
-					console.error("Error:", error);
-					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
-				}
-			});
+		    // 1️⃣ Mandatory field validation
+		    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+		        alert("All fields are required.");
+		        return;
+		    }
+		    // 2️⃣ Call backend to check existing data
+		    $.ajax({
+		        url: "./search_date",
+		        type: "GET",
+		        data: {
+		            reportDate: reportDate,
+		            iBranchCode: iBranchCode,
+		            mode: "settlement" 
+		        },
+		        success: function (response) {
+
+		            console.log("Existing record count:", response);
+		            // 3️⃣ IMPORTANT FIX → ONLY >0 means exists
+		            if (parseInt(response, 10) > 0) {
+		                // Show replace confirmation modal
+		                $("#alertmsg1").text("Report already exists for the selected date. Do you want to replace?");
+		                $("#alert1").modal("show");
+
+		            } else {
+		                // No data exists → direct upload
+		                submitform();
+		            }
+		        },
+		        error: function (xhr, status, error) {
+
+		            console.error("Error:", error);
+		            $("#alertmsg").text("Error occurred while checking existing data.");
+		            $("#alert").modal("show");
+		        }
+		    });
 		}
+
 
 
 

@@ -4,6 +4,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- CSS files -->
 	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
 		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
 	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
@@ -12,30 +14,28 @@
 		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
 		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
-	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<!-- Favicon -->
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+	<!-- JS files (ORDER: jQuery → Popper → Bootstrap → Plugins) -->
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
 		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
 		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-
 	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
 		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
 		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
-
 	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-
-
 
 
 	<style>
@@ -505,48 +505,6 @@
 		}
 	</script>
 
-	<script>
-
-
-		function submitform() {
-			var iBranchCode = $("#iBranchCode").val().trim();
-			var iBranchName = $("#iBranchName").val().trim();
-			var reportDate = $("#Report_date").val().trim();
-			var fileInput = $("#file")[0].files[0];
-
-			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-				alert("All fields are required.");
-				return;
-			}
-
-			let formData = new FormData();
-			formData.append("iBranchCode", iBranchCode);
-			formData.append("iBranchName", iBranchName);
-			formData.append("reportDate", reportDate);
-			formData.append("file", fileInput);
-			formData.append("uploadedBy", $("#uploadedBy").val());
-
-			$.ajax({
-				url: "./Add_ASL",
-				type: "POST",
-				data: formData,
-				contentType: false,
-				processData: false,
-				success: function (response) {
-					console.log("Success:", response);
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
-				},
-				error: function (xhr, status, error) {
-					console.error("Error:", error);
-					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
-				}
-			});
-		}
-
-
-	</script>
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
@@ -760,47 +718,55 @@
 		}
 	</script>
 	<script>
-
+		// 1️⃣ Check if Placement data exists for selected date
 		function check_date() {
-			
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
 			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
 
+			// Mandatory validation
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
 				alert("All fields are required.");
 				return;
 			}
-			
+
+			// AJAX call to check if record exists
 			$.ajax({
-				url: "./search_date?reportDate=" + encodeURIComponent(reportDate) + "&iBranchCode=" + encodeURIComponent(iBranchCode) + "&mode=placement",
+				url: "./search_date",
 				type: "GET",
+				data: {
+					reportDate: reportDate,
+					iBranchCode: iBranchCode,
+					mode: "placement"
+				},
 				success: function (response) {
-					console.log("Success:", response);
-					if (response > 0) {
-						$("#alertmsg1").text("Report already exists for the selected date.");
-						$('#alert1').modal("toggle");
+					console.log("Existing record count:", response);
+
+					if (parseInt(response, 10) > 0) {
+						// Show replace confirmation modal
+						$("#alertmsg1").text("Report already exists for the selected date. Do you want to replace?");
+						$("#alert1").modal("show");
 					} else {
+						// No existing data → upload directly
 						submitform();
 					}
 				},
 				error: function (xhr, status, error) {
 					console.error("Error:", error);
-					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
+					$("#alertmsg").text("Error occurred while checking existing data.");
+					$("#alert").modal("show");
 				}
 			});
 		}
 
-
-
+		// 2️⃣ Submit Placement upload
 		function submitform() {
 			var iBranchCode = $("#iBranchCode").val().trim();
 			var iBranchName = $("#iBranchName").val().trim();
 			var reportDate = $("#Report_date").val().trim();
 			var fileInput = $("#file")[0].files[0];
-			
+
 			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
 				alert("All fields are required.");
 				return;
@@ -812,9 +778,10 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			
-		//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			
+
+			// Show loader
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
 			$.ajax({
 				url: "./Add_ASL?mode=placement",
 				type: "POST",
@@ -822,26 +789,29 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					
+					// Hide loader
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
+					$("#alert").modal("show");
 				},
 				error: function (xhr, status, error) {
-					
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
+					$("#alert").modal("show");
 				}
 			});
 		}
 
+		// 3️⃣ Ignore replace
 		function ignore() {
-
-
 			$("#alertmsg1").text("");
 			$("#alert1").modal("hide");
 		}
+
+		// 4️⃣ Replace existing Placement
 		function replace() {
 			$("#alertmsg1").text("");
 			$("#alert1").modal("hide");
@@ -862,7 +832,10 @@
 			formData.append("reportDate", reportDate);
 			formData.append("file", fileInput);
 			formData.append("uploadedBy", $("#uploadedBy").val());
-			
+
+			// Show loader
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
 			$.ajax({
 				url: "./Replace_data?mode=placement",
 				type: "POST",
@@ -870,23 +843,23 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					
+					// Hide loader
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
 					console.log("Success:", response);
 					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
+					$("#alert").modal("show");
 				},
 				error: function (xhr, status, error) {
-					
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error("Error:", error);
 					$("#alertmsg").text("Error occurred: " + error);
-					$('#alert').modal("toggle");
+					$("#alert").modal("show");
 				}
 			});
-
-
 		}
-
 	</script>
+
 	<script>
 		function get_branch() {
 			var code = document.getElementById('iBranchCode').value;
@@ -1241,67 +1214,68 @@
 					</div>
 
 
-
-					<!-- Floating Back Button -->
-					<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-						<i class="fa fa-arrow-left"></i>
-					</button>
-					<!-- Floating Forward Button -->
-					<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-						<i class="fa fa-arrow-right"></i>
-					</button>
-
-
-					<div class="modal fade" id="alert">
-						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-							<div class="modal-content">
-								<div class="menu-title-header">
-									<div class="modal-title" id="exampleModalLabel"
-										style="text-align: center; color: white;">
-										BANK OF BARODA</div>
-								</div>
-								<div class="modal-body" style="text-align: center">
-									<p id="alertmsg"></p>
-									<button type="button" class="custom-tab-btn" onclick="list()"
-										data-dismiss="modal">Close</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-
-					<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
-						<div class="bob-loader-card">
-							<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
-							<div class="flow-bar">
-								<div class="flow-line"></div>
-							</div>
-						</div>
-					</div>
-
-
-				</div>
-				<div class="modal fade" id="alert1">
-					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-						<div class="modal-content">
-							<div class="menu-title-header">
-								<div class="modal-title" id="exampleModalLabel"
-									style="text-align: center; color: white;">BANK
-									OF BARODA</div>
-							</div>
-							<div class="modal-body" style="text-align: center">
-								<p id="alertmsg1"></p>
-								<button type="button" class="btn " style="background-color:darkorange"
-									onclick="replace()" data-dismiss="modal">Replace</button>
-								<button type="button" class="btn" style="background-color:darkorange"
-									data-dismiss="modal" onclick="ignore();">Ignore</button>
-
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
+
+			<!-- Success / Error Modal -->
+			<div class="modal fade" id="alert">
+			    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			        <div class="modal-content">
+			            <div class="menu-title-header">
+			                <div class="modal-title" style="text-align: center; color: white;">
+			                    BANK OF BARODA
+			                </div>
+			            </div>
+			            <div class="modal-body" style="text-align: center">
+			                <p id="alertmsg"></p>
+			                <button type="button" class="custom-tab-btn" onclick="list()" data-dismiss="modal">
+			                    Close
+			                </button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+			<!-- Loader -->
+			<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+			    <div class="bob-loader-card">
+			        <img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+			        <div class="flow-bar">
+			            <div class="flow-line"></div>
+			        </div>
+			    </div>
+			</div>
+			</div>
+				</div>
+			<!-- Floating Navigation Buttons -->
+			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+			    <i class="fa fa-arrow-left"></i>
+			</button>
+			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			    <i class="fa fa-arrow-right"></i>
+			</button>
+
+			<!-- Replace Confirmation Modal -->
+			<div class="modal fade" id="alert1">
+			    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			        <div class="modal-content">
+			            <div class="menu-title-header">
+			                <div class="modal-title" style="text-align: center; color: white; background-color: #007bff;">
+			                    BANK OF BARODA
+			                </div>
+			            </div>
+			            <div class="modal-body" style="text-align: center">
+			                <p id="alertmsg1"></p>
+			                <button type="button" class="custom-tab-btn" onclick="replace()" data-dismiss="modal">Replace</button>
+			                <button type="button" class="custom-tab-btn" data-dismiss="modal" onclick="ignore();">Ignore</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
 </body>
+
+
 <style>
 	/* ACTIVE page number (1) */
 	#usertable_paginate .page-item.active .page-link {

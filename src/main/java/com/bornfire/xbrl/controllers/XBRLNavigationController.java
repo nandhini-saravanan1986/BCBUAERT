@@ -1670,6 +1670,9 @@ public class XBRLNavigationController {
 			@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
 			@RequestParam("file") MultipartFile file, @RequestParam("uploadedBy") String uploadedBy,
 			HttpServletRequest request, @RequestParam(required = false) String mode) {
+	    mode = (mode == null) ? "" : mode.trim().toLowerCase();
+
+	    logger.info("Upload mode received: [{}]", mode);
 		String msg = "";
 		String userid = (String) request.getSession().getAttribute("USERID");
 		if (mode.equals("exposure")) {
@@ -1687,6 +1690,7 @@ public class XBRLNavigationController {
 
 		}
 		return msg;
+	
 	}
 
 	@RequestMapping(value = "/getvalues", method = RequestMethod.POST)
@@ -2010,46 +2014,43 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "search_date", method = RequestMethod.GET)
 	@ResponseBody
 	public int search_date(
-			@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
-			@RequestParam("iBranchCode") String iBranchCode, @RequestParam(required = false) String mode) {
+	        @RequestParam("reportDate")
+	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+	        @RequestParam("iBranchCode") String iBranchCode,
+	        @RequestParam(required = false) String mode) {
 
-		Logger logger = LoggerFactory.getLogger(this.getClass());
-		logger.info("Searching report data for date: {} and branch code: {}", reportDate, iBranchCode);
+	    Logger logger = LoggerFactory.getLogger(this.getClass());
 
-		int size = 0;
-		if (mode.equals("exposure")) {
-			try {
-				List<ASL_Report_Entity> list = ASL_Report_Reps.getByReportDateAndBR(java.sql.Date.valueOf(reportDate),
-						iBranchCode);
-				size = list.size();
-				logger.info("Number of records found is Exposure Data: {}", size);
-			} catch (Exception e) {
-				logger.error("Error occurred while searching Exposure Data for date: {} and branch code: {}",
-						reportDate, iBranchCode, e);
-			}
-		} else if (mode.equals("placement")) {
-			try {
-				List<MIS_TREASURY_PLACEMENT_ENTITY> list = Mis_treasury_placement_repo
-						.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
-				size = list.size();
-				logger.info("Number of records found for placement: {}", size);
-			} catch (Exception e) {
-				logger.error("Error occurred while searching placement data for date: {} and branch code: {}",
-						reportDate, iBranchCode, e);
-			}
-		} else if (mode.equals("settlement")) {
-			try {
-				List<MIS_SETTLEMENT_ENTITY> list = MIS_SETTLEMENT_ENTITY_REPs
-						.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode);
-				size = list.size();
-				logger.info("Number of records found for settlement: {}", size);
-			} catch (Exception e) {
-				logger.error("Error occurred while searching settlement data for date: {} and branch code: {}",
-						reportDate, iBranchCode, e);
-			}
-		}
-		return size; // returns 0 if no report, >0 if exists
+	    mode = (mode == null) ? "" : mode.trim().toLowerCase();
+	    logger.info("Searching data | Date: {} | Branch: {} | Mode: {}", reportDate, iBranchCode, mode);
+
+	    int size = 0;
+
+	    try {
+	        if ("exposure".equals(mode)) {
+	            size = ASL_Report_Reps
+	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
+	                    .size();
+
+	        } else if ("placement".equals(mode)) {
+	            size = Mis_treasury_placement_repo
+	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
+	                    .size();
+
+	        } else if ("settlement".equals(mode)) {
+	            size = MIS_SETTLEMENT_ENTITY_REPs
+	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
+	                    .size();
+	        }
+	    } catch (Exception e) {
+	        logger.error("Error while checking existing data", e);
+	        return 0;
+	    }
+
+	    logger.info("Final record count returned to UI = {}", size);
+	    return size; // ✔ 0 = NOT EXISTS | >0 = EXISTS
 	}
+
 
 	@RequestMapping(value = "Replace_data", method = { RequestMethod.POST })
 	@ResponseBody

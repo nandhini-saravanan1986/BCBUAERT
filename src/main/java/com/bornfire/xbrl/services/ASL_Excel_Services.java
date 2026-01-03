@@ -92,6 +92,8 @@ public class ASL_Excel_Services {
                 session.save(entity);
             }
             auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF COUNTERPARTY", null,"MIS_ASL_DETAIL_REPORT");
+            session.flush();   
+            session.clear();
             msg = "File Uploaded and Data Saved Successfully";
             logger.info("Upload successful for Exposure Data..");
 
@@ -146,7 +148,8 @@ public class ASL_Excel_Services {
 
                 	    session.save(entity);
                 	}
-
+                 session.flush();   
+                 session.clear();
 
                  msg = "File Uploaded and Data Saved Successfully";
                  auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF TREASURY PLACEMENT", null,"MIS_TREASURY_PLACEMENT");
@@ -199,7 +202,8 @@ public class ASL_Excel_Services {
                 	    session.save(entity);
                 	}
 
-
+                 session.flush();   
+                 session.clear();
                  msg = "File Uploaded and Data Saved Successfully";
                  auditService.createBusinessAudit(userid, "UPLOAD", "UPLOAD FILE OF SWAP SETTLEMENT", null,"MIS_SETTLEMENT");
                  logger.info("Upload successful for Settlement..");
