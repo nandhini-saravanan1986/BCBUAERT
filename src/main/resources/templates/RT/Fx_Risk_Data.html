@@ -116,7 +116,48 @@ TESTED BY   : RAJALAKSHMI R
 </style>
 
 
+<style>
+	#usertable {
+				font-family: Arial, sans-serif !important;
+				font-size: 12px !important;
+			}
 
+			#usertable th {
+				background-color: #7b6458 !important;
+				/* Header background */
+				color: white !important;
+				/* Header text color */
+				padding: 8px 10px !important;
+				/* Same spacing style */
+				text-align: center;
+				/* Center text */
+				font-weight: bold;
+				white-space: normal !important;
+			}
+
+			#usertable td {
+				padding: 4px 6px !important;
+				white-space: normal !important;
+			}
+
+			#usertable th,
+			#usertable td {
+				border: 1px solid #ffffff !important;
+				/* thin white separators like your screenshot */
+			}
+
+
+			/* Avoid table taking too much width */
+			#usertable {
+				width: auto !important;
+				max-width: 100% !important;
+			}
+
+			/* Control column widths */
+			#usertable th {
+				max-width: 150px;
+			}
+</style>
 
 <style>
 body {
@@ -717,6 +758,48 @@ left
 	transform: scale(1.1);
 }
 </style>
+<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
+
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
 <script th:inline="javascript">
 	
 
@@ -980,7 +1063,7 @@ if (tabId === 'data') {
 		style="padding-left: 0px; padding-right: 0px;">
 
 
-		<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
 		<!-- <div class="role-page-title" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"style="background-color: rgb(107, 122, 143) ; ">
 					<div class="float-left">
@@ -990,7 +1073,7 @@ if (tabId === 'data') {
 				</div>  -->
 		<!-- 	<div class="col-sm-12 finuserapply"> -->
 		<!-- 	<div class="card" style="margin-left: 10px; margin-right: 10px;"> -->
-		<div
+		<!--<div
 			class="role-page-header d-flex justify-content-between align-items-center"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
 			
@@ -1005,14 +1088,43 @@ if (tabId === 'data') {
 
 
 			</div>
-		</div>
+		</div>-->
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
+
+
+					<!-- LEFT: Buttons -->
+					<div  class="text-left flex-grow-1">
+						<h4 class="m-0">FX RISK DATA</h4>
+
+					</div>
+					<div class="d-flex align-items-center gap-2">
+
+						<!-- Data Controls Button -->
+						<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
+							Data Controls</button>
+
+						<!-- Template Instructions Button -->
+						<button class="role-btn" id="template-btn" onclick="handleClick('template')">
+							Template Instructions</button>
+
+						<!-- Data Button -->
+						<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
+							Data</button>
+					
+						<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
+							onclick="downloadFxrisk();">
+							<i class="fa fa-download"></i> Download
+						</button>
+					</div>
+
+				</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div style="padding-right: 10px; padding-left: 20px;"
+		<div  id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
 
 
 			<!-- Tabs -->
-			<div
+			<!--<div
 				class="role-page-header d-flex justify-content-between align-items-center">
 
 				<div class="float-left">
@@ -1029,7 +1141,7 @@ if (tabId === 'data') {
 						<i class="fa fa-download"></i> Download
 					</button>
 				</div>
-			</div>
+			</div>-->
 
 
 
@@ -1250,26 +1362,32 @@ if (tabId === 'data') {
 
 			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-			<div class="tab-pane fade" id="template" role="tabpanel"
+			<!--<div class="tab-pane fade" id="template" role="tabpanel"
 				th:if="${formmode == 'null'}">
 				<p>Templates tabs</p>
 				<div class="card-footer text-center"  style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-					<!-- <button type="button" class="custom-tab-btn" onclick="home();">
+					 <button type="button" class="custom-tab-btn" onclick="home();">
 								<i class="fa fa-home"></i> Home
-							</button> -->
+							</button> 
 
 
-					<!-- <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
-                  onclick="submitForm()">Save</button>-->
+					 <button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+                  onclick="submitForm()">Save</button>
 
 
-					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
+					 <button type="button" class="custom-tab-btn" onclick="back();">
 								<i class="fa fa-arrow-left"></i> Back
-							</button> -->
+							</button> 
 
 				</div>
-			</div>
+			</div>-->
+			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
+							<p>Templates tabs</p>
+							<div class="card-footer text-center"
+								style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 
+							</div>
+						</div>
 			<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
 
@@ -1286,11 +1404,8 @@ if (tabId === 'data') {
 
 
 
-				<div class="table-responsive"
-					style="max-height: 400px; overflow: auto; border: none;">
-					<table id="usertable"
-						class="table table-bordered table-striped table-hover"
-						style="min-width: 2000px;">
+					<div class="table-responsive" style="border: none;">
+					<table id="usertable" class="table table-bordered table-striped table-hover">
 
 						<thead class="thead-light">
 							<!-- style="background-color: #e9ecf0; font-size: 11px;"> -->
@@ -1705,22 +1820,25 @@ if (tabId === 'data') {
 
 </body>
 <script>
-  $(document).ready(function () {
-    $('#usertable').DataTable({
-    	"scrollX": true,
-      "paging": true,
-      "pageLength": 10,
-      "lengthChange": false,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
-      "language": {
-        "search": "Search:"
-      }
-    });
-  });
+	$('#usertable').DataTable({
+				scrollX: false,
+				autoWidth: false,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+				ordering: false,
+				pageLength: 100,
+				fixedHeader: true,
+
+				// Layout: search (left) + pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+
+				// Optional: language tweak for better label
+				language: {
+					search: "Search:"
+				}
+			});
 </script>
 
 
@@ -1779,7 +1897,7 @@ function handleBankChange(select) {
     }
 
     $.ajax({
-    	url: '/BCDRS/getBankDetails',
+    	url: './getBankDetails',
         type: 'GET',
         data: { bankName: selectedBank },
         success: function(data) {
