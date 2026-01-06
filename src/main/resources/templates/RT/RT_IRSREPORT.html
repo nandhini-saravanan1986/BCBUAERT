@@ -722,18 +722,23 @@
 						window.URL.revokeObjectURL(url);
 						document.body.removeChild(a);
 
-						showResultModal('Success', filename + ' downloaded successfully.');
+						showResultModal('BANK OF BARODA', filename + ' downloaded successfully.');
 					} else {
 						showResultModal('Information', 'No data was available to create a download.');
 					}
 				},
-				error: function (jqXHR, textStatus, errorThrown) {
-					$('#loader').modal('hide');
-					console.error("Download failed:", textStatus, errorThrown);
-					showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+				 error: function (jqXHR, textStatus, errorThrown) {
+
+				            $('#loader').modal('hide');
+
+				            console.error("Download failed:", textStatus, errorThrown);
+
+				            // ❌ FAILURE MODAL
+				            showResultModal('Error',
+				                'An error occurred while downloading the file. Please try again.');
+				        }
+				    });
 				}
-			});
-		}
 
 
 
@@ -960,18 +965,18 @@
 					</span>
 
 					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()"
-						style="margin-right: 20px; padding: 5px 10px; font-weight: 600; border-radius: 5px;">
+						style="margin-right: 10px; padding: 5px 10px; font-weight: 600; border-radius: 5px;">
 						<option th:each="clist : ${currencylist}" th:value="${clist.report_currency}"
 							th:selected="${clist.report_currency == currency}" th:text="${clist.report_currency}">
 						</option>
 					</select>
 
 					<button type="button" class="role-btn" th:if="${formmode == 'summary'}"
-						style="margin-right: 20px; padding: 5px 10px;" onclick="getdetails();">Details</button>
+						style="margin-right: 10px; padding: 5px 10px;" onclick="getdetails();">Details</button>
 					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
-						style="margin-right: 20px; padding: 5px 10px;"  onclick="getreport();">Summary</button>
+						style="margin-right: 10px; padding: 5px 10px;"  onclick="getreport();">Summary</button>
 
-					<button  class="role-btn" style="margin-right: 20px; padding: 5px 10px;" type="button"
+					<button  class="role-btn" type="button"
 						th:if="${formmode == 'summary'}"
 						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=IRS.xls"
 						 onclick="downloadfile(this);">
@@ -987,7 +992,7 @@
 					<input type="hidden" id="currency" th:value="${currency}">
 
 					<button type="button" th:if="${formmode == 'Detail'}"
-					        class="btn btn-success"
+					        class="role-btn"
 					        onclick="downloadDetailExcel()">
 					    	<i class="fa fa-download"></i>
 					</button>
@@ -4535,20 +4540,20 @@
 						 id="usertable">
 						<thead class="thead-light">
 							<tr>
-								<th>CUST ID</th>
-								<th>ACCT NO</th>
-								<th>ACCT NAME</th>
+								<th style="text-align:right;">CUST ID</th>
+								<th style="text-align:right;">ACCT NO</th>
+								<th  style="text-align:left;">ACCT NAME</th>
 								<th style="text-align:right;">ACCT BALANCE</th>
 								<th style="text-align:left;">ROWID</th>
-								<th>REPORT_DATE</th>
+								<th style="text-align:left;">REPORT_DATE</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="detaillist : ${detailsList}">
-								<td th:text="${detaillist.custId}"></td>
-								<td th:text="${detaillist.foracid}"></td>
-								<td th:text="${detaillist.acctName}"></td>
-								<td style="text-align:right;" th:text="${detaillist.acctBalanceLc}"></td>
+								<td  style="text-align:right;" th:text="${detaillist.custId}"></td>
+								<td  style="text-align:right;" th:text="${detaillist.foracid}"></td>
+								<td   style="text-align:left;" th:text="${detaillist.acctName}"></td>
+								<td  style="text-align:right;" th:text="${detaillist.acctBalanceLc}"></td>
 								<td style="text-align:left;" th:text="${detaillist.reportLabel}"></td>
 								<td style="text-align:left;"
 									th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
@@ -4605,7 +4610,40 @@
 		</div>
 	</div>
 
+	<!-- Modal -->
+	<div class="modal fade" id="resultModal" tabindex="-1">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+
+	            <div class="modal-header" style="background:#f7a47c;color:white;">
+	                <h5 class="modal-title" id="resultModalTitle">BANK OF BARODA</h5>
+	            </div>
+
+	            <div class="modal-body text-center">
+	                <p id="resultModalMessage"></p>
+	            </div>
+
+	            <div class="modal-footer justify-content-center">
+	                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" onclick="back()">
+	                    Close
+	                </button>
+	            </div>
+
+	        </div>
+	    </div>
+	</div>
+
 
 </body>
+
+<script>
+function showResultModal(title, message) {
+
+    document.getElementById("resultModalTitle").innerText = title;
+    document.getElementById("resultModalMessage").innerText = message;
+
+    $('#resultModal').modal('show');
+}
+</script>
 
 </html>

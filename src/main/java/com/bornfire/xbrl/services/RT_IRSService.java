@@ -284,8 +284,8 @@ public class RT_IRSService {
 								row.createCell(0).setCellValue(" ");
 							}
 							
-							if(item.getAcid()!=null) {
-								row.createCell(1).setCellValue(item.getAcid());
+							if(item.getForacid()!=null) {
+								row.createCell(1).setCellValue(item.getForacid());
 							}
 							else {
 								row.createCell(1).setCellValue(" ");
@@ -315,7 +315,7 @@ public class RT_IRSService {
 
 							
 							// Apply data style for all other cells
-							for (int j = 0; j < 5; j++) {
+							for (int j = 0; j <=5; j++) {
 								if (j != 3) {
 									row.getCell(j).setCellStyle(dataStyle);
 								}
