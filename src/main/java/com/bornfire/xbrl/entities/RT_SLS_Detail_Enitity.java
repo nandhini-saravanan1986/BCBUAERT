@@ -14,10 +14,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "RT_SLS_DETAILTABLE")
 public class RT_SLS_Detail_Enitity {
 	
-	@Id
+	
     @Column(name = "CUST_ID")
     private String custId; 
-
+    @Id
     @Column(name = "FORACID")
     private String foracid;
 

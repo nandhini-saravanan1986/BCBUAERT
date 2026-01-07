@@ -690,57 +690,83 @@
 
 		function downloadfile(button) {
 
-			var reportdate = button.getAttribute('data-reportdate');
-			var currency = button.getAttribute('data-currency');
-			var filename = button.getAttribute('data-filename');
-			//var version = button.getAttribute('data-version');
+		    var reportdate = button.getAttribute('data-reportdate');
+		    var currency   = button.getAttribute('data-currency');
+		    var filename   = button.getAttribute('data-filename');
+		    var report     = button.getAttribute('data-report'); 
 
+		    $('#loader').modal('show');
 
-			$('#loader').modal('show');
+		    $.ajax({
+		        url: './downloadExcel',
+		        type: 'GET',
+		        data: {
+		            reportdate: reportdate,
+		            currency: currency,
+		            filename: filename,
+		            type: 'summary',
+		            report: report          
+		        },
+		        xhrFields: {
+		            responseType: 'blob'
+		        },
 
-			$.ajax({
-				url: './downloadExcel?reportdate=' + reportdate +
-					'&currency=' + currency +
-					'&filename=' + filename +
-					'&type=summary',
-				type: 'GET',
-				xhrFields: {
-					responseType: 'blob'
-				},
-				success: function (data) {
-					$('#loader').modal('hide');
+		        success: function (data, status, xhr) {
 
-					if (data && data.size > 100) {
-						const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-						const url = window.URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.style.display = 'none';
-						a.href = url;
-						a.download = filename;
-						document.body.appendChild(a);
-						a.click();
-						window.URL.revokeObjectURL(url);
-						document.body.removeChild(a);
+		            $('#loader').modal('hide');
 
-						showResultModal('BANK OF BARODA', filename + ' downloaded successfully.');
-					} else {
-						showResultModal('Information', 'No data was available to create a download.');
-					}
-				},
-				 error: function (jqXHR, textStatus, errorThrown) {
+		            // ✅ HANDLE 204 NO CONTENT
+		            if (xhr.status === 204 || !data || data.size === 0) {
+		                showResultModal(
+		                    'Information',
+		                    'No data was available to create a download.'
+		                );
+		                return;
+		            }
 
-				            $('#loader').modal('hide');
+		            // ✅ FILE DOWNLOAD
+		            const blob = new Blob([data], {
+		                type: 'application/vnd.ms-excel'
+		            });
 
-				            console.error("Download failed:", textStatus, errorThrown);
+		            const url = window.URL.createObjectURL(blob);
+		            const a = document.createElement('a');
+		            a.style.display = 'none';
+		            a.href = url;
+		            a.download = filename + '.xls';
 
-				            // ❌ FAILURE MODAL
-				            showResultModal('Error',
-				                'An error occurred while downloading the file. Please try again.');
-				        }
-				    });
-				}
+		            document.body.appendChild(a);
+		            a.click();
 
+		            window.URL.revokeObjectURL(url);
+		            document.body.removeChild(a);
 
+		            showResultModal(
+		                'BANK OF BARODA',
+		                filename + ' downloaded successfully.'
+		            );
+		        },
+
+		        error: function (xhr, textStatus, errorThrown) {
+
+		            $('#loader').modal('hide');
+
+		            console.error('Download failed:', textStatus, errorThrown);
+
+		            if (xhr.status === 204) {
+		                showResultModal(
+		                    'Information',
+		                    'No data was available to create a download.'
+		                );
+		            } else {
+		                showResultModal(
+		                    'Error',
+		                    'An error occurred while downloading the file. Please try again.'
+		                );
+		            }
+		        }
+		    });
+		}
 
 		function startReport(filename, reportdate, currency, version) {
 
@@ -976,11 +1002,23 @@
 					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
 						style="margin-right: 10px; padding: 5px 10px;"  onclick="getreport();">Summary</button>
 
-					<button  class="role-btn" type="button"
+					<!--<button  class="role-btn" type="button"
 						th:if="${formmode == 'summary'}"
 						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=IRS.xls"
 						 onclick="downloadfile(this);">
 						<i class="fa fa-download"></i>
+					</button>-->
+					<button type="button"
+					        th:if="${formmode == 'summary'}"
+					        th:attr="
+					            data-reportdate=${reportdate},
+					            data-currency=${currency},
+					            data-filename='IRS.xls',
+					            data-report='IRS'
+					        "
+					        class="role-btn"
+					        onclick="downloadfile(this);">
+					    <i class="fa fa-download"></i>
 					</button>
 
 					<!--<button type="button" th:if="${formmode == 'Detail'}" style="margin-right: 20px; padding: 5px 10px;"
@@ -4526,6 +4564,92 @@
 									th:text="${row.r87_total != null ? #numbers.formatDecimal(row.r87_total,1,2) : '0.00'}">
 								</td>
 							</tr>
+							<tr th:each="row, stat : ${irsList2}" class="orange-row">
+							    <td></td>
+							    <td th:text="${row.r88_product}">R88 Product</td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_day1_28 != null ? #numbers.formatDecimal(row.r88_day1_28,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_day29_3m != null ? #numbers.formatDecimal(row.r88_day29_3m,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over3m_to_6m != null ? #numbers.formatDecimal(row.r88_over3m_to_6m,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over6m_to_1y != null ? #numbers.formatDecimal(row.r88_over6m_to_1y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over1y_to_3y != null ? #numbers.formatDecimal(row.r88_over1y_to_3y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over3y_to_5y != null ? #numbers.formatDecimal(row.r88_over3y_to_5y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over5y_to_7y != null ? #numbers.formatDecimal(row.r88_over5y_to_7y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over7y_to_10y != null ? #numbers.formatDecimal(row.r88_over7y_to_10y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over10y_to_15y != null ? #numbers.formatDecimal(row.r88_over10y_to_15y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_over15y != null ? #numbers.formatDecimal(row.r88_over15y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_non_sensitive != null ? #numbers.formatDecimal(row.r88_non_sensitive,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_total_rsl != null ? #numbers.formatDecimal(row.r88_total_rsl,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r88_total != null ? #numbers.formatDecimal(row.r88_total,1,2) : '0.00'}"></td>
+							</tr>
+							<tr th:each="row, stat : ${irsList2}" class="orange-row">
+							    <td></td>
+							    <td th:text="${row.r89_product}">R89 Product</td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_day1_28 != null ? #numbers.formatDecimal(row.r89_day1_28,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_day29_3m != null ? #numbers.formatDecimal(row.r89_day29_3m,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over3m_to_6m != null ? #numbers.formatDecimal(row.r89_over3m_to_6m,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over6m_to_1y != null ? #numbers.formatDecimal(row.r89_over6m_to_1y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over1y_to_3y != null ? #numbers.formatDecimal(row.r89_over1y_to_3y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over3y_to_5y != null ? #numbers.formatDecimal(row.r89_over3y_to_5y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over5y_to_7y != null ? #numbers.formatDecimal(row.r89_over5y_to_7y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over7y_to_10y != null ? #numbers.formatDecimal(row.r89_over7y_to_10y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over10y_to_15y != null ? #numbers.formatDecimal(row.r89_over10y_to_15y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_over15y != null ? #numbers.formatDecimal(row.r89_over15y,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_non_sensitive != null ? #numbers.formatDecimal(row.r89_non_sensitive,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_total_rsl != null ? #numbers.formatDecimal(row.r89_total_rsl,1,2) : '0.00'}"></td>
+
+							    <td class="amt-right"
+							        th:text="${row.r89_total != null ? #numbers.formatDecimal(row.r89_total,1,2) : '0.00'}"></td>
+							</tr>
 
 						</tbody>
 
@@ -4578,7 +4702,7 @@
 									       th:href="@{/IRSREPORT(page=${currentPage + 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
 									       Next
 									    </a>
-									</div>-->
+									</div>
 
 				</div>
 			</div>
@@ -4624,7 +4748,7 @@
 	            </div>
 
 	            <div class="modal-footer justify-content-center">
-	                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" onclick="back()">
+	                <button type="button" class="role-btn" data-bs-dismiss="modal" onclick="back()">
 	                    Close
 	                </button>
 	            </div>

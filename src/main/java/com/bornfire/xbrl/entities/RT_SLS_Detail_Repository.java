@@ -8,8 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RT_SLS_Detail_Repository extends JpaRepository<RT_SLS_Detail_Enitity,String>  {
 
-	@Query(value = "select * from RT_SLS_DETAILTABLE where REPORT_DATE=?1 AND Cust_id is NOT null  offset ?2 rows fetch next ?3 rows only", nativeQuery = true)
-	 List<RT_SLS_Detail_Enitity> slsdetaillist(Date REPORT_DATE,int startpage,int endpage);
+	/*
+	 * @Query(value =
+	 * "select * from RT_SLS_DETAILTABLE where REPORT_DATE=?1 AND Cust_id is NOT null  offset ?2 rows fetch next ?3 rows only"
+	 * , nativeQuery = true) List<RT_SLS_Detail_Enitity> slsdetaillist(Date
+	 * REPORT_DATE,int startpage,int endpage);
+	 */
+	 
+	 
+	 @Query(value = "select * from RT_SLS_DETAILTABLE where REPORT_DATE=?1 AND Cust_id is NOT null offset ?2 rows fetch next ?3 rows only", nativeQuery = true)
+	 List<RT_SLS_Detail_Enitity> slsdetaillist(Date REPORT_DATE, int offset, int pageSize);
+
 	 
 	 @Query(value = "select * from RT_SLS_DETAILTABLE where REPORT_DATE=?1 ", nativeQuery = true)
 	 List<RT_SLS_Detail_Enitity> slsdetaillistdate(Date REPORT_DATE);

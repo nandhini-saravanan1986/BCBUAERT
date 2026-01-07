@@ -396,6 +396,34 @@ public class RT_IRS_ENTITY2 {
 	private BigDecimal	r87_non_sensitive;
 	private BigDecimal	r87_total_rsl;
 	private BigDecimal	r87_total;
+	private String	r88_product;
+	private BigDecimal	r88_day1_28;
+	private BigDecimal	r88_day29_3m;
+	private BigDecimal	r88_over3m_to_6m;
+	private BigDecimal	r88_over6m_to_1y;
+	private BigDecimal	r88_over1y_to_3y;
+	private BigDecimal	r88_over3y_to_5y;
+	private BigDecimal	r88_over5y_to_7y;
+	private BigDecimal	r88_over7y_to_10y;
+	private BigDecimal	r88_over10y_to_15y;
+	private BigDecimal	r88_over15y;
+	private BigDecimal	r88_non_sensitive;
+	private BigDecimal	r88_total_rsl;
+	private BigDecimal	r88_total;
+	private String	r89_product;
+	private BigDecimal	r89_day1_28;
+	private BigDecimal	r89_day29_3m;
+	private BigDecimal	r89_over3m_to_6m;
+	private BigDecimal	r89_over6m_to_1y;
+	private BigDecimal	r89_over1y_to_3y;
+	private BigDecimal	r89_over3y_to_5y;
+	private BigDecimal	r89_over5y_to_7y;
+	private BigDecimal	r89_over7y_to_10y;
+	private BigDecimal	r89_over10y_to_15y;
+	private BigDecimal	r89_over15y;
+	private BigDecimal	r89_non_sensitive;
+	private BigDecimal	r89_total_rsl;
+	private BigDecimal	r89_total;
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date	report_date;
@@ -2680,6 +2708,174 @@ public class RT_IRS_ENTITY2 {
 	public void setR87_total(BigDecimal r87_total) {
 		this.r87_total = r87_total;
 	}
+	public String getR88_product() {
+		return r88_product;
+	}
+	public void setR88_product(String r88_product) {
+		this.r88_product = r88_product;
+	}
+	public BigDecimal getR88_day1_28() {
+		return r88_day1_28;
+	}
+	public void setR88_day1_28(BigDecimal r88_day1_28) {
+		this.r88_day1_28 = r88_day1_28;
+	}
+	public BigDecimal getR88_day29_3m() {
+		return r88_day29_3m;
+	}
+	public void setR88_day29_3m(BigDecimal r88_day29_3m) {
+		this.r88_day29_3m = r88_day29_3m;
+	}
+	public BigDecimal getR88_over3m_to_6m() {
+		return r88_over3m_to_6m;
+	}
+	public void setR88_over3m_to_6m(BigDecimal r88_over3m_to_6m) {
+		this.r88_over3m_to_6m = r88_over3m_to_6m;
+	}
+	public BigDecimal getR88_over6m_to_1y() {
+		return r88_over6m_to_1y;
+	}
+	public void setR88_over6m_to_1y(BigDecimal r88_over6m_to_1y) {
+		this.r88_over6m_to_1y = r88_over6m_to_1y;
+	}
+	public BigDecimal getR88_over1y_to_3y() {
+		return r88_over1y_to_3y;
+	}
+	public void setR88_over1y_to_3y(BigDecimal r88_over1y_to_3y) {
+		this.r88_over1y_to_3y = r88_over1y_to_3y;
+	}
+	public BigDecimal getR88_over3y_to_5y() {
+		return r88_over3y_to_5y;
+	}
+	public void setR88_over3y_to_5y(BigDecimal r88_over3y_to_5y) {
+		this.r88_over3y_to_5y = r88_over3y_to_5y;
+	}
+	public BigDecimal getR88_over5y_to_7y() {
+		return r88_over5y_to_7y;
+	}
+	public void setR88_over5y_to_7y(BigDecimal r88_over5y_to_7y) {
+		this.r88_over5y_to_7y = r88_over5y_to_7y;
+	}
+	public BigDecimal getR88_over7y_to_10y() {
+		return r88_over7y_to_10y;
+	}
+	public void setR88_over7y_to_10y(BigDecimal r88_over7y_to_10y) {
+		this.r88_over7y_to_10y = r88_over7y_to_10y;
+	}
+	public BigDecimal getR88_over10y_to_15y() {
+		return r88_over10y_to_15y;
+	}
+	public void setR88_over10y_to_15y(BigDecimal r88_over10y_to_15y) {
+		this.r88_over10y_to_15y = r88_over10y_to_15y;
+	}
+	public BigDecimal getR88_over15y() {
+		return r88_over15y;
+	}
+	public void setR88_over15y(BigDecimal r88_over15y) {
+		this.r88_over15y = r88_over15y;
+	}
+	public BigDecimal getR88_non_sensitive() {
+		return r88_non_sensitive;
+	}
+	public void setR88_non_sensitive(BigDecimal r88_non_sensitive) {
+		this.r88_non_sensitive = r88_non_sensitive;
+	}
+	public BigDecimal getR88_total_rsl() {
+		return r88_total_rsl;
+	}
+	public void setR88_total_rsl(BigDecimal r88_total_rsl) {
+		this.r88_total_rsl = r88_total_rsl;
+	}
+	public BigDecimal getR88_total() {
+		return r88_total;
+	}
+	public void setR88_total(BigDecimal r88_total) {
+		this.r88_total = r88_total;
+	}
+	public String getR89_product() {
+		return r89_product;
+	}
+	public void setR89_product(String r89_product) {
+		this.r89_product = r89_product;
+	}
+	public BigDecimal getR89_day1_28() {
+		return r89_day1_28;
+	}
+	public void setR89_day1_28(BigDecimal r89_day1_28) {
+		this.r89_day1_28 = r89_day1_28;
+	}
+	public BigDecimal getR89_day29_3m() {
+		return r89_day29_3m;
+	}
+	public void setR89_day29_3m(BigDecimal r89_day29_3m) {
+		this.r89_day29_3m = r89_day29_3m;
+	}
+	public BigDecimal getR89_over3m_to_6m() {
+		return r89_over3m_to_6m;
+	}
+	public void setR89_over3m_to_6m(BigDecimal r89_over3m_to_6m) {
+		this.r89_over3m_to_6m = r89_over3m_to_6m;
+	}
+	public BigDecimal getR89_over6m_to_1y() {
+		return r89_over6m_to_1y;
+	}
+	public void setR89_over6m_to_1y(BigDecimal r89_over6m_to_1y) {
+		this.r89_over6m_to_1y = r89_over6m_to_1y;
+	}
+	public BigDecimal getR89_over1y_to_3y() {
+		return r89_over1y_to_3y;
+	}
+	public void setR89_over1y_to_3y(BigDecimal r89_over1y_to_3y) {
+		this.r89_over1y_to_3y = r89_over1y_to_3y;
+	}
+	public BigDecimal getR89_over3y_to_5y() {
+		return r89_over3y_to_5y;
+	}
+	public void setR89_over3y_to_5y(BigDecimal r89_over3y_to_5y) {
+		this.r89_over3y_to_5y = r89_over3y_to_5y;
+	}
+	public BigDecimal getR89_over5y_to_7y() {
+		return r89_over5y_to_7y;
+	}
+	public void setR89_over5y_to_7y(BigDecimal r89_over5y_to_7y) {
+		this.r89_over5y_to_7y = r89_over5y_to_7y;
+	}
+	public BigDecimal getR89_over7y_to_10y() {
+		return r89_over7y_to_10y;
+	}
+	public void setR89_over7y_to_10y(BigDecimal r89_over7y_to_10y) {
+		this.r89_over7y_to_10y = r89_over7y_to_10y;
+	}
+	public BigDecimal getR89_over10y_to_15y() {
+		return r89_over10y_to_15y;
+	}
+	public void setR89_over10y_to_15y(BigDecimal r89_over10y_to_15y) {
+		this.r89_over10y_to_15y = r89_over10y_to_15y;
+	}
+	public BigDecimal getR89_over15y() {
+		return r89_over15y;
+	}
+	public void setR89_over15y(BigDecimal r89_over15y) {
+		this.r89_over15y = r89_over15y;
+	}
+	public BigDecimal getR89_non_sensitive() {
+		return r89_non_sensitive;
+	}
+	public void setR89_non_sensitive(BigDecimal r89_non_sensitive) {
+		this.r89_non_sensitive = r89_non_sensitive;
+	}
+	public BigDecimal getR89_total_rsl() {
+		return r89_total_rsl;
+	}
+	public void setR89_total_rsl(BigDecimal r89_total_rsl) {
+		this.r89_total_rsl = r89_total_rsl;
+	}
+	public BigDecimal getR89_total() {
+		return r89_total;
+	}
+	public void setR89_total(BigDecimal r89_total) {
+		this.r89_total = r89_total;
+	}
 	public Date getReport_date() {
 		return report_date;
 	}
@@ -2732,6 +2928,5 @@ public class RT_IRS_ENTITY2 {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-
+	
 }

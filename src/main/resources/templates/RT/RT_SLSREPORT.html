@@ -616,54 +616,79 @@
 
 		}
 
+
 		function downloadfile(button) {
 
 			var reportdate = button.getAttribute('data-reportdate');
 			var currency = button.getAttribute('data-currency');
 			var filename = button.getAttribute('data-filename');
-			//var version = button.getAttribute('data-version');
-
+			var report = button.getAttribute('data-report'); 
 
 			$('#loader').modal('show');
 
 			$.ajax({
-				url: './downloadExcel?reportdate=' + reportdate +
-					'&currency=' + currency +
-					'&filename=' + filename +
-					'&type=summary',
+				url: './downloadExcel',
 				type: 'GET',
+				data: {
+					reportdate: reportdate,
+					currency: currency,
+					filename: filename,
+					type: 'summary',
+					report: report         
+				},
 				xhrFields: {
 					responseType: 'blob'
 				},
-				success: function (data) {
+
+				success: function (data, status, xhr) {
 					$('#loader').modal('hide');
 
-					if (data && data.size > 100) {
-						const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-						const url = window.URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.style.display = 'none';
-						a.href = url;
-						a.download = filename;
-						document.body.appendChild(a);
-						a.click();
-						window.URL.revokeObjectURL(url);
-						document.body.removeChild(a);
-
-						showResultModal('Success', filename + ' downloaded successfully.');
-					} else {
-						showResultModal('Information', 'No data was available to create a download.');
+					if (xhr.status === 204) {
+						showResultModal(
+							'Information',
+							'No data was available to create a download.'
+						);
+						return;
 					}
+
+					const blob = new Blob([data], {
+						type: 'application/vnd.ms-excel'
+					});
+
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = filename + '.xls';
+
+					document.body.appendChild(a);
+					a.click();
+
+					window.URL.revokeObjectURL(url);
+					document.body.removeChild(a);
+
+					showResultModal(
+						'BANK OF BARODA',
+						filename + ' downloaded successfully.'
+					);
 				},
-				error: function (jqXHR, textStatus, errorThrown) {
+
+				error: function (xhr) {
 					$('#loader').modal('hide');
-					console.error("Download failed:", textStatus, errorThrown);
-					showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
+
+					if (xhr.status === 204) {
+						showResultModal(
+							'Information',
+							'No data was available.'
+						);
+					} else {
+						showResultModal(
+							'Error',
+							'An error occurred while downloading the file.'
+						);
+					}
 				}
 			});
 		}
-
-
 
 		function startReport(button) {
 			const alertMsg = document.getElementById("alertMessage");
@@ -678,7 +703,7 @@
 				filename: filename
 			});
 
-			fetch('startreport?' + params.toString())  // ✅ no invalid characters now
+			fetch('startreport?' + params.toString())  
 				.then(res => res.text())
 				.then(jobId => {
 					alertMsg.innerHTML = 'Download request received...';
@@ -826,20 +851,19 @@
 					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
 						style="margin-right: 10px; padding: 5px 10px;" onclick="getreport();">Summary</button>
 
+					
+
 					<button type="button" th:if="${formmode == 'summary'}"
-						style="margin-right: 20px; padding: 5px 10px;"
-						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SLS.xls"
-						class="role-btn" onclick="downloadfile(this);">
+						style="margin-right: 20px; padding: 5px 10px;" th:attr="
+					            data-reportdate=${reportdate},
+					            data-currency=${currency},
+					            data-filename='SLS.xls',
+					            data-report='SLS'
+					        " class="role-btn" onclick="downloadfile(this);">
 						<i class="fa fa-download"></i>
 					</button>
 
 
-					<!--<button  class="role-btn" style="margin-right: 20px; padding: 5px 10px;" type="button"
-											th:if="${formmode == 'summary'}"
-											th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SLS.xls"
-											 onclick="downloadfile(this);">
-											<i class="fa fa-download"></i>
-										</button>-->
 					<button type="button" th:if="${formmode == 'Detail'}"
 						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SlsDetail.xls"
 						class="role-btn" onclick="startReport(this);">
@@ -2410,7 +2434,39 @@
 		</div>
 	</div>
 
+	<!-- Result Modal -->
+	<div class="modal fade" id="resultModal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="margin-top:25%">
+
+				<div class="modal-header" style="background:#f7a47c;color:white;">
+					<h5 class="modal-title" id="resultModalTitle">BANK OF BARODA</h5>
+				</div>
+
+				<div class="modal-body text-center">
+					<p id="resultModalMessage"></p>
+				</div>
+
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="role-btn" data-bs-dismiss="modal" onclick="back()">
+						Close
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
 
 </body>
+
+<script>
+	function showResultModal(title, message) {
+
+		document.getElementById("resultModalTitle").innerText = title;
+		document.getElementById("resultModalMessage").innerText = message;
+
+		$('#resultModal').modal('show');
+	}
+</script>
 
 </html>

@@ -2823,70 +2823,78 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "SLSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
-	public String SLSREPORT(@RequestParam(required = false) String currency,
-			@RequestParam(required = false) String reportdate, @RequestParam(required = false) String formmode,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
-			@RequestParam(required = false) String Rowid, Model md, HttpServletRequest req) {
+	public String SLSREPORT(
+	        @RequestParam(required = false) String currency,
+	        @RequestParam(required = false) String reportdate,
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "100") int size,
+	        @RequestParam(required = false) String Rowid,
+	        Model md,
+	        HttpServletRequest req) {
 
-		// Match the input format: 30/04/2025
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date reportdatefor = null;
+	    // Match the input format: 30/04/2025
+	    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	    Date reportdatefor = null;
 
-		if (formmode == null || formmode.equals("summary")) {
-			try {
-				reportdatefor = dateFormat.parse(reportdate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				// Optional: add an error message to the model
-				md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-			}
+	    try {
+	        if (reportdate != null) {
+	            reportdatefor = dateFormat.parse(reportdate);
+	        }
+	    } catch (ParseException e) {
+	        e.printStackTrace();
+	        md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+	        return "RT/RT_SLSREPORT";
+	    }
 
-			List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
-			md.addAttribute("slslist", slslist);
-			List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
-			System.out.println("count" + currencylist.size());
-			md.addAttribute("currencylist", currencylist);
-			md.addAttribute("currency", currency);
-			md.addAttribute("reportdate", reportdate);
-			md.addAttribute("formmode", "summary");
-		} else if (formmode.equals("Detail")) {
+	    if (formmode == null || formmode.equals("summary")) {
+	        // --- Summary Mode ---
+	        List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
+	        md.addAttribute("slslist", slslist);
 
-			try {
-				reportdatefor = dateFormat.parse(reportdate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				// Optional: add an error message to the model
-				md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-			}
+	        List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
+	        md.addAttribute("currencylist", currencylist);
 
-			if (Rowid != null) {
-				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,
-						Rowid);
-				int totalPages = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid);
-				md.addAttribute("slsdetaillist", slsdetaillist);
-				md.addAttribute("reportdate", reportdate);
-				md.addAttribute("formmode", "Detail");
-				md.addAttribute("currency", currency);
-				md.addAttribute("currentPage", page);
-				md.addAttribute("totalPages", (int) Math.floor(totalPages / 100));
-			} else {
+	        md.addAttribute("currency", currency);
+	        md.addAttribute("reportdate", reportdate);
+	        md.addAttribute("formmode", "summary");
 
-				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, page,
-						size);
-				int totalPages = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
-				md.addAttribute("slsdetaillist", slsdetaillist);
-				md.addAttribute("reportdate", reportdate);
-				md.addAttribute("formmode", "Detail");
-				md.addAttribute("currency", currency);
-				md.addAttribute("pagination", "YES");
-				md.addAttribute("currentPage", page);
-				md.addAttribute("totalPages", (int) Math.floor(totalPages / 100));
-			}
+	    } else if (formmode.equals("Detail")) {
+	        // --- Detail Mode ---
+	        int pageSize = size;
+	        int offset = page * pageSize;
 
-		}
+	        if (Rowid != null && !Rowid.isEmpty()) {
+	            List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
+	            int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid);
+	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
 
-		return "RT/RT_SLSREPORT";
+	            md.addAttribute("slsdetaillist", slsdetaillist);
+	            md.addAttribute("reportdate", reportdate);
+	            md.addAttribute("formmode", "Detail");
+	            md.addAttribute("currency", currency);
+	            md.addAttribute("currentPage", page);
+	            md.addAttribute("totalPages", totalPages);
+
+	        } else {
+	            int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
+
+	            List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
+
+	            md.addAttribute("slsdetaillist", slsdetaillist);
+	            md.addAttribute("reportdate", reportdate);
+	            md.addAttribute("formmode", "Detail");
+	            md.addAttribute("currency", currency);
+	            md.addAttribute("pagination", "YES");
+	            md.addAttribute("currentPage", page);
+	            md.addAttribute("totalPages", totalPages);
+	        }
+	    }
+
+	    return "RT/RT_SLSREPORT";
 	}
+
 
 	@RequestMapping(value = "IRSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
 	public String IRSREPORT(
@@ -2969,51 +2977,69 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
-			@RequestParam("reportdate") String reportdate, @RequestParam("currency") String currency,
-			@RequestParam("type") String type, @RequestParam(value = "version", required = false) String version,
-			@RequestParam(value = "filename", required = false) String filename)
-			throws SQLException, FileNotFoundException {
+	public ResponseEntity<ByteArrayResource> summaryDownload(
+	        HttpServletResponse response,
+	        @RequestParam("reportdate") String reportdate,
+	        @RequestParam("currency") String currency,
+	        @RequestParam("type") String type,
+	        @RequestParam("report") String report,   // ✅ ADD THIS
+	        @RequestParam(value = "version", required = false) String version,
+	        @RequestParam(value = "filename", required = false) String filename
+	) {
 
-		response.setContentType("application/octet-stream");
+	    response.setContentType("application/octet-stream");
 
-		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-		try {
+	    try {
+	        // ✅ Date format conversion
+	        DateFormat outFormat = new SimpleDateFormat("dd-MMM-yyyy");
+	        reportdate = outFormat.format(
+	                new SimpleDateFormat("dd/MM/yyyy").parse(reportdate)
+	        );
 
-			reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
+	        byte[] excelData = null;
 
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		try {
-			byte[] excelData = null;
-			if (type.equals("summary")) {
-				excelData = RT_SLSServices.getSlsExcel(filename, reportdate, currency, version);
-			}
-			if (type.equals("summary")) {
-				excelData = rtIrsService.getIrsExcel(filename, reportdate, currency, version);
-			}
+	        if ("summary".equalsIgnoreCase(type)) {
 
-			if (excelData == null || excelData.length == 0) {
-				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
-				return ResponseEntity.noContent().build();
-			}
+	            if ("SLS".equalsIgnoreCase(report)) {
+	                excelData = RT_SLSServices.getSlsExcel(
+	                        filename, reportdate, currency, version
+	                );
 
-			ByteArrayResource resource = new ByteArrayResource(excelData);
+	            } else if ("IRS".equalsIgnoreCase(report)) {
+	                excelData = rtIrsService.getIrsExcel(
+	                        filename, reportdate, currency, version
+	                );
+	            }
+	        }
 
-			HttpHeaders headers = new HttpHeaders();
-			filename = filename + ".xls";
-			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+	        // ✅ NO DATA
+	        if (excelData == null || excelData.length == 0) {
+	            logger.warn("No data available for Excel download");
+	            return ResponseEntity.noContent().build(); // 204
+	        }
 
-			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
-			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
-					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+	        ByteArrayResource resource = new ByteArrayResource(excelData);
 
-		} catch (Exception e) {
-			logger.error("Controller ERROR: A critical error occurred during file generation.", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.add(
+	                HttpHeaders.CONTENT_DISPOSITION,
+	                "attachment; filename=" + filename + ".xls"
+	        );
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .contentLength(excelData.length)
+	                .contentType(
+	                        MediaType.parseMediaType("application/vnd.ms-excel")
+	                )
+	                .body(resource);
+
+	    } catch (Exception e) {
+	        logger.error("Excel download error", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
+
 
 	@RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
