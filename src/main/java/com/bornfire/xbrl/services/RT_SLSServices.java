@@ -278,8 +278,8 @@ public class RT_SLSServices {
 		     //System.out.println("offset=="+offset);
 		     while (true) {
 		    	 
-		    	 //System.out.println("offsettest");
-		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,offset,batchSize);
+		    	 System.out.println("offsettest");
+		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,currency,offset,batchSize);
 		    	    if (reportData.isEmpty()) break;  // <-- STOP when there is no more data
 
 		    	    
@@ -295,8 +295,8 @@ public class RT_SLSServices {
 								row.createCell(0).setCellValue(" ");
 							}
 							
-							if(item.getAcid()!=null) {
-								row.createCell(1).setCellValue(item.getAcid());
+							if(item.getForacid()!=null) {
+								row.createCell(1).setCellValue(item.getForacid());
 							}
 							else {
 								row.createCell(1).setCellValue(" ");

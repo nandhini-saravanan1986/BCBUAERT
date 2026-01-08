@@ -2865,8 +2865,11 @@ public class XBRLNavigationController {
 	        int offset = page * pageSize;
 
 	        if (Rowid != null && !Rowid.isEmpty()) {
-	            List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
-	            int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid);
+	            //List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
+	            
+	            List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid, currency);
+
+	            int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, currency, Rowid);
 	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
 
 	            md.addAttribute("slsdetaillist", slsdetaillist);
@@ -2877,11 +2880,17 @@ public class XBRLNavigationController {
 	            md.addAttribute("totalPages", totalPages);
 
 	        } else {
-	            int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+	           // int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+	            
+	            int totalRows = rt_sls_detail_repository
+	                    .slsdetaillistcount(reportdatefor, currency);
 	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
 
-	            List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
-
+	           // List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
+	            System.out.println("offset=="+offset);
+	            List<RT_SLS_Detail_Enitity> slsdetaillist =
+	                    rt_sls_detail_repository
+	                            .slsdetaillist(reportdatefor, currency, offset, pageSize);
 	            md.addAttribute("slsdetaillist", slsdetaillist);
 	            md.addAttribute("reportdate", reportdate);
 	            md.addAttribute("formmode", "Detail");
@@ -3090,6 +3099,7 @@ public class XBRLNavigationController {
 			@RequestParam String currency, @RequestParam(value = "version", required = false) String version) {
 		String jobId = UUID.randomUUID().toString();
 		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		System.out.println("startreport inside....");
 		try {
 
 			reportdate = dateFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
@@ -3105,8 +3115,9 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "/checkreport", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody // forces raw text instead of HTML view
 	public ResponseEntity<String> checkReport(@RequestParam String jobId) {
+		System.out.println(jobId);
 		byte[] report = RT_SLSServices.getReport(jobId);
-		// System.out.println("Report generation completed for: " + jobId);
+		 System.out.println("Report generation completed for: " + jobId +"    the reoport   "+report);
 		if (report == null) {
 			return ResponseEntity.ok("PROCESSING");
 		}

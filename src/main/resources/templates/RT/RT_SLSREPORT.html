@@ -691,54 +691,49 @@
 		}
 
 		function startReport(button) {
-			const alertMsg = document.getElementById("alertMessage");
-			var reportdate = button.getAttribute('data-reportdate');
-			var currency = button.getAttribute('data-currency');
-			var filename = button.getAttribute('data-filename');
 
-			// Encode all params
-			const params = new URLSearchParams({
-				reportdate: reportdate,
-				currency: currency,
-				filename: filename
-			});
+			$('#loader').modal('show');
+		    const params = new URLSearchParams({
+		        reportdate: button.getAttribute('data-reportdate'),
+		        currency: button.getAttribute('data-currency'),
+		        filename: button.getAttribute('data-filename')
+		    });
 
-			fetch('startreport?' + params.toString())  
-				.then(res => res.text())
-				.then(jobId => {
-					alertMsg.innerHTML = 'Download request received...';
-					showAlert();
-					sessionStorage.setItem("jobId", jobId);
-					sessionStorage.setItem("filename", filename);
-					checkReport(jobId);
-				});
+		    fetch('startreport?' + params.toString())
+		        .then(res => res.text())
+		        .then(jobId => {
+		            sessionStorage.setItem("jobId", jobId);
+		            sessionStorage.setItem("filename", button.getAttribute('data-filename'));
+		            checkReport(jobId);
+		        });
 		}
+
 
 		function checkReport(jobId) {
-			const alertMsg = document.getElementById("alertMessage");
-			fetch('checkreport?jobId=' + encodeURIComponent(jobId))
-				.then(res => res.text())
-				.then(status => {
-					if (status === "READY") {
-						alertMsg.innerHTML = 'Report is ready! Downloading…';
-						showAlert();
-						const filename = sessionStorage.getItem("filename");
-						downloadDetailfile(jobId, filename)
-						sessionStorage.removeItem("jobId");
-						sessionStorage.removeItem("filename");
 
-					} else {
-						alertMsg.innerHTML = 'Download Is Processing…';
-						showAlert();
-						setTimeout(() => checkReport(jobId), 60000);
-					}
-				});
+			$('#loader').modal('show');
+		    fetch('checkreport?jobId=' + jobId)
+		        .then(res => res.text())
+		        .then(status => {
+
+		            if (status === "READY") {
+		                downloadDetailfile(jobId,
+		                    sessionStorage.getItem("filename"));
+		            } else if (status === "FAILED") {
+		                alert("Report generation failed");
+		            } else {
+		                setTimeout(() => checkReport(jobId), 10000);
+		            }
+		        });
 		}
+
 
 
 
 		function downloadDetailfile(jobId, filename) {
 
+			$('#loader').modal('show');
+			//alert("inside downloadDetailfile")
 			//$('#loader').modal('show');
 
 			$.ajax({
@@ -763,7 +758,7 @@
 						window.URL.revokeObjectURL(url);
 						document.body.removeChild(a);
 
-						showResultModal('Success', filename + ' downloaded successfully.');
+						showResultModal('BANK OF BARODA', filename + ' downloaded successfully.');
 					} else {
 						showResultModal('Information', 'No data was available to create a download.');
 					}

@@ -359,7 +359,11 @@ public class RT_IRSService {
 		byte[] fileData = getDetailExcel(filename,reportDate,currency, version);
 		if (fileData == null) {
 		    //logger.warn("Excel generation failed or no data for jobId: {}", jobId);
-		    jobStorage.put(jobId, null); 
+			System.out.println("the file data" + fileData);
+		    if (fileData != null && fileData.length > 0) {
+		        jobStorage.put(jobId, fileData);
+		    }
+
 		} else {
 		    jobStorage.put(jobId, fileData);
 		}
@@ -369,9 +373,9 @@ public class RT_IRSService {
 
     
     public byte[] getReport(String jobId) {
-    	 //System.out.println("Report generation completed for: " + jobId);
         return jobStorage.get(jobId);
     }
+
 	
 	
 	
