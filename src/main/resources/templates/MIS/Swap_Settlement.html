@@ -6,52 +6,47 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" type="text/css"
-	      href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	      th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
 
-	<link rel="stylesheet" type="text/css"
-	      href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	      th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
 
-	<link rel="stylesheet" type="text/css"
-	      href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	      th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 
-	<link rel="stylesheet" type="text/css"
-	      href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	      th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
 	<!-- jQuery (FIRST) -->
-	<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	        th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
 	<!-- Popper (SECOND) -->
 	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	        th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
 
 	<!-- Bootstrap JS (THIRD - THIS WAS MISSING ❗) -->
 	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	        th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 
 	<!-- jQuery UI -->
 	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	        th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
 
 	<!-- Other plugins -->
 	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	        th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
 
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	        th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
 	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	        th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	        th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
 
@@ -164,10 +159,11 @@
 
 
 		.table .thead-light th {
-			color: #495057;
-			background-color: #e9ecef;
+			background-color: rgba(33, 37, 41, 65%);
 			border-color: #dee2e6;
-			font-family: sans-serif;
+			font-family: Arial, Helvetica, sans-serif;
+			color: white;
+			font-size: small;
 		}
 
 		.role-page-underline {
@@ -446,10 +442,10 @@
 
 		}
 		function list() {
-					var Report_date = $("#Report_date").val();
-					location.href = 'swap_settlement?formmode=list' + '&Report_date=' + Report_date;
-					$("#alert").modal("hide");
-				}
+			var Report_date = $("#Report_date").val();
+			location.href = 'swap_settlement?formmode=list' + '&Report_date=' + Report_date;
+			$("#alert").modal("hide");
+		}
 		/*]]>*/
 	</script>
 
@@ -555,24 +551,24 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-				    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-				    $("#alertmsg").text(response);   // backend message
-				    $("#alert").modal("show");       // show popup
+					$("#alertmsg").text(response);   // backend message
+					$("#alert").modal("show");       // show popup
 				},
 				error: function () {
-				    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-				    $("#alertmsg").text("Upload failed. Please contact administrator.");
-				    $("#alert").modal("show");
+					$("#alertmsg").text("Upload failed. Please contact administrator.");
+					$("#alert").modal("show");
 				}
 
 			});
 		}
-		
+
 		function showAlert(msg) {
-		    document.getElementById("alertmsg").innerText = msg;
-		    $("#alert").modal("show");
+			document.getElementById("alertmsg").innerText = msg;
+			$("#alert").modal("show");
 		}
 
 
@@ -657,69 +653,7 @@
 			margin-left: auto;
 		}
 	</style>
-	<style>
-		/* ACTIVE page number (1) */
-		#usertable_paginate .page-item.active .page-link {
-			background-color: #fa7b32 !important;
-			border-color: #fa7b32 !important;
-			color: #fff !important;
-		}
 
-		/* HOVER on other page buttons */
-		#usertable_paginate .page-item .page-link:hover {
-			background-color: #fa7b32 !important;
-			border-color: #fa7b32 !important;
-			color: #fff !important;
-		}
-
-		/* Normal page numbers */
-		#usertable_paginate .page-item .page-link {
-			color: #555 !important;
-		}
-
-		/* Pagination Container */
-		#usertable_paginate {
-			margin-top: 10px;
-		}
-
-		/* Each page button */
-		#usertable_paginate .paginate_button {
-			border-radius: 4px !important;
-			padding: 0px 0px !important;
-			margin: 0 2px !important;
-			border: 1px solid #ddd !important;
-			color: #007bff !important;
-			background: white !important;
-		}
-
-		/* Hover (non-active buttons) */
-		.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
-			background: #e5e5e5 !important;
-			color: #555 !important;
-		}
-
-		/* Active page */
-		#usertable_paginate .paginate_button.current {
-			background: #fa7b32 !important;
-			color: #fff !important;
-			border-color: #fa7b32 !important;
-		}
-
-		/* Hover */
-		#usertable_paginate .paginate_button:hover {
-			background: #fa7b32 !important;
-			color: #fff !important;
-			border-color: #fa7b32 !important;
-		}
-
-		/* Disabled buttons (Previous/Next when not clickable) */
-		#usertable_paginate .paginate_button.disabled,
-		#usertable_paginate .paginate_button.disabled:hover {
-			color: #999 !important;
-			background: #f5f5f5 !important;
-			border-color: #ddd !important;
-		}
-	</style>
 	<style>
 		.role-btn {
 			background: #ffffff;
@@ -790,38 +724,6 @@
 
 
 	<style>
-		#usertable {
-			width: 100% !important;
-			border-collapse: collapse !important;
-			font-family: Arial, sans-serif !important;
-			font-size: 12px !important;
-		}
-
-		#usertable th,
-		.dataTables_scrollHeadInner table th,
-		table.dataTable.fixedHeader-floating th {
-			background-color: #7b6458 !important;
-			color: white !important;
-		}
-
-		/* BODY CELLS */
-		#usertable td {
-			padding: 5px 6px !important;
-			border: 1px solid #e8e8e8 !important;
-			/* light grey lines */
-			background: #fafafa;
-			white-space: normal !important;
-		}
-
-		/* ROW EVEN/ODD */
-		#usertable tbody tr:nth-child(even) {
-			background-color: #f4f2ef !important;
-		}
-
-		#usertable tbody tr:nth-child(odd) {
-			background-color: #ffffff !important;
-		}
-
 		/* SEARCH BOX FIX */
 		.dataTables_filter label {
 			display: flex !important;
@@ -861,45 +763,25 @@
 			font-weight: 500;
 			margin: 0;
 		}
-
-		/* FORCE right alignment for DataTables body cells */
-		#usertable tbody td.text-end {
-			text-align: right !important;
-		}
-
-		/* Right align ONLY header columns 1, 6, 14 */
-		#usertable thead th:nth-child(2),
-		#usertable thead th:nth-child(7),
-		#usertable thead th:nth-child(12),
-		#usertable thead th:nth-child(11),
-		#usertable thead th:nth-child(14),
-		#usertable thead th:nth-child(15) {
-			text-align: right !important;
-		}
 	</style>
 	<script>
 		$(document).ready(function () {
+			let tableHeight = $(window).height() - 330; // subtract header/footer space
+			if (tableHeight < 200) tableHeight = 200;   // minimum height
+
 			$('#usertable').DataTable({
+				destroy: true,
+				scrollY: tableHeight + "px", // dynamic height
+				scrollCollapse: false,
 				paging: true,
-				searching: true,
+				autoWidth: false,
 				ordering: false,
-				lengthChange: false,
+				searching: true,
+				scrollX: true,
 				pageLength: 100,
-				fixedHeader: true,
-
-				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
-
-				columnDefs: [
-					{targets: [2, 3, 4, 10, 11,13], className: 'text-end'}
-				]
+				lengthChange: false,
+				responsive: true
 			});
-
-
-
-
-			// Fix search input alignment
-			$('div.dataTables_filter label').addClass('d-flex align-items-center gap-2 mb-0');
-			$('div.dataTables_filter input').addClass('form-control form-control-sm ms-2');
 		});
 
 
@@ -969,46 +851,46 @@
 	<script>
 		function check_date() {
 
-		    var iBranchCode = $("#iBranchCode").val().trim();
-		    var iBranchName = $("#iBranchName").val().trim();
-		    var reportDate  = $("#reportDate").val().trim();
-		    var fileInput   = $("#file")[0].files[0];
+			var iBranchCode = $("#iBranchCode").val().trim();
+			var iBranchName = $("#iBranchName").val().trim();
+			var reportDate = $("#reportDate").val().trim();
+			var fileInput = $("#file")[0].files[0];
 
-		    // 1️⃣ Mandatory field validation
-		    if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
-		        alert("All fields are required.");
-		        return;
-		    }
-		    // 2️⃣ Call backend to check existing data
-		    $.ajax({
-		        url: "./search_date",
-		        type: "GET",
-		        data: {
-		            reportDate: reportDate,
-		            iBranchCode: iBranchCode,
-		            mode: "settlement" 
-		        },
-		        success: function (response) {
+			// 1️⃣ Mandatory field validation
+			if (!iBranchCode || !iBranchName || !reportDate || !fileInput) {
+				alert("All fields are required.");
+				return;
+			}
+			// 2️⃣ Call backend to check existing data
+			$.ajax({
+				url: "./search_date",
+				type: "GET",
+				data: {
+					reportDate: reportDate,
+					iBranchCode: iBranchCode,
+					mode: "settlement"
+				},
+				success: function (response) {
 
-		            console.log("Existing record count:", response);
-		            // 3️⃣ IMPORTANT FIX → ONLY >0 means exists
-		            if (parseInt(response, 10) > 0) {
-		                // Show replace confirmation modal
-		                $("#alertmsg1").text("Report already exists for the selected date. Do you want to replace?");
-		                $("#alert1").modal("show");
+					console.log("Existing record count:", response);
+					// 3️⃣ IMPORTANT FIX → ONLY >0 means exists
+					if (parseInt(response, 10) > 0) {
+						// Show replace confirmation modal
+						$("#alertmsg1").text("Report already exists for the selected date. Do you want to replace?");
+						$("#alert1").modal("show");
 
-		            } else {
-		                // No data exists → direct upload
-		                submitform();
-		            }
-		        },
-		        error: function (xhr, status, error) {
+					} else {
+						// No data exists → direct upload
+						submitform();
+					}
+				},
+				error: function (xhr, status, error) {
 
-		            console.error("Error:", error);
-		            $("#alertmsg").text("Error occurred while checking existing data.");
-		            $("#alert").modal("show");
-		        }
-		    });
+					console.error("Error:", error);
+					$("#alertmsg").text("Error occurred while checking existing data.");
+					$("#alert").modal("show");
+				}
+			});
 		}
 
 
@@ -1332,7 +1214,7 @@
 											<th style="white-space: nowrap;">CCF (%)</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody style="font-size: x-small;">
 										<tr th:each="lists : ${listall}" style="cursor: pointer;">
 											<td style="text-align: center"
 												th:text="${#dates.format(lists.reportDate, 'dd-MM-yyyy')}"></td>

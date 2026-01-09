@@ -565,6 +565,15 @@ public class counter_services {
 				existingEntity.setAccount_no(incomingEntity.getAccount_no());
 				existingEntity.setDel_flg("N");
 				existingEntity.setEntry_flg("Y");
+				
+				List<Counterparty_Entity> CheckBankName = Counterparty_Reps.Checkbanknameisexist(incomingEntity.getName_of_the_bank());
+				
+				if(CheckBankName.size() > 0) {
+					existingEntity.setCounterparty_status("Y");
+				}else {
+					existingEntity.setCounterparty_status("N");
+				}		
+						
 				existingEntity.setModify_flg(incomingEntity.getModify_flg());
 				existingEntity.setVerify_flg(incomingEntity.getVerify_flg());
 				existingEntity.setModify_user((String) request.getSession().getAttribute("USERID"));
@@ -598,6 +607,14 @@ public class counter_services {
 			NewBillentry.setEntry_flg("Y");
 			NewBillentry.setModify_flg("N");
 			NewBillentry.setVerify_flg("N");
+			NewBillentry.setReport_date(new Date());
+			List<Counterparty_Entity> CheckBankName = Counterparty_Reps.Checkbanknameisexist(incomingEntity.getName_of_the_bank());
+			
+			if(CheckBankName.size() > 0) {
+				NewBillentry.setCounterparty_status("Y");
+			}else {
+				NewBillentry.setCounterparty_status("N");
+			}
 			NewBillentry.setEntry_user((String) request.getSession().getAttribute("USERID"));
 			NewBillentry.setEntry_time(new Date());
 			Mis_exposure_bill_detail_rep.save(NewBillentry);
@@ -641,8 +658,16 @@ public class counter_services {
 
 			if (optionalExisting.isPresent()) {
 				Mis_exposure_bill_detail_entity existingEntity = optionalExisting.get();
+				List<Counterparty_Entity> CheckBankName = Counterparty_Reps.Checkbanknameisexist(incomingEntity.getName_of_the_bank());
 				
-				incomingEntity.setVerify_flg("Y");
+				if(CheckBankName.size() > 0) {
+					existingEntity.setCounterparty_status("Y");
+					incomingEntity.setVerify_flg("Y");
+				}else {
+					existingEntity.setCounterparty_status("N");
+					incomingEntity.setVerify_flg("N");
+				}
+				
 				incomingEntity.setVerify_user((String) request.getSession().getAttribute("USERID"));
 				incomingEntity.setVerify_time(new Date());
 				incomingEntity.setModify_flg("N");
@@ -657,8 +682,11 @@ public class counter_services {
 				existingEntity.setModify_flg("N");
 				
 				Mis_exposure_bill_detail_rep.save(existingEntity);
-				
-				responseMsg = "Bill details have been successfully Verified.";
+				if(incomingEntity.getVerify_flg().equals("Y")) {
+					responseMsg = "Bill details have been successfully Verified.";
+				}else {
+					responseMsg = "Bill details not Verified. Invalid bank name is provided";
+				}
 				
 			}else {
 				responseMsg = "Verification failed: invalid data. Contact admin for assistance.";

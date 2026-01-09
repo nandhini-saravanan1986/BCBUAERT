@@ -141,50 +141,6 @@
 
 
 	<style>
-		#usertable {
-			width: 100% !important;
-
-			font-family: Arial, sans-serif !important;
-			font-size: 12px !important;
-			border-collapse: separate !important;
-			/* Required for sticky borders to work */
-			border-spacing: 0;
-		}
-
-		/* HEADER */
-		#usertable th {
-			background-color: #7b6458 !important;
-			/* brown header */
-			position: sticky;
-			top: 0;
-			z-index: 100;
-			/* Keeps header above the body rows */
-			color: white !important;
-			/*text-align: center !important;*/
-			padding: 8px 10px !important;
-			font-weight: bold !important;
-			border: 1px solid #ffffff !important;
-			/* thin white separator */
-			white-space: normal !important;
-		}
-
-		/* BODY CELLS */
-		#usertable td {
-			padding: 5px 6px !important;
-			border: 1px solid #e8e8e8 !important;
-			/* light grey lines */
-			background: #fafafa;
-			white-space: normal !important;
-		}
-
-		/* ROW EVEN/ODD */
-		#usertable tbody tr:nth-child(even) {
-			background-color: #f4f2ef !important;
-		}
-
-		#usertable tbody tr:nth-child(odd) {
-			background-color: #ffffff !important;
-		}
 
 		/* SEARCH BOX FIX */
 		.dataTables_filter label {
@@ -618,6 +574,14 @@
 		.suggestion-item-code:hover {
 			background-color: #f1f1f1;
 		}
+		.table .thead-light th {
+					background-color: rgba(33, 37, 41, 65%);
+					border-color: #dee2e6;
+					font-family: sans-serif;
+					color: white;
+					font-size: smaller;
+
+				}
 	</style>
 
 	<script th:inline="javascript">
@@ -984,22 +948,23 @@
 	</style>
 	<script>
 		$(document).ready(function () {
-			$('#usertable').DataTable({
-				"paging": true,
-				"lengthChange": false,
-				"searching": true,
-				"ordering": true,
-				"info": true,
-				"autoWidth": false,
-				"pageLength": 10,
-				"language": {
-					"search": "Search:",
-					"paginate": {"previous": "Previous", "next": "Next"}
-				},
-				// 'f' is search (left), 'p' is pagination (right) inside the top div
-				"dom": '<"d-flex justify-content-between align-items-center mt-2 mb-2"fp>rt<"bottom"i><"clear">'
-			});
-		});
+					let tableHeight = $(window).height() - 330; // subtract header/footer space
+					if (tableHeight < 200) tableHeight = 200;   // minimum height
+
+					$('#usertable').DataTable({
+						destroy: true,
+						scrollY: tableHeight + "px", // dynamic height
+						scrollCollapse: false,
+						paging: true,
+						autoWidth: false,
+						ordering: false,
+						searching: true,
+						scrollX: true,
+						pageLength: 100,
+						lengthChange: false,
+						responsive: true
+					});
+				});
 		var originalCreditLimit = 0;
 		var originalSettlementLimit = 0;
 
@@ -1423,7 +1388,7 @@
 								<div class="table-responsive" style="border: none;">
 									<!--<div class="table-container" style="padding: 0px 15px;">-->
 									<table class="table table-striped table-bordered table-hover" id="usertable">
-										<thead style="background-color: #e9ecf0;" class="thead-light">
+										<thead class="thead-light">
 											<tr>
 												<th style="white-space: nowrap;">S. No.</th>
 												<th style="text-align: left; white-space: nowrap;">CounterParty Bank
@@ -1455,7 +1420,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="lists : ${listall}" style="cursor: pointer;">
+											<tr th:each="lists : ${listall}" style="cursor: pointer;font-size: x-small;">
 												<td th:text="${lists.srlNo}"></td>
 												<td style="text-align:left" th:text="${lists.counterPartyBankCode}">
 												</td>

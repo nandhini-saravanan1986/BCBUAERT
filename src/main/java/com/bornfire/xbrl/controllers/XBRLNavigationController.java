@@ -1466,7 +1466,8 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "counterparty_list", method = { RequestMethod.GET, RequestMethod.POST })
 	public String counterparty_list(@RequestParam(required = false) String formmode,
-			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid, Model md,
+			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,Model md,
 			HttpServletRequest req) {
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
@@ -1474,7 +1475,7 @@ public class XBRLNavigationController {
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
 		logger.info("User '{}' accessed counterparty_list with formmode='{}'", userid, formmode);
-
+		LocalDate today = LocalDate.now();
 		md.addAttribute("dom_ids", domIds); // To highlight the menu
 
 		if ("list".equalsIgnoreCase(formmode)) {
@@ -1499,22 +1500,29 @@ public class XBRLNavigationController {
 			}
 
 			md.addAttribute("branchesl", branchesl);
-			LocalDate today = LocalDate.now();
+			
 			java.sql.Date sqlDate = java.sql.Date.valueOf(today);
 			List<ASL_Report_Entity> list = ASL_Report_Reps.getAlls(sqlDate, BRANCHNAME.trim());
 			logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
 			md.addAttribute("listall", list);
 
 		} else if ("Billdetaillist".equalsIgnoreCase(formmode)) {
-
+			
+			if (Report_date != null) {
+				Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+			} else {
+				Report_date = java.sql.Date.valueOf(today.minusDays(0));
+			}
+			md.addAttribute("Todateselected", Report_date);
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - list");
 
 			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
-
-				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME));
+				System.out.println("Selected Report : "+ Report_date + ": and user id is : "+ ROLEID);
+				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME,Report_date));
 			} else {
-				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails());
+				System.out.println("Selected Report : "+ Report_date + ": and user id is : "+ ROLEID + " and Branch Name is : "+ BRANCHNAME);
+				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails(Report_date));
 			}
 
 		} else if ("Addbilldetail".equalsIgnoreCase(formmode)) {
@@ -1539,10 +1547,10 @@ public class XBRLNavigationController {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Edit");
-
+			md.addAttribute("Todateselected", Report_date);
 			System.out.println("Edit Exposure Menu Received bill detail is : " + Exposurebillid);
-
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			System.out.println("Report date for bill : "+ Report_date);
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 
 		} else if ("Deletebilldetail".equalsIgnoreCase(formmode)) {
@@ -1550,13 +1558,13 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", formmode);
 
 			md.addAttribute("menuname", "Bill detail operation - Delete");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else if ("Verifybilldetail".equalsIgnoreCase(formmode)) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Verify");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid));
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else {
 			logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);

@@ -3,6 +3,8 @@ package com.bornfire.xbrl.entities;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,9 +20,11 @@ public interface Mis_treasury_placement_repo extends JpaRepository<MIS_TREASURY_
 	@Query(value = "SELECT * FROM MIS_TREASURY_PLACEMENT", nativeQuery = true)
     List<MIS_TREASURY_PLACEMENT_ENTITY> findall();
     
+	
+    @Transactional
     @Modifying
-	@Query("DELETE FROM MIS_TREASURY_PLACEMENT_ENTITY e WHERE e.report_date = :report_date AND e.branch_name = :branch_name")
-	void deleteByReportDate(@Param("report_date") Date report_date, @Param("branch_name") String branchName);
+    @Query(value = "Delete From MIS_TREASURY_PLACEMENT where report_date = ?1 and branch_name =?2", nativeQuery = true)
+    void Deletedatabyreport_date(Date report_date,String Branchname);
     
     @Query(value = "SELECT * FROM MIS_TREASURY_PLACEMENT WHERE REPORT_DATE = ?1", nativeQuery = true)
     List<MIS_TREASURY_PLACEMENT_ENTITY> getAllListByDate(Date report_date);
