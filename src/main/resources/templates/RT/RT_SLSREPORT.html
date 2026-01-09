@@ -113,16 +113,16 @@
 			border-color: #dee2e6 #dee2e6 #ffffff;
 		}
 
-		.table-responsive {
-			border: 1px solid #dee2e6;
-			border-radius: 4px;
-		}
-
 		.table-hover tbody tr:hover {
 			background-color: #f3f6f9;
 		}
 
-
+		thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
 
 		.table td {
 			background-color: #FFFFFF;
@@ -142,8 +142,7 @@
 			border-radius: 4px;
 		}
 
-		#BRFvalidation th,
-		#usertable td {
+		#BRFvalidation th {
 			vertical-align: middle;
 			text-align: left;
 			font-size: 16px;
@@ -158,7 +157,8 @@
 
 
 		td {
-			border: 1px solid rgb(0, 164, 166);
+			border: 1px solid rgb(255, 255, 255);
+			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
@@ -311,17 +311,10 @@
 			font-weight: bold;
 		}
 
-		.card-body {
-			flex: 1 1 auto;
-			/* body takes rest of the space */
-			min-height: 0;
-			/* allow inner scroll */
-			padding: 0;
-		}
-
 		.scrollable-table-container {
 			height: 100%;
 			/* take full body height */
+			overflow-y: auto;
 			/* ✅ scrollbar appears here */
 			border: 1px solid #ccc;
 		}
@@ -330,7 +323,7 @@
 		.scrollable-table-container thead tr:nth-child(1) {
 			position: sticky;
 			top: 0;
-
+			background-color: #b3b6b9;
 			z-index: 5;
 		}
 
@@ -338,138 +331,50 @@
 			position: sticky;
 			top: 36px;
 			/* adjust based on row height */
-
+			background-color: #b3b6b9;
 			z-index: 4;
 		}
-	</style>
-	<style>
-		/* Reduce font size */
-		/* Apply font family and smaller font */
-		#usertable {
-			font-family: Arial, sans-serif !important;
-			font-size: 12px !important;
+
+		.scrollable-table-container thead tr:nth-child(3) {
+			position: sticky;
+			top: 72px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 3;
 		}
 
-		#usertable tbody td {
-			font-family: Arial, sans-serif !important;
-			font-size: 12px !important;
-			padding: 4px 6px !important;
-			white-space: normal !important;
+		.scrollable-table-container thead tr:nth-child(4) {
+			position: sticky;
+			top: 100px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 2;
 		}
 
-		#usertable th {
-			background-color: #7b6458 !important;
-			color: white !important;
-			padding: 8px 10px !important;
-			text-align: center;
-			font-weight: bold;
-			font-size: 13px;
-			white-space: normal !important;
-		}
-
-		#usertable td {
-			padding: 4px 6px !important;
-			white-space: normal !important;
-		}
-
-		#usertable th,
-		#usertable td {
-			border: 1px solid #ffffff !important;
-			/* thin white separators like your screenshot */
-		}
-
-
-		/* Avoid table taking too much width */
-		#usertable {
-			/*width: auto !important;*/
-			max-width: 100% !important;
-		}
-
-		/* Control column widths */
-		#usertable th {
-			max-width: 150px;
-			text-align: center;
-			vertical-align: middle;
-		}
-
-		#usertable {
-			border-collapse: separate;
-			border-spacing: 0;
-		}
-
-		#usertable thead tr:nth-child(1) th {
-			top: 0;
-		}
-
-		#usertable thead tr:nth-child(2) th {
-			top: 38px;
-			/* height of first header row */
-			background: #d0d0d0;
+		.scrollable-table-container thead tr:nth-child(5) {
+			position: sticky;
+			top: 135px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 1;
 		}
 	</style>
 
-	<style>
-		/* Full screen layout */
-		.container-fluid {
-			height: 100vh;
-			overflow: hidden;
-		}
-
-		.card {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-
-		/* Header area should NOT scroll */
-		#mainHeader {
-			position: sticky;
-			top: 0;
-			z-index: 3000;
-			background: white;
-		}
-
-		#pageHeader {
-			position: sticky;
-			top: 60px;
-			/* height of mainHeader */
-			z-index: 2500;
-			background: white;
-		}
-
-		/* ONLY table body scrolls */
-		.table-scroll-container {
-			flex: 1;
-			overflow-y: auto;
-			max-height: calc(100vh - 140px);
-			/* mainHeader + pageHeader height */
-		}
-
-		#usertable thead th {
-			position: sticky;
-			top: 0;
-			z-index: 2000;
-			background: #7b6458;
-			color: white;
-		}
-
-
-		.role-page-header {
-			background-color: #ffffff;
-			padding: 15px 20px;
-			display: flex;
-			/* Added for alignment */
-			justify-content: space-between;
-			/* Added for alignment */
-			align-items: center;
-			/* Added for alignment */
-		}
-	</style>
 	<style>
 		.inner {
 			max-height: 600px;
 			/* Adjust height as needed */
+			overflow: auto;
 			border: 1px solid #dee2e6;
+		}
+
+		/* Sticky thead */
+		#reports thead th {
+			position: sticky;
+			top: 0;
+			background-color: #f8f9fa;
+			/* Match Bootstrap thead-light */
+			z-index: 2;
 		}
 
 		div.dataTables_wrapper div.dataTables_paginate {
@@ -507,12 +412,132 @@
 			width: auto;
 		}
 	</style>
+
+	<style>
+		/* Reduce font size */
+		/* Apply font family and smaller font */
+		#usertable {
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
+
+		#usertable th {
+			background-color: #7b6458 !important;
+			color: white !important;
+			padding: 8px 10px !important;
+			text-align: center;
+			font-size: 13px;
+			font-weight: bold;
+			white-space: normal !important;
+		}
+
+		#usertable td {
+			padding: 4px 6px !important;
+			white-space: normal !important;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #ffffff !important;
+			/* thin white separators like your screenshot */
+		}
+
+
+		/* Avoid table taking too much width */
+		#usertable {
+			/*width: auto !important;*/
+			max-width: 100% !important;
+		}
+
+		/* Control column widths */
+		#usertable th {
+			max-width: 150px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		#usertable {
+			border-collapse: separate;
+			border-spacing: 0;
+		}
+
+		/* Row 1 – Table Title */
+		#usertable thead tr:nth-child(1) th {
+			position: sticky;
+			top: 170px;
+			/* page-header + section-header */
+			z-index: 800;
+			background: #b3b6b9;
+		}
+
+		/* Row 2 – Column Names */
+		#usertable thead tr:nth-child(2) th {
+			position: sticky;
+			top: 205px;
+			/* previous + row1 height */
+			z-index: 700;
+			background: #d0d0d0;
+		}
+
+		/* Row 3 – Column Numbers */
+		#usertable thead tr:nth-child(3) th {
+			position: sticky;
+			top: 276px;
+			/* previous + row2 height */
+			z-index: 600;
+			background: #eaeaea;
+		}
+
+		.card,
+		.card-body,
+		.scrollable-table-container,
+		.container,
+		.container-fluid,
+		.row,
+		.col {
+			overflow: visible !important;
+		}
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+	</style>
 	<style>
 		.role-btn {
 			background: #ffffff;
-			/* default white */
 			color: #E67E00;
-			/* default orange text */
 			border: 1px solid #E67E00;
 			border-radius: 25px;
 			padding: 8px 18px;
@@ -523,10 +548,8 @@
 			transition: all 0.3s ease;
 		}
 
-		/* Hover effect → pastel orange */
 		.role-btn:hover {
 			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
 			color: #E67E00;
 			/* orange text */
 			transform: translateY(-2px);
@@ -548,6 +571,55 @@
 		.role-btn i {
 			margin-right: 5px;
 		}
+
+		/* Right align numeric columns (thead + tbody) */
+		#usertable th.amt-right,
+		#usertable td.amt-right {
+			text-align: right !important;
+		}
+
+		/* Ensure product column is left aligned */
+		#usertable th.product-col,
+		#usertable td.product-col {
+			text-align: left !important;
+		}
+
+		/* ===== FULL TABLE BORDER ===== */
+		#usertable {
+			border-collapse: collapse !important;
+			width: 100%;
+			border: 1px solid #b0b0b0;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #b0b0b0 !important;
+		}
+
+		/* Force orange background for the entire row */
+		#usertable tbody tr.orange-row>td {
+			background-color: #f7a47c !important;
+		}
+
+		/* Force orange background for the entire row */
+		#usertable tbody tr.orange-rows>td {
+			background-color: #c2ffff !important;
+		}
+	</style>
+	<style>
+	.calc-row td {
+	    background-color: #f7a47c !important;
+	    font-weight: 600;
+	}
+	.calc-col {
+	    background-color: #f7a47c !important;
+	    font-weight: 600;
+	}
+
+	/* Keep borders visible */
+	table td, table th {
+	    border: 1px solid #666;
+	}
 	</style>
 	<script th:inline="javascript">
 
@@ -812,16 +884,16 @@
 
 <body>
 
-	<div class="container-fluid" style="padding-left:0px; padding-right:0px; height:100vh;">
-
-
-		<!--<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>-->
+	
+	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
+		<!-- <div class="row"> -->
 
 
 		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 		<div class="card" style="height:100%; display:flex; flex-direction:column;">
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
-				<!-- LEFT: Buttons -->
+
+		<!-- LEFT: Buttons -->
 				<div class="text-left flex-grow-1">
 					<h4 style="padding-right:12px;">Structural Liquidity Statements</h4>
 
