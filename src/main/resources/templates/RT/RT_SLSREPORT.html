@@ -311,6 +311,14 @@
 			font-weight: bold;
 		}
 
+		.card-body {
+			flex: 1 1 auto;
+			/* body takes rest of the space */
+			min-height: 0;
+			/* allow inner scroll */
+			padding: 0;
+		}
+
 		.scrollable-table-container {
 			height: 100%;
 			/* take full body height */
@@ -341,6 +349,7 @@
 			/* Adjust based on row height */
 			background-color: #b3b6b9;
 			z-index: 3;
+
 		}
 
 		.scrollable-table-container thead tr:nth-child(4) {
@@ -357,6 +366,90 @@
 			/* Adjust based on row height */
 			background-color: #b3b6b9;
 			z-index: 1;
+		}
+	</style>
+	<style>
+		/* Reduce font size */
+		/* Apply font family and smaller font */
+		#usertable {
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+
+		}
+
+		.scrollable-table-container thead tr:nth-child(4) {
+			position: sticky;
+			top: 100px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 2;
+		}
+
+
+		.scrollable-table-container thead tr:nth-child(5) {
+			position: sticky;
+			top: 135px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 1;
+
+		#usertable th {
+			background-color: #7b6458 !important;
+			color: white !important;
+			padding: 8px 10px !important;
+			text-align: center;
+			font-weight: bold;
+			font-size: 13px;
+			white-space: normal !important;
+		}
+
+		#usertable td {
+			padding: 4px 6px !important;
+			white-space: normal !important;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #ffffff !important;
+			/* thin white separators like your screenshot */
+		}
+		#usertable {
+					border-collapse: collapse !important;
+					width: 100%;
+					border: 1px solid #b0b0b0;
+				}
+
+				#usertable th,
+				#usertable td {
+					border: 1px solid #b0b0b0 !important;
+				}
+
+		/* Avoid table taking too much width */
+		#usertable {
+			/*width: auto !important;*/
+			max-width: 100% !important;
+		}
+
+		/* Control column widths */
+		#usertable th {
+			max-width: 150px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		#usertable {
+			border-collapse: separate;
+			border-spacing: 0;
+		}
+
+		#usertable thead tr:nth-child(1) th {
+			top: 0;
+		}
+
+		#usertable thead tr:nth-child(2) th {
+			top: 38px;
+			/* height of first header row */
+			background: #d0d0d0;
 		}
 	</style>
 
@@ -621,6 +714,86 @@
 	    border: 1px solid #666;
 	}
 	</style>
+	<style>
+		.dt-search {
+		    float: left;
+		}
+
+		.dt-pagination {
+		    float: right;
+		}
+
+		.dataTables_filter input {
+		    width: 220px;
+		    height: 32px;
+		}
+		/* Pagination wrapper */
+		.dataTables_paginate {
+		    margin: 0;
+		}
+
+		/* ALL buttons base */
+		.dataTables_paginate .paginate_button {
+		    background: #eeeeee !important;
+		    color: #444 !important;          /* light black */
+		    border: 1px solid #e0e0e0 !important;
+		    border-radius: 8px;
+		    padding: 6px 14px;
+		    margin-left: 6px;
+		    box-shadow: none !important;
+		    font-weight: 500;
+		}
+
+		/* Hover – SAME look (no dark border, no blue) */
+		.dataTables_paginate .paginate_button:hover {
+		    background: #eeeeee !important;
+		    color: #444 !important;
+		    border: 1px solid #e0e0e0 !important;
+		}
+
+		/* Active page number (ORANGE) */
+		.dataTables_paginate .paginate_button.current {
+		    background: #ff7f27 !important;
+		    color: #ffffff !important;
+		    border: 1px solid #ff7f27 !important;
+		    font-weight: 600;
+		}
+
+		.dataTables_paginate .paginate_button.disabled {
+		    background: #f2f2f2 !important;
+		    color: #bdbdbd !important;
+		    border: 1px solid #e5e5e5 !important;
+		    cursor: not-allowed;
+		}
+
+		.dataTables_paginate .paginate_button:focus,
+		.dataTables_paginate .paginate_button:active {
+		    outline: none !important;
+		    box-shadow: none !important;
+		}
+		/* Keep search label + input in same row */
+		.dt-search .dataTables_filter {
+		    display: flex;
+		    align-items: center;
+		    gap: 8px;
+		    margin: 0;
+		}
+
+		/* Prevent label from breaking line */
+		.dt-search label {
+		    display: flex;
+		    align-items: center;
+		    margin: 0;
+		    white-space: nowrap;
+		}
+
+		/* Search input size */
+		.dt-search input {
+		    width: 220px;
+		    height: 32px;
+		}
+
+		</style>
 	<script th:inline="javascript">
 
 		function home() {
@@ -636,7 +809,7 @@
 
 	</script>
 
-	<script>
+<!--	<script>
 		$('#usertable').DataTable({
 			scrollX: false,
 			autoWidth: false,
@@ -660,7 +833,70 @@
 				search: "Search:"
 			}
 		});
+	</script>-->
+	<script th:inline="javascript">
+	    var formmode = /*[[${formmode}]]*/ '';
 	</script>
+
+	<script>
+	$(document).ready(function () {
+
+	    if (formmode === 'Detail') {
+
+	        // ✅ Detail page → WITH search & pagination
+	        $('#usertable').DataTable({
+	            paging: true,
+	            searching: true,
+	            pagingType: "simple", 
+	            ordering: false,
+	            lengthChange: false,
+	            pageLength: 100,
+	            autoWidth: false,
+	            scrollX: false,
+
+	            dom:
+	                '<"d-flex justify-content-between align-items-center mb-2"' +
+	                    '<"dt-search"f>' +
+	                    '<"dt-pagination"p>' +
+	                '>' +
+	                't'
+
+	            // ⚠️ No columnDefs here! Detail table won't get right-alignment.
+	        });
+
+	    } else {
+
+	        // ✅ Summary page → NORMAL table (NO search, NO pagination)
+	        // Apply right-alignment for amount columns here
+	        $('#usertable').DataTable({
+	            paging: false,
+	            searching: false,
+	            ordering: false,
+	            autoWidth: false,
+	            scrollX: false,
+
+	            columnDefs: [
+	                {
+	                    targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+	                    className: 'amt-right'
+	                }
+	            ]
+	        });
+
+	    }
+
+	});
+	</script>
+	<style>
+		.text-left {
+		    text-align: left !important;
+		}
+
+		.text-right {
+		    text-align: right !important;
+		}
+
+	</style>
 	<script>
 
 
@@ -946,7 +1182,7 @@
 			        <table class="sticky-header-table table table-bordered table-hover table-sm table-condensed" id="usertable" >-->
 
 			<div class="card-body p-0" th:if="${formmode == 'summary'}">
-				<div class="table-scroll-container">
+				<div class="table-scroll-container table-bordered">
 					<table id="usertable">
 
 						<thead class="thead-light">
@@ -2431,30 +2667,31 @@
 						id="usertable">
 						<thead class="thead-light">
 							<tr>
-								<th style="text-align:right;">CUST ID</th>
-								<th style="text-align:right;">ACCT NO</th>
-								<th style="text-align:left;">ACCT NAME</th>
-								<th style="text-align:right;">ACCT BALANCE</th>
-								<th style="text-align:left;">ROWID</th>
-								<th style="text-align:left;">REPORT_DATE</th>
+								
+								<th class="text-left">CUST ID</th>
+																<th class="text-left">ACCT NO</th>
+																<th class="text-left">ACCT NAME</th>
+																<th class="text-right">ACCT BALANCE</th>
+																<th class="text-left">ROWID</th>
+																<th class="text-left">REPORT_DATE</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="detaillist : ${slsdetaillist}">
-								<td style="text-align:right;" th:text="${detaillist.custId}"></td>
-								<td style="text-align:right;" th:text="${detaillist.foracid}"></td>
-								<td style="text-align:left;" th:text="${detaillist.acctName}"></td>
-								<td style="text-align:right;" th:text="${detaillist.acctBalanceLc}"></td>
-								<td style="text-align:left;" th:text="${detaillist.reportLabel}"></td>
-								<td style="text-align:left;"
-									th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
+								<td class="text-left" th:text="${detaillist.custId}"></td>
+																	<td class="text-left" th:text="${detaillist.foracid}"></td>
+																	<td class="text-left" th:text="${detaillist.acctName}"></td>
+																	<td class="text-right" th:text="${detaillist.acctBalanceLc}"></td>
+																	<td class="text-left" th:text="${detaillist.reportLabel}"></td>
+																	<td class="text-left"
+																	    th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
 
 							</tr>
 
 						</tbody>
 					</table>
 
-					<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
+					<!--<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
 
 						<a th:if="${currentPage > 0}"
 							th:href="@{/SLSREPORT(page=${currentPage - 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
@@ -2469,7 +2706,7 @@
 							th:href="@{/SLSREPORT(page=${currentPage + 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
 							Next
 						</a>
-					</div>
+					</div>-->
 
 				</div>
 			</div>
@@ -2515,9 +2752,13 @@
 				</div>
 
 				<div class="modal-footer justify-content-center">
-					<button type="button" class="role-btn" data-bs-dismiss="modal" onclick="back()">
+					<!--<button type="button" class="role-btn" data-bs-dismiss="modal" onclick="back()">
 						Close
+					</button>-->
+					<button type="button" class="role-btn" onclick="$('#resultModal').modal('hide')">
+					    Close
 					</button>
+
 				</div>
 
 			</div>

@@ -79,10 +79,15 @@ body {
 
 /* === ROLE PAGE CUSTOM HEADER === */
 .role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
-
+		background-color: #ffffff;
+		padding: 15px 20px;
+		display: flex;
+		/* Added for alignment */
+		justify-content: space-between;
+		/* Added for alignment */
+		align-items: center;
+		/* Added for alignment */
+	}
 .role-page-title h4 {
 	color: #003366;
 	font-family: "Segoe UI", Arial, sans-serif;
@@ -340,10 +345,6 @@ left
 #finusertb {
 	width: 460px;
 }
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
 </style>
 
 
@@ -496,6 +497,73 @@ label.error {
 	display: block;
 }
 </style>
+<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
+
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
 <script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
@@ -719,20 +787,43 @@ label.error {
 		style="padding-left: 0px; padding-right: 0px;">
 		<!-- <div class="row"> -->
 
-		<div th:insert="XBRLHeaderMenu :: header"></div>
-
-		<div
-			class="role-page-header d-flex justify-content-between align-items-center"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-			<div class="float-left role-page-title">
-				<h4>LIQUIDITY RISK DASHBOARD TEMPLATE</h4>
-				<div
-					style="width: 383px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-
-			</div>
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
 
-		</div>
+					<!-- LEFT: Buttons -->
+					<div  class="text-left flex-grow-1">
+						<h4>LIQUIDITY RISK DASHBOARD TEMPLATE</h4>
+
+					</div>
+					<div class="d-flex align-items-center gap-2">
+
+						<!-- Data Controls Button -->
+						<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
+							Data Controls</button>
+
+						<!-- Template Instructions Button -->
+						<button class="role-btn" id="template-btn" onclick="handleClick('template')">
+							Template Instructions</button>
+
+						<!-- Data Button -->
+						<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
+							Data</button>
+					
+
+					<!-- CENTER: Title -->
+
+
+					<!-- RIGHT: Download Button -->
+				
+						<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
+							onclick="downloadLiquidityrisk();">
+							<i class="fa fa-download"></i> Download
+						</button>
+					
+						</div>
+				</div>
+	
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<div style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
@@ -742,7 +833,7 @@ label.error {
 
 
 			<!-- Tabs -->
-			<div
+			<!--<div
 				class="role-page-header d-flex justify-content-between align-items-center">
 				<div class="float-left">
 					<button class="role-add-btn" id="datacontrols-btn"
@@ -761,7 +852,7 @@ label.error {
 
 
 				</div>
-			</div>
+			</div>-->
 
 
 			<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
@@ -1004,7 +1095,7 @@ label.error {
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="table-responsive"
-				style="max-height: 400px; overflow: auto; border: none;"
+				style="max-height: 600px; border: none;"
 				th:if="${formmode == 'list'}">
 				<table id="usertable"
 					class="table table-bordered table-striped table-hover"
@@ -2978,65 +3069,153 @@ label.error {
 </body>
 <script>
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+				scrollX: false,
+				autoWidth: false,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+				ordering: false,
+				pageLength: 100,
+				fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+				// Layout: search (left) + pagination (right)
+				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
-				  
+
+				// Optional: language tweak for better label
+				language: {
+					search: "Search:"
+				}
+			});
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-/* Remove top margin/padding from DataTables parent containers */
-#data {
-	padding-top: 0 !important;
-	margin-top: 0 !important;
-}
+			#usertable {
+			    width: 100% !important;
+			    border-collapse: collapse !important;
+			    font-family: Arial, sans-serif !important;
+			    font-size: 12px !important;
+			}
 
-.table-responsive {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+			/* HEADER */
+			#usertable th {
+			    background-color: #7b6458 !important;   /* brown header */
+			    color: white !important;
+			    text-align: center !important;
+			    padding: 8px 10px !important;
+			    font-weight: bold !important;
+			    border: 1px solid #ffffff !important;   /* thin white separator */
+			    white-space: normal !important;
+			}
 
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+			/* BODY CELLS */
+			#usertable td {
+			    padding: 5px 6px !important;
+			    border: 1px solid #e8e8e8 !important;   /* light grey lines */
+			    background: #fafafa;
+			    white-space: normal !important;
+			}
 
-/* FIX: Make search label and box inline */
-.dataTables_filter label {
-	display: flex !important;
-	align-items: center;
-	gap: 8px; /* space between text and input */
-	margin-bottom: 0 !important;
-}
+			/* ROW EVEN/ODD */
+			#usertable tbody tr:nth-child(even) {
+			    background-color: #f4f2ef !important;
+			}
 
-/* Style pagination buttons */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
+			#usertable tbody tr:nth-child(odd) {
+			    background-color: #ffffff !important;
+			}
 
-/* Optional: Style the search input */
-.dataTables_filter input {
-	margin-left: 5px;
-	flex: 1;
-}
+			/* SEARCH BOX FIX */
+			.dataTables_filter label {
+			    display: flex !important;
+			    gap: 10px;
+			    align-items: center;
+			}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			/* space between text and input */
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
+
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+
+
+	</style>
+
+	<style>
+		
+		.dataTables_wrapper .dataTables_paginate {
+		    float: right !important;
+		    margin-top: 5px !important;
+		}
+		/* ===== DataTables Pagination – Exact Image Style ===== */
+
+		/* Pagination container */
+		.dataTables_paginate {
+		    display: flex;
+		    gap: 6px;
+		}
+
+		/* All pagination buttons */
+		.dataTables_paginate .paginate_button {
+		    border: 1px solid #dee2e6 !important;
+		    background: #f8f9fa !important;
+		    color: #6c757d !important;
+		    padding: 6px 14px !important;
+		    border-radius: 6px !important;
+		    font-weight: 500;
+		    cursor: pointer;
+		}
+
+		/* Hover (only for enabled buttons) */
+		.dataTables_paginate .paginate_button:not(.disabled):not(.current):hover {
+		    background: #e9ecef !important;
+		    color: #495057 !important;
+		}
+
+		/* Active page (ORANGE like image) */
+		.dataTables_paginate .paginate_button.current {
+		    background: #ff7a18 !important;   
+		    color: #ffffff !important;
+		    border-color: #ff7a18 !important;
+		    font-weight: 600;
+		}
+
+		/* Disabled Previous / Next */
+		.dataTables_paginate .paginate_button.disabled {
+		    background: #f1f1f1 !important;
+		    color: #bdbdbd !important;
+		    cursor: not-allowed;
+		    opacity: 1;
+		}
+
+		/* Remove default DataTables focus outline */
+		.dataTables_paginate .paginate_button:focus {
+		    outline: none !important;
+		    box-shadow: none !important;
+		}
+
 </style>
 
 

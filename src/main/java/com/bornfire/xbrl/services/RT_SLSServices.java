@@ -326,7 +326,7 @@ public class RT_SLSServices {
 
 							
 							// Apply data style for all other cells
-							for (int j = 0; j < 5; j++) {
+							for (int j = 0; j <=5; j++) {
 								if (j != 3) {
 									row.getCell(j).setCellStyle(dataStyle);
 								}
