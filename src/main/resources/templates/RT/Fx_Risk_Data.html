@@ -800,6 +800,31 @@ left
 			margin-right: 5px;
 		}
 	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
 <script th:inline="javascript">
 	
 
@@ -1062,33 +1087,8 @@ if (tabId === 'data') {
 	<div class="container-fluid"
 		style="padding-left: 0px; padding-right: 0px;">
 
-
 			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-		<!-- <div class="role-page-title" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"style="background-color: rgb(107, 122, 143) ; ">
-					<div class="float-left">
-						<h5 
-							 style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">FX RISK DATA</h5>
-					</div>
-				</div>  -->
-		<!-- 	<div class="col-sm-12 finuserapply"> -->
-		<!-- 	<div class="card" style="margin-left: 10px; margin-right: 10px;"> -->
-		<!--<div
-			class="role-page-header d-flex justify-content-between align-items-center"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-			
-			<div class="float-left role-page-title">
-				<h4>FX RISK DATA
-				</h4>
-				<div
-					th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }"
-					class="role-page-underline"
-					style="width: 132px; height: 3px; background-color: #0073e6; border-radius: 2px;margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);">
-				</div>
-
-
-			</div>
-		</div>-->
 		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
 
@@ -1156,8 +1156,7 @@ if (tabId === 'data') {
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
 							<form id="fxriskForm" method="post" autocomplete="off">
-								<div class="card-body"
-									style="max-height: 450px; overflow-y: auto">
+								<div class="card-body">
 
 
 									<input autocomplete="false" name="hidden" type="text"
@@ -1515,8 +1514,7 @@ if (tabId === 'data') {
 							<!-- style="background-color: rgb(166, 0, 0);" -->
 							<div class="role-page-title">
 								<h4>Fx Risk Data - Edit</h4>
-								<div
-									style="width: 174px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+								
 							</div>
 						</div>
 						<div class="card-body"
@@ -1870,10 +1868,40 @@ div.dataTables_filter {
 	margin-bottom: 0 !important;
 }
 
-/* Style pagination buttons */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
+/* DataTables pagination container */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    gap: 8px;
 }
+
+/* All pagination links */
+.dataTables_wrapper .dataTables_paginate .page-link {
+    color: #6c757d !important;
+    background-color: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    padding: 6px 14px;
+}
+
+/* ACTIVE page → ORANGE */
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+    background-color: #ff7f27 !important;
+    border-color: #ff7f27 !important;
+    color: #ffffff !important;
+}
+
+/* Hover */
+.dataTables_wrapper .dataTables_paginate .page-link:hover {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+}
+
+/* Disabled Previous / Next */
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+    color: #adb5bd !important;
+    background-color: #f5f5f5 !important;
+}
+
 
 /* Optional: Style the search input */
 .dataTables_filter input {

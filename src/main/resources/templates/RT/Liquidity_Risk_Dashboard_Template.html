@@ -825,7 +825,7 @@ label.error {
 				</div>
 	
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div style="padding-right: 10px; padding-left: 20px;"
+		<div  id="tabHeader"  style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
 
 
@@ -863,8 +863,7 @@ label.error {
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
 							<form id="nostroForm" method="post" autocomplete="off">
-								<div class="card-body"
-									style="max-height: 450px; overflow-y: auto">
+								<div class="card-body">
 
 
 									<input autocomplete="false" name="hidden" type="text"
@@ -3165,56 +3164,41 @@ label.error {
 
 	<style>
 		
+		/* DataTables pagination container */
 		.dataTables_wrapper .dataTables_paginate {
-		    float: right !important;
-		    margin-top: 5px !important;
-		}
-		/* ===== DataTables Pagination – Exact Image Style ===== */
-
-		/* Pagination container */
-		.dataTables_paginate {
 		    display: flex;
-		    gap: 6px;
+		    gap: 3px;
+			margin-left: 4px !important;
 		}
-
-		/* All pagination buttons */
-		.dataTables_paginate .paginate_button {
-		    border: 1px solid #dee2e6 !important;
-		    background: #f8f9fa !important;
+		
+		/* All pagination links */
+		.dataTables_wrapper .dataTables_paginate .page-link {
 		    color: #6c757d !important;
-		    padding: 6px 14px !important;
+		    background-color: #f5f5f5 !important;
+		    border: 1px solid #ddd !important;
 		    border-radius: 6px !important;
-		    font-weight: 500;
-		    cursor: pointer;
+		    padding: 6px 14px;
 		}
 
-		/* Hover (only for enabled buttons) */
-		.dataTables_paginate .paginate_button:not(.disabled):not(.current):hover {
-		    background: #e9ecef !important;
+		/* ACTIVE page → ORANGE */
+		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		    background-color: #ff7f27 !important;
+		    border-color: #ff7f27 !important;
+		    color: #ffffff !important;
+		}
+
+		/* Hover */
+		.dataTables_wrapper .dataTables_paginate .page-link:hover {
+		    background-color: #e9ecef !important;
 		    color: #495057 !important;
 		}
 
-		/* Active page (ORANGE like image) */
-		.dataTables_paginate .paginate_button.current {
-		    background: #ff7a18 !important;   
-		    color: #ffffff !important;
-		    border-color: #ff7a18 !important;
-		    font-weight: 600;
-		}
-
 		/* Disabled Previous / Next */
-		.dataTables_paginate .paginate_button.disabled {
-		    background: #f1f1f1 !important;
-		    color: #bdbdbd !important;
-		    cursor: not-allowed;
-		    opacity: 1;
+		.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+		    color: #adb5bd !important;
+		    background-color: #f5f5f5 !important;
 		}
 
-		/* Remove default DataTables focus outline */
-		.dataTables_paginate .paginate_button:focus {
-		    outline: none !important;
-		    box-shadow: none !important;
-		}
 
 </style>
 
