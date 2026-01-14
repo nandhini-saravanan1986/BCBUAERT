@@ -147,6 +147,8 @@
 										<option value="FXP">FXP - Foreign Exchange Position</option>
 										<option value="RWAFUND">RWA - Fund Based Data</option>
 										<option value="RWANONFUND">RWA - Non-Fund Based Data</option>
+										<option value="ACPR">ACPR - Fund Based Data</option>
+										<option value="ACPRNF">ACPRNF - Non-Fund Based Data</option>
 									</select>
 								</div>
 							</div>
@@ -264,53 +266,50 @@
 
 		// 1. Dynamic Dropdown Logic
 		function updateFormatOptions() {
-			var report = $("#reportId").val();
-			var formatSelect = $("#submissionFormat");
-			formatSelect.empty();
-			formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
+		    var report = $("#reportId").val();
+		    var formatSelect = $("#submissionFormat");
+		    formatSelect.empty();
+		    formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
 
-			// Define allowed formats per report
-			if (report === "RWAFUND" || report === "RWANONFUND") {
-				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-			}
-			else if (report === "FXP") {
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-			}
-			else if (report === "SLS") {
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
-			} else {
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-			}
+		    // ADDED: ACPR and ACPRNF to this condition
+		    if (report === "RWAFUND" || report === "RWANONFUND" || report === "ACPR" || report === "ACPRNF") {
+		        formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
+		        formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+		    }
+		    else if (report === "FXP") {
+		        formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+		    }
+		    else if (report === "SLS") {
+		        formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+		        formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
+		    } else {
+		        formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+		    }
 
-			// Reset file input
-			$("#fileInput").val("");
-			$(".custom-file-label").html("Choose file...");
-			$("#fileConstraints").text("Supported formats: Select Format first");
+		    // Reset file input
+		    $("#fileInput").val("");
+		    $(".custom-file-label").html("Choose file...");
+		    $("#fileConstraints").text("Supported formats: Select Format first");
 		}
 
 		// 2. Dynamic File Constraints
 		function updateFileConstraints() {
-			var format = $("#submissionFormat").val();
-			var input = $("#fileInput");
-			var help = $("#fileConstraints");
+		    var format = $("#submissionFormat").val();
+		    var input = $("#fileInput");
+		    var help = $("#fileConstraints");
 
-			input.val("");
-			$(".custom-file-label").html("Choose file...");
+		    input.val("");
+		    $(".custom-file-label").html("Choose file...");
 
-			if (format === "EXCEL") {
-				input.attr("accept", ".xlsx, .xls");
-				help.text("Allowed extensions: .xlsx, .xls");
-			} else if (format === "TEXT") {
-				input.attr("accept", ".txt, .csv, .dat");
-				help.text("Allowed extensions: .txt, .csv, .dat");
-			} else if (format === "XML") {
-				input.attr("accept", ".xml");
-				help.text("Allowed extensions: .xml");
-			}
+		    if (format === "EXCEL") {
+		        input.attr("accept", ".xlsx, .xls");
+		        help.text("Allowed extensions: .xlsx, .xls");
+		    } else if (format === "TEXT") {
+		        // This ensures the browser shows .txt and .csv files
+		        input.attr("accept", ".txt, .csv, .dat");
+		        help.text("Allowed extensions: .txt, .csv, .dat");
+		    }
 		}
-
 		// 3. Download Logic
 		function downloadTemplate() {
 			var report = $("#reportId").val();
@@ -365,7 +364,7 @@
 				processData: false,
 				contentType: false,
 				cache: false,
-				
+
 				success: function (response) {
 					$('#loader').hide();
 					$(".btn-corporate").prop("disabled", false);

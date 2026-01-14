@@ -151,6 +151,7 @@ import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
+import com.bornfire.xbrl.services.RT_ACPR_SERVICE;
 import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
 import com.bornfire.xbrl.services.RT_DataControlService;
 import com.bornfire.xbrl.services.RT_FX_Position_Service;
@@ -366,7 +367,7 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
-	
+
 	@Autowired
 	RT_IRS_DETAIL_REPO RT_IRS_DETAIL_REPO;
 
@@ -1467,7 +1468,7 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "counterparty_list", method = { RequestMethod.GET, RequestMethod.POST })
 	public String counterparty_list(@RequestParam(required = false) String formmode,
 			@RequestParam(value = "Exposurebillid", required = false) String Exposurebillid,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,Model md,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date, Model md,
 			HttpServletRequest req) {
 		String userid = (String) req.getSession().getAttribute("USERID");
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
@@ -1500,14 +1501,14 @@ public class XBRLNavigationController {
 			}
 
 			md.addAttribute("branchesl", branchesl);
-			
+
 			java.sql.Date sqlDate = java.sql.Date.valueOf(today);
 			List<ASL_Report_Entity> list = ASL_Report_Reps.getAlls(sqlDate, BRANCHNAME.trim());
 			logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
 			md.addAttribute("listall", list);
 
 		} else if ("Billdetaillist".equalsIgnoreCase(formmode)) {
-			
+
 			if (Report_date != null) {
 				Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
 			} else {
@@ -1518,10 +1519,12 @@ public class XBRLNavigationController {
 			md.addAttribute("menuname", "Bill detail operation - list");
 
 			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
-				System.out.println("Selected Report : "+ Report_date + ": and user id is : "+ ROLEID);
-				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME,Report_date));
+				System.out.println("Selected Report : " + Report_date + ": and user id is : " + ROLEID);
+				md.addAttribute("Activebilldetails",
+						Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME, Report_date));
 			} else {
-				System.out.println("Selected Report : "+ Report_date + ": and user id is : "+ ROLEID + " and Branch Name is : "+ BRANCHNAME);
+				System.out.println("Selected Report : " + Report_date + ": and user id is : " + ROLEID
+						+ " and Branch Name is : " + BRANCHNAME);
 				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails(Report_date));
 			}
 
@@ -1549,8 +1552,8 @@ public class XBRLNavigationController {
 			md.addAttribute("menuname", "Bill detail operation - Edit");
 			md.addAttribute("Todateselected", Report_date);
 			System.out.println("Edit Exposure Menu Received bill detail is : " + Exposurebillid);
-			System.out.println("Report date for bill : "+ Report_date);
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
+			System.out.println("Report date for bill : " + Report_date);
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 
 		} else if ("Deletebilldetail".equalsIgnoreCase(formmode)) {
@@ -1558,13 +1561,13 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", formmode);
 
 			md.addAttribute("menuname", "Bill detail operation - Delete");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else if ("Verifybilldetail".equalsIgnoreCase(formmode)) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Verify");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid,Report_date));
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else {
 			logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);
@@ -1678,9 +1681,9 @@ public class XBRLNavigationController {
 			@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
 			@RequestParam("file") MultipartFile file, @RequestParam("uploadedBy") String uploadedBy,
 			HttpServletRequest request, @RequestParam(required = false) String mode) {
-	    mode = (mode == null) ? "" : mode.trim().toLowerCase();
+		mode = (mode == null) ? "" : mode.trim().toLowerCase();
 
-	    logger.info("Upload mode received: [{}]", mode);
+		logger.info("Upload mode received: [{}]", mode);
 		String msg = "";
 		String userid = (String) request.getSession().getAttribute("USERID");
 		if (mode.equals("exposure")) {
@@ -1698,7 +1701,7 @@ public class XBRLNavigationController {
 
 		}
 		return msg;
-	
+
 	}
 
 	@RequestMapping(value = "/getvalues", method = RequestMethod.POST)
@@ -2022,43 +2025,36 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "search_date", method = RequestMethod.GET)
 	@ResponseBody
 	public int search_date(
-	        @RequestParam("reportDate")
-	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
-	        @RequestParam("iBranchCode") String iBranchCode,
-	        @RequestParam(required = false) String mode) {
+			@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+			@RequestParam("iBranchCode") String iBranchCode, @RequestParam(required = false) String mode) {
 
-	    Logger logger = LoggerFactory.getLogger(this.getClass());
+		Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	    mode = (mode == null) ? "" : mode.trim().toLowerCase();
-	    logger.info("Searching data | Date: {} | Branch: {} | Mode: {}", reportDate, iBranchCode, mode);
+		mode = (mode == null) ? "" : mode.trim().toLowerCase();
+		logger.info("Searching data | Date: {} | Branch: {} | Mode: {}", reportDate, iBranchCode, mode);
 
-	    int size = 0;
+		int size = 0;
 
-	    try {
-	        if ("exposure".equals(mode)) {
-	            size = ASL_Report_Reps
-	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
-	                    .size();
+		try {
+			if ("exposure".equals(mode)) {
+				size = ASL_Report_Reps.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode).size();
 
-	        } else if ("placement".equals(mode)) {
-	            size = Mis_treasury_placement_repo
-	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
-	                    .size();
+			} else if ("placement".equals(mode)) {
+				size = Mis_treasury_placement_repo.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
+						.size();
 
-	        } else if ("settlement".equals(mode)) {
-	            size = MIS_SETTLEMENT_ENTITY_REPs
-	                    .getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
-	                    .size();
-	        }
-	    } catch (Exception e) {
-	        logger.error("Error while checking existing data", e);
-	        return 0;
-	    }
+			} else if ("settlement".equals(mode)) {
+				size = MIS_SETTLEMENT_ENTITY_REPs.getByReportDateAndBR(java.sql.Date.valueOf(reportDate), iBranchCode)
+						.size();
+			}
+		} catch (Exception e) {
+			logger.error("Error while checking existing data", e);
+			return 0;
+		}
 
-	    logger.info("Final record count returned to UI = {}", size);
-	    return size; // ✔ 0 = NOT EXISTS | >0 = EXISTS
+		logger.info("Final record count returned to UI = {}", size);
+		return size; // ✔ 0 = NOT EXISTS | >0 = EXISTS
 	}
-
 
 	@RequestMapping(value = "Replace_data", method = { RequestMethod.POST })
 	@ResponseBody
@@ -2831,274 +2827,230 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "SLSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
-	public String SLSREPORT(
-	        @RequestParam(required = false) String currency,
-	        @RequestParam(required = false) String reportdate,
-	        @RequestParam(required = false) String formmode,
-	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "100") int size,
-	        @RequestParam(required = false) String Rowid,
-	        Model md,
-	        HttpServletRequest req) {
+	public String SLSREPORT(@RequestParam(required = false) String currency,
+			@RequestParam(required = false) String reportdate, @RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
+			@RequestParam(required = false) String Rowid, Model md, HttpServletRequest req) {
 
-	    // Match the input format: 30/04/2025
-	    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    Date reportdatefor = null;
+		// Match the input format: 30/04/2025
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date reportdatefor = null;
 
-	    try {
-	        if (reportdate != null) {
-	            reportdatefor = dateFormat.parse(reportdate);
-	        }
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	        md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-	        return "RT/RT_SLSREPORT";
-	    }
+		try {
+			if (reportdate != null) {
+				reportdatefor = dateFormat.parse(reportdate);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+			md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+			return "RT/RT_SLSREPORT";
+		}
 
-	    if (formmode == null || formmode.equals("summary")) {
-	        // --- Summary Mode ---
-	        List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
-	        md.addAttribute("slslist", slslist);
+		if (formmode == null || formmode.equals("summary")) {
+			// --- Summary Mode ---
+			List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
+			md.addAttribute("slslist", slslist);
 
-	        List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
-	        md.addAttribute("currencylist", currencylist);
+			List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
+			md.addAttribute("currencylist", currencylist);
 
-	        md.addAttribute("currency", currency);
-	        md.addAttribute("reportdate", reportdate);
-	        md.addAttribute("formmode", "summary");
+			md.addAttribute("currency", currency);
+			md.addAttribute("reportdate", reportdate);
+			md.addAttribute("formmode", "summary");
 
-	    } else if (formmode.equals("Detail")) {
-	        // --- Detail Mode ---
-	        int pageSize = size;
-	        int offset = page * pageSize;
+		} else if (formmode.equals("Detail")) {
+			// --- Detail Mode ---
+			int pageSize = size;
+			int offset = page * pageSize;
 
-	        if (Rowid != null && !Rowid.isEmpty()) {
-	            //List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
-	            
-	            List<RT_SLS_Detail_Enitity> slsdetaillist =rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid, currency);
+			if (Rowid != null && !Rowid.isEmpty()) {
+				// List<RT_SLS_Detail_Enitity> slsdetaillist =
+				// rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
 
-	            int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, currency, Rowid);
-	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
+				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,
+						Rowid, currency);
 
-	            md.addAttribute("slsdetaillist", slsdetaillist);
-	            md.addAttribute("reportdate", reportdate);
-	            md.addAttribute("formmode", "Detail");
-	            md.addAttribute("currency", currency);
-	            md.addAttribute("currentPage", page);
-	            md.addAttribute("totalPages", totalPages);
+				int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, currency, Rowid);
+				int totalPages = (int) Math.ceil((double) totalRows / pageSize);
 
-	        } else {
-	           // int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
-	            
-	            int totalRows = rt_sls_detail_repository
-	                    .slsdetaillistcount(reportdatefor, currency);
-	            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
+				md.addAttribute("slsdetaillist", slsdetaillist);
+				md.addAttribute("reportdate", reportdate);
+				md.addAttribute("formmode", "Detail");
+				md.addAttribute("currency", currency);
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", totalPages);
 
-	           // List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
-	            System.out.println("offset=="+offset);
-	            List<RT_SLS_Detail_Enitity> slsdetaillist =
-	                    rt_sls_detail_repository
-	                            .slsdetaillist(reportdatefor, currency, offset, pageSize);
-	            md.addAttribute("slsdetaillist", slsdetaillist);
-	            md.addAttribute("reportdate", reportdate);
-	            md.addAttribute("formmode", "Detail");
-	            md.addAttribute("currency", currency);
-	            md.addAttribute("pagination", "YES");
-	            md.addAttribute("currentPage", page);
-	            md.addAttribute("totalPages", totalPages);
-	        }
-	    }
+			} else {
+				// int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
 
-	    return "RT/RT_SLSREPORT";
+				int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor, currency);
+				int totalPages = (int) Math.ceil((double) totalRows / pageSize);
+
+				// List<RT_SLS_Detail_Enitity> slsdetaillist =
+				// rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
+				System.out.println("offset==" + offset);
+				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor,
+						currency, offset, pageSize);
+				md.addAttribute("slsdetaillist", slsdetaillist);
+				md.addAttribute("reportdate", reportdate);
+				md.addAttribute("formmode", "Detail");
+				md.addAttribute("currency", currency);
+				md.addAttribute("pagination", "YES");
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", totalPages);
+			}
+		}
+
+		return "RT/RT_SLSREPORT";
 	}
 
-
 	@RequestMapping(value = "IRSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
-	public String IRSREPORT(
-	        @RequestParam String reportdate,
-	        @RequestParam String currency,
-	        @RequestParam(defaultValue = "summary") String formmode,
-	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "100") int size,
-	        @RequestParam(required = false) String rowid,
-	        Model md) {
+	public String IRSREPORT(@RequestParam String reportdate, @RequestParam String currency,
+			@RequestParam(defaultValue = "summary") String formmode, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "100") int size, @RequestParam(required = false) String rowid, Model md) {
 
-	    Date reportDateFor;
+		Date reportDateFor;
 
-	    try {
-	        reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
-	    } catch (Exception e) {
-	        md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
-	        return "RT/RT_IRSREPORT";
-	    }
+		try {
+			reportDateFor = new SimpleDateFormat("dd/MM/yyyy").parse(reportdate);
+		} catch (Exception e) {
+			md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+			return "RT/RT_IRSREPORT";
+		}
 
-	    /* ===================== COMMON ATTRIBUTES ===================== */
-	    md.addAttribute("reportdate", reportdate);
-	    md.addAttribute("currency", currency);
-	    md.addAttribute("formmode", formmode);
+		/* ===================== COMMON ATTRIBUTES ===================== */
+		md.addAttribute("reportdate", reportdate);
+		md.addAttribute("currency", currency);
+		md.addAttribute("formmode", formmode);
 
-	    /* ===================== SUMMARY ===================== */
-	    if ("summary".equalsIgnoreCase(formmode)) {
+		/* ===================== SUMMARY ===================== */
+		if ("summary".equalsIgnoreCase(formmode)) {
 
-	        List<RT_IRS_ENTITY> irslist =
-	                RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+			List<RT_IRS_ENTITY> irslist = RT_irs_repository.rtirslistbydate(reportDateFor, currency);
 
-	        List<RT_IRS_ENTITY2> irsList2 =
-	                RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+			List<RT_IRS_ENTITY2> irsList2 = RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
 
-	        List<RT_IRS_ENTITY> currencyList =
-	                RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
+			List<RT_IRS_ENTITY> currencyList = RT_irs_repository.getIrsCurrencyByDate(reportDateFor);
 
-	        md.addAttribute("irslist", irslist);
-	        md.addAttribute("irsList2", irsList2);
-	        md.addAttribute("currencylist", currencyList);
-	    }
+			md.addAttribute("irslist", irslist);
+			md.addAttribute("irsList2", irsList2);
+			md.addAttribute("currencylist", currencyList);
+		}
 
-	    /* ===================== DETAIL ===================== */
-	    else if ("Detail".equalsIgnoreCase(formmode)) {
+		/* ===================== DETAIL ===================== */
+		else if ("Detail".equalsIgnoreCase(formmode)) {
 
-	        if (rowid != null && !rowid.trim().isEmpty()) {
+			if (rowid != null && !rowid.trim().isEmpty()) {
 
-	            // 🔹 Detail by ROWID
-	            List<RT_IRS_DETAIL_ENTITY> detailsList =
-	                    RT_IRS_DETAIL_REPO.IRSdetaillistrowid(reportDateFor, rowid);
+				// 🔹 Detail by ROWID
+				List<RT_IRS_DETAIL_ENTITY> detailsList = RT_IRS_DETAIL_REPO.IRSdetaillistrowid(reportDateFor, rowid);
 
-	            int totalCount =
-	                    RT_IRS_DETAIL_REPO.IRSdetaillistcountROWID(reportDateFor, rowid);
+				int totalCount = RT_IRS_DETAIL_REPO.IRSdetaillistcountROWID(reportDateFor, rowid);
 
-	            md.addAttribute("detailsList", detailsList);
-	            md.addAttribute("rowid", rowid);
-	            md.addAttribute("currentPage", page);
-	            md.addAttribute("totalPages",
-	                    (int) Math.ceil((double) totalCount / size));
-	        }
-	        else {
+				md.addAttribute("detailsList", detailsList);
+				md.addAttribute("rowid", rowid);
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", (int) Math.ceil((double) totalCount / size));
+			} else {
 
-	            // 🔹 Normal paginated detail
-	            List<RT_IRS_DETAIL_ENTITY> detailsList =
-	                    RT_IRS_DETAIL_REPO.irsdetaillist(reportDateFor, page, size);
+				// 🔹 Normal paginated detail
+				List<RT_IRS_DETAIL_ENTITY> detailsList = RT_IRS_DETAIL_REPO.irsdetaillist(reportDateFor, page, size);
 
-	            int totalCount =
-	                    RT_IRS_DETAIL_REPO.IRSdetaillistcount(reportDateFor);
+				int totalCount = RT_IRS_DETAIL_REPO.IRSdetaillistcount(reportDateFor);
 
-	            md.addAttribute("detailsList", detailsList);
-	            md.addAttribute("pagination", "YES");
-	            md.addAttribute("currentPage", page);
-	            md.addAttribute("totalPages",
-	                    (int) Math.ceil((double) totalCount / size));
-	        }
-	    }
+				md.addAttribute("detailsList", detailsList);
+				md.addAttribute("pagination", "YES");
+				md.addAttribute("currentPage", page);
+				md.addAttribute("totalPages", (int) Math.ceil((double) totalCount / size));
+			}
+		}
 
-	    return "RT/RT_IRSREPORT"; // SAME SCREEN
+		return "RT/RT_IRSREPORT"; // SAME SCREEN
 	}
 
 	@RequestMapping(value = "downloadExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public ResponseEntity<ByteArrayResource> summaryDownload(
-	        HttpServletResponse response,
-	        @RequestParam("reportdate") String reportdate,
-	        @RequestParam("currency") String currency,
-	        @RequestParam("type") String type,
-	        @RequestParam("report") String report,   // ✅ ADD THIS
-	        @RequestParam(value = "version", required = false) String version,
-	        @RequestParam(value = "filename", required = false) String filename
-	) {
+	public ResponseEntity<ByteArrayResource> summaryDownload(HttpServletResponse response,
+			@RequestParam("reportdate") String reportdate, @RequestParam("currency") String currency,
+			@RequestParam("type") String type, @RequestParam("report") String report, // ✅ ADD THIS
+			@RequestParam(value = "version", required = false) String version,
+			@RequestParam(value = "filename", required = false) String filename) {
 
-	    response.setContentType("application/octet-stream");
+		response.setContentType("application/octet-stream");
 
-	    try {
-	        // ✅ Date format conversion
-	        DateFormat outFormat = new SimpleDateFormat("dd-MMM-yyyy");
-	        reportdate = outFormat.format(
-	                new SimpleDateFormat("dd/MM/yyyy").parse(reportdate)
-	        );
+		try {
+			// ✅ Date format conversion
+			DateFormat outFormat = new SimpleDateFormat("dd-MMM-yyyy");
+			reportdate = outFormat.format(new SimpleDateFormat("dd/MM/yyyy").parse(reportdate));
 
-	        byte[] excelData = null;
+			byte[] excelData = null;
 
-	        if ("summary".equalsIgnoreCase(type)) {
+			if ("summary".equalsIgnoreCase(type)) {
 
-	            if ("SLS".equalsIgnoreCase(report)) {
-	                excelData = RT_SLSServices.getSlsExcel(
-	                        filename, reportdate, currency, version
-	                );
+				if ("SLS".equalsIgnoreCase(report)) {
+					excelData = RT_SLSServices.getSlsExcel(filename, reportdate, currency, version);
 
-	            } else if ("IRS".equalsIgnoreCase(report)) {
-	                excelData = rtIrsService.getIrsExcel(
-	                        filename, reportdate, currency, version
-	                );
-	            }
-	        }
+				} else if ("IRS".equalsIgnoreCase(report)) {
+					excelData = rtIrsService.getIrsExcel(filename, reportdate, currency, version);
+				}
+			}
 
-	        // ✅ NO DATA
-	        if (excelData == null || excelData.length == 0) {
-	            logger.warn("No data available for Excel download");
-	            return ResponseEntity.noContent().build(); // 204
-	        }
+			// ✅ NO DATA
+			if (excelData == null || excelData.length == 0) {
+				logger.warn("No data available for Excel download");
+				return ResponseEntity.noContent().build(); // 204
+			}
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add(
-	                HttpHeaders.CONTENT_DISPOSITION,
-	                "attachment; filename=" + filename + ".xls"
-	        );
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename + ".xls");
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(
-	                        MediaType.parseMediaType("application/vnd.ms-excel")
-	                )
-	                .body(resource);
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
-	    } catch (Exception e) {
-	        logger.error("Excel download error", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		} catch (Exception e) {
+			logger.error("Excel download error", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
-
 
 	@RequestMapping(value = "downloaddetailExcel", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public ResponseEntity<ByteArrayResource> detailDownload(
-	        HttpServletResponse response,
-	        @RequestParam("jobId") String jobId, 
-	        @RequestParam("filename") String filename,
-	        @RequestParam(value = "type", required = false) String type) { // Added type param
+	public ResponseEntity<ByteArrayResource> detailDownload(HttpServletResponse response,
+			@RequestParam("jobId") String jobId, @RequestParam("filename") String filename,
+			@RequestParam(value = "type", required = false) String type) { // Added type param
 
-	    try {
-	        byte[] excelData = null;
+		try {
+			byte[] excelData = null;
 
-	        // Routing logic based on type
-	        if ("IRS".equalsIgnoreCase(type)) {
-	            excelData = rtIrsService.getReport(jobId);
-	        } else {
-	            // Default to SLS if no type or type is SLS
-	            excelData = RT_SLSServices.getReport(jobId);
-	        }
+			// Routing logic based on type
+			if ("IRS".equalsIgnoreCase(type)) {
+				excelData = rtIrsService.getReport(jobId);
+			} else {
+				// Default to SLS if no type or type is SLS
+				excelData = RT_SLSServices.getReport(jobId);
+			}
 
-	        if (excelData == null || excelData.length == 0) {
-	            return ResponseEntity.noContent().build();
-	        }
+			if (excelData == null || excelData.length == 0) {
+				return ResponseEntity.noContent().build();
+			}
 
-	        ByteArrayResource resource = new ByteArrayResource(excelData);
-	        HttpHeaders headers = new HttpHeaders();
-	        
-	        // Ensure filename has extension
-	        String finalFileName = filename.endsWith(".xls") ? filename : filename + ".xls";
-	        
-	        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + finalFileName);
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+			HttpHeaders headers = new HttpHeaders();
 
-	        return ResponseEntity.ok()
-	                .headers(headers)
-	                .contentLength(excelData.length)
-	                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-	                .body(resource);
+			// Ensure filename has extension
+			String finalFileName = filename.endsWith(".xls") ? filename : filename + ".xls";
 
-	    } catch (Exception e) {
-	        logger.error("Controller ERROR: Detail download failed", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + finalFileName);
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Detail download failed", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(value = "/startreport", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3125,7 +3077,7 @@ public class XBRLNavigationController {
 	public ResponseEntity<String> checkReport(@RequestParam String jobId) {
 		System.out.println(jobId);
 		byte[] report = RT_SLSServices.getReport(jobId);
-		 System.out.println("Report generation completed for: " + jobId +"    the reoport   "+report);
+		System.out.println("Report generation completed for: " + jobId + "    the reoport   " + report);
 		if (report == null) {
 			return ResponseEntity.ok("PROCESSING");
 		}
@@ -3148,7 +3100,7 @@ public class XBRLNavigationController {
 		rtIrsService.generateReportAsync(jobId, filename, reportdate, currency, version);
 		return jobId;
 	}
-	
+
 	@RequestMapping(value = "/checkirsreport", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody // forces raw text instead of HTML view
 	public ResponseEntity<String> checkirsreport(@RequestParam String jobId) {
@@ -3265,9 +3217,12 @@ public class XBRLNavigationController {
 
 	@Autowired
 	private RT_FX_Position_Service rtFxPositionService;
-	
+
 	@Autowired
 	RwaDataUploadService rwaService;
+
+	@Autowired
+	private RT_ACPR_SERVICE acprService;
 
 	// Page for SLS
 	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3302,9 +3257,9 @@ public class XBRLNavigationController {
 
 			String resultMsg = "";
 
-			 if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
-		            resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
-		        } else if ("FXP".equals(reportType)) {
+			if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
+				resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
+			} else if ("FXP".equals(reportType)) {
 				// 1. Process FX (The image data)
 				resultMsg = rtFxPositionService.uploadFxData(file, fromDate, toDate, username);
 			} else if ("SLS".equals(reportType)) {
@@ -3312,6 +3267,10 @@ public class XBRLNavigationController {
 				// Note: Using toDate as the reportDate for your SLS service
 				rtSlsService.processAndSaveFile(file, toDate, username);
 				resultMsg = "SLS data uploaded and saved successfully!";
+			} else if ("ACPR".equals(reportType)) {
+				resultMsg = acprService.uploadAcprFile(file, fromDate, toDate, username);
+			} else if ("ACPRNF".equals(reportType)) {
+				resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
 			} else {
 				return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
 			}
