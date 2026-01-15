@@ -374,6 +374,7 @@
 			document.querySelector(".Sector_Industrial").style.display = "none";
 			document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "none");
 			document.querySelector(".Netovernight_noop").style.display = "none";
+			
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
@@ -395,7 +396,8 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
-			} else if (labelsrlno === "4") {
+			} 
+			else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
 					.then(response => response.json())
 					.then(result => {
@@ -1010,6 +1012,64 @@
 					});
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
+			}
+			
+			else if (labelsrlno === "46") {
+				alert(labelReport_date);
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
+				
+				
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(labelReport_date))
+			    .then(response => response.json())
+			    .then(result => {
+
+			        // Get tbody element
+			        var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
+			        if (!UnsecuredPositionbody) {
+			            console.error("Table body not found!");
+			            return;
+			        }
+			        UnsecuredPositionbody.innerHTML = "";
+
+			        // Build table rows
+			        var trHTML =
+			            "<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>"+formatNumber(result.securedNfb)+"</td><td style=text-align:right;>"+formatNumber(result.totalSecured)+"</td></tr>" +
+			            "<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>"+formatNumber(result.securedOtherBankNfb)+"</td><td style=text-align:right;>"+formatNumber(result.totalSecuredOtherBank)+"</td></tr>" +
+			            "<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" +formatNumber(result.interestSuspenseNfb)+ "</td><td style=text-align:right;>"+formatNumber(result.totalInterestSuspense)+"</td></tr>" +
+			            "<tr><td>Provision</td><td style=text-align:right;>"+formatNumber(result.provisionFb) +"</td><td style=text-align:right;>"+ formatNumber(result.provisionNfb) +"</td><td style=text-align:right;>"+ formatNumber(result.totalProvision) +"</td></tr>" +
+			            "<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>"+ formatNumber(result.unsecuredFb) +"</b></td><td style=text-align:right;><b>"+formatNumber(result.unsecuredNfb)+"</b></td><td style=text-align:right;><b>"+formatNumber(result.totalFbNfb)+"</b></td></tr>" +
+			            "<tr><td></td><td>Balance FB</td><td style=text-align:right;>"+ formatNumber(result.balanceFb) +"</td><td style=text-align:right;><b>"+result.totalRatio+"%</b></td></tr>" +
+			            "<tr><td></td><td>Balance NFB</td><td style=text-align:right;>"+ formatNumber(result.balanceNfb) +"</td><td></td></tr>" +
+			            "<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>"+ formatNumber(result.totalAdvances)+"</b></td><td></td></tr>" +
+			            "<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>"+ formatNumber(result.unsecuredCapTa)+"</b></td></tr>" +
+			            "<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>"+ formatNumber(result.headroomAvailableAed)+"</b></td></tr>" +
+			            "<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>"+ formatNumber(result.headroomAvailableUsd)+"</b></td></tr>";
+
+			        // Set table body content
+			        UnsecuredPositionbody.innerHTML = trHTML;
+
+			        // Show table section
+			        document.querySelector(".UnsecuredPosition").style.display = "block";
+			    });
+
 			}
 		}
 
@@ -1860,6 +1920,23 @@
 						<canvas id="Linechartfordailyreport"></canvas>
 
 					</div>
+					
+					<!--	Group and Single Borrower detail -->
+					<div class="UnsecuredPosition" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Secured Vs Unsecured (From ACPR FB+NFB Dump)</th>
+									<th style=text-align:right;>Fund Based</th>
+									<th style=text-align:right;>Non Fund Based</th>
+									<th style=text-align:right;>TOTAL</th>
+								</tr>
+							</thead>
+							<tbody id="UnsecuredPositionbody">
+							</tbody>
+						</table>
+					</div>
+					
 					<!--	Group and Single Borrower detail -->
 					<div class="GroupExposuredetail" style="display: none;">
 						<table class="table refund-table align-middle mb-0">

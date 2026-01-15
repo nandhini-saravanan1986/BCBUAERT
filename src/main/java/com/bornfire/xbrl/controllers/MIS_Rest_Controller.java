@@ -43,6 +43,8 @@ import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredEntity;
+import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredrep;
 import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
@@ -54,6 +56,9 @@ public class MIS_Rest_Controller {
 
     @Autowired
     private Excel_Services excelServices;
+    
+    @Autowired
+    Rt_AcprSecuredUnsecuredrep rt_acprsecuredunsecuredrep;
     
     @Autowired
     AuditService auditService;
@@ -354,6 +359,12 @@ System.out.println("Entered");
 					.collect(Collectors.toList());
 		} 
 	    
+		else if(Matrix_Srl_no.equals("46")) {
+			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		} 
+	    
 	    return finalList;   
 	}
 	
@@ -413,7 +424,28 @@ System.out.println("Entered");
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
+		else if(Matrix_Srl_no.equals("46")) {
+			
+			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured();
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
 		return finalList;
+	}
+	
+	
+	@GetMapping("/GetSecuredUnsecureddata")
+	public Rt_AcprSecuredUnsecuredEntity GetSecuredUnsecureddata(@RequestParam("Report_date") String Report_date) throws ParseException {
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		Date Selecteddate = dateFormat.parse(Report_date);
+		
+		Rt_AcprSecuredUnsecuredEntity Rt_AcprSecuredlist = rt_acprsecuredunsecuredrep.GetSecuredUnsecuredreport(Selecteddate);
+		System.out.println("Rt_AcprSecuredUnsecuredEntity="+Rt_AcprSecuredlist.getSecuredFb());
+		
+		
+		return Rt_AcprSecuredlist;
+		
 	}
 	
 	@GetMapping("/GetElarreport")
