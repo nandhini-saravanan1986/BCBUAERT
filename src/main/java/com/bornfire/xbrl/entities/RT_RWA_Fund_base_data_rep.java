@@ -160,7 +160,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 			+ "        FULL JOIN Non_FundBase_Single_Expo b\r\n"
 			+ "          ON a.cust_id = b.cust_id\r\n"
 			+ "    )\r\n"
-			+ "    WHERE total_balance / 1000 >= ?2\r\n"
+			+ "    WHERE total_balance / 1000 >= ?2*0.10 \r\n"
 			+ ")\r\n"
 			+ "SELECT\r\n"
 			+ "    COALESCE(g.cust_id,s.Cust_id)                AS cust_id,\r\n"
@@ -216,38 +216,37 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		
 		//Fresh Slippage data Fetching
-		@Query(value="With Total_balance_of_last_year as(Select LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-13)) as Tot_bal_rep_date,\r\n"
-				+ "Nvl(Sum(Balance),1) Total_bal from brf95_rwa_data_fundbased where report_date = LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-13))),\r\n"
+		@Query(value="\r\n"
+				+ "With Total_balance_of_last_year as(Select LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-13)) as Tot_bal_rep_date,\r\n"
+				+ "Nvl(Sum(Balance),1) Total_bal from brf95_rwa_data_fundbased where report_date = LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-13))),\r\n"
 				+ "First_Quater_Npa as(\r\n"
-				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-10)) as First_Qua_Rep_date,Nvl(Sum(Balance),0) First_bal \r\n"
-				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-10))\r\n"
-				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-13))+1 and \r\n"
-				+ "LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-10))),\r\n"
+				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-10)) as First_Qua_Rep_date,Nvl(Sum(Balance),0) First_bal \r\n"
+				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-10))\r\n"
+				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-13))+1 and \r\n"
+				+ "LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-10))),\r\n"
 				+ "Second_Quater_Npa as(\r\n"
-				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-7)) As Second_Qua_Rep_date,Nvl(Sum(Balance),0) Second_bal\r\n"
-				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-7))\r\n"
-				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-10))+1 and \r\n"
-				+ "LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-7))),\r\n"
+				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-7)) As Second_Qua_Rep_date,Nvl(Sum(Balance),0) Second_bal\r\n"
+				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-7))\r\n"
+				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-10))+1 and \r\n"
+				+ "LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-7))),\r\n"
 				+ "Third_Quater as (\r\n"
-				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-4)) As Third_Qua_Rep_date,Nvl(Sum(Balance),0) Third_bal \r\n"
-				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-4))\r\n"
-				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-7))+1 and \r\n"
-				+ "LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-4))),\r\n"
+				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-4)) As Third_Qua_Rep_date,Nvl(Sum(Balance),0) Third_bal \r\n"
+				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-4))\r\n"
+				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-7))+1 and \r\n"
+				+ "LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-4))),\r\n"
 				+ "Final_quater as (\r\n"
-				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-1)) As Final_Qua_Rep_date,Nvl(Sum(Balance),0) Final_bal \r\n"
-				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-1))\r\n"
-				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-4))+1 and \r\n"
-				+ "LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'Q'),-1)))\r\n"
+				+ "Select LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-1)) As Final_Qua_Rep_date,Nvl(Sum(Balance),0) Final_bal \r\n"
+				+ "from brf95_rwa_data_fundbased Where Report_date = LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-1))\r\n"
+				+ "and Rwa_class not in ('STD') and NPA_DATE Between LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-4))+1 and \r\n"
+				+ "LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'),-1)))\r\n"
 				+ "Select Round((e.final_bal+d.third_bal+c.second_bal+b.first_bal)/Total_bal,4)*100 Current_Ratio,\r\n"
 				+ "To_char(a.Tot_bal_rep_date,'Mon - YYYY'),a.Total_bal,\r\n"
 				+ "To_char(b.First_Qua_Rep_date,'Mon - YYYY'),b.First_bal,\r\n"
 				+ "To_char(c.Second_Qua_Rep_date,'Mon - YYYY'),c.Second_bal,\r\n"
 				+ "To_char(d.Third_Qua_Rep_date,'Mon - YYYY'),d.Third_bal,\r\n"
 				+ "To_char(e.Final_Qua_Rep_date,'Mon - YYYY'),e.Final_bal \r\n"
-				+ "from Total_balance_of_last_year a,First_Quater_Npa b,Second_Quater_Npa c,Third_Quater d,Final_quater e\r\n"
-				+ "\r\n"
-				+ "",nativeQuery=true)
-		List<Object[]> Freshslippage();
+				+ "from Total_balance_of_last_year a,First_Quater_Npa b,Second_Quater_Npa c,Third_Quater d,Final_quater e",nativeQuery=true)
+		List<Object[]> Freshslippage(Date Selecteddate);
 		
 		//Sector Calculation
 		@Query(value="With Industrial_asset As (Select ABS(SUM(balance)) As Sector_balance,sector_classification \r\n"
@@ -307,57 +306,63 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 
 		//Real Estate Concentration
 		@Query(value="With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
-				+ "is_acct_real_estate_exp = 'Y' Group by Report_date),\r\n"
-				+ "Date_wise_total_rwa as (\r\n"
-				+ "Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased Group by Report_date),\r\n"
+				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) and is_acct_real_estate_exp = 'Y' Group by Report_date),\r\n"
+				+ "Date_wise_total_rwa as (Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased where \r\n"
+				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) Group by Report_date),\r\n"
 				+ "DateWise_Percen as (Select a.report_date as Report_date,a.Real_estate_total_rwa/b.Total_rwa as Real_Estate_perce\r\n"
 				+ "from DateWise_Real_Estate_RWA a ,Date_wise_total_rwa b \r\n"
 				+ "where a.report_date = b.report_date),\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
 				+ "Select To_char(d.month_end,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) from Current_Year_dates d left join \r\n"
 				+ "DateWise_Percen c on d.month_end = c.Report_date Order by d.month_end asc",nativeQuery=true)
-		List<Object[]> GetCurrentyear_realestate_concen_per();
+		List<Object[]> GetCurrentyear_realestate_concen_per(Date Selecteddate);
 		
 
 		@Query(value="With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
+				+ "Report_date BETWEEN Trunc(?1,'MM') and Last_day(Trunc(?1,'MM')) and\r\n"
 				+ "is_acct_real_estate_exp = 'Y' Group by Report_date),\r\n"
-				+ "Date_wise_total_rwa as (\r\n"
-				+ "Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased Group by Report_date),\r\n"
+				+ "Date_wise_total_rwa as (Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased where \r\n"
+				+ "Report_date BETWEEN Trunc(?1,'MM') and Last_day(Trunc(?1,'MM')) Group by Report_date),\r\n"
 				+ "DateWise_Percen as (Select a.report_date as Report_date,a.Real_estate_total_rwa/b.Total_rwa as Real_Estate_perce\r\n"
 				+ "from DateWise_Real_Estate_RWA a ,Date_wise_total_rwa b \r\n"
 				+ "where a.report_date = b.report_date),\r\n"
-				+ "Current_month_dates as(SELECT TRUNC(SYSDATE, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-				+ "CONNECT BY TRUNC(SYSDATE, 'MM') + (LEVEL - 1) <= LAST_DAY(SYSDATE))\r\n"
+				+ "Current_month_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
 				+ "Select To_char(d.month_dates,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) from Current_month_dates d left join  \r\n"
 				+ "DateWise_Percen c on d.month_dates = c.Report_date order by d.month_dates asc",nativeQuery=true)
-		List<Object[]> GetCurrentMonth_realestate_concen_per();
+		List<Object[]> GetCurrentMonth_realestate_concen_per(Date Selectedreport_date);
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
-				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD' Group by Report_date),\r\n"
+				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD' and \r\n"
+				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )Group by Report_date),\r\n"
 				+ "NonFundbase_provision as (Select Report_date,Sum(LCBG_BALANCE) as NfbBalance from brf95_rwa_data_nonfundbased\r\n"
-				+ "Where class <> 'STD' Group by Report_date),\r\n"
+				+ "Where class <> 'STD' and Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) Group by Report_date),\r\n"
 				+ "Provision_Cover as (Select a.Report_date as Report_date,Round(TOT_PROVISION/((a.Fundbalance+NfbBalance)-FundIntSuspen),4)*100 as Prov_Coverage\r\n"
 				+ "from Fundbase_Provision_data a ,NonFundbase_provision b where a.Report_date = b.Report_date),\r\n"
 				+ "MonthWise_Prov_Cov as(Select * from Provision_Cover),\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
 				+ "Select To_char(a.Month_end,'DD-MM-YYYY'),Nvl(Prov_Coverage,0) from Current_Year_dates a left join Provision_Cover b on a.month_end = b.Report_date\r\n"
 				+ "Order by month_end Asc",nativeQuery=true)
-		List<Object[]> GetCurrentyear_prov_cover();
+		List<Object[]> GetCurrentyear_prov_cover(Date Selecteddate);
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
-				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD' Group by Report_date),\r\n"
+				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD'\r\n"
+				+ "and Report_date Between Trunc(?1,'MM') and Last_day(Trunc(?1,'MM'))Group by Report_date),\r\n"
 				+ "NonFundbase_provision as (Select Report_date,Sum(LCBG_BALANCE) as NfbBalance from brf95_rwa_data_nonfundbased\r\n"
-				+ "Where class <> 'STD' Group by Report_date),\r\n"
+				+ "Where class <> 'STD' and Report_date Between Trunc(?1,'MM') and Last_day(Trunc(?1,'MM')) Group by Report_date),\r\n"
 				+ "Provision_Cover as (Select a.Report_date as Report_date,Round(TOT_PROVISION/((a.Fundbalance+NfbBalance)-FundIntSuspen),4)*100 as Prov_Coverage\r\n"
 				+ "from Fundbase_Provision_data a ,NonFundbase_provision b where a.Report_date = b.Report_date),\r\n"
 				+ "MonthWise_Prov_Cov as(Select * from Provision_Cover),\r\n"
-				+ "Current_month_dates as(SELECT TRUNC(SYSDATE, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-				+ "CONNECT BY TRUNC(SYSDATE, 'MM') + (LEVEL - 1) <= LAST_DAY(SYSDATE))\r\n"
+				+ "Current_month_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
 				+ "Select To_char(a.month_dates,'DD-MM-YYYY'),Nvl(Prov_Coverage,0) from Current_month_dates a \r\n"
-				+ "left join Provision_Cover b on a.month_dates = b.Report_date\r\n"
-				+ "Order by month_dates Asc",nativeQuery=true)
-		List<Object[]> GetCurrentmonth_prov_cover();
+				+ "left join Provision_Cover b on a.month_dates = b.Report_date Order by month_dates Asc",nativeQuery=true)
+		List<Object[]> GetCurrentmonth_prov_cover(Date Selecteddate);
 	
 }

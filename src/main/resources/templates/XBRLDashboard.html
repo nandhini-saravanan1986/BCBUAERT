@@ -353,7 +353,7 @@
 			var labelnameselected = a.getAttribute("setlabelname");
 			var labelsrlno = a.getAttribute("setlabelsrlno");
 			var labelReport_date = a.getAttribute("setreport_date");
-
+			
 			Selectedmatrixlabel = labelsrlno;
 			document.getElementById("Analyticsheadername").innerHTML = labelnameselected;
 
@@ -382,7 +382,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10,50);
+						Initiatemonthlychart(labels, dataValues, 10, 50);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
@@ -390,28 +390,28 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10,50);
+						Initiatedailychart(labels, dataValues, 10, 50);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
-			} 
-			else if (labelsrlno === "4") {
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+			} else if (labelsrlno === "4") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5,50);
+						Initiatemonthlychart(labels, dataValues, 5, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5,50);
+						Initiatedailychart(labels, dataValues, 5, 50);
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
@@ -423,7 +423,7 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10,100);
+						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
@@ -431,26 +431,26 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10,100);
+						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 			} else if (labelsrlno === "1") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5,50);
+						Initiatemonthlychart(labels, dataValues, 5, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5,50);
+						Initiatedailychart(labels, dataValues, 5, 50);
 					});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
@@ -458,7 +458,7 @@
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
-					})
+				})
 					.then(response => {
 						if (!response.ok) {
 							throw new Error("HTTP error " + response.status);
@@ -496,13 +496,13 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (labelsrlno === "2") {
-				
+
 
 				var trHTML = "";
 				document.getElementById("Groupexposurebody").innerHTML = trHTML;
 
-				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'SingleGroupExposure'+'&Tier1capital='
-				+Curr_Tier_1_capital, {
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'SingleGroupExposure' + '&Tier1capital='
+					+ Curr_Tier_1_capital, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -530,8 +530,8 @@
 								"<td>" + (data[6] + '%' || "") + "</td>" +
 								"</tr>";
 						});
-						
-						document.getElementById("Tier_1_capital").textContent =formatNumber(Curr_Tier_1_capital);
+
+						document.getElementById("Tier_1_capital").textContent = formatNumber(Curr_Tier_1_capital);
 
 						// Replace body content
 						document.getElementById("Groupexposurebody").innerHTML = trHTML;
@@ -543,12 +543,12 @@
 
 				document.querySelector(".GroupExposuredetail").style.display = "block";
 			} else if (labelsrlno === "10") {
-				const Report_dateSelected = '30-09-2025';
+				
 
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
 
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposuresummarydata', {
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Exposuresummarydata', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -584,8 +584,8 @@
 				document.querySelector(".CountryExposuredetail").style.display = "grid";
 
 			} else if (labelsrlno === "9") {
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Mortageloanappetite', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Mortageloanappetite', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -618,20 +618,20 @@
 					});
 				//Mortgage loan Graph api
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 2,20);
+						Initiatemonthlychart(labels, dataValues, 2, 20);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 2,20);
+						Initiatedailychart(labels, dataValues, 2, 20);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
@@ -641,9 +641,9 @@
 				document.querySelector(".Mortageloan_block").style.display = "grid";
 			} else if (labelsrlno === "7") {
 
-				const Report_dateSelected = '30-09-2025'; // But for this Fetching backend query didn't use date just for api i am placing the date
+				
 
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'FreshslippageQoQ', {
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'FreshslippageQoQ', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -697,8 +697,8 @@
 
 			} else if (labelsrlno === "11") {
 
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Industry', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Industry', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -734,8 +734,8 @@
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "12") {
 
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Trading', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Trading', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -771,8 +771,8 @@
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 
 			} else if (labelsrlno === "13") {
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Services', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -807,8 +807,8 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "14") {
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Banks', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -843,8 +843,8 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "15") {
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Real_Estate', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Real_Estate', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -879,8 +879,8 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "16") {
-				const Report_dateSelected = '30-09-2025';
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Sector_Others', {
+				
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Others', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -914,30 +914,30 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-			}else if(labelsrlno === "3"){
-				
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+			} else if (labelsrlno === "3") {
+
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5,50);
+						Initiatemonthlychart(labels, dataValues, 5, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5,50);
+						Initiatedailychart(labels, dataValues, 5, 50);
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				
+
 			} else if (labelsrlno === "8") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -946,7 +946,7 @@
 						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -956,8 +956,8 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
-			}else if(labelsrlno === "24"){
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+			} else if (labelsrlno === "24") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -966,7 +966,7 @@
 						Initiatemonthlychart(labels, dataValues, 200, 2000);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1015,8 +1015,8 @@
 			}
 			
 			else if (labelsrlno === "46") {
-				alert(labelReport_date);
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -1025,7 +1025,7 @@
 						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1401,7 +1401,7 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
-			}else {
+			} else {
 				alert('Sorry invalid operation selected')
 			}
 		}
@@ -1427,16 +1427,135 @@
 				maximumFractionDigits: 0
 			});
 		}
+		
+		
+		function formatDecimalValue(value) {
+		    if (value === null || value === undefined || value === "") {
+		        return "0.00";
+		    }
 
+		    const num = Number(value);
+
+		    if (isNaN(num)) {
+		        return "00.00";
+		    }
+
+		    return num.toFixed(2);
+		}
+		
+		function formatDateForInput(dateValue) {
+		    if (!dateValue) return "";
+
+		    const d = new Date(dateValue);
+		    if (isNaN(d)) return "";
+
+		    const year  = d.getFullYear();
+		    const month = String(d.getMonth() + 1).padStart(2, '0');
+		    const day   = String(d.getDate()).padStart(2, '0');
+
+		    return `${year}-${month}-${day}`;
+		}
+
+
+		function onDateChange(input) {
+			const selectedDate = input.value;
+			const sNo = input.dataset.sno;
+			const label = input.dataset.label;
+			var trHTML = "";
+			document.getElementById("Matrixtablebody").innerHTML = trHTML;
+
+			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo+'&MatrixLabel'+
+			label, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("HTTP error " + response.status);
+					}
+					return response.json();
+				})
+				.then(list => {
+					trHTML = "";
+
+					// Use plain JS loop; you already use jQuery only for DOM
+					list.forEach(function (data) {
+						const statusText = data.status === 'Y' ? 'Within limit' : 'Breach';
+						const statusColor = data.status === 'Y' ? 'greenyellow' : 'coral';
+
+
+						trHTML += `
+						        <tr style="font-size: small;">
+						            <td>${data.s_no ?? ""}</td>
+
+						            <td class="truncate">
+						                <a href="#"
+						                   onclick="Getanalyticaldata(this);"
+						                   setlabelname="${data.matrix_label ?? ""}"
+						                   setlabelsrlno="${data.s_no ?? ""}"
+										   setreport_date="${data.report_date ?? ""}">
+						                   ${data.matrix_label ?? ""}
+						                </a>
+						            </td>
+
+						            <td>${data.guidelines_or_policy ?? ""}</td>
+
+						            <!-- Limit -->
+						            <td style="text-align: center;">
+						                <span class="badge-status">
+						                    <span class="limit-value">
+						                        ${formatDecimalValue(data.limit_assigned) ?? "0.00"}%
+						                    </span>
+						                </span>
+						            </td>
+
+						            <!-- Today's Position -->
+						            <td style="text-align: center;">
+						                <span class="badge-status">
+						                    <span class="position-value">
+						                        ${formatDecimalValue(data.position_of_matrix) ?? "0.00"}%
+						                    </span>
+						                </span>
+						            </td>
+
+						            <!-- Date -->
+						            <td style="text-align: center;">
+						                <input class="badge-status"
+						                       type="date"
+						                       value="${formatDateForInput(data.report_date) ?? ""}"
+						                       data-sno="${data.s_no ?? ""}"
+						                       data-label="${data.matrix_label ?? ""}"
+						                       onchange="onDateChange(this)">
+						            </td>
+
+						            <!-- Status -->
+						            <td class="status-cell"
+						                style="background-color:${statusColor};">
+						                ${statusText}
+						            </td>
+						        </tr>`;
+					});
+
+					// Replace body content
+					document.getElementById("Matrixtablebody").innerHTML = trHTML;
+				})
+				.catch(error => {
+					alert("Error fetching exposure data: " + error.message);
+					$("#invalidfile").modal("toggle");
+				});
+
+		}
 
 
 		document.addEventListener("DOMContentLoaded", function () {
 
-			Initiatemonthlychart(labels, dataValues, 10,100);
-			Initiatedailychart(labels, dataValues, 10,100);
+			Initiatemonthlychart(labels, dataValues, 10, 100);
+			Initiatedailychart(labels, dataValues, 10, 100);
 		});
 
-		function Initiatemonthlychart(labels, dataValues, CalculatedStepSize,yaxismaxsize) {
+		function Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
 			const ctx = document.getElementById("Linechartformonthlyreport");
 			if (!ctx) return;
 
@@ -1502,7 +1621,7 @@
 									top: 8    // space between labels and title
 								}
 							}
-							
+
 						},
 						y: {
 							beginAtZero: true,
@@ -1525,7 +1644,7 @@
 		}
 
 		///Progressing chart function for currenct Month
-		function Initiatedailychart(labels, dataValues, CalculatedStepSize,yaxismaxsize) {
+		function Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
 			const ctx = document.getElementById("Linechartfordailyreport");
 			if (!ctx) return;
 
@@ -1633,7 +1752,7 @@
 								<th>Status</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="Matrixtablebody">
 							<tr style="font-size: small;" th:each="Matrixlist : ${Matrixlistdata}">
 
 								<td th:text="${Matrixlist.s_no}">1</td>
@@ -1650,7 +1769,7 @@
 								<td style="text-align: center;">
 									<span class="badge-status">
 										<span
-											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 1, 'COMMA', 2, 'POINT')}">0.00%</span>
+											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 2, 'COMMA', 2, 'POINT')}">0.00%</span>
 									</span>
 								</td>
 
@@ -1658,16 +1777,16 @@
 								<td style="text-align: center;">
 									<span class="badge-status">
 										<span
-											th:text="${#numbers.formatDecimal(Matrixlist.position_of_matrix, 1, 'COMMA', 2, 'POINT')}">0.00%</span>
+											th:text="${#numbers.formatDecimal(Matrixlist.position_of_matrix, 2, 'COMMA', 2, 'POINT')}">0.00%</span>
 									</span>
 								</td>
 
 								<!-- Date -->
 								<td style="text-align: center;">
-									<span class="badge-status">
 
-										<span th:text="${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')}"></span>
-									</span>
+									<input class="badge-status" type="date" th:attr="data-sno=${Matrixlist.s_no},
+										data-label=${Matrixlist.matrix_label}" onchange="onDateChange(this)"
+										th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
 								</td>
 								<th:block th:switch="${Matrixlist.status}">
 									<td th:case="'Y'" style="background-color: greenyellow;">Within limit</td>
@@ -2010,44 +2129,45 @@
 							</tbody>
 						</table>
 					</div>
-					
-				<!--Net Overnight position Noop calculation-->
 
-				<div class="Netovernight_noop" style="display: none;">
-					<table class="table refund-table align-middle mb-0">
-						<thead>
-							<tr>
-								<th colspan="2" id="Netovernight_noop_table_name" style="text-align: center;">Table Name
-								</th>
-							</tr>
-						</thead>
-						<tbody id="Netovernight_noop_table_body">
-							<tr>
-								<td>Over Bought In (AED)</td>
-								<td id="OVER_BOUGHT_AMOUNT">0.00</td>
-							</tr>
-							<tr>
-								<td>Over Sold In (AED)</td>
-								<td id="OVER_SOLD_AMOUNT">0.00</td>
-							</tr>
-							<tr>
-								<td>Noop Amount in INR</td>
-								<td id="NOOP_AMOUNT_IN_INR">0.00</td>
-							</tr>
-							<tr>
-								<td>Limit Amount in INR</td>
-								<td id="LIMIT_AMOUNT_IN_INR">0.00</td>
-							</tr>
-							<tr>
-								<td>Headroom Amount Available in INR</td>
-								<td id="HEADROOM_AVAL_AMOUNT_IN_INR">0.00</td>
-							</tr>
-							
-							
-						</tbody>
-					</table>
-				</div>
-				
+					<!--Net Overnight position Noop calculation-->
+
+					<div class="Netovernight_noop" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="2" id="Netovernight_noop_table_name" style="text-align: center;">Table
+										Name
+									</th>
+								</tr>
+							</thead>
+							<tbody id="Netovernight_noop_table_body">
+								<tr>
+									<td>Over Bought In (AED)</td>
+									<td id="OVER_BOUGHT_AMOUNT">0.00</td>
+								</tr>
+								<tr>
+									<td>Over Sold In (AED)</td>
+									<td id="OVER_SOLD_AMOUNT">0.00</td>
+								</tr>
+								<tr>
+									<td>Noop Amount in INR</td>
+									<td id="NOOP_AMOUNT_IN_INR">0.00</td>
+								</tr>
+								<tr>
+									<td>Limit Amount in INR</td>
+									<td id="LIMIT_AMOUNT_IN_INR">0.00</td>
+								</tr>
+								<tr>
+									<td>Headroom Amount Available in INR</td>
+									<td id="HEADROOM_AVAL_AMOUNT_IN_INR">0.00</td>
+								</tr>
+
+
+							</tbody>
+						</table>
+					</div>
+
 				</div>
 
 				<div class="LiquidAssetsRatio" style="display: none;">
