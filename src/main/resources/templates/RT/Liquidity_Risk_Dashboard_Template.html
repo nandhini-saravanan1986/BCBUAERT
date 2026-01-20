@@ -6,403 +6,415 @@ CREATED ON	: 02.07.2025
 PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 -->
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<!-- JavaScript -->
-<!-- jQuery core (required first) -->
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
 
 
-<!-- ✅ Your manually placed jQuery validation
+	<!-- ✅ Your manually placed jQuery validation
 
 	 <script th:src="/jquery/jquery.validate.min.js"></script>
 	 -->
 
-<!-- jQuery (required first) -->
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<!-- jQuery (required first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<!-- ✅ jQuery Validation -->
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- ✅ jQuery Validation -->
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<!-- Bootstrap + Others -->
-<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
-<style>
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+	<style>
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
 
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
-	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
-}
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
 
-/* === ROLE PAGE CUSTOM HEADER === */
-.role-page-header {
-		background-color: #ffffff;
-		padding: 15px 20px;
-		display: flex;
-		/* Added for alignment */
-		justify-content: space-between;
-		/* Added for alignment */
-		align-items: center;
-		/* Added for alignment */
-	}
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
 
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-/* Add Button Styling */
-/* Base Button Style */
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
 
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
+		/* Add Button Styling */
+		/* Base Button Style */
+		.role-add-btn {
+			background: #ffffff;
+			/* default white background */
+			color: #005fa3;
+			/* blue text */
+			border: 2px solid #005fa3;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+			transition: all 0.3s ease;
+		}
 
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
+		/* Hover effect */
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
 
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
-</style>
+		/* Active (clicked or selected) button */
+		.role-add-btn.active {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+			transform: translateY(-1px);
+		}
 
-<style>
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
+		/* Optional: icon spacing */
+		.role-add-btn i {
+			margin-right: 5px;
+		}
+	</style>
 
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
+	<style>
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
 
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
+		/* Full-screen overlay */
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			/* lighter background */
+			backdrop-filter: blur(8px);
+			/* ✅ background blur */
+			-webkit-backdrop-filter: blur(8px);
+			/* Safari support */
+			z-index: 9999;
+			transition: opacity 0.25s ease, visibility 0.25s;
+			opacity: 1;
+			visibility: visible;
+		}
 
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+		/* Hide when not active */
+		.bob-loader[aria-hidden="true"] {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
 
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
+		/* Loader card */
+		.bob-loader-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
 
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
+		/* Flowing bar below logo */
+		.flow-bar {
+			position: relative;
+			width: 200px;
+			/* ✅ increased width */
+			height: 8px;
+			/* slightly thicker for better visibility */
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+		}
 
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
-:
-100%;
-}
-}
-</style>
+		.flow-line {
+			position: absolute;
+			left: -40%;
+			top: 0;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			border-radius: 4px;
+			animation: flowMove 1.2s linear infinite;
+		}
 
-<script>
-							function goBack() {
-							    window.history.back();
-							}
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
 
-							function goForward() {
-							    window.history.forward();
-							}
+			100% {
+				left:
+					100%;
+			}
+		}
+	</style>
 
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
+	<script>
+		function goBack() {
+			window.history.back();
+		}
 
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
+		function goForward() {
+			window.history.forward();
+		}
 
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							</script>
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
 
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #0073e6;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
+			}
 
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
+			}
+		});
+	</script>
 
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #0073e6;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
-	transform: scale(1.1);
-}
-</style>
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-<style>
-.btns {
-	float: right;
-	margin: 5px;
-}
-
-.col-sm-5 {
-	padding-bottom: 15px;
-}
-
-.list-body {
-	padding: 0px;
-}
-
-.error {
-	color: red;
-	padding-left: 10px;
-}
-
-.formline {
-	padding-bottom: 15px;
-}
-
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
-	.show>.btn-primary.dropdown-toggle {
-	color: #fff;
-	background-color: #cc0000;
-	/* corrected to a valid red */
-	border-color: #161617;
-}
-
-#finusertb {
-	width: 460px;
-}
-</style>
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #005bb5;
+			transform: scale(1.1);
+		}
+	</style>
 
 
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
+
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
+
+		.list-body {
+			padding: 0px;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.formline {
+			padding-bottom: 15px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc0000;
+			/* corrected to a valid red */
+			border-color: #161617;
+		}
+
+		#finusertb {
+			width: 460px;
+		}
+	</style>
 
 
-<style>
-.card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-}
 
-.card-header h5 {
-	font-size: 22px;
-	color: #fff;
-	font-weight: 600;
-}
 
-.nav-tabs .nav-link {
-	font-weight: 500;
-	border: 1px solid #dee2e6;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	background-color: #f1f1f1;
-	margin-right: 5px;
-}
+	<style>
+		.card {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
 
-.nav-tabs .nav-link.active {
-	background-color: #ffffff;
-	border-color: #dee2e6 #dee2e6 #ffffff;
-}
+		.card-header h5 {
+			font-size: 22px;
+			color: #fff;
+			font-weight: 600;
+		}
 
-.table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		.nav-tabs .nav-link {
+			font-weight: 500;
+			border: 1px solid #dee2e6;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			background-color: #f1f1f1;
+			margin-right: 5px;
+		}
 
-.table-hover tbody tr:hover {
-	background-color: #f3f6f9;
-}
+		.nav-tabs .nav-link.active {
+			background-color: #ffffff;
+			border-color: #dee2e6 #dee2e6 #ffffff;
+		}
 
-thead th {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+		.table-responsive {
+			border: 1px solid #dee2e6;
+			border-radius: 4px;
+		}
 
-.card-footer {
-	padding: 10px;
-	border-top: 1px solid #ccc;
-}
+		.table-hover tbody tr:hover {
+			background-color: #f3f6f9;
+		}
 
-.btn-xs {
-	padding: 4px 12px;
-	font-size: 14px;
-	border-radius: 4px;
-}
-/* 
+		thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
+
+		.card-footer {
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
+
+		.btn-xs {
+			padding: 4px 12px;
+			font-size: 14px;
+			border-radius: 4px;
+		}
+
+		/* 
 		#usertable th,
 		#usertable td {
 			vertical-align: middle;
@@ -410,94 +422,95 @@ thead th {
 			font-size: 17px;
 			font-family: Verdana, sans-serif;
 		} */
-.fa-edit:hover {
-	color: #28a745;
-	transform: scale(1.1);
-}
+		.fa-edit:hover {
+			color: #28a745;
+			transform: scale(1.1);
+		}
 
-td {
-	border: 1px solid rgb(0, 164, 166);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-</style>
+		td {
+			border: 1px solid rgb(0, 164, 166);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</style>
 
 
-<style>
-.form-group {
-	position: relative;
-	margin-bottom: 1.5rem;
-}
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
 
-.form-control {
-	width: 100%;
-	border: 2px solid #ccc;
-	border-radius: 8px;
-	font-size: 1rem;
-	outline: none;
-	background: transparent;
-	transition: border-color 0.3s ease, padding-top 0.3s ease;
-}
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
 
-.error {
-	color: red;
-	padding-top: 15px;
-}
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
 
-.form-control:focus {
-	border-color: #007bff;
-}
+		.form-control:focus {
+			border-color: #007bff;
+		}
 
-.form-legend {
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	transform: translateY(-50%);
-	font-size: 1rem;
-	color: #aaa;
-	background: white;
-	padding: 0 5px;
-	pointer-events: none;
-	transition: 0.3s ease;
-}
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
 
-/* When input or select is focused or has a value, move the label up */
-.form-control:focus ~.form-legend, .form-control:not(:placeholder-shown)
-	~.form-legend {
-	top: -8px;
-	font-size: 1rem;
-	color: #007bff;
-}
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
 
-/* Hover effect when the input/select is focused */
-.form-control:focus:hover ~.form-legend {
-	color: #0056b3;
-	/* Darker shade of blue on hover */
-}
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
 
-/* Ensure the label returns to the normal color after focus or hover is removed */
-.form-control:not(:focus) ~.form-legend {
-	color: #aaa;
-	/* Normal label color */
-}
-</style>
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
 
-<style>
-/* Red border for invalid inputs */
-input.error, select.error {
-	border: 2px solid red !important;
-}
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
 
-/* Error message style */
-label.error {
-	color: red;
-	font-size: 0.85em;
-	margin-top: 5px;
-	display: block;
-}
-</style>
-<style>
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
+	</style>
+	<style>
 		.role-btn {
 			background: #ffffff;
 			/* default white */
@@ -564,7 +577,7 @@ label.error {
 			background: white;
 		}
 	</style>
-<script>
+	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
 				errorClass: "error", // use 'error' class for styling
@@ -595,7 +608,7 @@ label.error {
 		});
 	</script>
 
-<script>
+	<script>
 
 		function submitForm() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
@@ -627,7 +640,7 @@ label.error {
 
 	</script>
 
-<script th:inline="javascript">
+	<script th:inline="javascript">
 
 
 		function home() {
@@ -716,8 +729,8 @@ label.error {
 		const params = new URLSearchParams(window.location.search);
 		const formmode = params.get('formmode');
 		if (formmode === 'edit') {
-			        return;
-			    }
+			return;
+		}
 		if (formmode === 'list') {
 			handleClick('data');
 		} else {
@@ -785,85 +798,56 @@ label.error {
 <title>RiskInsights</title>
 
 <body>
-	<div class="container-fluid"
-		style="padding-left: 0px; padding-right: 0px;">
+	<div class="container-fluid" style="padding-left: 0px; padding-right: 0px;">
 		<!-- <div class="row"> -->
 
 		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
-		
-			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
-			     th:if="${formmode != 'edit'}">
+
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+			th:if="${formmode != 'edit'}">
 
 
 
-					<!-- LEFT: Buttons -->
-					<div  class="text-left flex-grow-1">
-						<h4>LIQUIDITY RISK DASHBOARD TEMPLATE</h4>
+			<!-- LEFT: Buttons -->
+			<div class="text-left flex-grow-1">
+				<h4>LIQUIDITY RISK DASHBOARD TEMPLATE</h4>
 
-					</div>
-					<div class="d-flex align-items-center gap-2">
+			</div>
+			<div class="d-flex align-items-center gap-2">
 
-						<!-- Data Controls Button -->
-						<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
-							Data Controls</button>
+				<!-- Data Controls Button -->
+				<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
+					Data Controls</button>
 
-						<!-- Template Instructions Button -->
-						<button class="role-btn" id="template-btn" onclick="handleClick('template')">
-							Template Instructions</button>
+				<!-- Template Instructions Button -->
+				<button class="role-btn" id="template-btn" onclick="handleClick('template')">
+					Template Instructions</button>
 
-						<!-- Data Button -->
-						<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
-							Data</button>
-					
-
-					<!-- CENTER: Title -->
+				<!-- Data Button -->
+				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
+					Data</button>
 
 
-					<!-- RIGHT: Download Button -->
-				
-						<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
-							onclick="downloadLiquidityrisk();">
-							<i class="fa fa-download"></i> Download
-						</button>
-					
-						</div>
-				</div>
-	
+				<!-- CENTER: Title -->
+
+
+				<!-- RIGHT: Download Button -->
+
+				<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
+					onclick="downloadLiquidityrisk();">
+					<i class="fa fa-download"></i> Download
+				</button>
+
+			</div>
+		</div>
+
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div  id="tabHeader"  style="padding-right: 10px; padding-left: 20px;"
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
 
-
-
-
-
-			<!-- Tabs -->
-			<!--<div
-				class="role-page-header d-flex justify-content-between align-items-center">
-				<div class="float-left">
-					<button class="role-add-btn" id="datacontrols-btn"
-						onclick="navigateToTab('datacontrols')">Data Controls</button>
-					<button class="role-add-btn" id="template-btn"
-						onclick="handleClick('template')">Template Instructions</button>
-					<button class="role-add-btn" id="data-btn"
-						onclick="navigateToTab('data')">Data</button>
-				</div>
-				<div class="float-right">
-					<button th:if="${formmode} =='list'" type="button"
-						class="role-add-btn" onclick="downloadLiquidityrisk();">
-						<i class="fa fa-download"></i> Download
-					</button>
-
-
-
-				</div>
-			</div>-->
-
-
-			<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
+			<div class="tab-content" id="myTabContent" style="margin-top: 13px;"
 				th:if="${formmode == null or formmode == 'add'}">
-				<div class="tab-pane fade show active" id="datacontrols"
-					role="tabpanel">
+				<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
 
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
@@ -871,24 +855,24 @@ label.error {
 								<div class="card-body">
 
 
-									<input autocomplete="false" name="hidden" type="text"
-										style="display: none;">
+									<input autocomplete="false" name="hidden" type="text" style="display: none;">
 									<div class="form-group" style="border: none">
 										<div class="row formline">
 											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
-												<select id="submittingInstitution"
-													name="submittingInstitution" class="form-control" required>
+											<div class="form-group col-md-2">
+												<select id="submittingInstitution" name="submittingInstitution"
+													class="form-control" required>
 													<option value="">-- Select Institution --</option>
 													<option value="Bank of Baroda">Bank of Baroda</option>
-												</select> <label for="submittingInstitution" class="form-legend">Submitting
+												</select> <label for="submittingInstitution"
+													class="form-legend">Submitting
 													Institution</label>
 											</div>
 
 
 											<div class="col-sm-1"></div>
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<input type="date" id="portfolioDate" name="portfolioDate"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
@@ -899,7 +883,7 @@ label.error {
 										<!-- Contact Employee 1 Name / Title -->
 										<!-- Contact Employee 1 Group -->
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
 													<label style="font-weight: bold; color: #000;">Contact
@@ -907,35 +891,36 @@ label.error {
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Name1"
 														name="contactEmployee1Name1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Name1" class="form-legend">Name</label>
+														placeholder=" " required /> <label for="contactEmployee1Name1"
+														class="form-legend">Name</label>
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Title1"
 														name="contactEmployee1Title1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Title1" class="form-legend">Title</label>
+														placeholder=" " required /> <label for="contactEmployee1Title1"
+														class="form-legend">Title</label>
 												</div>
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee1Email1"
 														name="contactEmployee1Email1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Email1" class="form-legend">Email</label>
+														placeholder=" " required /> <label for="contactEmployee1Email1"
+														class="form-legend">Email</label>
 												</div>
 												<div class="col-sm-3"></div>
 
 											</div>
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
 													<label style="font-weight: bold; color: #000;">Contact
@@ -943,28 +928,29 @@ label.error {
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Name2"
 														name="contactEmployee2Name2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Name2" class="form-legend">Name</label>
+														placeholder=" " required /> <label for="contactEmployee2Name2"
+														class="form-legend">Name</label>
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Title2"
 														name="contactEmployee2Title2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Title2" class="form-legend">Title</label>
+														placeholder=" " required /> <label for="contactEmployee2Title2"
+														class="form-legend">Title</label>
 												</div>
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee2Email2"
 														name="contactEmployee2Email2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Email2" class="form-legend">Email</label>
+														placeholder=" " required /> <label for="contactEmployee2Email2"
+														class="form-legend">Email</label>
 												</div>
 												<div class="col-sm-3"></div>
 
@@ -972,7 +958,7 @@ label.error {
 											<!-- Contact Employee 2 Group -->
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
 													<label style="font-weight: bold; color: #000;">Sign
@@ -982,56 +968,41 @@ label.error {
 
 											<!-- Sign-off CRO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCroName"
-														name="signOffCroName" class="form-control" placeholder=" "
-														required /> <label for="signOffCroName"
-														class="form-legend">CRO Name</label>
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCroName" name="signOffCroName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroName" class="form-legend">CRO Name</label>
 												</div>
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCroEmail"
-														name="signOffCroEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCroEmail"
-														class="form-legend">CRO Email</label>
+												
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCroEmail" name="signOffCroEmail"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroEmail" class="form-legend">CRO Email</label>
 												</div>
-
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCfoName" name="signOffCfoName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoName" class="form-legend">CFO Name</label>
+												</div>
 											</div>
 
 											<!-- Sign-off CFO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCfoName"
-														name="signOffCfoName" class="form-control" placeholder=" "
-														required /> <label for="signOffCfoName"
-														class="form-legend">CFO Name</label>
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoEmail" class="form-legend">CFO Email</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCfoEmail"
-														name="signOffCfoEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCfoEmail"
-														class="form-legend">CFO Email</label>
-												</div>
-
-											</div>
-
-											<!-- Sign-off Head of Treasury Name / Email -->
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffHeadOfTreasuryName"
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
 														of Treasury Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffHeadOfTreasuryEmail"
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
@@ -1039,32 +1010,41 @@ label.error {
 														of Treasury Email</label>
 												</div>
 											</div>
+
+											<!-- Sign-off Head of Treasury Name / Email -->
+											<!--<div class="row formline">
+												<div class="col-sm-1"></div>
+
+
+												<div class="col-sm-1"></div>
+
+											</div>-->
 										</div>
 
 									</div>
 							</form>
-						
-						<div class="card-footer text-center" style="padding-bottom: 18px;">
-							<!-- <button type="button" class="custom-tab-btn" onclick="home();">
+
+							<div class="card-footer text-center" style="padding-bottom: 0px;">
+								<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 								<i class="fa fa-home"></i> Home
 							</button> -->
 
 
-							<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="role-btn"
-                  onclick="submitForm()">Save</button>
+								<button th:if="${formmode == 'null' or formmode == 'add'}" type="button"
+									class="role-btn" onclick="submitForm()">Save</button>
 
-							<!-- <button th:if="${formmode == null or formmode == 'add'}" type="button"
+								<!-- <button th:if="${formmode == null or formmode == 'add'}" type="button"
 								class="custom-tab-btn" onclick="submitForm()">Save</button>
  -->
 
 
-							<!-- <button type="button" class="custom-tab-btn" onclick="back();">
+								<!-- <button type="button" class="custom-tab-btn" onclick="back();">
 								<i class="fa fa-arrow-left"></i> Back
 							</button>
  -->
- </div>
-					</div>
+							</div>
 						</div>
+					</div>
 				</div>
 			</div>
 
@@ -1072,8 +1052,7 @@ label.error {
 
 			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-			<div class="tab-pane fade" id="template" role="tabpanel"
-				th:if="${formmode == null or formmode == 'add'}">
+			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == null or formmode == 'add'}">
 				<p>Templates tabs</p>
 
 				<!--<div class="card-footer text-center"
@@ -1098,16 +1077,9 @@ label.error {
 
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-			<div class="table-responsive"
-				style="max-height: 600px; border: none;"
-				th:if="${formmode == 'list'}">
-				<table id="usertable"
-					class="table table-bordered table-striped table-hover"
-					style="min-width: 2000px;">
-
+			<div class="table-responsive" style="max-height: 450px; border: none;" th:if="${formmode == 'list'}">
+				<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
 					<thead class="thead-light">
-
-
 						<tr>
 							<th rowspan="2" style="text-align: center;width: 100px;">Action</th>
 
@@ -1135,194 +1107,194 @@ label.error {
 						<tr>
 							<!-- Financial Institution Information 8-->
 							<th class="col-report-date th-left">Report Date</th>
-							<th  class="th-left">Bank Name</th>
-							<th  class="th-left">Head Office/Subsidiary</th>
-							<th  class="th-left">Subsidiary</th>
-							<th  class="th-left">Bank Symbol</th>
+							<th class="th-left">Bank Name</th>
+							<th class="th-left">Head Office/Subsidiary</th>
+							<th class="th-left">Subsidiary</th>
+							<th class="th-left">Bank Symbol</th>
 							<th>Conventional/Islamic</th>
 							<th>Local/Foreign</th>
 							<th>CBUAE Tiering</th>
 
 							<!-- Balance sheet Asset Composition 23-->
 							<th class="th-right">Asset Balance Sheet size (AED)</th>
-							<th  class="th-right">Cash(AED)</th>
-							<th  class="th-right">Cash%</th>
-							<th  class="th-right">Due From Central Bank(AED)</th>
-							<th  class="th-right">Due From Central Bank%</th>
-							<th  class="th-right">Due from Head Office/Own Branch/banking Subsidiaries
+							<th class="th-right">Cash(AED)</th>
+							<th class="th-right">Cash%</th>
+							<th class="th-right">Due From Central Bank(AED)</th>
+							<th class="th-right">Due From Central Bank%</th>
+							<th class="th-right">Due from Head Office/Own Branch/banking Subsidiaries
 								(AED)</th>
-							<th  class="th-right">Due from Head Office/Own Branch/banking Subsidiaries (%)
+							<th class="th-right">Due from Head Office/Own Branch/banking Subsidiaries (%)
 							</th>
-							<th  class="th-right">Due from Banks (AED)</th>
-							<th  class="th-right">DuefromBanks (%)</th>
-							<th  class="th-right">Due from Non Banking Financial Institutions (AED)</th>
-							<th  class="th-right">Due from Non Banking Financial Institutions (%)</th>
-							<th  class="th-right">Investment (AED)</th>
-							<th  class="th-right">Investment (%)</th>
-							<th  class="th-right">Other Investments (AED)</th>
-							<th  class="th-right">Other Investments (%)</th>
-							<th  class="th-right">Net Credit portfolio (AED)</th>
-							<th  class="th-right">Net Credit portfolio (%)</th>
-							<th  class="th-right">Trade Bills (AED)</th>
-							<th  class="th-right">Trade Bills (%)</th>
-							<th  class="th-right">Net Fixed Assets & Other Assets (AED)</th>
-							<th  class="th-right">Net Fixed Assets & Other Assets (%)</th>
-							<th  class="th-right">Positive Fair Value of Derivatives (AED)</th>
-							<th  class="th-right">Positive Fair Value of Derivatives (%)</th>
+							<th class="th-right">Due from Banks (AED)</th>
+							<th class="th-right">DuefromBanks (%)</th>
+							<th class="th-right">Due from Non Banking Financial Institutions (AED)</th>
+							<th class="th-right">Due from Non Banking Financial Institutions (%)</th>
+							<th class="th-right">Investment (AED)</th>
+							<th class="th-right">Investment (%)</th>
+							<th class="th-right">Other Investments (AED)</th>
+							<th class="th-right">Other Investments (%)</th>
+							<th class="th-right">Net Credit portfolio (AED)</th>
+							<th class="th-right">Net Credit portfolio (%)</th>
+							<th class="th-right">Trade Bills (AED)</th>
+							<th class="th-right">Trade Bills (%)</th>
+							<th class="th-right">Net Fixed Assets & Other Assets (AED)</th>
+							<th class="th-right">Net Fixed Assets & Other Assets (%)</th>
+							<th class="th-right">Positive Fair Value of Derivatives (AED)</th>
+							<th class="th-right">Positive Fair Value of Derivatives (%)</th>
 
 							<!-- Balance Sheet Liability composition 19-->
-							<th  class="th-right">Liability Balance Sheet size (AED)</th>
-							<th  class="th-right">Due to Central Bank (AED)</th>
-							<th  class="th-right">Due to Central Bank (%)</th>
-							<th  class="th-right">Due to Head Office/Own Branch/banking Subsidiaries (AED)</th>
-							<th  class="th-right">Due to Head Office (%)</th>
-							<th  class="th-right">Due to Banks (AED)</th>
-							<th  class="th-right">Due to Banks (%)</th>
-							<th  class="th-right">Due to Non Banking Financial Institutions (AED)</th>
-							<th  class="th-right">Due to Non Banking Financial Institutions (%)</th>
-							<th  class="th-right">Customer Deposit (AED)</th>
-							<th  class="th-right">Customer Deposit (%)</th>
-							<th  class="th-right">Long Term Funding (AED)</th>
-							<th  class="th-right">Long Term Funding (%)</th>
-							<th  class="th-right">Other Liabilities (AED)</th>
-							<th  class="th-right">Other Liabilities (%)</th>
-							<th  class="th-right">Negative Fair Value of Derivatives (AED)</th>
-							<th  class="th-right">Negative Fair Value of Derivatives (%)</th>
-							<th  class="th-right">Capital & Reserves (AED)</th>
-							<th  class="th-right">Capital & Reserves (%)</th>
+							<th class="th-right">Liability Balance Sheet size (AED)</th>
+							<th class="th-right">Due to Central Bank (AED)</th>
+							<th class="th-right">Due to Central Bank (%)</th>
+							<th class="th-right">Due to Head Office/Own Branch/banking Subsidiaries (AED)</th>
+							<th class="th-right">Due to Head Office (%)</th>
+							<th class="th-right">Due to Banks (AED)</th>
+							<th class="th-right">Due to Banks (%)</th>
+							<th class="th-right">Due to Non Banking Financial Institutions (AED)</th>
+							<th class="th-right">Due to Non Banking Financial Institutions (%)</th>
+							<th class="th-right">Customer Deposit (AED)</th>
+							<th class="th-right">Customer Deposit (%)</th>
+							<th class="th-right">Long Term Funding (AED)</th>
+							<th class="th-right">Long Term Funding (%)</th>
+							<th class="th-right">Other Liabilities (AED)</th>
+							<th class="th-right">Other Liabilities (%)</th>
+							<th class="th-right">Negative Fair Value of Derivatives (AED)</th>
+							<th class="th-right">Negative Fair Value of Derivatives (%)</th>
+							<th class="th-right">Capital & Reserves (AED)</th>
+							<th class="th-right">Capital & Reserves (%)</th>
 
 							<!-- Regulatory Ratios 40-->
-							<th  class="th-right">Short-Term Regulatory Ratio Requirement</th>
-							<th  class="th-right">High-Quality Assets (converted into AED)</th>
-							<th  class="th-right">Outflows over the next 30 calendar days (converted into
+							<th class="th-right">Short-Term Regulatory Ratio Requirement</th>
+							<th class="th-right">High-Quality Assets (converted into AED)</th>
+							<th class="th-right">Outflows over the next 30 calendar days (converted into
 								AED)</th>
-							<th  class="th-right">Inflows over the next 30 calendar days (converted into
+							<th class="th-right">Inflows over the next 30 calendar days (converted into
 								AED))</th>
-							<th  class="th-right">Liquidity Coverage Ratio</th>
-							<th  class="th-right">AED High-Quality Assets</th>
-							<th  class="th-right">AED Outflows over the next 30 calendar days</th>
-							<th  class="th-right">AED Inflows over the next 30 calendar days</th>
-							<th  class="th-right">Liquidity Coverage Ratio (AED)</th>
-							<th  class="th-right">USD High-Quality Assets (AED)</th>
-							<th  class="th-right">USD Outflows over the next 30 calendar days (AED)</th>
-							<th  class="th-right">USD Inflows over the next 30 calendar days (AED)</th>
-							<th  class="th-right">Liquidity Coverage Ratio (USD)</th>
-							<th  class="th-right">ELAR High-Quality Assets (converted into AED)</th>
-							<th  class="th-right">Total Liabilities (converted into AED)</th>
-							<th  class="th-right">Eligible Asset Ratio</th>
-							<th  class="th-right">AED ELAR High-Quality Assets</th>
-							<th  class="th-right">AED Total Liabilities</th>
-							<th  class="th-right">Eligible Asset Ratio (AED)</th>
-							<th  class="th-right">USD ELAR High-Quality Assets (AED)</th>
-							<th  class="th-right">USD Total Liabilities (AED)</th>
-							<th  class="th-right">Eligible Asset Ratio (USD)</th>
-							<th  class="th-right">Available Stable Funding (converted into AED)</th>
-							<th  class="th-right">Required Stable Funding (converted into AED)</th>
-							<th  class="th-right">Net Stable Funding Ratio</th>
-							<th  class="th-right">AED Available Stable Funding</th>
-							<th  class="th-right">AED Required Stable Funding</th>
-							<th  class="th-right">Net Stable Funding Ratio (AED)</th>
-							<th  class="th-right">USD Available Stable Funding (AED)</th>
-							<th  class="th-right">USD Required Stable Funding (AED)</th>
-							<th  class="th-right">Net Stable Funding Ratio (USD)</th>
-							<th  class="th-right">Loans and Advances converted into AED</th>
-							<th  class="th-right">Stable Resources converted into AED</th>
-							<th  class="th-right">Loans to Stable Resources Ratio</th>
-							<th  class="th-right">AED Loans and Advances</th>
-							<th  class="th-right">AED Stable Resources</th>
-							<th  class="th-right">Loans to Stable Resources Ratio (AED)</th>
-							<th  class="th-right">USD Loans and Advances (AED)</th>
-							<th  class="th-right">USD Stable Resources (AED)</th>
-							<th  class="th-right">Loans to Stable Resources Ratio (USD)</th>
+							<th class="th-right">Liquidity Coverage Ratio</th>
+							<th class="th-right">AED High-Quality Assets</th>
+							<th class="th-right">AED Outflows over the next 30 calendar days</th>
+							<th class="th-right">AED Inflows over the next 30 calendar days</th>
+							<th class="th-right">Liquidity Coverage Ratio (AED)</th>
+							<th class="th-right">USD High-Quality Assets (AED)</th>
+							<th class="th-right">USD Outflows over the next 30 calendar days (AED)</th>
+							<th class="th-right">USD Inflows over the next 30 calendar days (AED)</th>
+							<th class="th-right">Liquidity Coverage Ratio (USD)</th>
+							<th class="th-right">ELAR High-Quality Assets (converted into AED)</th>
+							<th class="th-right">Total Liabilities (converted into AED)</th>
+							<th class="th-right">Eligible Asset Ratio</th>
+							<th class="th-right">AED ELAR High-Quality Assets</th>
+							<th class="th-right">AED Total Liabilities</th>
+							<th class="th-right">Eligible Asset Ratio (AED)</th>
+							<th class="th-right">USD ELAR High-Quality Assets (AED)</th>
+							<th class="th-right">USD Total Liabilities (AED)</th>
+							<th class="th-right">Eligible Asset Ratio (USD)</th>
+							<th class="th-right">Available Stable Funding (converted into AED)</th>
+							<th class="th-right">Required Stable Funding (converted into AED)</th>
+							<th class="th-right">Net Stable Funding Ratio</th>
+							<th class="th-right">AED Available Stable Funding</th>
+							<th class="th-right">AED Required Stable Funding</th>
+							<th class="th-right">Net Stable Funding Ratio (AED)</th>
+							<th class="th-right">USD Available Stable Funding (AED)</th>
+							<th class="th-right">USD Required Stable Funding (AED)</th>
+							<th class="th-right">Net Stable Funding Ratio (USD)</th>
+							<th class="th-right">Loans and Advances converted into AED</th>
+							<th class="th-right">Stable Resources converted into AED</th>
+							<th class="th-right">Loans to Stable Resources Ratio</th>
+							<th class="th-right">AED Loans and Advances</th>
+							<th class="th-right">AED Stable Resources</th>
+							<th class="th-right">Loans to Stable Resources Ratio (AED)</th>
+							<th class="th-right">USD Loans and Advances (AED)</th>
+							<th class="th-right">USD Stable Resources (AED)</th>
+							<th class="th-right">Loans to Stable Resources Ratio (USD)</th>
 
 							<!-- Deposit Base Breakdown 6-->
-							<th  class="th-right">Stable Term Deposit (AED)</th>
-							<th  class="th-right">Volatile Term Deposit (AED)</th>
-							<th  class="th-right">Stable CASA (AED)</th>
-							<th  class="th-right">Volatile CASA (AED)</th>
-							<th  class="th-right">Term Deposit (AED)</th>
-							<th  class="th-right">CASA (AED)</th>
+							<th class="th-right">Stable Term Deposit (AED)</th>
+							<th class="th-right">Volatile Term Deposit (AED)</th>
+							<th class="th-right">Stable CASA (AED)</th>
+							<th class="th-right">Volatile CASA (AED)</th>
+							<th class="th-right">Term Deposit (AED)</th>
+							<th class="th-right">CASA (AED)</th>
 
 							<!-- Liquidity Ratio - Stock Approach 7-->
-							<th  class="th-right">Loans / Deposits</th>
-							<th  class="th-right">Stable Term Deposits / Total Assets</th>
-							<th  class="th-right">Volatile Term Deposits / Total Assets</th>
-							<th  class="th-right">Stable CASA / Total Assets</th>
-							<th  class="th-right">Volatile CASA / Total Assets</th>
-							<th  class="th-right">Liquid Assets / Total Deposits</th>
-							<th  class="th-right">Liquid Assets / Total CASA Deposits</th>
+							<th class="th-right">Loans / Deposits</th>
+							<th class="th-right">Stable Term Deposits / Total Assets</th>
+							<th class="th-right">Volatile Term Deposits / Total Assets</th>
+							<th class="th-right">Stable CASA / Total Assets</th>
+							<th class="th-right">Volatile CASA / Total Assets</th>
+							<th class="th-right">Liquid Assets / Total Deposits</th>
+							<th class="th-right">Liquid Assets / Total CASA Deposits</th>
 
 							<!-- Liquidity Ratio - Cash Flow Approach 18 -->
-							<th  class="th-right">6 Month Cumulative Cash Flow Gap converted into AED</th>
-							<th  class="th-right">Total Liabilities excluding Capital, Other items and
+							<th class="th-right">6 Month Cumulative Cash Flow Gap converted into AED</th>
+							<th class="th-right">Total Liabilities excluding Capital, Other items and
 								Off-Balance sheet</th>
-							<th  class="th-right">6 Month Cumulative Cash Flow Gap / Total Liabilities</th>
-							<th  class="th-right">AED 6 Month Cumulative Cash Flow Gap</th>
-							<th  class="th-right">AED Liabilities excluding Capital, Other items and
+							<th class="th-right">6 Month Cumulative Cash Flow Gap / Total Liabilities</th>
+							<th class="th-right">AED 6 Month Cumulative Cash Flow Gap</th>
+							<th class="th-right">AED Liabilities excluding Capital, Other items and
 								Off-Balance sheet</th>
-							<th  class="th-right">6 Month Cumulative AED Cash Flow Gap / AED Total
+							<th class="th-right">6 Month Cumulative AED Cash Flow Gap / AED Total
 								Liabilities</th>
-							<th  class="th-right">USD 6 Month Cumulative Cash Flow Gap</th>
-							<th  class="th-right">USD Liabilities excluding Capital, Other items and
+							<th class="th-right">USD 6 Month Cumulative Cash Flow Gap</th>
+							<th class="th-right">USD Liabilities excluding Capital, Other items and
 								Off-Balance sheet</th>
-							<th  class="th-right">6 Month Cumulative USD Cash Flow Gap / USD Total
+							<th class="th-right">6 Month Cumulative USD Cash Flow Gap / USD Total
 								Liabilities</th>
-							<th  class="th-right">3 Month Cumulative Cash Flow Gap converted into AED</th>
-							<th  class="th-right">3 Month Cumulative Cash Flow Gap/Total Liabilities</th>
-							<th  class="th-right">1 Month Cumulative Cash Flow Gap converted into AED</th>
-							<th  class="th-right">1 Month Cumulative Cash Flow Gap / Total Liabilities</th>
-							<th  class="th-right">7 days Cumulative Cash Flow Gap converted into AED</th>
-							<th  class="th-right">7 days Cumulative Cash Flow Gap / Total Liabilities</th>
-							<th  class="th-right">Unencumbered Liquid Assets (AED)</th>
-							<th  class="th-right">1 Month Cumulative Cash Flow Gap converted into AED</th>
-							<th  class="th-right">Unencumbered Liquid Assets / 1M Cumulative Cash Flow Gap</th>
+							<th class="th-right">3 Month Cumulative Cash Flow Gap converted into AED</th>
+							<th class="th-right">3 Month Cumulative Cash Flow Gap/Total Liabilities</th>
+							<th class="th-right">1 Month Cumulative Cash Flow Gap converted into AED</th>
+							<th class="th-right">1 Month Cumulative Cash Flow Gap / Total Liabilities</th>
+							<th class="th-right">7 days Cumulative Cash Flow Gap converted into AED</th>
+							<th class="th-right">7 days Cumulative Cash Flow Gap / Total Liabilities</th>
+							<th class="th-right">Unencumbered Liquid Assets (AED)</th>
+							<th class="th-right">1 Month Cumulative Cash Flow Gap converted into AED</th>
+							<th class="th-right">Unencumbered Liquid Assets / 1M Cumulative Cash Flow Gap</th>
 
 							<!-- Liquidity Reserve - Composition 10-->
-							<th  class="th-right">Cash and balances with CBUAE, including obligatory
+							<th class="th-right">Cash and balances with CBUAE, including obligatory
 								reserves (subject to reserves being fully withdrawn at any time)</th>
-							<th  class="th-right">Cash and balances with CBUAE (%)</th>
-							<th  class="th-right">Money market placements below 6 months (AED)</th>
-							<th  class="th-right">Money market placements below 6 months (%)</th>
-							<th  class="th-right">Local currency government bonds (AED)</th>
-							<th  class="th-right">Local currency government bonds (%)</th>
-							<th  class="th-right">Unencumbered hard currency government bonds (AED)</th>
-							<th  class="th-right">Unencumbered hard currency government bonds (%)</th>
-							<th  class="th-right">Unencumbered foreign currency government bonds (AED)</th>
+							<th class="th-right">Cash and balances with CBUAE (%)</th>
+							<th class="th-right">Money market placements below 6 months (AED)</th>
+							<th class="th-right">Money market placements below 6 months (%)</th>
+							<th class="th-right">Local currency government bonds (AED)</th>
+							<th class="th-right">Local currency government bonds (%)</th>
+							<th class="th-right">Unencumbered hard currency government bonds (AED)</th>
+							<th class="th-right">Unencumbered hard currency government bonds (%)</th>
+							<th class="th-right">Unencumbered foreign currency government bonds (AED)</th>
 							<th>Unencumbered foreign currency government bonds (%)</th>
 
 							<!-- Asset Concentration 6-->
 
-							<th  class="th-right">Pledge Securities (AED)</th>
-							<th  class="th-right">Total Pledgeable Securities (AED)</th>
-							<th  class="th-right">Pledge Securities / Total Pledgeable Securities</th>
-							<th  class="th-right">Total Complex Financial Instruments (AED)</th>
-							<th  class="th-right">Total Tradable Assets (AED)</th>
-							<th  class="th-right">Total Complex Financial Instruments / Total Tradable
+							<th class="th-right">Pledge Securities (AED)</th>
+							<th class="th-right">Total Pledgeable Securities (AED)</th>
+							<th class="th-right">Pledge Securities / Total Pledgeable Securities</th>
+							<th class="th-right">Total Complex Financial Instruments (AED)</th>
+							<th class="th-right">Total Tradable Assets (AED)</th>
+							<th class="th-right">Total Complex Financial Instruments / Total Tradable
 								Assets</th>
 
 							<!-- Funding Concentration 20-->
-							<th  class="th-right">Top 10 Deposits (AED)</th>
-							<th  class="th-right">Total Deposits (AED)</th>
-							<th  class="th-right">Top 10 Depositors / Total Deposits</th>
-							<th  class="th-right">Interbank borrowing with residual maturity less than 3
+							<th class="th-right">Top 10 Deposits (AED)</th>
+							<th class="th-right">Total Deposits (AED)</th>
+							<th class="th-right">Top 10 Depositors / Total Deposits</th>
+							<th class="th-right">Interbank borrowing with residual maturity less than 3
 								months (AED)</th>
-							<th  class="th-right">Repurchase Agreements with residual maturity less than 3
+							<th class="th-right">Repurchase Agreements with residual maturity less than 3
 								months (AED))</th>
-							<th  class="th-right">Interbank borrowing (AED)</th>
-							<th  class="th-right">Repurchase Agreements (AED)</th>
-							<th  class="th-right">Total Deposits (AED)</th>
-							<th  class="th-right">Long Term Funding (AED)</th>
-							<th  class="th-right">(ST IB Borrowing + ST Repo) / Total Funding</th>
-							<th  class="th-right">Largest Single Depositor (AED)</th>
-							<th  class="th-right">Individual Counterparty / Total Funding</th>
-							<th  class="th-right">Unutilized loans and credit lines (AED)</th>
-							<th  class="th-right">Derivatives Expected Negative Exposure (AED)</th>
-							<th  class="th-right">Derivatives Expected Negative Exposure Proxy (AED)</th>
-							<th  class="th-right">Contingent Liabilities (AED)</th>
-							<th  class="th-right">Contingent Liabilities / Total Funding</th>
-							<th  class="th-right">Top 5 Industry Deposits (AED)</th>
-							<th  class="th-right">Top 5 Industry deposits / Total Deposits</th>
-							<th  class="th-right">Long Term Liabilities / Total Liabilities</th>
+							<th class="th-right">Interbank borrowing (AED)</th>
+							<th class="th-right">Repurchase Agreements (AED)</th>
+							<th class="th-right">Total Deposits (AED)</th>
+							<th class="th-right">Long Term Funding (AED)</th>
+							<th class="th-right">(ST IB Borrowing + ST Repo) / Total Funding</th>
+							<th class="th-right">Largest Single Depositor (AED)</th>
+							<th class="th-right">Individual Counterparty / Total Funding</th>
+							<th class="th-right">Unutilized loans and credit lines (AED)</th>
+							<th class="th-right">Derivatives Expected Negative Exposure (AED)</th>
+							<th class="th-right">Derivatives Expected Negative Exposure Proxy (AED)</th>
+							<th class="th-right">Contingent Liabilities (AED)</th>
+							<th class="th-right">Contingent Liabilities / Total Funding</th>
+							<th class="th-right">Top 5 Industry Deposits (AED)</th>
+							<th class="th-right">Top 5 Industry deposits / Total Deposits</th>
+							<th class="th-right">Long Term Liabilities / Total Liabilities</th>
 						</tr>
 					</thead>
 
@@ -1330,9 +1302,9 @@ label.error {
 						<tr>
 
 							<td style="text-align: center;min-width: 100px;"> <a
-								th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
+									th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
 									<i class="fa fa-edit" style="color: #ff7f27;"></i>
-							</a></td>
+								</a></td>
 
 							<!-- Financial Institution Information 8-->
 
@@ -1347,261 +1319,294 @@ label.error {
 
 
 							<!-- Balance sheet Asset Composition 23-->
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.cashAed, 1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.cashPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.dueFromCentralBankAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueFromCentralBankPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.dueFromHoBranchSubsAed,1,'COMMA',2,'POINT')}"></td>
-							<td   class="th-right" th:text="${data.dueFromHoBranchSubsPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.cashAed, 1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.cashPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.dueFromCentralBankAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.dueFromCentralBankPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.dueFromHoBranchSubsAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.dueFromHoBranchSubsPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueFromBanksAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueFromBanksPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueFromBanksPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueFromNbfiAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueFromNbfiPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueFromNbfiPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.investmentAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.investmentPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.investmentPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.otherInvestmentsAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.otherInvestmentsPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.netCreditPortfolioAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.netCreditPortfolioPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.otherInvestmentsPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.netCreditPortfolioAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.netCreditPortfolioPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.tradeBillsAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.tradeBillsPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.netFixedOtherAssetsAed,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right" th:text="${data.tradeBillsPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.netFixedOtherAssetsAed,1,'COMMA',2,'POINT')}">
+							</td>
 							<td th:text="${data.netFixedOtherAssetsPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.positiveFvDerivativesAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.positiveFvDerivativesPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.positiveFvDerivativesAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.positiveFvDerivativesPercent}"></td>
 
 
 							<!-- Balance Sheet Liability composition 19-->
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.liabilityBalanceSheetSizeAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.liabilityBalanceSheetSizeAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueToCentralBankAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueToCentralBankPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueToCentralBankPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueToHoBranchSubsAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueToHoPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueToHoPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueToBanksAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.dueToBanksPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueToBanksPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueToNbfiAed,1,'COMMA',2,'POINT')}"></td>
-							<td   class="th-right" th:text="${data.dueToNbfiPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.dueToNbfiPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.customerDepositAed,1,'COMMA',2,'POINT')}"></td>
 							<td th:text="${data.customerDepositPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.longTermFundingAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.longTermFundingPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.longTermFundingPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.otherLiabilitiesAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.otherLiabilitiesPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.negativeFvDerivativesAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.negativeFvDerivativesPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.otherLiabilitiesPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.negativeFvDerivativesAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.negativeFvDerivativesPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.capitalReservesAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.capitalReservesPercent}"></td>
+							<td class="th-right" th:text="${data.capitalReservesPercent}"></td>
 
 							<!-- Regulatory Ratios 40-->
-							<td  class="th-right" th:text="${data.shortTermRegRatioReq}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.shortTermRegRatioReq}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.hqAssetsConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.outflows30dAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.inflows30dAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.lcr}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.lcr}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedHqAssets,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedOutflows30d,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedInflows30d,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.aedLcr}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.aedLcr}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdHqAssets,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdOutflows30d,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdInflows30d,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.usdLcr}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.elarHqAssetsConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.totalLiabilitiesConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.eligibleAssetRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.usdLcr}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.elarHqAssetsConvertedAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.totalLiabilitiesConvertedAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.eligibleAssetRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedElarHqAssets,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedTotalLiabilities,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.aedEligiblrAssetRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.aedEligiblrAssetRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdElarHqAssets,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdTotalLiabilities,1,'COMMA',2,'POINT')}"></td>
-							<td   class="th-right"th:text="${data.usdEigibleAssetRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.usdEigibleAssetRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.asfConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.rsfConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.nsfr}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.aedAsf,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.aedRsf,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.aedNsfr}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.usdAsf,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.usdRsf,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.usdNsfr}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.loansAdvancesConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.stableResourcesConvertedAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.loansToStableResourcesRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.nsfr}"></td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.aedAsf,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.aedRsf,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.aedNsfr}"></td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.usdAsf,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.usdRsf,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.usdNsfr}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.loansAdvancesConvertedAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.stableResourcesConvertedAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.loansToStableResourcesRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedLoansAdvances,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.aedStableResources,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.aedLtsRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.aedLtsRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdLoansAdvances,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.usdStableResources,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.usdLtsRatio}"></td>
+							<td class="th-right" th:text="${data.usdLtsRatio}"></td>
 
 							<!-- Deposit Base Breakdown 6-->
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.stableTermDepositAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.volatileTermDepositAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.volatileTermDepositAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.stableCasaAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.volatileCasaAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.termDepositAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.casaAed,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right" th:text="${#numbers.formatDecimal(data.casaAed,1,'COMMA',2,'POINT')}">
+							</td>
 
 							<!-- Liquidity Ratio - Stock Approach 7-->
-							<td  class="th-right" th:text="${data.loansToDepositsRatio}"></td>
-							<td  class="th-right" th:text="${data.stableTermDepositToAssets}"></td>
-							<td  class="th-right" th:text="${data.volatileTermDepositToAssets}"></td>
-							<td  class="th-right" th:text="${data.stableCasaToAssets}"></td>
-							<td  class="th-right" th:text="${data.volatileCasaToAssets}"></td>
-							<td  class="th-right" th:text="${data.liquidAssetsToTotalDeposits}"></td>
-							<td  class="th-right" th:text="${data.liquidAssetsToTotalCasa}"></td>
+							<td class="th-right" th:text="${data.loansToDepositsRatio}"></td>
+							<td class="th-right" th:text="${data.stableTermDepositToAssets}"></td>
+							<td class="th-right" th:text="${data.volatileTermDepositToAssets}"></td>
+							<td class="th-right" th:text="${data.stableCasaToAssets}"></td>
+							<td class="th-right" th:text="${data.volatileCasaToAssets}"></td>
+							<td class="th-right" th:text="${data.liquidAssetsToTotalDeposits}"></td>
+							<td class="th-right" th:text="${data.liquidAssetsToTotalCasa}"></td>
 
 							<!-- Liquidity Ratio - Cash Flow Approach 18 -->
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.sixMonthCashFlowGapAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.totalLiabilitiesExclCapital,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.sixMonthGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.aedSixMonthCashFlowGap,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.aedLiabilitiesExclCapital,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.aedSixMonthGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.usdSixMonthCashFlowGap,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.usdLiabilitiesExclCapital,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.usdSixMonthGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.threeMonthCashFlowGapAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.threeMonthGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.oneMonthCashFlowGapAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.oneMonthGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.sevenDayCashFlowGapAed,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.sixMonthCashFlowGapAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.totalLiabilitiesExclCapital,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.sixMonthGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.aedSixMonthCashFlowGap,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.aedLiabilitiesExclCapital,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.aedSixMonthGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.usdSixMonthCashFlowGap,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.usdLiabilitiesExclCapital,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.usdSixMonthGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.threeMonthCashFlowGapAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.threeMonthGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.oneMonthCashFlowGapAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.oneMonthGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.sevenDayCashFlowGapAed,1,'COMMA',2,'POINT')}">
+							</td>
 							<td th:text="${data.sevenDayGapRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.unencumberedLiquidAssetsAed,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.oneMonthCashFlowGapCopy,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.unencumberedTo1mGapRatio}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.unencumberedLiquidAssetsAed,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.oneMonthCashFlowGapCopy,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.unencumberedTo1mGapRatio}"></td>
 
 							<!-- Liquidity Reserve - Composition 10-->
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.cbuaeCashBalances,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.cbuaeCashBalancesPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.moneyMktPlacementsLt6m,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.moneyMktPlacementsLt6mPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.localCurrencyGovtBonds,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.localCurrencyGovtBondsPercent}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.hardCurrencyGovtBonds,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.hardCurrencyGovtBondsPercent}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.cbuaeCashBalancesPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.moneyMktPlacementsLt6m,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.moneyMktPlacementsLt6mPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.localCurrencyGovtBonds,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.localCurrencyGovtBondsPercent}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.hardCurrencyGovtBonds,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.hardCurrencyGovtBondsPercent}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.foreignGovtBonds,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.foreignGovtBondsPercent}"></td>
+							<td class="th-right" th:text="${data.foreignGovtBondsPercent}"></td>
 
 							<!-- Asset Concentration 6-->
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.pledgeSecurities,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.totalPledgeableSecurities,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.totalPledgeableSecurities,1,'COMMA',2,'POINT')}">
+							</td>
 							<td th:text="${data.pledgeRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.totalComplexFinInstruments,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.totalComplexFinInstruments,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.totalTradableAssets,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.complexToTradableRatio}"></td>
+							<td class="th-right" th:text="${data.complexToTradableRatio}"></td>
 
 							<!-- Funding Concentration 20-->
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.top10Deposits,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.totalDepositsAed1,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.top10ToTotalRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right" th:text="${data.top10ToTotalRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.stIbBorrowingLt3m,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.stRepoLt3m,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.interbankBorrowing,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.repoAgreements,1,'COMMA',2,'POINT')}"></td>
-							<td
-								th:text="${#numbers.formatDecimal(data.totalDepositsAed2,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
+							<td th:text="${#numbers.formatDecimal(data.totalDepositsAed2,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.longTermFundingCopy,1,'COMMA',2,'POINT')}"></td>
 							<td th:text="${data.stIbRepoToTotalFundingRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.largestSingleDepositor,1,'COMMA',2,'POINT')}"></td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.largestSingleDepositor,1,'COMMA',2,'POINT')}">
+							</td>
 							<td th:text="${data.individualCounterpartyToTotalFundingRatio}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.unutilizedLoansCreditLines,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.derivativesExpectedNegExposure,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.derivativesExpectedNegExposureProxy,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right"
-								th:text="${#numbers.formatDecimal(data.contingentLiabilities,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.contingentLiabilitiesToTotalFundingRatio}"></td>
-							<td  class="th-right"
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.unutilizedLoansCreditLines,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.derivativesExpectedNegExposure,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.derivativesExpectedNegExposureProxy,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right"
+								th:text="${#numbers.formatDecimal(data.contingentLiabilities,1,'COMMA',2,'POINT')}">
+							</td>
+							<td class="th-right" th:text="${data.contingentLiabilitiesToTotalFundingRatio}"></td>
+							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.top5IndustryDeposits,1,'COMMA',2,'POINT')}"></td>
-							<td  class="th-right" th:text="${data.top5ToTotalDepositsRatio}"></td>
-							<td  class="th-right" th:text="${data.longTermLiabilitiesToTotalLiabilitiesRatio}"></td>
+							<td class="th-right" th:text="${data.top5ToTotalDepositsRatio}"></td>
+							<td class="th-right" th:text="${data.longTermLiabilitiesToTotalLiabilitiesRatio}"></td>
 
 
 
@@ -1611,7 +1616,7 @@ label.error {
 			</div>
 
 
-			<div class="card-footer text-center"style="padding-bottom: 18px;">
+			<div class="card-footer text-center" style="padding-bottom: 18px;">
 				<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 							<i class="fa fa-home"></i> Home
 						</button> -->
@@ -1633,16 +1638,14 @@ label.error {
 
 	<!-- ---------------- edit starts------------------------------------------------------------ -->
 
-		<div th:if="${formmode}=='edit'" id="liquidity-edit-page">
+	<div th:if="${formmode}=='edit'"  class="liquid-edit-page"  id="liquidity-edit-page">
 		<div class="row">
-			<form th:action="@{/updateliquidityriskdashboard}"
-				th:object="${liquidityriskdashboard}" method="post"
+			<form th:action="@{/updateliquidityriskdashboard}" th:object="${liquidityriskdashboard}" method="post"
 				id="liquidityriskdashboard">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
-					<div
-						class="role-page-header d-flex justify-content-between align-items-center">
-						<div class="role-page-title">
-							<h4>Liquidity Risk Dashboard - Edit</h4>
+					<div class="role-page-header d-flex justify-content-between align-items-center">
+						<div>
+							<h4 style="background-color:000;">Liquidity Risk Dashboard - Edit</h4>
 							<!--<div
 								style="width: 290px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>-->
 
@@ -1655,16 +1658,14 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label"> Date</label>
 							<div class="col-sm-4">
-								<input type="date" class="form-control" th:field="*{reportDate}"
-									required readonly />
+								<input type="date" class="form-control" th:field="*{reportDate}" required readonly />
 							</div>
 							<label class="col-sm-2 col-form-label">Bank Name</label>
 							<div class="col-sm-4">
-								<select class="form-control" th:field="*{bankName}"
-									onchange="handleBankChange(this)">
+								<select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
 									<option value="" disabled selected>-- Select Bank --</option>
-									<option th:each="bank : ${bankList}"
-										th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+									<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+										th:text="${bank.bankName}"></option>
 								</select>
 							</div>
 						</div>
@@ -1674,8 +1675,7 @@ label.error {
 							<label class="col-sm-2 col-form-label">Group / Head
 								Office / Subsidiary</label>
 							<div class="col-sm-4">
-								<select class="form-control"
-									th:field="*{groupHeadOfficeSubsidiary}">
+								<select class="form-control" th:field="*{groupHeadOfficeSubsidiary}">
 									<option value="" disabled selected>-- Select --</option>
 									<option value="Group">Group</option>
 									<option value="Head Office">Head Office</option>
@@ -1700,29 +1700,28 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Bank Symbol</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" th:field="*{bankSymbol}"
-									id="bankSymbol" readonly />
+								<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+									readonly />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{conventionalIslamic}" id="conventionalIslamic"
-									readonly />
+								<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+									id="conventionalIslamic" readonly />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Local/Foreign</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{localForeign}" id="localForeign" readonly />
+								<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+									readonly />
 							</div>
 
 							<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{cbuAeTiering}" id="cbuAeTiering" readonly />
+								<input type="text" class="form-control" th:field="*{cbuAeTiering}" id="cbuAeTiering"
+									readonly />
 							</div>
 						</div>
 
@@ -1730,30 +1729,28 @@ label.error {
 							<label class="col-sm-2 col-form-label">Asset Balance
 								Sheet Size (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{assetBalanceSheetSizeAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Cash (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{cashAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{cashAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Cash (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{cashPercent}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{cashPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due from Central
 								Bank (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromCentralBankAed}" />
 							</div>
 						</div>
@@ -1762,16 +1759,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Due from Central
 								Bank (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromCentralBankPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due from HO
 								Branch/Subs (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromHoBranchSubsAed}" />
 							</div>
 						</div>
@@ -1780,63 +1775,58 @@ label.error {
 							<label class="col-sm-2 col-form-label">Due from HO
 								Branch/Subs (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromHoBranchSubsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due from Banks
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueFromBanksAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueFromBanksAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Due from Banks (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromBanksPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due from NBFI
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueFromNbfiAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueFromNbfiAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Due from NBFI (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueFromNbfiPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Investment (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{investmentAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{investmentAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Investment (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{investmentPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Other Investments
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{otherInvestmentsAed}" />
 							</div>
 						</div>
@@ -1845,16 +1835,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Other Investments
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{otherInvestmentsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Net Credit
 								Portfolio (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{netCreditPortfolioAed}" />
 							</div>
 						</div>
@@ -1863,31 +1851,28 @@ label.error {
 							<label class="col-sm-2 col-form-label">Net Credit
 								Portfolio (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{netCreditPortfolioPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Trade Bills (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{tradeBillsAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{tradeBillsAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Trade Bills (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{tradeBillsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Net Fixed Other
 								Assets (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{netFixedOtherAssetsAed}" />
 							</div>
 						</div>
@@ -1896,16 +1881,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Net Fixed Other
 								Assets (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{netFixedOtherAssetsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Positive FV
 								Derivatives (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{positiveFvDerivativesAed}" />
 							</div>
 						</div>
@@ -1914,16 +1897,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Positive FV
 								Derivatives (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{positiveFvDerivativesPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Liability Balance
 								Sheet Size (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{liabilityBalanceSheetSizeAed}" />
 							</div>
 						</div>
@@ -1932,16 +1913,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Due to Central
 								Bank (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueToCentralBankAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due to Central
 								Bank (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueToCentralBankPercent}" />
 							</div>
 						</div>
@@ -1950,29 +1929,27 @@ label.error {
 							<label class="col-sm-2 col-form-label">Due to
 								HO/Branch/Subs (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueToHoBranchSubsAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due to HO (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueToHoPercent}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueToHoPercent}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Due to Banks (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueToBanksAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueToBanksAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due to Banks (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{dueToBanksPercent}" />
 							</div>
 						</div>
@@ -1980,14 +1957,14 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Due to NBFI (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueToNbfiAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueToNbfiAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Due to NBFI (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{dueToNbfiPercent}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{dueToNbfiPercent}" />
 							</div>
 						</div>
 
@@ -1995,16 +1972,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Customer Deposit
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{customerDepositAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Customer Deposit
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{customerDepositPercent}" />
 							</div>
 						</div>
@@ -2013,16 +1988,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Long Term Funding
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{longTermFundingAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Long Term Funding
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{longTermFundingPercent}" />
 							</div>
 						</div>
@@ -2031,16 +2004,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Other Liabilities
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{otherLiabilitiesAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Other Liabilities
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{otherLiabilitiesPercent}" />
 							</div>
 						</div>
@@ -2049,16 +2020,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Negative FV
 								Derivatives (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{negativeFvDerivativesAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Negative FV
 								Derivatives (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{negativeFvDerivativesPercent}" />
 							</div>
 						</div>
@@ -2067,16 +2036,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Capital Reserves
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{capitalReservesAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Capital Reserves
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{capitalReservesPercent}" />
 							</div>
 						</div>
@@ -2085,16 +2052,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Short Term Reg.
 								Ratio Requirement</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{shortTermRegRatioReq}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">HQ Assets
 								Converted (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{hqAssetsConvertedAed}" />
 							</div>
 						</div>
@@ -2102,85 +2067,83 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Outflows 30D (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{outflows30dAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{outflows30dAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Inflows 30D (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{inflows30dAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{inflows30dAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">LCR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{lcr}" />
+								<input type="number" step="0.01" class="form-control number-24-2" th:field="*{lcr}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED HQ Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedHqAssets}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedHqAssets}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED Outflows 30D</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedOutflows30d}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedOutflows30d}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED Inflows 30D</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedInflows30d}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedInflows30d}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED LCR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedLcr}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedLcr}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD HQ Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdHqAssets}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdHqAssets}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">USD Outflows 30D</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdOutflows30d}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdOutflows30d}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD Inflows 30D</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdInflows30d}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdInflows30d}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">USD LCR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdLcr}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdLcr}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">ELAR HQ Assets
 								Converted (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{elarHqAssetsConvertedAed}" />
 							</div>
 						</div>
@@ -2189,16 +2152,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Liabilities
 								Converted (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalLiabilitiesConvertedAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Eligible Asset
 								Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{eligibleAssetRatio}" />
 							</div>
 						</div>
@@ -2206,8 +2167,7 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED ELAR HQ Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01" class="form-control"
-									th:field="*{aedElarHqAssets}" />
+								<input type="number" step="0.01" class="form-control" th:field="*{aedElarHqAssets}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED Total
@@ -2222,15 +2182,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">AED Eligible Asset
 								Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{aedEligiblrAssetRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD ELAR HQ Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdElarHqAssets}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdElarHqAssets}" />
 							</div>
 						</div>
 
@@ -2238,16 +2197,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">USD Total
 								Liabilities</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdTotalLiabilities}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD Eligible Asset
 								Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdEigibleAssetRatio}" />
 							</div>
 						</div>
@@ -2256,72 +2213,70 @@ label.error {
 							<label class="col-sm-2 col-form-label">ASF Converted
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{asfConvertedAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{asfConvertedAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">RSF Converted
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{rsfConvertedAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{rsfConvertedAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">NSFR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{nsfr}" />
+								<input type="number" step="0.01" class="form-control number-24-2" th:field="*{nsfr}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED ASF</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedAsf}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedAsf}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED RSF</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedRsf}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedRsf}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED NSFR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedNsfr}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedNsfr}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">USD ASF</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdAsf}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdAsf}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD RSF</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdRsf}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdRsf}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">USD NSFR</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdNsfr}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdNsfr}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Loans & Advances
 								Converted (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{loansAdvancesConvertedAed}" />
 							</div>
 						</div>
@@ -2330,16 +2285,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Stable Resources
 								Converted (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stableResourcesConvertedAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Loans to Stable
 								Resources Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{loansToStableResourcesRatio}" />
 							</div>
 						</div>
@@ -2348,15 +2301,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">AED Loans &
 								Advances</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedLoansAdvances}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedLoansAdvances}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED Stable
 								Resources</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{aedStableResources}" />
 							</div>
 						</div>
@@ -2364,15 +2316,15 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED LTS Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{aedLtsRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{aedLtsRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD Loans &
 								Advances</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdLoansAdvances}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdLoansAdvances}" />
 							</div>
 						</div>
 
@@ -2380,15 +2332,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">USD Stable
 								Resources</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdStableResources}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD LTS Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{usdLtsRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{usdLtsRatio}" />
 							</div>
 						</div>
 
@@ -2396,16 +2347,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Stable Term
 								Deposit (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stableTermDepositAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Volatile Term
 								Deposit (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{volatileTermDepositAed}" />
 							</div>
 						</div>
@@ -2413,29 +2362,29 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Stable CASA (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{stableCasaAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{stableCasaAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Volatile CASA
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{volatileCasaAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{volatileCasaAed}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Term Deposit (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{termDepositAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{termDepositAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">CASA (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{casaAed}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{casaAed}" />
 							</div>
 						</div>
 
@@ -2443,16 +2392,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Loans to Deposits
 								Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{loansToDepositsRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Stable Term
 								Deposit to Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stableTermDepositToAssets}" />
 							</div>
 						</div>
@@ -2461,16 +2408,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Volatile Term
 								Deposit to Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{volatileTermDepositToAssets}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Stable CASA to
 								Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stableCasaToAssets}" />
 							</div>
 						</div>
@@ -2479,16 +2424,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Volatile CASA to
 								Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{volatileCasaToAssets}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Liquid Assets to
 								Total Deposits</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{liquidAssetsToTotalDeposits}" />
 							</div>
 						</div>
@@ -2497,16 +2440,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Liquid Assets to
 								Total CASA</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{liquidAssetsToTotalCasa}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">6M Cash Flow Gap
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{sixMonthCashFlowGapAed}" />
 							</div>
 						</div>
@@ -2515,15 +2456,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Liabilities
 								Excl. Capital</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalLiabilitiesExclCapital}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">6M Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{sixMonthGapRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{sixMonthGapRatio}" />
 							</div>
 						</div>
 
@@ -2531,16 +2471,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">AED 6M Cash Flow
 								Gap</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{aedSixMonthCashFlowGap}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">AED Liabilities
 								Excl. Capital</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{aedLiabilitiesExclCapital}" />
 							</div>
 						</div>
@@ -2548,16 +2486,14 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">AED 6M Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{aedSixMonthGapRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD 6M Cash Flow
 								Gap</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdSixMonthCashFlowGap}" />
 							</div>
 						</div>
@@ -2566,15 +2502,13 @@ label.error {
 							<label class="col-sm-2 col-form-label">USD Liabilities
 								Excl. Capital</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdLiabilitiesExclCapital}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">USD 6M Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{usdSixMonthGapRatio}" />
 							</div>
 						</div>
@@ -2583,15 +2517,13 @@ label.error {
 							<label class="col-sm-2 col-form-label">3M Cash Flow Gap
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{threeMonthCashFlowGapAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">3M Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{threeMonthGapRatio}" />
 							</div>
 						</div>
@@ -2600,15 +2532,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">1M Cash Flow Gap
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{oneMonthCashFlowGapAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">1M Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{oneMonthGapRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{oneMonthGapRatio}" />
 							</div>
 						</div>
 
@@ -2616,15 +2547,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">7 Day Cash Flow
 								Gap (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{sevenDayCashFlowGapAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">7 Day Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{sevenDayGapRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{sevenDayGapRatio}" />
 							</div>
 						</div>
 
@@ -2632,16 +2562,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Unencumbered
 								Liquid Assets (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{unencumberedLiquidAssetsAed}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">One Month Cash
 								Flow Gap Copy</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{oneMonthCashFlowGapCopy}" />
 							</div>
 						</div>
@@ -2650,16 +2578,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Unencumbered To 1M
 								Gap Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{unencumberedTo1mGapRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">CBUAE Cash
 								Balances</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{cbuaeCashBalances}" />
 							</div>
 						</div>
@@ -2668,16 +2594,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">CBUAE Cash
 								Balances (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{cbuaeCashBalancesPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Money Mkt
 								Placements &lt; 6M</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{moneyMktPlacementsLt6m}" />
 							</div>
 						</div>
@@ -2686,16 +2610,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Money Mkt
 								Placements &lt; 6M (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{moneyMktPlacementsLt6mPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Local Currency
 								Govt Bonds</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{localCurrencyGovtBonds}" />
 							</div>
 						</div>
@@ -2704,16 +2626,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Local Currency
 								Govt Bonds (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{localCurrencyGovtBondsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Hard Currency Govt
 								Bonds</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{hardCurrencyGovtBonds}" />
 							</div>
 						</div>
@@ -2722,15 +2642,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Hard Currency Govt
 								Bonds (%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{hardCurrencyGovtBondsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Foreign Govt Bonds</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{foreignGovtBonds}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{foreignGovtBonds}" />
 							</div>
 						</div>
 
@@ -2738,15 +2657,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Foreign Govt Bonds
 								(%)</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{foreignGovtBondsPercent}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Pledge Securities</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{pledgeSecurities}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{pledgeSecurities}" />
 							</div>
 						</div>
 
@@ -2754,15 +2672,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Pledgeable
 								Securities</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalPledgeableSecurities}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Pledge Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{pledgeRatio}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{pledgeRatio}" />
 							</div>
 						</div>
 
@@ -2770,16 +2687,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Complex Fin
 								Instruments</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalComplexFinInstruments}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Total Tradable
 								Assets</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalTradableAssets}" />
 							</div>
 						</div>
@@ -2788,15 +2703,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Complex to
 								Tradable Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{complexToTradableRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Top 10 Deposits</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{top10Deposits}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{top10Deposits}" />
 							</div>
 						</div>
 
@@ -2804,15 +2718,13 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Deposits AED
 								1</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01" class="form-control"
-									th:field="*{totalDepositsAed1}" />
+								<input type="number" step="0.01" class="form-control" th:field="*{totalDepositsAed1}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Top 10 to Total
 								Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{top10ToTotalRatio}" />
 							</div>
 						</div>
@@ -2821,15 +2733,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">ST IB Borrowing
 								&lt; 3M</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stIbBorrowingLt3m}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">ST Repo &lt; 3M</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2" th:field="*{stRepoLt3m}" />
+								<input type="number" step="0.01" class="form-control number-24-2"
+									th:field="*{stRepoLt3m}" />
 							</div>
 						</div>
 
@@ -2837,15 +2748,13 @@ label.error {
 							<label class="col-sm-2 col-form-label">Interbank
 								Borrowing</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{interbankBorrowing}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Repo Agreements</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01" class="form-control"
-									th:field="*{repoAgreements}" />
+								<input type="number" step="0.01" class="form-control" th:field="*{repoAgreements}" />
 							</div>
 						</div>
 
@@ -2853,16 +2762,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Total Deposits AED
 								2</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{totalDepositsAed2}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Long Term Funding
 								Copy</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{longTermFundingCopy}" />
 							</div>
 						</div>
@@ -2871,16 +2778,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">ST IB Repo to
 								Total Funding Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{stIbRepoToTotalFundingRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Largest Single
 								Depositor</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{largestSingleDepositor}" />
 							</div>
 						</div>
@@ -2889,16 +2794,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Individual
 								Counterparty to Total Funding Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{individualCounterpartyToTotalFundingRatio}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Unutilized Loans
 								Credit Lines</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{unutilizedLoansCreditLines}" />
 							</div>
 						</div>
@@ -2907,16 +2810,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Derivatives
 								Expected Neg Exposure</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{derivativesExpectedNegExposure}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Derivatives
 								Expected Neg Exposure Proxy</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{derivativesExpectedNegExposureProxy}" />
 							</div>
 						</div>
@@ -2925,16 +2826,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Contingent
 								Liabilities</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{contingentLiabilities}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Contingent
 								Liabilities to Total Funding Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{contingentLiabilitiesToTotalFundingRatio}" />
 							</div>
 						</div>
@@ -2943,16 +2842,14 @@ label.error {
 							<label class="col-sm-2 col-form-label">Top 5 Industry
 								Deposits</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{top5IndustryDeposits}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Top 5 to Total
 								Deposits Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{top5ToTotalDepositsRatio}" />
 							</div>
 						</div>
@@ -2961,8 +2858,7 @@ label.error {
 							<label class="col-sm-2 col-form-label">Long Term
 								Liabilities to Total Liabilities Ratio</label>
 							<div class="col-sm-4">
-								<input type="number" step="0.01"
-									class="form-control number-24-2"
+								<input type="number" step="0.01" class="form-control number-24-2"
 									th:field="*{longTermLiabilitiesToTotalLiabilitiesRatio}" />
 							</div>
 						</div>
@@ -2970,11 +2866,9 @@ label.error {
 
 
 						<div class="card-footer text-center">
-							<button type="submit" class="role-btn"
-								onclick="updateform(event)">Update</button>
-							<a
-								th:href="@{/Liquidity_Risk_Dashboard_Template(formmode='list')}"
-								class="role-btn" style="text-decoration: none;">Cancel</a>
+							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Liquidity_Risk_Dashboard_Template(formmode='list')}" class="role-btn"
+								style="text-decoration: none;">Cancel</a>
 						</div>
 					</div>
 				</div>
@@ -2983,17 +2877,15 @@ label.error {
 	</div>
 
 	<div class="modal fade" id="alert">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
+					<div class="modal-title" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="role-add-btn" onclick="list()"
-						data-dismiss="modal">Close</button>
+					<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -3004,45 +2896,37 @@ label.error {
 		<i class="fa fa-arrow-left"></i>
 	</button>
 	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
+	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
 		<i class="fa fa-arrow-right"></i>
 	</button>
 	<div class="modal fade" id="alert1">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="role-btn" onclick="trade()"
-						data-dismiss="modal">Close</button>
+					<button type="button" class="role-btn" onclick="trade()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
+	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
 			<div class="flow-bar">
 				<div class="flow-line"></div>
 			</div>
 		</div>
 	</div>
 	<!-- Loader Modal (Using your existing loader image) -->
-	<div class="modal fade" id="loader" data-backdrop="static"
-		data-keyboard="false">
+	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content"
-				style="background: transparent; border: none;">
+			<div class="modal-content" style="background: transparent; border: none;">
 				<div class="modal-body text-center">
-					<img th:src="@{/images/loader.gif}"
-						style="width: 150px; height: auto;" alt="Processing...">
+					<img th:src="@{/images/loader.gif}" style="width: 150px; height: auto;" alt="Processing...">
 				</div>
 			</div>
 		</div>
@@ -3054,17 +2938,14 @@ label.error {
 			<div class="modal-content">
 				<!-- Your custom styled header -->
 				<div class="menu-title-header">
-					<div class="modal-title" id="resultModalLabel"
-						style="text-align: center; color: white;">
+					<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
 						<!-- Title will be set by JavaScript -->
 					</div>
 				</div>
-				<div class="modal-body"
-					style="text-align: center; font-size: 1.1rem;">
+				<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 					<p id="resultModalBody"></p>
 					<!-- Your custom styled button -->
-					<button type="button" class="role-btn" onclick="list()"
-						data-dismiss="modal">OK</button>
+					<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">OK</button>
 				</div>
 			</div>
 		</div>
@@ -3072,148 +2953,151 @@ label.error {
 </body>
 <script>
 	$('#usertable').DataTable({
-				scrollX: false,
-				autoWidth: false,
-				paging: true,
-				searching: true,
-				lengthChange: false,
-				ordering: false,
-				pageLength: 100,
-				fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				// Layout: search (left) + pagination (right)
-				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-				// Optional: language tweak for better label
-				language: {
-					search: "Search:"
-				}
-			});
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-			#usertable {
-			    width: 100% !important;
-			    border-collapse: collapse !important;
-			    font-family: Arial, sans-serif !important;
-			    font-size: 12px !important;
-			}
+	#usertable {
+		min-width: 2800px;
+		/* adjust based on columns */
+	}
 
-			/* HEADER */
-			#usertable th {
-			    background-color: #7b6458 !important;   /* brown header */
-			    color: white !important;
-			    text-align: center !important;
-			    padding: 8px 10px !important;
-			    font-weight: bold !important;
-			    border: 1px solid #ffffff !important;   /* thin white separator */
-			    white-space: normal !important;
-			}
+	#usertable {
+		border-collapse: collapse !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
 
-			/* BODY CELLS */
-			#usertable td {
-			    padding: 5px 6px !important;
-			    border: 1px solid #e8e8e8 !important;   /* light grey lines */
-			    background: #fafafa;
-			    white-space: normal !important;
-			}
-
-			/* ROW EVEN/ODD */
-			#usertable tbody tr:nth-child(even) {
-			    background-color: #f4f2ef !important;
-			}
-
-			#usertable tbody tr:nth-child(odd) {
-			    background-color: #ffffff !important;
-			}
-
-			/* SEARCH BOX FIX */
-			.dataTables_filter label {
-			    display: flex !important;
-			    gap: 10px;
-			    align-items: center;
-			}
-
-		.dataTables_filter label {
-			display: flex !important;
-			align-items: center;
-			gap: 8px;
-			/* space between text and input */
-			margin-bottom: 0 !important;
-		}
-
-		.dataTables_filter input {
-			margin-left: 5px;
-			flex: 1;
-		}
-
-		/* === ROLE PAGE CUSTOM HEADER === */
-		.role-page-header {
-			background-color: #ffffff;
-			padding: 15px 20px;
-			display: flex;
-			/* Added for alignment */
-			justify-content: space-between;
-			/* Added for alignment */
-			align-items: center;
-			/* Added for alignment */
-		}
+	/* HEADER */
+	#usertable thead th {
+		background-color: #7b6458;
+		color: #fff;
+		text-align: center;
+		vertical-align: middle;
+		white-space: normal;
+	}
 
 
-	</style>
+	/* BODY CELLS */
+	#usertable td {
+		padding: 5px 6px !important;
+		border: 1px solid #e8e8e8 !important;
+		/* light grey lines */
+		background: #fafafa;
+		white-space: normal !important;
+	}
 
-	<style>
-		
-		/* DataTables pagination container */
-		.dataTables_wrapper .dataTables_paginate {
-		    display: flex;
-		    gap: 3px;
-			margin-left: 4px !important;
-		}
+	/* ROW EVEN/ODD */
+	#usertable tbody tr:nth-child(even) {
+		background-color: #f4f2ef !important;
+	}
 
-		.dataTables_wrapper .dataTables_paginate .paginate_button {
-				    box-sizing: border-box;
-				    display: inline-block;
-				    min-width: 1.5em;
-				    padding: 0.5em !important;
-				    margin-left: -8px;
-				    text-align: center;
-				    text-decoration: none !important;
-				    border: 1px solid transparent;
-				    border-radius: 2px;
-				}
-				.mb-2 {
-				    margin-bottom: -0.5rem !important;
-				}
-				.dataTables_wrapper .dataTables_paginate .page-link {
-				    outline: none !important;
-				    box-shadow: none !important;
-				}
+	#usertable tbody tr:nth-child(odd) {
+		background-color: #ffffff !important;
+	}
 
-		/* Hover ONLY for Previous & Next */
-		.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
-		.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
-		    background-color: #e9ecef !important;
-		    color: rgb(255, 128, 64) !important;
-		}
-		/* Page numbers should NOT hover */
-		.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
-		    background-color: #f5f5f5 !important;
-		    color: #6c757d !important;
-		    cursor: default !important;
-		}
-		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-		    background-color: #ff7f27 !important;
-		    border-color: #ff7f27 !important;
-		    color: #ffffff !important;
-		    cursor: default !important;
-		}
+	/* SEARCH BOX FIX */
+	.dataTables_filter label {
+		display: flex !important;
+		gap: 10px;
+		align-items: center;
+	}
 
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
 
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
+
+	/* === ROLE PAGE CUSTOM HEADER === */
+	.role-page-header {
+		background-color: #ffffff;
+		padding: 15px 20px;
+		display: flex;
+		/* Added for alignment */
+		justify-content: space-between;
+		/* Added for alignment */
+		align-items: center;
+		/* Added for alignment */
+	}
+</style>
+
+<style>
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 3px;
+		margin-left: 4px !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		box-sizing: border-box;
+		display: inline-block;
+		min-width: 1.5em;
+		padding: 0.5em !important;
+		margin-left: -8px;
+		text-align: center;
+		text-decoration: none !important;
+		border: 1px solid transparent;
+		border-radius: 2px;
+	}
+
+	.mb-2 {
+		margin-bottom: -0.5rem !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hover ONLY for Previous & Next */
+	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+		background-color: #e9ecef !important;
+		color: rgb(255, 128, 64) !important;
+	}
+
+	/* Page numbers should NOT hover */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+		background-color: #f5f5f5 !important;
+		color: #6c757d !important;
+		cursor: default !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+		cursor: default !important;
+	}
 </style>
 
 
@@ -3248,135 +3132,152 @@ label.error {
 	}
 </script>
 <script>
-  function showError(input, msg) {
-    let span = document.getElementById(input.id + "-error");
-    if (!span) {
-      span = document.createElement("small");
-      span.id = input.id + "-error";
-      span.className = "text-danger";
-      span.style.display = "block";
-      input.parentNode.appendChild(span);
-    }
-    span.innerText = msg;
-  }
+	function showError(input, msg) {
+		let span = document.getElementById(input.id + "-error");
+		if (!span) {
+			span = document.createElement("small");
+			span.id = input.id + "-error";
+			span.className = "text-danger";
+			span.style.display = "block";
+			input.parentNode.appendChild(span);
+		}
+		span.innerText = msg;
+	}
 
-  function clearError(input) {
-    const span = document.getElementById(input.id + "-error");
-    if (span) span.innerText = "";
-  }
+	function clearError(input) {
+		const span = document.getElementById(input.id + "-error");
+		if (span) span.innerText = "";
+	}
 
-  // Validate VARCHAR2 fields based on vchar-XXX class
-  document.querySelectorAll('[class*="vchar-"]').forEach(input => {
-    const match = input.className.match(/vchar-(\d+)/);
-    if (match) {
-      const maxLength = parseInt(match[1]);
-      input.setAttribute("maxlength", maxLength);
+	// Validate VARCHAR2 fields based on vchar-XXX class
+	document.querySelectorAll('[class*="vchar-"]').forEach(input => {
+		const match = input.className.match(/vchar-(\d+)/);
+		if (match) {
+			const maxLength = parseInt(match[1]);
+			input.setAttribute("maxlength", maxLength);
 
-      input.addEventListener("input", () => {
-        const val = input.value.trim();
-        if (val.length > maxLength) {
-          showError(input, `Max ${maxLength} characters allowed`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
+			input.addEventListener("input", () => {
+				const val = input.value.trim();
+				if (val.length > maxLength) {
+					showError(input, `Max ${maxLength} characters allowed`);
+				} else {
+					clearError(input);
+				}
+			});
+		}
+	});
 
-  // Validate NUMBER(24,2) or other number fields
-  document.querySelectorAll('[class*="number-"]').forEach(input => {
-    const match = input.className.match(/number-(\d+)-(\d+)/);
-    if (match) {
-      const total = parseInt(match[1]);
-      const decimal = parseInt(match[2]);
+	// Validate NUMBER(24,2) or other number fields
+	document.querySelectorAll('[class*="number-"]').forEach(input => {
+		const match = input.className.match(/number-(\d+)-(\d+)/);
+		if (match) {
+			const total = parseInt(match[1]);
+			const decimal = parseInt(match[2]);
 
-      input.addEventListener("input", () => {
-        const value = input.value.trim();
-        const regex = /^\d+(\.\d+)?$/;
+			input.addEventListener("input", () => {
+				const value = input.value.trim();
+				const regex = /^\d+(\.\d+)?$/;
 
-        if (!regex.test(value)) {
-          showError(input, `Only numbers allowed with up to ${decimal} decimal places`);
-          return;
-        }
+				if (!regex.test(value)) {
+					showError(input, `Only numbers allowed with up to ${decimal} decimal places`);
+					return;
+				}
 
-        const [intPart, decPart = ""] = value.split(".");
-        const intLen = intPart.replace(/^0+/, "").length;
-        const decLen = decPart.length;
+				const [intPart, decPart = ""] = value.split(".");
+				const intLen = intPart.replace(/^0+/, "").length;
+				const decLen = decPart.length;
 
-        if (intLen + decLen > total || decLen > decimal) {
-          showError(input, `Max ${total - decimal} digits`);
-        } else {
-          clearError(input);
-        }
-      });
-    }
-  });
+				if (intLen + decLen > total || decLen > decimal) {
+					showError(input, `Max ${total - decimal} digits`);
+				} else {
+					clearError(input);
+				}
+			});
+		}
+	});
 </script>
 
 <style>
-	
 	/* Default header alignment */
 	#usertable thead th {
-	    text-align: center !important;
-	    vertical-align: middle !important;
+		text-align: center !important;
+		vertical-align: middle !important;
 	}
 
 	/* Left aligned headers */
 	#usertable thead th.th-left {
-	    text-align: left !important;
+		text-align: left !important;
 	}
 
 	/* Right aligned headers */
 	#usertable thead th.th-right {
-	    text-align: right !important;
+		text-align: right !important;
+		width: 50px !important;
 	}
-	#usertable td.th-left {
-		    text-align: left !important;
-		}
 
-		/* Right aligned headers */
-		#usertable td.th-right {
-		    text-align: right !important;
-		}
-	#usertable {
-	    table-layout: auto !important;
-	    width: 100% !important;
+	#usertable td.th-left {
+		text-align: left !important;
 	}
+
+	/* Right aligned headers */
+	#usertable td.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable {
+		table-layout: auto !important;
+		width: 100% !important;
+	}
+
 	/* Report Date column – prevent wrap + increase width */
 	#usertable th.col-report-date,
 	#usertable td.col-report-date {
-	    min-width: 120px !important;   /* increase as needed */
-	    white-space: nowrap !important;
-	    text-align: center;
+		min-width: 120px !important;
+		/* increase as needed */
+		white-space: nowrap !important;
+		text-align: center;
 	}
-
 </style>
 <style>
 	body:has(#liquidity-edit-page) {
-	    overflow: hidden;
+		overflow: hidden;
 	}
 
 	#liquidity-edit-page .card-body {
-	    max-height: calc(100vh - 280px);
-	    overflow-y: auto;
-	    overflow-x: hidden;
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	#liquidity-edit-page .card {
-	    margin-bottom: 0;
+		margin-bottom: 0;
 	}
 </style>
 <style>
-
 	.menu-title-header {
-	    background-color: #f7a47c !important; 
-	    color: #ffffff;
-	    text-align: center;
-	    padding: 10px 15px;
-	    border-top-left-radius: 6px;
-	    border-top-right-radius: 6px;
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.liquid-edit-page {
+	    font-family: Arial, sans-serif !important;
+	    font-size: 12px !important;
 	}
 
+	.liquid-edit-page label,
+	.liquid-edit-page input,
+	.liquid-edit-page textarea,
+	.liquid-edit-page button {
+	    font-size: 12px !important;
+	}
+	.modal-title {
+	    background-color: #f7a47c;
+	}
 </style>
 </html>
-
