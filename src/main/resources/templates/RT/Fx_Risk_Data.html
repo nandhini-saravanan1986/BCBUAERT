@@ -362,7 +362,7 @@ left
 #floatingBackBtn, #floatingForwardBtn {
 	position: fixed;
 	top: 50%;
-	background-color: #0073e6;
+	background-color: #F8AC46FF;
 	border: none;
 	color: white;
 	font-size: 20px;
@@ -404,7 +404,7 @@ left
 
 /* Hover animation */
 #floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
+	background-color: #E67E00;
 	transform: scale(1.1);
 }
 </style>
@@ -961,7 +961,9 @@ if (tabId === 'data') {
   window.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
     const formmode = params.get('formmode');
-
+	if (formmode === 'edit') {
+				return;
+			}
     if (formmode === 'list') {
       handleClick('data');
     } else {
@@ -1089,7 +1091,8 @@ if (tabId === 'data') {
 
 			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+			th:if="${formmode != 'edit'}">
 
 
 					<!-- LEFT: Buttons -->
@@ -1164,7 +1167,7 @@ if (tabId === 'data') {
 									<div class="form-group" style="border: none">
 										<div class="row formline">
 											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<select id="submittingInstitution"
 													name="submittingInstitution" class="form-control" required>
 													<option value="">-- Select Institution --</option>
@@ -1176,7 +1179,7 @@ if (tabId === 'data') {
 
 											<div class="col-sm-1"></div>
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<input type="date" id="portfolioDate" name="portfolioDate"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
@@ -1187,10 +1190,10 @@ if (tabId === 'data') {
 										<!-- Contact Employee 1 Name / Title -->
 										<!-- Contact Employee 1 Group -->
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #000;">Contact
 														Details(Employee 1)</label>
 												</div>
 											</div>
@@ -1223,10 +1226,10 @@ if (tabId === 'data') {
 											</div>
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #000;">Contact
 														Details(Employee 2)</label>
 												</div>
 											</div>
@@ -1266,66 +1269,58 @@ if (tabId === 'data') {
 											<!-- Contact Employee 2 Group -->
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Sign
+													<label style="font-weight: bold; color: #000;">Sign
 														Off</label>
 												</div>
 											</div>
 
 											<!-- Sign-off CRO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffCroName"
 														name="signOffCroName" class="form-control" placeholder=" "
 														required /> <label for="signOffCroName"
 														class="form-legend">CRO Name</label>
 												</div>
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffCroEmail"
 														name="signOffCroEmail" class="form-control"
 														placeholder=" " required /> <label for="signOffCroEmail"
 														class="form-legend">CRO Email</label>
 												</div>
-
-											</div>
-
-											<!-- Sign-off CFO Name / Email -->
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffCfoName"
 														name="signOffCfoName" class="form-control" placeholder=" "
 														required /> <label for="signOffCfoName"
 														class="form-legend">CFO Name</label>
 												</div>
 
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCfoEmail"
-														name="signOffCfoEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCfoEmail"
-														class="form-legend">CFO Email</label>
-												</div>
-
 											</div>
+
+											<!-- Sign-off CFO Name / Email -->
+											
 
 											<!-- Sign-off Head of Treasury Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+												<input type="email" id="signOffCfoEmail"
+													name="signOffCfoEmail" class="form-control"
+													placeholder=" " required /> <label for="signOffCfoEmail"
+													class="form-legend">CFO Email</label>
+												</div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffHeadOfTreasuryName"
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
 														of Treasury Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffHeadOfTreasuryEmail"
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
@@ -1345,7 +1340,7 @@ if (tabId === 'data') {
 
 
 						<button th:if="${formmode == 'null' or formmode == 'add'}"
-							type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+							type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1486,7 +1481,7 @@ if (tabId === 'data') {
 
 
 					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+						type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1503,17 +1498,16 @@ if (tabId === 'data') {
 
 		<!------------------ edit starts-------------------------------------------------------------->
 
-		<div th:if="${formmode}=='edit'" style="align-items: center">
+		<div th:if="${formmode}=='edit'"  class="fx-edit-page" style="align-items: center">
 
 			<div class="row">
 				<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}"
 					method="post" id="Fxriskdata">
 					<div class="card" style="margin-left: 15px; margin-right: 15px;">
-						<div
-							class="role-page-header d-flex justify-content-between align-items-center">
-							<!-- style="background-color: rgb(166, 0, 0);" -->
-							<div class="role-page-title">
-								<h4>Fx Risk Data - Edit</h4>
+						
+								<div class="role-page-header d-flex justify-content-between align-items-center">
+														<div>
+								<h4 style="background-color:000;">Fx Risk Data - Edit</h4>
 								
 							</div>
 						</div>
@@ -1680,10 +1674,10 @@ if (tabId === 'data') {
 
 							<!-- Submit -->
 							<div class="card-footer text-center">
-								<button type="submit" class="role-add-btn"
+								<button type="submit" class="role-btn"
 									onclick="updateform(event)">Update</button>
 								<a th:href="@{/Fx_Risk_Data(formmode='list')}"
-									class="role-add-btn" style="text-decoration: none;">Cancel</a>
+									class="role-btn" style="text-decoration: none;">Cancel</a>
 							</div>
 						</div>
 					</div>
@@ -2058,7 +2052,35 @@ function handleBankChange(select) {
     }
   });
 </script>
+<style>
+	.fx-edit-page  {
+		    overflow: hidden;
+		}
+		.fx-edit-page  .card-body {
+		    max-height: calc(100vh - 280px);
+		    overflow-y: auto;
+		    overflow-x: hidden;
+		}
 
+		.fx-edit-page  .card {
+		    margin-bottom: 0;
+		}
+</style>
+<style>
+	.fx-edit-page {
+	    font-family: Arial, sans-serif !important;
+	    font-size: 12px !important;
+	}
 
+	.fx-edit-page label,
+	.fx-edit-page-page input,
+	.fx-edit-page-page textarea,
+	.fx-edit-page-page button {
+	    font-size: 12px !important;
+	}
+	.modal-title {
+	    background-color: #f7a47c;
+	}
+</style>
 
 </html>

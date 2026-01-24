@@ -257,7 +257,7 @@ left
 #floatingBackBtn, #floatingForwardBtn {
 	position: fixed;
 	top: 50%;
-	background-color: #0073e6;
+	background-color: #F8AC46FF;
 	border: none;
 	color: white;
 	font-size: 20px;
@@ -299,7 +299,7 @@ left
 
 /* Hover animation */
 #floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
+	background-color: #E67E00;
 	transform: scale(1.1);
 }
 </style>
@@ -346,13 +346,58 @@ left
 #finusertb {
 	width: 460px;
 }
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
 </style>
 
+<style>
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 3px;
+		margin-left: 4px !important;
+	}
 
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		box-sizing: border-box;
+		display: inline-block;
+		min-width: 1.5em;
+		padding: 0.5em !important;
+		margin-left: -8px;
+		text-align: center;
+		text-decoration: none !important;
+		border: 1px solid transparent;
+		border-radius: 2px;
+	}
+
+	.mb-2 {
+		margin-bottom: -0.5rem !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hover ONLY for Previous & Next */
+	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+		background-color: #e9ecef !important;
+		color: rgb(255, 128, 64) !important;
+	}
+
+	/* Page numbers should NOT hover */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+		background-color: #f5f5f5 !important;
+		color: #6c757d !important;
+		cursor: default !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+		cursor: default !important;
+	}
+</style>
 
 
 <style>
@@ -382,9 +427,13 @@ left
 }
 
 .table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+			border-radius: 4px;
+			max-height: 500px;
+			/* Adjust this height as needed */
+			overflow-y: auto;
+			overflow-x: auto;
+			border: 1px solid #dee2e6;
+		}
 
 .table-hover tbody tr:hover {
 	background-color: #f3f6f9;
@@ -407,13 +456,6 @@ thead th {
 	font-size: 14px;
 	border-radius: 4px;
 }
-
-/* #usertable th, #usertable td {
-	vertical-align: middle;
-	text-align: left;
-	font-size: 17px;
-	font-family: Verdana, sans-serif;
-} */
 
 .fa-edit:hover {
 	color: #28a745;
@@ -719,7 +761,7 @@ $(document).ready(function () {
 
   function handleClick(tabId) {
     // Remove active class from all buttons
-    document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId + '-btn').classList.add('active');
 
     // Hide all panes
@@ -805,9 +847,33 @@ $(document).ready(function () {
 		style="padding-left: 0px; padding-right: 0px;">
 		<!-- 	<div class="row"> -->
 
-		<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div
+					<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+						th:if="${formmode != 'edit'}">
+						<div class="text-left flex-grow-1">
+										<h4>INVESTMENT RISK DATA DASHBOARD TEMPLATE</h4>
+
+									</div>
+									<div
+											class="role-page-header d-flex justify-content-between align-items-center">
+											<div class="float-left">
+												<button class="role-btn" id="datacontrols-btn"
+													onclick="navigateToTab('datacontrols')">Data Controls</button>
+												<button class="role-btn" id="template-btn"
+													onclick="handleClick('template')">Template Instructions</button>
+												<button class="role-btn" id="data-btn"
+													onclick="navigateToTab('data')">Data</button>
+
+											</div>
+											<div class="float-right" >
+												<button th:if="${formmode} =='list'" type="button"
+													class="role-btn" onclick="investmentriskdata();">
+													<i class="fa fa-download"></i> Download
+												</button>
+											</div>
+										</div>
+		<!--<div
 			class="role-page-header d-flex justify-content-between align-items-center"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
 			<div class="float-left role-page-title">
@@ -815,7 +881,7 @@ $(document).ready(function () {
 				<div
 					style="width: 399px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 			</div>
-		</div>
+		</div>-->
 
 
 	</div>
@@ -828,24 +894,7 @@ $(document).ready(function () {
 
 
 		<!-- Tabs -->
-		<div
-			class="role-page-header d-flex justify-content-between align-items-center">
-			<div class="float-left">
-				<button class="role-add-btn" id="datacontrols-btn"
-					onclick="navigateToTab('datacontrols')">Data Controls</button>
-				<button class="role-add-btn" id="template-btn"
-					onclick="handleClick('template')">Template Instructions</button>
-				<button class="role-add-btn" id="data-btn"
-					onclick="navigateToTab('data')">Data</button>
-
-			</div>
-			<div class="float-right" >
-				<button th:if="${formmode} =='list'" type="button"
-					class="role-add-btn" onclick="investmentriskdata();">
-					<i class="fa fa-download"></i> Download
-				</button>
-			</div>
-		</div>
+	
 
 
 
@@ -860,8 +909,7 @@ $(document).ready(function () {
 				<div class="row">
 					<div class="col-sm-12 finuserapply">
 						<form id="nostroForm" method="post" autocomplete="off">
-							<div class="card-body"
-								style="max-height: 450px; overflow-y: auto">
+							<div class="card-body">
 
 
 								<input autocomplete="false" name="hidden" type="text"
@@ -869,7 +917,7 @@ $(document).ready(function () {
 								<div class="form-group" style="border: none">
 									<div class="row formline">
 										<div class="col-sm-1"></div>
-										<div class="form-group col-md-4">
+										<div class="form-group col-md-2" style="margin-top:1%;">
 											<select id="submittingInstitution"
 												name="submittingInstitution" class="form-control" required>
 												<option value="">-- Select Institution --</option>
@@ -881,7 +929,7 @@ $(document).ready(function () {
 
 										<div class="col-sm-1"></div>
 
-										<div class="form-group col-md-4">
+										<div class="form-group col-md-2" style="margin-top:1%;">
 											<input type="date" id="portfolioDate" name="portfolioDate"
 												class="form-control" placeholder=" " required /> <label
 												for="portfolioDate" class="form-legend">Portfolio
@@ -892,15 +940,16 @@ $(document).ready(function () {
 									<!-- Contact Employee 1 Name / Title -->
 									<!-- Contact Employee 1 Group -->
 									<div class="form-group"
-										style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+										style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 										<div class="row formline">
 											<div class="col-sm-12">
-												<label style="font-weight: bold; color: #007B8A;">Contact
+												<label style="font-weight: bold; color: #0D0D0C;">Contact
 													Details(Employee 1)</label>
 											</div>
 										</div>
 										<div class="row formline">
-											<div class="form-group col-md-4">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-3">
 												<input type="text" id="contactEmployee1Name1"
 													name="contactEmployee1Name1" class="form-control"
 													placeholder=" " required /> <label
@@ -908,7 +957,7 @@ $(document).ready(function () {
 											</div>
 
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-3">
 												<input type="text" id="contactEmployee1Title1"
 													name="contactEmployee1Title1" class="form-control"
 													placeholder=" " required /> <label
@@ -917,7 +966,7 @@ $(document).ready(function () {
 
 
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-3">
 												<input type="email" id="contactEmployee1Email1"
 													name="contactEmployee1Email1" class="form-control"
 													placeholder=" " required /> <label
@@ -928,15 +977,16 @@ $(document).ready(function () {
 										</div>
 									</div>
 									<div class="form-group"
-										style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+										style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 										<div class="row formline">
 											<div class="col-sm-12">
-												<label style="font-weight: bold; color: #007B8A;">Contact
+												<label style="font-weight: bold; color: #0D0D0C;">Contact
 													Details(Employee 2)</label>
 											</div>
 										</div>
 										<div class="row formline">
-											<div class="form-group col-md-4">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-3">
 												<input type="text" id="contactEmployee2Name2"
 													name="contactEmployee2Name2" class="form-control"
 													placeholder=" " required /> <label
@@ -944,7 +994,7 @@ $(document).ready(function () {
 											</div>
 
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-3">
 												<input type="text" id="contactEmployee2Title2"
 													name="contactEmployee2Title2" class="form-control"
 													placeholder=" " required /> <label
@@ -953,7 +1003,7 @@ $(document).ready(function () {
 
 
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-3">
 												<input type="email" id="contactEmployee2Email2"
 													name="contactEmployee2Email2" class="form-control"
 													placeholder=" " required /> <label
@@ -965,64 +1015,55 @@ $(document).ready(function () {
 										<!-- Contact Employee 2 Group -->
 									</div>
 									<div class="form-group"
-										style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+										style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 										<div class="row formline">
 											<div class="col-sm-12">
-												<label style="font-weight: bold; color: #007B8A;">Sign
+												<label style="font-weight: bold; color: #0D0D0C;">Sign
 													Off</label>
 											</div>
 										</div>
 
 										<!-- Sign-off CRO Name / Email -->
 										<div class="row formline">
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-3">
 												<input type="text" id="signOffCroName" name="signOffCroName"
 													class="form-control" placeholder=" " required /> <label
 													for="signOffCroName" class="form-legend">CRO Name</label>
 											</div>
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											
+											<div class="form-group col-md-3">
 												<input type="email" id="signOffCroEmail"
 													name="signOffCroEmail" class="form-control" placeholder=" "
 													required /> <label for="signOffCroEmail"
 													class="form-legend">CRO Email</label>
 											</div>
-
+											<div class="form-group col-md-3">
+											<input type="text" id="signOffCfoName" name="signOffCfoName"
+												class="form-control" placeholder=" " required /> <label
+												for="signOffCfoName" class="form-legend">CFO Name</label>
+											</div>
 										</div>
 
 										<!-- Sign-off CFO Name / Email -->
-										<div class="row formline">
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
-												<input type="text" id="signOffCfoName" name="signOffCfoName"
-													class="form-control" placeholder=" " required /> <label
-													for="signOffCfoName" class="form-legend">CFO Name</label>
-											</div>
-
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
-												<input type="email" id="signOffCfoEmail"
-													name="signOffCfoEmail" class="form-control" placeholder=" "
-													required /> <label for="signOffCfoEmail"
-													class="form-legend">CFO Email</label>
-											</div>
-
-										</div>
 
 										<!-- Sign-off Head of Treasury Name / Email -->
 										<div class="row formline">
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-3">
+													<input type="email" id="signOffCfoEmail"
+													name="signOffCfoEmail" class="form-control" placeholder=" "
+													required /> <label for="signOffCfoEmail"
+													class="form-legend">CFO Email</label>
+													</div>
+											<div class="form-group col-md-3">
 												<input type="text" id="signOffHeadOfTreasuryName"
 													name="signOffHeadOfTreasuryName" class="form-control"
 													placeholder=" " required /> <label
 													for="signOffHeadOfTreasuryName" class="form-legend">Head
 													of Treasury Name</label>
 											</div>
-
-											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-3">
 												<input type="email" id="signOffHeadOfTreasuryEmail"
 													name="signOffHeadOfTreasuryEmail" class="form-control"
 													placeholder=" " required /> <label
@@ -1043,7 +1084,7 @@ $(document).ready(function () {
 
 
 					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+						type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn"
@@ -1074,7 +1115,7 @@ $(document).ready(function () {
 
 
 				<button th:if="${formmode == 'null' or formmode == 'add'}"
-					type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+					type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 				<!-- <button type="button" class="custom-tab-btn"
@@ -1104,7 +1145,7 @@ $(document).ready(function () {
 
 			<div class="table-responsive"
 				style="max-height: 400px; overflow: auto; border: none;">
-				<table id="usertable"
+				<table id="usertable" 
 					class="table table-bordered table-striped table-hover"
 					style="min-width: 2000px;" >
 					<thead class="thead-light">
@@ -1220,7 +1261,7 @@ $(document).ready(function () {
 						<tr th:each="data : ${InvestmentRiskDatalist}">
 							<td style="text-align: center;min-width: 100px;"><a
 								th:href="@{'/Investment_Risk_Data_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-									<i class="fa fa-edit" style="color: #007bff;"></i>
+									<i class="fa fa-edit" style="color: #ff7f27;"></i>
 							</a></td>
 							<td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
 							<td th:text="${data.bankName}"></td>
@@ -1408,7 +1449,7 @@ $(document).ready(function () {
 
 
 				<button th:if="${formmode == 'null' or formmode == 'add'}"
-					type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+					type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 			<!-- 	<button type="button" class="custom-tab-btn" onclick="back();">
@@ -1425,17 +1466,15 @@ $(document).ready(function () {
 
 	<!------------------ edit starts-------------------------------------------------------------->
 
-	<div th:if="${formmode}=='edit'" style="align-items: center">
+	<div th:if="${formmode}=='edit'"   class="investment-edit-page"  style="align-items: center;">
 		<div class="row">
 			<form th:action="@{/updateinvestmentriskdatadictionary}"
 				th:object="${investmentriskdatadashboard}" method="post"
 				id="investmentriskdatadashboard">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
-					<div class="role-page-header d-flex justify-content-between align-items-center" >
-						<div class="role-page-title">
+					<div class="role-page-header d-flex justify-content-between align-items-center">
+						<div>
 							<h4>Investment Risk Data Dictionary Template - Edit</h4>
-								<div
-										style="width: 453px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 								
 						</div>
 					</div>
@@ -1463,7 +1502,7 @@ $(document).ready(function () {
 						</div>
 
 						<!-- ─────────────────────────────────────────────────────────────────────────── -->
-						<!-- Row 2: Group Head Office/Subsidiary  |  Subsidiary                         -->
+						<!-- Row 2: Group Head Office/Subsidiary  |  Subsidiary                          -->
 						<!-- ─────────────────────────────────────────────────────────────────────────── -->
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Group Head Office / Subsidiary</label>
@@ -2225,11 +2264,11 @@ $(document).ready(function () {
 					
 
 					<div class="card-footer text-center">
-						<button type="submit" class="role-add-btn"
+						<button type="submit" class="role-btn"
 							onclick="updateform(event)">Update</button>
 						<a
 							th:href="@{/Investment_Risk_Data_Dashboard_Template(formmode='list')}"
-							class="role-add-btn" style="text-decoration: none;">Cancel</a>
+							class="role-btn" style="text-decoration: none;">Cancel</a>
 					</div>
 					
 					
@@ -2307,7 +2346,7 @@ $(document).ready(function () {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="role-add-btn" onclick="list()"
+					<button type="button" class="role-btn" onclick="list()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -2324,7 +2363,7 @@ $(document).ready(function () {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="role-add-btn" onclick="nostro()"
+					<button type="button" class="role-btn" onclick="nostro()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -2380,24 +2419,24 @@ $(document).ready(function () {
 </body>
 <script>
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
 
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
@@ -2429,10 +2468,6 @@ div.dataTables_filter {
 	margin-bottom: 0 !important;
 }
 
-/* Style pagination buttons */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
 
 /* Optional: Style the search input */
 .dataTables_filter input {
@@ -2661,5 +2696,228 @@ function handleBankChange(select) {
 		}
 	});
 </script>
+<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
+
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
+	<style>
+		#usertable {
+			min-width: 2800px;
+			/* adjust based on columns */
+		}
+
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
+
+		/* HEADER */
+		#usertable thead th {
+			background-color: #7b6458;
+			color: #fff;
+			text-align: center;
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
+			vertical-align: middle;
+			white-space: normal;
+		}
+
+
+		/* BODY CELLS */
+		#usertable td {
+			padding: 5px 6px !important;
+			border: 1px solid #e8e8e8 !important;
+			/* light grey lines */
+			background: #fafafa;
+			white-space: normal !important;
+		}
+
+		/* ROW EVEN/ODD */
+		#usertable tbody tr:nth-child(even) {
+			background-color: #f4f2ef !important;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+			background-color: #ffffff !important;
+		}
+
+		/* SEARCH BOX FIX */
+		.dataTables_filter label {
+			display: flex !important;
+			gap: 10px;
+			align-items: center;
+		}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			/* space between text and input */
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
+
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+	</style>
+<style>
+	/* Default header alignment */
+	#usertable thead th {
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
+
+	/* Left aligned headers */
+	#usertable thead th.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable thead th.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable td.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable td.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable {
+		table-layout: auto !important;
+		width: 100% !important;
+	}
+
+	/* Report Date column – prevent wrap + increase width */
+	#usertable th.col-report-date,
+	#usertable td.col-report-date {
+		min-width: 120px !important;
+		/* increase as needed */
+		white-space: nowrap !important;
+		text-align: center;
+	}
+</style>
+<style>
+	.investment-edit-page  {
+		    overflow: hidden;
+		}
+		.investment-edit-page  .card-body {
+		    max-height: calc(100vh - 280px);
+		    overflow-y: auto;
+		    overflow-x: hidden;
+		}
+
+		.investment-edit-page  .card {
+		    margin-bottom: 0;
+		}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.investment-edit-page {
+	    font-family: Arial, sans-serif !important;
+	    font-size: 12px !important;
+	}
+
+	.investment-edit-page label,
+	.investment-edit-page input,
+	.investment-edit-page textarea,
+	.investment-edit-page button {
+	    font-size: 12px !important;
+	}
+	.modal-title {
+	    background-color: #f7a47c;
+	}
+</style>
 
 </html>

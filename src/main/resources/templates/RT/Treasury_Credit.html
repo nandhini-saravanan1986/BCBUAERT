@@ -6,505 +6,514 @@ CREATED ON	: 24.06.2025
 PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 -->
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<!-- JavaScript -->
-<!-- jQuery core (required first) -->
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
 
 
-<!-- ✅ Your manually placed jQuery validation
+	<!-- ✅ Your manually placed jQuery validation
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	 <script th:src="/jquery/jquery.validate.min.js"></script>
 	 -->
 
-<!-- jQuery core (must be loaded first) -->
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<!-- jQuery core (must be loaded first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<!-- ✅ jQuery Validation -->
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- ✅ jQuery Validation -->
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<!-- Bootstrap + Others -->
-<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
-<style>
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+	<style>
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
 
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
-	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
-}
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
 
-/* === ROLE PAGE CUSTOM HEADER === */
-.role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+		}
 
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
 
-/* Add Button Styling */
-/* Base Button Style */
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
+		/* Add Button Styling */
+		/* Base Button Style */
+		.role-add-btn {
+			background: #ffffff;
+			/* default white background */
+			color: #005fa3;
+			/* blue text */
+			border: 2px solid #005fa3;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+			transition: all 0.3s ease;
+		}
 
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
+		/* Hover effect */
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
 
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
+		/* Active (clicked or selected) button */
+		.role-add-btn.active {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+			transform: translateY(-1px);
+		}
 
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
-</style>
+		/* Optional: icon spacing */
+		.role-add-btn i {
+			margin-right: 5px;
+		}
+	</style>
 
-<style>
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
+	<style>
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
 
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
+		/* Full-screen overlay */
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			/* lighter background */
+			backdrop-filter: blur(8px);
+			/* ✅ background blur */
+			-webkit-backdrop-filter: blur(8px);
+			/* Safari support */
+			z-index: 9999;
+			transition: opacity 0.25s ease, visibility 0.25s;
+			opacity: 1;
+			visibility: visible;
+		}
 
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
+		/* Hide when not active */
+		.bob-loader[aria-hidden="true"] {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
 
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+		/* Loader card */
+		.bob-loader-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
 
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
+		/* Flowing bar below logo */
+		.flow-bar {
+			position: relative;
+			width: 200px;
+			/* ✅ increased width */
+			height: 8px;
+			/* slightly thicker for better visibility */
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+		}
 
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
+		.flow-line {
+			position: absolute;
+			left: -40%;
+			top: 0;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			border-radius: 4px;
+			animation: flowMove 1.2s linear infinite;
+		}
 
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
 
+			100% {
+				left:
 
-:
+					100%;
+			}
+		}
+	</style>
 
-100%;
-}
-}
-</style>
+	<script>
+		function goBack() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-<script>
-							function goBack() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.history.back();
+		}
 
-							    window.history.back();
-							}
+		function goForward() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-							function goForward() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.history.forward();
+		}
 
-							    window.history.forward();
-							}
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
 
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
+			}
 
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
+			}
+		});
+	</script>
 
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							</script>
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #F8AC46FF;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #0073e6;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
-	transform: scale(1.1);
-}
-</style>
-
-
-
-<style>
-.btns {
-	float: right;
-	margin: 5px;
-}
-
-.col-sm-5 {
-	padding-bottom: 15px;
-}
-
-.list-body {
-	padding: 0px;
-}
-
-.error {
-	color: red;
-	padding-left: 10px;
-}
-
-.formline {
-	padding-bottom: 15px;
-}
-
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
-	.show>.btn-primary.dropdown-toggle {
-	color: #fff;
-	background-color: #cc0000;
-	/* corrected to a valid red */
-	border-color: #161617;
-}
-
-#finusertb {
-	width: 460px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
-</style>
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #E67E00;
+			transform: scale(1.1);
+		}
+	</style>
 
 
 
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
 
-<style>
-.card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-}
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
 
-.card-header h5 {
-	font-size: 22px;
-	color: #fff;
-	font-weight: 600;
-}
+		.list-body {
+			padding: 0px;
+		}
 
-.nav-tabs .nav-link {
-	font-weight: 500;
-	border: 1px solid #dee2e6;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	background-color: #f1f1f1;
-	margin-right: 5px;
-}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-.nav-tabs .nav-link.active {
-	background-color: #ffffff;
-	border-color: #dee2e6 #dee2e6 #ffffff;
-}
+		.formline {
+			padding-bottom: 15px;
+		}
 
-.table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
 
-.table-hover tbody tr:hover {
-	background-color: #f3f6f9;
-}
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc0000;
+			/* corrected to a valid red */
+			border-color: #161617;
+		}
 
-thead th {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+		#finusertb {
+			width: 460px;
+		}
+	</style>
 
-.card-footer {
-	padding: 10px;
-	border-top: 1px solid #ccc;
-}
 
-.btn-xs {
-	padding: 4px 12px;
-	font-size: 14px;
-	border-radius: 4px;
-}
 
-/* #usertable th, #usertable td {
+
+	<style>
+		.card {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		.card-header h5 {
+			font-size: 22px;
+			color: #fff;
+			font-weight: 600;
+		}
+
+		.nav-tabs .nav-link {
+			font-weight: 500;
+			border: 1px solid #dee2e6;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			background-color: #f1f1f1;
+			margin-right: 5px;
+		}
+
+		.nav-tabs .nav-link.active {
+			background-color: #ffffff;
+			border-color: #dee2e6 #dee2e6 #ffffff;
+		}
+
+		.table-responsive {
+					border-radius: 4px;
+					max-height: 500px;
+					/* Adjust this height as needed */
+					overflow-y: auto;
+					overflow-x: auto;
+					border: 1px solid #dee2e6;
+				}
+
+		.table-hover tbody tr:hover {
+			background-color: #f3f6f9;
+		}
+
+		thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
+
+		.card-footer {
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
+
+		.btn-xs {
+			padding: 4px 12px;
+			font-size: 14px;
+			border-radius: 4px;
+		}
+
+		/* #usertable th, #usertable td {
 	vertical-align: middle;
 	text-align: left;
 	font-size: 17px;
 	font-family: Verdana, sans-serif;
 } */
 
-.fa-edit:hover {
-	color: #28a745;
-	transform: scale(1.1);
-}
+		.fa-edit:hover {
+			color: #28a745;
+			transform: scale(1.1);
+		}
 
-td {
-	border: 1px solid rgb(0, 164, 166);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-</style>
+		td {
+			border: 1px solid rgb(0, 164, 166);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</style>
 
 
-<style>
-.form-group {
-	position: relative;
-	margin-bottom: 1.5rem;
-}
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
 
-.form-control {
-	width: 100%;
-	border: 2px solid #ccc;
-	border-radius: 8px;
-	font-size: 1rem;
-	outline: none;
-	background: transparent;
-	transition: border-color 0.3s ease, padding-top 0.3s ease;
-}
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
 
-.error {
-	color: red;
-	padding-top: 15px;
-}
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
 
-.form-control:focus {
-	border-color: #007bff;
-}
+		.form-control:focus {
+			border-color: #007bff;
+		}
 
-.form-legend {
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	transform: translateY(-50%);
-	font-size: 1rem;
-	color: #aaa;
-	background: white;
-	padding: 0 5px;
-	pointer-events: none;
-	transition: 0.3s ease;
-}
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
 
-/* When input or select is focused or has a value, move the label up */
-.form-control:focus ~.form-legend, .form-control:not(:placeholder-shown)
-	~.form-legend {
-	top: -8px;
-	font-size: 1rem;
-	color: #007bff;
-}
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
 
-/* Hover effect when the input/select is focused */
-.form-control:focus:hover ~.form-legend {
-	color: #0056b3;
-	/* Darker shade of blue on hover */
-}
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
 
-/* Ensure the label returns to the normal color after focus or hover is removed */
-.form-control:not(:focus) ~.form-legend {
-	color: #aaa;
-	/* Normal label color */
-}
-</style>
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
 
-<style>
-/* Red border for invalid inputs */
-input.error, select.error {
-	border: 2px solid red !important;
-}
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
 
-/* Error message style */
-label.error {
-	color: red;
-	font-size: 0.85em;
-	margin-top: 5px;
-	display: block;
-}
-</style>
-<script>
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
+	</style>
+	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
 				errorClass: "error", // use 'error' class for styling
@@ -535,7 +544,7 @@ label.error {
 		});
 	</script>
 
-<script>
+	<script>
 
 		function submitForm() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
@@ -567,7 +576,7 @@ label.error {
 
 	</script>
 
-<script th:inline="javascript">
+	<script th:inline="javascript">
 
 
 		function home() {
@@ -648,7 +657,7 @@ label.error {
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
-		document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
 		document.getElementById(tabId + '-btn').classList.add('active');
 
 		// Hide all panes
@@ -660,7 +669,9 @@ label.error {
 	window.addEventListener('DOMContentLoaded', function () {
 		const params = new URLSearchParams(window.location.search);
 		const formmode = params.get('formmode');
-
+		if (formmode === 'edit') {
+					return;
+				}
 		if (formmode === 'list') {
 			handleClick('data');
 		} else {
@@ -705,7 +716,7 @@ label.error {
 					window.URL.revokeObjectURL(url);
 					document.body.removeChild(a);
 
-					showResultModal('Success', 'The CBUAE_Treasury_Credit_Limit_Management_Data_Template file has been downloaded successfully.');
+					showResultModal('BANK OF BARODA', 'The CBUAE_Treasury_Credit_Limit_Management_Data_Template file has been downloaded successfully.');
 				} else {
 					showResultModal('Information', 'No data was available to create a download.');
 				}
@@ -724,21 +735,36 @@ label.error {
 <title>RiskInsights</title>
 
 <body>
-	<div class="container-fluid"
-		style="padding-left: 0px; padding-right: 0px;">
+	<div class="container-fluid" style="padding-left: 0px; padding-right: 0px;">
 		<!-- <div class="row"> -->
 
-		<div th:insert="XBRLHeaderMenu :: header"></div>
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div
-			class="role-page-header d-flex justify-content-between align-items-center"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-			<div class="float-left role-page-title">
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+			th:if="${formmode != 'edit'}">
+			<div class="text-left flex-grow-1">
 				<h4>TREASURY CREDIT LIMIT MANAGEMENT</h4>
-				<div
-					style="width: 384px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 			</div>
+			<div class="role-page-header d-flex justify-content-between align-items-center">
+				<div class="float-left">
+					<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+						Controls</button>
+					<button class="role-btn" id="template-btn" onclick="handleClick('template')">Template
+						Instructions</button>
+					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
+				</div>
+				<div class="float-right">
+					<!--<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn" onclick="downloadTreasurycredit						
+										<i class="fa fa-download"></i> Download
+									</button>-->
+				</div>
+				<button th:if="${formmode} == 'list'" type="button" class="role-btn" onclick="downloadTreasurycredit()">
+					<i class="fa fa-download"></i> Download
+				</button>
 
+
+
+			</div>
 
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
@@ -750,63 +776,38 @@ label.error {
 
 
 			<!-- Tabs -->
-			<div
-				class="role-page-header d-flex justify-content-between align-items-center"
-				>
-				<div class="float-left">
-					<button class="role-add-btn" id="datacontrols-btn"
-						onclick="navigateToTab('datacontrols')">Data Controls</button>
-					<button class="role-add-btn" id="template-btn"
-						onclick="handleClick('template')">Template Instructions</button>
-					<button class="role-add-btn" id="data-btn"
-						onclick="navigateToTab('data')">Data</button>
-						</div>
-					<div class="float-right" >
-						<!--<button th:if="${formmode} =='list'" type="button" class="custom-tab-btn" onclick="downloadTreasurycredit						
-							<i class="fa fa-download"></i> Download
-						</button>-->
-					</div>
-					<button th:if="${formmode} == 'list'" type="button"
-						class="role-add-btn" onclick="downloadTreasurycredit()">
-						<i class="fa fa-download"></i> Download
-					</button>
 
 
-
-				</div>
-			
 
 
 			<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
 				th:if="${formmode == null or formmode == 'add'}">
-				<div class="tab-pane fade show active" id="datacontrols"
-					role="tabpanel">
+				<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
 
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
 							<form id="nostroForm" method="post" autocomplete="off">
-								<div class="card-body"
-									style="max-height: 450px; overflow-y: auto">
+								<div class="card-body">
 
 
-									<input autocomplete="false" name="hidden" type="text"
-										style="display: none;">
+									<input autocomplete="false" name="hidden" type="text" style="display: none;">
 									<div class="form-group" style="border: none">
 										<div class="row formline">
 											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
-												<select id="submittingInstitution"
-													name="submittingInstitution" class="form-control" required>
+											<div class="form-group col-md-2">
+												<select id="submittingInstitution" name="submittingInstitution"
+													class="form-control" required>
 													<option value="">-- Select Institution --</option>
 													<option value="Bank of Baroda">Bank of Baroda</option>
-												</select> <label for="submittingInstitution" class="form-legend">Submitting
+												</select> <label for="submittingInstitution"
+													class="form-legend">Submitting
 													Institution</label>
 											</div>
 
 
 											<div class="col-sm-1"></div>
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<input type="date" id="portfolioDate" name="portfolioDate"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
@@ -817,72 +818,74 @@ label.error {
 										<!-- Contact Employee 1 Name / Title -->
 										<!-- Contact Employee 1 Group -->
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 1)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Name1"
 														name="contactEmployee1Name1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Name1" class="form-legend">Name</label>
+														placeholder=" " required /> <label for="contactEmployee1Name1"
+														class="form-legend">Name</label>
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Title1"
 														name="contactEmployee1Title1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Title1" class="form-legend">Title</label>
+														placeholder=" " required /> <label for="contactEmployee1Title1"
+														class="form-legend">Title</label>
 												</div>
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee1Email1"
 														name="contactEmployee1Email1" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee1Email1" class="form-legend">Email</label>
+														placeholder=" " required /> <label for="contactEmployee1Email1"
+														class="form-legend">Email</label>
 												</div>
 												<div class="col-sm-3"></div>
 
 											</div>
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 2)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Name2"
 														name="contactEmployee2Name2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Name2" class="form-legend">Name</label>
+														placeholder=" " required /> <label for="contactEmployee2Name2"
+														class="form-legend">Name</label>
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Title2"
 														name="contactEmployee2Title2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Title2" class="form-legend">Title</label>
+														placeholder=" " required /> <label for="contactEmployee2Title2"
+														class="form-legend">Title</label>
 												</div>
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee2Email2"
 														name="contactEmployee2Email2" class="form-control"
-														placeholder=" " required /> <label
-														for="contactEmployee2Email2" class="form-legend">Email</label>
+														placeholder=" " required /> <label for="contactEmployee2Email2"
+														class="form-legend">Email</label>
 												</div>
 												<div class="col-sm-3"></div>
 
@@ -890,66 +893,52 @@ label.error {
 											<!-- Contact Employee 2 Group -->
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Sign
+													<label style="font-weight: bold; color: #0D0D0C;">Sign
 														Off</label>
 												</div>
 											</div>
 
 											<!-- Sign-off CRO Name / Email -->
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCroName"
-														name="signOffCroName" class="form-control" placeholder=" "
-														required /> <label for="signOffCroName"
-														class="form-legend">CRO Name</label>
-												</div>
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCroEmail"
-														name="signOffCroEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCroEmail"
-														class="form-legend">CRO Email</label>
-												</div>
 
-											</div>
 
 											<!-- Sign-off CFO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCfoName"
-														name="signOffCfoName" class="form-control" placeholder=" "
-														required /> <label for="signOffCfoName"
-														class="form-legend">CFO Name</label>
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCroName" name="signOffCroName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroName" class="form-legend">CRO Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCfoEmail"
-														name="signOffCfoEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCfoEmail"
-														class="form-legend">CFO Email</label>
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCroEmail" name="signOffCroEmail"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroEmail" class="form-legend">CRO Email</label>
 												</div>
-
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCfoName" name="signOffCfoName"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoName" class="form-legend">CFO Name</label>
+												</div>
 											</div>
-
 											<!-- Sign-off Head of Treasury Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoEmail" class="form-legend">CFO Email</label>
+												</div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffHeadOfTreasuryName"
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
 														of Treasury Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffHeadOfTreasuryEmail"
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
@@ -961,26 +950,26 @@ label.error {
 
 									</div>
 							</form>
-						
-					<div class="card-footer text-center" style="padding-bottom: 18px;">
-						<!-- <button type="button" class="custom-tab-btn" onclick="home();">
+
+							<div class="card-footer text-center" style="padding-bottom: 18px;">
+								<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 								<i class="fa fa-home"></i> Home
 							</button> -->
 
 
-						<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
+								<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="custom-tab-btn"
                   onclick="submitForm()">Save</button>-->
 
-						<button th:if="${formmode == null or formmode == 'add'}"
-							type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+								<button th:if="${formmode == null or formmode == 'add'}" type="button" class="role-btn"
+									onclick="submitForm()">Save</button>
 
 
 
-						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
+								<!-- <button type="button" class="custom-tab-btn" onclick="back();">
 								<i class="fa fa-arrow-left"></i> Back
 							</button> -->
-</div>
-					</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -989,16 +978,16 @@ label.error {
 
 			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
 
-			<div class="tab-pane fade" id="template" role="tabpanel"
-				th:if="${formmode == null or formmode == 'add'}">
+			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == null or formmode == 'add'}">
 				<p>Templates tabs</p>
 
-				<div class="card-footer text-center"  style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 					<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 							<i class="fa fa-home"></i> Home
 						</button> -->
 
-					<button type="button" class="role-add-btn" onclick="submitForm()">
+					<button type="button" class="role-btn" onclick="submitForm()">
 						Save</button>
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1014,101 +1003,99 @@ label.error {
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="tab-pane fade" id="data" role="tabpanel">
-				<div class="table-responsive"
-					style="max-height: 400px; overflow: auto; border: none;">
-					<table id="usertable"
-						class="table table-bordered table-striped table-hover"
+				<div class="table-responsive" style="max-height: 400px; overflow: auto; border: none;">
+					<table id="usertable" class="table table-bordered table-striped table-hover"
 						style="min-width: 2000px;">
 
-							<thead class="thead-light">
-						<tr>
-							<th colspan=""></th>
-							<th colspan="8" style="text-align: center;">Bank Information</th>
-							<th colspan="7" style="text-align: center;">Counterparty
-								Information</th>
-							<th colspan="3" style="text-align: center;">Money Market</th>
-							<th colspan="3" style="text-align: center;">Repo</th>
-							<th colspan="3" style="text-align: center;">Bonds/Sukuks</th>
-							<th colspan="3" style="text-align: center;">Equity</th>
-							<th colspan="3" style="text-align: center;">Credit</th>
-							<th colspan="3" style="text-align: center;">Other</th>
-							<th colspan="3" style="text-align: center;">Nostro</th>
-							<th colspan="3" style="text-align: center;">Derivatives</th>
-							<th colspan="3" style="text-align: center;">FX Settlement</th>
-							<th colspan="3" style="text-align: center;">Bond Settlement</th>
-							<th colspan="4" style="text-align: center;">Overall Treasury
-								Limit & Exposure</th>
-						</tr>
-						<tr>
-							<!-- Bank Info -->
-							<th style="text-align: center;width: 100px;">Action</th>
+						<thead class="thead-light">
+							<tr>
+								<th colspan=""></th>
+								<th colspan="8" style="text-align: center;">Bank Information</th>
+								<th colspan="7" style="text-align: center;">Counterparty
+									Information</th>
+								<th colspan="3" style="text-align: center;">Money Market</th>
+								<th colspan="3" style="text-align: center;">Repo</th>
+								<th colspan="3" style="text-align: center;">Bonds/Sukuks</th>
+								<th colspan="3" style="text-align: center;">Equity</th>
+								<th colspan="3" style="text-align: center;">Credit</th>
+								<th colspan="3" style="text-align: center;">Other</th>
+								<th colspan="3" style="text-align: center;">Nostro</th>
+								<th colspan="3" style="text-align: center;">Derivatives</th>
+								<th colspan="3" style="text-align: center;">FX Settlement</th>
+								<th colspan="3" style="text-align: center;">Bond Settlement</th>
+								<th colspan="4" style="text-align: center;">Overall Treasury
+									Limit & Exposure</th>
+							</tr>
+							<tr>
+								<!-- Bank Info -->
+								<th style="text-align: center;width: 100px;">Action</th>
 
-							<th>Data Date</th>
-							<th>Bank Name</th>
-							<th>Head Office/Subsidiary</th>
-							<th>Subsidiary</th>
-							<th>Bank Symbol</th>
-							<th>Conventional/Islamic</th>
-							<th>Local/Foreign</th>
-							<th>CBUAE Tiering</th>
+								<th   class="th-left">Data Date</th>
+								<th   class="th-left">Bank Name</th>
+								<th  class="th-left">Head Office/Subsidiary</th>
+								<th  class="th-left">Subsidiary</th>
+								<th  class="th-left">Bank Symbol</th>
+								<th  class="th-left">Conventional/Islamic</th>
+								<th  class="th-left">Local/Foreign</th>
+								<th  class="th-left">CBUAE Tiering</th>
 
-							<!-- Counterparty Info -->
-							<th>Counterparty Name</th>
-							<th>Counterparty Internal Reference</th>
-							<th>Counterparty Risk Rating</th>
-							<th>Final Rating (CBUAE)</th>
-							<th>Country of Risk</th>
-							<th>CBUAE Geographical Zone</th>
-							<th>Counterparty Type</th>
+								<!-- Counterparty Info -->
+								<th  class="th-left">Counterparty Name</th>
+								<th  class="th-left">Counterparty Internal Reference</th>
+								<th  class="th-left">Counterparty Risk Rating</th>
+								<th  class="th-left">Final Rating (CBUAE)</th>
+								<th  class="th-left">Country of Risk</th>
+								<th  class="th-left">CBUAE Geographical Zone</th>
+								<th  class="th-left">Counterparty Type</th>
 
-							<!-- Limits -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- MM -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Repo -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Bonds -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Equity -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Credit -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Other -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Nostro -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Derivatives -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- FX -->
-							<th>Limit</th>
-							<th>Utilization</th>
-							<th>Percent</th>
-							<!-- Bond Set -->
+								<!-- Limits -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- MM -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Repo -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Bonds -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Equity -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Credit -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Other -->
+								<th   class="th-right">Limit</th>
+								<th   class="th-right">Utilization</th>
+								<th   class="th-right">Percent</th>
+								<!-- Nostro -->
+								<th   class="th-right">Limit</th>
+								<th  class="th-right">Utilization</th>
+								<th  class="th-right">Percent</th>
+								<!-- Derivatives -->
+								<th  class="th-right">Limit</th>
+								<th  class="th-right">Utilization</th>
+								<th  class="th-right">Percent</th>
+								<!-- FX -->
+								<th  class="th-right">Limit</th>
+								<th  class="th-right">Utilization</th>
+								<th  class="th-right">Percent</th>
+								<!-- Bond Set -->
 
-							<!-- Overall -->
-							<th>Treasury Limits (AED Mio)</th>
-							<th>Treasury Limits (%)</th>
-							<th>Exposure (AED Mio)</th>
-							<th>Exposure (%)</th>
-						</tr>
+								<!-- Overall -->
+								<th  class="th-right">Treasury Limits (AED Mio)</th>
+								<th  class="th-right">Treasury Limits (%)</th>
+								<th  class="th-right">Exposure (AED Mio)</th>
+								<th  class="th-right">Exposure (%)</th>
+							</tr>
 						</thead>
 
 
@@ -1116,9 +1103,9 @@ label.error {
 							<tr th:each="data : ${TClist}">
 								<!-- Edit icon (optional) -->
 								<td style="text-align: center;min-width: 100px;"><a
-									th:href="@{'/Treasury_Credit_Limit_Management?formmode=edit&slNo=' + ${data.slNo}}">
-										<i class="fa fa-edit" style="color: #007bff;"></i>
-								</a></td>
+										th:href="@{'/Treasury_Credit_Limit_Management?formmode=edit&slNo=' + ${data.slNo}}">
+										<i class="fa fa-edit" style="color: #ff7f27;"></i>
+									</a></td>
 
 								<!-- Bank Info -->
 								<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
@@ -1146,8 +1133,7 @@ label.error {
 								<td style="text-align: right;"
 									th:text="${#numbers.formatDecimal(data.utilizationAedMoneymarket, 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: right;"
-									th:text="${data.moneymarketPercent}"></td>
+								<td style="text-align: right;" th:text="${data.moneymarketPercent}"></td>
 
 								<!-- Repo -->
 								<td style="text-align: right;"
@@ -1210,8 +1196,7 @@ label.error {
 								<td style="text-align: right;"
 									th:text="${#numbers.formatDecimal(data.utilizationAedDerivatives, 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: right;"
-									th:text="${data.derivativesPercent}"></td>
+								<td style="text-align: right;" th:text="${data.derivativesPercent}"></td>
 
 								<!-- FX -->
 								<td style="text-align: right;"
@@ -1220,8 +1205,7 @@ label.error {
 								<td style="text-align: right;"
 									th:text="${#numbers.formatDecimal(data.utilizationAedFxsettlement, 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: right;"
-									th:text="${data.fxsettlementPercent}"></td>
+								<td style="text-align: right;" th:text="${data.fxsettlementPercent}"></td>
 
 								<!-- Bond Settlement -->
 								<td style="text-align: right;"
@@ -1230,8 +1214,7 @@ label.error {
 								<td style="text-align: right;"
 									th:text="${#numbers.formatDecimal(data.utilizationAedBondsettlement, 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: right;"
-									th:text="${data.bondsettlementPercent}"></td>
+								<td style="text-align: right;" th:text="${data.bondsettlementPercent}"></td>
 
 								<!-- Overall -->
 								<td style="text-align: right;"
@@ -1259,8 +1242,8 @@ label.error {
 					</button> -->
 
 
-					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+					<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
+						onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1277,37 +1260,32 @@ label.error {
 
 		<!-- ---------------- edit starts------------------------------------------------------------ -->
 
-		<div th:if="${formmode}=='edit'" style="align-items: center">
-			<form th:action="@{/BCDRS/updateTreasuryCredit}"
-				th:object="${creditData}" method="post" id="creditData">
+		<div th:if="${formmode}=='edit'" class="tressury-edit-page" style="align-items: center">
+			<form th:action="@{/BCDRS/updateTreasuryCredit}" th:object="${creditData}" method="post" id="creditData">
 				<div class="card" style="margin: 0 15px;">
 					<div class="role-page-header d-flex justify-content-between align-items-center">
-						<div class="role-page-title">
-						<h4 >
-							TREASURY CREDIT LIMIT - EDIT</h4>
-							<div
-										style="width: 298px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-							</div>
+						<div>
+							<h4>
+								TREASURY CREDIT LIMIT - EDIT</h4>
+						</div>
 					</div>
 
-					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+					<div class="card-body" style="max-height: 510px; overflow-y: auto;">
 						<input type="hidden" th:field="*{slNo}" />
 
 						<!-- Bank Info -->
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Data Date</label>
 							<div class="col-sm-4">
-								<input type="date" class="form-control" th:field="*{reportDate}"
-									readonly Required />
+								<input type="date" class="form-control" th:field="*{reportDate}" readonly Required />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Bank Name</label>
 							<div class="col-sm-4">
-								<select class="form-control" th:field="*{bankName}"
-									onchange="handleBankChange(this)">
+								<select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
 									<option value="">-- Select Bank --</option>
-									<option th:each="bank : ${bankList}"
-										th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+									<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+										th:text="${bank.bankName}"></option>
 								</select>
 							</div>
 						</div>
@@ -1316,13 +1294,11 @@ label.error {
 							<label class="col-sm-2 col-form-label">Head
 								Office/Subsidiary</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{headOfficeSubsidiary}" />
+								<input type="text" class="form-control" th:field="*{headOfficeSubsidiary}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Subsidiary</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{subsidiary}" />
+								<input type="text" class="form-control vchar-50" th:field="*{subsidiary}" />
 							</div>
 						</div>
 
@@ -1330,27 +1306,26 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Bank Symbol</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" th:field="*{bankSymbol}"
-									id="bankSymbol" readonly />
+								<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+									readonly />
 							</div>
 							<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{conventionalIslamic}" id="conventionalIslamic"
-									readonly />
+								<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+									id="conventionalIslamic" readonly />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Local/Foreign</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{localForeign}" id="localForeign" readonly />
+								<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+									readonly />
 							</div>
 							<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly />
+								<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+									readonly />
 							</div>
 						</div>
 
@@ -1358,13 +1333,11 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Counterparty Name</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{counterpartyName}" />
+								<input type="text" class="form-control" th:field="*{counterpartyName}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Internal Ref</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{counterpartyIntRef}" />
+								<input type="text" class="form-control" th:field="*{counterpartyIntRef}" />
 							</div>
 						</div>
 
@@ -1372,14 +1345,12 @@ label.error {
 							<label class="col-sm-2 col-form-label">Counterparty Risk
 								Rating</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-20"
-									th:field="*{counterpartyRiskRating}" />
+								<input type="text" class="form-control vchar-20" th:field="*{counterpartyRiskRating}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Final Rating
 								(CBUAE)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-20"
-									th:field="*{finalRatingCbuae}" />
+								<input type="text" class="form-control vchar-20" th:field="*{finalRatingCbuae}" />
 							</div>
 						</div>
 
@@ -1389,8 +1360,7 @@ label.error {
 								<select class="form-control" th:field="*{countryOfRisk}"
 									onchange="handleCountryChange(this)">
 									<option value="">-- Select Country --</option>
-									<option th:each="country : ${countryList}"
-										th:value="${country.countryOfRisk}"
+									<option th:each="country : ${countryList}" th:value="${country.countryOfRisk}"
 										th:text="${country.countryOfRisk}"></option>
 								</select>
 							</div>
@@ -1398,17 +1368,15 @@ label.error {
 							<label class="col-sm-2 col-form-label">CBUAE Geographical
 								Zone</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone"
-									readonly />
+								<input type="text" class="form-control vchar-50" th:field="*{cbuaeGeographicalZone}"
+									id="cbuaeGeographicalZone" readonly />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Counterparty Type</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{counterpartyType}" />
+								<input type="text" class="form-control vchar-50" th:field="*{counterpartyType}" />
 							</div>
 						</div>
 
@@ -1438,8 +1406,7 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Repo Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{limitAedRepo}" />
+								<input type="number" class="form-control number-24-2" th:field="*{limitAedRepo}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
@@ -1448,8 +1415,7 @@ label.error {
 							</div>
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{repoPercent}" />
+								<input type="number" class="form-control number-24-2" th:field="*{repoPercent}" />
 							</div>
 						</div>
 
@@ -1458,8 +1424,7 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Bonds Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{limitAedBonds}" />
+								<input type="number" class="form-control number-24-2" th:field="*{limitAedBonds}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
@@ -1468,50 +1433,47 @@ label.error {
 							</div>
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{bondsPercent}" />
+								<input type="number" class="form-control number-24-2" th:field="*{bondsPercent}" />
 							</div>
 						</div>
 						<!-- Bonds -->
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Bonds Limit</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="limitAedBonds" th:value="${creditData.limitAedBonds}" />
+								<input type="text" class="form-control number-24-2" name="limitAedBonds"
+									th:value="${creditData.limitAedBonds}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="utilizationAedBonds"
+								<input type="text" class="form-control number-24-2" name="utilizationAedBonds"
 									th:value="${creditData.utilizationAedBonds}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="bondsPercent" th:value="${creditData.bondsPercent}" />
+								<input type="text" class="form-control number-24-2" name="bondsPercent"
+									th:value="${creditData.bondsPercent}" />
 							</div>
 						</div>
 						<!-- Credit -->
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Credit Limit</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="limitAedCredit" th:value="${creditData.limitAedCredit}" />
+								<input type="text" class="form-control number-24-2" name="limitAedCredit"
+									th:value="${creditData.limitAedCredit}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="utilizationAedCredit"
+								<input type="text" class="form-control number-24-2" name="utilizationAedCredit"
 									th:value="${creditData.utilizationAedCredit}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control number-24-2"
-									name="creditPercent" th:value="${creditData.creditPercent}" />
+								<input type="text" class="form-control number-24-2" name="creditPercent"
+									th:value="${creditData.creditPercent}" />
 							</div>
 						</div>
 
@@ -1519,21 +1481,20 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Other Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="limitAedOther" th:value="${creditData.limitAedOther}" />
+								<input type="number" class="form-control number-24-2" name="limitAedOther"
+									th:value="${creditData.limitAedOther}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="utilizationAedOther"
+								<input type="number" class="form-control number-24-2" name="utilizationAedOther"
 									th:value="${creditData.utilizationAedOther}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="otherPercent" th:value="${creditData.otherPercent}" />
+								<input type="number" class="form-control number-24-2" name="otherPercent"
+									th:value="${creditData.otherPercent}" />
 							</div>
 						</div>
 
@@ -1541,21 +1502,20 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Nostro Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="limitAedNostro" th:value="${creditData.limitAedNostro}" />
+								<input type="number" class="form-control number-24-2" name="limitAedNostro"
+									th:value="${creditData.limitAedNostro}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="utilizationAedNostro"
+								<input type="number" class="form-control number-24-2" name="utilizationAedNostro"
 									th:value="${creditData.utilizationAedNostro}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="nostroPercent" th:value="${creditData.nostroPercent}" />
+								<input type="number" class="form-control number-24-2" name="nostroPercent"
+									th:value="${creditData.nostroPercent}" />
 							</div>
 						</div>
 
@@ -1563,22 +1523,19 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Derivatives Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="limitAedDerivatives"
+								<input type="number" class="form-control number-24-2" name="limitAedDerivatives"
 									th:value="${creditData.limitAedDerivatives}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="utilizationAedDerivatives"
+								<input type="number" class="form-control number-24-2" name="utilizationAedDerivatives"
 									th:value="${creditData.utilizationAedDerivatives}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="derivativesPercent"
+								<input type="number" class="form-control number-24-2" name="derivativesPercent"
 									th:value="${creditData.derivativesPercent}" />
 							</div>
 						</div>
@@ -1587,22 +1544,19 @@ label.error {
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">FX Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="limitAedFxsettlement"
+								<input type="number" class="form-control number-24-2" name="limitAedFxsettlement"
 									th:value="${creditData.limitAedFxsettlement}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Utilization</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="utilizationAedFxsettlement"
+								<input type="number" class="form-control number-24-2" name="utilizationAedFxsettlement"
 									th:value="${creditData.utilizationAedFxsettlement}" />
 							</div>
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="fxsettlementPercent"
+								<input type="number" class="form-control number-24-2" name="fxsettlementPercent"
 									th:value="${creditData.fxsettlementPercent}" />
 							</div>
 						</div>
@@ -1612,8 +1566,7 @@ label.error {
 							<label class="col-sm-2 col-form-label">Bond Settlement
 								Limit</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="limitAedBondsettlement"
+								<input type="number" class="form-control number-24-2" name="limitAedBondsettlement"
 									th:value="${creditData.limitAedBondsettlement}" />
 							</div>
 
@@ -1626,8 +1579,7 @@ label.error {
 
 							<label class="col-sm-2 col-form-label">%</label>
 							<div class="col-sm-2">
-								<input type="number" class="form-control number-24-2"
-									name="bondsettlementPercent"
+								<input type="number" class="form-control number-24-2" name="bondsettlementPercent"
 									th:value="${creditData.bondsettlementPercent}" />
 							</div>
 						</div>
@@ -1640,36 +1592,32 @@ label.error {
 							<label class="col-sm-2 col-form-label">Treasury Limit
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control"
-									th:field="*{treasuryLmtAed}" />
+								<input type="number" class="form-control" th:field="*{treasuryLmtAed}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Treasury Limit (%)</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{treasuryLmt}" />
+								<input type="number" class="form-control number-24-2" th:field="*{treasuryLmt}" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Exposure (AED)</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{exposureAed}" />
+								<input type="number" class="form-control number-24-2" th:field="*{exposureAed}" />
 							</div>
 							<label class="col-sm-2 col-form-label">Exposure (%)</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control number-24-2"
-									th:field="*{exposure}" />
+								<input type="number" class="form-control number-24-2" th:field="*{exposure}" />
 							</div>
 						</div>
-					
 
-					<div class="card-footer text-center">
-						<button type="submit" class="role-add-btn"
-							onclick="updateform(event)">Update</button>
-						<a th:href="@{/Treasury_Credit_Limit_Management(formmode='list')}"
-							class="role-add-btn" style="text-decoration: none;" >Cancel</a>
-					</div></div>
+
+						<div class="card-footer text-center">
+							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Treasury_Credit_Limit_Management(formmode='list')}" class="role-btn"
+								style="text-decoration: none;">Cancel</a>
+						</div>
+					</div>
 			</form>
 		</div>
 
@@ -1677,35 +1625,31 @@ label.error {
 
 
 		<div class="modal fade" id="datadelete">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
-					<div class="modal-body"
-						style="margin-top: 8px; text-align: center; color: #f15362;">
+					<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
 						<button type="button" class="close" data-dismiss="modal">×</button>
 						Are you Sure want to delete?
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary"
-							onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+							th:attr="data-formmode=delete">Submit</button>
 						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="modal fade" id="formmsg">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
-					<div class="modal-body"
-						style="margin-top: 8px; text-align: center; color: aliceblue;">
+					<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
 						<button type="button" class="close" data-dismiss="modal">×</button>
 						<a th:value="${msg}"></a>
 					</div>
 					<div class="modal-footer"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="btn btn-primary"
-							onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+							th:attr="data-formmode=delete">Submit</button>
 						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
@@ -1713,60 +1657,51 @@ label.error {
 		</div>
 
 		<div class="modal fade" id="alert">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel"
-							style="text-align: center; color: white;">BANK OF BARODA</div>
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
+							OF BARODA</div>
 					</div>
 					<div class="modal-body" style="text-align: center">
 						<p id="alertmsg"></p>
-						<button type="button" class="role-add-btn" onclick="list()"
-							data-dismiss="modal">Close</button>
+						<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
-<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+		<!-- Floating Back Button -->
+		<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+			<i class="fa fa-arrow-left"></i>
+		</button>
+		<!-- Floating Forward Button -->
+		<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
+			<i class="fa fa-arrow-right"></i>
+		</button>
 		<div class="modal fade" id="alert1">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel"
-							style="text-align: center; color: white;">BANK OF BARODA</div>
+						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
+							OF BARODA</div>
 					</div>
 					<div class="modal-body" style="text-align: center">
 						<p id="alertmsg1"></p>
-						<button type="button" class="role-add-btn" onclick="nostro()"
-							data-dismiss="modal">Close</button>
+						<button type="button" class="role-btn" onclick="nostro()" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
-		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
-			<div class="flow-bar">
-				<div class="flow-line"></div>
+		<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+			<div class="bob-loader-card">
+				<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
+				<div class="flow-bar">
+					<div class="flow-line"></div>
+				</div>
 			</div>
 		</div>
-	</div>
-		<div class="modal fade" id="loader" data-backdrop="static"
-			data-keyboard="false">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content" style="background: transparent;">
 					<div class="modal-body" style="text-align: center">
 						<div>
@@ -1778,12 +1713,9 @@ label.error {
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
-			role="dialog" aria-labelledby="downloadProcessingModalLabel"
-			aria-hidden="true">
-			<div
-				class="modal-dialog modal-dialog-centered d-flex align-items-center"
-				role="document">
+		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+			aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="downloadProcessingModalLabel">Download
@@ -1793,9 +1725,8 @@ label.error {
 			</div>
 		</div>
 		<!-- Download Message -->
-		<div class="modal fade" id="customAlertModal" tabindex="-1"
-			role="dialog" aria-labelledby="customAlertModalLabel"
-			aria-hidden="true">
+		<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+			aria-labelledby="customAlertModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -1803,8 +1734,7 @@ label.error {
 					</div>
 					<div class="modal-body" id="customAlertBody"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-dismiss="modal"
-							onclick="list()">OK</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
 					</div>
 				</div>
 			</div>
@@ -1816,25 +1746,21 @@ label.error {
 				<div class="modal-content">
 					<!-- Your custom styled header -->
 					<div class="menu-title-header">
-						<div class="modal-title" id="resultModalLabel"
-							style="text-align: center; color: white;">
+						<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
 							<!-- Title will be set by JavaScript -->
 						</div>
 					</div>
-					<div class="modal-body"
-						style="text-align: center; font-size: 1.1rem;">
+					<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 						<p id="resultModalBody"></p>
 						<!-- Your custom styled button -->
-						<button type="button" class="role-add-btn" onclick="list()"
-							data-dismiss="modal">OK</button>
+						<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">OK</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="modal fade" id="alert1">
-			<div
-				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="menu-title-header">
 						<div class="modal-title" style="text-align: center; color: white;">BANK
@@ -1842,75 +1768,224 @@ label.error {
 					</div>
 					<div class="modal-body" style="text-align: center">
 						<p id="alertmsg1"></p>
-						<button type="button" class="role-add-btn" data-dismiss="modal">Close</button>
+						<button type="button" class="role-btn" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
 </body>
+
 <script>
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
-				  
+
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
-
 <!-- Include this after your DataTable initialization script -->
-
 <style>
-/* Remove top margin/padding from DataTables parent containers */
-#data {
-	padding-top: 0 !important;
-	margin-top: 0 !important;
-}
+	/* Default header alignment */
+	#usertable thead th {
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
 
-.table-responsive {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	/* Left aligned headers */
+	#usertable thead th.th-left {
+		text-align: left !important;
+	}
 
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	/* Right aligned headers */
+	#usertable thead th.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
 
-/* FIX: Make search label and box inline */
-.dataTables_filter label {
-	display: flex !important;
-	align-items: center;
-	gap: 8px; /* space between text and input */
-	margin-bottom: 0 !important;
-}
+	#usertable td.th-left {
+		text-align: left !important;
+	}
 
-/* Style pagination buttons */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
+	/* Right aligned headers */
+	#usertable td.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
 
-/* Optional: Style the search input */
-.dataTables_filter input {
-	margin-left: 5px;
-	flex: 1;
-}
+	#usertable {
+		table-layout: auto !important;
+		width: 100% !important;
+	}
+
+	/* Report Date column – prevent wrap + increase width */
+	#usertable th.col-report-date,
+	#usertable td.col-report-date {
+		min-width: 120px !important;
+		/* increase as needed */
+		white-space: nowrap !important;
+		text-align: center;
+	}
+</style>
+<style>
+	#usertable {
+		min-width: 2800px;
+		/* adjust based on columns */
+	}
+
+	#usertable {
+		border-collapse: collapse !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	/* HEADER */
+	/* Update this section in your <style> tag */
+	#usertable thead th {
+		background-color: #7b6458;
+		color: #fff;
+		font-family: Arial, sans-serif !important;
+		font-size: 14px !important;
+		text-align: center;
+		vertical-align: middle;
+		white-space: normal;
+
+		/* ADD THESE THREE LINES */
+		padding: 2px 4px !important;
+		/* Reduces internal spacing */
+		line-height: 1.1 !important;
+		/* Reduces space between wrapped text lines */
+		font-size: 11px !important;
+		/* Optional: slightly smaller font to save space */
+		position: sticky;
+		top: 0;
+		/* Keeps the first row at the top */
+		z-index: 10;
+		background-color: #7b6458 !important;
+		/* Ensures the header isn't transparent */
+		color: white;
+		box-shadow: inset 0 -1px 0 #dee2e6;
+		/* Optional: adds a bottom border to the sticky header */
+	}
+
+
+	/* BODY CELLS */
+	#usertable td {
+		padding: 5px 6px !important;
+		border: 1px solid #e8e8e8 !important;
+		/* light grey lines */
+		background: #fafafa;
+		white-space: normal !important;
+	}
+
+	/* ROW EVEN/ODD */
+	#usertable tbody tr:nth-child(even) {
+		background-color: #f4f2ef !important;
+	}
+
+	#usertable tbody tr:nth-child(odd) {
+		background-color: #ffffff !important;
+	}
+	#usertable thead tr:nth-child(2) th {
+	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	    z-index: 9;
+
+	/* SEARCH BOX FIX */
+	.dataTables_filter label {
+		display: flex !important;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
+
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
+
+	/* === ROLE PAGE CUSTOM HEADER === */
+	.role-page-header {
+		background-color: #ffffff;
+		padding: 15px 20px;
+		display: flex;
+		/* Added for alignment */
+		justify-content: space-between;
+		/* Added for alignment */
+		align-items: center;
+		/* Added for alignment */
+	}
 </style>
 
+<style>
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 3px;
+		margin-left: 4px !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		box-sizing: border-box;
+		display: inline-block;
+		min-width: 1.5em;
+		padding: 0.5em !important;
+		margin-left: -8px;
+		text-align: center;
+		text-decoration: none !important;
+		border: 1px solid transparent;
+		border-radius: 2px;
+	}
+
+	.mb-2 {
+		margin-bottom: -0.5rem !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hover ONLY for Previous & Next */
+	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+		background-color: #e9ecef !important;
+		color: rgb(255, 128, 64) !important;
+	}
+
+	/* Page numbers should NOT hover */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+		background-color: #f5f5f5 !important;
+		color: #6c757d !important;
+		cursor: default !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+		cursor: default !important;
+	}
+</style>
 
 
 <!-- ALERT SCRIPT TO SHOW MODAL IF MESSAGE IS PRESENT -->
@@ -2001,7 +2076,7 @@ div.dataTables_filter {
 		countryOfRisk: 50,
 		cbuaeGeographicalZone: 50,
 		counterpartyType: 50,
-		
+
 
 		// NUMBER(24,2) or similar precision fields
 		limitAedMoneymarket: "24,2",
@@ -2038,7 +2113,7 @@ div.dataTables_filter {
 		treasuryLmt: "24,2",
 		exposureAed: "24,2",
 		exposure: "24,2"
-		
+
 	};
 
 	function showError(input, msg) {
@@ -2100,5 +2175,113 @@ div.dataTables_filter {
 		}
 	});
 </script>
+<style>
+	.role-btn {
+		background: #ffffff;
+		/* default white */
+		color: #E67E00;
+		/* default orange text */
+		border: 1px solid #E67E00;
+		border-radius: 25px;
+		padding: 8px 18px;
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+		transition: all 0.3s ease;
+	}
 
+	/* Hover effect → pastel orange */
+	.role-btn:hover {
+		background: #FFF3D1;
+		/* pastel orange (same as submenu hover) */
+		color: #E67E00;
+		/* orange text */
+		transform: translateY(-2px);
+		box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+	}
+
+	/* Active (selected tab) */
+	.role-btn.active {
+		background: #E67E00;
+		/* solid orange */
+		color: #fff;
+		/* white text */
+		border-color: #E67E00;
+		transform: translateY(-1px);
+		box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+	}
+
+	/* Optional: icon spacing */
+	.role-btn i {
+		margin-right: 5px;
+	}
+</style>
+<style>
+	#pageHeader {
+		position: sticky;
+		top: 110px;
+		z-index: 1050;
+		background: white;
+		padding-top: 10px;
+	}
+
+	#tabHeader {
+		position: sticky;
+		top: 5px;
+		/* just below page header */
+		z-index: 1040;
+		background: white;
+		padding: 5px 0;
+	}
+
+	#mainHeader {
+		position: sticky;
+		top: 0;
+		z-index: 9999;
+		background: white;
+	}
+</style>
+<style>
+	body:has(#tressury-edit-page) {
+		overflow: hidden;
+	}
+
+	#tressury-edit-page .card-body {
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	#tressury-edit-page .card {
+		margin-bottom: 0;
+	}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.tressury-edit-page {
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	.tressury-edit-page label,
+	.tressury-edit-page input,
+	.tressury-edit-page textarea,
+	.tressury-edit-page button {
+		font-size: 12px !important;
+	}
+
+	.modal-title {
+		background-color: #f7a47c;
+	}
+</style>
 </html>
