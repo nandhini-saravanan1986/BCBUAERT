@@ -370,7 +370,7 @@ public class MIS_Rest_Controller {
 		} 
 	    
 		else if(Matrix_Srl_no.equals("46")) {
-			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured();
+			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		} 
@@ -445,7 +445,7 @@ public class MIS_Rest_Controller {
 		}
 		else if(Matrix_Srl_no.equals("46")) {
 			
-			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured();
+			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
@@ -456,11 +456,16 @@ public class MIS_Rest_Controller {
 	@GetMapping("/GetSecuredUnsecureddata")
 	public Rt_AcprSecuredUnsecuredEntity GetSecuredUnsecureddata(@RequestParam("Report_date") String Report_date) throws ParseException {
 		
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		Date Selecteddate = dateFormat.parse(Report_date);
 		
+		if(Report_date.contains("T")) {
+			Report_date = Report_date.split("T")[0];
+			System.out.println(Report_date + " Splitted date");
+		}
+		
+		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+		System.out.println(Selecteddate);
 		Rt_AcprSecuredUnsecuredEntity Rt_AcprSecuredlist = rt_acprsecuredunsecuredrep.GetSecuredUnsecuredreport(Selecteddate);
-		System.out.println("Rt_AcprSecuredUnsecuredEntity="+Rt_AcprSecuredlist.getSecuredFb());
+		
 		
 		
 		return Rt_AcprSecuredlist;

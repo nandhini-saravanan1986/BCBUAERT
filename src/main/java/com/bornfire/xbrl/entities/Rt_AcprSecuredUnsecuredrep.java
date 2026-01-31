@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface Rt_AcprSecuredUnsecuredrep extends JpaRepository<Rt_AcprSecuredUnsecuredEntity, Date> {
 	@Query(value=" WITH current_year_dates AS (\r\n" + 
-			"    SELECT LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE, 'YEAR'), LEVEL - 1)) AS month_end\r\n" + 
+			"    SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end\r\n" + 
 			"    FROM dual\r\n" + 
 			"    CONNECT BY LEVEL <= 12\r\n" + 
 			"),\r\n" + 
@@ -26,12 +26,12 @@ public interface Rt_AcprSecuredUnsecuredrep extends JpaRepository<Rt_AcprSecured
 			"LEFT JOIN monthly_sum b\r\n" + 
 			"    ON TRUNC(a.month_end, 'MM') = b.month_start\r\n" + 
 			"ORDER BY a.month_end ASC",nativeQuery=true)
-	List<Object[]> GetCurrentyear_unsecured();
+	List<Object[]> GetCurrentyear_unsecured(Date Selecteddate);
 	
 	@Query(value="WITH current_month_dates AS (\r\n" + 
-			"    SELECT TRUNC(SYSDATE, 'MM') + (LEVEL - 1) AS report_date\r\n" + 
+			"    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date\r\n" + 
 			"    FROM dual\r\n" + 
-			"    CONNECT BY TRUNC(SYSDATE, 'MM') + (LEVEL - 1) <= LAST_DAY(SYSDATE)\r\n" + 
+			"    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1)\r\n" + 
 			")\r\n" + 
 			"SELECT \r\n" + 
 			"    TO_CHAR(a.report_date, 'DD-MM-YYYY') AS report_date,\r\n" + 
@@ -40,9 +40,9 @@ public interface Rt_AcprSecuredUnsecuredrep extends JpaRepository<Rt_AcprSecured
 			"LEFT JOIN rt_acpr_secured_unsecured b\r\n" + 
 			"    ON TRUNC(a.report_date) = TRUNC(b.report_date)\r\n" + 
 			"ORDER BY a.report_date",nativeQuery=true)
-	List<Object[]> GetCurrentmonth_unsecured();
+	List<Object[]> GetCurrentmonth_unsecured(Date Selecteddate);
 	
-	@Query(value="Select * from RT_ACPR_SECURED_UNSECURED where REPORT_DATE=?1 ",nativeQuery=true)
+	@Query(value="Select * from RT_ACPR_SECURED_UNSECURED where REPORT_DATE=TRUNC(?1) ",nativeQuery=true)
 	Rt_AcprSecuredUnsecuredEntity GetSecuredUnsecuredreport(Date date);
 	
 }
