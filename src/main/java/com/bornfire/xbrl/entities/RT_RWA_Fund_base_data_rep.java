@@ -96,86 +96,19 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	
 	
 	///GetSingleandGroupBorrower Detail -- Tier 1 Capital and Percentage value need to check and change once the Query id getting finalized
-	@Query(value="\r\n"
-			+ "Select * from (\r\n"
-			+ "WITH FundBase_Group_Expo AS (\r\n"
-			+ "    SELECT CUST_ID,\r\n"
-			+ "           ACCOUNT_NAME,\r\n"
-			+ "           SUM(BALANCE) AS fb_grp_bal,\r\n"
-			+ "           GROUP_NAME,Currency\r\n"
-			+ "    FROM brf95_rwa_data_fundbased\r\n"
-			+ "    WHERE GROUP_NAME IS NOT NULL\r\n"
-			+ "      AND report_date = ?1\r\n"
-			+ "    GROUP BY CUST_ID, ACCOUNT_NAME, GROUP_NAME,Currency\r\n"
-			+ "),\r\n"
-			+ "Non_Fundbase_Group_Expo AS (\r\n"
-			+ "    SELECT CUST_ID,\r\n"
-			+ "           CUST_NAME,\r\n"
-			+ "           SUM(LCBG_BALANCE) AS nfb_grp_bal,\r\n"
-			+ "           GROUP_NAME,Currency\r\n"
-			+ "    FROM brf95_rwa_data_nonfundbased\r\n"
-			+ "    WHERE GROUP_NAME IS NOT NULL\r\n"
-			+ "      AND report_date = ?1\r\n"
-			+ "    GROUP BY CUST_ID, CUST_NAME, GROUP_NAME,Currency\r\n"
-			+ "),\r\n"
-			+ "Consolidated_GroupExposure AS (\r\n"
-			+ "    SELECT\r\n"
-			+ "        COALESCE(a.cust_id, b.cust_id)       AS cust_id,\r\n"
-			+ "        COALESCE(a.account_name, b.cust_name) AS customer_name,\r\n"
-			+ "        COALESCE(a.group_name, b.group_name)  AS group_name,\r\n"
-			+ "        COALESCE(a.Currency, b.Currency)  AS Group_Currency,\r\n"
-			+ "        NVL(a.fb_grp_bal, 0) + NVL(b.nfb_grp_bal, 0) AS total_group_exposure\r\n"
-			+ "    FROM FundBase_Group_Expo a\r\n"
-			+ "    FULL JOIN Non_Fundbase_Group_Expo b\r\n"
-			+ "      ON a.group_name = b.group_name\r\n"
-			+ "     AND a.cust_id   = b.cust_id\r\n"
-			+ "),\r\n"
-			+ "FundBase_Single_Expo AS (\r\n"
-			+ "    SELECT CUST_ID,\r\n"
-			+ "           ACCOUNT_NAME,\r\n"
-			+ "           SUM(BALANCE) AS fb_sng_bal,Currency\r\n"
-			+ "    FROM brf95_rwa_data_fundbased\r\n"
-			+ "    WHERE GROUP_NAME IS NULL\r\n"
-			+ "      AND report_date = ?1\r\n"
-			+ "    GROUP BY CUST_ID, ACCOUNT_NAME,Currency\r\n"
-			+ "),\r\n"
-			+ "Non_FundBase_Single_Expo AS (\r\n"
-			+ "    SELECT CUST_ID,\r\n"
-			+ "           CUST_NAME,\r\n"
-			+ "           SUM(LCBG_BALANCE) AS nfb_sng_bal,Currency\r\n"
-			+ "    FROM brf95_rwa_data_nonfundbased\r\n"
-			+ "    WHERE GROUP_NAME IS NULL\r\n"
-			+ "      AND report_date = ?1\r\n"
-			+ "    GROUP BY CUST_ID, CUST_NAME,Currency\r\n"
-			+ "),\r\n"
-			+ "Consolidated_SingleExposure AS (\r\n"
-			+ "    SELECT *\r\n"
-			+ "    FROM (\r\n"
-			+ "        SELECT\r\n"
-			+ "            COALESCE(a.cust_id, b.cust_id)        AS cust_id,\r\n"
-			+ "            COALESCE(a.account_name, b.cust_name) AS customer_name,\r\n"
-			+ "            COALESCE(a.Currency, b.Currency) AS Sng_Currency,\r\n"
-			+ "            NVL(a.fb_sng_bal, 0) + NVL(b.nfb_sng_bal, 0) AS total_balance\r\n"
-			+ "        FROM FundBase_Single_Expo a\r\n"
-			+ "        FULL JOIN Non_FundBase_Single_Expo b\r\n"
-			+ "          ON a.cust_id = b.cust_id\r\n"
-			+ "    )\r\n"
-			+ "    WHERE total_balance / 1000 >= ?2*0.10 \r\n"
-			+ ")\r\n"
-			+ "SELECT\r\n"
-			+ "    COALESCE(g.cust_id,s.Cust_id)                AS cust_id,\r\n"
-			+ "    COALESCE(g.customer_name,s.customer_name)    AS customer_name,\r\n"
-			+ "    Case When g.group_name is null then 'Single' Else 'Group' End as Borr_type,\r\n"
-			+ "    NVL(g.group_name,'NA')                  AS group_name,\r\n"
-			+ "     COALESCE(g.Group_Currency,s.Sng_Currency)    AS Currency,\r\n"
-			+ "    NVL(g.total_group_exposure,0)+ NVL(s.total_balance,0) As total_balance,\r\n"
-			+ "    Round(((NVL(g.total_group_exposure,0)+ NVL(s.total_balance,0))/1000)/?2,4)*100 As Percentage\r\n"
-			+ "FROM Consolidated_GroupExposure g\r\n"
-			+ "FULL JOIN Consolidated_SingleExposure s\r\n"
-			+ "  ON g.cust_id = s.cust_id) Order by Borr_type,GROUP_NAME, TOTAL_BALANCE Desc\r\n"
-			+ "\r\n"
-			+ "",nativeQuery=true)
-	List<Object[]> GetGetSingleandGroupBorrower(Date Report_date,String Tier1capital);
+	@Query(value="With SingleBorrower_detail as ((Select ACCOUNT_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
+			+ "report_date = ?1  and group_name is null Group by  ACCOUNT_NAME) ORDER BY Exposure DESC\r\n"
+			+ "FETCH FIRST 10 ROWS ONLY),\r\n"
+			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000)*0.1,2) as r15_ratios1 from BRF95_SUMMARYTABLE Where report_date = ?1 )\r\n"
+			+ "Select ACCOUNT_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
+	List<Object[]> GetsingleExposure(Date Report_date);
+	
+	@Query(value="With SingleBorrower_detail as ((Select ACCOUNT_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
+			+ "report_date = ?1  and group_name is not null Group by  ACCOUNT_NAME) ORDER BY Exposure DESC\r\n"
+			+ "FETCH FIRST 10 ROWS ONLY),\r\n"
+			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000)*0.1,2) as r15_ratios1 from BRF95_SUMMARYTABLE Where report_date = ?1 )\r\n"
+			+ "Select ACCOUNT_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
+	List<Object[]> Getgroupexposure(Date Report_date);
 	
 	
 	//Get Outside Gcc Exposure detail
@@ -305,7 +238,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		List<Object[]> Others_Classifi(Date Selecteddate);
 
 		//Real Estate Concentration
-		@Query(value="With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
+		@Query(value="Select * from(\r\n"
+				+ "With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
 				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) and is_acct_real_estate_exp = 'Y' Group by Report_date),\r\n"
 				+ "Date_wise_total_rwa as (Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased where \r\n"
@@ -316,12 +250,13 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "where a.report_date = b.report_date),\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-				+ "Select To_char(d.month_end,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) from Current_Year_dates d left join \r\n"
-				+ "DateWise_Percen c on d.month_end = c.Report_date Order by d.month_end asc",nativeQuery=true)
+				+ "Select To_char(d.month_end,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) as REAL_ESTATE_PERCE from Current_Year_dates d left join \r\n"
+				+ "DateWise_Percen c on d.month_end = c.Report_date Order by d.month_end asc) ",nativeQuery=true)
 		List<Object[]> GetCurrentyear_realestate_concen_per(Date Selecteddate);
 		
 
-		@Query(value="With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
+		@Query(value="Select * from (\r\n"
+				+ "With DateWise_Real_Estate_RWA as(Select Report_date,Nvl(sum(total_rwa),0) as Real_estate_total_rwa  from brf95_rwa_data_fundbased where \r\n"
 				+ "Report_date BETWEEN Trunc(?1,'MM') and Last_day(Trunc(?1,'MM')) and\r\n"
 				+ "is_acct_real_estate_exp = 'Y' Group by Report_date),\r\n"
 				+ "Date_wise_total_rwa as (Select Report_date,Sum(Total_rwa) as Total_rwa from brf95_rwa_data_fundbased where \r\n"
@@ -331,8 +266,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "where a.report_date = b.report_date),\r\n"
 				+ "Current_month_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
 				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
-				+ "Select To_char(d.month_dates,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) from Current_month_dates d left join  \r\n"
-				+ "DateWise_Percen c on d.month_dates = c.Report_date order by d.month_dates asc",nativeQuery=true)
+				+ "Select To_char(d.month_dates,'DD-MM-YYYY'),Nvl(Round(c.REAL_ESTATE_PERCE,4)*100,0) as REAL_ESTATE_PERCE  from Current_month_dates d left join  \r\n"
+				+ "DateWise_Percen c on d.month_dates = c.Report_date order by d.month_dates asc)",nativeQuery=true)
 		List<Object[]> GetCurrentMonth_realestate_concen_per(Date Selectedreport_date);
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
@@ -364,5 +299,31 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Select To_char(a.month_dates,'DD-MM-YYYY'),Nvl(Prov_Coverage,0) from Current_month_dates a \r\n"
 				+ "left join Provision_Cover b on a.month_dates = b.Report_date Order by month_dates Asc",nativeQuery=true)
 		List<Object[]> GetCurrentmonth_prov_cover(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '7') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+		List<Object[]> GetSelectedyearslippagedetails(Date Selecteddate);
+		
+		@Query(value="Select * from(With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '7') ,\r\n"
+				+ "Current_Year_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+		List<Object[]> GetSelectedMonthslippagedetails(Date Selecteddate);
+		
+		
+		
+		/////Get Top 10 Real Estate Details
+		@Query(value="SELECT * FROM (\r\n"
+				+ "Select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where \r\n"
+				+ "Report_date = ?1 and is_acct_real_estate_exp = 'Y' ORDER BY TOTAL_RWA DESC ) FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		List<Object[]> GetToptenRealestateaccountdetail(Date Selecteddate);
+		
 	
 }

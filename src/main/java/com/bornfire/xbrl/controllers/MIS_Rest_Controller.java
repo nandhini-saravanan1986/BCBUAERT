@@ -373,7 +373,11 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		} 
+		} else if(Matrix_Srl_no.equals("7")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedyearslippagedetails(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
 	    
 	    return finalList;   
 	}
@@ -446,6 +450,11 @@ public class MIS_Rest_Controller {
 		else if(Matrix_Srl_no.equals("46")) {
 			
 			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("7")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthslippagedetails(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
@@ -530,8 +539,10 @@ public class MIS_Rest_Controller {
 		
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
 		List<Object[]>  Exposuredata = new ArrayList<>();
-		if(Data_Type_Used.equals("SingleGroupExposure")) {
-			Exposuredata = RT_RWA_Fund_base_data_rep.GetGetSingleandGroupBorrower(Selecteddate,Tier1capital);
+		if(Data_Type_Used.equals("ToptenSingleExposure")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetsingleExposure(Selecteddate);
+		}else if (Data_Type_Used.equals("ToptenGroupExposure")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.Getgroupexposure(Selecteddate);
 		}else if (Data_Type_Used.equals("Exposureoutsidegcc")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetoutsideGccExposure(Selecteddate);
 		}else if(Data_Type_Used.equals("Exposureonlygcc")) {
@@ -568,6 +579,9 @@ public class MIS_Rest_Controller {
 			
 		}else if(Data_Type_Used.equals("NetOvernight_noop")) {
 			Exposuredata = RT_Noop_net_position_summ_rep.Get_Noop_netposition(Selecteddate);
+		}else if(Data_Type_Used.equals("RealEstateaccountdetail")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenRealestateaccountdetail(Selecteddate);
+			System.out.println("Selected Real Estate Detail size : "+Exposuredata.size());
 		}
 		
 		return Exposuredata;

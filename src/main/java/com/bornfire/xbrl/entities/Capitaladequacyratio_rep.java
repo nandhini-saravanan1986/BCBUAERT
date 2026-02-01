@@ -16,7 +16,7 @@ public interface Capitaladequacyratio_rep extends JpaRepository<Capitaladequacyr
 			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
 			+ "Select month_end,NVL(R1_RATIOS2,0) AS R1_RATIOS2\r\n"
-			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by month_end asc)",nativeQuery=true)
+			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by month_end asc) Where R1_RATIOS2 <> 0",nativeQuery=true)
 	List<Object[]> GetCapitalratio_curryear_report(Date Selecteddate);
 	
 	@Query(value = "Select To_char(month_dates,'DD-MM-YYYY') as month_end,R1_RATIOS2 from (\r\n"
@@ -24,7 +24,8 @@ public interface Capitaladequacyratio_rep extends JpaRepository<Capitaladequacyr
 			+ "Current_month_date as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
 			+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) )\r\n"
 			+ "Select month_dates,NVL(R1_RATIOS2,0) AS R1_RATIOS2\r\n"
-			+ "from Current_month_date a left join Eligibility_ratio b on a.month_dates = b.report_date Order by month_dates asc)", nativeQuery = true)
+			+ "from Current_month_date a left join Eligibility_ratio b on a.month_dates = b.report_date Order by month_dates asc) \r\n"
+			+ "Where R1_RATIOS2 <> 0", nativeQuery = true)
 	List<Object[]> GetCapitalratio_currentmonthgraph(Date Selecteddate);
 	
 	@Query(value = "Select r15_ratios1,r22_ratios2,r16_ratios1,r18_ratios1,r23_ratios1,r23_ratios2,r45_ratios2,"

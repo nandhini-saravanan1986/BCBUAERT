@@ -353,7 +353,7 @@
 			var labelnameselected = a.getAttribute("setlabelname");
 			var labelsrlno = a.getAttribute("setlabelsrlno");
 			var labelReport_date = a.getAttribute("setreport_date");
-			
+
 			Selectedmatrixlabel = labelsrlno;
 			document.getElementById("Analyticsheadername").innerHTML = labelnameselected;
 
@@ -366,7 +366,8 @@
 			document.querySelector(".Capitaladequacyratio").style.display = "none"; //hide capitalratio block
 			document.querySelector(".Capitaladequacyratiodetail_2").style.display = "none";
 			document.querySelector(".Capitaladequacyratiodetail_1").style.display = "none";
-			document.querySelector(".GroupExposuredetail").style.display = "none";
+			document.querySelector(".ToptenSingleborrowerdiv").style.display = "none";
+			document.querySelector(".ToptenGroupborrowerdiv").style.display = "none";
 			document.querySelector(".Exposure_outside_GCC").style.display = "none";
 			document.querySelector(".CountryExposuredetail").style.display = "none";
 			document.querySelector(".Mortageloan_block").style.display = "none";
@@ -374,11 +375,11 @@
 			document.querySelector(".Sector_Industrial").style.display = "none";
 			document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "none");
 			document.querySelector(".Netovernight_noop").style.display = "none";
-			 document.querySelector(".UnsecuredPosition").style.display = "none";
-			
+			document.querySelector(".UnsecuredPosition").style.display = "none";
+			document.querySelector(".CustomerChartdetails").style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -386,7 +387,7 @@
 						Initiatemonthlychart(labels, dataValues, 10, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -398,7 +399,7 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 			} else if (labelsrlno === "4") {
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
 					.then(response => response.json())
 					.then(result => {
@@ -407,7 +408,7 @@
 						Initiatemonthlychart(labels, dataValues, 5, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -418,7 +419,7 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Leverageratiosummblock").style.display = "grid";
 			} else if (labelsrlno === "6") {
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -427,7 +428,7 @@
 						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -438,7 +439,7 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 			} else if (labelsrlno === "1") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -446,7 +447,7 @@
 						Initiatemonthlychart(labels, dataValues, 5, 50);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -498,12 +499,27 @@
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (labelsrlno === "2") {
 
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 2, 20);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 2, 20);
+					});
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				var trHTML = "";
-				document.getElementById("Groupexposurebody").innerHTML = trHTML;
-
-				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'SingleGroupExposure' + '&Tier1capital='
-					+ Curr_Tier_1_capital, {
+				document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
+				document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'ToptenSingleExposure', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -523,28 +539,58 @@
 							trHTML +=
 								"<tr>" +
 								"<td>" + (data[0] || "") + "</td>" +
-								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (data[3] || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
-								"<td>" + (data[6] + '%' || "") + "</td>" +
 								"</tr>";
 						});
 
-						document.getElementById("Tier_1_capital").textContent = formatNumber(Curr_Tier_1_capital);
-
 						// Replace body content
-						document.getElementById("Groupexposurebody").innerHTML = trHTML;
+						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
 
-				document.querySelector(".GroupExposuredetail").style.display = "block";
+				document.querySelector(".ToptenSingleborrowerdiv").style.display = "block";
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'ToptenGroupExposure', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML;
+						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".ToptenGroupborrowerdiv").style.display = "block";
 			} else if (labelsrlno === "10") {
-				
+
 
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
@@ -585,7 +631,7 @@
 				document.querySelector(".CountryExposuredetail").style.display = "grid";
 
 			} else if (labelsrlno === "9") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Mortageloanappetite', {
 					method: 'POST',
 					headers: {
@@ -619,7 +665,7 @@
 					});
 				//Mortgage loan Graph api
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -627,7 +673,7 @@
 						Initiatemonthlychart(labels, dataValues, 2, 20);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -642,7 +688,25 @@
 				document.querySelector(".Mortageloan_block").style.display = "grid";
 			} else if (labelsrlno === "7") {
 
-				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 2, 20);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 2, 20);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'FreshslippageQoQ', {
 					method: 'POST',
@@ -698,7 +762,7 @@
 
 			} else if (labelsrlno === "11") {
 
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Industry', {
 					method: 'POST',
 					headers: {
@@ -735,7 +799,7 @@
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "12") {
 
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Trading', {
 					method: 'POST',
 					headers: {
@@ -772,7 +836,7 @@
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 
 			} else if (labelsrlno === "13") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
 					headers: {
@@ -808,7 +872,7 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "14") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
 					headers: {
@@ -844,7 +908,7 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "15") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Real_Estate', {
 					method: 'POST',
 					headers: {
@@ -880,7 +944,7 @@
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "16") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Others', {
 					method: 'POST',
 					headers: {
@@ -917,28 +981,68 @@
 				document.querySelector(".Sector_Industrial").style.display = "grid";
 			} else if (labelsrlno === "3") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 50);
+						Initiatemonthlychart(labels, dataValues, 5, 20);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 50);
+						Initiatedailychart(labels, dataValues, 5, 20);
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'RealEstateaccountdetail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+
 			} else if (labelsrlno === "8") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -947,7 +1051,7 @@
 						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -958,7 +1062,7 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 			} else if (labelsrlno === "24") {
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -967,7 +1071,7 @@
 						Initiatemonthlychart(labels, dataValues, 200, 2000);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1014,10 +1118,10 @@
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 			}
-			
+
 			else if (labelsrlno === "46") {
-				
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						// Convert backend values into arrays
@@ -1026,50 +1130,50 @@
 						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date='+labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
-				
-				
+
+
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				
+
 				fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(labelReport_date))
-			    .then(response => response.json())
-			    .then(result => {
+					.then(response => response.json())
+					.then(result => {
 
-			        // Get tbody element
-			        var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
-			        if (!UnsecuredPositionbody) {
-			            console.error("Table body not found!");
-			            return;
-			        }
-			        UnsecuredPositionbody.innerHTML = "";
+						// Get tbody element
+						var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
+						if (!UnsecuredPositionbody) {
+							console.error("Table body not found!");
+							return;
+						}
+						UnsecuredPositionbody.innerHTML = "";
 
-			        // Build table rows
-			        var trHTML =
-			            "<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>"+formatNumber(result.securedNfb)+"</td><td style=text-align:right;>"+formatNumber(result.totalSecured)+"</td></tr>" +
-			            "<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>"+formatNumber(result.securedOtherBankNfb)+"</td><td style=text-align:right;>"+formatNumber(result.totalSecuredOtherBank)+"</td></tr>" +
-			            "<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" +formatNumber(result.interestSuspenseNfb)+ "</td><td style=text-align:right;>"+formatNumber(result.totalInterestSuspense)+"</td></tr>" +
-			            "<tr><td>Provision</td><td style=text-align:right;>"+formatNumber(result.provisionFb) +"</td><td style=text-align:right;>"+ formatNumber(result.provisionNfb) +"</td><td style=text-align:right;>"+ formatNumber(result.totalProvision) +"</td></tr>" +
-			            "<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>"+ formatNumber(result.unsecuredFb) +"</b></td><td style=text-align:right;><b>"+formatNumber(result.unsecuredNfb)+"</b></td><td style=text-align:right;><b>"+formatNumber(result.totalFbNfb)+"</b></td></tr>" +
-			            "<tr><td></td><td>Balance FB</td><td style=text-align:right;>"+ formatNumber(result.balanceFb) +"</td><td style=text-align:right;><b>"+result.totalRatio+"%</b></td></tr>" +
-			            "<tr><td></td><td>Balance NFB</td><td style=text-align:right;>"+ formatNumber(result.balanceNfb) +"</td><td></td></tr>" +
-			            "<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>"+ formatNumber(result.totalAdvances)+"</b></td><td></td></tr>" +
-			            "<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>"+ formatNumber(result.unsecuredCapTa)+"</b></td></tr>" +
-			            "<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>"+ formatNumber(result.headroomAvailableAed)+"</b></td></tr>" +
-			            "<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>"+ formatNumber(result.headroomAvailableUsd)+"</b></td></tr>";
+						// Build table rows
+						var trHTML =
+							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured) + "</td></tr>" +
+							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank) + "</td></tr>" +
+							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
+							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
+							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
+							"<tr><td></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td></td><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
+							"<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
+							"<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
+							"<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
+							"<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
 
-			        // Set table body content
-			        UnsecuredPositionbody.innerHTML = trHTML;
+						// Set table body content
+						UnsecuredPositionbody.innerHTML = trHTML;
 
-			        // Show table section
-			        document.querySelector(".UnsecuredPosition").style.display = "block";
-			    });
+						// Show table section
+						document.querySelector(".UnsecuredPosition").style.display = "block";
+					});
 
 			}
 		}
@@ -1315,7 +1419,7 @@
 							formatNumber(result.r14_eligi_liq_assets);
 
 						document.getElementById("r15_eligi_liq_assets").textContent =
-							(result.r15_eligi_liq_assets * 100) + " %";
+							(formatDecimalValue(result.r15_eligi_liq_assets * 100)) + " %";
 					})
 					.catch(err => console.error("Error loading ELAR report:", err));
 
@@ -1402,6 +1506,46 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
+			} else if (Selectedmatrixlabel === "3") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'RealEstateaccountdetail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
 			} else {
 				alert('Sorry invalid operation selected')
 			}
@@ -1428,33 +1572,33 @@
 				maximumFractionDigits: 0
 			});
 		}
-		
-		
+
+
 		function formatDecimalValue(value) {
-		    if (value === null || value === undefined || value === "") {
-		        return "0.00";
-		    }
+			if (value === null || value === undefined || value === "") {
+				return "0.00";
+			}
 
-		    const num = Number(value);
+			const num = Number(value);
 
-		    if (isNaN(num)) {
-		        return "00.00";
-		    }
+			if (isNaN(num)) {
+				return "00.00";
+			}
 
-		    return num.toFixed(2);
+			return num.toFixed(2);
 		}
-		
+
 		function formatDateForInput(dateValue) {
-		    if (!dateValue) return "";
+			if (!dateValue) return "";
 
-		    const d = new Date(dateValue);
-		    if (isNaN(d)) return "";
+			const d = new Date(dateValue);
+			if (isNaN(d)) return "";
 
-		    const year  = d.getFullYear();
-		    const month = String(d.getMonth() + 1).padStart(2, '0');
-		    const day   = String(d.getDate()).padStart(2, '0');
+			const year = d.getFullYear();
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const day = String(d.getDate()).padStart(2, '0');
 
-		    return `${year}-${month}-${day}`;
+			return `${year}-${month}-${day}`;
 		}
 
 
@@ -1465,8 +1609,8 @@
 			var trHTML = "";
 			document.getElementById("Matrixtablebody").innerHTML = trHTML;
 
-			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo+'&MatrixLabel'+
-			label, {
+			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo + '&MatrixLabel' +
+				label, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -1612,7 +1756,7 @@
 							},
 							title: {
 								display: true,
-								text: 'Current Year Report (↑)',
+								text: 'Monthly Trend (↑)',
 								color: '#6b7280',
 								font: {
 									size: 15,
@@ -1699,7 +1843,7 @@
 							},
 							title: {
 								display: true,
-								text: 'Current Month Report (↑)',
+								text: 'Daily Trend (↑)',
 								color: '#6b7280',
 								font: {
 									size: 15,
@@ -2040,7 +2184,7 @@
 						<canvas id="Linechartfordailyreport"></canvas>
 
 					</div>
-					
+
 					<!--	Group and Single Borrower detail -->
 					<div class="UnsecuredPosition" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
@@ -2056,37 +2200,71 @@
 							</tbody>
 						</table>
 					</div>
-					
+
 					<!--	Group and Single Borrower detail -->
-					<div class="GroupExposuredetail" style="display: none;">
+					<div class="ToptenSingleborrowerdiv" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th colspan="7">
-										BORROWERS EQUAL TO OR ABOVE 10% OF BANK'S TIER 1 CAPITAL
-									</th>
+									<th>Top 10 Single Borrower Exposure detail</th>
+									<th id="Singleexpreportdate" colspan="2">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6">
-									<th>Tier 1 Capital</th>
-									<th id="Tier_1_capital">0.00</th>
-									<th colspan="5"></th>
-								</tr>
-								<tr style="background-color: #dee2e6">
-									<th>Customer Id</th>
-									<th>Name of the Borrower</th>
-									<th>Borrower Type</th>
-									<th>Group Name</th>
-									<th>Currency</th>
-									<th>Balance</th>
-									<th>As % of Tier 1 Capital</th>
+									<th>Customer Name</th>
+									<th>Balance In (Mn)</th>
+									<th>Exposure Percentage (%)</th>
 								</tr>
 
 
 							</thead>
-							<tbody id="Groupexposurebody">
+							<tbody id="ToptenSingleborrowerbody">
 							</tbody>
 						</table>
 					</div>
+
+					<div class="ToptenGroupborrowerdiv" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Top 10 Group Borrower Exposure detail</th>
+									<th id="Groupexpreportdate" colspan="2">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Customer Name</th>
+									<th>Balance In (Mn)</th>
+									<th>Exposure Percentage (%)</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="ToptenGroupborrowerbody">
+							</tbody>
+						</table>
+					</div>
+
+					<div class="CustomerChartdetails" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Top 10 Borrower </th>
+									<th id="ToptenBorrowerdate" colspan="5">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Branch Name</th>
+									<th>Customer Id</th>
+									<th>Account Name</th>
+									<th>Balance</th>
+									<th>Rw (%)</th>
+									<th>Total Rwa</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="CustomerChartdetailsbody">
+							</tbody>
+						</table>
+					</div>
+
 
 					<div class="Exposure_outside_GCC" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
