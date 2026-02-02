@@ -377,6 +377,7 @@
 			document.querySelector(".Netovernight_noop").style.display = "none";
 			document.querySelector(".UnsecuredPosition").style.display = "none";
 			document.querySelector(".CustomerChartdetails").style.display = "none";
+			 document.querySelector(".MortgageLoanAppetitedetails").style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -670,7 +671,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 2, 20);
+						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -678,7 +679,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 2, 20);
+						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
@@ -686,6 +687,55 @@
 
 
 				document.querySelector(".Mortageloan_block").style.display = "grid";
+				
+				
+				// Clear previous table
+				document.getElementById("MortgageLoanbody").innerHTML = "";
+
+
+				// Fetch data
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=tenaccountMortgageLoanAppetite', {
+				    method: 'POST',
+				    headers: {
+				        'Content-Type': 'application/x-www-form-urlencoded'
+				    }
+				})
+				.then(response => {
+				    if (!response.ok) {
+				        throw new Error("HTTP error " + response.status);
+				    }
+				    return response.json();
+				})
+				.then(list => {
+				    var trHTML = "";
+
+				    // Build table rows
+				    list.forEach(function(data) {
+				        trHTML +=
+				            "<tr>" +
+				            "<td>" + (data[0] || "") + "</td>" +
+				            "<td>" + (data[1] || "") + "</td>" +
+				            "<td>" + (formatNumber(data[2]) || "") + "</td>" +
+				            "</tr>";
+				    });
+
+				    // Update report date and table body
+				    document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + labelReport_date;
+				    document.getElementById("MortgageLoanbody").innerHTML = trHTML;
+
+				    // Show the table
+				    document.querySelector(".MortgageLoanAppetitedetails").style.display = "block";
+				})
+				.catch(error => {
+				    alert("Error fetching exposure data: " + error.message);
+				    $("#invalidfile").modal("toggle");
+				});
+
+								
+				
+				
+				
+				
 			} else if (labelsrlno === "7") {
 
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -693,7 +743,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 2, 20);
+						Initiatemonthlychart(labels, dataValues, 10, 100);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -701,7 +751,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 2, 20);
+						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
@@ -759,8 +809,75 @@
 					});
 
 				document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "grid");
+				
+				
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				document.getElementById("labletype").innerHTML = "Top 10 NPA Accounts";
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountdetailSlippage', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
+				
+				
+				
 
 			} else if (labelsrlno === "11") {
+				
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+			fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatedailychart(labels, dataValues, 10, 100);
+				});
+
+			document.querySelector(".chart-card").style.display = "block";
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
 
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Industry', {
@@ -797,7 +914,69 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Industrial";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountSectorIndustrial', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
 			} else if (labelsrlno === "12") {
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+			fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatedailychart(labels, dataValues, 10, 100);
+				});
+
+			document.querySelector(".chart-card").style.display = "block";
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
 
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Trading', {
@@ -834,8 +1013,69 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Trading";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
 
 			} else if (labelsrlno === "13") {
+				
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
+
+			document.querySelector(".chart-card").style.display = "block";
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
@@ -871,7 +1111,70 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Services excluding bank";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
+				
 			} else if (labelsrlno === "14") {
+				
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 2, 20);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
@@ -907,7 +1210,68 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Banks Exposure";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountBank', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
 			} else if (labelsrlno === "15") {
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Real_Estate', {
 					method: 'POST',
@@ -943,7 +1307,68 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Real Estate";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountRealEstate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
 			} else if (labelsrlno === "16") {
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					Initiatemonthlychart(labels, dataValues, 10, 100);
+				});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Others', {
 					method: 'POST',
@@ -979,6 +1404,48 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				var trHTML = "";
+				document.getElementById("labletype").innerHTML = "Top 10 Other Sectors";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountOtherSectors', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
 			} else if (labelsrlno === "3") {
 
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1060,6 +1527,48 @@
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				document.getElementById("labletype").innerHTML = "Top 10 Provision Coverage Accounts";
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'teaccountProvisionCoverageRatio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+				
 
 			} else if (labelsrlno === "24") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1426,9 +1935,10 @@
 
 				document.querySelector(".LiquidAssetsRatio").style.display = "block";
 			} else if (Selectedmatrixlabel === "9") {
+			
 				var trHTML = "";
-				document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
-				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Mortgageloantopten', {
+				document.getElementById("MortgageLoanbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountMortgageLoanAppetite', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -1444,25 +1954,28 @@
 						var trHTML = "";
 
 						// Use plain JS loop; you already use jQuery only for DOM
-						list.forEach(function (data) {
-							trHTML +=
-								"<tr>" +
-								"<td>" + (data[0] || "") + "</td>" +
-								"<td>" + ((data[1]) || "") + "</td>" +
-								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
-								"<td>" + (data[3] + '%' || "") + "</td>" +
-								"</tr>";
-						});
-
+						list.forEach(function(data) {
+				        trHTML +=
+				            "<tr>" +
+				            "<td>" + (data[0] || "") + "</td>" +
+				            "<td>" + (data[1] || "") + "</td>" +
+				            "<td>" + (formatNumber(data[2]) || "") + "</td>" +
+				            "</tr>";
+				    });
+						
 						// Replace body content
-						document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
-						document.getElementById("Mortageloan_table_name").innerHTML = 'Top 10 Mortgage loan customer detail';
+						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("MortgageLoanbody").innerHTML = trHTML;
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-				document.querySelector(".Mortageloan_table").style.display = "block";
+				document.querySelector(".MortgageLoanAppetitedetails").style.display = "block";
+				
+				
+				
+				
 			} else if (Selectedmatrixlabel === "1") {
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -1546,7 +2059,342 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} else {
+			} 
+			
+			else if (Selectedmatrixlabel === "11") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorIndustrial', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			} 
+			
+			else if (Selectedmatrixlabel === "12") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			}
+			else if (Selectedmatrixlabel === "13") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountServicesexcludingbank', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			} 
+			else if (Selectedmatrixlabel === "14") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountBank', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			} 
+			else if (Selectedmatrixlabel === "15") {
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountRealEstate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			} 
+			else if (Selectedmatrixlabel === "16") {
+				
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountOtherSectors', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			} 
+			else if (Selectedmatrixlabel === "7") {
+				document.getElementById("labletype").innerHTML = "Top 10 NPA Accounts";
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountdetailSlippage', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			}else if(Selectedmatrixlabel === "8"){
+				document.getElementById("labletype").innerHTML = "Top 10 Provision Coverage Accounts";
+				var trHTML = "";
+				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountProvisionCoverageRatio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".CustomerChartdetails").style.display = "block";
+			}
+			
+			
+			else {
 				alert('Sorry invalid operation selected')
 			}
 		}
@@ -1830,6 +2678,12 @@
 							}
 						}
 					},
+					onClick: (evt, elements) => {
+						if (!elements.length) return;
+						const idx = elements[0].index;
+						const period = labels[idx];   // e.g. "Jan"
+						updateLiquidAssetsTable(period);
+					},					
 					scales: {
 						x: {
 							grid: {
@@ -2246,10 +3100,10 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th>Top 10 Borrower </th>
+									<th id ="labletype">Top 10 Borrower </th>
 									<th id="ToptenBorrowerdate" colspan="5">Report date</th>
 								</tr>
-								<tr style="background-color: #dee2e6">
+								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
 									<th>Branch Name</th>
 									<th>Customer Id</th>
 									<th>Account Name</th>
@@ -2264,6 +3118,28 @@
 							</tbody>
 						</table>
 					</div>
+					
+					
+						<div class="MortgageLoanAppetitedetails" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th >Top 10 Mortgage Loan Appetite</th>
+									<th id="MortgageLoanAppetitedetailsdate" colspan="5">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Account Number</th>
+									<th>Account Name</th>
+									<th>Account Balance</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="MortgageLoanbody">
+							</tbody>
+						</table>
+					</div>
+					
 
 
 					<div class="Exposure_outside_GCC" style="display: none;">

@@ -377,7 +377,38 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedyearslippagedetails(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("11")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Industry_ClassiGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		} else if(Matrix_Srl_no.equals("12")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Trading_ClassiGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
 		}
+		else if(Matrix_Srl_no.equals("13")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.ServicesGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}
+	    
+		else if(Matrix_Srl_no.equals("14")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.BanksGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}
+	    
+		else if(Matrix_Srl_no.equals("15")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.RealEstateGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}
+		else if(Matrix_Srl_no.equals("16")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.otherGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}
+	    
 	    
 	    return finalList;   
 	}
@@ -458,6 +489,46 @@ public class MIS_Rest_Controller {
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
+		else if(Matrix_Srl_no.equals("11")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyIndustryRatio(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		
+		else if(Matrix_Srl_no.equals("12")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyTradingRatio(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		
+		else if(Matrix_Srl_no.equals("13")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyServicesRatio(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if(Matrix_Srl_no.equals("14")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyBanks(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if(Matrix_Srl_no.equals("15")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyRealEstate(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if(Matrix_Srl_no.equals("16")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyother(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		
+		
 		return finalList;
 	}
 	
@@ -582,6 +653,33 @@ public class MIS_Rest_Controller {
 		}else if(Data_Type_Used.equals("RealEstateaccountdetail")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenRealestateaccountdetail(Selecteddate);
 			System.out.println("Selected Real Estate Detail size : "+Exposuredata.size());
+		}
+		else if(Data_Type_Used.equals("tenaccountdetailSlippage")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSlippage(Selecteddate);
+		}else if(Data_Type_Used.equals("teaccountProvisionCoverageRatio")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenProvision(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountMortgageLoanAppetite")) {
+			Exposuredata =RT_Mis_Fund_Based_Adv_Rep.GetTopteMort(Selecteddate);
+		}
+		
+		else if(Data_Type_Used.equals("tenaccountSectorIndustrial")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorIndustrial(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountSectorTrading")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorTrading(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountServicesexcludingbank")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountBank")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountRealEstate")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenRealEstate(Selecteddate);
+		}
+		else if(Data_Type_Used.equals("tenaccountOtherSectors")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenOtherSectors(Selecteddate);
 		}
 		
 		return Exposuredata;

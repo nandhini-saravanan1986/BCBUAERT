@@ -60,6 +60,29 @@ public interface RT_Mis_Fund_Based_Adv_Rep extends JpaRepository<RT_Mis_Fund_bas
 			+ "from Current_year_Dates a left join Mortgage_loan_cal b on a.month_end = b.Report_date Order by a.month_end Asc) ",nativeQuery=true)
 	List<Object[]> GetMortgageratio_curryear_report(Date Selecteddate);
 	
+	@Query(value = 
+		    "WITH Combined_Data AS ( " +
+		    "    SELECT ACCT_NUMBER, ACCT_NAME, ACT_BALANCE_AMT_LC " +
+		    "    FROM BRF_MIS_FUND_BASED_ADVANCES " +
+		    "    WHERE report_date = ?1 " +
+		    "    UNION ALL " +
+		    "    SELECT ACCT_NUMBER, ACCT_NAME, ACT_BALANCE_AMT_LC " +
+		    "    FROM BRF_MIS_FUND_BASED_ADVANCES " +
+		    "    WHERE report_date = ?1 " +
+		    "      AND schm_code IN ('LA106', 'LA110') " +
+		    ") " +
+		    "SELECT * FROM ( " +
+		    "    SELECT ACCT_NUMBER, ACCT_NAME, ACT_BALANCE_AMT_LC, " +
+		    "           ROW_NUMBER() OVER (ORDER BY ACT_BALANCE_AMT_LC DESC) AS rn " +
+		    "    FROM Combined_Data " +
+		    ") WHERE rn <= 10",
+		    nativeQuery = true
+		)
+		List<Object[]> GetTopteMort(Date Selecteddate);
+
+	
+	
+	
 	
 	
 	//Daily Query
