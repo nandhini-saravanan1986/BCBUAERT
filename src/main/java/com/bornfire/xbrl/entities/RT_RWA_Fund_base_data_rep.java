@@ -99,15 +99,15 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	@Query(value="With SingleBorrower_detail as ((Select ACCOUNT_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
 			+ "report_date = ?1  and group_name is null Group by  ACCOUNT_NAME) ORDER BY Exposure DESC\r\n"
 			+ "FETCH FIRST 10 ROWS ONLY),\r\n"
-			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000)*0.1,2) as r15_ratios1 from BRF95_SUMMARYTABLE Where report_date = ?1 )\r\n"
-			+ "Select ACCOUNT_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
+			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000),2) as r15_ratios1 from CAR Where report_date = ?1 )\r\n"
+			+ "Select ACCOUNT_NAME, EXPOSURE,Round((EXPOSURE/r15_ratios1)*100,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
 	List<Object[]> GetsingleExposure(Date Report_date);
 	
 	@Query(value="With SingleBorrower_detail as ((Select GROUP_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
 			+ "report_date = ?1  and group_name is not null Group by  GROUP_NAME) ORDER BY Exposure DESC\r\n"
 			+ "FETCH FIRST 10 ROWS ONLY),\r\n"
-			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000)*0.1,2) as r15_ratios1 from BRF95_SUMMARYTABLE Where report_date = ?1 )\r\n"
-			+ "Select GROUP_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
+			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000),2) as r15_ratios1 from CAR Where report_date = ?1 )\r\n"
+			+ "Select GROUP_NAME, EXPOSURE,Round((EXPOSURE/r15_ratios1)*100,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
 	List<Object[]> Getgroupexposure(Date Report_date);
 	
 	
@@ -667,28 +667,18 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 			List<Object[]> GetToptenSlippage(Date Selecteddate);
 
 		
-			@Query(value =
-				    "WITH Combined_Data AS ( " +
-				    "    SELECT 'FUND' AS SRC_TYPE, BRANCH_NAME, CUST_ID, ACCOUNT_NAME, " +
-				    "           ROUND(BALANCE / 1000000, 2) AS BALANCE_MN, RW, " +
-				    "           ROUND(TOTAL_RWA / 1000000, 2) AS TOTAL_RWA_MN " +
-				    "    FROM brf95_rwa_data_fundbased " +
-				    "    WHERE rwa_class <> 'STD' " +
-				    "      AND report_date BETWEEN TRUNC(?1, 'MM') AND LAST_DAY(TRUNC(?1, 'MM')) " +
-				    "    UNION ALL " +
-				    "    SELECT 'NON_FUND' AS SRC_TYPE, BRANCH_NAME, CUST_ID, CUST_NAME AS ACCOUNT_NAME, " +
-				    "           ROUND(LCBG_BALANCE / 1000000, 2) AS BALANCE_MN, NULL AS RW, NULL AS TOTAL_RWA_MN " +
-				    "    FROM brf95_rwa_data_nonfundbased " +
-				    "    WHERE class <> 'STD' " +
-				    "      AND report_date BETWEEN TRUNC(?1, 'MM') AND LAST_DAY(TRUNC(?1, 'MM')) " +
-				    ") " +
-				    "SELECT * FROM ( " +
-				    "    SELECT BRANCH_NAME, CUST_ID, ACCOUNT_NAME, BALANCE_MN,RW,TOTAL_RWA_MN, " +
-				    "           ROW_NUMBER() OVER (ORDER BY BALANCE_MN DESC) AS rn " +
-				    "    FROM Combined_Data " +
-				    ") WHERE rn <= 10",
-				    nativeQuery = true
-				)
+			@Query(value = "Select * from (\r\n"
+					+ "WITH FUNDBASE_BALANCE AS (\r\n"
+					+ "Select branch_name,CUST_ID,ACCOUNT_NAME,Report_date,ROUND(SUM(balance)/1000000,2) AS balance,\r\n"
+					+ "ROUND(SUM(Int_suspense)/1000000,2) AS Int_suspense,ROUND(SUM(TOT_PROVISION)/1000000,2) AS TOT_PROVISION from \r\n"
+					+ "brf95_rwa_data_fundbased Where report_date = ?1 AND rwa_class <> 'STD'\r\n"
+					+ "GROUP BY CUST_ID,ACCOUNT_NAME,Report_date,branch_name),\r\n"
+					+ "NON_FUND_BALANCE AS (Select branch_name,CUST_ID, CUST_NAME,Report_date,ROUND(Sum(LCBG_BALANCE)/1000000,2) as NfbBalance \r\n"
+					+ "from brf95_rwa_data_nonfundbased Where class <> 'STD' AND report_date = ?1 GROUP BY Report_date,CUST_ID, CUST_NAME,branch_name)\r\n"
+					+ "SELECT NVL(A.branch_name, B.branch_name) AS branch_name,NVL(A.CUST_ID, B.CUST_ID) AS CUST_ID,NVL(A.ACCOUNT_NAME, B.CUST_NAME) AS NAME,\r\n"
+					+ "NVL(BALANCE,0) AS BALANCE,NVL(NFBBALANCE,0) AS NFBBALANCE,NVL(INT_SUSPENSE,0) AS INT_SUSPENSE, \r\n"
+					+ "NVL(TOT_PROVISION,0) AS TOT_PROVISION FROM FUNDBASE_BALANCE A FULL JOIN NON_FUND_BALANCE B ON \r\n"
+					+ "(A.REPORT_DATE = B.REPORT_DATE AND A.CUST_ID = B.CUST_ID))Order by BALANCE desc fetch first 10 rows only",nativeQuery = true)
 				List<Object[]> GetToptenProvision(Date Selecteddate);
 
 		///Get Outside Gcc Exposure Current Year Graph
@@ -765,9 +755,9 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		///Single and Group Borrower Exposure Details
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> GetSelectedyearSingorGroupdetails(Date Selecteddate);

@@ -377,7 +377,7 @@
 			document.querySelector(".Netovernight_noop").style.display = "none";
 			document.querySelector(".UnsecuredPosition").style.display = "none";
 			document.querySelector(".CustomerChartdetails").style.display = "none";
-			 document.querySelector(".MortgageLoanAppetitedetails").style.display = "none";
+			document.querySelector(".MortgageLoanAppetitedetails").style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -505,7 +505,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 2, 20);
+						Initiatemonthlychart(labels, dataValues, 10, 150);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -513,7 +513,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 2, 20);
+						Initiatedailychart(labels, dataValues, 10, 150);
 					});
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
@@ -555,6 +555,8 @@
 					});
 
 				document.querySelector(".ToptenSingleborrowerdiv").style.display = "block";
+
+				var trHTML_1 = "";
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'ToptenGroupExposure', {
 					method: 'POST',
 					headers: {
@@ -568,11 +570,11 @@
 						return response.json();
 					})
 					.then(list => {
-						var trHTML = "";
+						var trHTML_1 = "";
 
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
-							trHTML +=
+							trHTML_1 +=
 								"<tr>" +
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
@@ -581,7 +583,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML;
+						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML_1;
 						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + labelReport_date;
 					})
 					.catch(error => {
@@ -590,6 +592,7 @@
 					});
 
 				document.querySelector(".ToptenGroupborrowerdiv").style.display = "block";
+
 			} else if (labelsrlno === "10") {
 
 				var trHTML = "";
@@ -627,7 +630,8 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-
+				document.getElementById('outsideGccLink').dataset.reportDate = labelReport_date;
+				document.getElementById('GccLink').dataset.reportDate = labelReport_date;
 				document.querySelector(".CountryExposuredetail").style.display = "grid";
 
 			} else if (labelsrlno === "9") {
@@ -650,11 +654,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							document.getElementById("Housingloan_Exp").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Topuploan_Expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Total_mortgage_loan").textContent =
-								formatNumber(data[2]);
+								formatDecimalValue(data[2]);
 							document.getElementById("Total_mortgage_loan_per").textContent =
 								(data[3] + '%');
 						});
@@ -670,7 +674,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+						Initiatemonthlychart(labels, dataValues, 1, 15);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -678,7 +682,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+						Initiatedailychart(labels, dataValues, 1, 15);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
@@ -686,55 +690,57 @@
 
 
 				document.querySelector(".Mortageloan_block").style.display = "grid";
-				
-				
+
+
 				// Clear previous table
 				document.getElementById("MortgageLoanbody").innerHTML = "";
 
 
 				// Fetch data
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=tenaccountMortgageLoanAppetite', {
-				    method: 'POST',
-				    headers: {
-				        'Content-Type': 'application/x-www-form-urlencoded'
-				    }
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
 				})
-				.then(response => {
-				    if (!response.ok) {
-				        throw new Error("HTTP error " + response.status);
-				    }
-				    return response.json();
-				})
-				.then(list => {
-				    var trHTML = "";
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
 
-				    // Build table rows
-				    list.forEach(function(data) {
-				        trHTML +=
-				            "<tr>" +
-				            "<td>" + (data[0] || "") + "</td>" +
-				            "<td>" + (data[1] || "") + "</td>" +
-				            "<td>" + (formatNumber(data[2]) || "") + "</td>" +
-				            "</tr>";
-				    });
+						// Build table rows
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"</tr>";
+						});
 
-				    // Update report date and table body
-				    document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + labelReport_date;
-				    document.getElementById("MortgageLoanbody").innerHTML = trHTML;
+						// Update report date and table body
+						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("MortgageLoanbody").innerHTML = trHTML;
+						document.getElementById('TopuploanLink').dataset.reportDate = labelReport_date;
+						document.getElementById('Housingloanlink').dataset.reportDate = labelReport_date;
+						// Show the table
+						document.querySelector(".MortgageLoanAppetitedetails").style.display = "block";
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
 
-				    // Show the table
-				    document.querySelector(".MortgageLoanAppetitedetails").style.display = "block";
-				})
-				.catch(error => {
-				    alert("Error fetching exposure data: " + error.message);
-				    $("#invalidfile").modal("toggle");
-				});
 
-								
-				
-				
-				
-				
+
+
+
+
 			} else if (labelsrlno === "7") {
 
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -808,8 +814,8 @@
 					});
 
 				document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "grid");
-				
-				
+
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				document.getElementById("labletype").innerHTML = "Top 10 NPA Accounts";
@@ -850,32 +856,32 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
-				
-				
-				
+
+
+
+
 
 			} else if (labelsrlno === "11") {
-				
-				
+
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
-			fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatedailychart(labels, dataValues, 10, 100);
-				});
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
 
-			document.querySelector(".chart-card").style.display = "block";
-			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 
 
@@ -913,7 +919,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Industrial";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -954,27 +960,27 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
+
 			} else if (labelsrlno === "12") {
-				
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
-			fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatedailychart(labels, dataValues, 10, 100);
-				});
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 10, 100);
+					});
 
-			document.querySelector(".chart-card").style.display = "block";
-			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 
 
@@ -1012,7 +1018,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Trading";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -1055,15 +1061,15 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 
 			} else if (labelsrlno === "13") {
-				
-				
+
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
@@ -1073,8 +1079,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-			document.querySelector(".chart-card").style.display = "block";
-			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
@@ -1110,7 +1116,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Services excluding bank";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -1151,18 +1157,18 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
-				
+
+
 			} else if (labelsrlno === "14") {
-				
-				
+
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
@@ -1209,7 +1215,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Banks Exposure";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -1250,16 +1256,16 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
+
 			} else if (labelsrlno === "15") {
-				
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
@@ -1306,7 +1312,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Real Estate";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -1347,16 +1353,16 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
+
 			} else if (labelsrlno === "16") {
-				
+
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					Initiatemonthlychart(labels, dataValues, 10, 100);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 10, 100);
+					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
@@ -1403,7 +1409,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Other Sectors";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -1444,7 +1450,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
+
 			} else if (labelsrlno === "3") {
 
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1526,10 +1532,10 @@
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				
+
 				var trHTML = "";
-				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
-				document.getElementById("labletype").innerHTML = "Top 10 Provision Coverage Accounts";
+				document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
+				document.getElementById("Provlabletype").innerHTML = "Top 10 Provision Coverage Accounts";
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'teaccountProvisionCoverageRatio', {
 					method: 'POST',
 					headers: {
@@ -1553,21 +1559,22 @@
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
 								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
+								"<td>" + (formatNumber(data[4]) || "") + "</td>" +
 								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[6]) || "") + "</td>" +
 								"</tr>";
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
-						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-				document.querySelector(".CustomerChartdetails").style.display = "block";
-				
+				document.querySelector(".ProvisionCoverage").style.display = "block";
+
 
 			} else if (labelsrlno === "24") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1686,16 +1693,14 @@
 			}
 		}
 
-		function Getexposuredetail(a) {
+		function Getexposuredetail(a,el) {
 
-			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
-			const Report_dateSelected = '30-09-2025';
-
-
+			
+			const Report_dateSelected = el.dataset.reportDate;
 
 			if (a === 'Outsidegcc') {
-				
-				
+
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
 				fetch("./Getbarchart?Matrix_Srl_no=" + '10A' + '&Report_date=' + Report_dateSelected) // your API URL
 					.then(response => response.json())
 					.then(result => {
@@ -1712,9 +1717,9 @@
 						Initiatedailychart(labels, dataValues, 5, 100);
 					});
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				
-				
-				
+
+
+
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureoutsidegcc', {
@@ -1755,7 +1760,7 @@
 					});
 				document.querySelector(".Exposure_outside_GCC").style.display = "block";
 			} else if (a === 'OnlyGcc') {
-				
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
 				fetch("./Getbarchart?Matrix_Srl_no=" + '10B' + '&Report_date=' + Report_dateSelected) // your API URL
 					.then(response => response.json())
 					.then(result => {
@@ -1972,7 +1977,39 @@
 
 				document.querySelector(".LiquidAssetsRatio").style.display = "block";
 			} else if (Selectedmatrixlabel === "9") {
-			
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Mortageloanappetite', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("Housingloan_Exp").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Topuploan_Expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Total_mortgage_loan").textContent =
+								formatDecimalValue(data[2]);
+							document.getElementById("Total_mortgage_loan_per").textContent =
+								(data[3] + '%');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+					document.querySelector(".Mortageloan_block").style.display = "grid";
 				var trHTML = "";
 				document.getElementById("MortgageLoanbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountMortgageLoanAppetite', {
@@ -1991,15 +2028,16 @@
 						var trHTML = "";
 
 						// Use plain JS loop; you already use jQuery only for DOM
-						list.forEach(function(data) {
-				        trHTML +=
-				            "<tr>" +
-				            "<td>" + (data[0] || "") + "</td>" +
-				            "<td>" + (data[1] || "") + "</td>" +
-				            "<td>" + (formatNumber(data[2]) || "") + "</td>" +
-				            "</tr>";
-				    });
-						
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"</tr>";
+						});
+
 						// Replace body content
 						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + selectedDate;
 						document.getElementById("MortgageLoanbody").innerHTML = trHTML;
@@ -2009,10 +2047,11 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".MortgageLoanAppetitedetails").style.display = "block";
-				
-				
-				
-				
+				document.getElementById('TopuploanLink').dataset.reportDate = selectedDate;
+				document.getElementById('Housingloanlink').dataset.reportDate = selectedDate;
+
+
+
 			} else if (Selectedmatrixlabel === "1") {
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -2096,8 +2135,8 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
-			
+			}
+
 			else if (Selectedmatrixlabel === "11") {
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2138,8 +2177,8 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
-			
+			}
+
 			else if (Selectedmatrixlabel === "12") {
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2221,7 +2260,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
+			}
 			else if (Selectedmatrixlabel === "14") {
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2262,7 +2301,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
+			}
 			else if (Selectedmatrixlabel === "15") {
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2303,9 +2342,9 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
+			}
 			else if (Selectedmatrixlabel === "16") {
-				
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountOtherSectors', {
@@ -2345,7 +2384,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			} 
+			}
 			else if (Selectedmatrixlabel === "7") {
 				document.getElementById("labletype").innerHTML = "Top 10 NPA Accounts";
 				var trHTML = "";
@@ -2387,11 +2426,11 @@
 						$("#invalidfile").modal("toggle");
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
-			}else if(Selectedmatrixlabel === "8"){
-				document.getElementById("labletype").innerHTML = "Top 10 Provision Coverage Accounts";
+			} else if (Selectedmatrixlabel === "8") {
+				document.getElementById("Provlabletype").innerHTML = "Top 10 Provision Coverage Accounts";
 				var trHTML = "";
-				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
-				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountProvisionCoverageRatio', {
+				document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'teaccountProvisionCoverageRatio', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -2413,24 +2452,101 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[6]) || "") + "</td>" +
 								"</tr>";
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
-						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
+						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-				document.querySelector(".CustomerChartdetails").style.display = "block";
+				document.querySelector(".ProvisionCoverage").style.display = "block";
+			} else if (Selectedmatrixlabel === "2") {
+				var trHTML = "";
+				document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
+				document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'ToptenSingleExposure', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".ToptenSingleborrowerdiv").style.display = "block";
+
+				var trHTML_1 = "";
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'ToptenGroupExposure', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML_1 = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML_1 +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (data[2] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML_1;
+						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + selectedDate;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".ToptenGroupborrowerdiv").style.display = "block";
 			}
-			
-			
+
+
 			else {
 				alert('Sorry invalid operation selected')
 			}
@@ -2720,7 +2836,7 @@
 						const idx = elements[0].index;
 						const period = labels[idx];   // e.g. "Jan"
 						updateLiquidAssetsTable(period);
-					},					
+					},
 					scales: {
 						x: {
 							grid: {
@@ -2940,8 +3056,8 @@
 					<div class="stats-grid CountryExposuredetail" style="display: none;">
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#"
-										onclick="Getexposuredetail('Outsidegcc');">Outside GCC Exposure
+								<div class="stat-card-title"><a href="#" id="outsideGccLink" data-report-date=""
+										onclick="Getexposuredetail('Outsidegcc',this);">Outside GCC Exposure
 										(%)</a></div>
 							</div>
 							<div class="stat-card-value" id="Outside_gcc_exp">0.00</div>
@@ -2954,7 +3070,8 @@
 						</div>
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#" onclick="Getexposuredetail('OnlyGcc');">GCC
+								<div class="stat-card-title"><a href="#" id="GccLink" data-report-date=""
+									onclick="Getexposuredetail('OnlyGcc',this);">GCC
 										Exposure (%)</a></div>
 							</div>
 							<div class="stat-card-value" id="Only_gcc_Exp">0.00</div>
@@ -2973,17 +3090,17 @@
 					<div class="stats-grid Mortageloan_block" style="display: none;">
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#"
-										onclick="Getexposuredetail('Toptenhousingloan');">Housing loan</a>
+								<div class="stat-card-title"><a href="#" id="Housingloanlink" data-report-date=""
+										onclick="Getexposuredetail('Toptenhousingloan',this);">Housing loan In (Mn)</a>
 								</div>
 							</div>
 							<div class="stat-card-value" id="Housingloan_Exp">0.00</div>
 						</div>
 						<div class="stat-card">
 							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#"
-										onclick="Getexposuredetail('Toptentopuploan');">Baroda Topup
-										loan</a></div>
+								<div class="stat-card-title"><a href="#" id="TopuploanLink" data-report-date=""
+										onclick="Getexposuredetail('Toptentopuploan',this);">Baroda Topup
+										loan In (Mn)</a></div>
 							</div>
 							<div class="stat-card-value" id="Topuploan_Expo">0.00</div>
 						</div>
@@ -3071,10 +3188,10 @@
 					</div>
 
 					<!--Current Month progressing chart-->
-					<div class="chart-container" style="display: none;">
+					<!--<div class="chart-container" style="display: none;">
 						<canvas id="Linechartfordailyreport"></canvas>
 
-					</div>
+					</div>-->
 
 					<!--	Group and Single Borrower detail -->
 					<div class="UnsecuredPosition" style="display: none;">
@@ -3137,8 +3254,8 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th id ="labletype">Top 10 Borrower </th>
-									<th id="ToptenBorrowerdate" colspan="5">Report date</th>
+									<th id="labletype" colspan="4"op 10 Borrower </th>
+									<th id="ToptenBorrowerdate" colspan="2">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
 									<th>Branch Name</th>
@@ -3156,18 +3273,43 @@
 						</table>
 					</div>
 					
-					
-						<div class="MortgageLoanAppetitedetails" style="display: none;">
+					<div class="ProvisionCoverage" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th >Top 10 Mortgage Loan Appetite</th>
-									<th id="MortgageLoanAppetitedetailsdate" colspan="5">Report date</th>
+									<th id="Provlabletype" colspan="5" op 10 Borrower </th>
+									<th id="ToptenProvisiondate" colspan="2">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
+									<th>Branch Name</th>
+									<th>Customer Id</th>
+									<th>Account Name</th>
+									<th>FB Balance in AED (Mn)</th>
+									<th>NFB Balance in AED (Mn)</th>
+									<th>Int Suspense in AED (Mn)</th>
+									<th>Total Provision in AED (Mn)</th>
+								</tr>
+					
+					
+							</thead>
+							<tbody id="ProvisionCoveragebody">
+							</tbody>
+						</table>
+					</div>
+
+
+					<div class="MortgageLoanAppetitedetails" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="2">Top 10 Mortgage Loan Appetite</th>
+									<th id="MortgageLoanAppetitedetailsdate" colspan="2">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6">
-									<th>Account Number</th>
+									<th>Branch Name</th>
+									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>Account Balance</th>
+									<th>Balance In (Mn)</th>
 								</tr>
 
 
@@ -3176,7 +3318,7 @@
 							</tbody>
 						</table>
 					</div>
-					
+
 
 
 					<div class="Exposure_outside_GCC" style="display: none;">
@@ -3211,7 +3353,7 @@
 								<tr>
 									<th>Customer Id</th>
 									<th>Customer Name</th>
-									<th>Balance</th>
+									<th>Balance In (Mn)</th>
 									<th>Loans as a % of total Credit</th>
 								</tr>
 
