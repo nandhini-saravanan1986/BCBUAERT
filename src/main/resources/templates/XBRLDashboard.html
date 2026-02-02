@@ -592,7 +592,6 @@
 				document.querySelector(".ToptenGroupborrowerdiv").style.display = "block";
 			} else if (labelsrlno === "10") {
 
-
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
 
@@ -1689,12 +1688,33 @@
 
 		function Getexposuredetail(a) {
 
-
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
 			const Report_dateSelected = '30-09-2025';
 
 
 
 			if (a === 'Outsidegcc') {
+				
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + '10A' + '&Report_date=' + Report_dateSelected) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 5, 100);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + '10A' + '&Report_date=' + Report_dateSelected) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5, 100);
+					});
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
+				
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureoutsidegcc', {
@@ -1735,6 +1755,23 @@
 					});
 				document.querySelector(".Exposure_outside_GCC").style.display = "block";
 			} else if (a === 'OnlyGcc') {
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + '10B' + '&Report_date=' + Report_dateSelected) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatemonthlychart(labels, dataValues, 5, 100);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + '10B' + '&Report_date=' + Report_dateSelected) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5, 100);
+					});
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				var trHTML = "";
 				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureonlygcc', {
@@ -3151,8 +3188,8 @@
 								</tr>
 								<tr>
 									<th>Country Name</th>
-									<th>Balance</th>
-									<th>RWA</th>
+									<th>Balance In (Mn)</th>
+									<th>RWA In (Mn)</th>
 									<th>Total Exposure (%)</th>
 									<th>Total RWA (%)</th>
 								</tr>

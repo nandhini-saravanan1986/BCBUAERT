@@ -385,6 +385,21 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Trading_ClassiGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("10A")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthOutsideGccexp(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("10B")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthGccexp(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("2")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedyearSingorGroupdetails(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
 		}
 		else if(Matrix_Srl_no.equals("13")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.ServicesGetCurrentyear(Selecteddate);
@@ -486,6 +501,21 @@ public class MIS_Rest_Controller {
 		}else if(Matrix_Srl_no.equals("7")) {
 			
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthslippagedetails(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("10A")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayOutsideGccexp(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("10B")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayGccexp(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("2")) {
+			
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedmonSingorGroupdetails(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}

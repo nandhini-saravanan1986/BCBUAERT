@@ -103,20 +103,20 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 			+ "Select ACCOUNT_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
 	List<Object[]> GetsingleExposure(Date Report_date);
 	
-	@Query(value="With SingleBorrower_detail as ((Select ACCOUNT_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
-			+ "report_date = ?1  and group_name is not null Group by  ACCOUNT_NAME) ORDER BY Exposure DESC\r\n"
+	@Query(value="With SingleBorrower_detail as ((Select GROUP_NAME, ROUND(Sum(BALANCE)/1000000,2) AS Exposure from brf95_rwa_data_fundbased Where \r\n"
+			+ "report_date = ?1  and group_name is not null Group by  GROUP_NAME) ORDER BY Exposure DESC\r\n"
 			+ "FETCH FIRST 10 ROWS ONLY),\r\n"
 			+ "Tier_1_Capital as (Select Round((r15_ratios1/1000)*0.1,2) as r15_ratios1 from BRF95_SUMMARYTABLE Where report_date = ?1 )\r\n"
-			+ "Select ACCOUNT_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
+			+ "Select GROUP_NAME, EXPOSURE,Round(EXPOSURE/r15_ratios1,2) from SingleBorrower_detail a, Tier_1_Capital b",nativeQuery=true)
 	List<Object[]> Getgroupexposure(Date Report_date);
 	
 	
 	//Get Outside Gcc Exposure detail
 	@Query(value="With Countrywise_exposure as (\r\n"
-			+ "Select EXPOSURE_COUNTRY,Sum(Balance) as Country_bal,Sum(Total_RWA) as Country_rwa from brf95_rwa_data_fundbased\r\n"
+			+ "Select EXPOSURE_COUNTRY,Round(Sum(Balance)/1000000,2) as Country_bal,Round(Sum(Total_RWA)/1000000,2) as Country_rwa from brf95_rwa_data_fundbased\r\n"
 			+ "Where report_Date = ?1 and UPPER(Trim(EXPOSURE_COUNTRY)) not in ('OMAN','SAUDI ARABIA',\r\n"
 			+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by EXPOSURE_COUNTRY),\r\n"
-			+ "Total_Exposure_balance as (Select Sum(Balance) as Total_balance,Sum(Total_rwa) as Total_rwa \r\n"
+			+ "Total_Exposure_balance as (Select Round(Sum(Balance)/1000000,2) as Total_balance,Round(Sum(Total_rwa)/1000000,2) as Total_rwa \r\n"
 			+ "from brf95_rwa_data_fundbased where report_date = ?1 )\r\n"
 			+ "Select EXPOSURE_COUNTRY,Country_bal,Country_rwa,\r\n"
 			+ "Round(Country_bal/Total_balance,4)*100,Round(Country_rwa/Total_rwa,4)*100 \r\n"
@@ -125,10 +125,10 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	
 	// Get Gcc Exposure detail
 	@Query(value = "With Countrywise_exposure as (\r\n"
-			+ "Select EXPOSURE_COUNTRY,Sum(Balance) as Country_bal,Sum(Total_RWA) as Country_rwa from brf95_rwa_data_fundbased\r\n"
+			+ "Select EXPOSURE_COUNTRY,Round(Sum(Balance)/1000000,2) as Country_bal,Round(Sum(Total_RWA)/1000000,2) as Country_rwa from brf95_rwa_data_fundbased\r\n"
 			+ "Where report_Date = ?1 and UPPER(Trim(EXPOSURE_COUNTRY)) in ('OMAN','SAUDI ARABIA',\r\n"
 			+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by EXPOSURE_COUNTRY),\r\n"
-			+ "Total_Exposure_balance as (Select Sum(Balance) as Total_balance,Sum(Total_rwa) as Total_rwa \r\n"
+			+ "Total_Exposure_balance as (Select  Round(Sum(Balance)/1000000,2) as Total_balance,Round(Sum(Total_rwa)/1000000,2) as Total_rwa \r\n"
 			+ "from brf95_rwa_data_fundbased where report_date = ?1 )\r\n"
 			+ "Select EXPOSURE_COUNTRY,Country_bal,Country_rwa,\r\n"
 			+ "Round(Country_bal/Total_balance,4)*100,Round(Country_rwa/Total_rwa,4)*100 \r\n"
@@ -691,11 +691,93 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				)
 				List<Object[]> GetToptenProvision(Date Selecteddate);
 
-
-
-			
+		///Get Outside Gcc Exposure Current Year Graph
+		@Query(value="Select To_char(month_end,'DD-MM-YYYY'),Countrywise_exposure from (With Countrywise_exposure as (\r\n"
+				+ "Select report_Date,Sum(Balance) as Country_bal from brf95_rwa_data_fundbased\r\n"
+				+ "Where report_Date  IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) and UPPER(Trim(EXPOSURE_COUNTRY)) not in ('OMAN','SAUDI ARABIA',\r\n"
+				+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by report_Date),\r\n"
+				+ "Total_Exposure_balance as (Select report_Date,Sum(Balance) as Total_balance\r\n"
+				+ "from brf95_rwa_data_fundbased where report_date IN (\r\n"
+				+ "SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) group by report_Date),\r\n"
+				+ "PercentageCalcu as (Select a.REPORT_DATE,Country_bal,Round(Country_bal/Total_balance,4)*100 as Countrywise_exposure\r\n"
+				+ "from Countrywise_exposure a , Total_Exposure_balance b  Where A.Report_date = b.Report_date),\r\n"
+				+ "Current_yeardates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
+				+ "Select month_end as month_end,Nvl(b.Countrywise_exposure,0) as Countrywise_exposure from Current_yeardates a Left Join \r\n"
+				+ "PercentageCalcu b on a.month_end = b.REPORT_DATE  Order by month_end Asc)",nativeQuery=true)
+		List<Object[]> GetSelectedMonthOutsideGccexp(Date Selecteddate);
 		
-
+		@Query(value="Select To_char(month_end,'DD-MM-YYYY'),Countrywise_exposure from (With Countrywise_exposure as (\r\n"
+				+ "Select report_Date,Sum(Balance) as Country_bal from brf95_rwa_data_fundbased\r\n"
+				+ "Where report_Date Between Trunc(?1,'MM') AND\r\n"
+				+ "LAST_DAY(Trunc(?1,'MM'))\r\n"
+				+ "and UPPER(Trim(EXPOSURE_COUNTRY)) not in ('OMAN','SAUDI ARABIA',\r\n"
+				+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by report_Date),\r\n"
+				+ "Total_Exposure_balance as (Select report_Date,Sum(Balance) as Total_balance\r\n"
+				+ "from brf95_rwa_data_fundbased where report_date \r\n"
+				+ "Between Trunc(?1,'MM') AND\r\n"
+				+ "LAST_DAY(Trunc(?1,'MM')) group by report_Date),\r\n"
+				+ "PercentageCalcu as (Select a.REPORT_DATE,Country_bal,Round(Country_bal/Total_balance,4)*100 as Countrywise_exposure\r\n"
+				+ "from Countrywise_exposure a , Total_Exposure_balance b  Where A.Report_date = b.Report_date),\r\n"
+				+ "Current_yeardates as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
+				+ "Select month_end as month_end,Nvl(b.Countrywise_exposure,0) as Countrywise_exposure from Current_yeardates a Left Join \r\n"
+				+ "PercentageCalcu b on a.month_end = b.REPORT_DATE  Order by month_end Asc)",nativeQuery=true)
+		List<Object[]> GetSelectedDayOutsideGccexp(Date Selecteddate);
 		
-	
+		@Query(value="Select To_char(month_end,'DD-MM-YYYY'),Countrywise_exposure from (With Countrywise_exposure as (\r\n"
+				+ "Select report_Date,Sum(Balance) as Country_bal from brf95_rwa_data_fundbased\r\n"
+				+ "Where report_Date  IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) and UPPER(Trim(EXPOSURE_COUNTRY)) in ('OMAN','SAUDI ARABIA',\r\n"
+				+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by report_Date),\r\n"
+				+ "Total_Exposure_balance as (Select report_Date,Sum(Balance) as Total_balance\r\n"
+				+ "from brf95_rwa_data_fundbased where report_date IN (\r\n"
+				+ "SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) group by report_Date),\r\n"
+				+ "PercentageCalcu as (Select a.REPORT_DATE,Country_bal,Round(Country_bal/Total_balance,4)*100 as Countrywise_exposure\r\n"
+				+ "from Countrywise_exposure a , Total_Exposure_balance b  Where A.Report_date = b.Report_date),\r\n"
+				+ "Current_yeardates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
+				+ "Select month_end as month_end,Nvl(b.Countrywise_exposure,0) as Countrywise_exposure from Current_yeardates a Left Join \r\n"
+				+ "PercentageCalcu b on a.month_end = b.REPORT_DATE  Order by month_end Asc)",nativeQuery=true)
+		List<Object[]> GetSelectedMonthGccexp(Date Selecteddate);
+		
+		@Query(value="Select To_char(month_end,'DD-MM-YYYY'),Countrywise_exposure from (With Countrywise_exposure as (\r\n"
+				+ "Select report_Date,Sum(Balance) as Country_bal from brf95_rwa_data_fundbased\r\n"
+				+ "Where report_Date Between Trunc(?1,'MM') AND\r\n"
+				+ "LAST_DAY(Trunc(?1,'MM'))\r\n"
+				+ "and UPPER(Trim(EXPOSURE_COUNTRY)) in ('OMAN','SAUDI ARABIA',\r\n"
+				+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by report_Date),\r\n"
+				+ "Total_Exposure_balance as (Select report_Date,Sum(Balance) as Total_balance\r\n"
+				+ "from brf95_rwa_data_fundbased where report_date \r\n"
+				+ "Between Trunc(?1,'MM') AND\r\n"
+				+ "LAST_DAY(Trunc(?1,'MM')) group by report_Date),\r\n"
+				+ "PercentageCalcu as (Select a.REPORT_DATE,Country_bal,Round(Country_bal/Total_balance,4)*100 as Countrywise_exposure\r\n"
+				+ "from Countrywise_exposure a , Total_Exposure_balance b  Where A.Report_date = b.Report_date),\r\n"
+				+ "Current_yeardates as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
+				+ "Select month_end as month_end,Nvl(b.Countrywise_exposure,0) as Countrywise_exposure from Current_yeardates a Left Join \r\n"
+				+ "PercentageCalcu b on a.month_end = b.REPORT_DATE  Order by month_end Asc)",nativeQuery=true)
+		List<Object[]> GetSelectedDayGccexp(Date Selecteddate);
+		
+		///Single and Group Borrower Exposure Details
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+		List<Object[]> GetSelectedyearSingorGroupdetails(Date Selecteddate);
+		
+		@Query(value="Select * from(With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
+				+ "Current_Year_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
+				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+		List<Object[]> GetSelectedmonSingorGroupdetails(Date Selecteddate);
+		
 }
