@@ -44,6 +44,7 @@ import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.RT_SLS_Repository;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredEntity;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredrep;
 import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
@@ -96,6 +97,9 @@ public class MIS_Rest_Controller {
     
     @Autowired
     Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
+    
+    @Autowired
+    RT_SLS_Repository RT_SLS_Repository;
     
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
@@ -316,6 +320,25 @@ public class MIS_Rest_Controller {
 		
 	}
 	
+	@GetMapping("/GetStocklimitdetail")
+	public List<Object[]> GetStocklimitdetail(@RequestParam(value="Matrix_Srl_no",required=true) String Matrix_Srl_no,
+			@RequestParam(value="Report_date",required=false) String Report_date) {
+		List<Object[]>  Exposuredata = new ArrayList<>();
+		System.out.println("Bar chart Entered");
+		
+		if(Report_date.contains("T")) {
+			Report_date = Report_date.split("T")[0];
+			System.out.println(Report_date + " Splitted date");
+		}
+		
+		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+		
+		 if(Matrix_Srl_no.equals("45")) {
+				 Exposuredata = RT_SLS_Repository.GetStockapproachratioGraph(Selecteddate);
+			}
+		return Exposuredata;
+	}
+	
 	@GetMapping("/Getbarchart")
 	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value="Matrix_Srl_no",required=true) String Matrix_Srl_no,
 			@RequestParam(value="Report_date",required=false) String Report_date) {
@@ -420,6 +443,22 @@ public class MIS_Rest_Controller {
 		}
 		else if(Matrix_Srl_no.equals("16")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.otherGetCurrentyear(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("38")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsaed(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("39")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsUSD(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("40")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("41")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList()); 
 		}
@@ -710,6 +749,12 @@ public class MIS_Rest_Controller {
 		}
 		else if(Data_Type_Used.equals("tenaccountOtherSectors")) {
 			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenOtherSectors(Selecteddate);
+		}else if(Data_Type_Used.equals("LongTermAED")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetlongtermAED(Selecteddate);
+		}else if(Data_Type_Used.equals("LongTermUSD")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetlongtermUSD(Selecteddate);
+		}else if (Data_Type_Used.equals("Stockapproachratio")) {
+			Exposuredata=RT_SLS_Repository.GetStockapproachratio(Selecteddate);
 		}
 		
 		return Exposuredata;

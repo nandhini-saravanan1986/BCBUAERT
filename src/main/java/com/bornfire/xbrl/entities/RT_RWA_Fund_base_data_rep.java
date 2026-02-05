@@ -628,21 +628,44 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Report_date = ?1 and is_acct_real_estate_exp = 'Y' ORDER BY TOTAL_RWA DESC ) FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealestateaccountdetail(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) as BALANCE from brf95_rwa_data_fundbased where sector_classification = 'Industry' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Industry' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorIndustrial(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) as BALANCE from brf95_rwa_data_fundbased where sector_classification = 'Trading' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Trading' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorTrading(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) as BALANCE from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorServicesexcludingbank(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) as BALANCE from brf95_rwa_data_fundbased where sector_classification = 'Real Estate' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Real Estate' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealEstate(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) as BALANCE from brf95_rwa_data_fundbased where sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenOtherSectors(Date Selecteddate);
 		
+		@Query(value="SELECT SHORT_TERM_RESO, MEDIUM_TERM_RESO, LONG_TERM_RES, SHORT_TERM_ASSET, MEDIUM_TERM_ASSET, LONG_TERM_ASSET,\r\n"
+				+ "Round((LONG_TERM_RES/LONG_TERM_ASSET),4)*100 As Long_Term_Ratio,\r\n"
+				+ "Round((MEDIUM_TERM_RESO+ LONG_TERM_RES)/(MEDIUM_TERM_ASSET+ LONG_TERM_ASSET),4)*100 As Medium_to_long_Term_Ratio,\r\n"
+				+ "70 - Round((LONG_TERM_RES/LONG_TERM_ASSET),4)*100 Long_Term_Remai,\r\n"
+				+ "80 - Round((MEDIUM_TERM_RESO+ LONG_TERM_RES)/(MEDIUM_TERM_ASSET+ LONG_TERM_ASSET),4)*100 As Medium_to_long_Term_Ratio_Remai\r\n"
+				+ "FROM(Select (R39_DAY1+ R39_DAY2_7+ R39_DAY8_14+ R39_DAY15_30+ R39_DAY31_TO_2M+R39_MORE2M_TO_3M+ R39_OVER3M_TO_6M) As Short_Term_reso,\r\n"
+				+ "(R39_OVER6M_TO_1Y+ R39_OVER1Y_TO_3Y) As Medium_Term_Reso,(R39_OVER3Y_TO_5Y+ R39_OVER5Y) As Long_Term_Res,\r\n"
+				+ "(R70_DAY1+ R70_DAY2_7+ R70_DAY8_14+ R70_DAY15_30+ R70_DAY31_TO_2M+R70_MORE2M_TO_3M+ R70_OVER3M_TO_6M) As Short_Term_Asset,\r\n"
+				+ "(R70_OVER6M_TO_1Y+ R70_OVER1Y_TO_3Y) As Medium_Term_Asset,(R70_OVER3Y_TO_5Y+ R70_OVER5Y) As Long_Term_Asset\r\n"
+				+ "from RT_SLS_USD Where report_date = ?1 and report_currency = 'ONLY_AED_CCY_REPORT')",nativeQuery=true)
+		List<Object[]> GetlongtermAED(Date Selecteddate);
+		
+		@Query(value="SELECT SHORT_TERM_RESO, MEDIUM_TERM_RESO, LONG_TERM_RES, SHORT_TERM_ASSET, MEDIUM_TERM_ASSET, LONG_TERM_ASSET,\r\n"
+				+ "Round((LONG_TERM_RES/LONG_TERM_ASSET),4)*100 As Long_Term_Ratio,\r\n"
+				+ "Round((MEDIUM_TERM_RESO+ LONG_TERM_RES)/(MEDIUM_TERM_ASSET+ LONG_TERM_ASSET),4)*100 As Medium_to_long_Term_Ratio,\r\n"
+				+ "70 - Round((LONG_TERM_RES/LONG_TERM_ASSET),4)*100 Long_Term_Remai,\r\n"
+				+ "80 - Round((MEDIUM_TERM_RESO+ LONG_TERM_RES)/(MEDIUM_TERM_ASSET+ LONG_TERM_ASSET),4)*100 As Medium_to_long_Term_Ratio_Remai\r\n"
+				+ "FROM(Select (R39_DAY1+ R39_DAY2_7+ R39_DAY8_14+ R39_DAY15_30+ R39_DAY31_TO_2M+R39_MORE2M_TO_3M+ R39_OVER3M_TO_6M) As Short_Term_reso,\r\n"
+				+ "(R39_OVER6M_TO_1Y+ R39_OVER1Y_TO_3Y) As Medium_Term_Reso,(R39_OVER3Y_TO_5Y+ R39_OVER5Y) As Long_Term_Res,\r\n"
+				+ "(R70_DAY1+ R70_DAY2_7+ R70_DAY8_14+ R70_DAY15_30+ R70_DAY31_TO_2M+R70_MORE2M_TO_3M+ R70_OVER3M_TO_6M) As Short_Term_Asset,\r\n"
+				+ "(R70_OVER6M_TO_1Y+ R70_OVER1Y_TO_3Y) As Medium_Term_Asset,(R70_OVER3Y_TO_5Y+ R70_OVER5Y) As Long_Term_Asset\r\n"
+				+ "from RT_SLS_USD Where report_date = ?1 and report_currency = 'ONLY_USD_CCY_REPORT')",nativeQuery=true)
+		List<Object[]> GetlongtermUSD(Date Selecteddate);
 
 		
 		@Query(value =
@@ -769,5 +792,42 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> GetSelectedmonSingorGroupdetails(Date Selecteddate);
+		
+		/////SLS AED Limit
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '38') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetLongTermResourcesLongTermAssetsaed(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '39') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetLongTermResourcesLongTermAssetsUSD(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '40') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetLongMedTermResourcesLongMedTermAssetsaed(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '41') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetLongMedTermResourcesLongMedTermAssetsUSD(Date Selecteddate);
 		
 }
