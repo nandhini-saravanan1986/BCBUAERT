@@ -140,6 +140,73 @@ PURPOSE		: Access the Modules by Role
 		}
 	</style>
 	<style>
+			.role-btn {
+				background: #ffffff;
+				/* default white */
+				color: #E67E00;
+				/* default orange text */
+				border: 1px solid #E67E00;
+				border-radius: 25px;
+				padding: 8px 18px;
+				font-size: 13px;
+				font-weight: 600;
+				cursor: pointer;
+				box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+				transition: all 0.3s ease;
+			}
+
+			/* Hover effect → pastel orange */
+			.role-btn:hover {
+				background: #FFF3D1;
+				/* pastel orange (same as submenu hover) */
+				color: #E67E00;
+				/* orange text */
+				transform: translateY(-2px);
+				box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+			}
+
+			/* Active (selected tab) */
+			.role-btn.active {
+				background: #E67E00;
+				/* solid orange */
+				color: #fff;
+				/* white text */
+				border-color: #E67E00;
+				transform: translateY(-1px);
+				box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+			}
+
+			/* Optional: icon spacing */
+			.role-btn i {
+				margin-right: 5px;
+			}
+		</style>
+		<style>
+			#pageHeader {
+				position: sticky;
+				top: 110px;
+				z-index: 1050;
+				background: white;
+				padding-top: 10px;
+			}
+
+			#tabHeader {
+				position: sticky;
+				top: 5px;
+				/* just below page header */
+				z-index: 1040;
+				background: white;
+				padding: 5px 0;
+			}
+
+			#mainHeader {
+				position: sticky;
+				top: 0;
+				z-index: 9999;
+				background: white;
+			}
+		</style>
+	<style>
 		body {
 			font-family: 'Segoe UI', Arial, sans-serif;
 			font-size: 14px;
@@ -344,7 +411,7 @@ PURPOSE		: Access the Modules by Role
 		#floatingForwardBtn {
 			position: fixed;
 			top: 50%;
-			background-color: #0073e6;
+			background-color: #F8AC46FF;
 			border: none;
 			color: white;
 			font-size: 20px;
@@ -389,8 +456,153 @@ PURPOSE		: Access the Modules by Role
 		/* Hover animation */
 		#floatingBackBtn:hover,
 		#floatingForwardBtn:hover {
-			background-color: #005bb5;
+			background-color: #E67E00;
 			transform: scale(1.1);
+		}
+	</style>
+	<style>
+		#usertable {
+			min-width: 2800px;
+			/* adjust based on columns */
+		}
+
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
+
+		/* HEADER */
+		/* Update this section in your <style> tag */
+		#usertable thead th {
+			background-color: #7b6458;
+			color: #fff;
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
+			text-align: center;
+			vertical-align: middle;
+			white-space: normal;
+
+			/* ADD THESE THREE LINES */
+			padding: 2px 4px !important;
+			/* Reduces internal spacing */
+			line-height: 1.1 !important;
+			/* Reduces space between wrapped text lines */
+			/* Optional: slightly smaller font to save space */
+			position: sticky;
+			top: 0;
+			/* Keeps the first row at the top */
+			z-index: 10;
+			background-color: #7b6458 !important;
+			/* Ensures the header isn't transparent */
+			color: white;
+			box-shadow: inset 0 -1px 0 #dee2e6;
+			/* Optional: adds a bottom border to the sticky header */
+		}
+
+
+		/* BODY CELLS */
+		#usertable td {
+			padding: 5px 6px !important;
+			border: 1px solid #e8e8e8 !important;
+			/* light grey lines */
+			background: #fafafa;
+			white-space: normal !important;
+		}
+
+		/* ROW EVEN/ODD */
+		#usertable tbody tr:nth-child(even) {
+			background-color: #f4f2ef !important;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+			background-color: #ffffff !important;
+		}
+		#usertable thead tr:nth-child(2) th {
+		    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+		    z-index: 9;
+
+		/* SEARCH BOX FIX */
+		.dataTables_filter label {
+			display: flex !important;
+			gap: 10px;
+			align-items: center;
+		}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			/* space between text and input */
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
+
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+	</style>
+
+	<style>
+		/* DataTables pagination container */
+		.dataTables_wrapper .dataTables_paginate {
+			display: flex;
+			gap: 3px;
+			margin-left: 4px !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			box-sizing: border-box;
+			display: inline-block;
+			min-width: 1.5em;
+			padding: 0.5em !important;
+			margin-left: -8px;
+			text-align: center;
+			text-decoration: none !important;
+			border: 1px solid transparent;
+			border-radius: 2px;
+		}
+
+		.mb-2 {
+			margin-bottom: -0.5rem !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-link {
+			outline: none !important;
+			box-shadow: none !important;
+		}
+
+		/* Hover ONLY for Previous & Next */
+		.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+		.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+			background-color: #e9ecef !important;
+			color: rgb(255, 128, 64) !important;
+		}
+
+		/* Page numbers should NOT hover */
+		.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+			background-color: #f5f5f5 !important;
+			color: #6c757d !important;
+			cursor: default !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+			background-color: #ff7f27 !important;
+			border-color: #ff7f27 !important;
+			color: #ffffff !important;
+			cursor: default !important;
 		}
 	</style>
 	<script th:inline="javascript">
@@ -690,11 +902,14 @@ PURPOSE		: Access the Modules by Role
 
 		$(document).ready(function () {
 			$('#usertable').DataTable({
-				pageLength: 10,
-				lengthChange: false,
-				searching: true,
-				paging: true,
-				ordering: false,
+				scrollX: false,
+					autoWidth: false,
+					paging: true,
+					searching: true,
+					lengthChange: false,
+					ordering: false,
+					pageLength: 100,
+					fixedHeader: true,
 				scrollCollapse: true,
 				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t'
 			});
@@ -948,13 +1163,13 @@ PURPOSE		: Access the Modules by Role
 							<!-- Left: Page Title -->
 							<div class="role-page-title">
 								<h4 th:text="${menu}"></h4>
-								<div class="role-page-underline"></div>
+								<!--<div class="role-page-underline"></div>-->
 							</div>
 							<div class="custom-tab-btn-group nav-buttons float-right">
-								<button type="button" class="custom-tab-btn"
+								<button type="button"  class="role-btn"
 									th:if="${WORKCLASSAC}=='M' OR ${ROLEIDAC}=='ADM' OR ${ROLEIDAC}=='MGR'"
 									id="custom-tab-btnAdd" onclick="adduser();"
-									style="background: linear-gradient(135deg, #005fa3, #007bff); color: white;">Create
+									style="background: linear-gradient(135deg, #ff7f27, #ff7f27); color: white;">Create
 									User</button>
 
 							</div>
@@ -964,17 +1179,18 @@ PURPOSE		: Access the Modules by Role
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="table-container" style="max-height: 620px; ">
+									<div  id="liquidity-edit-page"  class="table-responsive">
 									<table class="table table-striped table-bordered table-hover" id="usertable">
 										<thead style="background-color: #e9ecf0;" class="thead-light">
 											<tr>
 												<!-- <th></th> -->
-												<th>User Id</th>
-												<th>User Name</th>
-												<th>Employee Id</th>
-												<th style="text-align:left">Branch code</th>
-												<th>Branch Name</th>
-												<th>Status</th>
-												<th>Action</th>
+												<th  class="th-left">User Id</th>
+												<th  class="th-left">User Name</th>
+												<th  class="th-left">Employee Id</th>
+												<th  class="th-left" style="text-align:left">Branch code</th>
+												<th  class="th-left">Branch Name</th>
+												<th  class="th-left">Status</th>
+												<th  class="th-left">Action</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -997,13 +1213,13 @@ PURPOSE		: Access the Modules by Role
 												</th:block>
 												<td>
 													<i class="fa fa-edit" title="Modify"
-														style="cursor: pointer; color: blue; margin-right: 12px;"
+														style="cursor: pointer; color: #ff7f27; margin-right: 12px;"
 														onclick="fnClick(this);"
 														th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC},data-roleid=${ROLEIDAC}">
 													</i>
 
 													<i class="fa fa-eye" title="View"
-														style="cursor: pointer; color: blue;" onclick="fnView(this);"
+														style="cursor: pointer; color: #ff7f27;" onclick="fnView(this);"
 														th:attr="data-userid=${userProfile.userid},data-WORKCLASS=${WORKCLASSAC}">
 													</i>
 												</td>
@@ -1013,13 +1229,13 @@ PURPOSE		: Access the Modules by Role
 									</table>
 								</div>
 
-
+</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div style="padding-right: 0px;padding-left: 0px; margin-left:35px;"
+				<div  id="liquidity-edit-page" style="padding-right: 0px;padding-left: 0px; margin-left:35px;"
 					th:if="${formmode}=='edit' OR ${formmode}=='add' OR ${formmode}=='view'">
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
@@ -1035,28 +1251,28 @@ PURPOSE		: Access the Modules by Role
 										<div class="role-page-title">
 											<div>
 												<h4 th:if="${formmode}=='add'"
-													style="  font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+													style="  font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
 													USER PROFILE - ADD
 												</h4>
 												<h4 th:if="${formmode}=='view'"
-													style="  font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+													style="  font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
 													USER PROFILE - VIEW
 												</h4>
 												<h4 th:if="${formmode}=='edit'"
-													style="  font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+													style="  font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
 													USER PROFILE - EDIT
 												</h4>
 												<!-- Underline just below the heading -->
-												<div class="role-page-underline"
+												<!--<div class="role-page-underline"
 													style="width: 200px; height: 3px; background-color: #0073e6; border-radius: 2px;">
-												</div>
+												</div>-->
 											</div>
 										</div>
 
 										<!-- Right: List Button -->
 										<div>
-											<button type="button" class="role-add-btn" onclick="list();"
-												style="background-color: #376275; color: white; border: none; padding: 6px 16px; border-radius: 5px; font-weight: 500;">
+											<button type="button" class="role-btn" onclick="list();"
+												style="background-color: #ff7f27; color: white; border: none; padding: 6px 16px; border-radius: 5px; font-weight: 500;">
 												List
 											</button>
 										</div>
@@ -1380,12 +1596,12 @@ PURPOSE		: Access the Modules by Role
 												<!-- Left: Page Title -->
 												<div class="role-page-title">
 													<h4
-														style="  font-size: 20px; font-weight: bold; color: #376275; margin-bottom: 5px;">
+														style="  font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
 														Role and Rights
 													</h4>
-													<div class="role-page-underline"
+													<!--<div class="role-page-underline"
 														style="width: 151px; height: 3px; background-color: #0073e6; border-radius: 2px;">
-													</div>
+													</div>-->
 												</div>
 											</div>
 
@@ -1517,7 +1733,7 @@ PURPOSE		: Access the Modules by Role
 											class="custom-tab-btn" form="IPSAccessRole"
 											th:attr="data-formmode=${formmode}" id="btnSubmit"
 											onclick="submitform(this);"
-											style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+											style="background: linear-gradient(135deg, #ff7f27, #ff7f27); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
 											Submit
 										</button>
 
@@ -1526,7 +1742,7 @@ PURPOSE		: Access the Modules by Role
 											form="IPSAccessRole"
 											th:attr="data-formmode='verify', data-entryUser=${IPSAccessRole.entryUser}, data-modifyUser=${IPSAccessRole.modifyUser}"
 											id="btnSubmit" onclick="verifySubmit(this);"
-											style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+											style="background: linear-gradient(135deg, #ff7f27, #ff7f27); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
 											Submit
 										</button>
 
@@ -1535,7 +1751,7 @@ PURPOSE		: Access the Modules by Role
 											form="IPSAccessRole"
 											th:attr="data-formmode='delete', data-entryUser=${IPSAccessRole.entryUser}, data-roleId=${IPSAccessRole.roleId}, data-modifyUser=${IPSAccessRole.modifyUser}"
 											id="btnSubmit" onclick="deleteSubmit(this);"
-											style="background: linear-gradient(135deg, #005fa3, #007bff); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
+											style="background: linear-gradient(135deg, #ff7f27, #ff7f27); color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500; margin: 5px;">
 											Delete
 										</button>
 
@@ -1935,7 +2151,7 @@ PURPOSE		: Access the Modules by Role
 							</div>
 							<div class="modal-body" style="text-align: center">
 								<p id="alertmsg"></p>
-								<button type="button" class="role-add-btn" onclick="list()"
+								<button type="button" class="role-btn" onclick="list()"
 									data-dismiss="modal">Close</button>
 							</div>
 						</div>
@@ -1981,5 +2197,96 @@ PURPOSE		: Access the Modules by Role
 		</button>
 	</div>
 </body>
+<style>
+	/* Default header alignment */
+	#usertable thead th {
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
 
+	/* Left aligned headers */
+	#usertable thead th.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable thead th.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable td.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable td.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable {
+		table-layout: auto !important;
+		width: 100% !important;
+	}
+
+	/* Report Date column – prevent wrap + increase width */
+	#usertable th.col-report-date,
+	#usertable td.col-report-date {
+		min-width: 120px !important;
+		/* increase as needed */
+		white-space: nowrap !important;
+		text-align: center;
+	}
+</style>
+<style>
+	body:has(#liquidity-edit-page) {
+		overflow: hidden;
+	}
+
+	#liquidity-edit-page .card-body {
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	#liquidity-edit-page .card {
+		margin-bottom: 0;
+	}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.liquid-edit-page {
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	.liquid-edit-page label,
+	.liquid-edit-page input,
+	.liquid-edit-page textarea,
+	.liquid-edit-page button {
+		font-size: 12px !important;
+	}
+
+	.modal-title {
+		background-color: #f7a47c;
+	}
+	.table-responsive {
+					border-radius: 4px;
+					max-height: 500px;
+					/* Adjust this height as needed */
+					overflow-y: auto;
+					overflow-x: auto;
+					border: 1px solid #dee2e6;
+				}
+</style>
 </html>
