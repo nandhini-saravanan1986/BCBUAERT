@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -335,80 +336,36 @@ public String addUser(UserProfile userProfile, String formmode, String inputUser
 
 
 	
-	public String verifyUser(UserProfile userProfile, String inputUser) {
-		String msg = "";
+public String verifyUser(UserProfile userProfile, String inputUser) {
+    String msg = "";
+    try {
+        Optional<UserProfile> upOpt = userProfileRep.findById(userProfile.getUserid());
+        if (upOpt.isPresent()) {
+            UserProfile user = upOpt.get();
+            
+            // Sync status flags
+            user.setUser_locked_flg("Active".equalsIgnoreCase(userProfile.getLogin_status()) ? "N" : "Y");
+            user.setDisable_flg("Active".equalsIgnoreCase(userProfile.getUser_status()) ? "N" : "Y");
+            
+            user.setEntity_flg("Y");
+            user.setAuth_user(inputUser);
+            user.setAuth_time(new Date());
+            
+            // Set account expiry (e.g., 1 year from today instead of hardcoded 2027)
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, 1);
+            user.setAcc_exp_date(cal.getTime());
 
-		Optional<UserProfile> up = userProfileRep.findById(userProfile.getUserid());
-		
-
-		try {
-
-			if (up.isPresent()) {
-
-				userProfile.setPassword(up.get().getPassword());
-
-				if (userProfile.getLogin_status().equals("Active")) {
-					userProfile.setUser_locked_flg("N");
-				} else {
-					userProfile.setUser_locked_flg("Y");
-				}
-
-				if (userProfile.getUser_status().equals("Active")) {
-					userProfile.setDisable_flg("N");
-				} else {
-					userProfile.setDisable_flg("Y");
-				}
-			    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-				Date Disabledate = formatter.parse("21-12-23"); // <-- note full year!
-				
-				
-				userProfile.setNo_of_attmp(0);
-				userProfile.setEntity_flg("Y");
-				userProfile.setLogin_flg("N");
-				userProfile.setAuth_user(inputUser);
-				userProfile.setAuth_time(new Date());
-				userProfile.setLogin_low("00:00");
-				userProfile.setLogin_high("23:59");
-				userProfile.setDisable_start_date(Disabledate);
-				userProfile.setDisable_end_date(Disabledate);
-				userProfile.setEmp_name(userProfile.getUsername());
-	           
-				Date date1 = formatter.parse("28-02-2027"); // <-- note full year!
-									
-				userProfile.setAcc_exp_date(date1);
-
-				 // Password expiry date
-	            if (userProfile.getPass_exp_days() != null && !userProfile.getPass_exp_days().trim().isEmpty()) {
-	                String localdateval = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-	                LocalDate date = LocalDate.parse(localdateval);
-	                BigDecimal passexpdays = new BigDecimal(userProfile.getPass_exp_days());
-	                LocalDate date2 = date.plusDays(passexpdays.intValue());
-	                userProfile.setPass_exp_date(new SimpleDateFormat("yyyy-MM-dd").parse(date2.toString()));
-	            } else {
-	                // Default expiry period: 90 days (optional)
-	                String localdateval = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-	                LocalDate date = LocalDate.parse(localdateval);
-	                LocalDate date2 = date.plusDays(90);
-	                userProfile.setPass_exp_date(new SimpleDateFormat("yyyy-MM-dd").parse(date2.toString()));
-	            }
-
-				
-				auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,"BRF_USER_PROFILE_TABLE");
-				userProfileRep.save(userProfile);
-				
-				
-			}
-
-			msg = "User Verified Successfully";
-		} catch (Exception e) {
-			logger.info(e.getMessage());
-			e.printStackTrace();
-			msg = "Error Occured. Please contact Administrator";
-		}
-
-		return msg;
-	}
-
+            userProfileRep.save(user);
+            msg = "User Verified Successfully";
+        } else {
+            msg = "User not found.";
+        }
+    } catch (Exception e) {
+        msg = "Error: " + e.getMessage();
+    }
+    return msg;
+}
 	public String passwordReset(UserProfile userprofile, String userid) {
 
 		String msg = "";

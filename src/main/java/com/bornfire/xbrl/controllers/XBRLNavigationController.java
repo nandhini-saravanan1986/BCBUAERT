@@ -512,62 +512,35 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String userid,
-			@RequestParam(value = "page", required = false) Optional<Integer> page,
-			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
+	        @RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
 
-		String loginuserid = (String) req.getSession().getAttribute("USERID");
-		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
-		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
-		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
+	    String loginuserid = (String) req.getSession().getAttribute("USERID");
+	    String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
+	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
+	    
+	    // Always provide these for dropdowns/logic
+	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
+	    md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+	    md.addAttribute("ROLEIDAC", ROLEIDAC);
+	    md.addAttribute("loginuserid", loginuserid);
 
-		// System.out.println("work class is : " + WORKCLASSAC);
-		// System.out.println("role ID" + ROLEIDAC);
-
-//	    System.out.println("work class is : " + WORKCLASSAC);
-//	    System.out.println("role ID" + ROLEIDAC);
-
-		loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(), loginuserid, req.getRemoteAddr(),
-				"ACTIVE");
-		Session hs1 = sessionFactory.getCurrentSession();
-		md.addAttribute("menu", "USER PROFILE");
-
-		int currentPage = page.orElse(0);
-		int pageSize = size.orElse(Integer.parseInt(pagesize));
-
-		if (formmode == null || formmode.equals("list")) {
-			md.addAttribute("formmode", "list");
-			md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-			md.addAttribute("ROLEIDAC", ROLEIDAC);
-			md.addAttribute("loginuserid", loginuserid);
-
-			Iterable<UserProfile> user = loginServices.getUsersList();
-			md.addAttribute("userProfiles", user);
-
-		} else if (formmode.equals("edit")) {
-
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(userid));
-
-		} else if (formmode.equals("add")) {
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(""));
-
-		} else if (formmode.equals("verify")) {
-			md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-			md.addAttribute("ROLEIDAC", ROLEIDAC);
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("userProfile", loginServices.getUser(userid));
-
-		} else {
-			md.addAttribute("formmode", formmode);
-			md.addAttribute("FinUserProfiles", loginServices.getFinUsersList());
-			md.addAttribute("userProfile", loginServices.getUser(userid));
-		}
-
-		return "XBRLUserprofile";
+	    if (formmode == null || formmode.equals("list")) {
+	        md.addAttribute("formmode", "list");
+	        md.addAttribute("userProfiles", loginServices.getUsersList());
+	    } else {
+	        md.addAttribute("formmode", formmode);
+	        UserProfile user;
+	        if (formmode.equals("add")) {
+	            user = new UserProfile();
+	            user.setLogin_low("00:00");
+	            user.setLogin_high("23:59");
+	        } else {
+	            user = loginServices.getUser(userid);
+	        }
+	        md.addAttribute("userProfile", user);
+	    }
+	    return "XBRLUserprofile";
 	}
-
 	@RequestMapping(value = "verifyUser", method = RequestMethod.POST)
 	@ResponseBody
 	public String verifyUser(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
