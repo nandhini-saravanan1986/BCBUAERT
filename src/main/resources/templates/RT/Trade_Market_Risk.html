@@ -250,7 +250,7 @@ left
 #floatingBackBtn, #floatingForwardBtn {
 	position: fixed;
 	top: 50%;
-	background-color: #0073e6;
+	background-color: #F8AC46FF;
 	border: none;
 	color: white;
 	font-size: 20px;
@@ -292,7 +292,7 @@ left
 
 /* Hover animation */
 #floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
+	background-color: #E67E00;
 	transform: scale(1.1);
 }
 </style>
@@ -370,10 +370,13 @@ left
 }
 
 .table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
-
+			border-radius: 4px;
+			max-height: 500px;
+			/* Adjust this height as needed */
+			overflow-y: auto;
+			overflow-x: auto;
+			border: 1px solid #dee2e6;
+		}
 .table-hover tbody tr:hover {
 	background-color: #f3f6f9;
 }
@@ -550,7 +553,8 @@ label.error {
 			color: white !important;
 			/* Header text color */
 			padding: 8px 10px !important;
-			/* Same spacing style */
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
 			text-align: center;
 			/* Center text */
 			font-weight: bold;
@@ -591,6 +595,56 @@ label.error {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
+		}
+	</style>
+	<style>
+		/* DataTables pagination container */
+		.dataTables_wrapper .dataTables_paginate {
+			display: flex;
+			gap: 3px;
+			margin-left: 4px !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			box-sizing: border-box;
+			display: inline-block;
+			min-width: 1.5em;
+			padding: 0.5em !important;
+			margin-left: -8px;
+			text-align: center;
+			text-decoration: none !important;
+			border: 1px solid transparent;
+			border-radius: 2px;
+		}
+
+		.mb-2 {
+			margin-bottom: -0.5rem !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-link {
+			outline: none !important;
+			box-shadow: none !important;
+		}
+
+		/* Hover ONLY for Previous & Next */
+		.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+		.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+			background-color: #e9ecef !important;
+			color: rgb(255, 128, 64) !important;
+		}
+
+		/* Page numbers should NOT hover */
+		.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+			background-color: #f5f5f5 !important;
+			color: #6c757d !important;
+			cursor: default !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+			background-color: #ff7f27 !important;
+			border-color: #ff7f27 !important;
+			color: #ffffff !important;
+			cursor: default !important;
 		}
 	</style>
 </style>
@@ -762,7 +816,7 @@ label.error {
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
-		document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
 		document.getElementById(tabId + '-btn').classList.add('active');
 
 		// Hide all panes
@@ -774,7 +828,9 @@ label.error {
 	window.addEventListener('DOMContentLoaded', function () {
 		const params = new URLSearchParams(window.location.search);
 		const formmode = params.get('formmode');
-
+		if (formmode === 'edit') {
+					return;
+				}
 		if (formmode === 'list') {
 			handleClick('data');
 		} else if (formmode !== 'edit') { // Do not trigger for edit mode
@@ -861,13 +917,15 @@ label.error {
 		style="padding-left: 0px; padding-right: 0px;">
 		<!-- <div class="row"> -->
 
-		<div  id="mainHeader"  th:insert="XBRLHeaderMenu :: header"></div>
-		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+
+				<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+					th:if="${formmode != 'edit'}">
 
 
 						<!-- LEFT: Buttons -->
 						<div  class="text-left flex-grow-1">
-							<h4 class="m-0">FX RISK DATA</h4>
+							<h4 class="m-0">TRADE MARKET RISK DATA</h4>
 
 						</div>
 						<div class="d-flex align-items-center gap-2">
@@ -914,8 +972,7 @@ label.error {
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
 							<form id="nostroForm" method="post" autocomplete="off">
-								<div class="card-body"
-									style="max-height: 450px; overflow-y: auto">
+								<div class="card-body">
 
 
 									<input autocomplete="false" name="hidden" type="text"
@@ -923,7 +980,7 @@ label.error {
 									<div class="form-group" style="border: none">
 										<div class="row formline">
 											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<select id="submittingInstitution"
 													name="submittingInstitution" class="form-control" required>
 													<option value="">-- Select Institution --</option>
@@ -935,7 +992,7 @@ label.error {
 
 											<div class="col-sm-1"></div>
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<input type="date" id="portfolioDate" name="portfolioDate"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
@@ -946,15 +1003,16 @@ label.error {
 										<!-- Contact Employee 1 Name / Title -->
 										<!-- Contact Employee 1 Group -->
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 1)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Name1"
 														name="contactEmployee1Name1" class="form-control"
 														placeholder=" " required /> <label
@@ -962,7 +1020,7 @@ label.error {
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Title1"
 														name="contactEmployee1Title1" class="form-control"
 														placeholder=" " required /> <label
@@ -971,7 +1029,7 @@ label.error {
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee1Email1"
 														name="contactEmployee1Email1" class="form-control"
 														placeholder=" " required /> <label
@@ -982,15 +1040,16 @@ label.error {
 											</div>
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 2)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Name2"
 														name="contactEmployee2Name2" class="form-control"
 														placeholder=" " required /> <label
@@ -998,7 +1057,7 @@ label.error {
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Title2"
 														name="contactEmployee2Title2" class="form-control"
 														placeholder=" " required /> <label
@@ -1007,7 +1066,7 @@ label.error {
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee2Email2"
 														name="contactEmployee2Email2" class="form-control"
 														placeholder=" " required /> <label
@@ -1019,66 +1078,64 @@ label.error {
 											<!-- Contact Employee 2 Group -->
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Sign
+													<label style="font-weight: bold; color: #0D0D0C;">Sign
 														Off</label>
 												</div>
 											</div>
 
 											<!-- Sign-off CRO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffCroName"
 														name="signOffCroName" class="form-control" placeholder=" "
 														required /> <label for="signOffCroName"
 														class="form-legend">CRO Name</label>
 												</div>
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffCroEmail"
 														name="signOffCroEmail" class="form-control"
 														placeholder=" " required /> <label for="signOffCroEmail"
 														class="form-legend">CRO Email</label>
 												</div>
-
+												<div class="form-group col-md-3">
+														<input type="text" id="signOffCfoName"
+														name="signOffCfoName" class="form-control" placeholder=" "
+														required /> <label for="signOffCfoName"
+														class="form-legend">CFO Name</label>
+														</div>
 											</div>
 
 											<!-- Sign-off CFO Name / Email -->
 											<div class="row formline">
 												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCfoName"
-														name="signOffCfoName" class="form-control" placeholder=" "
-														required /> <label for="signOffCfoName"
-														class="form-legend">CFO Name</label>
-												</div>
+												
 
 												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="email" id="signOffCfoEmail"
-														name="signOffCfoEmail" class="form-control"
-														placeholder=" " required /> <label for="signOffCfoEmail"
-														class="form-legend">CFO Email</label>
-												</div>
+											
 
 											</div>
 
 											<!-- Sign-off Head of Treasury Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCfoEmail"
+										 			    name="signOffCfoEmail" class="form-control"
+														placeholder=" " required /> <label for="signOffCfoEmail"
+														class="form-legend">CFO Email</label>
+														</div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffHeadOfTreasuryName"
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
 														of Treasury Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffHeadOfTreasuryEmail"
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
@@ -1099,7 +1156,7 @@ label.error {
 
 
 						<button th:if="${formmode == 'null' or formmode == 'add'}"
-							type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+							type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 						<!-- 	<button type="button" class="custom-tab-btn" onclick="back();">
@@ -1154,7 +1211,7 @@ label.error {
 					style="max-height: 400px; overflow: auto; border: none;">
 					<table  id="usertable" 
 						class="table table-bordered table-striped table-hover"
-						style="min-width: 2000px;">
+						style="min-width: 2800px;">
 
 						<thead class="thead-light">
 
@@ -1262,7 +1319,7 @@ label.error {
 							<tr th:each="data : ${dataList}">
 								<td style="text-align: center;min-width: 100px;"><a
 									th:href="@{/Trade_Market_Risk(formmode='edit', reportDate=${#dates.format(data.reportDate, 'yyyy-MM-dd')})}">
-										<i class="fa fa-edit" style="color: #007bff; font-size: 16px;"></i>
+										<i class="fa fa-edit" style="color: #ff7f27; font-size: 16px;"></i>
 								</a></td>
 								<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
 								<td th:text="${data.bankName}"></td>
@@ -1483,7 +1540,7 @@ label.error {
 
 
 					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class=role-add-btn onclick="submitForm()">Save</button>
+						type="button" class=role-btn onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1499,18 +1556,16 @@ label.error {
 
 	<!------------------ edit starts-------------------------------------------------------------->
 
-	<div th:if="${formmode}=='edit'" style="width: 100%;">
+	<div th:if="${formmode}=='edit'"  class="Trademark-edit-page"  style="width: 100%;">
 
 		<div class="row" style="margin: 0;">
 			<form th:action="@{/updateTradeMarketRisk}" th:object="${data}"
 				method="post" id="tradeMarketRiskEditForm" style="width: 100%;">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
-					<div
-						class="role-page-header d-flex justify-content-between align-items-center">
-						<div class="role-page-title">
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+						<div>
 							<h4>Trade Market Risk - Edit</h4>
-							<div
-								style="width: 227px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+					
 
 						</div>
 
@@ -1520,7 +1575,7 @@ label.error {
 						<input type="hidden" th:field="*{reportDate}" />
 
 						<!-- SECTION: General Information -->
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px">Financial Institution information</h4>
 						</div>
 						<div class="form-group row">
@@ -1582,7 +1637,7 @@ label.error {
 						</div>
 
 						<!-- SECTION: Book Size & P&L -->
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px" >Trading Book Desks</h4>
 						</div>
 						<div class="form-group row">
@@ -1635,7 +1690,7 @@ label.error {
 						</div>
 
 						<!-- SECTION: VaR & Expected Shortfall -->
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px" >Value-at-Risk/Expected Shortfall</h4>
 						</div>
 						<div class="form-group row">
@@ -1689,7 +1744,7 @@ label.error {
 						</div>
 
 						<!-- SECTION: Sensitivity Analysis -->
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px" >Sensitivity Metrics</h4>
 						</div>
 						<!-- ... Continue with the rest of the fields, grouped logically ... -->
@@ -2024,7 +2079,7 @@ label.error {
 
 						<!-- Sub-section: SVaR Breakdown -->
 						<hr class="my-4">
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px">SVaR Breakdown</h4>
 						</div>
 
@@ -2151,10 +2206,10 @@ label.error {
 
 						<!-- Submit -->
 						<div class="card-footer text-center">
-							<button type="button" class="role-add-btn"
+							<button type="button" class="role-btn"
 								onclick="updateform(event)">Update</button>
 							<a th:href="@{/Trade_Market_Risk(formmode='list')}"
-								class="role-add-btn" style="text-decoration: none;">Cancel</a>
+								class="role-btn" style="text-decoration: none;">Cancel</a>
 						</div>
 					</div>
 				</div>
@@ -2173,7 +2228,7 @@ label.error {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="role-add-btn" onclick="list()"
+					<button type="button" class="role-btn" onclick="list()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -2199,7 +2254,7 @@ label.error {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="role-add-btn" onclick="trade()"
+					<button type="button" class="role-btn" onclick="trade()"
 						data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -2244,7 +2299,7 @@ label.error {
 					style="text-align: center; font-size: 1.1rem;">
 					<p id="resultModalBody"></p>
 					<!-- Your custom styled button -->
-					<button type="button" class="role-add-btn" onclick="list()"
+					<button type="button" class="role-btn" onclick="list()"
 						data-dismiss="modal">OK</button>
 				</div>
 			</div>
@@ -2546,4 +2601,71 @@ window.onload = function() {
     }
   });
 </script>
+<style>
+	#pageHeader {
+		position: sticky;
+		top: 110px;
+		z-index: 1050;
+		background: white;
+		padding-top: 10px;
+	}
+
+	#tabHeader {
+		position: sticky;
+		top: 5px;
+		/* just below page header */
+		z-index: 1040;
+		background: white;
+		padding: 5px 0;
+	}
+
+	#mainHeader {
+		position: sticky;
+		top: 0;
+		z-index: 9999;
+		background: white;
+	}
+</style>
+<style>
+	body:has(#Trademark-edit-page) {
+		overflow: hidden;
+	}
+
+	#Trademark-edit-page .card-body {
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	#Trademark-edit-page .card {
+		margin-bottom: 0;
+	}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.Trademark-edit-page {
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	.Trademark-edit-page label,
+	.Trademark-edit-page input,
+	.Trademark-edit-page textarea,
+	.Trademark-edit-page button {
+		font-size: 12px !important;
+	}
+
+	.modal-title {
+		background-color: #f7a47c;
+	}
+</style>
 </html>

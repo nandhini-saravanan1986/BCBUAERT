@@ -256,7 +256,7 @@ left
 #floatingBackBtn, #floatingForwardBtn {
 	position: fixed;
 	top: 50%;
-	background-color: #0073e6;
+	background-color: #F8AC46FF;
 	border: none;
 	color: white;
 	font-size: 20px;
@@ -298,7 +298,7 @@ left
 
 /* Hover animation */
 #floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #005bb5;
+	background-color: #E67E00;
 	transform: scale(1.1);
 }
 </style>
@@ -342,13 +342,220 @@ left
 #finusertb {
 	width: 460px;
 }
+</style>
+<style>
+	#usertable {
+		min-width: 2800px;
+		/* adjust based on columns */
+	}
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
+	#usertable {
+		border-collapse: collapse !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	/* HEADER */
+	/* Update this section in your <style> tag */
+	#usertable thead th {
+		background-color: #7b6458;
+		color: #fff;
+		font-family: Arial, sans-serif !important;
+		font-size: 14px !important;
+		text-align: center;
+		vertical-align: middle;
+		white-space: normal;
+
+		/* ADD THESE THREE LINES */
+		padding: 2px 4px !important;
+		/* Reduces internal spacing */
+		line-height: 1.1 !important;
+		/* Reduces space between wrapped text lines */
+		font-size: 11px !important;
+		/* Optional: slightly smaller font to save space */
+		position: sticky;
+		top: 0;
+		/* Keeps the first row at the top */
+		z-index: 10;
+		background-color: #7b6458 !important;
+		/* Ensures the header isn't transparent */
+		color: white;
+		box-shadow: inset 0 -1px 0 #dee2e6;
+		/* Optional: adds a bottom border to the sticky header */
+	}
+
+
+	/* BODY CELLS */
+	#usertable td {
+		padding: 5px 6px !important;
+		border: 1px solid #e8e8e8 !important;
+		/* light grey lines */
+		background: #fafafa;
+		white-space: normal !important;
+	}
+
+	/* ROW EVEN/ODD */
+	#usertable tbody tr:nth-child(even) {
+		background-color: #f4f2ef !important;
+	}
+
+	#usertable tbody tr:nth-child(odd) {
+		background-color: #ffffff !important;
+	}
+	#usertable thead tr:nth-child(2) th {
+	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	    z-index: 9;
+
+	/* SEARCH BOX FIX */
+	.dataTables_filter label {
+		display: flex !important;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
+
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
+
+	/* === ROLE PAGE CUSTOM HEADER === */
+	.role-page-header {
+		background-color: #ffffff;
+		padding: 15px 20px;
+		display: flex;
+		/* Added for alignment */
+		justify-content: space-between;
+		/* Added for alignment */
+		align-items: center;
+		/* Added for alignment */
+	}
 </style>
 
+<style>
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 3px;
+		margin-left: 4px !important;
+	}
 
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		box-sizing: border-box;
+		display: inline-block;
+		min-width: 1.5em;
+		padding: 0.5em !important;
+		margin-left: -8px;
+		text-align: center;
+		text-decoration: none !important;
+		border: 1px solid transparent;
+		border-radius: 2px;
+	}
+
+	.mb-2 {
+		margin-bottom: -0.5rem !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hover ONLY for Previous & Next */
+	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+		background-color: #e9ecef !important;
+		color: rgb(255, 128, 64) !important;
+	}
+
+	/* Page numbers should NOT hover */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+		background-color: #f5f5f5 !important;
+		color: #6c757d !important;
+		cursor: default !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+		cursor: default !important;
+	}
+</style>
+<style>
+	.role-btn {
+		background: #ffffff;
+		/* default white */
+		color: #E67E00;
+		/* default orange text */
+		border: 1px solid #E67E00;
+		border-radius: 25px;
+		padding: 8px 18px;
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+		transition: all 0.3s ease;
+	}
+
+	/* Hover effect → pastel orange */
+	.role-btn:hover {
+		background: #FFF3D1;
+		/* pastel orange (same as submenu hover) */
+		color: #E67E00;
+		/* orange text */
+		transform: translateY(-2px);
+		box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+	}
+
+	/* Active (selected tab) */
+	.role-btn.active {
+		background: #E67E00;
+		/* solid orange */
+		color: #fff;
+		/* white text */
+		border-color: #E67E00;
+		transform: translateY(-1px);
+		box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+	}
+
+	/* Optional: icon spacing */
+	.role-btn i {
+		margin-right: 5px;
+	}
+</style>
+<style>
+	#pageHeader {
+		position: sticky;
+		top: 110px;
+		z-index: 1050;
+		background: white;
+		padding-top: 10px;
+	}
+
+	#tabHeader {
+		position: sticky;
+		top: 5px;
+		/* just below page header */
+		z-index: 1040;
+		background: white;
+		padding: 5px 0;
+	}
+
+	#mainHeader {
+		position: sticky;
+		top: 0;
+		z-index: 9999;
+		background: white;
+	}
+</style>
 
 
 <style>
@@ -730,54 +937,42 @@ label.error {
 		style="padding-left: 0px; padding-right: 0px;">
 		<!-- 	<div class="row"> -->
 
-		<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div
-			class="role-page-header d-flex justify-content-between align-items-center"
+				<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
-			<div class="float-left role-page-title">
+			<div class="float-left">
 				<h4>CCR DATA TEMPLATE</h4>
-				<div
-					style="width: 200px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-
 			</div>
+			<div
+							class="role-page-header d-flex justify-content-between align-items-center">
+							<div class="float-left">
+								<button class=role-btn id="datacontrols-btn"
+									onclick="navigateToTab('datacontrols')">Data Controls</button>
+								<!--<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template
+									Instructions</button>-->
+
+								<button class="role-btn" id="template-btn"
+									onclick="navigateToTab('template')">Template Instructions</button>
 
 
+								<button class="role-btn" id="data-btn"
+									onclick="navigateToTab('data')">Data</button>
+
+							</div>
+							<div class="float-right">
+								<button th:if="${formmode} =='list'" type="button"
+									class="role-btn" onclick="downloadCCRData();">
+									<i class="fa fa-download"></i> Download
+								</button>
+							</div>
+						</div>
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<div style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
 
 			<!-- Tabs -->
-			<div
-				class="role-page-header d-flex justify-content-between align-items-center">
-				<div class="float-left">
-					<button class=role-add-btn id="datacontrols-btn"
-						onclick="navigateToTab('datacontrols')">Data Controls</button>
-					<!--<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template
-						Instructions</button>-->
-
-					<button class="role-add-btn" id="template-btn"
-						onclick="navigateToTab('template')">Template Instructions</button>
-
-
-					<button class="role-add-btn" id="data-btn"
-						onclick="navigateToTab('data')">Data</button>
-
-				</div>
-				<div class="float-right">
-					<button th:if="${formmode} =='list'" type="button"
-						class="role-add-btn" onclick="downloadCCRData();">
-						<i class="fa fa-download"></i> Download
-					</button>
-				</div>
-			</div>
-
-
-
-
-
-
 			<div class="tab-content" id="myTabContent" style="margin-top: 15px;">
 				<!--<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">-->
 
@@ -789,8 +984,7 @@ label.error {
 					<div class="row">
 						<div class="col-sm-12 finuserapply">
 							<form id="nostroForm" method="post" autocomplete="off">
-								<div class="card-body"
-									style="max-height: 450px; overflow-y: auto">
+								<div class="card-body">
 
 
 									<input autocomplete="false" name="hidden" type="text"
@@ -798,7 +992,7 @@ label.error {
 									<div class="form-group" style="border: none">
 										<div class="row formline">
 											<div class="col-sm-1"></div>
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<select id="submittingInstitution"
 													name="submittingInstitution" class="form-control" required>
 													<option value="">-- Select Institution --</option>
@@ -810,7 +1004,7 @@ label.error {
 
 											<div class="col-sm-1"></div>
 
-											<div class="form-group col-md-4">
+											<div class="form-group col-md-2">
 												<input type="date" id="portfolioDate" name="portfolioDate"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
@@ -821,15 +1015,16 @@ label.error {
 										<!-- Contact Employee 1 Name / Title -->
 										<!-- Contact Employee 1 Group -->
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 1)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Name1"
 														name="contactEmployee1Name1" class="form-control"
 														placeholder=" " required /> <label
@@ -837,7 +1032,7 @@ label.error {
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee1Title1"
 														name="contactEmployee1Title1" class="form-control"
 														placeholder=" " required /> <label
@@ -846,7 +1041,7 @@ label.error {
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee1Email1"
 														name="contactEmployee1Email1" class="form-control"
 														placeholder=" " required /> <label
@@ -857,15 +1052,16 @@ label.error {
 											</div>
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Contact
+													<label style="font-weight: bold; color: #0D0D0C;">Contact
 														Details(Employee 2)</label>
 												</div>
 											</div>
 											<div class="row formline">
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Name2"
 														name="contactEmployee2Name2" class="form-control"
 														placeholder=" " required /> <label
@@ -873,7 +1069,7 @@ label.error {
 												</div>
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="text" id="contactEmployee2Title2"
 														name="contactEmployee2Title2" class="form-control"
 														placeholder=" " required /> <label
@@ -882,7 +1078,7 @@ label.error {
 
 
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="contactEmployee2Email2"
 														name="contactEmployee2Email2" class="form-control"
 														placeholder=" " required /> <label
@@ -894,66 +1090,56 @@ label.error {
 											<!-- Contact Employee 2 Group -->
 										</div>
 										<div class="form-group"
-											style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+											style="border: 1px solid #e0e0e0; padding: 1px; margin-bottom: 6px; border-radius: 5px;">
 											<div class="row formline">
 												<div class="col-sm-12">
-													<label style="font-weight: bold; color: #007B8A;">Sign
+													<label style="font-weight: bold; color: #0D0D0C;">Sign
 														Off</label>
 												</div>
 											</div>
 
 											<!-- Sign-off CRO Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffCroName"
 														name="signOffCroName" class="form-control" placeholder=" "
 														required /> <label for="signOffCroName"
 														class="form-legend">CRO Name</label>
 												</div>
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffCroEmail"
 														name="signOffCroEmail" class="form-control"
 														placeholder=" " required /> <label for="signOffCroEmail"
 														class="form-legend">CRO Email</label>
 												</div>
-
+												<div class="form-group col-md-3">
+															<input type="text" id="signOffCfoName"
+															name="signOffCfoName" class="form-control" placeholder=" "
+															required /> <label for="signOffCfoName"
+														class="form-legend">CFO Name</label>
+													</div>
 											</div>
 
 											<!-- Sign-off CFO Name / Email -->
+										
+											<!-- Sign-off Head of Treasury Name / Email -->
 											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
-													<input type="text" id="signOffCfoName"
-														name="signOffCfoName" class="form-control" placeholder=" "
-														required /> <label for="signOffCfoName"
-														class="form-legend">CFO Name</label>
-												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffCfoEmail"
 														name="signOffCfoEmail" class="form-control"
 														placeholder=" " required /> <label for="signOffCfoEmail"
 														class="form-legend">CFO Email</label>
-												</div>
-
-											</div>
-
-											<!-- Sign-off Head of Treasury Name / Email -->
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+														</div>
+												<div class="form-group col-md-3">
 													<input type="text" id="signOffHeadOfTreasuryName"
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
 														of Treasury Name</label>
 												</div>
-
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-3">
 													<input type="email" id="signOffHeadOfTreasuryEmail"
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
@@ -974,7 +1160,7 @@ label.error {
 
 
 						<button th:if="${formmode == 'null' or formmode == 'add'}"
-							type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+							type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1083,7 +1269,7 @@ label.error {
 							<tr th:each="data : ${repoList1}">
 								<td style="text-align: center;min-width: 100px;"><a
 									th:href="@{'/CCR_Data_Templates?formmode=edit&siNo=' + ${data.siNo}}">
-										<i class="fa fa-edit" style="color: #007bff;"></i>
+										<i class="fa fa-edit" style="color: #ff7f27;"></i>
 								</a></td>
 								<td
 									th:text="${#dates.format(data.transactionDate, 'dd-MM-yyyy')}"></td>
@@ -1159,7 +1345,7 @@ label.error {
 
 
 					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-add-btn" onclick="submitForm()">Save</button>
+						type="button" class="role-btn" onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1176,16 +1362,14 @@ label.error {
 
 		<!------------------ edit starts-------------------------------------------------------------->
 
-		<div th:if="${formmode}=='edit'" style="align-items: center">
+		<div th:if="${formmode}=='edit'"  class="ccr-edit-page"  style="align-items: center">
 			<form th:action="@{/BCDRS/updateCCRData}" th:object="${repoData}"
 				method="post" id="repoData">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
 					<div
 						class="role-page-header d-flex justify-content-between align-items-center">
-						<div class="role-page-title">
+						<div>
 							<h4>CCR Data Templates - Edit</h4>
-							<div
-								style="width: 245px; height: 3px; background-color: #0073e6; border-radius: 2px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
 
 						</div>
 					</div>
@@ -1193,7 +1377,7 @@ label.error {
 
 					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 						<input type="hidden" name="siNo" th:field="*{siNo}" />
-						<div class="role-page-title">
+						<div>
 							<h4 style="padding-bottom:10px">Financial Institution Information</h4>
 						</div>
 						<div class="form-group row">
@@ -1262,7 +1446,7 @@ label.error {
 
 							</div>
 						</div>
-						<div class="role-page-title">
+						<div>
 							<h4 style="padding-bottom:10px">Counterparty Information</h4>
 						</div>
 
@@ -1515,7 +1699,7 @@ label.error {
 							</div>
 
 						</div>
-						<div class="role-page-title">
+						<div>
 						<h4 style="padding-bottom:10px">Exposure</h4>
 						</div>
 						<div class="form-group row">
@@ -1532,10 +1716,10 @@ label.error {
 						<!-- End card-body -->
 						<!-- ✅ Footer section -->
 						<div class="card-footer text-center">
-							<button type="submit" class="role-add-btn"
+							<button type="submit" class="role-btn"
 								onclick="updateform(event)">Update</button>
 							<a th:href="@{/CCR_Data_Templates (formmode='list')}"
-								class="role-add-btn" style="text-decoration: none;">Cancel</a>
+								class="role-btn" style="text-decoration: none;">Cancel</a>
 							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
 						</div>
 					</div>
@@ -1604,7 +1788,7 @@ label.error {
 					<!--<button type="button" class="custom-tab-btn" onclick="list()"
 							data-dismiss="modal">Close</button>-->
 
-					<button type="button" class="role-add-btn"
+					<button type="button" class="role-btn"
 						onclick="closeAlertAndRedirect()">Close</button>
 
 				</div>
@@ -1622,9 +1806,9 @@ label.error {
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg">Update successful!</p>
-					<!--<button type="button" class="role-add-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
+					<!--<button type="button" class="role-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
 					<a th:href="@{/CCR_Data_Templates(formmode='list')}"
-						class="role-add-btn" style="text-decoration: none;">Close</a>
+						class="role-btn" style="text-decoration: none;">Close</a>
 				</div>
 			</div>
 		</div>
@@ -1668,7 +1852,7 @@ label.error {
 					style="text-align: center; font-size: 1.1rem;">
 					<p id="resultModalBody"></p>
 					<!-- Your custom styled button -->
-					<button type="button" class="role-add-btn" onclick="list()"
+					<button type="button" class="role-btn" onclick="list()"
 						data-dismiss="modal">OK</button>
 				</div>
 			</div>
@@ -1677,26 +1861,25 @@ label.error {
 
 </body>
 <script>
-
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
-				  
+
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
@@ -1949,5 +2132,88 @@ div.dataTables_filter {
     }
   });
 </script>
+<style>
+	/* Default header alignment */
+	#usertable thead th {
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
 
+	/* Left aligned headers */
+	#usertable thead th.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable thead th.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable td.th-left {
+		text-align: left !important;
+	}
+
+	/* Right aligned headers */
+	#usertable td.th-right {
+		text-align: right !important;
+		width: 50px !important;
+	}
+
+	#usertable {
+		table-layout: auto !important;
+		width: 100% !important;
+	}
+
+	/* Report Date column – prevent wrap + increase width */
+	#usertable th.col-report-date,
+	#usertable td.col-report-date {
+		min-width: 120px !important;
+		/* increase as needed */
+		white-space: nowrap !important;
+		text-align: center;
+	}
+</style>
+<style>
+	body:has(#ccr-edit-page) {
+		overflow: hidden;
+	}
+
+	#ccr-edit-page .card-body {
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	#ccr-edit-page .card {
+		margin-bottom: 0;
+	}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
+<style>
+	.ccr-edit-page {
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	.ccr-edit-page label,
+	.ccr-edit-page input,
+	.ccr-edit-page textarea,
+	.ccr-edit-page button {
+		font-size: 12px !important;
+	}
+
+	.modal-title {
+		background-color: #f7a47c;
+	}
+</style>
 </html>
