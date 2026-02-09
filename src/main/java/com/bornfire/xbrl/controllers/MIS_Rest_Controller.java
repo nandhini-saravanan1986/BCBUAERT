@@ -47,6 +47,7 @@ import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
 import com.bornfire.xbrl.entities.RT_SLS_Repository;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredEntity;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredrep;
+import com.bornfire.xbrl.entities.Stableresourcesratio_entity;
 import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
@@ -461,6 +462,14 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("42")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDepositconcentrationnonretail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("43")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDepositconcentrationretail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
 		}
 	    
 	    
@@ -635,6 +644,20 @@ public class MIS_Rest_Controller {
 		
 	}
 	
+	@GetMapping("/GetAsrrreport")
+	public Stableresourcesratio_entity GetAsrrreport(@RequestParam("Report_date") String Report_date) throws ParseException {
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		Date Selecteddate = dateFormat.parse(Report_date);
+		
+		Stableresourcesratio_entity Elar_summary_report_entity = Stableresourcesratio_rep.GetAsrrreport(Selecteddate);
+		
+		
+		
+		return Elar_summary_report_entity;
+		
+	}
+	
 	@GetMapping("/Getcategorychart")
 	public List<RT_Chart_pojo> Getcategorychart(@RequestParam("Report_date") String Report_date,@RequestParam("Branch_name") String Branch_name) throws ParseException {
 		
@@ -678,6 +701,9 @@ public class MIS_Rest_Controller {
 		}
 		
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
+		
+		System.out.println("Final Date for Searching - "+ Selecteddate);
+		
 		List<Object[]>  Exposuredata = new ArrayList<>();
 		if(Data_Type_Used.equals("ToptenSingleExposure")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetsingleExposure(Selecteddate);
@@ -755,6 +781,12 @@ public class MIS_Rest_Controller {
 			Exposuredata=RT_RWA_Fund_base_data_rep.GetlongtermUSD(Selecteddate);
 		}else if (Data_Type_Used.equals("Stockapproachratio")) {
 			Exposuredata=RT_SLS_Repository.GetStockapproachratio(Selecteddate);
+		}else if (Data_Type_Used.equals("Depositnonretail")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenNonretaildepo(Selecteddate);
+		}else if (Data_Type_Used.equals("Depositretail")) {
+			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenretaildepo(Selecteddate);
+		}else if (Data_Type_Used.equals("Leverageratio")) {
+			Exposuredata=Leverage_ratio_rep.GetLeverageratiodata(Selecteddate);
 		}
 		
 		return Exposuredata;

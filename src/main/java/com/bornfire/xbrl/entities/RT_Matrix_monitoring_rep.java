@@ -19,15 +19,13 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	@Query(value = "Select * from rt_matrix_monitored_table Where REPORT_DATE=?1 and S_NO =?2", nativeQuery = true)
 	List<RT_Matrix_monitoring_entity> checkdataavail(Date Report_date,String Srl_no);
 	
-	@Query(value = "Select month_end,R15_ELIGI_LIQ_ASSETS from (\r\n"
+	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\r\n"
 			+ "With Eligibility_ratio as(\r\n"
 			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable),\r\n"
 			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\r\n"
-			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by month_end asc)\r\n"
-			+ "\r\n"
-			+ "", nativeQuery = true)
+			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\r\n"
+			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)", nativeQuery = true)
 	List<Object[]> GetElar_curryear_report(Date Selecteddate);
 
 	@Query(value = "Select month_dates,R15_ELIGI_LIQ_ASSETS from (\r\n"

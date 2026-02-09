@@ -23,7 +23,7 @@
 		:root {
 			--bg: #f9fbff;
 			--surface: #ffffff;
-			--border: #e6eaf0;
+			--border: rgba(0, 0, 0, 0.15);
 			--text: #0f172a;
 			--muted: #6b7280;
 			--textcolorheaderwhite: white;
@@ -61,7 +61,7 @@
 			--color-surface: #f8fafc;
 			--color-surface-hover: #f1f5f9;
 			/* Border Colors */
-			--color-border: #e2e8f0;
+			--color-border: black;
 			/* Typography */
 			--font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 			--text-xs: 0.75rem;
@@ -132,18 +132,19 @@
 		.table.refund-table thead th {
 			position: sticky;
 			top: 0;
-			background: rgba(33, 37, 41, 65%);
+			background: brown;
 			color: var(--textcolorheaderwhite);
 			font-weight: 700;
 			font-size: 0.65rem;
-			border: 2px solid;
+			border: 1px solid;
 			text-transform: uppercase;
+			border-color: black;
 		}
 
 		.table.refund-table tbody td {
 			font-size: 0.65rem;
-			border: 2px solid;
-			border-color: var(--border);
+			border: 1px solid;
+			border-color: black;
 		}
 
 		.table.refund-table tbody tr:hover {
@@ -153,7 +154,7 @@
 		.badge-status {
 			padding: 0.25rem 0.55rem;
 			border-radius: 12px;
-			font-size: 0.60rem;
+			font-size: 0.65rem;
 			font-weight: 600;
 			display: inline-flex;
 			gap: 6px;
@@ -278,7 +279,8 @@
 			position: relative;
 			height: 300px;
 		}
-		.StockChart-container{
+
+		.StockChart-container {
 			position: relative;
 			height: 500px;
 		}
@@ -289,6 +291,7 @@
 			font-size: 0.70rem;
 			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 			padding: 10px;
+			color: white;
 		}
 
 		.blink-bg {
@@ -366,6 +369,7 @@
 			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
 			document.querySelectorAll(".StockChart-container").forEach(el => el.style.display = "none");
 			document.querySelector(".LiquidAssetsRatio").style.display = "none";
+			document.querySelector(".Advancestostableratio").style.display = "none";
 			document.querySelector(".Leverageratiosummblock").style.display = "none";
 			document.querySelector(".Leverageratiodtlblock").style.display = "none";
 			document.querySelector(".Capitaladequacyratio").style.display = "none"; //hide capitalratio block
@@ -386,10 +390,10 @@
 			document.querySelector(".ProvisionCoverage").style.display = "none";
 			document.querySelector(".LongTermandMediumTerm").style.display = "none";
 			document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
-			document.getElementById("Sector_classifi_expo").textContent =formatDecimalValue(0);
-			document.getElementById("Total_expo").textContent =formatDecimalValue(0);
-			document.getElementById("Sector_classifi_per").textContent =formatDecimalValue(0);
-
+			document.getElementById("Sector_classifi_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Total_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Sector_classifi_per").textContent = formatDecimalValue(0);
+			document.querySelector(".Depositconcentration").style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -397,7 +401,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 50);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -411,6 +420,76 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+
+
+				fetch("./GetElarreport?Report_date=" + encodeURIComponent(labelReport_date))
+					.then(response => response.json())
+					.then(result => {
+
+						// Example fields returned from backend:
+						// result.r1_nominal_amount
+						// result.r2_nominal_amount
+						// result.total_liquid_assets
+
+						document.getElementById("r1_nominal_amount").textContent =
+							formatNumber(result.r1_nominal_amount);
+
+						document.getElementById("r2_nominal_amount").textContent =
+							formatNumber(result.r2_nominal_amount);
+
+						document.getElementById("r3_nominal_amount").textContent =
+							formatNumber(result.r3_nominal_amount);
+
+						document.getElementById("r4_nominal_amount").textContent =
+							formatNumber(result.r4_nominal_amount);
+
+						document.getElementById("r5_nominal_amount").textContent =
+							formatNumber(result.r5_nominal_amount);
+
+
+						document.getElementById("r6_nominal_amount").textContent =
+							formatNumber(result.r6_nominal_amount);
+						document.getElementById("r6_eligi_liq_assets").textContent =
+							formatNumber(result.r6_eligi_liq_assets);
+
+						document.getElementById("r7_nominal_amount").textContent =
+							formatNumber(result.r7_nominal_amount);
+
+						document.getElementById("r8_nominal_amount").textContent =
+							formatNumber(result.r8_nominal_amount);
+
+						document.getElementById("r9_nominal_amount").textContent =
+							formatNumber(result.r9_nominal_amount);
+
+						document.getElementById("r10_nominal_amount").textContent =
+							formatNumber(result.r10_nominal_amount);
+
+						document.getElementById("r11_nominal_amount").textContent =
+							formatNumber(result.r11_nominal_amount);
+
+						document.getElementById("r11_eligi_liq_assets").textContent =
+							formatNumber(result.r11_eligi_liq_assets);
+
+
+
+						document.getElementById("r12_nominal_amount").textContent =
+							formatNumber(result.r12_nominal_amount);
+
+						document.getElementById("r13_nominal_amount").textContent =
+							formatNumber(result.r13_nominal_amount);
+
+						document.getElementById("r14_eligi_liq_assets").textContent =
+							formatNumber(result.r14_eligi_liq_assets);
+
+						document.getElementById("r15_eligi_liq_assets").textContent =
+							(formatDecimalValue(result.r15_eligi_liq_assets * 100)) + " %";
+					})
+					.catch(err => console.error("Error loading ELAR report:", err));
+
+
+				document.querySelector(".LiquidAssetsRatio").style.display = "block";
+
+
 			} else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -418,7 +497,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 50);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -428,6 +512,40 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 5, 50);
 					});
+
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Leverageratio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("r21_total").textContent =
+								formatNumber(data[0]);
+							document.getElementById("r22_total").textContent =
+								formatNumber(data[1]);
+							document.getElementById("r12_total").textContent =
+								formatNumber(data[3]);
+							document.getElementById("r20_total").textContent =
+								formatNumber(data[4]);
+							document.getElementById("r3_total").textContent =
+								formatNumber(data[5]);
+
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Leverageratiosummblock").style.display = "grid";
@@ -438,7 +556,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 50, 600);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -505,7 +628,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 200);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -571,7 +699,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 50, 600);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -639,7 +772,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 200);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -707,7 +845,12 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -719,6 +862,68 @@
 					});
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				fetch("./GetAsrrreport?Report_date=" + encodeURIComponent(labelReport_date))
+					.then(response => response.json())
+					.then(result => {
+						document.getElementById("r1_amount").textContent =
+							formatDecimalValue(result.r1_amount);
+						document.getElementById("r2_amount").textContent =
+							formatDecimalValue(result.r2_amount);
+						document.getElementById("r3_amount").textContent =
+							formatDecimalValue(result.r3_amount);
+						document.getElementById("r4_amount").textContent =
+							formatDecimalValue(result.r4_amount);
+						document.getElementById("r5_amount").textContent =
+							formatDecimalValue(result.r5_amount);
+						document.getElementById("r6_amount").textContent =
+							formatDecimalValue(result.r6_amount);
+						document.getElementById("r7_amount").textContent =
+							formatDecimalValue(result.r7_amount);
+						document.getElementById("r8_amount").textContent =
+							formatDecimalValue(result.r8_amount);
+						document.getElementById("r9_amount").textContent =
+							formatDecimalValue(result.r9_amount);
+						document.getElementById("r10_amount").textContent =
+							formatDecimalValue(result.r10_amount);
+						document.getElementById("r11_amount").textContent =
+							formatDecimalValue(result.r11_amount);
+						document.getElementById("r12_amount").textContent =
+							formatDecimalValue(result.r12_amount);
+						document.getElementById("r13_amount").textContent =
+							formatDecimalValue(result.r13_amount);
+						document.getElementById("r14_amount").textContent =
+							formatDecimalValue(result.r14_amount);
+						document.getElementById("r15_amount").textContent =
+							formatDecimalValue(result.r15_amount);
+						document.getElementById("r16_amount").textContent =
+							formatDecimalValue(result.r16_amount);
+						document.getElementById("r17_amount").textContent =
+							formatDecimalValue(result.r17_amount);
+						document.getElementById("r18_amount").textContent =
+							formatDecimalValue(result.r18_amount);
+						document.getElementById("r19_amount").textContent =
+							formatDecimalValue(result.r19_amount);
+						document.getElementById("r20_amount").textContent =
+							formatDecimalValue(result.r20_amount);
+						document.getElementById("r21_amount").textContent =
+							formatDecimalValue(result.r21_amount);
+						document.getElementById("r22_amount").textContent =
+							formatDecimalValue(result.r22_amount);
+						document.getElementById("r23_amount").textContent =
+							formatDecimalValue(result.r23_amount);
+						document.getElementById("r24_amount").textContent =
+							formatDecimalValue(result.r24_amount);
+						document.getElementById("r25_amount").textContent =
+							formatDecimalValue(result.r25_amount);
+						document.getElementById("r26_amount").textContent =
+							formatDecimalValue(result.r26_amount);
+						document.getElementById("r27_amount").textContent =
+							formatDecimalValue(result.r27_amount) + '%';
+					})
+					.catch(err => console.error("Error loading ELAR report:", err));
+
+
+				document.querySelector(".Advancestostableratio").style.display = "block";
 			} else if (labelsrlno === "1") {
 
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -726,7 +931,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 50);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -786,7 +996,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 150);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -955,7 +1170,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 1, 15);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1029,7 +1249,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1150,7 +1375,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1167,14 +1397,14 @@
 
 				document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Industry', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
 				})
-					
+
 					.then(response => {
 						if (!response.ok) {
 							throw new Error("HTTP error " + response.status);
@@ -1187,7 +1417,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1251,7 +1481,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1286,7 +1521,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1351,7 +1586,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1385,7 +1625,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1451,7 +1691,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1467,7 +1712,7 @@
 
 				document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
-				
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
 					headers: {
@@ -1486,7 +1731,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1550,7 +1795,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1584,7 +1834,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1648,7 +1898,12 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1682,7 +1937,7 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							
+
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -1747,7 +2002,12 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 20);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1808,7 +2068,12 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1871,7 +2136,12 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 200, 2000);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychartnumber(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1930,7 +2200,12 @@
 						// Convert backend values into arrays
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1964,12 +2239,12 @@
 							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
 							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
 							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
-							"<tr><td></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
-							"<tr><td></td><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
-							"<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
-							"<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
-							"<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
-							"<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
+							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
+							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
+							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
 
 						// Set table body content
 						UnsecuredPositionbody.innerHTML = trHTML;
@@ -1978,8 +2253,8 @@
 						document.querySelector(".UnsecuredPosition").style.display = "block";
 					});
 
-			}else if (labelsrlno === "45"){
-				
+			} else if (labelsrlno === "45") {
+
 				fetch(
 					`./GetStocklimitdetail?Matrix_Srl_no=${encodeURIComponent(labelsrlno)}&Report_date=${encodeURIComponent(labelReport_date)}`
 				)
@@ -1996,7 +2271,7 @@
 						const dataValues6 = result.map(row => +row[6]);
 						const dataValues7 = result.map(row => +row[7]);
 
-						InitiatemonthlychartStockratio(labels,dataValues1,dataValues2,dataValues3,dataValues4,dataValues5,dataValues6,dataValues7,10,200);
+						InitiatemonthlychartStockratio(labels, dataValues1, dataValues2, dataValues3, dataValues4, dataValues5, dataValues6, dataValues7, 10, 200);
 					});
 
 				document.querySelector(".chart-card").style.display = "block";
@@ -2032,33 +2307,143 @@
 								formatDecimalValue(data[4]);
 							document.getElementById("Loans_Mandatory_SLR_Mandatory_CRR_Fixed_assets").textContent =
 								formatDecimalValue(data[5]);
-							
-								
+
+
 							////postions
 							document.getElementById("position_1").textContent =
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("position_2").textContent =
-								formatDecimalValue(data[7])+ '%';
+								formatDecimalValue(data[7]) + '%';
 							document.getElementById("position_3").textContent =
-								formatDecimalValue(data[8])+ '%';
+								formatDecimalValue(data[8]) + '%';
 							document.getElementById("position_4").textContent =
-								formatDecimalValue(data[9])+ '%';
+								formatDecimalValue(data[9]) + '%';
 							document.getElementById("position_5").textContent =
-								formatDecimalValue(data[10])+ '%';
+								formatDecimalValue(data[10]) + '%';
 							document.getElementById("position_6").textContent =
-								formatDecimalValue(data[11])+ '%';
+								formatDecimalValue(data[11]) + '%';
 							document.getElementById("position_7").textContent =
-								formatDecimalValue(data[12])+ '%';
-							
+								formatDecimalValue(data[12]) + '%';
+
 						});
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-					
-					document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + labelReport_date;
-					document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
+
+				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + labelReport_date;
+				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
+			} else if (labelsrlno === "42") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositnonretail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Depositconcentration").style.display = "block";
+
+
+			} else if (labelsrlno === "43") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						// Convert backend values into arrays
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositretail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Depositconcentration").style.display = "block";
+
+
 			}
 		}
 
@@ -2276,6 +2661,9 @@
 			const dateParts = periodKey.split("-");
 
 			const selectedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+			document.getElementById("Sector_classifi_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Total_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Sector_classifi_per").textContent = formatDecimalValue(0);
 
 			if (Selectedmatrixlabel == "5") {
 
@@ -2345,6 +2733,70 @@
 
 
 				document.querySelector(".LiquidAssetsRatio").style.display = "block";
+			} else if (Selectedmatrixlabel == "6") {
+				document.querySelector(".LiquidAssetsRatio").style.display = "none";
+				fetch("./GetAsrrreport?Report_date=" + encodeURIComponent(selectedDate))
+					.then(response => response.json())
+					.then(result => {
+						document.getElementById("r1_amount").textContent =
+							formatDecimalValue(result.r1_amount);
+						document.getElementById("r2_amount").textContent =
+							formatDecimalValue(result.r2_amount);
+						document.getElementById("r3_amount").textContent =
+							formatDecimalValue(result.r3_amount);
+						document.getElementById("r4_amount").textContent =
+							formatDecimalValue(result.r4_amount);
+						document.getElementById("r5_amount").textContent =
+							formatDecimalValue(result.r5_amount);
+						document.getElementById("r6_amount").textContent =
+							formatDecimalValue(result.r6_amount);
+						document.getElementById("r7_amount").textContent =
+							formatDecimalValue(result.r7_amount);
+						document.getElementById("r8_amount").textContent =
+							formatDecimalValue(result.r8_amount);
+						document.getElementById("r9_amount").textContent =
+							formatDecimalValue(result.r9_amount);
+						document.getElementById("r10_amount").textContent =
+							formatDecimalValue(result.r10_amount);
+						document.getElementById("r11_amount").textContent =
+							formatDecimalValue(result.r11_amount);
+						document.getElementById("r12_amount").textContent =
+							formatDecimalValue(result.r12_amount);
+						document.getElementById("r13_amount").textContent =
+							formatDecimalValue(result.r13_amount);
+						document.getElementById("r14_amount").textContent =
+							formatDecimalValue(result.r14_amount);
+						document.getElementById("r15_amount").textContent =
+							formatDecimalValue(result.r15_amount);
+						document.getElementById("r16_amount").textContent =
+							formatDecimalValue(result.r16_amount);
+						document.getElementById("r17_amount").textContent =
+							formatDecimalValue(result.r17_amount);
+						document.getElementById("r18_amount").textContent =
+							formatDecimalValue(result.r18_amount);
+						document.getElementById("r19_amount").textContent =
+							formatDecimalValue(result.r19_amount);
+						document.getElementById("r20_amount").textContent =
+							formatDecimalValue(result.r20_amount);
+						document.getElementById("r21_amount").textContent =
+							formatDecimalValue(result.r21_amount);
+						document.getElementById("r22_amount").textContent =
+							formatDecimalValue(result.r22_amount);
+						document.getElementById("r23_amount").textContent =
+							formatDecimalValue(result.r23_amount);
+						document.getElementById("r24_amount").textContent =
+							formatDecimalValue(result.r24_amount);
+						document.getElementById("r25_amount").textContent =
+							formatDecimalValue(result.r25_amount);
+						document.getElementById("r26_amount").textContent =
+							formatDecimalValue(result.r26_amount);
+						document.getElementById("r27_amount").textContent =
+							formatDecimalValue(result.r27_amount) + '%';
+					})
+					.catch(err => console.error("Error loading ELAR report:", err));
+
+
+				document.querySelector(".Advancestostableratio").style.display = "block";
 			} else if (Selectedmatrixlabel === "9") {
 
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Mortageloanappetite', {
@@ -2507,8 +2959,7 @@
 			}
 
 			else if (Selectedmatrixlabel === "11") {
-				
-				
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Industry', {
 					method: 'POST',
 					headers: {
@@ -2533,6 +2984,9 @@
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
 								formatDecimalValue(data[1]);
+							formatNumber(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatNumber(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -2543,13 +2997,6 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
-				
-				
-				
-				
-				
-				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorIndustrial', {
@@ -2592,7 +3039,7 @@
 			}
 
 			else if (Selectedmatrixlabel === "12") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Trading', {
 					method: 'POST',
 					headers: {
@@ -2627,9 +3074,9 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
-				
-				
+
+
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
@@ -2671,7 +3118,7 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "13") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
 					headers: {
@@ -2706,8 +3153,8 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
-				
+
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountServicesexcludingbank', {
@@ -2749,7 +3196,7 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "14") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
 					headers: {
@@ -2784,7 +3231,7 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountBank', {
@@ -2826,7 +3273,7 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "15") {
-				
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Real_Estate', {
 					method: 'POST',
 					headers: {
@@ -2861,8 +3308,8 @@
 					});
 
 				document.querySelector(".Sector_Industrial").style.display = "grid";
-				
-				
+
+
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountRealEstate', {
@@ -2904,8 +3351,8 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "16") {
-				
-				
+
+
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Others', {
 					method: 'POST',
 					headers: {
@@ -3233,7 +3680,7 @@
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + selectedDate;
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
-			}else if (Selectedmatrixlabel === "24"){
+			} else if (Selectedmatrixlabel === "24") {
 				document.querySelector(".Netovernight_noop").style.display = "none";
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'NetOvernight_noop', {
 					method: 'POST',
@@ -3272,7 +3719,7 @@
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 
-				}else if (Selectedmatrixlabel === "45"){
+			} else if (Selectedmatrixlabel === "45") {
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Stockapproachratio', {
 					method: 'POST',
@@ -3328,21 +3775,19 @@
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-					
+
 				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + selectedDate;
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
 
-				}
-			
-				else if (Selectedmatrixlabel === "46"){
-					var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
-					UnsecuredPositionbody.innerHTML = "";
-					fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(selectedDate))
+			}else if (Selectedmatrixlabel === "46"){
+				document.querySelector(".UnsecuredPosition").style.display = "none";
+
+				fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(selectedDate))
 					.then(response => response.json())
 					.then(result => {
 
 						// Get tbody element
-						
+						var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
 						if (!UnsecuredPositionbody) {
 							console.error("Table body not found!");
 							return;
@@ -3356,12 +3801,12 @@
 							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
 							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
 							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
-							"<tr><td></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
-							"<tr><td></td><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
-							"<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
-							"<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
-							"<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
-							"<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
+							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
+							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
+							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
 
 						// Set table body content
 						UnsecuredPositionbody.innerHTML = trHTML;
@@ -3369,7 +3814,123 @@
 						// Show table section
 						document.querySelector(".UnsecuredPosition").style.display = "block";
 					});
-				}
+
+
+			} else if (Selectedmatrixlabel === "43") {
+				document.querySelector(".Depositconcentration").style.display = "none";
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Depositretail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Depositconcentration").style.display = "block";
+			} else if (Selectedmatrixlabel === "42") {
+				document.querySelector(".Depositconcentration").style.display = "none";
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Depositnonretail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (data[1] || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Depositconcentration").style.display = "block";
+			} else if (Selectedmatrixlabel === "4") {
+
+				document.querySelector(".Leverageratiosummblock").style.display = "none"
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Leverageratio', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							document.getElementById("r21_total").textContent =
+								formatNumber(data[0]);
+							document.getElementById("r22_total").textContent =
+								formatNumber(data[1]);
+							document.getElementById("r12_total").textContent =
+								formatNumber(data[3]);
+							document.getElementById("r20_total").textContent =
+								formatNumber(data[4]);
+							document.getElementById("r3_total").textContent =
+								formatNumber(data[5]);
+
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".chart-card").style.display = "block";
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				document.querySelector(".Leverageratiosummblock").style.display = "grid"
+
+			}
 
 
 			else {
@@ -3398,14 +3959,37 @@
 				maximumFractionDigits: 0
 			});
 		}
-		
+
 		function formatDecimalValue(value) {
-				if (!value) return "0";
-				return Number(value).toLocaleString("en-US", {
-					minimumFractionDigits: 2,
-					maximumFractionDigits: 2
-				});
-			}
+			if (!value) return "0";
+			return Number(value).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+
+		function getRoundedMax(value) {
+			const padding = value * 0.1; // 10% headroom
+			const rawMax = value + padding;
+
+			if (rawMax <= 10) return 10;
+			if (rawMax <= 20) return 20;
+			if (rawMax <= 30) return 30;
+			if (rawMax <= 40) return 40;
+			if (rawMax <= 50) return 50;
+			if (rawMax <= 60) return 60;
+			if (rawMax <= 70) return 70;
+			if (rawMax <= 80) return 80;
+			if (rawMax <= 90) return 90;
+			if (rawMax <= 100) return 100;
+
+			return Math.ceil(rawMax / 10) * 10;
+		}
+
+		function getStepSize(maxValue) {
+			const steps = 10;
+			return Math.ceil(maxValue / steps / 5) * 5;
+		}
 
 
 		function formatDateForInput(dateValue) {
@@ -3448,14 +4032,14 @@
 					// Use plain JS loop; you already use jQuery only for DOM
 					list.forEach(function (data) {
 						const statusText = data.status === 'Y' ? 'Within limit' : 'Breach';
-						const statusColor = data.status === 'Y' ? 'greenyellow' : 'coral';
+						const statusColor = data.status === 'Y' ? 'green' : 'coral';
 
 
 						trHTML += `
 						        <tr style="font-size: small;">
 						            <td>${data.s_no ?? ""}</td>
 
-						            <td class="truncate">
+						            <td class="truncate" style="font-weight:600;">
 						                <a href="#"
 						                   onclick="Getanalyticaldata(this);"
 						                   setlabelname="${data.matrix_label ?? ""}"
@@ -3465,7 +4049,7 @@
 						                </a>
 						            </td>
 
-						            <td>${data.guidelines_or_policy ?? ""}</td>
+						            <td style="font-weight:600;">${data.guidelines_or_policy ?? ""}</td>
 
 						            <!-- Limit -->
 						            <td style="text-align: center;">
@@ -3497,7 +4081,7 @@
 
 						            <!-- Status -->
 						            <td class="status-cell"
-						                style="background-color:${statusColor};">
+						                style="background-color:${statusColor};color:White;font-weight:600;">
 						                ${statusText}
 						            </td>
 						        </tr>`;
@@ -3519,159 +4103,172 @@
 			Initiatemonthlychart(labels, dataValues, 10, 100);
 			Initiatedailychart(labels, dataValues, 10, 100);
 		});
-		
-		
-		
+
+
+
 		function InitiatemonthlychartStockratio(labels, position_1, position_2,
-				position_3, position_4, position_5, position_6, position_7, CalculatedStepSize, yaxismaxsize) {
-				const ctx = document.getElementById("StockLinechartformonthlyreport");
+			position_3, position_4, position_5, position_6, position_7, CalculatedStepSize, yaxismaxsize) {
+			const ctx = document.getElementById("StockLinechartformonthlyreport");
 
-				if (!ctx) return;
+			if (!ctx) return;
 
-				if (barChartInstance) {
-					barChartInstance.destroy();
-				}
+			if (barChartInstance) {
+				barChartInstance.destroy();
+			}
 
-				barChartInstance = new Chart(ctx, {
-					type: "line",
-					data: {
-						labels: labels,
-						datasets: [
-							{
-								label: "S.no : 1 Per",
-								data: position_1,
-								backgroundColor: "rgba(139, 92, 246, 0.75)",   // bar fill
-								borderColor: "rgba(139, 92, 246, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 2 Per",
-								data: position_2,
-								backgroundColor: "rgba(16, 185, 129, 0.75)",   // bar fill
-								borderColor: "rgba(16, 185, 129, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 3 Per",
-								data: position_3,
-								backgroundColor: "rgba(59, 130, 246, 0.75)",   // bar fill
-								borderColor: "rgba(59, 130, 246, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 4 Per",
-								data: position_4,
-								backgroundColor: "rgba(245, 158, 11, 0.75)",   // bar fill
-								borderColor: "rgba(245, 158, 11, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 5 Per",
-								data: position_5,
-								backgroundColor: "rgba(239, 68, 68, 0.75)",   // bar fill
-								borderColor: "rgba(239, 68, 68, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 6 Per",
-								data: position_6,
-								backgroundColor: "rgba(14, 165, 233, 0.75)",   // bar fill
-								borderColor: "rgba(14, 165, 233, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							}, {
-								label: "S.no : 7 Per",
-								data: position_7,
-								backgroundColor: "rgba(168, 85, 247, 0.75)",   // bar fill
-								borderColor: "rgba(168, 85, 247, 1)",                        // bar border
-								borderWidth: 1.5,
-								borderRadius: 6,                               // rounded corners
-								maxBarThickness: 26,                           // slim bars
-								hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-								hoverBorderColor: "#7c3aed"
-							},
-						],
+			barChartInstance = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: "S.no : 1 Per",
+							data: position_1,
+							backgroundColor: "rgba(139, 92, 246, 0.75)",   // bar fill
+							borderColor: "rgba(139, 92, 246, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 2 Per",
+							data: position_2,
+							backgroundColor: "rgba(16, 185, 129, 0.75)",   // bar fill
+							borderColor: "rgba(16, 185, 129, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 3 Per",
+							data: position_3,
+							backgroundColor: "rgba(59, 130, 246, 0.75)",   // bar fill
+							borderColor: "rgba(59, 130, 246, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 4 Per",
+							data: position_4,
+							backgroundColor: "rgba(245, 158, 11, 0.75)",   // bar fill
+							borderColor: "rgba(245, 158, 11, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 5 Per",
+							data: position_5,
+							backgroundColor: "rgba(239, 68, 68, 0.75)",   // bar fill
+							borderColor: "rgba(239, 68, 68, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 6 Per",
+							data: position_6,
+							backgroundColor: "rgba(14, 165, 233, 0.75)",   // bar fill
+							borderColor: "rgba(14, 165, 233, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						}, {
+							label: "S.no : 7 Per",
+							data: position_7,
+							backgroundColor: "rgba(168, 85, 247, 0.75)",   // bar fill
+							borderColor: "rgba(168, 85, 247, 1)",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {display: true},
+						tooltip: {
+							callbacks: {
+								label: (ctx) => `${ctx.parsed.y}%`
+							}
+						}
 					},
-					options: {
-						responsive: true,
-						maintainAspectRatio: false,
-						plugins: {
-							legend: {display: true},
-							tooltip: {
-								callbacks: {
-									label: (ctx) => `${ctx.parsed.y}%`
+					onClick: (evt, elements) => {
+						if (!elements.length) return;
+						const idx = elements[0].index;
+						const period = labels[idx];   // e.g. "Jan"
+						updateLiquidAssetsTable(period);
+					},
+					scales: {
+						x: {
+							grid: {
+								display: false
+							},
+							ticks: {
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
+								},
+								maxRotation: 45,
+								minRotation: 45
+							},
+							border: {
+								color: 'black',
+								width: 1.5
+							},
+							title: {
+								display: true,
+								color: '#6b7280',
+								font: {
+									size: 15,
+									weight: '800'
+								},
+								padding: {
+									top: 8    // space between labels and title
 								}
 							}
-						},
-						onClick: (evt, elements) => {
-							if (!elements.length) return;
-							const idx = elements[0].index;
-							const period = labels[idx];   // e.g. "Jan"
-							updateLiquidAssetsTable(period);
-						},
-						scales: {
-							x: {
-								grid: {
-									display: false
-								},
-								ticks: {
-									color: "#6b7280",
-									font: {size: 10},
-									maxRotation: 45,
-									minRotation: 45
-								},
-								title: {
-									display: true,
-									text: 'Monthly Trend (↑)',
-									color: '#6b7280',
-									font: {
-										size: 15,
-										weight: '800'
-									},
-									padding: {
-										top: 8    // space between labels and title
-									}
-								}
 
+						},
+						y: {
+							beginAtZero: false,
+							max: yaxismaxsize,
+							grid: {
+								color: "White",
+								drawBorder: false
 							},
-							y: {
-								beginAtZero: true,
-								max: yaxismaxsize,
-								grid: {
-									color: "#e5e7eb",
-									drawBorder: false
+							border: {
+								color: 'black',
+								width: 1.5
+							},
+							ticks: {
+								stepSize: CalculatedStepSize,
+								autoSkip: false,
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
 								},
-								ticks: {
-									stepSize: CalculatedStepSize,
-									autoSkip: false,
-									color: "#6b7280",
-									font: {size: 10},
-									callback: (value) => value + "%"
-								}
+								callback: (value) => value + "%"
 							}
 						}
 					}
-				});
-			}
-		
+				}
+			});
+		}
+
 
 		function Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
 			const ctx = document.getElementById("Linechartformonthlyreport");
@@ -3721,15 +4318,21 @@
 							grid: {
 								display: false
 							},
+							border: {
+								color: 'black',
+								width: 1.5
+							},
 							ticks: {
-								color: "#6b7280",
-								font: {size: 10},
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
+								},
 								maxRotation: 45,
 								minRotation: 45
 							},
 							title: {
 								display: true,
-								text: 'Monthly Trend (↑)',
 								color: '#6b7280',
 								font: {
 									size: 15,
@@ -3742,18 +4345,126 @@
 
 						},
 						y: {
-							beginAtZero: true,
+							beginAtZero: false,
 							max: yaxismaxsize,
 							grid: {
-								color: "#e5e7eb",
+								color: "White",
 								drawBorder: false
+							},
+							border: {
+								color: 'black',
+								width: 1.5
 							},
 							ticks: {
 								stepSize: CalculatedStepSize,
 								autoSkip: false,
-								color: "#6b7280",
-								font: {size: 10},
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
+								},
 								callback: (value) => value + "%"
+							}
+						}
+					}
+				}
+			});
+		}
+
+		function Initiatemonthlychartnumber(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
+			const ctx = document.getElementById("Linechartformonthlyreport");
+			if (!ctx) return;
+
+			if (barChartInstance) {
+				barChartInstance.destroy();
+			}
+
+			barChartInstance = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: "Utilization %",
+							data: dataValues,
+							backgroundColor: "rgba(139, 92, 246, 0.65)",   // bar fill
+							borderColor: "#8b5cf6",                        // bar border
+							borderWidth: 1.5,
+							borderRadius: 6,                               // rounded corners
+							maxBarThickness: 26,                           // slim bars
+							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
+							hoverBorderColor: "#7c3aed"
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {display: false},
+						tooltip: {
+							callbacks: {
+								label: (ctx) => `${ctx.parsed.y}%`
+							}
+						}
+					},
+					onClick: (evt, elements) => {
+						if (!elements.length) return;
+						const idx = elements[0].index;
+						const period = labels[idx];   // e.g. "Jan"
+						updateLiquidAssetsTable(period);
+					},
+					scales: {
+						x: {
+							grid: {
+								display: false
+							},
+							border: {
+								color: 'black',
+								width: 1.5
+							},
+							ticks: {
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
+								},
+								maxRotation: 45,
+								minRotation: 45
+							},
+							title: {
+								display: true,
+								color: '#6b7280',
+								font: {
+									size: 15,
+									weight: '800'
+								},
+								padding: {
+									top: 8    // space between labels and title
+								}
+							}
+
+						},
+						y: {
+							beginAtZero: false,
+							max: yaxismaxsize,
+							grid: {
+								color: "White",
+								drawBorder: false
+							},
+							border: {
+								color: 'black',
+								width: 1.5
+							},
+							ticks: {
+								stepSize: CalculatedStepSize,
+								autoSkip: false,
+								color: "Black",
+								font: {
+									size: 10,
+									weight: 'bold'
+								},
+								callback: (value) => value + " Cr"
 							}
 						}
 					}
@@ -3815,7 +4526,7 @@
 								display: false
 							},
 							ticks: {
-								color: "#6b7280",
+								color: "Black",
 								font: {size: 10},
 								maxRotation: 45,
 								minRotation: 45
@@ -3837,13 +4548,13 @@
 							beginAtZero: true,
 							max: yaxismaxsize,
 							grid: {
-								color: "#e5e7eb",
+								color: "White",
 								drawBorder: false
 							},
 							ticks: {
 								stepSize: CalculatedStepSize,
 								autoSkip: false,
-								color: "#6b7280",
+								color: "Black",
 								font: {size: 10},
 								callback: (value) => value + "%"
 							}
@@ -3862,7 +4573,9 @@
 		<div class="row g-3">
 			<!-- LEFT: table uses full left half -->
 			<div class="col-lg-6 col-md-12">
-				<h4>List of all Matrix monitored by Risk Management</h4>
+				<h4 style="background-color: brown;border-radius: 10px;color: white;">List Of All Ratios Monitored By
+					Risk Management
+				</h4>
 				<div class="table-wrap">
 					<table class="table refund-table align-middle mb-0">
 						<thead>
@@ -3872,22 +4585,22 @@
 								<th>Guidelines / Policy</th>
 								<th>Limit</th>
 								<th>Today's Position</th>
-								<th>Reporting Date Position (dd-MM-yyyy)</th>
+								<th>Reporting Date Position</th>
 								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody id="Matrixtablebody">
-							<tr style="font-size: small;" th:each="Matrixlist : ${Matrixlistdata}">
+							<tr th:each="Matrixlist,iterator : ${Matrixlistdata}">
 
-								<td th:text="${Matrixlist.s_no}">1</td>
+								<td th:text="${iterator.index+1}" style="font-weight: 600;">1</td>
 
-								<td class="truncate">
+								<td class="truncate" style="font-weight: 600;">
 									<a href="#" th:text="${Matrixlist.matrix_label}" onclick="Getanalyticaldata(this);"
 										th:attr="setlabelname=${Matrixlist.matrix_label},setlabelsrlno=${Matrixlist.s_no},
 										setreport_date=${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')}"></a>
 								</td>
 
-								<td th:text="${Matrixlist.guidelines_or_policy}">CBUAE</td>
+								<td th:text="${Matrixlist.guidelines_or_policy}" style="font-weight: 600;">CBUAE</td>
 
 								<!-- 1st percentage -->
 								<td style="text-align: center;">
@@ -3913,8 +4626,10 @@
 										th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
 								</td>
 								<th:block th:switch="${Matrixlist.status}">
-									<td th:case="'Y'" style="background-color: greenyellow;">Within limit</td>
-									<td th:case="'N'" style="background-color: coral;" class="blink-bg">Breach</td>
+									<td th:case="'Y'" style="background-color:green;color: white;font-weight: 600;">
+										Within limit</td>
+									<td th:case="'N'" style="background-color: coral;font-weight: 600;color: white;"
+										class="blink-bg">Breach</td>
 
 								</th:block>
 
@@ -3926,7 +4641,8 @@
 
 			<!-- RIGHT: graphs use full right half -->
 			<div class="col-lg-6 col-md-12">
-				<h4 id="Analyticsheadername">Analytics</h4>
+				<h4 id="Analyticsheadername" style="background-color: brown;border-radius: 10px;color: white;">Analytics
+				</h4>
 				<div class="chart-card">
 					<div class="stats-grid Leverageratiosummblock" style="display: none;">
 						<div class="stat-card">
@@ -3975,7 +4691,7 @@
 						<div class="stat-card">
 							<div class="stat-card-header">
 								<div class="stat-card-title"><a href="#"
-										onclick="ShowLeverageratiodtlblock('1.2');">Pillar 1 (Total RWA)</a></div>
+										onclick="ShowLeverageratiodtlblock('1.2');">Total RWA</a></div>
 							</div>
 							<div class="stat-card-value" id="r22_ratios2">0.00</div>
 						</div>
@@ -4158,10 +4874,10 @@
 						<canvas id="Linechartformonthlyreport"></canvas>
 
 					</div>
-					
+
 					<div class="StockChart-container" style="display: none;">
 						<canvas id="StockLinechartformonthlyreport"></canvas>
-					
+
 					</div>
 
 					<!--Current Month progressing chart-->
@@ -4214,7 +4930,7 @@
 									<th id="LongTermandMediumTermreportdate" colspan="2">Report date</th>
 									<th id="LongTermandMediumTermlabel" colspan="4"></th>
 								</tr>
-								<tr style="background-color: #dee2e6">
+								<tr>
 									<th>S No</th>
 									<th>Resources / Outflows</th>
 									<th>Amount</th>
@@ -4250,36 +4966,41 @@
 									<td>Long Term (Above 3 Years)</td>
 									<td id="LongTermAssetAbove3YR"></td>
 								</tr>
-								<tr style="background-color: #dee2e6">
-									<td style="background-color: #dee2e6"></td>
-									<td>Ratio in Terms of (%)</td>
+								<tr>
+									<td colspan="6" style="border: none;"></td>
+								</tr>
+								<tr>
+									<td colspan="6" style="border: none;"></td>
+								</tr>
+								<tr style="font-weight: bold;">
+
+									<td colspan="2">Ratio in Terms of (%)</td>
 									<td>Actual</td>
 									<td>Tolerance</td>
-									<td>Remaining Gap</td>
-									<td style="background-color: #dee2e6"></td>
+									<td>Headroom</td>
+
 								</tr>
-								<tr style="background-color: #dee2e6">
-									<td>1</td>
+								<tr style="font-weight: bold;">
+									<td>a</td>
 									<td>Long Term (3/6)</td>
-									<td id="LongtermActual" style="background-color: rgb(203, 169, 52);font-weight: bold;"></td>
+									<td id="LongtermActual" style="font-weight: bold;"></td>
 									<td>70%</td>
-									<td id="LongtermRemain" style="background-color: rgb(203, 169, 52);font-weight: bold;"></td>
-									<td style="background-color: #dee2e6"></td>
+									<td id="LongtermRemain" style="font-weight: bold;"></td>
+
 								</tr>
-								<tr style="background-color: #dee2e6">
-									<td>2</td>
+								<tr style="font-weight: bold;">
+									<td>b</td>
 									<td>Medium to Long Term (2+3 / 5+6)</td>
-									<td id="MediumtoLongActual" style="background-color: rgb(203, 169, 52);font-weight: bold;"></td>
+									<td id="MediumtoLongActual" style="font-weight: bold;"></td>
 									<td>80%</td>
-									<td id="MediumtoLongRemian" style="background-color: rgb(203, 169, 52);font-weight: bold;"></td>
-									<td style="background-color: #dee2e6"></td>
+									<td id="MediumtoLongRemian" style="font-weight: bold;"></td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 
 					<!--Stock Approach Table Started Here-->
-					
+
 					<div class="Stockapproachtables" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
 							<thead>
@@ -4296,23 +5017,24 @@
 									<th>Positions</th>
 								</tr>
 							</thead>
-					
+
 							<tbody>
 								<!-- Row 1 -->
 								<tr>
 									<td>1 </td>
 									<td>(Volatile Liab- Temp Assets)/(Earning Assets-Temporary Assets)</td>
 									<td>
-										Measures the extent to which volatile money supports bank’s basic earning assets.
+										Measures the extent to which volatile money supports bank’s basic earning
+										assets.
 										Since the numerator represents short term, interest sensitive funds,
 										high and positive number imply some risk of illiquidity.
 									</td>
 									<td>Not More than 95%</td>
 									<td>95%</td>
-									<td style="background-color: rgba(139, 92, 246, 0.45);font-weight: bold;" 
+									<td style="background-color: rgba(139, 92, 246, 0.45);font-weight: bold;"
 										id="position_1" th:text="${position_1}">0</td>
 								</tr>
-					
+
 								<!-- Row 2 -->
 								<tr>
 									<td>2 </td>
@@ -4322,10 +5044,10 @@
 									</td>
 									<td>Not less than 30%</td>
 									<td>30%</td>
-									<td style="background-color: rgba(16, 185, 129, 0.45);font-weight: bold;" 
+									<td style="background-color: rgba(16, 185, 129, 0.45);font-weight: bold;"
 										id="position_2" th:text="${position_2}">0</td>
 								</tr>
-					
+
 								<!-- Row 3 -->
 								<tr>
 									<td>3 </td>
@@ -4337,10 +5059,10 @@
 									</td>
 									<td>Not More than 90%</td>
 									<td>90%</td>
-									<td style="background-color: rgba(59, 130, 246, 0.45);font-weight: bold;" 
+									<td style="background-color: rgba(59, 130, 246, 0.45);font-weight: bold;"
 										id="position_3" th:text="${position_3}">0</td>
 								</tr>
-					
+
 								<!-- Row 4 -->
 								<tr>
 									<td>4 </td>
@@ -4350,10 +5072,10 @@
 									</td>
 									<td>Not More than 200%</td>
 									<td>200%</td>
-									<td style="background-color: rgba(245, 158, 11, 0.45);font-weight: bold;" 
+									<td style="background-color: rgba(245, 158, 11, 0.45);font-weight: bold;"
 										id="position_4" th:text="${position_4}">0</td>
 								</tr>
-					
+
 								<!-- Row 5 -->
 								<tr>
 									<td>5 </td>
@@ -4365,10 +5087,10 @@
 									</td>
 									<td>Not less than 15%</td>
 									<td>15%</td>
-									<td style="background-color: rgba(239, 68, 68, 0.45);font-weight: bold;" 
-														id="position_5" th:text="${position_5}">0</td>
+									<td style="background-color: rgba(239, 68, 68, 0.45);font-weight: bold;"
+										id="position_5" th:text="${position_5}">0</td>
 								</tr>
-					
+
 								<!-- Row 6 -->
 								<tr>
 									<td>6 </td>
@@ -4379,10 +5101,10 @@
 									</td>
 									<td>Not less than 35%</td>
 									<td>35%</td>
-									<td style="background-color: rgba(14, 165, 233, 0.45);font-weight: bold;" 
-																		id="position_6" th:text="${position_6}">0</td>
+									<td style="background-color: rgba(14, 165, 233, 0.45);font-weight: bold;"
+										id="position_6" th:text="${position_6}">0</td>
 								</tr>
-					
+
 								<!-- Row 7 -->
 								<tr>
 									<td>7 </td>
@@ -4392,14 +5114,14 @@
 									</td>
 									<td>Not more than 90%</td>
 									<td>90%</td>
-									<td style="background-color: rgba(168, 85, 247, 0.45);font-weight: bold;" 
-									id="position_7" th:text="${position_7}">0</td>
+									<td style="background-color: rgba(168, 85, 247, 0.45);font-weight: bold;"
+										id="position_7" th:text="${position_7}">0</td>
 								</tr>
-					
+
 							</tbody>
 						</table>
 					</div>
-					
+
 					<!--Temporart Assets-->
 					<div class="Stockapproachtables" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
@@ -4407,7 +5129,7 @@
 								<tr>
 									<th></th>
 									<th>Amount In AED (Mn)</th>
-								</tr>					
+								</tr>
 							</thead>
 							<tbody id="Stockapproachbody">
 								<tr>
@@ -4437,8 +5159,8 @@
 							</tbody>
 						</table>
 					</div>
-					
-					
+
+
 
 					<div class="ToptenGroupborrowerdiv" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
@@ -4505,6 +5227,27 @@
 
 							</thead>
 							<tbody id="ProvisionCoveragebody">
+							</tbody>
+						</table>
+					</div>
+
+					<div class="Depositconcentration" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th id="Depositconcentrationtype" colspan="2" op 10 Borrower </th>
+									<th id="ToptenDepositconcentrationdate" colspan="2">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6">
+									<th>Customer Id</th>
+									<th>Account Name</th>
+									<th>Balance in AED (Mn)</th>
+									<th>Percentage</th>
+								</tr>
+
+
+							</thead>
+							<tbody id="Depositconcentrationbody">
 							</tbody>
 						</table>
 					</div>
@@ -4596,9 +5339,9 @@
 									<td>Over Sold In (AED)</td>
 									<td id="OVER_SOLD_AMOUNT">0.00</td>
 								</tr>
-								<tr>
+								<tr style="font-weight: bold;">
 									<td>Noop Amount in INR</td>
-									<td id="NOOP_AMOUNT_IN_INR" style="background-color: rgb(203, 169, 52);font-weight: bold;">0.00</td>
+									<td id="NOOP_AMOUNT_IN_INR" style="font-weight: bold;">0.00</td>
 								</tr>
 								<tr>
 									<td>Limit Amount in INR</td>
@@ -4722,6 +5465,8 @@
 									(0% Risk Weighted under Basel II Standardized Approach)</td>
 								<td style="text-align: right" th:text="${r12_nominal_amount}" id="r12_nominal_amount">
 								</td>
+								<td style="text-align: right; background-color: #b3b6b9">
+								</td>
 							</tr>
 							<tr>
 								<td>11.1</td>
@@ -4754,6 +5499,258 @@
 					</table>
 
 				</div>
+
+
+				<div class="Advancestostableratio" style="display: none;">
+
+					<table class="table refund-table align-middle mb-0">
+						<thead class="thead-light">
+							<tr>
+								<th></th>
+								<th></th>
+								<th>Items</th>
+								<th>Amount</th>
+							</tr>
+
+
+						</thead>
+						<tbody>
+
+							<tr>
+								<td>1</td>
+								<td style="background-color: #b3b6b9;"></td>
+								<td style="background-color: #b3b6b9;">Computation of Advances</td>
+								<td style="background-color: #b3b6b9;"></td>
+
+							</tr>
+
+							<tr>
+								<td></td>
+								<td style="text-align: right">1.1</td>
+								<td style="background-color: yellow">Net Lending (BRF1 Item 7+8) minus {Stage 3 for
+									Loans and Advances (Principal) (BRF-2: item 25.1) + Provision for Interest & Fees
+									past due more than 90 days and Legacy Interest in Suspense (BRF-2 item: 25.3}</td>
+								<td style="text-align: right" id="r1_amount" th:text="${r1_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">1.2</td>
+								<td>Lending to NBFI (BRF
+									1, item 4)</td>
+								<td style="text-align: right" id="r2_amount" th:text="${r2_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">1.3</td>
+								<td>Financial Guarantees & Stand-by LC Issued (BRF 3-Item 3.1)</td>
+								<td style="text-align: right" th:text="${r3_amount}" align="right" id="r3_amount">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">1.4</td>
+								<td>Financial Guarantees & Stand -by LCs Received </td>
+								<td style="text-align: right" id="r4_amount" th:text="${r4_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+
+							<tr>
+								<td></td>
+								<td style="text-align: right">1.5</td>
+								<td>Interbank Placements with a remaining life of more than 3 months (BRF 9)</td>
+								<td style="text-align: right" id="r5_amount" th:text="${r5_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td style="background-color: #b3b6b9;"></td>
+								<td style="background-color: #b3b6b9;">1.6</td>
+								<td style="background-color: #b3b6b9;">Total Advances</td>
+								<td style="background-color: #b3b6b9;" id="r6_amount" th:text="${r6_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td style="text-align: right">2</td>
+								<td style="background-color: #b3b6b9;"></td>
+								<td style="background-color: #b3b6b9;">Calculation of Net Stable Resources</td>
+								<td style="background-color: #b3b6b9;"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1</td>
+								<td>Total own funds (BRF2 Liab: item 28 + item 26.7)+ Gen provision (BRF-2 Liab: item
+									25.2.3)</td>
+								<td style="text-align: right" id="r7_amount" th:text="${r7_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;"></td>
+								<td style="background-color: #b3b6b9;">Deduct:</td>
+								<td style="background-color: #b3b6b9;"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1.1</td>
+								<td>Goodwill and other intangible assets (BRF1 Assets: 11.3 and 11.4)</td>
+								<td style="text-align: right" id="r8_amount" th:text="${r8_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1.2</td>
+								<td>Fixed Assets (BRF1 Assets: 9.1 + 9.2 + 9.3 + 9.5)</td>
+								<td style="text-align: right" id="r9_amount" th:text="${r9_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1.3</td>
+								<td>Funds allocated to branches abroad (BRF1 Assets: 9.4)</td>
+								<td style="text-align: right" id="r10_amount" th:text="${r10_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.1.4</td>
+								<td style="background-color: #b3b6b9;">Treasury shares held / No INPUT required here
+								</td>
+								<td style="background-color: #b3b6b9;" id="r11_amount" th:text="${r11_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1.5</td>
+								<td>Unquoted Investments (BRF 5- Applicable items) </td>
+								<td style="text-align: right" id="r12_amount" th:text="${r12_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.1.6</td>
+								<td>Investment in subsidiaries, associates and affiliates ( BRF5- Applicable items)</td>
+								<td style="text-align: right" id="r13_amount" th:text="${r13_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+
+
+
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.1.7</td>
+								<td style="background-color: #b3b6b9;">Total deduction</td>
+								<td style="background-color: #b3b6b9;" id="r14_amount" th:text="${r14_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.2</td>
+								<td style="background-color: #b3b6b9;">Net Free Capital Funds</td>
+								<td style="background-color: #b3b6b9;" id="r15_amount" th:text="${r15_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.3</td>
+								<td style="background-color: #b3b6b9;">Other stable resources:</td>
+								<td style="background-color: #b3b6b9;"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.1</td>
+								<td th:text="${r16_product}">CHENNAI</td>
+								<td style="text-align: right" id="r16_amount" th:text="${r16_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.2</td>
+								<td>Non repayable head office funds (BRF2 Liab- Item 26.5)</td>
+								<td style="text-align: right" id="r17_amount" th:text="${r17_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.3</td>
+								<td>Interbank deposits with remaining life of more than 6 months (BRF 9)</td>
+								<td style="text-align: right" id="r18_amount" th:text="${r18_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.4 (a)</td>
+								<td>Refinancing of Housing Loans</td>
+								<td style="text-align: right" id="r19_amount" th:text="${r19_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.4 (b)</td>
+								<td>85% of the rest of NBFI Deposits</td>
+								<td style="text-align: right" id="r20_amount" th:text="${r20_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.5 (a)</td>
+								<td>Customer Deposits with remaining life of more than 6 months (BRF 9)</td>
+								<td style="text-align: right" id="r21_amount" th:text="${r21_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.5 (b)</td>
+								<td>85% of the rest of Customer Deposits</td>
+								<td style="text-align: right" id="r22_amount" th:text="${r22_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.6</td>
+								<td>Capital market funding/ term borrowings maturing after 6 months from reporting date
+									(BRF 9)</td>
+								<td style="text-align: right" id="r23_amount" th:text="${r23_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="text-align: right">2.3.7</td>
+								<td>Head Office loans towards meeting Large Exposure Funding (BRF 2 Liab- item 26.6)
+								</td>
+								<td style="text-align: right" id="r24_amount" th:text="${r24_amount}" align="right">
+									CHENNAI</td>
+							</tr>
+
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.3.8</td>
+								<td style="background-color: #b3b6b9;">Total other stable resources</td>
+								<td style="background-color: #b3b6b9;" id="r25_amount" th:text="${r25_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td style="background-color: #b3b6b9;">2.4</td>
+								<td style="background-color: #b3b6b9;">Total Stable Resources (2.2+2.3.8)</td>
+								<td style="background-color: #b3b6b9;" id="r26_amount" th:text="${r26_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td style="background-color: #b3b6b9;"></td>
+								<td style="background-color: #b3b6b9;">LENDING TO STABLE RESOURCES RATIO (1.6/ 2.4*100)
+								</td>
+								<td style="background-color: #b3b6b9;" id="r27_amount" th:text="${r27_amount}"
+									align="right">CHENNAI</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
 			</div>
 		</div>
 

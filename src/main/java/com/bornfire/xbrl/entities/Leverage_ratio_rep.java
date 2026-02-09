@@ -13,11 +13,18 @@ public interface Leverage_ratio_rep extends JpaRepository<Leverage_ratio_entity,
 	@Query(value="Select * from BRF96_SUMMARYTABLE Where report_date = ?1",nativeQuery=true)
 	Leverage_ratio_entity GetLeverageration(Date Selecteddate);
 	
-	@Query(value="Select month_end,R23_TOTAL from (With Eligibility_ratio as(Select (R23_TOTAL*100) as R23_TOTAL, REPORT_DATE from BRF96_SUMMARYTABLE),\r\n"
+	@Query(value="SELECT  R21_TOTAL AS Tier_1_capital,R22_TOTAL AS Total_exposures ,R23_TOTAL AS Leverage_ratio ,\r\n"
+			+ "R12_TOTAL AS Total_derivative_exposures ,R20_TOTAL AS offbalance_sheet_expsoures,\r\n"
+			+ "R3_TOTAL AS onbalance_sheet_exposures FROM brf96_summarytable\r\n"
+			+ "WHERE REPORT_DATE = ?1",nativeQuery=true)
+	List<Object[]> GetLeverageratiodata(Date Selecteddate);
+	
+	@Query(value="Select To_Char(month_end,'DD-MM-YYYY'),R23_TOTAL from (With Eligibility_ratio as(Select (R23_TOTAL*100) as R23_TOTAL, REPORT_DATE from BRF96_SUMMARYTABLE),\r\n"
 			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_Char(month_end,'DD-MM-YYYY') AS month_end,NVL(R23_TOTAL,0) AS R23_TOTAL\r\n"
-			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by month_end asc)",nativeQuery=true)
+			+ "Select a.month_end,NVL(R23_TOTAL,0) AS R23_TOTAL\r\n"
+			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by a.month_end asc)"
+			+ "Where R23_TOTAL <> 0",nativeQuery=true)
 	List<Object[]> GetLeverageration_curryear_report(Date Selecteddate);
 	
 	@Query(value = "Select month_dates,R23_TOTAL from (\r\n"
