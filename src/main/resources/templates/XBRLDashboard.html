@@ -3333,6 +3333,43 @@
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
 
 				}
+			
+				else if (Selectedmatrixlabel === "46"){
+					var UnsecuredPositionbody = document.getElementById("UnsecuredPositionbody");
+					UnsecuredPositionbody.innerHTML = "";
+					fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(selectedDate))
+					.then(response => response.json())
+					.then(result => {
+
+						// Get tbody element
+						
+						if (!UnsecuredPositionbody) {
+							console.error("Table body not found!");
+							return;
+						}
+						UnsecuredPositionbody.innerHTML = "";
+
+						// Build table rows
+						var trHTML =
+							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured) + "</td></tr>" +
+							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank) + "</td></tr>" +
+							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
+							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
+							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
+							"<tr><td></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td></td><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
+							"<tr><td></td><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
+							"<tr><td></td><td></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
+							"<tr><td></td><td></td><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
+							"<tr><td></td><td></td><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
+
+						// Set table body content
+						UnsecuredPositionbody.innerHTML = trHTML;
+
+						// Show table section
+						document.querySelector(".UnsecuredPosition").style.display = "block";
+					});
+				}
 
 
 			else {
