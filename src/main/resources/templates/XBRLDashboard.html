@@ -386,6 +386,10 @@
 			document.querySelector(".ProvisionCoverage").style.display = "none";
 			document.querySelector(".LongTermandMediumTerm").style.display = "none";
 			document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
+			document.getElementById("Sector_classifi_expo").textContent =formatDecimalValue(0);
+			document.getElementById("Total_expo").textContent =formatDecimalValue(0);
+			document.getElementById("Sector_classifi_per").textContent =formatDecimalValue(0);
+
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -1161,13 +1165,16 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 
-
+				document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
+				
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Industry', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
 				})
+					
 					.then(response => {
 						if (!response.ok) {
 							throw new Error("HTTP error " + response.status);
@@ -1180,12 +1187,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1222,9 +1228,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -1260,7 +1266,8 @@
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
 
-
+				document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Trading Exposure (%)';
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Trading', {
 					method: 'POST',
 					headers: {
@@ -1279,12 +1286,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Trading Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1321,9 +1327,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -1359,6 +1365,8 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+				document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Services', {
 					method: 'POST',
 					headers: {
@@ -1377,12 +1385,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1419,9 +1426,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -1458,6 +1465,9 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+				document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
+				
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Banks', {
 					method: 'POST',
 					headers: {
@@ -1476,12 +1486,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1518,9 +1527,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -1555,6 +1564,8 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+				document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Real_Estate', {
 					method: 'POST',
 					headers: {
@@ -1573,12 +1584,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1615,9 +1625,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -1652,6 +1662,8 @@
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 
+				document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
+				document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Sector_Others', {
 					method: 'POST',
 					headers: {
@@ -1670,12 +1682,11 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 
-							document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
-							document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
+							
 							document.getElementById("Sector_classifi_expo").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("Sector_classifi_per").textContent =
 								(data[2] + ' %' || '');
 						});
@@ -1712,9 +1723,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2496,6 +2507,49 @@
 			}
 
 			else if (Selectedmatrixlabel === "11") {
+				
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Industry', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				
+				
+				
+				
+				
+				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorIndustrial', {
@@ -2520,9 +2574,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2538,6 +2592,44 @@
 			}
 
 			else if (Selectedmatrixlabel === "12") {
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Trading', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Trading Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				
+				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
@@ -2562,9 +2654,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2579,6 +2671,43 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "13") {
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Services', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountServicesexcludingbank', {
@@ -2603,9 +2732,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2620,6 +2749,42 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "14") {
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Banks', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountBank', {
@@ -2644,9 +2809,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2661,6 +2826,43 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "15") {
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Real_Estate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
+				
+				
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'tenaccountRealEstate', {
@@ -2685,9 +2887,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -2702,6 +2904,42 @@
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 			}
 			else if (Selectedmatrixlabel === "16") {
+				
+				
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Sector_Others', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+
+							document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
+							document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
+							document.getElementById("Sector_classifi_expo").textContent =
+								formatDecimalValue(data[0]);
+							document.getElementById("Total_expo").textContent =
+								formatDecimalValue(data[1]);
+							document.getElementById("Sector_classifi_per").textContent =
+								(data[2] + ' %' || '');
+						});
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".Sector_Industrial").style.display = "grid";
 
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2727,9 +2965,9 @@
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (data[1] || "") + "</td>" +
 								"<td>" + (data[2] || "") + "</td>" +
-								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
-								"<td>" + (data[4] || "") + "</td>" +
-								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[4]) || "") + "</td>" +
+								"<td>" + (formatDecimalValue(data[5]) || "") + "</td>" +
 								"</tr>";
 						});
 
@@ -4189,14 +4427,16 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th id="labletype" colspan="4" op 10 Borrower </th>
+									<th id="labletype" colspan="4"> Top 10 Borrower </th>
 									<th id="ToptenBorrowerdate" colspan="2">Report date</th>
+									<th id="labletype" colspan="3"></th>
+									<th id="ToptenBorrowerdate" colspan="3">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
 									<th>Branch Name</th>
 									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>Balance</th>
+									<th>Balance In (Mn)</th>
 									<th>Rw (%)</th>
 									<th>Total Rwa</th>
 								</tr>
@@ -4212,7 +4452,7 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th id="Provlabletype" colspan="5" op 10 Borrower </th>
+									<th id="Provlabletype" colspan="5"> Top 10 Borrower </th>
 									<th id="ToptenProvisiondate" colspan="2">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
