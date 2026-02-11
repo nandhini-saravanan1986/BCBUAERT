@@ -100,7 +100,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 							/* Add Button Styling */
 							/* Base Button Style */
-							.role-add-btn {
+							.role-btn {
 							  background: #ffffff; /* default white background */
 							  color: #005fa3; /* blue text */
 							  border: 2px solid #005fa3;
@@ -114,7 +114,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							}
 
 							/* Hover effect */
-							.role-add-btn:hover {
+							.role-btn:hover {
 							  background: linear-gradient(135deg, #005fa3, #007bff);
 							  color: #fff;
 							  transform: translateY(-2px);
@@ -122,7 +122,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							}
 
 							/* Active (clicked or selected) button */
-							.role-add-btn.active {
+							.role-btn.active {
 							  background: linear-gradient(135deg, #005fa3, #007bff);
 							  color: #fff;
 							  border: none;
@@ -131,7 +131,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							}
 
 							/* Optional: icon spacing */
-							.role-add-btn i {
+							.role-btn i {
 							  margin-right: 5px;
 							}
 
@@ -250,59 +250,61 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							});
 							</script>
 
-							<style>
-							/* Shared styles for both buttons */
-							#floatingBackBtn, 
-							#floatingForwardBtn {
-							    position: fixed;
-							    top: 50%;
-							    background-color: #0073e6;
-							    border: none;
-							    color: white;
-							    font-size: 20px;
-							    border-radius: 50%;
-							    width: 45px;
-							    height: 45px;
-							    display: flex;
-							    align-items: center;
-							    justify-content: center;
-							    opacity: 0;
-							    pointer-events: none;
-							    transition: all 0.4s ease;
-							    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-							    z-index: 999;
-							}
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #F8AC46FF;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-							/* Back button */
-							#floatingBackBtn {
-							    left: -50px; /* hidden off-screen */
-							}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-							/* Forward button */
-							#floatingForwardBtn {
-							    right: -50px; /* hidden off-screen */
-							}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-							/* Show when near edge */
-							#floatingBackBtn.show {
-							    left: 20px;
-							    opacity: 1;
-							    pointer-events: auto;
-							}
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-							#floatingForwardBtn.show {
-							    right: 20px;
-							    opacity: 1;
-							    pointer-events: auto;
-							}
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-							/* Hover animation */
-							#floatingBackBtn:hover,
-							#floatingForwardBtn:hover {
-							    background-color: #005bb5;
-							    transform: scale(1.1);
-							}
-							</style>	
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #E67E00;
+			transform: scale(1.1);
+		}
+	</style>	
 							
 							
 							
@@ -506,7 +508,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	
 	<style>
 	
-	.role-add-btnl {
+	.role-btnl {
     min-width: 150px; /* or a value you prefer */
    
     padding: 8px 12px;
@@ -514,6 +516,308 @@ PURPOSE		: IRRBB DATA TEMPLATE
 }
 	
 	</style>
+	
+	
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
+
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
+
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
+
+		.form-control:focus {
+			border-color: #007bff;
+		}
+
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
+
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
+
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
+
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
+		<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
+
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
+	<style>
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 3px;
+		margin-left: 4px !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		box-sizing: border-box;
+		display: inline-block;
+		min-width: 1.5em;
+		padding: 0.5em !important;
+		margin-left: -8px;
+		text-align: center;
+		text-decoration: none !important;
+		border: 1px solid transparent;
+		border-radius: 2px;
+	}
+
+	.mb-2 {
+		margin-bottom: -0.5rem !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hover ONLY for Previous & Next */
+	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+		background-color: #e9ecef !important;
+		color: rgb(255, 128, 64) !important;
+	}
+
+	/* Page numbers should NOT hover */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+		background-color: #f5f5f5 !important;
+		color: #6c757d !important;
+		cursor: default !important;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+		cursor: default !important;
+	}
+</style>
+<style>
+	#usertable {
+		min-width: 2800px;
+		/* adjust based on columns */
+	}
+
+	#usertable {
+		border-collapse: collapse !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	/* HEADER */
+	/* Update this section in your <style> tag */
+	#usertable thead th {
+		background-color: #7b6458;
+		color: #fff;
+		font-family: Arial, sans-serif !important;
+		font-size: 14px !important;
+		/* text-align: center; */
+		vertical-align: middle;
+		white-space: normal;
+
+		/* ADD THESE THREE LINES */
+		padding: 2px 4px !important;
+		/* Reduces internal spacing */
+		line-height: 1.1 !important;
+		/* Reduces space between wrapped text lines */
+		font-size: 11px !important;
+		/* Optional: slightly smaller font to save space */
+		position: sticky;
+		top: 0;
+		/* Keeps the first row at the top */
+		z-index: 10;
+		background-color: #7b6458 !important;
+		/* Ensures the header isn't transparent */
+		color: white;
+		box-shadow: inset 0 -1px 0 #dee2e6;
+		/* Optional: adds a bottom border to the sticky header */
+	}
+
+
+	/* BODY CELLS */
+	#usertable td {
+		padding: 5px 6px !important;
+		border: 1px solid #e8e8e8 !important;
+		/* light grey lines */
+		background: #fafafa;
+		white-space: normal !important;
+	}
+
+	/* ROW EVEN/ODD */
+	#usertable tbody tr:nth-child(even) {
+		background-color: #f4f2ef !important;
+	}
+
+	#usertable tbody tr:nth-child(odd) {
+		background-color: #ffffff !important;
+	}
+	#usertable thead tr:nth-child(2) th {
+	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	    z-index: 9;
+}
+.dataTables_filter label {
+			    display: flex !important;
+			    gap: 10px;
+			    align-items: center;
+			}
+
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
+
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
+
+	/* === ROLE PAGE CUSTOM HEADER === */
+	.role-page-header {
+		background-color: #ffffff;
+		padding: 15px 20px;
+		display: flex;
+		/* Added for alignment */
+		justify-content: space-between;
+		/* Added for alignment */
+		align-items: center;
+		/* Added for alignment */
+	}
+</style>
+	<style>
+	.liquid-edit-page {
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	.liquid-edit-page label,
+	.liquid-edit-page input,
+	.liquid-edit-page textarea,
+	.liquid-edit-page button {
+		font-size: 12px !important;
+	}
+
+	.modal-title {
+		background-color: #f7a47c !important;
+	}
+	
+	body {
+    overflow: hidden;
+}
+</style>
+<style>
+	.menu-title-header {
+		background-color: #f7a47c !important;
+		color: #ffffff;
+		text-align: center;
+		padding: 10px 15px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+</style>
 	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
@@ -665,7 +969,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
-		document.querySelectorAll('.role-add-btn').forEach(btn => btn.classList.remove('active'));
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
 		document.getElementById(tabId + '-btn').classList.add('active');
 
 		// Hide all panes
@@ -893,48 +1197,42 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <body>
 	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
 		
-			<div th:insert="XBRLHeaderMenu :: header"></div>
+			<div  id="mainHeader"  th:insert="XBRLHeaderMenu :: header"></div>
 		
-			<div class="role-page-header d-flex justify-content-between align-items-center"
+			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
 				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'}">
-				<div class="float-left role-page-title">
-					<h5>IRRBB DATA TEMPLATE</h5>
-					<div style="width: 212px; height: 3px;background-color: #0073e6;border-radius: 2px;
-		margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+				<div class="text-left flex-grow-1">
+					<h4>IRRBB DATA TEMPLATE</h4>
+					
 				</div>
-			</div>
-		
-		
-			<!-- -------------------User List Starts----------------------------------------------------- -->
-			<div style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' }">
-            <!-- Tabs -->
-				<div  class="role-page-header d-flex justify-content-between align-items-center" >
+				
+				            <!-- Tabs -->
+				<div class="d-flex align-items-center gap-2">
 					<div class="float-left" >
-					<button  class="role-add-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+					<button  class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
 						Controls</button>
-					<button  class="role-add-btn" id="template-btn" onclick="handleClick('template')">Template
+					<button  class="role-btn" id="template-btn" onclick="handleClick('template')">Template
 						Instructions</button>
-					<button class="role-add-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
-					<button class="role-add-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
-					<button style="white-space:nowrap" class="role-add-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
+					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
+					<button class="role-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
+					<button style="white-space:nowrap" class="role-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
 					</div>
 					<div class="float-right" >
 					
 					<!-- ---LIST MEAN--EVE-- -->
-						<button th:if="${formmode} =='list'" type="button" class="role-add-btn"
+						<button th:if="${formmode} =='list'" type="button" class="role-btn"
 							onclick="downloadIrrbbeve();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---EAR DOWNLOAD-->
-						<button th:if="${formmode} =='EAR'" type="button" class="role-add-btn"
+						<button th:if="${formmode} =='EAR'" type="button" class="role-btn"
 							onclick="downloadIrrbbear();">
 							<i class="fa fa-download"></i> Download
 						</button>
 						
 						<!-- ---DiscountRate DOWNLOAD-->
-						<button th:if="${formmode} =='DiscountRate'" type="button" class="role-add-btn"
+						<button th:if="${formmode} =='DiscountRate'" type="button" class="role-btn"
 							onclick="downloadIrrbbdiscount();">
 							<i class="fa fa-download"></i> Download
 						</button>
@@ -943,6 +1241,13 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 					</div>
 				</div>
+				
+			</div>
+		
+		
+			<!-- -------------------User List Starts----------------------------------------------------- -->
+			<div id="tabHeader" style="padding-right: 10px;padding-left: 20px;"
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' }">
 
 
 				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
@@ -952,14 +1257,14 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						<div class="row">
 							<div class="col-sm-12 finuserapply">
 								<form id="nostroForm" method="post" autocomplete="off">
-									<div class="card-body" style="max-height:400px; overflow-y:auto">
+									<div class="card-body" style="overflow-y:auto">
 
 
 										<input autocomplete="false" name="hidden" type="text" style="display: none;">
-										<div class="form-group" style="border:none">
+										<div class="form-group" style="border:none;padding-top: 15px;">
 											<div class="row formline">
 												<div class="col-sm-1"></div>
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-2">
 													<select id="submittingInstitution" name="submittingInstitution"
 														class="form-control" required>
 														<option value="">-- Select Institution --</option>
@@ -972,7 +1277,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 												<div class="col-sm-1"></div>
 
-												<div class="form-group col-md-4">
+												<div class="form-group col-md-2">
 													<input type="date" id="portfolioDate" name="portfolioDate"
 														class="form-control" placeholder=" " required />
 													<label for="portfolioDate" class="form-legend">Portfolio
@@ -983,15 +1288,16 @@ PURPOSE		: IRRBB DATA TEMPLATE
 											<!-- Contact Employee 1 Name / Title -->
 											<!-- Contact Employee 1 Group -->
 											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 												<div class="row formline">
 													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Contact
+														<label style="font-weight: bold; color: #0D0D0C;">Contact
 															Details(Employee 1)</label>
 													</div>
 												</div>
 												<div class="row formline">
-													<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+													<div class="form-group col-md-3">
 														<input type="text" id="contactEmployee1Name1"
 															name="contactEmployee1Name1" class="form-control"
 															placeholder=" " required />
@@ -1000,7 +1306,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 													</div>
 
 
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="text" id="contactEmployee1Title1"
 															name="contactEmployee1Title1" class="form-control"
 															placeholder=" " required />
@@ -1010,7 +1316,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
 
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="email" id="contactEmployee1Email1"
 															name="contactEmployee1Email1" class="form-control"
 															placeholder=" " required />
@@ -1023,15 +1329,16 @@ PURPOSE		: IRRBB DATA TEMPLATE
 												</div>
 											</div>
 											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-												<div class="row formline">
+												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
+												<div class="row formline">												
 													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Contact
+														<label style="font-weight: bold; color: #0D0D0C;">Contact
 															Details(Employee 2)</label>
 													</div>
 												</div>
 												<div class="row formline">
-													<div class="form-group col-md-4">
+												<div class="col-sm-2"></div>
+													<div class="form-group col-md-3">
 														<input type="text" id="contactEmployee2Name2"
 															name="contactEmployee2Name2" class="form-control"
 															placeholder=" " required />
@@ -1040,7 +1347,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 													</div>
 
 
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="text" id="contactEmployee2Title2"
 															name="contactEmployee2Title2" class="form-control"
 															placeholder=" " required />
@@ -1050,7 +1357,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 
 
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="email" id="contactEmployee2Email2"
 															name="contactEmployee2Email2" class="form-control"
 															placeholder=" " required />
@@ -1064,55 +1371,47 @@ PURPOSE		: IRRBB DATA TEMPLATE
 												<!-- Contact Employee 2 Group -->
 											</div>
 											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
 												<div class="row formline">
 													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #007B8A;">Sign
+														<label style="font-weight: bold; color: #0D0D0C;">Sign
 															Off</label>
 													</div>
 												</div>
 
 												<!-- Sign-off CRO Name / Email -->
 												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
+													<div class="col-sm-2"></div>
+													<div class="form-group col-md-3">
 														<input type="text" id="signOffCroName" name="signOffCroName"
 															class="form-control" placeholder=" " required />
 														<label for="signOffCroName" class="form-legend">CRO Name</label>
 													</div>
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="email" id="signOffCroEmail" name="signOffCroEmail"
 															class="form-control" placeholder=" " required />
 														<label for="signOffCroEmail" class="form-legend">CRO
 															Email</label>
+													</div>
+													<div class="form-group col-md-3">
+														<input type="text" id="signOffCfoName" name="signOffCfoName"
+															class="form-control" placeholder=" " required />
+														<label for="signOffCfoName" class="form-legend">CFO Name</label>
 													</div>
 
 												</div>
 
 												<!-- Sign-off CFO Name / Email -->
 												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
-														<input type="text" id="signOffCfoName" name="signOffCfoName"
-															class="form-control" placeholder=" " required />
-														<label for="signOffCfoName" class="form-legend">CFO Name</label>
-													</div>
-
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
+													<div class="col-sm-2"></div>
+												
+													<div class="form-group col-md-3">
 														<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
 															class="form-control" placeholder=" " required />
 														<label for="signOffCfoEmail" class="form-legend">CFO
 															Email</label>
 													</div>
-
-												</div>
-
-												<!-- Sign-off Head of Treasury Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="text" id="signOffHeadOfTreasuryName"
 															name="signOffHeadOfTreasuryName" class="form-control"
 															placeholder=" " required />
@@ -1120,35 +1419,39 @@ PURPOSE		: IRRBB DATA TEMPLATE
 															of Treasury Name</label>
 													</div>
 
-													<div class="col-sm-1"></div>
-													<div class="form-group col-md-4">
+													<div class="form-group col-md-3">
 														<input type="email" id="signOffHeadOfTreasuryEmail"
 															name="signOffHeadOfTreasuryEmail" class="form-control"
 															placeholder=" " required />
 														<label for="signOffHeadOfTreasuryEmail" class="form-legend">Head
 															of Treasury Email</label>
 													</div>
+
 												</div>
+
+												<!-- Sign-off Head of Treasury Name / Email -->
+												<!-- <div class="row formline">
+													<div class="col-sm-1"></div>
+													
+												</div> -->
 											</div>
 
 										</div>
 
 
 								</form>
-							</div>
-						</div>
-						<div class="card-footer text-center"
-							style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 							
+					<div class="card-footer text-center" style="padding-bottom: 10px;">
 
 
-							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="role-add-btn"
+							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="role-btn"
                   onclick="submitForm()">Save</button>-->
 
 							<button th:if="${formmode == null or formmode == 'add'}" type="button"
-								class="role-add-btn" onclick="submitForm()">Save</button>
+								class="role-btn" onclick="submitForm()">Save</button>
 
 
+						</div></div>
 						</div>
 					</div>
 				</div>
@@ -1165,7 +1468,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 						
 
-						<button type="button" class="role-add-btn" onclick="submitForm()">
+						<button type="button" class="role-btn" onclick="submitForm()">
 							Save
 						</button>
 
@@ -1184,52 +1487,52 @@ PURPOSE		: IRRBB DATA TEMPLATE
 								 
 								<tr>
 								    <th>Action</th>
-									<th>Report Date</th>
-									<th>Bank Name</th>
+									<th style="text-align:left;min-width:80px">Report Date</th>
+									<th style="text-align:left;min-width:80px">Bank Name</th>
 									<th>Group_Head_Office_Subsidiary</th>
-									<th>Bank Symbol</th>
+									<th style="text-align:left;min-width:90px">Bank Symbol</th>
 									<th>Conventional/Islamic</th>
                                     <th>Local/Foreign</th>
-									<th>CBUAE Tiering</th>
+									<th style="text-align:left;min-width:100px">CBUAE Tiering</th>
 								    <th>Subsidiary</th>
 									<th>Scenario</th>
 									<th>GL_Level_1</th>
 									<th>GL_Level_2</th>
 									<th>GL_Level_3</th>
-									<th>Option type </th>
-									<th>Rate type</th>
+									<th style="text-align:left;min-width:70px">Option type </th>
+									<th style="text-align:left;min-width:70px">Rate type</th>
                                    <th>Reference_rate </th>
 									<th>Instrument_currency</th>
-									<th>Oustanding_Balance</th>
-									<th>Overnight</th>
-									<th>ON_to_1M</th>
-									<th>1M_to_3M</th>
-									<th>3M_to_6M</th>
-                                    <th>6M_to_9M</th>
-									<th>9M_to_1Y</th>
-									<th>1Y_to_5Y</th>
-									<th>1.5Y_to_2Y</th>
-									<th>2Y_to_3Y</th>
-									<th>3Y_to_4Y</th>
-									<th>4Y_to_5Y</th>
-									<th>5Y_to_6Y</th>
-									<th>6Y_to_7Y</th>
-									<th>7Y_to_8Y</th>
-									<th>8Y_to_9Y</th>
-									<th>9Y_to_10Y</th>
-									<th>10Y_to_15Y</th>
-									<th>15Y_to_20Y</th>
-									<th>20Y_Above</th>
-									<th>Non_rate_sensitive</th>
+									<th style="text-align:right;">Oustanding_Balance</th>
+									<th style="text-align:right;">Overnight</th>
+									<th style="text-align:right;">ON_to_1M</th>
+									<th style="text-align:right;">1M_to_3M</th>
+									<th style="text-align:right;">3M_to_6M</th>
+                                    <th style="text-align:right;">6M_to_9M</th>
+									<th style="text-align:right;">9M_to_1Y</th>
+									<th style="text-align:right;">1Y_to_5Y</th>
+									<th style="text-align:right;">1.5Y_to_2Y</th>
+									<th style="text-align:right;">2Y_to_3Y</th>
+									<th style="text-align:right;">3Y_to_4Y</th>
+									<th style="text-align:right;">4Y_to_5Y</th>
+									<th style="text-align:right;">5Y_to_6Y</th>
+									<th style="text-align:right;">6Y_to_7Y</th>
+									<th style="text-align:right;">7Y_to_8Y</th>
+									<th style="text-align:right;">8Y_to_9Y</th>
+									<th style="text-align:right;">9Y_to_10Y</th>
+									<th style="text-align:right;">10Y_to_15Y</th>
+									<th style="text-align:right;">15Y_to_20Y</th>
+									<th style="text-align:right;">20Y_Above</th>
+									<th style="text-align:right;">Non_rate_sensitive</th>
 									
 
 								</tr>
 							</thead>
 							<tbody th:each="data : ${ISList}">
 								<tr>
-								<td><a
+								<td style="text-align: center;"><a
 											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
-											<i class="fa fa-edit" style="color: #007bff;"></i></a>
+											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
 									</td>
 									
 									<!-- Financial Institution Information 8-->
@@ -1250,27 +1553,27 @@ PURPOSE		: IRRBB DATA TEMPLATE
 									<td th:text="${data.rateType}"></td>
 									<td th:text="${data.referenceRate}"></td>
 								     <td th:text="${data.instrumentCurrency}"></td>
-									<td th:text="${#numbers.formatDecimal(data.outstandingBalance,1,'COMMA',2,'POINT')}"></td>
-									  <td th:text="${#numbers.formatDecimal(data.overnight,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.onToOneM,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.oneMToThreeM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.threeMToSixM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.sixMonthToNineM,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.nineMonthToOneY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.oneYToFiveY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.onePointFiveYToTwoY,1,'COMMA',2,'POINT')}"></td>
-								     <td th:text="${#numbers.formatDecimal(data.twoYToThreeY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.threeYToFourY,1,'COMMA',2,'POINT')}"></td>
-									  <td th:text="${#numbers.formatDecimal(data.fourYToFiveY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.fiveYToSixY,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.sixYToSevenY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.sevenYToEightY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.eightYToNineY,1,'COMMA',2,'POINT')}"></td>
-								     <td th:text="${#numbers.formatDecimal(data.nineYToTenY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.tenYToFifteenY,1,'COMMA',2,'POINT')}"></td>
-									  <td th:text="${#numbers.formatDecimal(data.fifteenYToTwentyY,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.twentyYearAbove,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.nonRateSensitive,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.outstandingBalance,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.overnight,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.onToOneM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.oneMToThreeM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.threeMToSixM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sixMonthToNineM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.nineMonthToOneY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.oneYToFiveY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.onePointFiveYToTwoY,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twoYToThreeY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.threeYToFourY,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fourYToFiveY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fiveYToSixY,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sixYToSevenY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sevenYToEightY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.eightYToNineY,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.nineYToTenY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.tenYToFifteenY,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fifteenYToTwentyY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twentyYearAbove,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.nonRateSensitive,1,'COMMA',2,'POINT')}"></td>
 									</tr>
 							</tbody>
 						</table>
@@ -1282,7 +1585,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
 							onclick="submitForm()">Save</button>
 
 
@@ -1294,7 +1597,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				
 				<!------------------ edit starts for IRRBBEVE-------------------------------------------------------------->
 		
-<div th:if="${formmode == 'editeve'}" style="align-items:center">
+<div th:if="${formmode == 'editeve'}"  class="liquid-edit-page"  style="align-items:center">
 
 <div class="row">
 <form th:action="@{/updateirrbeve}"  th:object="${irrbbeve}" method="post" >
@@ -1303,10 +1606,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		
 		<div class="role-page-header d-flex justify-content-between align-items-center">
 								    <!-- Left: Page Title -->
-								    <div class="role-page-title">
+								    <div >
 								        <h4 >IRRBB EVE - Edit</h4>
-		<div style="width: 156px; height: 3px;background-color: #0073e6;border-radius: 2px;
-		margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
+		
 
 								  
 								</div>
@@ -1792,8 +2094,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
     <!-- Submit -->
    <div class="card-footer text-center">
-   <button type="submit" class="role-add-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='list')}" class="role-add-btn">Cancel</a>
+   <button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='list')}"  style="text-decoration: none;" class="role-btn">Cancel</a>
     </div>
     
     </div>
@@ -1814,46 +2116,46 @@ PURPOSE		: IRRBB DATA TEMPLATE
 								 
 								<tr>
 								    <th>Action</th>
-									<th>Report Date</th>
+									<th style="text-align:left;min-width:80px">Report Date</th>
 									<th>Bank Name</th>
 									<th>Group_Head_Office_Subsidiary</th>
-									<th>Bank Symbol</th>
+									<th style="text-align:left;min-width:80px">Bank Symbol</th>
 									<th>Conventional/Islamic</th>
                                     <th>Local/Foreign</th>
-									<th>CBUAE Tiering</th>
+									<th style="text-align:left;min-width:95px">CBUAE Tiering</th>
 								    <th>Subsidiary</th>
 									<th>Scenario</th>
 									<th>GL_Level_1</th>
 									<th>GL_Level_2</th>
 									<th>GL_Level_3</th>
-									<th>Option type </th>
-									<th>Rate type</th>
+									<th style="text-align:left;min-width:70px">Option type </th>
+									<th style="text-align:left;min-width:60px">Rate type</th>
                                    <th>Reference_rate </th>
 									<th>Instrument_currency</th>
-									<th>Pass-Through Rate (%)</th>
-									<th>Overnight</th>
-									<th>ON_to_2W</th>
-									<th>2W_to_1M</th>
-									<th>1M_to_2M</th>
-                                    <th>2M_to_3M</th>
-									<th>3M_to_4M</th>
-									<th>4M_to_5M</th>
-									<th>5M_to_6M</th>
-									<th>6M_to_7M</th>
-									<th>7M_to_8M</th>
-									<th>8M_to_9M</th>
-									<th>9M_to_10M</th>
-									<th>10M_to_11M</th>
-									<th>11M_to_12M</th>
+									<th style="text-align:left;min-width:145px">Pass-Through Rate (%)</th>
+									<th style="text-align:right;">Overnight</th>
+									<th style="text-align:right;">ON_to_2W</th>
+									<th style="text-align:right;">2W_to_1M</th>
+									<th style="text-align:right;">1M_to_2M</th>
+                                    <th style="text-align:right;">2M_to_3M</th>
+									<th style="text-align:right;">3M_to_4M</th>
+									<th style="text-align:right;">4M_to_5M</th>
+									<th style="text-align:right;">5M_to_6M</th>
+									<th style="text-align:right;">6M_to_7M</th>
+									<th style="text-align:right;">7M_to_8M</th>
+									<th style="text-align:right;">8M_to_9M</th>
+									<th style="text-align:right;">9M_to_10M</th>
+									<th style="text-align:right;">10M_to_11M</th>
+									<th style="text-align:right;">11M_to_12M</th>
 									
 
 								</tr>
 							</thead>
 							<tbody  th:each="data : ${ISListEar}">
 								<tr>
-								<td><a
+								<td style="text-align: center;"><a
 											th:href="@{'/IRRBB_data_Template?formmode=editear&SI_NO=' + ${data.SI_NO}}">
-											<i class="fa fa-edit" style="color: #007bff;"></i></a>
+											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
 									</td>
 									
 									<!-- Financial Institution Information 8-->
@@ -1875,20 +2177,20 @@ PURPOSE		: IRRBB DATA TEMPLATE
 									<td th:text="${data.referenceRate}"></td>
 								     <td th:text="${data.instrumentCurrency}"></td>
 									<td th:text="${#numbers.formatDecimal(data.passThroughRate,1,'COMMA',2,'POINT')}"></td>
-									  <td th:text="${#numbers.formatDecimal(data.overnight,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.onToTwoW,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.twoWToOneM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.oneMToTwoM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.twoMToThreeM,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.threeMToFourM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.fourMToFiveM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.fiveMToSixM,1,'COMMA',2,'POINT')}"></td>
-								     <td th:text="${#numbers.formatDecimal(data.sixMToSevenM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.sevenMToEightM,1,'COMMA',2,'POINT')}"></td>
-									  <td th:text="${#numbers.formatDecimal(data.eightMToNineM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.nineMToTenM,1,'COMMA',2,'POINT')}"></td>
-                                    <td th:text="${#numbers.formatDecimal(data.tenMToElevenM,1,'COMMA',2,'POINT')}"></td>
-									<td th:text="${#numbers.formatDecimal(data.elevenMToTwelveM,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.overnight,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.onToTwoW,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twoWToOneM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.oneMToTwoM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twoMToThreeM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.threeMToFourM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fourMToFiveM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fiveMToSixM,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sixMToSevenM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sevenMToEightM,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.eightMToNineM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.nineMToTenM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.tenMToElevenM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.elevenMToTwelveM,1,'COMMA',2,'POINT')}"></td>
 									</tr>
 							</tbody>
 						</table>
@@ -1899,7 +2201,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 						
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
 							onclick="submitForm()">Save</button>
 
 
@@ -1911,7 +2213,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							
 <!------------------ edit starts for IRRBBEAR-------------------------------------------------------------->
 		
-<div th:if="${formmode == 'editear'}" style="align-items:center">
+<div th:if="${formmode == 'editear'}" class="liquid-edit-page"  style="align-items:center">
  
 <div class="row">
 <form th:action="@{/updateirrbear}" th:object="${irrbbear}" method="post" id="irrbbear">
@@ -1920,13 +2222,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						
 						<div class="role-page-header d-flex justify-content-between align-items-center">
 													    <!-- Left: Page Title -->
-													    <div class="role-page-title">
-													        <h4 >IRRBB EAR - Edit</h4>
-							<div style="width: 156px; height: 3px;background-color: #0073e6;border-radius: 2px;
-							margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-
 													  
-													</div>
+													        <h4 >IRRBB EAR - Edit</h4>
+
 													</div>
 <div class="card-body" style="max-height: 500px; overflow-y: auto;">
 
@@ -2364,8 +2662,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
     <!-- Submit -->
    <div class="card-footer text-center">
-   <button type="submit" class="role-add-btn" onclick="updateform(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='EAR')}" class="role-add-btn">Cancel</a>
+   <button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='EAR')}" class="role-btn" style="text-decoration: none;">Cancel</a>
     </div>
     
     </div>
@@ -2413,9 +2711,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							</thead>
 							<tbody  th:each="data : ${ISListDiscount}">
 								<tr>
-								<td><a
+								<td style="text-align: center;"><a
 											th:href="@{'/IRRBB_data_Template?formmode=editdiscount&SI_NO=' + ${data.SI_NO}}">
-											<i class="fa fa-edit" style="color: #007bff;"></i></a>
+											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
 									</td> 
 									
 									<!-- Financial Institution Information 8-->
@@ -2455,7 +2753,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						
 
 
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-add-btn"
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
 							onclick="submitForm()">Save</button>
 
 
@@ -2470,20 +2768,16 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				
 				
 <!------------------ edit starts for IRRBBDISOCUNTRATE-------------------------------------------------------------->		
-<div th:if="${formmode == 'editdiscount'}" style="align-items:center">
+<div th:if="${formmode == 'editdiscount'}" class="liquid-edit-page" style="align-items:center">
  
 <div class="row">
 <form th:action="@{/updateirrbdiscount}" th:object="${irrbbdiscount}" method="post" id="irrbbdiscount">
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 		<div class="role-page-header d-flex justify-content-between align-items-center">
 															    <!-- Left: Page Title -->
-															    <div class="role-page-title">
-															        <h4 >IRRBB Discount Rate - Edit</h4>
-									<div style="width: 250px; height: 3px;background-color: #0073e6;border-radius: 2px;
-									margin-top: 6px;box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>
-
 															  
-															</div>
+															        <h4 >IRRBB Discount Rate - Edit</h4>
+
 															</div>
 						
 						
@@ -2659,8 +2953,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
     <!-- Submit -->
    <div class="card-footer text-center">
-   <button type="submit" class="role-add-btn" onclick="updateformdiscount(event)">Update</button>
-<a th:href="@{/IRRBB_data_Template(formmode='DiscountRate')}" class="role-add-btn">Cancel</a>
+   <button type="submit" class="role-btn" onclick="updateformdiscount(event)">Update</button>
+<a th:href="@{/IRRBB_data_Template(formmode='DiscountRate')}" class="role-btn" style="text-decoration: none;">Cancel</a>
     </div>
     
     </div>
@@ -2692,7 +2986,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg"></p>
-							<button type="button" class="role-add-btn" onclick="list()"
+							<button type="button" class="role-btn" onclick="list()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
@@ -2719,7 +3013,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						</div>
 						<div class="modal-body" style="text-align: center">
 							<p id="alertmsg1"></p>
-							<button type="button" class="role-add-btn" onclick="window.location.reload()"
+							<button type="button" class="role-btn" onclick="window.location.reload()"
 								data-dismiss="modal">Close</button>
 						</div>
 					</div>
@@ -2761,7 +3055,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 							<p id="resultModalBody"></p>
 							<!-- Your custom styled button -->
-							<button type="button" class="role-add-btn" onclick="list()"
+							<button type="button" class="role-btn" onclick="list()"
 								data-dismiss="modal">OK</button>
 						</div>
 					</div>
@@ -2770,83 +3064,28 @@ PURPOSE		: IRRBB DATA TEMPLATE
 </body>
 <script>
 	$('#usertable').DataTable({
-				    scrollX: true,
-				    autoWidth: false,
-				    paging: true,
-				    searching: true,
-				    lengthChange: false,
-				    ordering: true,
-				    pageLength: 10,
-				    fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				    // Layout: search (left) + pagination (right)
-				    dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
-				    // Optional: language tweak for better label
-				    language: {
-				      search: "Search:"
-				    }
-				  });
-				  
-				  
-	
 
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
-<!-- Include this after your DataTable initialization script -->
 
-<style>
-	/* Remove top margin/padding from DataTables parent containers */
-	#data {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
-	}
-
-	.table-responsive {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
-
-	/* Ensure DataTables filter (search box) doesn't have spacing above it */
-	div.dataTables_filter {
-		margin-top: 0 !important;
-		padding-top: 0 !important;
-	}
-
-	/* FIX: Make search label and box inline */
-	div.dataTables_filter label {
-		display: flex !important;
-		align-items: center;
-		gap: 8px;
-		white-space: nowrap;
-	}
-
-	/* Style pagination buttons */
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		background-color: white;
-		border: 1px solid rgb(0, 164, 166);
-		color: rgb(0, 164, 166) !important;
-		padding: 5px 10px;
-		margin: 2px;
-		border-radius: 6px;
-		transition: 0.3s;
-		font-weight: 600;
-	}
-
-	.dataTables_wrapper .dataTables_paginate .paginate_button.current,
-	.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-		background-color: rgb(0, 164, 166) !important;
-		color: white !important;
-	}
-
-	/* Optional: Style the search input */
-	.dataTables_filter input {
-		border: 1px solid rgb(0, 164, 166);
-		border-radius: 4px;
-		padding: 4px 8px;
-	}
-</style>
 
 
 <script>
