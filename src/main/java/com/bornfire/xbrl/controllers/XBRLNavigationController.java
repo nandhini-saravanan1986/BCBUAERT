@@ -3098,7 +3098,7 @@ public class XBRLNavigationController {
 		if (Report_date != null) {
 			Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
 		} else {
-			Report_date = java.sql.Date.valueOf(today.minusDays(0));
+			Report_date = java.sql.Date.valueOf(today.minusDays(42));
 		}
 
 		System.out.println("After validation Todaydate : " + Report_date);

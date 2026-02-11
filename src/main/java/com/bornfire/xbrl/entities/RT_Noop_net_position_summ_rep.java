@@ -10,17 +10,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RT_Noop_net_position_summ_rep extends JpaRepository<RT_Noop_net_position_summ_entity, Date> {
 
-	@Query(value="Select REPORT_DATE,OVER_BOUGHT_AMOUNT,OVER_SOLD_AMOUNT,"
-			+ "NOOP_AMOUNT_IN_INR,LIMIT_AMOUNT_IN_INR,HEADROOM_AVAL_AMOUNT_IN_INR"
-			+ " from rt_net_position_limit_noop_summ where report_date =?1",nativeQuery=true)
+	@Query(value="Select REPORT_DATE,ROUND(OVER_BOUGHT_AMOUNT/1000000,2),ROUND(OVER_SOLD_AMOUNT/1000000,2),\r\n"
+			+ "ROUND(NOOP_AMOUNT_IN_INR/10000000,2),ROUND(LIMIT_AMOUNT_IN_INR/10000000,2),ROUND(HEADROOM_AVAL_AMOUNT_IN_INR/10000000,2),Round((NOOP_AMOUNT_IN_INR/10000000)/(LIMIT_AMOUNT_IN_INR/10000000),4)*100\r\n"
+			+ "from rt_net_position_limit_noop_summ where report_date =?1",nativeQuery=true)
 	List<Object[]> Get_Noop_netposition(Date Selecteddate);
 	
-	@Query(value="With Available_head_room as (Select Report_date,Round(NOOP_AMOUNT_IN_INR/10000000,2) as HEADROOM_AVAL_AMOUNT_IN_INR\r\n"
+	@Query(value="With Available_head_room as (\r\n"
+			+ "Select Report_date,Round(NOOP_AMOUNT_IN_INR/10000000,2)/Round(LIMIT_AMOUNT_IN_INR/10000000,2) as HEADROOM_AVAL_AMOUNT_IN_INR\r\n"
 			+ "from rt_net_position_limit_noop_summ where report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )),\r\n"
 			+ "Current_year_dates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY'),Nvl(HEADROOM_AVAL_AMOUNT_IN_INR,0) from \r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY'),Round(Nvl(HEADROOM_AVAL_AMOUNT_IN_INR,0)*100,2) from \r\n"
 			+ "Current_year_dates a left join Available_head_room b on a.month_end = b.Report_date Order by a.month_end asc",nativeQuery=true)
 	List<Object[]> GetCurrentYear_NoopGraph(Date Selecteddate);
 	

@@ -13,6 +13,7 @@
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<script th:src="@{/js/chart.js}"></script>
+	<script th:src="@{/js/datatablesnew.js}"></script>
 	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
 		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
 
@@ -286,12 +287,37 @@
 		}
 
 		h4 {
-			text-align: center;
-			margin-bottom: 30px;
-			font-size: 0.70rem;
-			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-			padding: 10px;
-			color: white;
+		    position: relative;
+		    text-align: center;
+		    margin-bottom: 30px;
+		    font-size: 0.70rem;
+		    padding: 10px;
+		    color: white;
+		    background-color: brown;
+		    border-radius: 10px;
+		    overflow: hidden;
+		}
+
+		/* Glassy moving layer */
+		h4::before {
+		    content: "";
+		    position: absolute;
+		    top: 0;
+		    left: -100%;
+		    width: 50%;
+		    height: 100%;
+		    background: linear-gradient(
+		        120deg,
+		        rgba(255,255,255,0) 0%,
+		        rgba(255,255,255,0.35) 50%,
+		        rgba(255,255,255,0) 100%
+		    );
+		    animation: glassSweep 3s linear infinite;
+		}
+
+		@keyframes glassSweep {
+		    0% { left: -100%; }
+		    100% { left: 150%; }
 		}
 
 		.blink-bg {
@@ -353,6 +379,7 @@
 		let barChartInstance = null;
 		let Selectedmatrixlabel = 0;
 		var Curr_Tier_1_capital = /*[[${CurrentYear_Tier_1_capital}]]*/0;
+		Chart.register(ChartDataLabels);
 
 	</script>
 	<script>
@@ -362,8 +389,15 @@
 			var labelReport_date = a.getAttribute("setreport_date");
 
 			Selectedmatrixlabel = labelsrlno;
-			document.getElementById("Analyticsheadername").innerHTML = labelnameselected;
-
+			if (Selectedmatrixlabel === "24") {
+				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in INR Crore';
+			} else if (Selectedmatrixlabel === "39") {
+				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in USD Million';
+			} else if (Selectedmatrixlabel === "41") {
+				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in USD Million';
+			} else {
+				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in AED Million';
+			}
 			// Hide all analytics sections first
 
 			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
@@ -432,54 +466,54 @@
 						// result.total_liquid_assets
 
 						document.getElementById("r1_nominal_amount").textContent =
-							formatNumber(result.r1_nominal_amount);
+							formatNumber(result.r1_nominal_amount/1000);
 
 						document.getElementById("r2_nominal_amount").textContent =
-							formatNumber(result.r2_nominal_amount);
+							formatNumber(result.r2_nominal_amount/1000);
 
 						document.getElementById("r3_nominal_amount").textContent =
-							formatNumber(result.r3_nominal_amount);
+							formatNumber(result.r3_nominal_amount/1000);
 
 						document.getElementById("r4_nominal_amount").textContent =
-							formatNumber(result.r4_nominal_amount);
+							formatNumber(result.r4_nominal_amount/1000);
 
 						document.getElementById("r5_nominal_amount").textContent =
-							formatNumber(result.r5_nominal_amount);
+							formatNumber(result.r5_nominal_amount/1000);
 
 
 						document.getElementById("r6_nominal_amount").textContent =
-							formatNumber(result.r6_nominal_amount);
+							formatNumber(result.r6_nominal_amount/1000);
 						document.getElementById("r6_eligi_liq_assets").textContent =
-							formatNumber(result.r6_eligi_liq_assets);
+							formatNumber(result.r6_eligi_liq_assets/1000);
 
 						document.getElementById("r7_nominal_amount").textContent =
-							formatNumber(result.r7_nominal_amount);
+							formatNumber(result.r7_nominal_amount/1000);
 
 						document.getElementById("r8_nominal_amount").textContent =
-							formatNumber(result.r8_nominal_amount);
+							formatNumber(result.r8_nominal_amount/1000);
 
 						document.getElementById("r9_nominal_amount").textContent =
-							formatNumber(result.r9_nominal_amount);
+							formatNumber(result.r9_nominal_amount/1000);
 
 						document.getElementById("r10_nominal_amount").textContent =
-							formatNumber(result.r10_nominal_amount);
+							formatNumber(result.r10_nominal_amount/1000);
 
 						document.getElementById("r11_nominal_amount").textContent =
-							formatNumber(result.r11_nominal_amount);
+							formatNumber(result.r11_nominal_amount/1000);
 
 						document.getElementById("r11_eligi_liq_assets").textContent =
-							formatNumber(result.r11_eligi_liq_assets);
+							formatNumber(result.r11_eligi_liq_assets/1000);
 
 
 
 						document.getElementById("r12_nominal_amount").textContent =
-							formatNumber(result.r12_nominal_amount);
+							formatNumber(result.r12_nominal_amount/1000);
 
 						document.getElementById("r13_nominal_amount").textContent =
-							formatNumber(result.r13_nominal_amount);
+							formatNumber(result.r13_nominal_amount/1000);
 
 						document.getElementById("r14_eligi_liq_assets").textContent =
-							formatNumber(result.r14_eligi_liq_assets);
+							formatNumber(result.r14_eligi_liq_assets/1000);
 
 						document.getElementById("r15_eligi_liq_assets").textContent =
 							(formatDecimalValue(result.r15_eligi_liq_assets * 100)) + " %";
@@ -602,10 +636,6 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
@@ -616,7 +646,7 @@
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 
@@ -674,10 +704,6 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
@@ -688,7 +714,7 @@
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 
@@ -746,10 +772,6 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
@@ -760,7 +782,7 @@
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 
@@ -819,10 +841,6 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
@@ -833,7 +851,7 @@
 
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 
@@ -866,57 +884,57 @@
 					.then(response => response.json())
 					.then(result => {
 						document.getElementById("r1_amount").textContent =
-							formatDecimalValue(result.r1_amount);
+							formatDecimalValue(result.r1_amount/1000);
 						document.getElementById("r2_amount").textContent =
-							formatDecimalValue(result.r2_amount);
+							formatDecimalValue(result.r2_amount/1000);
 						document.getElementById("r3_amount").textContent =
-							formatDecimalValue(result.r3_amount);
+							formatDecimalValue(result.r3_amount/1000);
 						document.getElementById("r4_amount").textContent =
-							formatDecimalValue(result.r4_amount);
+							formatDecimalValue(result.r4_amount/1000);
 						document.getElementById("r5_amount").textContent =
-							formatDecimalValue(result.r5_amount);
+							formatDecimalValue(result.r5_amount/1000);
 						document.getElementById("r6_amount").textContent =
-							formatDecimalValue(result.r6_amount);
+							formatDecimalValue(result.r6_amount/1000);
 						document.getElementById("r7_amount").textContent =
-							formatDecimalValue(result.r7_amount);
+							formatDecimalValue(result.r7_amount/1000);
 						document.getElementById("r8_amount").textContent =
-							formatDecimalValue(result.r8_amount);
+							formatDecimalValue(result.r8_amount/1000);
 						document.getElementById("r9_amount").textContent =
-							formatDecimalValue(result.r9_amount);
+							formatDecimalValue(result.r9_amount/1000);
 						document.getElementById("r10_amount").textContent =
-							formatDecimalValue(result.r10_amount);
+							formatDecimalValue(result.r10_amount/1000);
 						document.getElementById("r11_amount").textContent =
-							formatDecimalValue(result.r11_amount);
+							formatDecimalValue(result.r11_amount/1000);
 						document.getElementById("r12_amount").textContent =
-							formatDecimalValue(result.r12_amount);
+							formatDecimalValue(result.r12_amount/1000);
 						document.getElementById("r13_amount").textContent =
-							formatDecimalValue(result.r13_amount);
+							formatDecimalValue(result.r13_amount/1000);
 						document.getElementById("r14_amount").textContent =
-							formatDecimalValue(result.r14_amount);
+							formatDecimalValue(result.r14_amount/1000);
 						document.getElementById("r15_amount").textContent =
-							formatDecimalValue(result.r15_amount);
+							formatDecimalValue(result.r15_amount/1000);
 						document.getElementById("r16_amount").textContent =
-							formatDecimalValue(result.r16_amount);
+							formatDecimalValue(result.r16_amount/1000);
 						document.getElementById("r17_amount").textContent =
-							formatDecimalValue(result.r17_amount);
+							formatDecimalValue(result.r17_amount/1000);
 						document.getElementById("r18_amount").textContent =
-							formatDecimalValue(result.r18_amount);
+							formatDecimalValue(result.r18_amount/1000);
 						document.getElementById("r19_amount").textContent =
-							formatDecimalValue(result.r19_amount);
+							formatDecimalValue(result.r19_amount/1000);
 						document.getElementById("r20_amount").textContent =
-							formatDecimalValue(result.r20_amount);
+							formatDecimalValue(result.r20_amount/1000);
 						document.getElementById("r21_amount").textContent =
-							formatDecimalValue(result.r21_amount);
+							formatDecimalValue(result.r21_amount/1000);
 						document.getElementById("r22_amount").textContent =
-							formatDecimalValue(result.r22_amount);
+							formatDecimalValue(result.r22_amount/1000);
 						document.getElementById("r23_amount").textContent =
-							formatDecimalValue(result.r23_amount);
+							formatDecimalValue(result.r23_amount/1000);
 						document.getElementById("r24_amount").textContent =
-							formatDecimalValue(result.r24_amount);
+							formatDecimalValue(result.r24_amount/1000);
 						document.getElementById("r25_amount").textContent =
-							formatDecimalValue(result.r25_amount);
+							formatDecimalValue(result.r25_amount/1000);
 						document.getElementById("r26_amount").textContent =
-							formatDecimalValue(result.r26_amount);
+							formatDecimalValue(result.r26_amount/1000);
 						document.getElementById("r27_amount").textContent =
 							formatDecimalValue(result.r27_amount) + '%';
 					})
@@ -963,21 +981,21 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							document.getElementById("r15_ratios1").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("r22_ratios2").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("r16_ratios1").textContent =
-								formatNumber(data[2]);
+								formatDecimalValue(data[2]);
 							document.getElementById("r18_ratios1").textContent =
-								formatNumber(data[3]);
+								formatDecimalValue(data[3]);
 							document.getElementById("r23_ratios1").textContent =
-								formatNumber(data[4]);
+								formatDecimalValue(data[4]);
 							document.getElementById("r23_ratios2").textContent =
-								formatNumber(data[5]);
+								formatDecimalValue(data[5]);
 							document.getElementById("r45_ratios2").textContent =
-								formatNumber(data[6]);
+								formatDecimalValue(data[6]);
 							document.getElementById("r51_ratios2").textContent =
-								formatNumber(data[7]);
+								formatDecimalValue(data[7]);
 						});
 					})
 					.catch(error => {
@@ -1042,7 +1060,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1080,7 +1098,7 @@
 
 						// Replace body content
 						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML_1;
-						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
@@ -1225,7 +1243,7 @@
 						});
 
 						// Update report date and table body
-						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("MortgageLoanbody").innerHTML = trHTML;
 						document.getElementById('TopuploanLink').dataset.reportDate = labelReport_date;
 						document.getElementById('Housingloanlink').dataset.reportDate = labelReport_date;
@@ -1354,7 +1372,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1465,7 +1483,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1569,7 +1587,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1673,7 +1691,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1779,7 +1797,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -1893,7 +1911,7 @@
 
 			} else if (labelsrlno === "16") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date.split("T")[0]) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1985,7 +2003,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2051,7 +2069,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2119,7 +2137,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2141,7 +2159,7 @@
 						const yaxismaxsize = getRoundedMax(maxValue);
 						const CalculatedStepSize = getStepSize(yaxismaxsize);
 
-						Initiatemonthlychartnumber(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -2182,6 +2200,8 @@
 								formatNumber(data[4]);
 							document.getElementById("HEADROOM_AVAL_AMOUNT_IN_INR").textContent =
 								formatNumber(data[5]);
+							document.getElementById("NOOP_EXPOSURE_PERC").textContent =
+								(data[6])+'%';
 						});
 					})
 					.catch(error => {
@@ -2234,17 +2254,17 @@
 
 						// Build table rows
 						var trHTML =
-							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured) + "</td></tr>" +
-							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank) + "</td></tr>" +
-							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
-							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
-							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
-							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
-							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
-							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
-							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
-							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
-							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
+							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured/1000000) + "</td></tr>" +
+							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank/1000000) + "</td></tr>" +
+							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense/1000000) + "</td></tr>" +
+							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision/1000000) + "</td></tr>" +
+							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb/1000000) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb/1000000) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb/1000000) + "</b></td></tr>" +
+							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb/1000000) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb/1000000) + "</td><td></td></tr>" +
+							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances/1000000) + "</b></td><td></td></tr>" +
+							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa/1000000) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed/1000000) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd/1000000) + "</b></td></tr>";
 
 						// Set table body content
 						UnsecuredPositionbody.innerHTML = trHTML;
@@ -2332,7 +2352,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + labelReport_date;
+				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
 			} else if (labelsrlno === "42") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -2379,7 +2399,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2434,7 +2454,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date;
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2677,54 +2697,54 @@
 						// result.total_liquid_assets
 
 						document.getElementById("r1_nominal_amount").textContent =
-							formatNumber(result.r1_nominal_amount);
+							formatNumber(result.r1_nominal_amount/1000);
 
 						document.getElementById("r2_nominal_amount").textContent =
-							formatNumber(result.r2_nominal_amount);
+							formatNumber(result.r2_nominal_amount/1000);
 
 						document.getElementById("r3_nominal_amount").textContent =
-							formatNumber(result.r3_nominal_amount);
+							formatNumber(result.r3_nominal_amount/1000);
 
 						document.getElementById("r4_nominal_amount").textContent =
-							formatNumber(result.r4_nominal_amount);
+							formatNumber(result.r4_nominal_amount/1000);
 
 						document.getElementById("r5_nominal_amount").textContent =
-							formatNumber(result.r5_nominal_amount);
+							formatNumber(result.r5_nominal_amount/1000);
 
 
 						document.getElementById("r6_nominal_amount").textContent =
-							formatNumber(result.r6_nominal_amount);
+							formatNumber(result.r6_nominal_amount/1000);
 						document.getElementById("r6_eligi_liq_assets").textContent =
-							formatNumber(result.r6_eligi_liq_assets);
+							formatNumber(result.r6_eligi_liq_assets/1000);
 
 						document.getElementById("r7_nominal_amount").textContent =
-							formatNumber(result.r7_nominal_amount);
+							formatNumber(result.r7_nominal_amount/1000);
 
 						document.getElementById("r8_nominal_amount").textContent =
-							formatNumber(result.r8_nominal_amount);
+							formatNumber(result.r8_nominal_amount/1000);
 
 						document.getElementById("r9_nominal_amount").textContent =
-							formatNumber(result.r9_nominal_amount);
+							formatNumber(result.r9_nominal_amount/1000);
 
 						document.getElementById("r10_nominal_amount").textContent =
-							formatNumber(result.r10_nominal_amount);
+							formatNumber(result.r10_nominal_amount/1000);
 
 						document.getElementById("r11_nominal_amount").textContent =
-							formatNumber(result.r11_nominal_amount);
+							formatNumber(result.r11_nominal_amount/1000);
 
 						document.getElementById("r11_eligi_liq_assets").textContent =
-							formatNumber(result.r11_eligi_liq_assets);
+							formatNumber(result.r11_eligi_liq_assets/1000);
 
 
 
 						document.getElementById("r12_nominal_amount").textContent =
-							formatNumber(result.r12_nominal_amount);
+							formatNumber(result.r12_nominal_amount/1000);
 
 						document.getElementById("r13_nominal_amount").textContent =
-							formatNumber(result.r13_nominal_amount);
+							formatNumber(result.r13_nominal_amount/1000);
 
 						document.getElementById("r14_eligi_liq_assets").textContent =
-							formatNumber(result.r14_eligi_liq_assets);
+							formatNumber(result.r14_eligi_liq_assets/1000);
 
 						document.getElementById("r15_eligi_liq_assets").textContent =
 							(formatDecimalValue(result.r15_eligi_liq_assets * 100)) + " %";
@@ -2738,60 +2758,60 @@
 				fetch("./GetAsrrreport?Report_date=" + encodeURIComponent(selectedDate))
 					.then(response => response.json())
 					.then(result => {
-						document.getElementById("r1_amount").textContent =
-							formatDecimalValue(result.r1_amount);
-						document.getElementById("r2_amount").textContent =
-							formatDecimalValue(result.r2_amount);
-						document.getElementById("r3_amount").textContent =
-							formatDecimalValue(result.r3_amount);
-						document.getElementById("r4_amount").textContent =
-							formatDecimalValue(result.r4_amount);
-						document.getElementById("r5_amount").textContent =
-							formatDecimalValue(result.r5_amount);
-						document.getElementById("r6_amount").textContent =
-							formatDecimalValue(result.r6_amount);
-						document.getElementById("r7_amount").textContent =
-							formatDecimalValue(result.r7_amount);
-						document.getElementById("r8_amount").textContent =
-							formatDecimalValue(result.r8_amount);
-						document.getElementById("r9_amount").textContent =
-							formatDecimalValue(result.r9_amount);
-						document.getElementById("r10_amount").textContent =
-							formatDecimalValue(result.r10_amount);
-						document.getElementById("r11_amount").textContent =
-							formatDecimalValue(result.r11_amount);
-						document.getElementById("r12_amount").textContent =
-							formatDecimalValue(result.r12_amount);
-						document.getElementById("r13_amount").textContent =
-							formatDecimalValue(result.r13_amount);
-						document.getElementById("r14_amount").textContent =
-							formatDecimalValue(result.r14_amount);
-						document.getElementById("r15_amount").textContent =
-							formatDecimalValue(result.r15_amount);
-						document.getElementById("r16_amount").textContent =
-							formatDecimalValue(result.r16_amount);
-						document.getElementById("r17_amount").textContent =
-							formatDecimalValue(result.r17_amount);
-						document.getElementById("r18_amount").textContent =
-							formatDecimalValue(result.r18_amount);
-						document.getElementById("r19_amount").textContent =
-							formatDecimalValue(result.r19_amount);
-						document.getElementById("r20_amount").textContent =
-							formatDecimalValue(result.r20_amount);
-						document.getElementById("r21_amount").textContent =
-							formatDecimalValue(result.r21_amount);
-						document.getElementById("r22_amount").textContent =
-							formatDecimalValue(result.r22_amount);
-						document.getElementById("r23_amount").textContent =
-							formatDecimalValue(result.r23_amount);
-						document.getElementById("r24_amount").textContent =
-							formatDecimalValue(result.r24_amount);
-						document.getElementById("r25_amount").textContent =
-							formatDecimalValue(result.r25_amount);
-						document.getElementById("r26_amount").textContent =
-							formatDecimalValue(result.r26_amount);
-						document.getElementById("r27_amount").textContent =
-							formatDecimalValue(result.r27_amount) + '%';
+					document.getElementById("r1_amount").textContent =
+						formatDecimalValue(result.r1_amount/1000);
+					document.getElementById("r2_amount").textContent =
+						formatDecimalValue(result.r2_amount/1000);
+					document.getElementById("r3_amount").textContent =
+						formatDecimalValue(result.r3_amount/1000);
+					document.getElementById("r4_amount").textContent =
+						formatDecimalValue(result.r4_amount/1000);
+					document.getElementById("r5_amount").textContent =
+						formatDecimalValue(result.r5_amount/1000);
+					document.getElementById("r6_amount").textContent =
+						formatDecimalValue(result.r6_amount/1000);
+					document.getElementById("r7_amount").textContent =
+						formatDecimalValue(result.r7_amount/1000);
+					document.getElementById("r8_amount").textContent =
+						formatDecimalValue(result.r8_amount/1000);
+					document.getElementById("r9_amount").textContent =
+						formatDecimalValue(result.r9_amount/1000);
+					document.getElementById("r10_amount").textContent =
+						formatDecimalValue(result.r10_amount/1000);
+					document.getElementById("r11_amount").textContent =
+						formatDecimalValue(result.r11_amount/1000);
+					document.getElementById("r12_amount").textContent =
+						formatDecimalValue(result.r12_amount/1000);
+					document.getElementById("r13_amount").textContent =
+						formatDecimalValue(result.r13_amount/1000);
+					document.getElementById("r14_amount").textContent =
+						formatDecimalValue(result.r14_amount/1000);
+					document.getElementById("r15_amount").textContent =
+						formatDecimalValue(result.r15_amount/1000);
+					document.getElementById("r16_amount").textContent =
+						formatDecimalValue(result.r16_amount/1000);
+					document.getElementById("r17_amount").textContent =
+						formatDecimalValue(result.r17_amount/1000);
+					document.getElementById("r18_amount").textContent =
+						formatDecimalValue(result.r18_amount/1000);
+					document.getElementById("r19_amount").textContent =
+						formatDecimalValue(result.r19_amount/1000);
+					document.getElementById("r20_amount").textContent =
+						formatDecimalValue(result.r20_amount/1000);
+					document.getElementById("r21_amount").textContent =
+						formatDecimalValue(result.r21_amount/1000);
+					document.getElementById("r22_amount").textContent =
+						formatDecimalValue(result.r22_amount/1000);
+					document.getElementById("r23_amount").textContent =
+						formatDecimalValue(result.r23_amount/1000);
+					document.getElementById("r24_amount").textContent =
+						formatDecimalValue(result.r24_amount/1000);
+					document.getElementById("r25_amount").textContent =
+						formatDecimalValue(result.r25_amount/1000);
+					document.getElementById("r26_amount").textContent =
+						formatDecimalValue(result.r26_amount/1000);
+					document.getElementById("r27_amount").textContent =
+						formatDecimalValue(result.r27_amount) + '%';
 					})
 					.catch(err => console.error("Error loading ELAR report:", err));
 
@@ -2860,7 +2880,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("MortgageLoanAppetitedetailsdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("MortgageLoanbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -2890,21 +2910,21 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							document.getElementById("r15_ratios1").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("r22_ratios2").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("r16_ratios1").textContent =
-								formatNumber(data[2]);
+								formatDecimalValue(data[2]);
 							document.getElementById("r18_ratios1").textContent =
-								formatNumber(data[3]);
+								formatDecimalValue(data[3]);
 							document.getElementById("r23_ratios1").textContent =
-								formatNumber(data[4]);
+								formatDecimalValue(data[4]);
 							document.getElementById("r23_ratios2").textContent =
-								formatNumber(data[5]);
+								formatDecimalValue(data[5]);
 							document.getElementById("r45_ratios2").textContent =
-								formatNumber(data[6]);
+								formatDecimalValue(data[6]);
 							document.getElementById("r51_ratios2").textContent =
-								formatNumber(data[7]);
+								formatDecimalValue(data[7]);
 						});
 					})
 					.catch(error => {
@@ -2948,7 +2968,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3028,7 +3048,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3108,7 +3128,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3186,7 +3206,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3263,7 +3283,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3341,7 +3361,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3419,7 +3439,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3461,7 +3481,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3503,7 +3523,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3541,7 +3561,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("Singleexpreportdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3579,7 +3599,7 @@
 
 						// Replace body content
 						document.getElementById("ToptenGroupborrowerbody").innerHTML = trHTML_1;
-						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("Groupexpreportdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
@@ -3620,17 +3640,13 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + selectedDate;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 			} else if ((Selectedmatrixlabel === "39") || (Selectedmatrixlabel === "41")) {
@@ -3666,10 +3682,6 @@
 								formatDecimalValue(data[6]) + '%';
 							document.getElementById("MediumtoLongActual").textContent =
 								formatDecimalValue(data[7]) + '%';
-							document.getElementById("LongtermRemain").textContent =
-								formatDecimalValue(data[8]) + '%';
-							document.getElementById("MediumtoLongRemian").textContent =
-								formatDecimalValue(data[9]) + '%';
 						});
 					})
 					.catch(error => {
@@ -3677,7 +3689,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + selectedDate;
+				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
 			} else if (Selectedmatrixlabel === "24") {
@@ -3710,6 +3722,8 @@
 								formatNumber(data[4]);
 							document.getElementById("HEADROOM_AVAL_AMOUNT_IN_INR").textContent =
 								formatNumber(data[5]);
+							document.getElementById("NOOP_EXPOSURE_PERC").textContent =
+								(data[6])+'%';
 						});
 					})
 					.catch(error => {
@@ -3776,7 +3790,7 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + selectedDate;
+				document.getElementById("StockapproachReport_date").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "block");
 
 			}else if (Selectedmatrixlabel === "46"){
@@ -3796,17 +3810,17 @@
 
 						// Build table rows
 						var trHTML =
-							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured) + "</td></tr>" +
-							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank) + "</td></tr>" +
-							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense) + "</td></tr>" +
-							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision) + "</td></tr>" +
-							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb) + "</b></td></tr>" +
-							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
-							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb) + "</td><td></td></tr>" +
-							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances) + "</b></td><td></td></tr>" +
-							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa) + "</b></td></tr>" +
-							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed) + "</b></td></tr>" +
-							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd) + "</b></td></tr>";
+							"<tr><td><b>Secured by tangible Assets</b></td><td style=text-align:right;>" + formatNumber(result.securedFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.securedNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecured/1000000) + "</td></tr>" +
+							"<tr><td>Secured by other Bank Guarantee</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.securedOtherBankNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalSecuredOtherBank/1000000) + "</td></tr>" +
+							"<tr><td>Interest Suspense</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.interestSuspenseNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalInterestSuspense/1000000) + "</td></tr>" +
+							"<tr><td>Provision</td><td style=text-align:right;>" + formatNumber(result.provisionFb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.provisionNfb/1000000) + "</td><td style=text-align:right;>" + formatNumber(result.totalProvision/1000000) + "</td></tr>" +
+							"<tr><td><b>Unsecured</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredFb/1000000) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredNfb/1000000) + "</b></td><td style=text-align:right;><b>" + formatNumber(result.totalFbNfb/1000000) + "</b></td></tr>" +
+							"<tr><td rowspan=6 style=border:none></td><td>Balance FB</td><td style=text-align:right;>" + formatNumber(result.balanceFb/1000000) + "</td><td style=text-align:right;><b>" + result.totalRatio + "%</b></td></tr>" +
+							"<tr><td>Balance NFB</td><td style=text-align:right;>" + formatNumber(result.balanceNfb/1000000) + "</td><td></td></tr>" +
+							"<tr><td><b>Total Advances</b></td><td style=text-align:right;><b>" + formatNumber(result.totalAdvances/1000000) + "</b></td><td></td></tr>" +
+							"<tr><td rowspan=3 style=border:none></td><td><b>Unsecured Cap @55% of total advance</b></td><td style=text-align:right;><b>" + formatNumber(result.unsecuredCapTa/1000000) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in AED</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableAed/1000000) + "</b></td></tr>" +
+							"<tr><td><b>Headroom available in USD</b></td><td style=text-align:right;><b>" + formatNumber(result.headroomAvailableUsd/1000000) + "</b></td></tr>";
 
 						// Set table body content
 						UnsecuredPositionbody.innerHTML = trHTML;
@@ -3845,7 +3859,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3882,7 +3896,7 @@
 						});
 
 						// Replace body content
-						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate;
+						document.getElementById("ToptenDepositconcentrationdate").innerHTML = 'Report Date : ' + selectedDate.split("T")[0];
 						document.getElementById("Depositconcentrationbody").innerHTML = trHTML;
 					})
 					.catch(error => {
@@ -3909,15 +3923,15 @@
 						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							document.getElementById("r21_total").textContent =
-								formatNumber(data[0]);
+								formatDecimalValue(data[0]);
 							document.getElementById("r22_total").textContent =
-								formatNumber(data[1]);
+								formatDecimalValue(data[1]);
 							document.getElementById("r12_total").textContent =
-								formatNumber(data[3]);
+								formatDecimalValue(data[3]);
 							document.getElementById("r20_total").textContent =
-								formatNumber(data[4]);
+								formatDecimalValue(data[4]);
 							document.getElementById("r3_total").textContent =
-								formatNumber(data[5]);
+								formatDecimalValue(data[5]);
 
 						});
 					})
@@ -3955,8 +3969,8 @@
 		function formatNumber(value) {
 			if (!value) return "0";
 			return Number(value).toLocaleString("en-US", {
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 0
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
 			});
 		}
 
@@ -3971,7 +3985,9 @@
 		function getRoundedMax(value) {
 			const padding = value * 0.1; // 10% headroom
 			const rawMax = value + padding;
-
+			if (rawMax <= 2) return 2;
+			if (rawMax <= 3) return 3;
+			if (rawMax <= 5) return 5;
 			if (rawMax <= 10) return 10;
 			if (rawMax <= 20) return 20;
 			if (rawMax <= 30) return 30;
@@ -3987,8 +4003,18 @@
 		}
 
 		function getStepSize(maxValue) {
-			const steps = 10;
-			return Math.ceil(maxValue / steps / 5) * 5;
+
+			if (maxValue <= 2) return 0.2;
+			if (maxValue <= 3) return 0.3;
+		    if (maxValue <= 5) return 0.5;
+		    if (maxValue <= 10) return 1;
+		    if (maxValue <= 20) return 2;
+			if (maxValue <= 30) return 3;
+			if (maxValue <= 40) return 4;
+		    if (maxValue <= 50) return 5;
+
+		    const steps = 10;
+		    return Math.ceil((maxValue / steps) / 5) * 5;
 		}
 
 
@@ -4055,7 +4081,7 @@
 						            <td style="text-align: center;">
 						                <span class="badge-status">
 						                    <span class="limit-value">
-						                        ${formatDecimalValue(data.limit_assigned) ?? "0.00"}%
+						                        ${formatDecimalValue(data.limit_assigned) ?? "0.00"}
 						                    </span>
 						                </span>
 						            </td>
@@ -4064,7 +4090,7 @@
 						            <td style="text-align: center;">
 						                <span class="badge-status">
 						                    <span class="position-value">
-						                        ${formatDecimalValue(data.position_of_matrix) ?? "0.00"}%
+						                        ${formatDecimalValue(data.position_of_matrix) ?? "0.00"}
 						                    </span>
 						                </span>
 						            </td>
@@ -4203,7 +4229,9 @@
 							callbacks: {
 								label: (ctx) => `${ctx.parsed.y}%`
 							}
-						}
+						},datalabels: {
+						            display: false   // ✅ removes values from chart
+						        }
 					},
 					onClick: (evt, elements) => {
 						if (!elements.length) return;
@@ -4271,207 +4299,127 @@
 
 
 		function Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
-			const ctx = document.getElementById("Linechartformonthlyreport");
-			if (!ctx) return;
 
-			if (barChartInstance) {
-				barChartInstance.destroy();
-			}
+		    const ctx = document.getElementById("Linechartformonthlyreport");
+		    if (!ctx) return;
 
-			barChartInstance = new Chart(ctx, {
-				type: "line",
-				data: {
-					labels: labels,
-					datasets: [
-						{
-							label: "Utilization %",
-							data: dataValues,
-							backgroundColor: "rgba(139, 92, 246, 0.65)",   // bar fill
-							borderColor: "#8b5cf6",                        // bar border
-							borderWidth: 1.5,
-							borderRadius: 6,                               // rounded corners
-							maxBarThickness: 26,                           // slim bars
-							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-							hoverBorderColor: "#7c3aed"
-						},
-					],
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
+		    if (barChartInstance) {
+		        barChartInstance.destroy();
+		    }
+
+		    barChartInstance = new Chart(ctx, {
+		        type: "line",
+		        data: {
+		            labels: labels,
+		            datasets: [
+		                {
+		                    label: "Utilization %",
+		                    data: dataValues,
+		                    backgroundColor: "rgba(139, 92, 246, 0.65)",
+		                    borderColor: "#8b5cf6",
+		                    borderWidth: 2,
+		                    tension: 0.3,
+		                    pointRadius: 4,
+		                    pointHoverRadius: 6
+		                },
+		            ],
+		        },
+		        options: {
+		            responsive: true,
+		            maintainAspectRatio: false,
+
 					plugins: {
-						legend: {display: false},
-						tooltip: {
-							callbacks: {
-								label: (ctx) => `${ctx.parsed.y}%`
-							}
-						}
-					},
-					onClick: (evt, elements) => {
-						if (!elements.length) return;
-						const idx = elements[0].index;
-						const period = labels[idx];   // e.g. "Jan"
-						updateLiquidAssetsTable(period);
-					},
-					scales: {
-						x: {
-							grid: {
-								display: false
-							},
-							border: {
-								color: 'black',
-								width: 1.5
-							},
-							ticks: {
-								color: "Black",
-								font: {
-									size: 10,
-									weight: 'bold'
-								},
-								maxRotation: 45,
-								minRotation: 45
-							},
-							title: {
-								display: true,
-								color: '#6b7280',
-								font: {
-									size: 15,
-									weight: '800'
-								},
-								padding: {
-									top: 8    // space between labels and title
-								}
-							}
+					    legend: { display: false },
 
-						},
-						y: {
-							beginAtZero: false,
-							max: yaxismaxsize,
-							grid: {
-								color: "White",
-								drawBorder: false
-							},
-							border: {
-								color: 'black',
-								width: 1.5
-							},
-							ticks: {
-								stepSize: CalculatedStepSize,
-								autoSkip: false,
-								color: "Black",
-								font: {
-									size: 10,
-									weight: 'bold'
-								},
-								callback: (value) => value + "%"
-							}
+					    tooltip: {
+					        callbacks: {
+					            label: (ctx) => `${ctx.parsed.y}%`
+					        }
+					    },
+
+						datalabels: {
+						    color: "black",
+						    font: {
+						        weight: "bold",
+						        size: 10
+						    },
+
+						    // Conditional positioning
+						    anchor: function(context) {
+						        return context.dataIndex === 0 ? 'end' : 'end'; // stays at end
+						    },
+						    align: function(context) {
+						        return context.dataIndex === 0 ? 'right' : 'top'; // first point at bottom
+						    },
+						    offset: function(context) {
+						        return context.dataIndex === 0 ? 6 : 0; // push a bit for bottom
+						    },
+
+						    // Hide label on hover for hovered point
+						    display: function(context) {
+						        const chart = context.chart;
+						        const activePoints = chart.getActiveElements();
+
+						        if (activePoints.length) {
+						            const { datasetIndex, index } = activePoints[0];
+						            if (datasetIndex === context.datasetIndex && index === context.dataIndex) {
+						                return false;
+						            }
+						        }
+						        return true;
+						    },
+
+						    // Format value
+						    formatter: (value) => value + "%"
 						}
-					}
-				}
-			});
+					},
+
+		            onClick: (evt, elements) => {
+		                if (!elements.length) return;
+		                const idx = elements[0].index;
+		                const period = labels[idx];
+		                updateLiquidAssetsTable(period);
+		            },
+
+		            scales: {
+		                x: {
+		                    grid: { display: false },
+		                    border: {
+		                        color: 'black',
+		                        width: 1.5
+		                    },
+		                    ticks: {
+		                        color: "black",
+		                        font: { size: 10, weight: 'bold' },
+		                        maxRotation: 45,
+		                        minRotation: 45
+		                    }
+		                },
+		                y: {
+		                    beginAtZero: false,
+		                    max: yaxismaxsize,
+		                    grid: {
+		                        color: "white",
+		                        drawBorder: false
+		                    },
+		                    border: {
+		                        color: 'black',
+		                        width: 1.5
+		                    },
+		                    ticks: {
+		                        stepSize: CalculatedStepSize,
+		                        autoSkip: false,
+		                        color: "black",
+		                        font: { size: 10, weight: 'bold' },
+		                        callback: (value) => value + "%"
+		                    }
+		                }
+		            }
+		        }
+		    });
 		}
 
-		function Initiatemonthlychartnumber(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
-			const ctx = document.getElementById("Linechartformonthlyreport");
-			if (!ctx) return;
-
-			if (barChartInstance) {
-				barChartInstance.destroy();
-			}
-
-			barChartInstance = new Chart(ctx, {
-				type: "line",
-				data: {
-					labels: labels,
-					datasets: [
-						{
-							label: "Utilization %",
-							data: dataValues,
-							backgroundColor: "rgba(139, 92, 246, 0.65)",   // bar fill
-							borderColor: "#8b5cf6",                        // bar border
-							borderWidth: 1.5,
-							borderRadius: 6,                               // rounded corners
-							maxBarThickness: 26,                           // slim bars
-							hoverBackgroundColor: "rgba(139, 92, 246, 0.9)",
-							hoverBorderColor: "#7c3aed"
-						},
-					],
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {display: false},
-						tooltip: {
-							callbacks: {
-								label: (ctx) => `${ctx.parsed.y}%`
-							}
-						}
-					},
-					onClick: (evt, elements) => {
-						if (!elements.length) return;
-						const idx = elements[0].index;
-						const period = labels[idx];   // e.g. "Jan"
-						updateLiquidAssetsTable(period);
-					},
-					scales: {
-						x: {
-							grid: {
-								display: false
-							},
-							border: {
-								color: 'black',
-								width: 1.5
-							},
-							ticks: {
-								color: "Black",
-								font: {
-									size: 10,
-									weight: 'bold'
-								},
-								maxRotation: 45,
-								minRotation: 45
-							},
-							title: {
-								display: true,
-								color: '#6b7280',
-								font: {
-									size: 15,
-									weight: '800'
-								},
-								padding: {
-									top: 8    // space between labels and title
-								}
-							}
-
-						},
-						y: {
-							beginAtZero: false,
-							max: yaxismaxsize,
-							grid: {
-								color: "White",
-								drawBorder: false
-							},
-							border: {
-								color: 'black',
-								width: 1.5
-							},
-							ticks: {
-								stepSize: CalculatedStepSize,
-								autoSkip: false,
-								color: "Black",
-								font: {
-									size: 10,
-									weight: 'bold'
-								},
-								callback: (value) => value + " Cr"
-							}
-						}
-					}
-				}
-			});
-		}
-
+		
 		///Progressing chart function for currenct Month
 		function Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
 			const ctx = document.getElementById("Linechartfordailyreport");
@@ -4573,7 +4521,7 @@
 		<div class="row g-3">
 			<!-- LEFT: table uses full left half -->
 			<div class="col-lg-6 col-md-12">
-				<h4 style="background-color: brown;border-radius: 10px;color: white;">List Of All Ratios Monitored By
+				<h4 style="color: white;">List Of All Ratios Monitored By
 					Risk Management
 				</h4>
 				<div class="table-wrap">
@@ -4641,7 +4589,7 @@
 
 			<!-- RIGHT: graphs use full right half -->
 			<div class="col-lg-6 col-md-12">
-				<h4 id="Analyticsheadername" style="background-color: brown;border-radius: 10px;color: white;">Analytics
+				<h4 id="Analyticsheadername" style="color: white;">Analytics
 				</h4>
 				<div class="chart-card">
 					<div class="stats-grid Leverageratiosummblock" style="display: none;">
@@ -4779,7 +4727,7 @@
 						<div class="stat-card">
 							<div class="stat-card-header">
 								<div class="stat-card-title"><a href="#" id="Housingloanlink" data-report-date=""
-										onclick="Getexposuredetail('Toptenhousingloan',this);">Housing loan In (Mn)</a>
+										onclick="Getexposuredetail('Toptenhousingloan',this);">Housing loan</a>
 								</div>
 							</div>
 							<div class="stat-card-value" id="Housingloan_Exp">0.00</div>
@@ -4787,8 +4735,7 @@
 						<div class="stat-card">
 							<div class="stat-card-header">
 								<div class="stat-card-title"><a href="#" id="TopuploanLink" data-report-date=""
-										onclick="Getexposuredetail('Toptentopuploan',this);">Baroda Topup
-										loan In (Mn)</a></div>
+										onclick="Getexposuredetail('Toptentopuploan',this);">Baroda Topup</a></div>
 							</div>
 							<div class="stat-card-value" id="Topuploan_Expo">0.00</div>
 						</div>
@@ -4912,7 +4859,7 @@
 								</tr>
 								<tr style="background-color: #dee2e6">
 									<th>Customer Name</th>
-									<th>Balance In (Mn)</th>
+									<th>Balance</th>
 									<th>Exposure Percentage (%)</th>
 								</tr>
 
@@ -4975,25 +4922,24 @@
 								<tr style="font-weight: bold;">
 
 									<td colspan="2">Ratio in Terms of (%)</td>
+									<td>Limit</td>
 									<td>Actual</td>
-									<td>Tolerance</td>
-									<td>Headroom</td>
 
 								</tr>
 								<tr style="font-weight: bold;">
 									<td>a</td>
 									<td>Long Term (3/6)</td>
-									<td id="LongtermActual" style="font-weight: bold;"></td>
 									<td>70%</td>
-									<td id="LongtermRemain" style="font-weight: bold;"></td>
+									<td id="LongtermActual" style="font-weight: bold;"></td>
+									
 
 								</tr>
 								<tr style="font-weight: bold;">
 									<td>b</td>
 									<td>Medium to Long Term (2+3 / 5+6)</td>
-									<td id="MediumtoLongActual" style="font-weight: bold;"></td>
 									<td>80%</td>
-									<td id="MediumtoLongRemian" style="font-weight: bold;"></td>
+									<td id="MediumtoLongActual" style="font-weight: bold;"></td>
+									
 								</tr>
 							</tbody>
 						</table>
@@ -5128,7 +5074,7 @@
 							<thead>
 								<tr>
 									<th></th>
-									<th>Amount In AED (Mn)</th>
+									<th>Amount</th>
 								</tr>
 							</thead>
 							<tbody id="Stockapproachbody">
@@ -5171,7 +5117,7 @@
 								</tr>
 								<tr style="background-color: #dee2e6">
 									<th>Customer Name</th>
-									<th>Balance In (Mn)</th>
+									<th>Balance</th>
 									<th>Exposure Percentage (%)</th>
 								</tr>
 
@@ -5193,7 +5139,7 @@
 									<th>Branch Name</th>
 									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>Balance In (Mn)</th>
+									<th>Balance</th>
 									<th>Rw (%)</th>
 									<th>Total Rwa</th>
 								</tr>
@@ -5216,10 +5162,10 @@
 									<th>Branch Name</th>
 									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>FB Balance in AED (Mn)</th>
-									<th>NFB Balance in AED (Mn)</th>
-									<th>Int Suspense in AED (Mn)</th>
-									<th>Total Provision in AED (Mn)</th>
+									<th>FB Balance</th>
+									<th>NFB Balance</th>
+									<th>Int Suspense</th>
+									<th>Total Provision</th>
 								</tr>
 
 
@@ -5239,7 +5185,7 @@
 								<tr style="background-color: #dee2e6">
 									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>Balance in AED (Mn)</th>
+									<th>Balance</th>
 									<th>Percentage</th>
 								</tr>
 
@@ -5262,7 +5208,7 @@
 									<th>Branch Name</th>
 									<th>Customer Id</th>
 									<th>Account Name</th>
-									<th>Balance In (Mn)</th>
+									<th>Balance</th>
 								</tr>
 
 
@@ -5283,8 +5229,8 @@
 								</tr>
 								<tr>
 									<th>Country Name</th>
-									<th>Balance In (Mn)</th>
-									<th>RWA In (Mn)</th>
+									<th>Balance</th>
+									<th>RWA</th>
 									<th>Total Exposure (%)</th>
 									<th>Total RWA (%)</th>
 								</tr>
@@ -5306,7 +5252,7 @@
 								<tr>
 									<th>Customer Id</th>
 									<th>Customer Name</th>
-									<th>Balance In (Mn)</th>
+									<th>Balance</th>
 									<th>Loans as a % of total Credit</th>
 								</tr>
 
@@ -5338,8 +5284,12 @@
 									<td id="OVER_SOLD_AMOUNT">0.00</td>
 								</tr>
 								<tr style="font-weight: bold;">
-									<td>Noop Amount in INR</td>
+									<td>Noop Exposure in INR</td>
 									<td id="NOOP_AMOUNT_IN_INR" style="font-weight: bold;">0.00</td>
+								</tr>
+								<tr style="font-weight: bold;">
+									<td>Noop Exposure (%)</td>
+									<td id="NOOP_EXPOSURE_PERC" style="font-weight: bold;">0.00</td>
 								</tr>
 								<tr>
 									<td>Limit Amount in INR</td>

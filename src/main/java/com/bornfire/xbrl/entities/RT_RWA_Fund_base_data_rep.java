@@ -187,16 +187,17 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Group by sector_classification),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> Industry_Classifi(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification = 'Industry' GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '11') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> Industry_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
@@ -249,16 +250,17 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Group by sector_classification),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> Trading_Classifi(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification = 'Trading' GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '12') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> Trading_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
@@ -311,40 +313,44 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Group by sector_classification),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> Services_Classifi(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification = 'Services' GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '13') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> ServicesGetCurrentyear(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification = 'Banks' GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '14') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> BanksGetCurrentyear(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification = 'Real Estate' GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '15') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> RealEstateGetCurrentyear(Date Selecteddate);
 		
-		@Query(value="WITH current_year_dates AS (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end FROM dual CONNECT BY LEVEL <= 12), " + 
-				"monthly_Sector_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Sector_balance FROM brf95_rwa_data_fundbased WHERE sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') GROUP BY TRUNC(report_date, 'MM')), " + 
-				"total_balance AS (SELECT TRUNC(report_date, 'MM') AS report_month,ABS(SUM(balance)) AS Total_assets FROM brf95_rwa_data_fundbased GROUP BY TRUNC(report_date, 'MM')), " + 
-				"finalcal AS (SELECT a.report_month,ROUND(a.Sector_balance / b.Total_assets, 4) * 100 AS total_ratio FROM monthly_Sector_balance a JOIN total_balance b ON a.report_month = b.report_month) " + 
-				"SELECT TO_CHAR(c.month_end, 'DD-MM-YYYY') AS month_end,nvl(d.total_ratio,0) FROM current_year_dates c LEFT JOIN finalcal d ON TRUNC(c.month_end, 'MM') = d.report_month ORDER BY c.month_end ASC " + 
-				"",nativeQuery=true)
+		@Query(value="Select * from(\r\n"
+				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '16') ,\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
 		List<Object[]> otherGetCurrentyear(Date Selecteddate);
 		
 		
@@ -517,7 +523,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Group by sector_classification),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> Banks_Classifi(Date Selecteddate);
 		
@@ -526,7 +532,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Group by sector_classification),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> RealEstate_Classifi(Date Selecteddate);
 		
@@ -536,7 +542,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "'Banks','Industry','Real Estate','Services','Trading')),\r\n"
 				+ "Current_Month_bala as (Select ABS(SUM(balance)) as Total_assets from brf95_rwa_data_fundbased Where \r\n"
 				+ "report_date = ?1)\r\n"
-				+ "Select Sector_balance,Total_assets,Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
+				+ "Select Round(Sector_balance/1000000,2),Round(Total_assets/1000000,2),Round(Sector_balance/Total_assets,4)*100 as Percentage\r\n"
 				+ "from Industrial_asset a,Current_Month_bala b",nativeQuery=true)
 		List<Object[]> Others_Classifi(Date Selecteddate);
 
@@ -838,7 +844,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
 				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
 				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW113','ROW114','ROW115','ROW124','ROW125')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE-60,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
 				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
 				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
 				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"
@@ -853,7 +859,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
 				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
 				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW118','ROW119','ROW120')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(SYSDATE-60,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
 				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
 				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
 				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"

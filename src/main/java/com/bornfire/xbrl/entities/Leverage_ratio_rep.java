@@ -13,9 +13,9 @@ public interface Leverage_ratio_rep extends JpaRepository<Leverage_ratio_entity,
 	@Query(value="Select * from BRF96_SUMMARYTABLE Where report_date = ?1",nativeQuery=true)
 	Leverage_ratio_entity GetLeverageration(Date Selecteddate);
 	
-	@Query(value="SELECT  R21_TOTAL AS Tier_1_capital,R22_TOTAL AS Total_exposures ,R23_TOTAL AS Leverage_ratio ,\r\n"
-			+ "R12_TOTAL AS Total_derivative_exposures ,R20_TOTAL AS offbalance_sheet_expsoures,\r\n"
-			+ "R3_TOTAL AS onbalance_sheet_exposures FROM brf96_summarytable\r\n"
+	@Query(value="SELECT  Round(R21_TOTAL/1000,2) AS Tier_1_capital, Round(R22_TOTAL/1000,2) AS Total_exposures ,\r\n"
+			+ "Round(R23_TOTAL /1000,2) AS Leverage_ratio, Round(R12_TOTAL/1000,2) AS Total_derivative_exposures ,\r\n"
+			+ "Round(R20_TOTAL/1000,2) AS offbalance_sheet_expsoures,Round(R3_TOTAL/1000,2) AS onbalance_sheet_exposures FROM brf96_summarytable\r\n"
 			+ "WHERE REPORT_DATE = ?1",nativeQuery=true)
 	List<Object[]> GetLeverageratiodata(Date Selecteddate);
 	

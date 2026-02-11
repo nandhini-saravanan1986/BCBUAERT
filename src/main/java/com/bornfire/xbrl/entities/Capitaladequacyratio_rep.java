@@ -28,8 +28,9 @@ public interface Capitaladequacyratio_rep extends JpaRepository<Capitaladequacyr
 			+ "Where R1_RATIOS2 <> 0", nativeQuery = true)
 	List<Object[]> GetCapitalratio_currentmonthgraph(Date Selecteddate);
 	
-	@Query(value = "Select r15_ratios1,r22_ratios2,r16_ratios1,r18_ratios1,r23_ratios1,r23_ratios2,r45_ratios2,"
-			+ "r51_ratios2 from BRF95_SUMMARYTABLE Where report_date = ?1", nativeQuery = true)
+	@Query(value = "Select Round(r15_ratios1/1000,2) as r15_ratios1,Round(r22_ratios2/1000,2) as r22_ratios2,Round(r16_ratios1/1000,2) as r16_ratios1,\r\n"
+			+ "Round(r18_ratios1/1000,2) as r18_ratios1,Round(r23_ratios1/1000,2) as r23_ratios1,Round(r23_ratios2/1000,2) as r23_ratios2,\r\n"
+			+ "Round(r45_ratios2/1000,2) as r45_ratios2,Round(r51_ratios2/1000,2) as r51_ratios2 from BRF95_SUMMARYTABLE Where report_date = ?1", nativeQuery = true)
 	List<Object[]> GetCapitalAdequecyvalues(Date Selecteddate);
 	
 	@Query(value = "Select r15_ratios1 from BRF95_SUMMARYTABLE Where report_date in ("
