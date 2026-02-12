@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,9 @@ public interface RT_NostroAccBalDataRepository extends JpaRepository<RT_NostroAc
 			+ "FROM BCBUAE_NOSTRO_ACC_BAL_DATA", nativeQuery = true)
 	List<Object[]> getnostrodatalistdata1();
 
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_NOSTRO_ACC_BAL_DATA", nativeQuery = true)
+	Timestamp findLastReportDate();
+	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_NOSTRO_ACC_BAL_DATA WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_NOSTRO_ACC_BAL_DATA)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 }

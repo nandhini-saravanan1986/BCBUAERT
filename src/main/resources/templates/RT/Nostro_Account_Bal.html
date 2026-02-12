@@ -843,7 +843,7 @@ PURPOSE		: Nostra Account balance Report
 
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' }">
 			<!-- Tabs -->
 
 			<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='null'">
@@ -863,7 +863,7 @@ PURPOSE		: Nostra Account balance Report
 												<select id="submittingInstitution" name="submittingInstitution"
 													class="form-control" required>
 													<option value="">-- Select Institution --</option>
-													<option value="Bank of Baroda">Bank of Baroda</option>
+													<option th:selected="${bankname == 'Bank of Baroda'}" value="Bank of Baroda">Bank of Baroda</option>
 												</select> <label for="submittingInstitution"
 													class="form-legend">Submitting
 													Institution</label>
@@ -873,7 +873,7 @@ PURPOSE		: Nostra Account balance Report
 											<div class="col-sm-1"></div>
 
 											<div class="form-group col-md-2">
-												<input type="date" id="portfolioDate" name="portfolioDate"
+												<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}"
 													class="form-control" placeholder=" " required /> <label
 													for="portfolioDate" class="form-legend">Portfolio
 													date</label>
@@ -901,7 +901,7 @@ PURPOSE		: Nostra Account balance Report
 
 
 												<div class="form-group col-md-3">
-													<input type="text" id="contactEmployee1Title1"
+													<input type="text" id="contactEmployee1Title1" 
 														name="contactEmployee1Title1" class="form-control"
 														placeholder=" " required /> <label for="contactEmployee1Title1"
 														class="form-legend">Title</label>
@@ -910,7 +910,7 @@ PURPOSE		: Nostra Account balance Report
 
 
 												<div class="form-group col-md-3">
-													<input type="email" id="contactEmployee1Email1"
+													<input type="email" id="contactEmployee1Email1" 
 														name="contactEmployee1Email1" class="form-control"
 														placeholder=" " required /> <label for="contactEmployee1Email1"
 														class="form-legend">Email</label>
@@ -938,7 +938,7 @@ PURPOSE		: Nostra Account balance Report
 
 
 												<div class="form-group col-md-3">
-													<input type="text" id="contactEmployee2Title2"
+													<input type="text" id="contactEmployee2Title2" 
 														name="contactEmployee2Title2" class="form-control"
 														placeholder=" " required /> <label for="contactEmployee2Title2"
 														class="form-legend">Title</label>
@@ -970,19 +970,19 @@ PURPOSE		: Nostra Account balance Report
 											<div class="row formline">
 												<div class="col-sm-2"></div>
 												<div class="form-group col-md-3">
-													<input type="text" id="signOffCroName" name="signOffCroName"
+													<input type="text" id="signOffCroName" name="signOffCroName"  
 														class="form-control" placeholder=" " required /> <label
 														for="signOffCroName" class="form-legend">CRO Name</label>
 												</div>
 												
 												<div class="form-group col-md-3">
-													<input type="email" id="signOffCroEmail" name="signOffCroEmail"
+													<input type="email" id="signOffCroEmail" name="signOffCroEmail" 
 														class="form-control" placeholder=" " required /> <label
 														for="signOffCroEmail" class="form-legend">CRO Email</label>
 												</div>
 												
 												<div class="form-group col-md-3">
-													<input type="text" id="signOffCfoName" name="signOffCfoName"
+													<input type="text" id="signOffCfoName" name="signOffCfoName" 
 														class="form-control" placeholder=" " required /> <label
 														for="signOffCfoName" class="form-legend">CFO Name</label>
 												</div>
@@ -996,13 +996,13 @@ PURPOSE		: Nostra Account balance Report
 											<div class="row formline">
 												<div class="col-sm-2"></div>
 																								<div class="form-group col-md-3">
-																									<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
+																									<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"  
 																										class="form-control" placeholder=" " required /> <label
 																										for="signOffCfoEmail" class="form-legend">CFO Email</label>
 																								</div>
 												
 												<div class="form-group col-md-3">
-													<input type="text" id="signOffHeadOfTreasuryName"
+													<input type="text" id="signOffHeadOfTreasuryName" 
 														name="signOffHeadOfTreasuryName" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryName" class="form-legend">Head
@@ -1011,7 +1011,7 @@ PURPOSE		: Nostra Account balance Report
 
 												
 												<div class="form-group col-md-3">
-													<input type="email" id="signOffHeadOfTreasuryEmail"
+													<input type="email" id="signOffHeadOfTreasuryEmail" 
 														name="signOffHeadOfTreasuryEmail" class="form-control"
 														placeholder=" " required /> <label
 														for="signOffHeadOfTreasuryEmail" class="form-legend">Head
@@ -1038,6 +1038,200 @@ PURPOSE		: Nostra Account balance Report
 				</div>
 			</div>
 
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='exist'">
+				<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+
+					<div class="row">
+						<div class="col-sm-12 finuserapply">
+							<form id="nostroForm" method="post" autocomplete="off">
+								<div class="card-body" style="max-height: 100px; ">
+
+
+									<input autocomplete="false" name="hidden" type="text" style="display: none;">
+									<div class="form-group" style="border: none">
+										<div class="row formline">
+											<div class="col-sm-2"></div>
+											<div class="form-group col-md-2">
+												<select id="submittingInstitution" name="submittingInstitution"
+													class="form-control" required>
+													<option value="">-- Select Institution --</option>
+													<option th:selected="${bankname == 'Bank of Baroda'}" value="Bank of Baroda">Bank of Baroda</option>
+												</select> <label for="submittingInstitution"
+													class="form-legend">Submitting
+													Institution</label>
+											</div>
+
+
+											<div class="col-sm-1"></div>
+
+											<div class="form-group col-md-2">
+												<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}"
+													class="form-control" placeholder=" " required /> <label
+													for="portfolioDate" class="form-legend">Portfolio
+													date</label>
+											</div>
+										</div>
+
+										<!-- Contact Employee 1 Name / Title -->
+										<!-- Contact Employee 1 Group -->
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Contact
+														Details(Employee 1)</label>
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee1Name1" th:value="${data.contactEmployee1Name1}" 
+														name="contactEmployee1Name1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Name1"
+														class="form-legend">Name</label>
+												</div>
+
+
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee1Title1"  th:value="${data.contactEmployee1Title1}" 
+														name="contactEmployee1Title1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Title1"
+														class="form-legend">Title</label>
+												</div>
+
+
+
+												<div class="form-group col-md-3">
+													<input type="email" id="contactEmployee1Email1"  th:value="${data.contactEmployee1Email1}" 
+														name="contactEmployee1Email1" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee1Email1"
+														class="form-legend">Email</label>
+												</div>
+												<div class="col-sm-3"></div>
+
+											</div>
+										</div>
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Contact
+														Details(Employee 2)</label>
+												</div>
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee2Name2" th:value="${data.contactEmployee2Name2}" 
+														name="contactEmployee2Name2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Name2"
+														class="form-legend">Name</label>
+												</div>
+
+
+												<div class="form-group col-md-3">
+													<input type="text" id="contactEmployee2Title2" th:value="${data.contactEmployee2Title2}" 
+														name="contactEmployee2Title2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Title2"
+														class="form-legend">Title</label>
+												</div>
+
+
+
+												<div class="form-group col-md-3">
+													<input type="email" id="contactEmployee2Email2" th:value="${data.contactEmployee2Email2}" 
+														name="contactEmployee2Email2" class="form-control"
+														placeholder=" " required /> <label for="contactEmployee2Email2"
+														class="form-legend">Email</label>
+												</div>
+												<div class="col-sm-3"></div>
+
+											</div>
+											<!-- Contact Employee 2 Group -->
+										</div>
+										<div class="form-group"
+											style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: -16px; border-radius: 5px;">
+											<div class="row formline">
+												<div class="col-sm-12">
+													<label style="font-weight: bold; color: #000000;">Sign
+														Off</label>
+												</div>
+											</div>
+
+											<!-- Sign-off CRO Name / Email -->
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCroName" name="signOffCroName"  th:value="${data.signOffCroName}" 
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroName" class="form-legend">CRO Name</label>
+												</div>
+												
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffCroEmail" name="signOffCroEmail" th:value="${data.signOffCroEmail}" 
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCroEmail" class="form-legend">CRO Email</label>
+												</div>
+												
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffCfoName" name="signOffCfoName" th:value="${data.signOffCfoName}" 
+														class="form-control" placeholder=" " required /> <label
+														for="signOffCfoName" class="form-legend">CFO Name</label>
+												</div>
+												<div class="col-sm-1"></div>
+
+											</div>
+
+											
+
+										
+											<div class="row formline">
+												<div class="col-sm-2"></div>
+																								<div class="form-group col-md-3">
+																									<input type="email" id="signOffCfoEmail" name="signOffCfoEmail" th:value="${data.signOffCfoEmail}" 
+																										class="form-control" placeholder=" " required /> <label
+																										for="signOffCfoEmail" class="form-legend">CFO Email</label>
+																								</div>
+												
+												<div class="form-group col-md-3">
+													<input type="text" id="signOffHeadOfTreasuryName" th:value="${data.signOffHeadOfTreasuryName}" 
+														name="signOffHeadOfTreasuryName" class="form-control"
+														placeholder=" " required /> <label
+														for="signOffHeadOfTreasuryName" class="form-legend">Head
+														of Treasury Name</label>
+												</div>
+
+												
+												<div class="form-group col-md-3">
+													<input type="email" id="signOffHeadOfTreasuryEmail" th:value="${data.signOffHeadOfTreasuryEmail}" 
+														name="signOffHeadOfTreasuryEmail" class="form-control"
+														placeholder=" " required /> <label
+														for="signOffHeadOfTreasuryEmail" class="form-legend">Head
+														of Treasury Email</label>
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+										</div>
+
+									</div>
+							</form>
+
+							<div class="card-footer text-center" style="padding-bottom: 1px;">
+
+
+
+								<button th:if="${formmode == 'exist'}" id="savebutton" type="button"
+									class="role-btn" onclick="submitForm()">Save</button>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+			
+			
 			<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
 
 			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
@@ -1668,6 +1862,67 @@ PURPOSE		: Nostra Account balance Report
 		</style>
 <!-- Include this after your DataTable initialization script -->
 
+
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
+
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
+
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
+
+
+
+		.form-control:focus {
+			border-color: #007bff;
+		}
+
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
+
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
+
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
+
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
 
 <script>
 	function handleBankChange(select) {

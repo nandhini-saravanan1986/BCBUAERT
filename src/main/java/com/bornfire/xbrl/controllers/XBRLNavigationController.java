@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -659,8 +660,25 @@ public class XBRLNavigationController {
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
 		} else {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
+			Timestamp lastdatetimestamp = nostroAccBalRepo.findLastReportDate();
+			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();			
+			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondlastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
+			if (data != null) {
+				md.addAttribute("data", data);
+				md.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null){
+				md.addAttribute("data", secondlastdata);
+				md.addAttribute("formmode", "exist");
+			}else {
+				md.addAttribute("formmode", "add");
+				md.addAttribute("formmode", "null");
+			}
+			md.addAttribute("lastDate", lastDate);
+			md.addAttribute("bankname", "Bank of Baroda");
+			
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
