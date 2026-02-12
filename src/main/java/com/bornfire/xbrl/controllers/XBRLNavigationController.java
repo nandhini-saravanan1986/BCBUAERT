@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,6 +165,7 @@ import com.bornfire.xbrl.services.RT_Irrbb_Ear_Service;
 import com.bornfire.xbrl.services.RT_Irrbb_Eve_Service;
 import com.bornfire.xbrl.services.RT_Liquidity_Risk_Data_Service;
 import com.bornfire.xbrl.services.RT_LiquidityriskdashboardService;
+import com.bornfire.xbrl.services.RT_MID_FX_DEAL_SERVICE;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
@@ -513,35 +512,36 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "UserProfile", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userprofile(@RequestParam(required = false) String formmode,
-	        @RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
 
-	    String loginuserid = (String) req.getSession().getAttribute("USERID");
-	    String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
-	    String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
-	    
-	    // Always provide these for dropdowns/logic
-	    md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
-	    md.addAttribute("WORKCLASSAC", WORKCLASSAC);
-	    md.addAttribute("ROLEIDAC", ROLEIDAC);
-	    md.addAttribute("loginuserid", loginuserid);
+		String loginuserid = (String) req.getSession().getAttribute("USERID");
+		String WORKCLASSAC = (String) req.getSession().getAttribute("WORKCLASS");
+		String ROLEIDAC = (String) req.getSession().getAttribute("ROLEID");
 
-	    if (formmode == null || formmode.equals("list")) {
-	        md.addAttribute("formmode", "list");
-	        md.addAttribute("userProfiles", loginServices.getUsersList());
-	    } else {
-	        md.addAttribute("formmode", formmode);
-	        UserProfile user;
-	        if (formmode.equals("add")) {
-	            user = new UserProfile();
-	            user.setLogin_low("00:00");
-	            user.setLogin_high("23:59");
-	        } else {
-	            user = loginServices.getUser(userid);
-	        }
-	        md.addAttribute("userProfile", user);
-	    }
-	    return "XBRLUserprofile";
+		// Always provide these for dropdowns/logic
+		md.addAttribute("RuleIDType", accessandrolesrepository.roleidtype());
+		md.addAttribute("WORKCLASSAC", WORKCLASSAC);
+		md.addAttribute("ROLEIDAC", ROLEIDAC);
+		md.addAttribute("loginuserid", loginuserid);
+
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("userProfiles", loginServices.getUsersList());
+		} else {
+			md.addAttribute("formmode", formmode);
+			UserProfile user;
+			if (formmode.equals("add")) {
+				user = new UserProfile();
+				user.setLogin_low("00:00");
+				user.setLogin_high("23:59");
+			} else {
+				user = loginServices.getUser(userid);
+			}
+			md.addAttribute("userProfile", user);
+		}
+		return "XBRLUserprofile";
 	}
+
 	@RequestMapping(value = "verifyUser", method = RequestMethod.POST)
 	@ResponseBody
 	public String verifyUser(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
@@ -3215,6 +3215,9 @@ public class XBRLNavigationController {
 	@Autowired
 	private RT_ACPR_SERVICE acprService;
 
+	@Autowired
+	RT_MID_FX_DEAL_SERVICE rtmidFxDealservice;
+
 	// Page for SLS
 	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
 	public String getSlsPage(Model model) {
@@ -3262,6 +3265,8 @@ public class XBRLNavigationController {
 				resultMsg = acprService.uploadAcprFile(file, fromDate, toDate, username);
 			} else if ("ACPRNF".equals(reportType)) {
 				resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
+			} else if ("MFD".equals(reportType)) {
+				resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, fromDate, toDate, username);
 			} else {
 				return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
 			}
