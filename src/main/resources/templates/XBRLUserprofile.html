@@ -188,7 +188,7 @@
 						$("#role_desc").val(data.roleDesc || "");
 						$("#work_class").val(data.workClass || "");
 						$("#permissions").val(data.permissions || "");
-						$("#domain_id").val(data.domainId || "");
+						$("#domain_id").val(data.menulist || "");
 					}
 				},
 				error: function (xhr) {
@@ -313,8 +313,8 @@
 		<div id="tabHeader" th:if="${formmode == 'list'}" class="mt-3">
 			<div class="role-page-header d-flex justify-content-between">
 				<h4>User Profile</h4>
-				<button class="role-btn" th:if="${ROLEIDAC == 'ADM-M' || ROLEIDAC == 'ADM-C'}" onclick="adduser()">Create
-					User</button>
+				<button class="role-btn" th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
+					onclick="adduser()">Create User</button>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
@@ -344,13 +344,13 @@
 								</td>
 								<td class="text-left">
 									<i class="fa fa-edit text-primary mr-2" style="cursor:pointer" title="Edit"
-										th:attr="data-userid=${up.userid}, data-WORKCLASS=${WORKCLASSAC}"
-										onclick="fnEdit(this)"></i>
+										th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
+										th:attr="data-userid=${up.userid}" onclick="fnEdit(this)"></i>
 									<i class="fa fa-eye text-info mr-2" style="cursor:pointer" title="View"
 										th:attr="data-userid=${up.userid}" onclick="fnView(this)"></i>
-									<i th:if="${up.entity_flg == 'N'}" class="fa fa-check-circle text-success"
-										style="cursor:pointer" title="Verify" th:attr="data-userid=${up.userid}"
-										onclick="fnVerify(this)"></i>
+									<i class="fa fa-check-circle text-success" style="cursor:pointer" title="Verify"
+										th:if="${session.ROLEID == 'ADM-C' AND up.entity_flg == 'N'}"
+										th:attr="data-userid=${up.userid}" onclick="fnVerify(this)"></i>
 								</td>
 							</tr>
 						</tbody>
