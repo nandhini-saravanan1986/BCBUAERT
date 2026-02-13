@@ -4,6 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 	<title>RiskInsights - User Profile</title>
 
 	<!-- CSS Links -->
@@ -32,9 +33,11 @@
 			font-family: 'Segoe UI', Arial, sans-serif;
 			font-size: 13px;
 			background-color: #f8f9fa;
+			height: 100vh;
+			overflow-y: auto;
+			/* Changed from hidden to allow scrolling if content overflows */
 		}
 
-		/* Unified Header Styling */
 		#mainHeader {
 			position: sticky;
 			top: 0;
@@ -44,43 +47,22 @@
 
 		.role-page-header {
 			background-color: #ffffff;
-			padding: -1px 20px;
-			border-bottom: none !important;
+			padding: 10px 20px;
+			border-bottom: 1px solid #dee2e6;
 		}
-
-		/* Table Styling - Fixed Width Issue */
 
 		#usertable thead th {
 			background-color: #7b6458;
 			color: #fff;
 			text-align: center;
-			padding: 10px;
+			padding: 8px;
 		}
 
-		/* Form Styling */
 		.formline {
 			padding-bottom: 15px;
 			align-items: center;
 		}
 
-		.error {
-			color: red !important;
-			font-size: 11px;
-			display: block;
-			margin-top: 5px;
-		}
-
-		.valids {
-			color: green;
-			font-size: 11px;
-		}
-
-		.invalids {
-			color: red;
-			font-size: 11px;
-		}
-
-		/* Loader Overlay */
 		.bob-loader {
 			position: fixed;
 			inset: 0;
@@ -110,55 +92,67 @@
 			font-weight: 600;
 		}
 
-		.role-btn:hover {
-			background: #e66d1a;
-		}
-
 		input[readonly],
 		select[disabled] {
 			background-color: #e9ecef !important;
 			cursor: not-allowed;
 		}
-	</style>
-	<style>
-		/* Hide default DataTables label spacing */
-		.dataTables_filter label {
+
+		/* Modal Category & Grid Styling */
+		.category-head {
+			background: #f8f9fa;
+			font-weight: bold;
+			padding: 5px 10px;
+			border-left: 4px solid var(--bob-orange);
+			margin: 10px 0;
+			color: #333;
+		}
+
+		.module-grid {
 			display: flex;
-			align-items: center;
-			gap: 6px;
-			margin-bottom: 0;
+			flex-wrap: wrap;
+			padding-left: 15px;
 		}
 
-		/* Make search box compact */
-		.dataTables_filter input {
-			margin-left: 5px;
-			height: 28px;
+		.module-item {
+			width: 50%;
+			padding: 3px 0;
+			font-size: 12px;
+		}
+
+		.modal-header {
+			background: #7b6458;
+			color: white;
 		}
 	</style>
 
+	<!-- Required Scripts -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
+
+
+
+
 		function showLoader() {$('.bob-loader').addClass('show');}
 		function hideLoader() {$('.bob-loader').removeClass('show');}
 
-		// Navigation Functions
 		function list() {showLoader(); location.href = 'UserProfile?formmode=list';}
 		function adduser() {showLoader(); location.href = 'UserProfile?formmode=add';}
-		function back() {window.history.back();}
 
-		function fnView(a) {
-			var userid = a.getAttribute("data-userid");
-			showLoader(); location.href = 'UserProfile?formmode=view&userid=' + userid;
-		}
+		function fnView(a) {var userid = a.getAttribute("data-userid"); showLoader(); location.href = 'UserProfile?formmode=view&userid=' + userid;}
 
 		function fnEdit(a) {
 			var userid = a.getAttribute("data-userid");
-			var workclass = a.getAttribute("data-WORKCLASS");
-			if (workclass !== "C" && /*[[${session.ROLEID}]]*/ '' !== "ADM") {
-				alert('Access Denied for Modification.');
-			} else {
+			var loggedInRole = /*[[${session.ROLEID}]]*/ '';
+			if (loggedInRole === "ADM-M" || loggedInRole === "ADM-C") {
 				showLoader(); location.href = 'UserProfile?formmode=edit&userid=' + userid;
+			} else {
+				alert('Access Denied: Modifications only allowed for Admin roles.');
 			}
 		}
 
@@ -167,19 +161,16 @@
 			showLoader(); location.href = 'UserProfile?formmode=verify&userid=' + userid;
 		}
 
-		// Dropdown Auto-fills
 		function Branchcodeval() {
 			var code = $("#branchCode").val();
-			var branches = {'9001': 'Dubai', '9002': 'Abu Dhabi', '9003': 'Deira', '9004': 'Sharjah', '9005': 'RAK', '9010': 'Treasury'};
+			var branches = {'9001': 'Dubai', '9002': 'Abu Dhabi', '9010': 'Treasury', '9003': 'Deira', '9006': 'Abu Dhabi', '9007': 'Deira'};
 			$("#branchName").val(branches[code] || "");
 		}
 
 		function roledesc() {
 			var roleId = $("#roleId").val();
 			if (!roleId) return;
-
 			$.ajax({
-				// Change the hardcoded "/BRAS/getRoleDetails" to this:
 				url: /*[[@{/getRoleDetails}]]*/ "/getRoleDetails",
 				type: "GET",
 				data: {roleId: roleId},
@@ -189,21 +180,39 @@
 						$("#work_class").val(data.workClass || "");
 						$("#permissions").val(data.permissions || "");
 						$("#domain_id").val(data.menulist || "");
+						syncCheckboxes(data.menulist || "");
 					}
-				},
-				error: function (xhr) {
-					console.error("Error fetching role: " + xhr.status);
 				}
 			});
 		}
-		// Custom Validation Helper Functions
+
+		function submitModules() {
+			let selected = [];
+			$("#permissionForm input[name='domId']:checked").each(function () {
+				selected.push($(this).val());
+			});
+			$("#domain_id").val(selected.join(","));
+			$('#moduleModal').modal('hide');
+		}
+
+		function syncCheckboxes(menuString) {
+			$("#permissionForm input[name='domId']").prop("checked", false);
+			if (!menuString) return;
+			let menus = menuString.split(",");
+			$("#permissionForm input[name='domId']").each(function () {
+				if (menus.includes($(this).val())) {
+					$(this).prop("checked", true);
+				}
+			});
+		}
+
 		function validateUserId() {
 			var regex = /^[A-Za-z]{2}[0-9]{6}$/;
-			var val = $("#userId").val();
+			var val = $("#userid").val();
 			if (val && !regex.test(val)) {
-				$("#feedbackuser").text("Format: 2 letters + 6 digits (AB123456)").addClass("invalids");
+				$("#feedbackuser").text("Format: 2 letters + 6 digits").css("color", "red");
 			} else {
-				$("#feedbackuser").text("").removeClass("invalids");
+				$("#feedbackuser").text("");
 			}
 		}
 
@@ -211,91 +220,55 @@
 			var p = $("#password").val();
 			var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{14,})/;
 			if (p && !strongRegex.test(p)) {
-				$("#feedback").html("Min 14 chars, include Upper, Lower, Num, Special").addClass("invalids");
+				$("#feedback").html("Weak Password").css("color", "red");
 			} else {
-				$("#feedback").html("Strong Password").removeClass("invalids").addClass("valids");
+				$("#feedback").html("Strong Password").css("color", "green");
 			}
 		}
 
-		// Form Submission
 		function submitForm() {
 			if (!$("#userForm").valid()) return;
 			showLoader();
-			var mode = $("#formmode").val();
 			$.ajax({
-				url: "./createUser?formmode=" + mode,
+				url: "./createUser?formmode=" + $("#formmode").val(),
 				type: 'POST',
 				data: $("#userForm").serialize(),
-				success: function (res) {
-					hideLoader(); alert(res); list();
-				},
+				success: function (res) {hideLoader(); alert(res); list();},
 				error: function () {hideLoader(); alert("Submission Failed");}
 			});
 		}
 
-		// Verification Logic (Maker-Checker check)
 		function verifySubmit(btn) {
-			var creator = btn.getAttribute("data-modify_user") || btn.getAttribute("data-entry_user");
+			var creator = btn.getAttribute("data-entry_user");
 			var loginUser = /*[[${session.USERID}]]*/ '';
-
-			if (creator === loginUser && /*[[${session.ROLEID}]]*/ '' !== 'ADM') {
-				alert("Same user cannot verify. (Maker-Checker violation)");
+			if (creator === loginUser) {
+				alert("Maker-Checker Violation: Same user cannot verify.");
 				return;
 			}
-
-			if (!confirm("Verify this user?")) return;
+			if (!confirm("Verify this profile?")) return;
 			showLoader();
 			$.ajax({
 				url: './verifyUser',
 				type: 'POST',
 				data: $('#userForm').serialize(),
-				success: function (res) {hideLoader(); alert(res); list();},
-				error: function () {hideLoader(); alert("Error");}
+				success: function (res) {hideLoader(); alert(res); list();}
 			});
 		}
 
 		$(document).ready(function () {
-
 			$('#usertable').DataTable({
-				paging: true,
-				ordering: false,
-				searching: true,
-				pageLength: 10,
-				lengthChange: false,   // remove "Show entries"
-
-				dom:
-					'<"table-top d-flex justify-content-between align-items-center"' +
-					'<"dt-search"f>' +
-					'<"dt-pagination"p>' +
-					'>' +
-					'rt'
+				paging: true, ordering: false, searching: true, pageLength: 10, lengthChange: false,
+				dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
 			});
-
-			$("#userForm").validate({
-				rules: {
-					userid: {required: true},
-					username: "required",
-					email_id: {required: true, email: true},
-					mob_number: {required: true, digits: true, minlength: 12},
-					password: {
-						required: function () {
-							return $("#formmode").val() === 'add';
-						}
-					}
-				},
-				errorPlacement: function (error, element) {
-					error.appendTo(element.parent());
-				}
+			$('#moduleModal').on('show.bs.modal', function () {
+				syncCheckboxes($("#domain_id").val());
 			});
-
 		});
-
 		/*]]>*/
 	</script>
 </head>
 
 <body>
-	<!-- Loader -->
 	<div class="bob-loader" role="status">
 		<div class="text-center">
 			<img th:src="@{/images/bobn.png}" height="60" alt="Loading...">
@@ -310,44 +283,43 @@
 		<div th:insert="XBRLHeaderMenu :: header" id="mainHeader"></div>
 
 		<!-- LIST VIEW -->
-		<div id="tabHeader" th:if="${formmode == 'list'}" class="mt-3">
-			<div class="role-page-header d-flex justify-content-between">
-				<h4>User Profile</h4>
+		<div th:if="${formmode == 'list'}" class="mt-3">
+			<div class="role-page-header d-flex justify-content-between align-items-center">
+				<h4 class="m-0">User Profile Management</h4>
 				<button class="role-btn" th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
 					onclick="adduser()">Create User</button>
 			</div>
-			<div class="card-body">
+			<div class="card-body bg-white shadow-sm mt-2">
 				<div class="table-responsive">
-					<table class="table table-hover table-bordered" id="usertable">
+					<table class="table table-hover table-bordered m-0" id="usertable">
 						<thead>
 							<tr>
-								<th style="width: 10px; text-align:left">User ID</th>
-								<th style="width: 10px;  text-align:left">User Name</th>
-								<th style="width: 10px;  text-align:left">Emp ID</th>
-								<th style="width: 10px;  text-align:left">Branch Code</th>
-								<th style="width: 10px;  text-align:left">Branch Name</th>
-								<th style="width: 10px;  text-align:left">Status</th>
-								<th style="width: 10px;  text-align:left">Action</th>
+								<th>User ID</th>
+								<th>User Name</th>
+								<th>Emp ID</th>
+								<th>Branch Name</th>
+								<th>Status</th>
+								<th>Action</th>
 							</tr>
 						</thead>
-
 						<tbody>
 							<tr th:each="up : ${userProfiles}">
 								<td th:text="${up.userid}"></td>
 								<td th:text="${up.username}"></td>
 								<td th:text="${up.empid}"></td>
-								<td th:text="${up.branch_code}"></td>
 								<td th:text="${up.branch_name}"></td>
 								<td>
-									<span th:if="${up.entity_flg == 'Y'}" class="text-success">Verified</span>
-									<span th:if="${up.entity_flg == 'N'}" class="text-danger">Pending</span>
+									<span th:if="${up.entity_flg == 'Y'}"
+										class="text-success font-weight-bold">Verified</span>
+									<span th:if="${up.entity_flg == 'N'}"
+										class="text-danger font-weight-bold">Pending</span>
 								</td>
-								<td class="text-left">
-									<i class="fa fa-edit text-primary mr-2" style="cursor:pointer" title="Edit"
+								<td class="text-center">
+									<i class="fa fa-eye text-info mr-3" style="cursor:pointer" title="View"
+										th:attr="data-userid=${up.userid}" onclick="fnView(this)"></i>
+									<i class="fa fa-edit text-primary mr-3" style="cursor:pointer" title="Edit"
 										th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
 										th:attr="data-userid=${up.userid}" onclick="fnEdit(this)"></i>
-									<i class="fa fa-eye text-info mr-2" style="cursor:pointer" title="View"
-										th:attr="data-userid=${up.userid}" onclick="fnView(this)"></i>
 									<i class="fa fa-check-circle text-success" style="cursor:pointer" title="Verify"
 										th:if="${session.ROLEID == 'ADM-C' AND up.entity_flg == 'N'}"
 										th:attr="data-userid=${up.userid}" onclick="fnVerify(this)"></i>
@@ -359,31 +331,30 @@
 			</div>
 		</div>
 
-		<!-- FORM VIEW (ADD / EDIT / VIEW / VERIFY) -->
+		<!-- FORM VIEW -->
 		<div th:if="${formmode != 'list'}" class="mt-3">
 			<form id="userForm" th:object="${userProfile}" autocomplete="off">
 				<input type="hidden" id="formmode" th:value="${formmode}">
-
-				<div class="card">
+				<div class="card shadow-sm">
 					<div class="role-page-header d-flex justify-content-between">
-						<h4 th:text="'User Profile - ' + ${#strings.toUpperCase(formmode)}"></h4>
+						<h4 class="m-0" th:text="'User Profile - ' + ${#strings.toUpperCase(formmode)}"></h4>
 						<button type="button" class="btn btn-secondary btn-sm" onclick="list()">Back to List</button>
 					</div>
 
-					<div class="card-body" style="max-height: 65vh; overflow-y: auto;">
+					<div class="card-body" style="max-height: 70vh; overflow-y: auto;">
 						<!-- Row 1 -->
 						<div class="row formline">
 							<label class="col-sm-2">User ID <span class="text-danger">*</span></label>
 							<div class="col-sm-3">
-								<input type="text" th:field="*{userid}" id="userId" class="form-control form-control-sm"
-									th:readonly="${formmode != 'add'}" onblur="validateUserId()" maxlength="8">
+								<input type="text" th:field="*{userid}" id="userid" class="form-control form-control-sm"
+									th:readonly="${formmode != 'add'}" onblur="validateUserId()" required>
 								<span id="feedbackuser"></span>
 							</div>
 							<div class="col-sm-1"></div>
 							<label class="col-sm-2">User Name <span class="text-danger">*</span></label>
 							<div class="col-sm-3">
 								<input type="text" th:field="*{username}" class="form-control form-control-sm"
-									th:readonly="${formmode == 'view' || formmode == 'verify'}">
+									th:readonly="${formmode == 'view' || formmode == 'verify'}" required>
 							</div>
 						</div>
 
@@ -413,9 +384,6 @@
 									<option value="9001">9001 - Dubai</option>
 									<option value="9002">9002 - Abu Dhabi</option>
 									<option value="9010">9010 - Treasury</option>
-									<option value="9001">9003 - Dubai</option>
-									<option value="9002">9006 - Abu Dhabi</option>
-									<option value="9010">9007 - Deira</option>
 								</select>
 							</div>
 							<div class="col-sm-1"></div>
@@ -462,7 +430,7 @@
 									class="text-danger">*</span></label>
 							<div class="col-sm-3">
 								<input th:if="${formmode == 'add'}" type="password" name="password" id="password"
-									class="form-control form-control-sm" onkeyup="validatePassword()">
+									class="form-control form-control-sm" onkeyup="validatePassword()" required>
 								<input th:if="${formmode != 'add'}" type="text" value="********"
 									class="form-control form-control-sm" readonly>
 								<span id="feedback"></span>
@@ -500,14 +468,14 @@
 						</div>
 
 						<hr>
-						<h5>Role and Rights</h5>
+						<h5 class="mb-4 text-muted">Role and Rights Mapping</h5>
 
 						<div class="row formline">
 							<label class="col-sm-2">Role ID</label>
 							<div class="col-sm-3">
 								<select th:field="*{role_id}" id="roleId" class="form-control form-control-sm"
 									th:disabled="${formmode == 'view' || formmode == 'verify'}" onchange="roledesc()">
-									<option value="">Select</option>
+									<option value="">Select Role</option>
 									<option th:each="role : ${RuleIDType}" th:value="${role}" th:text="${role}">
 									</option>
 								</select>
@@ -527,10 +495,19 @@
 									class="form-control form-control-sm" readonly>
 							</div>
 							<div class="col-sm-1"></div>
-							<label class="col-sm-2">Module</label>
+							<label class="col-sm-2">Module Access <span
+									th:if="${formmode == 'add' || formmode == 'edit'}"
+									class="text-danger">*</span></label>
 							<div class="col-sm-3">
-								<input type="text" th:field="*{domain_id}" id="domain_id"
-									class="form-control form-control-sm" readonly>
+								<div class="input-group">
+									<input type="text" th:field="*{domain_id}" id="domain_id"
+										class="form-control form-control-sm" readonly required>
+									<div class="input-group-append" th:if="${formmode == 'add' || formmode == 'edit'}">
+										<button class="btn btn-outline-secondary btn-sm" type="button"
+											data-toggle="modal" data-target="#moduleModal"><i
+												class="fas fa-search"></i></button>
+									</div>
+								</div>
 							</div>
 						</div>
 
@@ -541,226 +518,118 @@
 									class="form-control form-control-sm" readonly>
 							</div>
 						</div>
-					</div>
 
-					<div class="card-footer text-center">
-						<button th:if="${formmode == 'add' || formmode == 'edit'}" type="button" class="role-btn"
-							onclick="submitForm()">Submit</button>
-						<button th:if="${formmode == 'verify'}" type="button" class="btn btn-success"
-							th:attr="data-entry_user=*{entry_user}, data-modify_user=*{modify_user}"
-							onclick="verifySubmit(this)">Verify User</button>
+						<div class="card-footer text-center bg-white border-top-0">
+							<button th:if="${formmode == 'add' || formmode == 'edit'}" type="button"
+								class="role-btn px-5" onclick="submitForm()">Submit</button>
+							<button th:if="${formmode == 'verify'}" type="button" class="btn btn-success px-5"
+								th:attr="data-entry_user=*{entry_user}" onclick="verifySubmit(this)">Verify
+								Profile</button>
+						</div>
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
+
+	<!-- FULL MODULE SELECTION MODAL -->
+	<div class="modal fade" id="moduleModal" tabindex="-1" role="dialog" aria-labelledby="moduleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="moduleModalLabel">Access Rights Selection</h5>
+					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="max-height: 550px; overflow-y: auto;">
+					<form id="permissionForm">
+						<div class="category-head">Admin Management</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="Adm-Usrprf"> User
+								Profile</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="Adm-AccessRole"> Access
+								& Roles</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="Adm-CustgrpMain">
+								Customer Group Maintenance</div>
+						</div>
+						<div class="category-head">RT Reports</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT1"> Nostro Account
+								Balance</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT2"> FX Risk Data
+							</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT3"> Trade Market
+								Risk</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT4"> MM Data</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT5"> Repo Data
+								Template</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT6"> Investment
+								Risk Dashboard</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT7"> Treasury
+								Credit Limit Management</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT8"> Trade Level
+								Data
+								Derivatives</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT9"> Trade Level
+								Data Simplified</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT10"> CCR Data
+								Templates</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT11"> Cross
+								Currency Funding
+								Spread</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT12"> Liquidity
+								Risk Data</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT13"> Investment
+								Securities
+								Data</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT14"> Liquidity
+								Risk
+								Dashboard</div>
+
+							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT15"> IRRBB Data
+								Template</div>
+						</div>
+						<div class="category-head">ASL & Settlements</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Authcounterparty">
+								Auth Counterparty</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Exp_data"> Exposure
+								Data</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Intr_setl">
+								Interbank Placements</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Final_stmt"> ASL
+								Final Statement</div>
+						</div>
+						<div class="category-head">ASL Data Upload</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="Bill-Plac_data">
+								Treasury Placement Upload</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="Bill-Swap_data">
+								Settlement Upload</div>
+						</div>
+						<div class="category-head">Credit Risk</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="CR-Por_fol_anal">
+								Portfolio Analysis</div>
+						</div>
+						<div class="category-head">Audit Services</div>
+						<div class="module-grid">
+							<div class="module-item"><input type="checkbox" name="domId" value="Audit-Usr_audit"> User
+								Audit</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="Audit-Ser_audit">
+								Service Audit</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" onclick="submitModules()">Apply Selection</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
-<style>
-	#pageHeader {
-		position: sticky;
-		top: 110px;
-		z-index: 1050;
-		background: white;
-		padding-top: 10px;
-	}
-
-	#tabHeader {
-		position: sticky;
-		top: 5px;
-		/* just below page header */
-		z-index: 1040;
-		background: white;
-		padding: 5px 0;
-	}
-
-	#mainHeader {
-		position: sticky;
-		top: 0;
-		z-index: 9999;
-		background: white;
-	}
-</style>
-<style>
-	#usertable {
-		border-collapse: collapse !important;
-		font-family: Arial, sans-serif !important;
-		font-size: 12px !important;
-	}
-
-	/* HEADER */
-	/* Update this section in your <style> tag */
-	#usertable thead th {
-		background-color: #7b6458;
-		color: #fff;
-		font-family: Arial, sans-serif !important;
-		font-size: 14px !important;
-		text-align: center;
-		vertical-align: middle;
-		white-space: normal;
-
-		/* ADD THESE THREE LINES */
-		padding: 2px 4px !important;
-		/* Reduces internal spacing */
-		line-height: 1.1 !important;
-		position: sticky;
-		top: 0;
-		/* Keeps the first row at the top */
-		z-index: 10;
-		background-color: #7b6458 !important;
-		/* Ensures the header isn't transparent */
-		color: white;
-		box-shadow: inset 0 -1px 0 #dee2e6;
-	}
-
-
-	/* BODY CELLS */
-	#usertable td {
-		padding: 5px 6px !important;
-		border: 1px solid #e8e8e8 !important;
-		/* light grey lines */
-		background: #fafafa;
-		white-space: normal !important;
-	}
-
-	/* ROW EVEN/ODD */
-	#usertable tbody tr:nth-child(even) {
-		background-color: #f4f2ef !important;
-	}
-
-	#usertable tbody tr:nth-child(odd) {
-		background-color: #ffffff !important;
-	}
-
-	#usertable thead tr:nth-child(2) th {
-		top: 32px;
-		/* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
-		z-index: 9;
-
-		/* SEARCH BOX FIX */
-		.dataTables_filter label {
-			display: flex !important;
-			gap: 10px;
-			align-items: center;
-		}
-
-		.dataTables_filter label {
-			display: flex !important;
-			align-items: center;
-			gap: 8px;
-			/* space between text and input */
-			margin-bottom: 0 !important;
-		}
-
-		.dataTables_filter input {
-			margin-left: 5px;
-			flex: 1;
-		}
-
-		/* === ROLE PAGE CUSTOM HEADER === */
-		.role-page-header {
-			background-color: #ffffff;
-			padding: 15px 20px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-top: -8px;
-
-		}
-</style>
-
-<style>
-	.dataTables_wrapper .page-link:focus,
-	.dataTables_wrapper .page-link:active {
-		box-shadow: none !important;
-		outline: none !important;
-	}
-
-	/* ---------- Previous & Next ---------- */
-	.dataTables_wrapper .paginate_button.previous .page-link,
-	.dataTables_wrapper .paginate_button.next .page-link {
-		color: #9e9e9e !important;
-		/* gray */
-		background-color: transparent !important;
-		border-color: #dddddd !important;
-	}
-
-	.dataTables_wrapper .paginate_button.previous .page-link:hover,
-	.dataTables_wrapper .paginate_button.next .page-link:hover {
-		color: #c5c5c5 !important;
-		background-color: #f0f0f0 !important;
-	}
-
-	/* Disabled Previous / Next */
-	.dataTables_wrapper .paginate_button.disabled .page-link {
-		color: #c5c5c5 !important;
-		background-color: #eeeeee !important;
-		cursor: not-allowed;
-	}
-
-	/* ---------- Page Numbers ---------- */
-	.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link {
-		color: #6c757d !important;
-		background-color: transparent !important;
-		border-color: #dddddd !important;
-	}
-
-	/* Hover on page numbers */
-	.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link:hover {
-		background-color: #f5f5f5 !important;
-		color: #6c757d !important;
-	}
-
-	/* ---------- ACTIVE PAGE ---------- */
-	.dataTables_wrapper .paginate_button.active .page-link {
-		background-color: #ff7f27 !important;
-		/* ORANGE */
-		border-color: #ff7f27 !important;
-		color: #ffffff !important;
-		cursor: default !important;
-	}
-
-	/* Reduce spacing between pagination numbers */
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		margin: 0 -10px !important;/ min-width: auto !important;
-	}
-</style>
-<style>
-	/* Keep table layout intact */
-	#usertable {
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	/* Make thead fixed */
-	#usertable thead {
-		display: table;
-		width: 100%;
-		table-layout: fixed;
-	}
-
-	/* Scroll ONLY tbody */
-	#usertable tbody {
-		display: block;
-		max-height: 420px;
-		/* adjust height */
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
-
-	/* Keep rows aligned with header */
-	#usertable thead tr,
-	#usertable tbody tr {
-		display: table;
-		width: 100%;
-		table-layout: fixed;
-	}
-
-	html,
-	body {
-		height: 100%;
-		overflow-y: hidden;
-		/* 🚫 no window scroll */
-	}
-</style>
 
 </html>
