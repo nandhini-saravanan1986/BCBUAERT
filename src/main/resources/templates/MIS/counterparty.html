@@ -745,11 +745,7 @@
 			var countryRating = $("#countryRating").val().trim();
 
 
-			if (counterPartyBankCode === "") {
-				alert("Please enter counterParty Bank Code.");
-				$("#counterPartyBankCode").focus();
-				return;
-			}
+			
 			if (regularLimit === "") {
 				alert("Please enter regularLimit.");
 				$("#regularLimit").focus();
@@ -1012,11 +1008,7 @@
 			var earmarkingdate = $("#earmarkingdate").val().trim(); // Added
 			var countryRating = $("#countryRating").val().trim();
 
-			if (counterPartyBankCode === "") {
-				alert("Please enter counterParty Bank Code.");
-				$("#counterPartyBankCode").focus();
-				return;
-			}
+		
 			if (regularLimit === "") {
 				alert("Please enter regularLimit.");
 				$("#regularLimit").focus();
@@ -1162,7 +1154,7 @@
 			var adhocExp = $("#Adhoc_Limit_exp_date").val();
 			var countryRating = $("#countryRating").val().trim();
 
-			if (bankCode === "") {alert("Please enter Bank Code."); return false;}
+			//if (bankCode === "") {alert("Please enter Bank Code."); return false;}
 			if (bankName === "") {alert("Please enter Bank Name."); return false;}
 			if (country === "") {alert("Please enter Country."); return false;}
 			if (rating === "") {alert("Please enter Rating."); return false;}
@@ -1174,12 +1166,12 @@
 
 		// 4. MODAL LOGIC
 		function openAdhocModal() {
-			var bankCode = $("#counterPartyBankCode").val();
+			var bankname = $("#counterPartyBank").val();
 			var srlNo = $("#srlNo").val();
 			var formmode = /*[[${formmode}]]*/ 'add';
 
-			if (!bankCode) {
-				alert("Please enter CounterParty Bank Code first.");
+			if (!bankname) {
+				alert("Please enter CounterParty Bank Name first.");
 				return;
 			}
 
@@ -1212,7 +1204,7 @@
 		}
 
 		function addAdhocDetailRow(data = null) {
-			var bankCode = $("#counterPartyBankCode").val();
+			var bankname = $("#counterPartyBank").val();
 			var today = new Date().toISOString().split('T')[0];
 
 			var limitType = data ? data.limit_type : "Credit Limit";
@@ -1225,14 +1217,14 @@
 			var rollOverVal = data ? data.rollOver : "No";
 
 			var row = `<tr>
-	        <td><input type="text" class="form-control form-control-sm d-bank" value="${bankCode}" readonly></td>
+	        <td><input type="text" class="form-control form-control-sm d-bank" value="${bankname}" readonly></td>
 	        <td>
 	            <select class="form-control form-control-sm d-limit-type">
 	                <option value="Credit Limit" ${limitType === 'Credit Limit' ? 'selected' : ''}>Credit Limit</option>
 	                <option value="Settlement Limit" ${limitType === 'Settlement Limit' ? 'selected' : ''}>Settlement Limit</option>
 	            </select>
 	        </td>
-	        <td><input type="number" class="form-control form-control-sm d-limit" oninput="calculateAdhocSum()" value="${adhocAmt}"></td>
+	        <td><input type="number" class="two-decimal form-control form-control-sm d-limit" oninput="calculateAdhocSum()" value="${adhocAmt}"></td>
 	        <td><input type="date" class="form-control form-control-sm d-date" value="${adhocDate}"></td>
 	        <td><input type="date" class="form-control form-control-sm d-exp" value="${expDate}" min="${today}" onchange="validateAdhocDate(this)"></td>
 	        <td><input type="number" class="form-control form-control-sm d-ear-limit" value="${earLimit}"></td>
@@ -1286,11 +1278,21 @@
 			var totalAdhoc = 0;
 			var adhocCreditSum = 0;
 			var adhocSettlementSum = 0;
+			var maxexpdate=null;
+			var maxeardate=null;
 
 			// Loop through modal rows to sum up the NEW adhoc entries
 			$("#adhocDetailTable tbody tr").each(function () {
 				var limitType = $(this).find(".d-limit-type").val();
 				var limitVal = parseFloat($(this).find(".d-limit").val()) || 0;
+				var expdate = $(this).find(".d-exp").val();
+				var eardate = $(this).find(".d-ear-date").val();
+			
+				if (maxexpdate === null || expdate <= maxexpdate) {
+					  maxexpdate = expdate;
+					  maxeardate=eardate
+					}
+				
 
 				totalAdhoc += limitVal;
 
@@ -1303,6 +1305,9 @@
 
 			// 1. Update Adhoc Limit Total
 			$("#adhocLimit").val(totalAdhoc.toFixed(2));
+			$("#Adhoc_Limit_exp_date").val(maxexpdate);
+			$("#earmarkingdate").val(maxeardate);
+			
 
 			// 2. Update Credit Limit (Original Base + Modal Sum)
 			// If original was 100 and modal has 5, this sets it to 105
@@ -1351,6 +1356,26 @@
 		}
 
 		/*]]>*/
+	</script>
+	<script type="text/javascript">
+	document.addEventListener("input", function (e) {
+		  if (!e.target.classList.contains("two-decimal")) return;
+
+		  let value = e.target.value;
+		  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+		    e.target.value = value.slice(0, -1);
+		  }
+		});
+
+		document.addEventListener("blur", function (e) {
+		  if (!e.target.classList.contains("two-decimal")) return;
+
+		  if (e.target.value !== "") {
+		    e.target.value = Number(e.target.value).toFixed(2);
+		  }
+		}, true);
+	
+	
 	</script>
 </head>
 <title>RiskInsights</title>
@@ -1525,12 +1550,12 @@
 												</div>
 												<div class="col-sm-2">
 													<label for="counterPartyBankCode">CounterParty Bank Code<b
-															style="color: red;">*</b></label>
+															style="color: red;"></b></label>
 												</div>
 												<div class="col-sm-3 position-relative">
 													<input type="text" name="counterPartyBankCode"
 														id="counterPartyBankCode" class="form-control form-control-sm"
-														autocomplete="on" oninput="validatelist(this)" required />
+														autocomplete="on" oninput="validatelist(this)" />
 
 													<!-- Tooltip for already exists -->
 													<small id="bankExistsMsg_code"
@@ -1550,7 +1575,7 @@
 												<div class="col-sm-auto"></div>
 
 												<div class="col-sm-2">
-													<label for="counterPartyBank">CounterParty Bank<b
+													<label for="counterPartyBank">CounterParty Bank Name<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3 position-relative">
@@ -1573,29 +1598,34 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="rating" id="rating"
-														class="form-control form-control-sm" autocomplete="new-text"
-														required />
+													<select name="rating" id="rating" class="form-control form-control-sm" required >
+													<option value="">Select External Rating</option>
+													<option th:each="ratinglists:${ratinglist}" th:value=${ratinglists.rating} th:text=${ratinglists.rating}></option>
+													</select>
+												
 												</div>
 
 											</div>
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Country<b style="color: red;">*</b></label>
+													<label for="location">Country of Incorporation<b style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="location" id="location"
-														class="form-control form-control-sm" autocomplete="new-text"
-														required />
+													<select name="location" id="location" class="form-control form-control-sm" required >
+													<option value="">Select Country of Incorporation</option>
+													<option th:each="LOCATIONS:${LOCATION}" th:value=${LOCATIONS} th:text=${LOCATIONS}></option>
+													</select>	
 												</div>
 												<div class="col-sm-2">
 													<label for="location">Country Rating<b
 															style="color: red;">*</b></label>
 												</div>
-												<div class="col-sm-3">
-													<input type="text" name="countryRating" id="countryRating"
-														class="form-control form-control-sm" required />
+												<div class="col-sm-3">	
+													<select name="countryRating" id="countryRating" class="form-control form-control-sm" required >
+													<option value="">Select Country Rating</option>
+													<option th:each="ratinglists:${ratinglist}" th:value=${ratinglists.rating} th:text=${ratinglists.rating}></option>
+													</select>	
 												</div>
 
 											</div>
@@ -1604,16 +1634,16 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Regular Limit<b
+													<label for="location">Regular Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="regularLimit" id="regularLimit"
-														class="form-control form-control-sm" autocomplete="new-text"
-														required />
+														class="two-decimal form-control form-control-sm" autocomplete="new-text"
+														required  />
 												</div>
 												<div class="col-sm-2">
-													<label for="adhocLimit">Adhoc Limit (Total)<b
+													<label for="adhocLimit">Adhoc Limit Total In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1661,7 +1691,7 @@
 												<div class="col-sm-auto"></div>
 
 												<div class="col-sm-2">
-													<label for="location">Credit Limit<b
+													<label for="location">Credit Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1669,7 +1699,7 @@
 														class="form-control form-control-sm" required />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">Money Market Limit<b
+													<label for="location">Money Market Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1686,7 +1716,7 @@
 												<div class="col-sm-auto"></div>
 
 												<div class="col-sm-2">
-													<label for="location">EAR Marking Limit</label>
+													<label for="location">EAR Marking Limit In USD(MN)</label>
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="earmarkinglimit" id="earmarkinglimit"
@@ -1710,7 +1740,7 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Trade Finance Limit<b
+													<label for="location">Trade Finance Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1824,21 +1854,24 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="rating" id="rating"
-														th:value="${list.rating}" class="form-control form-control-sm"
-														autocomplete="new-text" required />
+													<select name="rating" id="rating" class="form-control form-control-sm" required >
+													<option value="">Select External Rating</option>
+													<option th:each="ratinglists:${ratinglist}" th:value=${ratinglists.rating} th:text=${ratinglists.rating} th:selected="${ratinglists.rating == list.rating}"></option>
+													</select>
+												
 												</div>
 
 											</div>
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Country<b style="color: red;">*</b></label>
+													<label for="location">Country of Incorporation<b style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="location" id="location"
-														th:value="${list.location}" class="form-control form-control-sm"
-														autocomplete="new-text" required />
+													<select name="location" id="location" class="form-control form-control-sm" required >
+													<option value="">Select Country of Incorporation</option>
+													<option th:each="LOCATIONS:${LOCATION}" th:value=${LOCATIONS} th:text=${LOCATIONS} th:selected="${LOCATIONS == list.location}"></option>
+													</select>		
 												</div>
 												<!--<div class="col-sm-2">
 													<label for="location">Expiry Date<b
@@ -1856,9 +1889,10 @@
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
-													<input type="text" name="countryRating" id="countryRating"
-														th:value="${list.countryRating}"
-														class="form-control form-control-sm" required />
+													<select  name="countryRating" id="countryRating" class="form-control form-control-sm" required >
+													<option value="">Select Country Rating</option>
+													<option th:each="ratinglists:${ratinglist}" th:value=${ratinglists.rating} th:text=${ratinglists.rating} th:selected="${ratinglists.rating == list.countryRating}"></option>
+													</select>	
 												</div>
 
 											</div>
@@ -1867,17 +1901,17 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Regular Limit<b
+													<label for="location">Regular Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="regularLimit" id="regularLimit"
 														th:value="${list.regularLimit}"
-														class="form-control form-control-sm" autocomplete="new-text"
+														class="two-decimal form-control form-control-sm" autocomplete="new-text"
 														required />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">Adhoc Limit<b
+													<label for="location">Adhoc Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1927,7 +1961,7 @@
 												<div class="col-sm-auto"></div>
 
 												<div class="col-sm-2">
-													<label for="location">Credit Limit<b
+													<label for="location">Credit Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1936,7 +1970,7 @@
 														th:value="${list.creditLimit}" />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">Money Market Limit<b
+													<label for="location">Money Market Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -1961,7 +1995,7 @@
 														th:value="${#dates.format(list.earmarkingdate, 'yyyy-MM-dd')}" />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">EAR Marking Limit</label>
+													<label for="location">EAR Marking Limit In USD(MN)</label>
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="earmarkinglimit" id="earmarkinglimit"
@@ -1976,7 +2010,7 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Trade Finance Limit<b
+													<label for="location">Trade Finance Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2052,7 +2086,7 @@
 												</div>
 												<div class="col-sm-2">
 													<label for="counterPartyBankCode">CounterParty Bank Code<b
-															style="color: red;">*</b></label>
+															style="color: red;"></b></label>
 												</div>
 												<div class="col-sm-3 position-relative">
 													<input type="text" name="counterPartyBankCode"
@@ -2099,7 +2133,7 @@
 												</div>
 
 												<div class="col-sm-2">
-													<label for="rating">External Rating<b
+													<label for="rating">Bank External Rating<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2112,7 +2146,7 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Country<b style="color: red;">*</b></label>
+													<label for="location">Country of Incorporation<b style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
 													<input type="text" name="location" id="location"
@@ -2145,7 +2179,7 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Regular Limit<b
+													<label for="location">Regular Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2155,7 +2189,7 @@
 														required readonly />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">Adhoc Limit<b
+													<label for="location">Adhoc Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2198,7 +2232,7 @@
 												<div class="col-sm-auto"></div>
 
 												<div class="col-sm-2">
-													<label for="location">Credit Limit<b
+													<label for="location">Credit Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2207,7 +2241,7 @@
 														th:value="${list.creditLimit}" readonly />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">Money Market Limit<b
+													<label for="location">Money Market Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2233,7 +2267,7 @@
 														readonly />
 												</div>
 												<div class="col-sm-2">
-													<label for="location">EAR Marking Limit</label>
+													<label for="location">EAR Marking Limit In USD(MN)</label>
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
@@ -2249,7 +2283,7 @@
 											<div class="row formline">
 												<div class="col-sm-auto"></div>
 												<div class="col-sm-2">
-													<label for="location">Trade Finance Limit<b
+													<label for="location">Trade Finance Limit In USD(MN)<b
 															style="color: red;">*</b></label>
 												</div>
 												<div class="col-sm-3">
@@ -2305,9 +2339,9 @@
 										style="font-size: 12px;">
 										<thead style="background-color: #f4f2ef;">
 											<tr class="text-center">
-												<th style="width: 15%">Bank Code</th>
+												<th style="width: 15%">Bank Name</th>
 												<th style="width: 12%">Limit Type</th> <!-- Added -->
-												<th style="width: 10%">Adhoc Limit</th>
+												<th style="width: 10%">Adhoc Limit In USD(MN)</th>
 												<th style="width: 12%">Adhoc Date</th>
 												<th style="width: 12%">Expiry Date</th>
 												<th style="width: 10%">Ear Mark Limit</th>

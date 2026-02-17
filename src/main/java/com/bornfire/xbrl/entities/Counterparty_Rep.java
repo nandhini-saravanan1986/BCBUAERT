@@ -20,6 +20,11 @@ public interface Counterparty_Rep extends CrudRepository<Counterparty_Entity,Lon
 	@Query(value = "select COUNTER_PARTY_BANK from MIS_COUNTER_PARTY_TABLE", nativeQuery = true)
 	List<String> getall();
 	
+	@Query(value = "select Distinct LOCATION from MIS_COUNTER_PARTY_TABLE", nativeQuery = true)
+	List<String> getallLOCATION();
+	
+	
+	
 	@Query(value = "select Distinct COUNTER_PARTY_BANK from MIS_COUNTER_PARTY_TABLE Order by COUNTER_PARTY_BANK Asc", nativeQuery = true)
 	List<String> Getcounterpartyname();
 	

@@ -39,6 +39,8 @@ import com.bornfire.xbrl.entities.AuditServicesRep;
 import com.bornfire.xbrl.entities.BRF39_ENTITYREP;
 import com.bornfire.xbrl.entities.Counterparty_Entity;
 import com.bornfire.xbrl.entities.Counterparty_Rep;
+import com.bornfire.xbrl.entities.Limit_Request_Entity;
+import com.bornfire.xbrl.entities.Limit_Request_Rep;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
 import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
 import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
@@ -59,6 +61,8 @@ public class counter_services {
 
 	@Autowired
 	AuditService auditservice;
+	@Autowired
+	Limit_Request_Rep limit_request_rep;
 	@Autowired
 	UserProfileRep UserProfileReps;
 	@Autowired
@@ -721,6 +725,76 @@ public class counter_services {
 		}
 
 		return changes;
+	}
+	
+	
+	public String AddLimitRequest(Limit_Request_Entity as, String userid, String formmode) {
+		String msg = "";
+
+		try {
+			Session hs = sessionFactory.getCurrentSession();
+
+			
+				
+				as.setSRL_NO(new BigDecimal(limit_request_rep.getSrlNo()));
+				as.setCreateuser(userid);
+				as.setDelFlg("N");
+				as.setCreatedate(new Date());
+
+				Limit_Request_Entity newdata = new Limit_Request_Entity();
+				Map<String, String> changes = new LinkedHashMap<>();
+
+				for (Field field : Limit_Request_Entity.class.getDeclaredFields()) {
+					field.setAccessible(true);
+					try {
+						Object oldValue = field.get(newdata);
+						Object newValue = field.get(as);
+						if ((oldValue == null || oldValue.toString().trim().isEmpty())
+								&& (newValue == null || newValue.toString().trim().isEmpty())) {
+							continue;
+						}
+
+						if (oldValue instanceof Date || newValue instanceof Date) {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+							String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+							if (Objects.equals(oldDateStr, newDateStr)) {
+								continue;
+							}
+						} else {
+							if (Objects.equals(oldValue, newValue)) {
+								continue;
+							}
+						}
+
+						if (newValue == null) {
+							changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+						} else {
+							changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+						}
+
+						if (newValue != null) {
+							field.set(newdata, newValue);
+						}
+
+					} catch (IllegalAccessException e) {
+						System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+					}
+				}
+				auditservice.createBusinessAudit(userid, "ADD", "Limit Request - ASL -Add", changes,
+						"Limit_Request");
+
+				hs.save(as);
+				msg = "Limit Requested Successfully.";
+			
+
+		} catch (Exception e) {
+			msg = "Kindly check the data / Please contact Administrator";
+			e.printStackTrace();
+		}
+
+		return msg;
 	}
 
 }

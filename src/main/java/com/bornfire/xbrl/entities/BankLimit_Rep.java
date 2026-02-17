@@ -20,4 +20,7 @@ public interface BankLimit_Rep extends CrudRepository<BankLimit_Entity,String>{
 	@Query(value = "select * from MIS_BANK_LIMITS WHERE REPORT_DATE=?1 ORDER BY BANK_NAME desc", nativeQuery = true)
 	List<BankLimit_Entity> getalllists(Date REPORT_DATE);
 	
+	@Query(value = "select * from MIS_BANK_LIMITS WHERE REPORT_DATE=(select max(REPORT_DATE) from MIS_BANK_LIMITS) ORDER BY BANK_NAME desc", nativeQuery = true)
+	List<BankLimit_Entity> getallbanknamemaxdate();
+	
 }

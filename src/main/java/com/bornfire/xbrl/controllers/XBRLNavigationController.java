@@ -75,6 +75,7 @@ import com.bornfire.xbrl.entities.Counterparty_Entity;
 import com.bornfire.xbrl.entities.Counterparty_Rep;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
+import com.bornfire.xbrl.entities.Limit_Request_Entity;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO;
 import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Entity;
@@ -129,6 +130,7 @@ import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.RT_RWA_RATING_GUIDELINES_Rep;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
 import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
@@ -145,6 +147,7 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
+import com.bornfire.xbrl.entities.Limit_Request_Rep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -191,6 +194,12 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_SLSServices RT_SLSServices;
+	
+	@Autowired
+	Limit_Request_Rep limit_request_rep;
+	
+	@Autowired
+	RT_RWA_RATING_GUIDELINES_Rep rt_rwa_rating_guidelines_rep;
 
 	@Autowired
 	RT_IRSService rtIrsService;
@@ -1408,7 +1417,9 @@ public class XBRLNavigationController {
 			md.addAttribute("list", Counterparty_Reps.getBYID(Long.valueOf(id)));
 			List<String> counterList = Counterparty_Reps.getall();
 			md.addAttribute("counterlist", counterList);
+			md.addAttribute("LOCATION", Counterparty_Reps.getallLOCATION());
 			List<String> getcode = Counterparty_Reps.getcodes();
+			md.addAttribute("ratinglist", rt_rwa_rating_guidelines_rep.getratinglist());
 			md.addAttribute("getcode", getcode);
 		}
 
@@ -1431,12 +1442,15 @@ public class XBRLNavigationController {
 			md.addAttribute("counterlist", counterList);
 			List<String> getcode = Counterparty_Reps.getcodes();
 			md.addAttribute("getcode", getcode);
+			md.addAttribute("LOCATION", Counterparty_Reps.getallLOCATION());
+			
 			logger.info("Fetched counterparty list: size={}", counterList.size());
 
 			Integer maxSuffix = Counterparty_Reps.findMaxSrlNoSuffix(); // e.g., returns 1
 			int nextSuffix = (maxSuffix != null) ? maxSuffix + 1 : 1;
 			String serialNo = String.format("%s%03d", "BOBUAE", nextSuffix); // BOBUAE002
 			md.addAttribute("serialNo", serialNo);
+			md.addAttribute("ratinglist", rt_rwa_rating_guidelines_rep.getratinglist());
 			logger.info("Generated serial number: {}", serialNo);
 		}
 		return "MIS/counterparty.html";
@@ -3412,4 +3426,44 @@ public class XBRLNavigationController {
 
 		return "Invalid Request";
 	}
+	
+	@RequestMapping(value = "/ASLCheck",  method = RequestMethod.GET)
+	public String ASLCheckS(@RequestParam(required = false) String formmode,Model md,HttpServletRequest request)  {
+		String roleId = (String) request.getSession().getAttribute("ROLEID");
+		String BRANCHCODE = (String) request.getSession().getAttribute("BRANCHCODE");
+		md.addAttribute("roleId", roleId);
+		md.addAttribute("branchcode", BRANCHCODE);
+		if(formmode==null||formmode.equals("ASLCheck")) {
+			md.addAttribute("menu", "Current Bank Limit - ASL");
+			md.addAttribute("formmode", "ASLChecklist");
+		}else if(formmode.equals("Branchrequestadd")) {
+			md.addAttribute("menu", "Limit Request - ASL");
+			md.addAttribute("formmode", "Branchrequestadd");
+			md.addAttribute("currentDate", new Date());
+		}else if(formmode.equals("Branchrequestlist")) {
+			md.addAttribute("menu", "Limit Request List - ASL");
+			md.addAttribute("formmode", "Branchrequestlist");
+			md.addAttribute("Requestlist", limit_request_rep.getAllLimitRequestList());
+			
+			
+		}
+		
+		List<BankLimit_Entity> BankLimitdata =banklimit_rep.getallbanknamemaxdate();
+		md.addAttribute("BankLimitdata",BankLimitdata);
+	return "RT/RT_ASLCheck";
+		
+	}
+	
+	@RequestMapping(value = "AddLimitRequest", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public String AddLimitRequest(@ModelAttribute Limit_Request_Entity Limit_Request_Entity,
+			@RequestParam(required = false) String formmode, Model md, HttpServletRequest rq) {
+		logger.info("Add counter party...");
+		String userid = (String) rq.getSession().getAttribute("USERID");
+		String msg = counter_servicess.AddLimitRequest(Limit_Request_Entity, userid, formmode);
+		return msg;
+
+	}
+	
+	
 }
