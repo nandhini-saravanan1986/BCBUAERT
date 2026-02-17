@@ -665,11 +665,11 @@ public class XBRLNavigationController {
 			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondlastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
-			if (data != null) {
+			if (data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
-			else if(secondlastdata != null){
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
 				md.addAttribute("data", secondlastdata);
 				md.addAttribute("formmode", "exist");
 			}else {
