@@ -672,8 +672,13 @@ public class XBRLNavigationController {
 			Timestamp lastdatetimestamp = nostroAccBalRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();			
 			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			RT_DataControl data= RT_DatacontrolRepository.getdata(lastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
-			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondlastdatetimestamp,"CBUAE_Nostro Account_Balance_Data_Template");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Nostro Account_Balance_Data_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Nostro Account_Balance_Data_Template");
 			if (data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
