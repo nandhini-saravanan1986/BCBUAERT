@@ -1200,7 +1200,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			<div  id="mainHeader"  th:insert="XBRLHeaderMenu :: header"></div>
 		
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'}">
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'  or formmode == 'exist'}">
 				<div class="text-left flex-grow-1">
 					<h4>IRRBB DATA TEMPLATE</h4>
 					
@@ -1247,213 +1247,150 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		
 			<!-- -------------------User List Starts----------------------------------------------------- -->
 			<div id="tabHeader" style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' }">
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' or formmode == 'exist' }">
 
 
 				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
 					th:if="${formmode == null or formmode == 'add'}">
-					<div class="tab-pane fade show active" id="datacontrols" role="tabpanel">
+					<div class="tab-pane fade show active scrollable-exist-viewport"
+					id="datacontrols" role="tabpanel">
+					<div class="row">
+						<div class="col-sm-12">
+							<form id="nostroForm" method="post" autocomplete="off"
+								class="compact-form">
+								<div class="card-body">
 
-						<div class="row">
-							<div class="col-sm-12 finuserapply">
-								<form id="nostroForm" method="post" autocomplete="off">
-									<div class="card-body" style="overflow-y:auto">
+									<div class="row mb-2 mt-3">
+										<div class="form-group" style="width:20%">
+											<select id="submittingInstitution"
+												name="submittingInstitution"
+												class="form-control form-control-sm" required>
+												<option value="">-- Select --</option>
+												<option th:selected="${bankname == 'Bank of Baroda'}"
+													value="Bank of Baroda">Bank of Baroda</option>
+											</select> <label class="form-legend">Submitting Institution</label>
+										</div>
+										<div class="form-group " style="width:20%">
+											<input type="date" id="portfolioDate" name="portfolioDate"
+												th:value="${lastDate}" class="form-control form-control-sm"
+												required /> <label class="form-legend">Portfolio
+												date</label>
+										</div>
+									</div>
 
-
-										<input autocomplete="false" name="hidden" type="text" style="display: none;">
-										<div class="form-group" style="border:none;padding-top: 15px;">
-											<div class="row formline">
-												<div class="col-sm-1"></div>
-												<div class="form-group col-md-2">
-													<select id="submittingInstitution" name="submittingInstitution"
-														class="form-control" required>
-														<option value="">-- Select Institution --</option>
-														<option value="Bank of Baroda">Bank of Baroda</option>
-													</select>
-													<label for="submittingInstitution" class="form-legend">Submitting
-														Institution</label>
-												</div>
-
-
-												<div class="col-sm-1"></div>
-
-												<div class="form-group col-md-2">
-													<input type="date" id="portfolioDate" name="portfolioDate"
-														class="form-control" placeholder=" " required />
-													<label for="portfolioDate" class="form-legend">Portfolio
-														date</label>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="compact-section">
+												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
+												<div class="centered-content">
+													<div class="form-group">
+														<input type="text"
+															
+															name="contactEmployee1Name1"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Name</label>
+													</div>
+													<div class="form-group">
+														<input type="text"
+															
+															name="contactEmployee1Title1"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Title</label>
+													</div>
+													<div class="form-group">
+														<input type="email"
+															
+															name="contactEmployee1Email1"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Email</label>
+													</div>
 												</div>
 											</div>
 
-											<!-- Contact Employee 1 Name / Title -->
-											<!-- Contact Employee 1 Group -->
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
-												<div class="row formline">
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #0D0D0C;">Contact
-															Details(Employee 1)</label>
+											<div class="compact-section">
+												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
+												<div class="centered-content">
+													<div class="form-group">
+														<input type="text"
+															
+															name="contactEmployee2Name2"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Name</label>
 													</div>
-												</div>
-												<div class="row formline">
-												<div class="col-sm-2"></div>
-													<div class="form-group col-md-3">
-														<input type="text" id="contactEmployee1Name1"
-															name="contactEmployee1Name1" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee1Name1"
-															class="form-legend">Name</label>
+													<div class="form-group">
+														<input type="text"
+															
+															name="contactEmployee2Title2"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Title</label>
 													</div>
-
-
-													<div class="form-group col-md-3">
-														<input type="text" id="contactEmployee1Title1"
-															name="contactEmployee1Title1" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee1Title1"
-															class="form-legend">Title</label>
+													<div class="form-group">
+														<input type="email"
+															
+															name="contactEmployee2Email2"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Email</label>
 													</div>
-
-
-
-													<div class="form-group col-md-3">
-														<input type="email" id="contactEmployee1Email1"
-															name="contactEmployee1Email1" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee1Email1"
-															class="form-legend">Email</label>
-													</div>
-													<div class="col-sm-3">
-													</div>
-
 												</div>
 											</div>
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
-												<div class="row formline">												
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #0D0D0C;">Contact
-															Details(Employee 2)</label>
-													</div>
-												</div>
-												<div class="row formline">
-												<div class="col-sm-2"></div>
-													<div class="form-group col-md-3">
-														<input type="text" id="contactEmployee2Name2"
-															name="contactEmployee2Name2" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee2Name2"
-															class="form-legend">Name</label>
-													</div>
-
-
-													<div class="form-group col-md-3">
-														<input type="text" id="contactEmployee2Title2"
-															name="contactEmployee2Title2" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee2Title2"
-															class="form-legend">Title</label>
-													</div>
-
-
-
-													<div class="form-group col-md-3">
-														<input type="email" id="contactEmployee2Email2"
-															name="contactEmployee2Email2" class="form-control"
-															placeholder=" " required />
-														<label for="contactEmployee2Email2"
-															class="form-legend">Email</label>
-													</div>
-													<div class="col-sm-3">
-													</div>
-
-												</div>
-												<!-- Contact Employee 2 Group -->
-											</div>
-											<div class="form-group"
-												style="border: 1px solid #e0e0e0; padding: 0px; margin-bottom: 6px; border-radius: 5px;">
-												<div class="row formline">
-													<div class="col-sm-12">
-														<label style="font-weight: bold; color: #0D0D0C;">Sign
-															Off</label>
-													</div>
-												</div>
-
-												<!-- Sign-off CRO Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-2"></div>
-													<div class="form-group col-md-3">
-														<input type="text" id="signOffCroName" name="signOffCroName"
-															class="form-control" placeholder=" " required />
-														<label for="signOffCroName" class="form-legend">CRO Name</label>
-													</div>
-													<div class="form-group col-md-3">
-														<input type="email" id="signOffCroEmail" name="signOffCroEmail"
-															class="form-control" placeholder=" " required />
-														<label for="signOffCroEmail" class="form-legend">CRO
-															Email</label>
-													</div>
-													<div class="form-group col-md-3">
-														<input type="text" id="signOffCfoName" name="signOffCfoName"
-															class="form-control" placeholder=" " required />
-														<label for="signOffCfoName" class="form-legend">CFO Name</label>
-													</div>
-
-												</div>
-
-												<!-- Sign-off CFO Name / Email -->
-												<div class="row formline">
-													<div class="col-sm-2"></div>
-												
-													<div class="form-group col-md-3">
-														<input type="email" id="signOffCfoEmail" name="signOffCfoEmail"
-															class="form-control" placeholder=" " required />
-														<label for="signOffCfoEmail" class="form-legend">CFO
-															Email</label>
-													</div>
-													<div class="form-group col-md-3">
-														<input type="text" id="signOffHeadOfTreasuryName"
-															name="signOffHeadOfTreasuryName" class="form-control"
-															placeholder=" " required />
-														<label for="signOffHeadOfTreasuryName" class="form-legend">Head
-															of Treasury Name</label>
-													</div>
-
-													<div class="form-group col-md-3">
-														<input type="email" id="signOffHeadOfTreasuryEmail"
-															name="signOffHeadOfTreasuryEmail" class="form-control"
-															placeholder=" " required />
-														<label for="signOffHeadOfTreasuryEmail" class="form-legend">Head
-															of Treasury Email</label>
-													</div>
-
-												</div>
-
-												<!-- Sign-off Head of Treasury Name / Email -->
-												<!-- <div class="row formline">
-													<div class="col-sm-1"></div>
-													
-												</div> -->
-											</div>
-
 										</div>
 
+										<div class="col-md-6">
+											<div class="compact-section">
+												<label class="section-title">SIGN OFF</label>
+												<div class="signoff-alignment-wrap">
+													<div class="form-group">
+														<input type="text" 
+															name="signOffCroName"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">CRO Name</label>
+													</div>
+													<div class="form-group">
+														<input type="email"
+															name="signOffCroEmail"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">CRO Email</label>
+													</div>
+													<div class="form-group">
+														<input type="text" 
+															name="signOffCfoName"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">CFO Name</label>
+													</div>
+													<div class="form-group">
+														<input type="email" 
+															name="signOffCfoEmail"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">CFO Email</label>
+													</div>
+													<div class="form-group">
+														<input type="text"
+															
+															name="signOffHeadOfTreasuryName"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">Head of Treasury Name</label>
+													</div>
+													<div class="form-group">
+														<input type="email"
+															
+															name="signOffHeadOfTreasuryEmail"
+															class="form-control form-control-sm" placeholder=" " required /><label
+															class="form-legend">Head of Treasury Email</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
 
-								</form>
-							
-					<div class="card-footer text-center" style="padding-bottom: 10px;">
-
-
-							<!--<button th:if="${formmode == 'null' or formmode == 'add'}"  type="button" class="role-btn"
-                  onclick="submitForm()">Save</button>-->
-
-							<button th:if="${formmode == null or formmode == 'add'}" type="button"
-								class="role-btn" onclick="submitForm()">Save</button>
-
-
-						</div></div>
+							<div class="card-footer text-center mt-3">
+								<button th:if="${formmode == 'add'}" id="savebutton"
+									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+							</div>
 						</div>
 					</div>
+				</div>
 				</div>
 
 				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
@@ -3186,4 +3123,106 @@ PURPOSE		: IRRBB DATA TEMPLATE
   });
 </script>
 
+<style>
+.scrollable-exist-viewport {
+	max-height: calc(100vh - 195px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 10px;
+}
+
+.compact-form {
+	font-size: 12px !important;
+}
+
+.compact-section {
+	padding: 1px 20px 1px;
+	border-radius: 5px;
+}
+
+.vertical-divider {
+	border-left: 4px solid #444;
+	padding-left: 20px;
+}
+
+.centered-content .form-group, .signoff-alignment-wrap .form-group {
+	position: relative;
+	width: 40% !important;
+	margin-bottom: 22px !important;
+}
+
+.centered-content .form-group {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.signoff-alignment-wrap .form-group {
+	margin-left: 85px !important;
+	margin-right: 0 !important;
+}
+
+.section-title {
+	font-weight: 700;
+	font-size: 13px;
+	color: #000;
+	margin-bottom: 20px;
+	display: block;
+	border-bottom: 1px solid #dee2e6;
+	padding-bottom: 5px;
+	text-align: left !important;
+	width: 100%;
+}
+
+label.error {
+	color: red !important;
+	font-size: 11px !important;
+	position: absolute;
+	left: 105%;
+	top: 50%;
+	transform: translateY(-50%);
+	white-space: nowrap;
+	z-index: 10;
+}
+
+.error {
+	padding-top: 0 !important;
+}
+
+.compact-form .form-control-sm {
+	height: 32px !important;
+	font-size: 12px !important;
+	padding: 5px 10px !important;
+	width: 100% !important;
+	border: 1px solid #ced4da !important;
+	border-radius: 8px !important;
+	background-color: #ffffff;
+}
+
+body {
+	overflow: hidden;
+}
+
+.table-responsive {
+	width: 100%;
+	max-height: calc(100vh - 190px);
+	overflow: auto;
+	position: relative;
+}
+
+.table-responsive thead {
+	position: sticky;
+	top: 0;
+	background-color: #e9ecf0;
+	z-index: 1;
+}
+
+#usertable {
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+#floatingBackBtn, #floatingForwardBtn {
+	z-index: 9999;
+}
+</style>
 </html>
