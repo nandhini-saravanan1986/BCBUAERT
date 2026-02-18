@@ -48,7 +48,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 	<style>
 		body {
 			font-family: 'Segoe UI', Arial, sans-serif;
-			font-size: 14px;
+			font-size: 13px;
 		}
 
 		.table .thead-light th {
@@ -828,6 +828,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 				<!-- Data Button -->
 				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
 					Data</button>
+				<button class="role-btn" id="data-btn">
+										Detail</button>
 				<!-- CENTER: Title -->
 
 				<!-- RIGHT: Download Button -->
@@ -2978,7 +2980,6 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 <style>
 	#usertable {
 		min-width: 2800px;
-		/* adjust based on columns */
 	}
 
 	#usertable {
@@ -2987,8 +2988,6 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		font-size: 12px !important;
 	}
 
-	/* HEADER */
-	/* Update this section in your <style> tag */
 	#usertable thead th {
 		background-color: #7b6458;
 		color: #fff;
@@ -2997,14 +2996,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		text-align: center;
 		vertical-align: middle;
 		white-space: normal;
-
-		/* ADD THESE THREE LINES */
 		padding: 2px 4px !important;
-		/* Reduces internal spacing */
 		line-height: 1.1 !important;
-		/* Reduces space between wrapped text lines */
-		font-size: 11px !important;
-		/* Optional: slightly smaller font to save space */
 		position: sticky;
 		top: 0;
 		/* Keeps the first row at the top */
@@ -3016,28 +3009,35 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		/* Optional: adds a bottom border to the sticky header */
 	}
 
-
-	/* BODY CELLS */
-	#usertable td {
-		padding: 5px 6px !important;
-		border: 1px solid #e8e8e8 !important;
-		/* light grey lines */
-		background: #fafafa;
-		white-space: normal !important;
+	.table-responsive {
+	    overflow-y: auto;
+	    max-height: 500px; 
 	}
 
-	/* ROW EVEN/ODD */
-	#usertable tbody tr:nth-child(even) {
-		background-color: #f4f2ef !important;
+	/* Base styles for all sticky headers */
+	#usertable thead th {
+	    position: sticky !important;
+	    background-color: #7b6458 !important; 
+	    color: white !important;
+	    z-index: 10;
+	    border: 1px solid #dee2e6 !important; 
 	}
 
-	#usertable tbody tr:nth-child(odd) {
-		background-color: #ffffff !important;
+	/* Row 1:*/
+	#usertable thead tr:nth-child(1) th {
+	    top: 0 !important;
+	    z-index: 20 !important; 
 	}
+
+	/* Row 2: Stays exactly beneath Row 1 to close the gap */
 	#usertable thead tr:nth-child(2) th {
-	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
-	    z-index: 9;
-
+	    top: 16px !important; 
+	    z-index: 19 !important;
+	}
+	.table-responsive {
+	    overflow: auto !important;
+	    max-height: 500px;
+	}
 	/* SEARCH BOX FIX */
 	.dataTables_filter label {
 		display: flex !important;
@@ -3058,16 +3058,12 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		flex: 1;
 	}
 
-	/* === ROLE PAGE CUSTOM HEADER === */
 	.role-page-header {
 		background-color: #ffffff;
 		padding: 15px 20px;
 		display: flex;
-		/* Added for alignment */
 		justify-content: space-between;
-		/* Added for alignment */
 		align-items: center;
-		/* Added for alignment */
 	}
 </style>
 
@@ -3119,6 +3115,22 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		border-color: #ff7f27 !important;
 		color: #ffffff !important;
 		cursor: default !important;
+	}
+	div.dataTables_filter {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
+
+	/* FIX: Make search label and box inline */
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px; 
+		margin-bottom: 0 !important;
+	}
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
 	}
 </style>
 
@@ -3302,6 +3314,108 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 	.modal-title {
 		background-color: #f7a47c;
 	}
-</style>
 
+</style>
+<style>
+.scrollable-exist-viewport {
+	max-height: calc(100vh - 195px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 10px;
+}
+
+.compact-form {
+	font-size: 12px !important;
+}
+
+.compact-section {
+	padding: 1px 20px 1px;
+	border-radius: 5px;
+}
+
+.vertical-divider {
+	border-left: 4px solid #444;
+	padding-left: 20px;
+}
+
+.centered-content .form-group, .signoff-alignment-wrap .form-group {
+	position: relative;
+	width: 40% !important;
+	margin-bottom: 22px !important;
+}
+
+.centered-content .form-group {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.signoff-alignment-wrap .form-group {
+	margin-left: 85px !important;
+	margin-right: 0 !important;
+}
+
+.section-title {
+	font-weight: 700;
+	font-size: 13px;
+	color: #000;
+	margin-bottom: 20px;
+	display: block;
+	border-bottom: 1px solid #dee2e6;
+	padding-bottom: 5px;
+	text-align: left !important;
+	width: 100%;
+}
+
+label.error {
+	color: red !important;
+	font-size: 11px !important;
+	position: absolute;
+	left: 105%;
+	top: 50%;
+	transform: translateY(-50%);
+	white-space: nowrap;
+	z-index: 10;
+}
+
+.error {
+	padding-top: 0 !important;
+}
+
+.compact-form .form-control-sm {
+	height: 32px !important;
+	font-size: 12px !important;
+	padding: 5px 10px !important;
+	width: 100% !important;
+	border: 1px solid #ced4da !important;
+	border-radius: 8px !important;
+	background-color: #ffffff;
+}
+
+body {
+	overflow: hidden;
+}
+
+.table-responsive {
+	width: 100%;
+	max-height: calc(100vh - 190px);
+	overflow: auto;
+	position: relative;
+}
+
+.table-responsive thead {
+	position: sticky;
+	top: 0;
+	background-color: #e9ecf0;
+	z-index: 1;
+}
+
+#usertable {
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+#floatingBackBtn, #floatingForwardBtn {
+	z-index: 9999;
+}
+</style>
 </html>
