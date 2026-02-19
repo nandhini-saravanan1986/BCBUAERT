@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -23,5 +24,11 @@ public interface RT_FxRiskDataRepository extends JpaRepository<RT_Fxriskdata, St
 	
 	@Query(value = "SELECT * FROM BCBUAE_FX_RISK_DATA where SI_NO =?1 ", nativeQuery = true)
 	RT_Fxriskdata getParticularDataBySI_NO(String SI_NO);
+
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_FX_RISK_DATA", nativeQuery = true)
+	Timestamp findLastReportDate();
+	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_FX_RISK_DATA WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_FX_RISK_DATA)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 	
 }
