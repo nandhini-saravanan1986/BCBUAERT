@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.services;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,78 +36,96 @@ public class RT_MID_FX_DEAL_SERVICE {
 	@Autowired
 	RT_MID_FX_DEAL_REPO repo;
 
-	public String uploadMidFxDealData(MultipartFile file, Date fromDate, Date toDate, String username) {
+	public String uploadMidFxDealData(MultipartFile file, Date fromDate, Date toDate, String username) throws Exception {
+		
+		repo.deleteByReportDate(toDate);
+		
+		Workbook workbook = new XSSFWorkbook(file.getInputStream());
+		RT_MID_FX_DEAL_DC entity = new RT_MID_FX_DEAL_DC();
+		int sheetCount = workbook.getNumberOfSheets();
+       
+        boolean totalFound = false;
+        for (int i = 0; i < sheetCount; i++) {
+            String sheetName = workbook.getSheetName(i);
+            System.out.println("Sheet " + (i + 1) + ": " + sheetName);
+            Sheet sheet = workbook.getSheetAt(i);
+            if(sheetName.contains("Bonds")) {
+            	String Bondvalue = processSheet(sheet);
+            	
+            	entity.setActualBonds(new BigDecimal(Bondvalue.replaceAll("[^0-9.-]", "")));
+            	entity.setAbsBonds(new BigDecimal(Bondvalue.replaceAll("[^0-9.]", "")));
+            }else if(sheetName.contains("FxSwaps")) {
+            	String Fxswapvalue = processSheet(sheet);
+            	 entity.setActualFxSwaps(new BigDecimal(Fxswapvalue.replaceAll("[^0-9.-]", "")));
+            	 entity.setAbsFxSwaps(new BigDecimal(Fxswapvalue.replaceAll("[^0-9.]", "")));
+            }else if(sheetName.contains("Outright Forwards")) {
+            	String Outrightforw = processSheet(sheet);
+            	entity.setActualOutrightForwards(new BigDecimal(Outrightforw.replaceAll("[^0-9.-]", "")));
+            	entity.setAbsOutrightForwards(new BigDecimal(Outrightforw.replaceAll("[^0-9.]", "")));
+            }else if(sheetName.contains("IRS CIRS")) {
+            	String irscirs = processSheet(sheet);
+            	entity.setActualIrsCirs(new BigDecimal(irscirs.replaceAll("[^0-9.-]", "")));
+            	entity.setAbsIrsCirs(new BigDecimal(irscirs.replaceAll("[^0-9.]", "")));
+            }
+        }
+        
+        
+        entity.setSrlNo(UUID.randomUUID().toString().substring(0, 20));
+		entity.setReportDate(toDate);
+		entity.setCreateUser(username);
+		entity.setCreateTime(new Date());
+		entity.setReportFromDate(fromDate);
+		entity.setReportToDate(toDate);
+		entity.setRcreUserId(username);
+		entity.setRcreTime(new Date());
+		entity.setDelFlg("N");
+		entity.setEntityFlg("N");
+		entity.setModifyFlg("N");
 
-		// 1. FILE NAME VALIDATION
-		String fileName = file.getOriginalFilename();
-		if (fileName == null || !fileName.toUpperCase().startsWith("MID_FX_DEAL")) {
-			return "Validation Failed: File name must start with 'MID_FX_DEAL'.";
-		}
-
-		try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-			Sheet sheet = workbook.getSheetAt(0);
-			List<RT_MID_FX_DEAL_DC> list = new ArrayList<>();
-
-			// To avoid multiple deletes if there are multiple rows for the same date
-			Set<Date> processedDates = new HashSet<>();
-
-			// 2. LOOP THROUGH ROWS (Start from row index 2 or 5 depending on where your
-			// data begins)
-			for (int i = 2; i <= sheet.getLastRowNum(); i++) {
-				Row row = sheet.getRow(i);
-				if (row == null)
-					continue;
-
-				Date reportDate = getDate(row.getCell(0));
-				if (reportDate == null)
-					continue;
-
-				// 3. REPLACE LOGIC: Delete existing data for this date once per upload session
-				if (!processedDates.contains(reportDate)) {
-					repo.deleteByReportDate(reportDate);
-					processedDates.add(reportDate);
-				}
-
-				RT_MID_FX_DEAL_DC entity = new RT_MID_FX_DEAL_DC();
-
-				// Audit & Header Info
-				entity.setSrlNo(UUID.randomUUID().toString().substring(0, 20));
-				entity.setReportDate(reportDate);
-				entity.setCreateUser(username);
-				entity.setCreateTime(new Date());
-				entity.setReportFromDate(fromDate);
-				entity.setReportToDate(toDate);
-				entity.setRcreUserId(username);
-				entity.setRcreTime(new Date());
-				entity.setDelFlg("N");
-				entity.setEntityFlg("N");
-				entity.setModifyFlg("N");
-
-				// --- ACTUAL VALUES (INR) ---
-				entity.setActualBonds(getDecimal(row.getCell(1)));
-				entity.setActualFxSwaps(getDecimal(row.getCell(2)));
-				entity.setActualOutrightForwards(getDecimal(row.getCell(3)));
-
-				// --- ABSOLUTE VALUES (INR) ---
-				entity.setAbsBonds(getDecimal(row.getCell(5)).abs());
-				entity.setAbsFxSwaps(getDecimal(row.getCell(6)).abs());
-				entity.setAbsOutrightForwards(getDecimal(row.getCell(7)).abs());
-
-				list.add(entity);
-			}
-
-			if (list.isEmpty()) {
-				return "Upload Failed: No valid data found in the spreadsheet.";
-			}
-
-			repo.saveAll(list);
-			return "Success: " + list.size() + " records processed and replaced successfully.";
-
-		} catch (Exception e) {
-			logger.error("Error during Mid FX Deal Upload: ", e);
-			return "System Error: " + e.getMessage();
-		}
+		repo.save(entity);
+		
+		return "AE_MID_FX_DEAL data processed successfully: Records for " + toDate + " updated/appended.";
 	}
+	
+	private String processSheet(Sheet sheet) {
+
+	    DataFormatter formatter = new DataFormatter();
+	    boolean totalFound = false;
+	    String result = "";
+	    for (Row row : sheet) {
+	        for (Cell cell : row) {
+
+	            String value = formatter.formatCellValue(cell).trim();
+
+	            // Step 1: Find Total
+	            if ("Total".equalsIgnoreCase(value)) {
+	                totalFound = true;
+	                continue;
+	            }
+
+	            // Step 2: After Total, find BPV (K)
+	            if (totalFound && "BPV (K)".equalsIgnoreCase(value)) {
+
+	                int rowIndex = row.getRowNum();
+	                int colIndex = cell.getColumnIndex();
+
+	                Row nextRow = sheet.getRow(rowIndex + 1);
+
+	                if (nextRow != null) {
+	                    Cell nextCell = nextRow.getCell(colIndex);
+
+	                    if (nextCell != null) {
+	                        result = formatter.formatCellValue(nextCell);
+	                       
+	                    }
+	                }
+	            }
+	        }
+	    }
+	    
+		return result;
+	}
+
 
 	// Helper for Numbers
 	private BigDecimal getDecimal(Cell cell) {

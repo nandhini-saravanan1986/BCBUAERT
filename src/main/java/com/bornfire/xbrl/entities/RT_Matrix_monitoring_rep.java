@@ -68,4 +68,28 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "ORDER BY s_no ASC\r\n"
 			+ "", nativeQuery = true)
 	List<RT_Matrix_monitoring_entity> GetMatrixbysortedvalue(Date Report_date,String Serial_no);
+	
+	
+	@Query(value="Select * from(\r\n"
+			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '47') ,\r\n"
+			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+			+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+	List<Object[]> General_provision_of_CRWA(Date Selecteddate);
+	
+	
+	@Query(value="Select * from(\r\n"
+			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '22') ,\r\n"
+			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+			+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+	List<Object[]> GetBPVPV01(Date Selecteddate);
+	
+	@Query(value="Select R20_RATIOS2 As General_Provision,R22_RATIOS2 As CRWA,report_date from car Where rePort_date = ?1",nativeQuery=true)
+	List<Object[]> GetSelecteddateGenepro(Date Selecteddate);
+	
 }

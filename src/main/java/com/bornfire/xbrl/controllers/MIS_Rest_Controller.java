@@ -37,6 +37,7 @@ import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Leverage_ratio_rep;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.RT_Chart_pojo;
+import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_REPO;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
 import com.bornfire.xbrl.entities.RT_Mis_Fund_Based_Adv_Rep;
@@ -101,6 +102,9 @@ public class MIS_Rest_Controller {
     
     @Autowired
     RT_SLS_Repository RT_SLS_Repository;
+    
+    @Autowired
+    RT_MID_FX_DEAL_REPO RT_MID_FX_DEAL_REPO;
     
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
@@ -470,6 +474,14 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDepositconcentrationretail(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("47")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.General_provision_of_CRWA(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
+		}else if(Matrix_Srl_no.equals("22")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList()); 
 		}
 	    
 	    
@@ -787,6 +799,10 @@ public class MIS_Rest_Controller {
 			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenretaildepo(Selecteddate);
 		}else if (Data_Type_Used.equals("Leverageratio")) {
 			Exposuredata=Leverage_ratio_rep.GetLeverageratiodata(Selecteddate);
+		}else if (Data_Type_Used.equals("Generalprovision")) {
+			Exposuredata = RT_Matrix_monitoring_rep.GetSelecteddateGenepro(Selecteddate);
+		}else if(Data_Type_Used.equals("BPVPV01_Detail")) {
+			Exposuredata = RT_MID_FX_DEAL_REPO.GetselectedmonthBPVdata(Selecteddate);
 		}
 		
 		return Exposuredata;

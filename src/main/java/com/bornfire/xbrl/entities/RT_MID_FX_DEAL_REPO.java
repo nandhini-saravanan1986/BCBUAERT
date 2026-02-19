@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -17,4 +18,11 @@ public interface RT_MID_FX_DEAL_REPO extends JpaRepository<RT_MID_FX_DEAL_DC, St
 	@Modifying
 	@Query("DELETE FROM RT_MID_FX_DEAL_DC a WHERE a.reportDate = ?1")
 	void deleteByReportDate(Date reportDate);
+	
+	@Query(value = "Select TO_CHAR(REPORT_DATE,'DD-MM-YYYY'),nvl(AED_FOREX,0), nvl(AED_INT_RATE,0), nvl(AED_INVEST_BONDS,0),"
+			+ " nvl(AED_MONEY_MARKET_CP_CD,0), nvl(AED_TOTAL_PV01,0)"
+			+ " from RT_MID_FX_DEAL Where report_date between Trunc(?1,'MM') "
+			+ "and Last_day(Trunc(?1,'MM'))",nativeQuery = true)
+	List<Object[]> GetselectedmonthBPVdata(Date Selecteddate);
+	
 }
