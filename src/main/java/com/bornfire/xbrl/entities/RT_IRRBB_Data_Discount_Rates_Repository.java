@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ public interface RT_IRRBB_Data_Discount_Rates_Repository extends JpaRepository<R
 	List<RT_IRRBB_Data_Discount_Rates> getAlldetails();
 	
 	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DISCOUNT_RATES where SI_NO =?1 ", nativeQuery = true)
-	RT_IRRBB_Data_Discount_Rates getParticularDataBySI_NO(String SI_NO);
+	RT_IRRBB_Data_Discount_Rates getParticularDataBySI_NO(BigDecimal sI_NO);
 	
 	
 	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DISCOUNT_RATES ", nativeQuery = true)

@@ -56,7 +56,13 @@ public class RT_Irrbb_Ear_Service {
 	public boolean updateirrbbear(RT_IRRBB_Data_EAR updatedData) {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
-	    RT_IRRBB_Data_EAR existing = IRRBB_EAR_Repository.getParticularDataBySI_NO(updatedData.getSI_NO());
+		/*
+		 * RT_IRRBB_Data_EAR existing =
+		 * IRRBB_EAR_Repository.getParticularDataBySI_NO(updatedData.getSI_NO());
+		 */
+	    RT_IRRBB_Data_EAR existing =
+	            IRRBB_EAR_Repository.findById(updatedData.getSI_NO())
+	                                .orElse(null);
 
 	    if (existing != null) {
 	        // Update fields

@@ -15,7 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class RT_IRRBB_Data_Discount_Rates {
 	
 	@Id
-	private String SI_NO;
+	@Column(name = "SI_NO")
+	private BigDecimal SI_NO;
 
 	    @Column(name = "DERIVED_TENOR")
 	    private String derivedTenor;
@@ -142,11 +143,11 @@ public class RT_IRRBB_Data_Discount_Rates {
 	  
 	    private Date verifyTime;
 
-		public String getSI_NO() {
+		public BigDecimal getSI_NO() {
 			return SI_NO;
 		}
 
-		public void setSI_NO(String sI_NO) {
+		public void setSI_NO(BigDecimal sI_NO) {
 			SI_NO = sI_NO;
 		}
 
@@ -446,10 +447,10 @@ public class RT_IRRBB_Data_Discount_Rates {
 			this.verifyTime = verifyTime;
 		}
 
-		public RT_IRRBB_Data_Discount_Rates(String sI_NO, String derivedTenor, BigDecimal overnight, BigDecimal oneWeek,
-				BigDecimal oneMonth, BigDecimal twoMonth, BigDecimal threeMonth, BigDecimal sixMonth,
-				BigDecimal nineMonth, BigDecimal oneYear, BigDecimal onePointFiveYear, BigDecimal twoYear,
-				BigDecimal threeYear, BigDecimal fourYear, BigDecimal fiveYear, BigDecimal sixYear,
+		public RT_IRRBB_Data_Discount_Rates(BigDecimal sI_NO, String derivedTenor, BigDecimal overnight,
+				BigDecimal oneWeek, BigDecimal oneMonth, BigDecimal twoMonth, BigDecimal threeMonth,
+				BigDecimal sixMonth, BigDecimal nineMonth, BigDecimal oneYear, BigDecimal onePointFiveYear,
+				BigDecimal twoYear, BigDecimal threeYear, BigDecimal fourYear, BigDecimal fiveYear, BigDecimal sixYear,
 				BigDecimal sevenYear, BigDecimal eightYear, BigDecimal nineYear, BigDecimal tenYear,
 				BigDecimal twelveYear, BigDecimal fifteenYear, BigDecimal twentyYear, BigDecimal thirtyYear,
 				Date reportDate, Date reportFromDate, Date reportToDate, String entityFlg, String modifyFlg,
@@ -501,6 +502,5 @@ public class RT_IRRBB_Data_Discount_Rates {
 			// TODO Auto-generated constructor stub
 		}
 
-		 
-	    
+
 }

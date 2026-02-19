@@ -76,6 +76,7 @@ import com.bornfire.xbrl.entities.Counterparty_Rep;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Limit_Request_Entity;
+import com.bornfire.xbrl.entities.Limit_Request_Rep;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO;
 import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Entity;
@@ -147,7 +148,6 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
-import com.bornfire.xbrl.entities.Limit_Request_Rep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -2374,11 +2374,15 @@ public class XBRLNavigationController {
 
 	/*--IRRBB Data template--*/
 	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
-	public String IRRBB_data_Template(@RequestParam(required = false) String SI_NO,
+	public String IRRBB_data_Template(@RequestParam(required = false) BigDecimal SI_NO,
 			@RequestParam(required = false) String formmode, Model md) {
 
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
-			RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
+			//RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
+			
+			RT_IRRBB_Data_EAR data =
+				    IRRBB_EAR_Repository.findById(SI_NO).orElse(null);
+
 			md.addAttribute("irrbbear", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "editear");
@@ -2387,7 +2391,9 @@ public class XBRLNavigationController {
 
 		else if ("editeve".equalsIgnoreCase(formmode)) {
 			System.out.println("EVE is formmode");
-			RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
+			//RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
+			RT_IRRBB_Data_EVE_Template data =
+					IRRB_EVE_Repo.findById(SI_NO).orElse(null);
 			md.addAttribute("irrbbeve", data);
 			md.addAttribute("formmode", "editeve");
 		}

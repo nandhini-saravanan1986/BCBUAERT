@@ -906,17 +906,42 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		function nostro() {
 
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			location.href = 'Investment_Securities_Data';
+			location.href = 'IRRBB_data_Template';
 		}
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-				window.location.href = './Investment_Securities_Data';
+				window.location.href = './IRRBB_data_Template';
 			});
 		});
+		function updateformeve(event) {
 
+					event.preventDefault();
+
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+					$.ajax({
+						url: `./updateirrbeve`,
+						type: 'POST',
+						data: $('#irrbbeve').serialize(),
+						success: function (response) {
+
+							document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
+							$("#alertmsg").text(response);
+							$("#alert").modal("toggle");
+
+						},
+						error: function (xhr, status, error) {
+							console.error("Error in modify:", error);
+
+							document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+							alert("Failed to modify. Please try again.");
+						}
+					});
+
+				}
 		function updateform(event) {
 
 			event.preventDefault();
@@ -1537,13 +1562,16 @@ PURPOSE		: IRRBB DATA TEMPLATE
 <div th:if="${formmode == 'editeve'}"  class="liquid-edit-page"  style="align-items:center">
 
 <div class="row">
-<form th:action="@{/updateirrbeve}"  th:object="${irrbbeve}" method="post" >
+<!--<form th:action="@{/updateirrbeve}"  th:object="${irrbbeve}" method="post" >-->
+	
+	<form id="irrbbeve" th:action="@{/updateirrbeve}" th:object="${irrbbeve}"  method="post">
+
 	<div class="card" style="margin-left: 15px;margin-right: 15px;">
 		
 		
 		<div class="role-page-header d-flex justify-content-between align-items-center">
 								    <!-- Left: Page Title -->
-								    <div >
+								    <div>
 								        <h4 >IRRBB EVE - Edit</h4>
 		
 
@@ -2031,7 +2059,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
     <!-- Submit -->
    <div class="card-footer text-center">
-   <button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+   <button type="submit" class="role-btn" onclick="updateformeve(event)">Update</button>
 <a th:href="@{/IRRBB_data_Template(formmode='list')}"  style="text-decoration: none;" class="role-btn">Cancel</a>
     </div>
     

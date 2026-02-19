@@ -15,7 +15,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class RT_IRRBB_Data_EAR {
 	
 	@Id
-	private String SI_NO;
+	@Column(name = "SI_NO")
+	private BigDecimal SI_NO;
+
 
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "REPORT_DATE")
@@ -157,12 +159,12 @@ public class RT_IRRBB_Data_EAR {
 	    private Date verifyTime;
 
 
-		public String getSI_NO() {
+		public BigDecimal getSI_NO() {
 			return SI_NO;
 		}
 
 
-		public void setSI_NO(String sI_NO) {
+		public void setSI_NO(BigDecimal sI_NO) {
 			SI_NO = sI_NO;
 		}
 
@@ -607,7 +609,7 @@ public class RT_IRRBB_Data_EAR {
 		}
 
 
-		public RT_IRRBB_Data_EAR(String sI_NO, Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
+		public RT_IRRBB_Data_EAR(BigDecimal sI_NO, Date reportDate, String bankName, String groupHeadOfficeSubsidiary,
 				String bankSymbol, String conventionalOrIslamic, String localOrForeign, String cbuaeTiering,
 				String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3,
 				String optionType, String rateType, String referenceRate, String instrumentCurrency,
@@ -671,8 +673,5 @@ public class RT_IRRBB_Data_EAR {
 			super();
 			// TODO Auto-generated constructor stub
 		}
-
-
-		
 
 }
