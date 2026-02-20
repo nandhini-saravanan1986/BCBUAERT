@@ -2584,8 +2584,32 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "list");
 
 		} else {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
+			Timestamp lastdatetimestamp = tradeleveldataderivativessimplifiedRepo.findLastReportDate();
+			Timestamp secondlastdatetimestamp = tradeleveldataderivativessimplifiedRepo.findSecondLastReportDate();			
+			LocalDate lastDate=(lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().toLocalDate();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Trade_Level_Data_Derivative_Simplified_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Level_Data_Derivative_Simplified_Template");
+			if (data != null && !data.equals(null)) {
+				md.addAttribute("data", data);
+				md.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				md.addAttribute("data", secondlastdata);
+				md.addAttribute("formmode", "exist");
+			}else {
+				md.addAttribute("formmode", "add");
+				md.addAttribute("formmode", "null");
+			}
+			md.addAttribute("lastDate", lastDate);
+			md.addAttribute("bankname", "Bank of Baroda");
+
+
 
 			// You had md.addAttribute("formmode", "null"); — removed this line because it
 			// would overwrite the previous one

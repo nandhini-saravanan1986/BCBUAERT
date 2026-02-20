@@ -716,6 +716,10 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		} else if (tabId === 'datacontrols') {
 			window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=add';
 		}
+		else if (tabId === 'detail') {
+			window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=detail';
+		}
+		
 	}
 
 
@@ -738,7 +742,11 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		}
 		if (formmode === 'list') {
 			handleClick('data');
-		} else {
+		}
+		if (formmode === 'detail') {
+			handleClick('detail');
+		}
+		else {
 			handleClick('datacontrols'); // default or formmode=add
 		}
 	});
@@ -829,8 +837,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 				<!-- Data Button -->
 				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
 					Data</button>
-				<button class="role-btn" id="data-btn">
-										Detail</button>
+				<button class="role-btn" id="detail-btn"
+					onclick="navigateToTab('detail')">Detail</button>
 				<!-- CENTER: Title -->
 
 				<!-- RIGHT: Download Button -->
@@ -845,7 +853,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null'  or formmode == 'exist' }">
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null'  or formmode == 'exist'  or formmode == 'detail'}">
 
 			<div class="tab-content" id="myTabContent" style="margin-top: 13px;"
 				th:if="${formmode == null or formmode == 'add'}">
@@ -1699,6 +1707,62 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 						</tr>
 					</tbody>
 				</table>
+			</div>
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 20px;"
+				th:if="${formmode} =='detail'">
+				<div class="tab-pane fade show active scrollable-exist-viewport"
+					id="detail" role="tabpanel">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="table-responsive scrollable-table-container"
+								style="border-right: 1px solid #dee2e6;">
+								<table
+									class="sticky-header-table table table-bordered table-hover table-sm table-condensed"
+									id="reportdetails">
+									<thead class="thead-light">
+										<tr>
+											<th></th>
+											<th>CUST ID</th>
+											<th>ACCT NO</th>
+											<th>ACCT NAME</th>
+											<th style="text-align: right;">ACCT BALANCE</th>
+											<th >ROWID</th>
+											<!-- <th>COLUMNID</th> -->
+											<th>REPORT DATE</th>
+										</tr>
+
+									</thead>
+
+									<tbody style="font-family: Arial;">
+										<tr th:each="report: ${reportdetails}">
+											<td><a data-toggle="tooltip" class="editrec"
+												title="Click to Edit this Record"> <i
+													class="fas fa-edit" style="color: black; cursor: pointer;"
+													th:attr="data-reportid=${reportid}, 
+											                    data-acctNo=${report.acctNumber}, 
+											                    data-asondate=${#dates.format(report.reportDate, 'dd-MM-yyyy')},
+											                    data-type=${type}"
+													onclick="openBRF1Detail(this, 'edit')"> </i>
+											</a></td>
+											<td th:text="${report.custId}"></td>
+											<td th:text="${report.acctNumber}"></td>
+											<td th:text="${report.acctName}"></td>
+											<td
+												th:text="${#numbers.formatDecimal(report.acctBalanceInAed, 1, 3, 'POINT')}"
+												style="text-align: right;"></td>
+											<td th:text="${report.rowId}"></td>
+											<!-- <td th:text="${report.columnId}"></td> -->
+											<td
+												th:text="${#dates.format(report.reportDate, 'dd-MM-yyyy')}"></td>
+
+										</tr>
+									</tbody> 
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 
@@ -3507,5 +3571,60 @@ body {
 #floatingBackBtn, #floatingForwardBtn {
 	z-index: 9999;
 }
+
+
+
+	#reportdetails {
+		border-collapse: collapse !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
+	}
+
+	#reportdetails thead th {
+		background-color: #7b6458;
+		color: #fff;
+		font-family: Arial, sans-serif !important;
+		font-size: 14px !important;
+		text-align: center;
+		vertical-align: middle;
+		white-space: normal;
+		padding: 2px 4px !important;
+		line-height: 1.1 !important;
+		position: sticky;
+		top: 0;
+		/* Keeps the first row at the top */
+		z-index: 10;
+		background-color: #7b6458 !important;
+		/* Ensures the header isn't transparent */
+		color: white;
+		box-shadow: inset 0 -1px 0 #dee2e6;
+		/* Optional: adds a bottom border to the sticky header */
+	}
+
+	.table-responsive {
+	    overflow-y: auto;
+	    max-height: 500px; 
+	}
+
+	/* Base styles for all sticky headers */
+	#reportdetails thead th {
+	    position: sticky !important;
+	    background-color: #7b6458 !important; 
+	    color: white !important;
+	    z-index: 10;
+	    border: 1px solid #dee2e6 !important; 
+	}
+
+	/* Row 1:*/
+	#reportdetails thead tr:nth-child(1) th {
+	    top: 0 !important;
+	    z-index: 20 !important; 
+	}
+
+	/* Row 2: Stays exactly beneath Row 1 to close the gap */
+	#reportdetails thead tr:nth-child(2) th {
+	    top: 16px !important; 
+	    z-index: 19 !important;
+	}
 </style>
 </html>
