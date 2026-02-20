@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -12,5 +13,11 @@ public interface RT_TradeMarketriskDataRepository extends JpaRepository<RT_Trade
 
 	@Query(value = "select * from BCBUAE_TRADE_MARKET_RISK_DATA where DEL_FLG != 'Y'", nativeQuery = true)
 	List<RT_TradeMarketRiskData> getlist();
+	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_TRADE_MARKET_RISK_DATA", nativeQuery = true)
+	Timestamp findLastReportDate();
+	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_TRADE_MARKET_RISK_DATA WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_TRADE_MARKET_RISK_DATA)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 
 }

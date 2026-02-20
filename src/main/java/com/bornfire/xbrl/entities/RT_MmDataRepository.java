@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -27,5 +28,9 @@ public interface RT_MmDataRepository extends JpaRepository<RT_MmData, String> {
 	RT_MmData getParticularDataBySI_NO(String SI_NO);
 	
 	
-
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_MM_DATA", nativeQuery = true)
+	Timestamp findLastReportDate();
+	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_MM_DATA WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_MM_DATA)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 }

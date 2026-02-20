@@ -1282,10 +1282,29 @@ public class XBRLNavigationController {
 			model.addAttribute("formmode", "list");
 			System.out.println("List mode activated");
 		} else {
-			model.addAttribute("data", new RT_TradeMarketRiskData());
-			model.addAttribute("formmode", "add");
-			model.addAttribute("formmode", "null");
-			System.out.println("Add mode activated");
+			Timestamp lastdatetimestamp = trade_market_risk_repo.findLastReportDate();
+			Timestamp secondlastdatetimestamp = trade_market_risk_repo.findSecondLastReportDate();			
+			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Trade_Market_Risk_Data_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Market_Risk_Data_Template");
+			if (data != null && !data.equals(null)) {
+				model.addAttribute("data", data);
+				model.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				model.addAttribute("data", secondlastdata);
+				model.addAttribute("formmode", "exist");
+			}else {
+				model.addAttribute("formmode", "add");
+				model.addAttribute("formmode", "null");
+			}
+			model.addAttribute("lastDate", lastDate);
+			model.addAttribute("bankname", "Bank of Baroda");
 		}
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
 		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
@@ -1377,8 +1396,29 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "list");
 
 		} else {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("formmode", "null");
+			Timestamp lastdatetimestamp = mmdataRepo.findLastReportDate();
+			Timestamp secondlastdatetimestamp = mmdataRepo.findSecondLastReportDate();			
+			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Mm_Data_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Mm_Data_Template");
+			if (data != null && !data.equals(null)) {
+				md.addAttribute("data", data);
+				md.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				md.addAttribute("data", secondlastdata);
+				md.addAttribute("formmode", "exist");
+			}else {
+				md.addAttribute("formmode", "add");
+				md.addAttribute("formmode", "null");
+			}
+			md.addAttribute("lastDate", lastDate);
+			md.addAttribute("bankname", "Bank of Baroda");
 
 			// You had md.addAttribute("formmode", "null"); — removed this line because it
 			// would overwrite the previous one
