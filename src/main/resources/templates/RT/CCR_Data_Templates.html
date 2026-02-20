@@ -969,11 +969,17 @@ label.error {
 						</div>
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div style="padding-right: 10px; padding-left: 20px;"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' or formmode == 'exist' }">
+		<!--<div style="padding-right: 10px; padding-left: 20px;"
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' or formmode == 'exist' }">-->
 
 			<!-- Tabs -->
-			<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='add'">
+			<!--<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='add'">-->
+				
+				<div style="padding-right: 10px; padding-left: 20px;"
+									th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
+									<!-- Tabs -->
+									<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
+										th:if="${formmode} =='null'">
 				<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
 					<div class="row">
@@ -1106,16 +1112,20 @@ label.error {
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3 mb-4">
+							<!--<div class="card-footer text-center mt-3 mb-4">
 								<button th:if="${formmode == 'add'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
-							</div>
+							</div>-->
+							<div class="card-footer text-center"  style="margin-top:-15px;">
+							<button th:if="${formmode == 'null'}" id="savebutton"
+							type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+						 </div>
 						</div>
 					</div>
 				</div>
 			</div>
 						
-			<div class="tab-content" id="myTabContent" style="margin-top: 20px;"
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
 				th:if="${formmode} =='exist'">
 				<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
@@ -1249,7 +1259,7 @@ label.error {
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3">
+							<div class="card-footer text-center"  style="margin-top:-15px;">
 								<button th:if="${formmode == 'exist'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
@@ -1892,8 +1902,10 @@ label.error {
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg">Update successful!</p>
 					<!--<button type="button" class="role-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
-					<a th:href="@{/CCR_Data_Templates(formmode='list')}"
-						class="role-btn" style="text-decoration: none;">Close</a>
+					<!--<a th:href="@{/CCR_Data_Templates(formmode='list')}"
+						class="role-btn" style="text-decoration: none;">Close</a>-->
+						
+						<button  type="button" class="role-btn" onclick="closeAlertAndRedirect()">Close</button>
 				</div>
 			</div>
 		</div>
@@ -2418,6 +2430,9 @@ body {
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
+function closeAlertAndRedirect() {
+		location.href = 'CCR_Data_Templates';
+	}
 </script>
 
 </html>

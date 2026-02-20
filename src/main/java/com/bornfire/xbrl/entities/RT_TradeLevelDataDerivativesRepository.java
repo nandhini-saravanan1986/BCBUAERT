@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -24,4 +25,9 @@ public interface RT_TradeLevelDataDerivativesRepository extends JpaRepository<RT
 	@Query(value = "SELECT * FROM BCBUAE_TRADE_LEVEL_DERIVATIVES where SI_NO =?1 ", nativeQuery = true)
 	RT_TradeLevelDataDerivatives getParticularDataBySI_NO(String SI_NO);
 	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_TRADE_LEVEL_DERIVATIVES", nativeQuery = true)
+	Timestamp findLastReportDate();
+		
+     @Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_TRADE_LEVEL_DERIVATIVES WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_TRADE_LEVEL_DERIVATIVES)", nativeQuery = true)
+    Timestamp findSecondLastReportDate();
 }

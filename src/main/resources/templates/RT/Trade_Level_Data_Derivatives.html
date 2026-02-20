@@ -920,10 +920,10 @@ if (tabId === 'data') {
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<div style="padding-right: 10px; padding-left: 20px;"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-
-			<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
-				th:if="${formmode} =='null'">
+					th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
+					<!-- Tabs -->
+					<div class="tab-content" id="myTabContent" style="margin-top: 2px;"
+						th:if="${formmode} =='null'">
 				<div  class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
 					<div class="row">
@@ -1056,7 +1056,7 @@ if (tabId === 'data') {
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3 mb-3">
+							<div class="card-footer text-center">
 								<button th:if="${formmode == 'null'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
@@ -1065,7 +1065,7 @@ if (tabId === 'data') {
 				</div>
 			</div>
 			
-			<div class="tab-content" id="myTabContent" style="margin-top: 20px;"
+			<div class="tab-content" id="myTabContent" style="margin-top: 1px;"
 				th:if="${formmode} =='exist'">
 				<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
@@ -1199,7 +1199,7 @@ if (tabId === 'data') {
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3">
+							<div class="card-footer text-center">
 								<button th:if="${formmode == 'exist'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>

@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -18,5 +19,9 @@ public interface RT_Investment_Risk_Data_Dashboard_TemplateRepository extends Jp
 	List<Object[]> getinvestmentriskdata1();
     
     
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_INVESTMENT_RISK_DATA_DASHBOARD_TEMPLATE", nativeQuery = true)
+	Timestamp findLastReportDate();
 	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_INVESTMENT_RISK_DATA_DASHBOARD_TEMPLATE WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_INVESTMENT_RISK_DATA_DASHBOARD_TEMPLATE)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 }
