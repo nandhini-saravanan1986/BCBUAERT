@@ -59,10 +59,8 @@ public class RT_Irrbb_Eve_Service {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
 	   // RT_IRRBB_Data_EVE_Template existing = IRRB_EVE_Repo.getParticularDataBySI_NO(updatedData.getSI_NO());
-	    
-	    RT_IRRBB_Data_EVE_Template existing =
-	    		IRRB_EVE_Repo.findById(updatedData.getSI_NO())
-	                                .orElse(null);
+	    RT_IRRBB_Data_EVE_Template existing =null;
+	    //RT_IRRBB_Data_EVE_Template existing =IRRB_EVE_Repo.findById(updatedData.getSI_NO()).orElse(null);
 
 	    if (existing != null) {
 	        // Update fields
