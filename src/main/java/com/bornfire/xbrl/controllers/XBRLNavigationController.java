@@ -2561,8 +2561,8 @@ public class XBRLNavigationController {
 		else if ("editeve".equalsIgnoreCase(formmode)) {
 			System.out.println("EVE is formmode");
 			//RT_IRRBB_Data_EVE_Template data = IRRB_EVE_Repo.getParticularDataBySI_NO(SI_NO);
-			RT_IRRBB_Data_EVE_Template data =
-					IRRB_EVE_Repo.findById(SI_NO).orElse(null);
+			//RT_IRRBB_Data_EVE_Template data =IRRB_EVE_Repo.findById(SI_NO).orElse(null);
+			RT_IRRBB_Data_EVE_Template data =null;
 			md.addAttribute("irrbbeve", data);
 			md.addAttribute("formmode", "editeve");
 		}
@@ -2593,6 +2593,11 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "DiscountRate");
 			md.addAttribute("ISListDiscount", list); // Used in HTML table
 			System.out.println("Formmode" + formmode);
+		}
+		else if ("Detaillist".equalsIgnoreCase(formmode)) {
+			md.addAttribute("formmode", "Detaillist");
+			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
+			
 		}
 
 		/*

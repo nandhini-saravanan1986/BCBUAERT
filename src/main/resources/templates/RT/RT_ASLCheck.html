@@ -582,26 +582,35 @@
 
 				}
 	</style>
-	
 	<script>
-		$(document).ready(function () {
-					let tableHeight = $(window).height() - 330; // subtract header/footer space
-					if (tableHeight < 200) tableHeight = 200;   // minimum height
+	function initUserTable() {
+		  let tableHeight = $(window).height() - 330;
+		  if (tableHeight < 200) tableHeight = 200;
 
-					$('#usertable').DataTable({
-						destroy: true,
-						scrollY: tableHeight + "px", // dynamic height
-						scrollCollapse: false,
-						paging: true,
-						autoWidth: false,
-						ordering: false,
-						searching: true,
-						scrollX: true,
-						pageLength: 100,
-						lengthChange: false,
-						responsive: true
-					});
-				});
+		  $('#usertable').DataTable({
+		    destroy: true,
+		    scrollY: tableHeight + "px",
+		    scrollCollapse: true,
+		    paging: true,
+		    autoWidth: false,
+		    ordering: false,
+		    searching: true,
+		    scrollX: true,
+		    pageLength: 25,
+		    lengthChange: false,
+		    responsive: true
+		  });
+		}
+
+		$(document).ready(function () {
+		  initUserTable();
+		});
+
+	
+		$(window).on("resize", function () {
+		  $('#usertable').DataTable().destroy();
+		  initUserTable();
+		});
 		
 	</script>
 	
@@ -615,10 +624,16 @@
 			var RequestType=document.getElementById("RequestType").value;	
 			var TotalLimit=document.getElementById("TotalLimit");
 			var AvailableLimit=document.getElementById("AvailableLimit");
+			const exposureEl = document.getElementById("Totalexposure");
 			var TotalLimitcal=0;
 			var AvailableLimitcal=0;
 			TotalLimit.value=0.00;
 			AvailableLimit.value=0.00;
+			
+			if (exposureEl) {
+				exposureEl.value=0.00;
+			}
+			
 			
 			if (RequestType === "") {
 			    alert("Please Select RequestType");
@@ -636,17 +651,30 @@
 						//alert(BankName);				
 						if(RequestType==="TradeFinance"){
 							TotalLimit.value=item.trade_finance_limits;
-							AvailableLimit.value=item.tf_limits_avlble;
+							AvailableLimit.value=((item.trade_finance_limits)-(item.trade_finance_exposure)).toFixed(2);
+							if (exposureEl) {
+								  exposureEl.value = Number(item.trade_finance_exposure).toFixed(2);
+								}
+							
+							
 							
 						}
 						else if(RequestType==="MoneyMarket"){
 							TotalLimit.value=(item.money_market_limit).toFixed(2);
 							AvailableLimit.value=((item.money_market_limit)-(item.money_market_exposure)).toFixed(2);
+							if (exposureEl) {
+								 exposureEl.value = Number(item.money_market_exposure).toFixed(2);
+							}
+						
+							
 							
 						}
 						else if(RequestType==="SettlementLimit"){
 							TotalLimit.value=(item.settlement_limit).toFixed(2);
 							AvailableLimit.value=((item.settlement_limit)-(item.settlement_exposure)).toFixed(2);	
+							if (exposureEl) {
+								 exposureEl.value = Number(item.settlement_exposure).toFixed(2);
+							}
 							
 						}
 					}
@@ -795,6 +823,7 @@
 												<th style="white-space: nowrap;text-align: center;">Request Type</th>
 												<th style="white-space: nowrap;text-align: center;">Bank Name</th>
 												<th style="white-space: nowrap;text-align: center;">Total Limit In USD(MN)</th>
+												<th style="white-space: nowrap;text-align: center;">Total Exposure In USD(MN)</th>
 												<th style="white-space: nowrap;text-align: center;">Available Limit</th>
 											</tr>
 										</thead>
@@ -815,8 +844,9 @@
 												<option th:each="BankLimitdatas:${BankLimitdata}" th:value="${BankLimitdatas.bank_name}" th:text="${BankLimitdatas.bank_name}"></option>
 												</select>
 											</td>
-											<td><input type="text" id="TotalLimit" class="TotalLimit form-control form-control-sm"></td>
-											<td><input type="text" id="AvailableLimit"  class="AvailableLimit form-control form-control-sm"></td>
+											<td><input type="text" id="TotalLimit" class="TotalLimit form-control form-control-sm" readonly></td>
+											<td><input type="text" id="Totalexposure" class="Totalexposure form-control form-control-sm" readonly></td>
+											<td><input type="text" id="AvailableLimit"  class="AvailableLimit form-control form-control-sm" readonly></td>
 											</tr>
 										</tbody>
 									</table>

@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -10,15 +11,42 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
-@IdClass(RT_IRRBB_Data_EVE_Template_Idclass.class)
-@Entity
-@Table(name="BCBUAE_IRRBB_DATA_TEMPLATE")
-public class RT_IRRBB_Data_EVE_Template {
-	
-	@Column(name = "SI_NO")
-	private BigDecimal SI_NO;
 
+@Entity
+@IdClass(RT_IRRBB_Data_EVE_Template_Detail_Id.class)
+@Table(name = "BCBUAE_IRRBB_DATA_TEMPLATE_DETAIL")
+
+public class RT_IRRBB_Data_EVE_Template_Detail {
 	
+	@Column(name = "CUST_ID")
+    private String custId;
+	
+	@Id
+	@Column(name = "FORACID")
+    private String foracid;
+
+    @Column(name = "ACCT_NAME")
+    private String acctName;
+    
+    @Column(name = "GL_CODE")
+    private String glCode;
+
+    @Column(name = "GLSH_CODE")
+    private String glshCode;
+    
+    @Column(name = "SCHM_CODE")
+    private String schmCode;
+
+    @Column(name = "SCHM_TYPE")
+    private String schmType;
+    
+    @Column(name = "SOL_ID")
+    private String solId;
+
+    @Column(name = "ACID")
+    private String acid;
+
+	@Id
 	@Column(name = "REPORT_DATE")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date date;
@@ -48,15 +76,12 @@ public class RT_IRRBB_Data_EVE_Template {
 	@Column(name = "SCENARIO")
 	private String scenario;
 	
-	@Id
 	@Column(name = "GL_LEVEL_1")
 	private String glLevel1;
 	
-	@Id
 	@Column(name = "GL_LEVEL_2")
 	private String glLevel2;
 	
-	@Id
 	@Column(name = "GL_LEVEL_3")
 	private String glLevel3;
 	
@@ -175,12 +200,76 @@ public class RT_IRRBB_Data_EVE_Template {
 	@Column(name = "VERIFY_TIME")
 	private Date verifyTime;
 
-	public BigDecimal getSI_NO() {
-		return SI_NO;
+	public String getCustId() {
+		return custId;
 	}
 
-	public void setSI_NO(BigDecimal sI_NO) {
-		SI_NO = sI_NO;
+	public void setCustId(String custId) {
+		this.custId = custId;
+	}
+
+	public String getForacid() {
+		return foracid;
+	}
+
+	public void setForacid(String foracid) {
+		this.foracid = foracid;
+	}
+
+	public String getAcctName() {
+		return acctName;
+	}
+
+	public void setAcctName(String acctName) {
+		this.acctName = acctName;
+	}
+
+	public String getGlCode() {
+		return glCode;
+	}
+
+	public void setGlCode(String glCode) {
+		this.glCode = glCode;
+	}
+
+	public String getGlshCode() {
+		return glshCode;
+	}
+
+	public void setGlshCode(String glshCode) {
+		this.glshCode = glshCode;
+	}
+
+	public String getSchmCode() {
+		return schmCode;
+	}
+
+	public void setSchmCode(String schmCode) {
+		this.schmCode = schmCode;
+	}
+
+	public String getSchmType() {
+		return schmType;
+	}
+
+	public void setSchmType(String schmType) {
+		this.schmType = schmType;
+	}
+
+	public String getSolId() {
+		return solId;
+	}
+
+	public void setSolId(String solId) {
+		this.solId = solId;
+	}
+
+	public String getAcid() {
+		return acid;
+	}
+
+	public void setAcid(String acid) {
+		this.acid = acid;
 	}
 
 	public Date getDate() {
@@ -583,12 +672,13 @@ public class RT_IRRBB_Data_EVE_Template {
 		this.verifyTime = verifyTime;
 	}
 
-	public RT_IRRBB_Data_EVE_Template(BigDecimal sI_NO, Date date, String bankName, String groupHeadOfficeSubsidiary,
-			String bankSymbol, String conventionalOrIslamic, String localOrForeign, String cbuaeTiering,
-			String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3, String optionType,
-			String rateType, String referenceRate, String instrumentCurrency, BigDecimal outstandingBalance,
-			BigDecimal overnight, BigDecimal onToOneM, BigDecimal oneMToThreeM, BigDecimal threeMToSixM,
-			BigDecimal sixMonthToNineM, BigDecimal nineMonthToOneY, BigDecimal oneYToFiveY,
+	public RT_IRRBB_Data_EVE_Template_Detail(String custId, String foracid, String acctName, String glCode,
+			String glshCode, String schmCode, String schmType, String solId, String acid, Date date, String bankName,
+			String groupHeadOfficeSubsidiary, String bankSymbol, String conventionalOrIslamic, String localOrForeign,
+			String cbuaeTiering, String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3,
+			String optionType, String rateType, String referenceRate, String instrumentCurrency,
+			BigDecimal outstandingBalance, BigDecimal overnight, BigDecimal onToOneM, BigDecimal oneMToThreeM,
+			BigDecimal threeMToSixM, BigDecimal sixMonthToNineM, BigDecimal nineMonthToOneY, BigDecimal oneYToFiveY,
 			BigDecimal onePointFiveYToTwoY, BigDecimal twoYToThreeY, BigDecimal threeYToFourY, BigDecimal fourYToFiveY,
 			BigDecimal fiveYToSixY, BigDecimal sixYToSevenY, BigDecimal sevenYToEightY, BigDecimal eightYToNineY,
 			BigDecimal nineYToTenY, BigDecimal tenYToFifteenY, BigDecimal fifteenYToTwentyY, BigDecimal twentyYearAbove,
@@ -596,7 +686,15 @@ public class RT_IRRBB_Data_EVE_Template {
 			String delFlg, String reportCode, Date reportSubmitDate, String entryUser, String modifyUser,
 			String verifyUser, Date entryTime, Date modifyTime, Date verifyTime) {
 		super();
-		SI_NO = sI_NO;
+		this.custId = custId;
+		this.foracid = foracid;
+		this.acctName = acctName;
+		this.glCode = glCode;
+		this.glshCode = glshCode;
+		this.schmCode = schmCode;
+		this.schmType = schmType;
+		this.solId = solId;
+		this.acid = acid;
 		this.date = date;
 		this.bankName = bankName;
 		this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
@@ -649,9 +747,10 @@ public class RT_IRRBB_Data_EVE_Template {
 		this.verifyTime = verifyTime;
 	}
 
-	public RT_IRRBB_Data_EVE_Template() {
+	public RT_IRRBB_Data_EVE_Template_Detail() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	
 }
