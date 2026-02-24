@@ -933,19 +933,12 @@ TESTED BY   : RAJALAKSHMI R
 
 	</div>
 	<!-- -------------------User List Starts----------------------------------------------------- -->
-	<div style="padding-right: 10px;padding-left: 20px;"
-		th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist'}">
-
-
-
-
-
+	<div style="padding-right: 10px; padding-left: 20px;"
+						th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
+						<!-- Tabs -->
+						<div class="tab-content" id="myTabContent" style="margin-top: 2px;"
+							th:if="${formmode == 'null'}">
 		<!-- Tabs -->
-
-
-
-		<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
-			th:if="${formmode == null or formmode == 'add'}">
 			<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
 					<div class="row">
@@ -1078,8 +1071,8 @@ TESTED BY   : RAJALAKSHMI R
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3">
-								<button th:if="${formmode == 'add'}" id="savebutton"
+							<div class="card-footer text-center">
+								<button th:if="${formmode == 'null'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
@@ -1093,7 +1086,7 @@ TESTED BY   : RAJALAKSHMI R
 					id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="nostroForm" method="post" autocomplete="off"
+							<form id="mmdataForm" method="post" autocomplete="off"
 								class="compact-form">
 								<div class="card-body">
 
@@ -1221,7 +1214,7 @@ TESTED BY   : RAJALAKSHMI R
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3">
+							<div class="card-footer text-center">
 								<button th:if="${formmode == 'exist'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>

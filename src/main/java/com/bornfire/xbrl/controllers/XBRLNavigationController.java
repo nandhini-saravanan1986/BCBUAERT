@@ -948,7 +948,29 @@ public class XBRLNavigationController {
 			 * model.addAttribute("securityData", new
 			 * RT_Investment_Securities_Data_Template()); }
 			 */else {
-			model.addAttribute("formmode", "add");
+				 Timestamp lastdatetimestamp = investmentSecuritiesDataTemplateRepo.findLastReportDate();
+					Timestamp secondlastdatetimestamp = investmentSecuritiesDataTemplateRepo.findSecondLastReportDate();			
+					LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+					String lastDateString = (lastdatetimestamp == null) ? null
+							: lastdatetimestamp.toLocalDateTime().format(formatter);
+					String secondLastDateString =(secondlastdatetimestamp == null) ? null
+							:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+					RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Investment_Securities_Data_Template");
+					RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Investment_Securities_Data_Template");
+					if (data != null && !data.equals(null)) {
+						model.addAttribute("data", data);
+						model.addAttribute("formmode", "exist");
+					}
+					else if(secondlastdata != null && !secondlastdata.equals(null)){
+						model.addAttribute("data", secondlastdata);
+						model.addAttribute("formmode", "exist");
+					}else {
+						model.addAttribute("formmode", "add");
+						model.addAttribute("formmode", "null");
+					}
+					model.addAttribute("lastDate", lastDate);
+					model.addAttribute("bankname", "Bank of Baroda");
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
@@ -988,8 +1010,29 @@ public class XBRLNavigationController {
 			model.addAttribute("formmode", "list");
 			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist());
 		} else {
-			model.addAttribute("formmode", "add");
-			model.addAttribute("liquidityData", new RT_Liquidity_Risk_Data_Template());
+			Timestamp lastdatetimestamp = LiquidityRiskDataRepository.findLastReportDate();
+			Timestamp secondlastdatetimestamp = LiquidityRiskDataRepository.findSecondLastReportDate();			
+			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Liquidity_Risk_Data_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Liquidity_Risk_Data_Template");
+			if (data != null && !data.equals(null)) {
+				model.addAttribute("data", data);
+				model.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				model.addAttribute("data", secondlastdata);
+				model.addAttribute("formmode", "exist");
+			}else {
+				model.addAttribute("formmode", "add");
+				model.addAttribute("formmode", "null");
+			}
+			model.addAttribute("lastDate", lastDate);
+			model.addAttribute("bankname", "Bank of Baroda");
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
