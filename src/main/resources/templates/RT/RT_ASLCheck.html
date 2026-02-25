@@ -619,74 +619,71 @@
 		/*<![CDATA[*/
 		let BankLimitdata = /*[[${BankLimitdata}]]*/[];
 		
-		function getaslcheckbybankname(){
-			var BankName=document.getElementById("BankName").value;	
-			var RequestType=document.getElementById("RequestType").value;	
-			var TotalLimit=document.getElementById("TotalLimit");
-			var AvailableLimit=document.getElementById("AvailableLimit");
-			const exposureEl = document.getElementById("Totalexposure");
-			var TotalLimitcal=0;
-			var AvailableLimitcal=0;
-			TotalLimit.value=0.00;
-			AvailableLimit.value=0.00;
-			
-			if (exposureEl) {
-				exposureEl.value=0.00;
-			}
-			
-			
-			if (RequestType === "") {
-			    alert("Please Select RequestType");
-			    return;
-			  }
-			
-			  if (BankName === "") {
-			    //alert("Please Select BankName");
-			    return;
-			  }
-			  
-			
-			BankLimitdata.forEach(item => {
-					if(BankName===item.bank_name){
-						//alert(BankName);				
-						if(RequestType==="TradeFinance"){
-							TotalLimit.value=item.trade_finance_limits;
-							AvailableLimit.value=((item.trade_finance_limits)-(item.trade_finance_exposure)).toFixed(2);
-							if (exposureEl) {
-								  exposureEl.value = Number(item.trade_finance_exposure).toFixed(2);
-								}
-							
-							
-							
-						}
-						else if(RequestType==="MoneyMarket"){
-							TotalLimit.value=(item.money_market_limit).toFixed(2);
-							AvailableLimit.value=((item.money_market_limit)-(item.money_market_exposure)).toFixed(2);
-							if (exposureEl) {
-								 exposureEl.value = Number(item.money_market_exposure).toFixed(2);
-							}
-						
-							
-							
-						}
-						else if(RequestType==="SettlementLimit"){
-							TotalLimit.value=(item.settlement_limit).toFixed(2);
-							AvailableLimit.value=((item.settlement_limit)-(item.settlement_exposure)).toFixed(2);	
-							if (exposureEl) {
-								 exposureEl.value = Number(item.settlement_exposure).toFixed(2);
-							}
-							
-						}
-					}
-				  
-				});
+		function getaslcheckbybankname() {
+		    const BankName = document.getElementById("BankName").value;
+		    const RequestType = document.getElementById("RequestType").value;
+		    const TotalLimitEl = document.getElementById("TotalLimit");
+		    const AvailableLimitEl = document.getElementById("AvailableLimit");
+		    const exposureEl = document.getElementById("Totalexposure");
+
+		    let totalLimit = 0;
+		    let totalExposure = 0;
+
+		    TotalLimitEl.value = "0.00";
+		    AvailableLimitEl.value = "0.00";
+		    if (exposureEl) exposureEl.value = "0.00";
+
+		    if (RequestType === "") {
+		        alert("Please Select RequestType");
+		        return;
+		    }
+
+		    if (BankName === "") {
+		        return;
+		    }
+
+		    BankLimitdata.forEach(item => {
+		        if (BankName === item.bank_name) {
+
+		            if (RequestType === "TradeFinance") {
+		                totalLimit += Number(item.trade_finance_limits) || 0;
+		                totalExposure += Number(item.trade_finance_exposure) || 0;
+		            }
+
+		            else if (RequestType === "MoneyMarket") {
+		                totalLimit += Number(item.money_market_limit) || 0;
+		                totalExposure += Number(item.money_market_exposure) || 0;
+		            }
+
+		            else if (RequestType === "SettlementLimit") {
+		                totalLimit += Number(item.settlement_limit) || 0;
+		                totalExposure += Number(item.settlement_exposure) || 0;
+		            }
+		        }
+		    });
+
+		    const available = totalLimit - totalExposure;
+
+		    TotalLimitEl.value = totalLimit.toFixed(2);
+		    AvailableLimitEl.value = available.toFixed(2);
+
+		    if (exposureEl) {
+		        exposureEl.value = totalExposure.toFixed(2);
+		    }
 		}
 		
 		
 		function getbranchrequestlist(){
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			location.href = 'ASLCheck?formmode=Branchrequestlist';
+			location.href = 'ASLCheck?formmode=Branchrequestlistactive';
 		}
+		
+		function getbranchrequestlisthis(){
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'ASLCheck?formmode=Branchrequestlisthistory';
+		}
+		
+		
 		
 		function getbranchrequestadd(){
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
@@ -824,7 +821,7 @@
 												<th style="white-space: nowrap;text-align: center;">Bank Name</th>
 												<th style="white-space: nowrap;text-align: center;">Total Limit In USD(MN)</th>
 												<th style="white-space: nowrap;text-align: center;">Total Exposure In USD(MN)</th>
-												<th style="white-space: nowrap;text-align: center;">Available Limit</th>
+												<th style="white-space: nowrap;text-align: center;">Available Limit In USD(MN)</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -856,7 +853,7 @@
 				</div>
 			</div>
 			
-			<div th:if="${formmode}=='Branchrequestlist'" >
+			<div th:if="${formmode=='Branchrequestlistactive' or formmode=='Branchrequestlisthistory'}" >
 				<form action="#" method="post" autocomplete="off" id="Branchrequest">
 					<div class="card">
 						<div id="pageHeader" class="role-page-header">
@@ -866,8 +863,14 @@
 
 							</div>
 							<div class="btn-group">
-								<button type="button" class="role-btn" th:if="${roleId}=='ADM-M'" onclick="getbranchrequestadd();">
+								<button type="button" class="role-btn" th:if="${roleId=='ADM-M' and formmode == 'Branchrequestlistactive'}" onclick="getbranchrequestadd();">
 									Limit Request Add
+								</button>
+								<button type="button" class="role-btn" th:if="${roleId=='ADM-M' and formmode == 'Branchrequestlistactive'}" onclick="getbranchrequestlisthis();">
+									Request History
+								</button>
+								<button type="button" class="role-btn" th:if="${roleId=='ADM-M' and formmode == 'Branchrequestlisthistory'}" onclick="getbranchrequestlist();">
+									Active Requests
 								</button>
 							</div>
 						</div>
@@ -883,7 +886,7 @@
 												<th style="white-space: nowrap;text-align: left;">Branch</th>
 												<th style="white-space: nowrap;text-align: left;">Bank Name</th>
 												<th style="white-space: nowrap;text-align: right;">Total Limit In USD(MN)</th>
-												<th style="white-space: nowrap;text-align: right;">Available Limit</th>
+												<th style="white-space: nowrap;text-align: right;">Available LimitIn USD(MN)</th>
 												<th style="white-space: nowrap;text-align: right;">Proposed Amt In USD(MN)</th>
 												<th style="white-space: nowrap;text-align: right;">Tenure In Months </th>
 												<th style="white-space: nowrap;text-align: right;">Rate Approved</th>
@@ -941,7 +944,7 @@
 												<th style="white-space: nowrap;text-align: center;">Branch</th>
 												<th style="white-space: nowrap;text-align: center;">Bank Name</th>
 												<th style="white-space: nowrap;text-align: center;">Total Limit In USD(MN)</th>
-												<th style="white-space: nowrap;text-align: center;">Available Limit</th>
+												<th style="white-space: nowrap;text-align: center;">Available Limit In USD(MN)</th>
 												<th style="white-space: nowrap;text-align: center;">Proposed Amt In USD(MN)</th>
 												<th style="white-space: nowrap;text-align: center;">Tenure In Months </th>
 												<th style="white-space: nowrap;text-align: center;">Rate Approved</th>

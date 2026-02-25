@@ -13,8 +13,11 @@ public interface Limit_Request_Rep  extends JpaRepository<Limit_Request_Entity, 
 	int getSrlNo();
 
 	
-	@Query(value = "SELECT * FROM LIMIT_REQUEST WHERE DEL_FLG = 'N' AND createdate >= SYSDATE - 3",nativeQuery = true)
+	@Query(value = "SELECT * FROM LIMIT_REQUEST WHERE DEL_FLG = 'N' AND EXECUTION_DATE >= trunc(SYSDATE)",nativeQuery = true)
 	List<Limit_Request_Entity> getAllLimitRequestList();
+	
+	@Query(value = "SELECT * FROM LIMIT_REQUEST WHERE DEL_FLG = 'N' AND EXECUTION_DATE < trunc(SYSDATE)",nativeQuery = true)
+	List<Limit_Request_Entity> getAllLimitRequestListhis();
 
 
 	

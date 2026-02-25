@@ -3696,15 +3696,39 @@ public class XBRLNavigationController {
 			md.addAttribute("menu", "Limit Request - ASL");
 			md.addAttribute("formmode", "Branchrequestadd");
 			md.addAttribute("currentDate", new Date());
-		}else if(formmode.equals("Branchrequestlist")) {
-			md.addAttribute("menu", "Limit Request List - ASL");
-			md.addAttribute("formmode", "Branchrequestlist");
+		}else if(formmode.equals("Branchrequestlistactive")) {
+			md.addAttribute("menu", "Active Limit Request List - ASL");
+			md.addAttribute("formmode", "Branchrequestlistactive");
 			md.addAttribute("Requestlist", limit_request_rep.getAllLimitRequestList());
+			
+		}else if(formmode.equals("Branchrequestlisthistory")) {
+			md.addAttribute("menu", "History Limit Request List - ASL");
+			md.addAttribute("formmode", "Branchrequestlisthistory");
+			md.addAttribute("Requestlist", limit_request_rep.getAllLimitRequestListhis());
 			
 			
 		}
 		
 		List<BankLimit_Entity> BankLimitdata =banklimit_rep.getallbanknamemaxdate();
+		List<Limit_Request_Entity> tempreqlimit=limit_request_rep.getAllLimitRequestList();
+		for(Limit_Request_Entity reqlimit:tempreqlimit) {
+			BankLimit_Entity tembanklimitdata=new BankLimit_Entity();
+			String RequestType =reqlimit.getRequestType();
+			if(RequestType.equals("TradeFinance")) {
+				tembanklimitdata.setTrade_finance_exposure(reqlimit.getProposedAmt());
+				tembanklimitdata.setBank_name(reqlimit.getBankName());
+			}
+			else if(RequestType.equals("MoneyMarket")) {
+				tembanklimitdata.setMoney_market_exposure(reqlimit.getProposedAmt());
+				tembanklimitdata.setBank_name(reqlimit.getBankName());
+			}else if(RequestType.equals("SettlementLimit")) {
+				tembanklimitdata.setSettlement_exposure(reqlimit.getProposedAmt());
+				tembanklimitdata.setBank_name(reqlimit.getBankName());
+			}
+			
+			BankLimitdata.add(tembanklimitdata);
+		}
+		
 		md.addAttribute("BankLimitdata",BankLimitdata);
 	return "RT/RT_ASLCheck";
 		
