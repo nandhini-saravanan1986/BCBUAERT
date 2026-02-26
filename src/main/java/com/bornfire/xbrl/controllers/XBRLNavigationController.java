@@ -1842,7 +1842,7 @@ public class XBRLNavigationController {
 
 		// Call stored procedure with 1 VARCHAR2 parameter
 
-		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("MIS_REPORT_WORKING");
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("RT_ASL_FINAL_STATEMENT_GENERATE_PROCEDURE");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.setParameter(1, formattedDate);
 		query.execute();
@@ -3537,6 +3537,12 @@ public class XBRLNavigationController {
 				resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
 			} else if ("MFD".equals(reportType)) {
 				resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, fromDate, toDate, username);
+			} else if ("GAMDATADUMP".equals(reportType)) {
+				resultMsg = rwaService.UploadEabandGamdata(file, reportType, toDate);
+			} else if ("ONLY_EAB_TABLE_DATA".equals(reportType)) {
+				resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
+			} else if ("RWABILLDETAIL".equals(reportType)) {
+				resultMsg = rwaService.Uploadrwadata(file, reportType, toDate);
 			} else {
 				return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
 			}

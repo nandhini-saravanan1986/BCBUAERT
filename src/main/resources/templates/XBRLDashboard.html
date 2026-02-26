@@ -415,7 +415,6 @@
 			document.querySelector(".ToptenSingleborrowerdiv").style.display = "none";
 			document.querySelector(".ToptenGroupborrowerdiv").style.display = "none";
 			document.querySelector(".Exposure_outside_GCC").style.display = "none";
-			document.querySelector(".CountryExposuredetail").style.display = "none";
 			document.querySelector(".Mortageloan_block").style.display = "none";
 			document.querySelector(".Mortageloan_table").style.display = "none";
 			document.querySelector(".Sector_Industrial").style.display = "none";
@@ -1197,46 +1196,21 @@
 				document.querySelector(".ToptenGroupborrowerdiv").style.display = "block";
 
 			} else if (labelsrlno === "10") {
+				
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
 
-				var trHTML = "";
-				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
 
-				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Exposuresummarydata', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
-					}
-				})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("HTTP error " + response.status);
-						}
-						return response.json();
-					})
-					.then(list => {
-						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
-						list.forEach(function (data) {
-							document.getElementById("Outside_gcc_exp").textContent =
-								(data[0] + '%');
-							document.getElementById("Only_gcc_Exp").textContent =
-								(data[1] + '%');
-							document.getElementById("Outside_gcc_rwa").textContent =
-								(data[2] + '%');
-							document.getElementById("Gcc_Rwa").textContent =
-								(data[3] + '%');
-						});
-					})
-					.catch(error => {
-						alert("Error fetching exposure data: " + error.message);
-						$("#invalidfile").modal("toggle");
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				document.getElementById('outsideGccLink').dataset.reportDate = labelReport_date;
-				document.getElementById('GccLink').dataset.reportDate = labelReport_date;
-				document.querySelector(".CountryExposuredetail").style.display = "grid";
-
+					document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 			} else if (labelsrlno === "9") {
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Mortageloanappetite', {
@@ -2561,126 +2535,7 @@
 
 			const Report_dateSelected = el.dataset.reportDate;
 
-			if (a === 'Outsidegcc') {
-
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
-				fetch("./Getbarchart?Matrix_Srl_no=" + '10A' + '&Report_date=' + Report_dateSelected) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 100);
-					});
-
-				fetch("./Getprogresschart?Matrix_Srl_no=" + '10A' + '&Report_date=' + Report_dateSelected) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 100);
-					});
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-
-
-
-				var trHTML = "";
-				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureoutsidegcc', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
-					}
-				})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("HTTP error " + response.status);
-						}
-						return response.json();
-					})
-					.then(list => {
-						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
-						list.forEach(function (data) {
-							trHTML +=
-								"<tr>" +
-								"<td>" + (data[0] || "") + "</td>" +
-								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
-								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
-								"<td>" + (data[3] + '%' || "") + "</td>" +
-								"<td>" + (data[4] + '%' || "") + "</td>" +
-								"</tr>";
-						});
-
-						// Replace body content
-						document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
-						document.getElementById("CountryExposuretablename").innerHTML = 'Outside GCC Country Exposure';
-
-					})
-					.catch(error => {
-						alert("Error fetching exposure data: " + error.message);
-						$("#invalidfile").modal("toggle");
-					});
-				document.querySelector(".Exposure_outside_GCC").style.display = "block";
-			} else if (a === 'OnlyGcc') {
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
-				fetch("./Getbarchart?Matrix_Srl_no=" + '10B' + '&Report_date=' + Report_dateSelected) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatemonthlychart(labels, dataValues, 5, 100);
-					});
-
-				fetch("./Getprogresschart?Matrix_Srl_no=" + '10B' + '&Report_date=' + Report_dateSelected) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 100);
-					});
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				var trHTML = "";
-				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
-				fetch('./Limitdetaildata?Report_date=' + Report_dateSelected + '&Data_Type_Used=' + 'Exposureonlygcc', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
-					}
-				})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("HTTP error " + response.status);
-						}
-						return response.json();
-					})
-					.then(list => {
-						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
-						list.forEach(function (data) {
-							trHTML +=
-								"<tr>" +
-								"<td>" + (data[0] || "") + "</td>" +
-								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
-								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
-								"<td>" + (data[3] + '%' || "") + "</td>" +
-								"<td>" + (data[4] + '%' || "") + "</td>" +
-								"</tr>";
-						});
-
-						// Replace body content
-						document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
-						document.getElementById("CountryExposuretablename").innerHTML = 'GCC Country Exposure';
-					})
-					.catch(error => {
-						alert("Error fetching exposure data: " + error.message);
-						$("#invalidfile").modal("toggle");
-					});
-				document.querySelector(".Exposure_outside_GCC").style.display = "block";
-
-
-			} else if (a === "Toptenhousingloan") {
+			 if (a === "Toptenhousingloan") {
 
 				var trHTML = "";
 				document.getElementById("Mortageloan_table_body").innerHTML = trHTML;
@@ -4064,6 +3919,126 @@
 					});
 				document.querySelector(".Generalprovisiongrid").style.display = "grid"
 
+			}else if(Selectedmatrixlabel === "10"){
+				var trHTML = "";
+				document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Exposureoutsidegcc', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"<td>" + (data[4] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Exposure_outside_GCC_body").innerHTML = trHTML;
+						document.getElementById("CountryExposuretablename").innerHTML = 'Outside GCC Country Exposure';
+
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Exposure_outside_GCC").style.display = "block";
+
+
+				var trHTML1 = "";
+				document.getElementById("Exposure_Only_GCC_Body").innerHTML = trHTML1;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Exposureonlygcc', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML1 = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML1 +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (data[3] + '%' || "") + "</td>" +
+								"<td>" + (data[4] + '%' || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("Exposure_Only_GCC_Body").innerHTML = trHTML1;
+						document.getElementById("CountryExposuretablenameGCC").innerHTML = 'GCC Country Exposure';
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+				document.querySelector(".Exposure_Only_GCC").style.display = "block";
+			}else if(Selectedmatrixlabel === "22"){
+				var trHTML = "";
+				document.getElementById("BPVPV01_TABLEBODY").innerHTML = trHTML;
+				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'BPVPV01_Detail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
+						var trHTML = "";
+
+						// Use plain JS loop; you already use jQuery only for DOM
+						list.forEach(function (data) {
+							trHTML +=
+								"<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[4]) || "") + "</td>" +
+								"<td>" + (formatNumber(data[5]) || "") + "</td>" +
+								"</tr>";
+						});
+
+						// Replace body content
+						document.getElementById("BPVPV01_TABLEBODY").innerHTML = trHTML;
+					})
+					.catch(error => {
+						alert("Error fetching exposure data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".BPVPV01_TABLE").style.display = "block";
 			}else {
 				alert('Sorry invalid operation selected')
 			}
@@ -4671,7 +4646,7 @@
 								<td style="text-align: center;">
 									<span class="badge-status">
 										<span
-											th:text="${#numbers.formatDecimal(Matrixlist.limit_assigned, 2, 'COMMA', 2, 'POINT')}">0.00%</span>
+											th:text="${Matrixlist.limit_assigned}">0.00</span>
 									</span>
 								</td>
 
@@ -4817,40 +4792,6 @@
 								<div class="stat-card-title">Operational Risk</div>
 							</div>
 							<div class="stat-card-value" id="r51_ratios2">0.00</div>
-						</div>
-					</div>
-
-					<!--Exposure to outside Gcc-->
-
-					<div class="stats-grid CountryExposuredetail" style="display: none;">
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#" id="outsideGccLink" data-report-date=""
-										onclick="Getexposuredetail('Outsidegcc',this);">Outside GCC Exposure
-										(%)</a></div>
-							</div>
-							<div class="stat-card-value" id="Outside_gcc_exp">0.00</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title">Outside Gcc Rwa</div>
-							</div>
-							<div class="stat-card-value" id="Outside_gcc_rwa">0.00</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title"><a href="#" id="GccLink" data-report-date=""
-										onclick="Getexposuredetail('OnlyGcc',this);">GCC
-										Exposure (%)</a></div>
-							</div>
-							<div class="stat-card-value" id="Only_gcc_Exp">0.00</div>
-						</div>
-
-						<div class="stat-card">
-							<div class="stat-card-header">
-								<div class="stat-card-title">GCC RWA</div>
-							</div>
-							<div class="stat-card-value" id="Gcc_Rwa">0.00</div>
 						</div>
 					</div>
 
@@ -5398,6 +5339,29 @@
 							</tbody>
 						</table>
 					</div>
+					
+					<div class="Exposure_Only_GCC" style="display: none;">
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th colspan="5" id="CountryExposuretablenameGCC" style="text-align: center;">Table Name
+									</th>
+								</tr>
+								<tr>
+									<th>Country Name</th>
+									<th>Balance</th>
+									<th>RWA</th>
+									<th>Total Exposure (%)</th>
+									<th>Total RWA (%)</th>
+								</tr>
+					
+					
+							</thead>
+							<tbody id="Exposure_Only_GCC_Body">
+							</tbody>
+						</table>
+					</div>
+					
 					<!--	Mortage loan Appetite detail table-->
 					<div class="Mortageloan_table" style="display: none;">
 						<table class="table refund-table align-middle mb-0">

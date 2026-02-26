@@ -147,9 +147,12 @@
 										<option value="FXP">FXP - Foreign Exchange Position</option>
 										<option value="RWAFUND">RWA - Fund Based Data</option>
 										<option value="RWANONFUND">RWA - Non-Fund Based Data</option>
+										<option value="RWABILLDETAIL">RWA - Bill Detail Data</option>
 										<option value="ACPR">ACPR - Fund Based Data</option>
 										<option value="ACPRNF">ACPRNF - Non-Fund Based Data</option>
 										<option value="MFD">MFD - Mid FX Deal & Exposure</option>
+										<option value="GAMDATADUMP">EOD & GAM DATA</option>
+										<option value="ONLY_EAB_TABLE_DATA">Only Eab data</option>
 									</select>
 								</div>
 							</div>
@@ -273,9 +276,9 @@
 			formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
 
 			// ADDED: ACPR and ACPRNF to this condition
-			if (report === "RWAFUND" || report === "RWANONFUND" || report === "ACPR" || report === "ACPRNF") {
+			if (report === "RWAFUND" || report === "RWANONFUND" || report === "ACPR" || report === "ACPRNF"
+			||report === "GAMDATADUMP" ||report === "ONLY_EAB_TABLE_DATA" || report==="RWABILLDETAIL") {
 				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
-				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
 			else if (report === "FXP") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');

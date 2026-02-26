@@ -115,7 +115,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	@Query(value="With Countrywise_exposure as (\r\n"
 			+ "Select EXPOSURE_COUNTRY,Round(Sum(Balance)/1000000,2) as Country_bal,Round(Sum(Total_RWA)/1000000,2) as Country_rwa from brf95_rwa_data_fundbased\r\n"
 			+ "Where report_Date = ?1 and UPPER(Trim(EXPOSURE_COUNTRY)) not in ('OMAN','SAUDI ARABIA',\r\n"
-			+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by EXPOSURE_COUNTRY),\r\n"
+			+ "'BAHRAIN','QATAR','KUWAIT','UAE','UNITED ARAB EMIRATES') Group by EXPOSURE_COUNTRY),\r\n"
 			+ "Total_Exposure_balance as (Select Round(Sum(Balance)/1000000,2) as Total_balance,Round(Sum(Total_rwa)/1000000,2) as Total_rwa \r\n"
 			+ "from brf95_rwa_data_fundbased where report_date = ?1 )\r\n"
 			+ "Select EXPOSURE_COUNTRY,Country_bal,Country_rwa,\r\n"
@@ -127,7 +127,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	@Query(value = "With Countrywise_exposure as (\r\n"
 			+ "Select EXPOSURE_COUNTRY,Round(Sum(Balance)/1000000,2) as Country_bal,Round(Sum(Total_RWA)/1000000,2) as Country_rwa from brf95_rwa_data_fundbased\r\n"
 			+ "Where report_Date = ?1 and UPPER(Trim(EXPOSURE_COUNTRY)) in ('OMAN','SAUDI ARABIA',\r\n"
-			+ "'BAHRAIN','QATAR','KUWAIT','UAE') Group by EXPOSURE_COUNTRY),\r\n"
+			+ "'BAHRAIN','QATAR','KUWAIT','UAE','UNITED ARAB EMIRATES') Group by EXPOSURE_COUNTRY),\r\n"
 			+ "Total_Exposure_balance as (Select  Round(Sum(Balance)/1000000,2) as Total_balance,Round(Sum(Total_rwa)/1000000,2) as Total_rwa \r\n"
 			+ "from brf95_rwa_data_fundbased where report_date = ?1 )\r\n"
 			+ "Select EXPOSURE_COUNTRY,Country_bal,Country_rwa,\r\n"
@@ -193,11 +193,11 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '11') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> Industry_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
@@ -256,11 +256,11 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '12') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> Trading_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
@@ -319,38 +319,38 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '13') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> ServicesGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '14') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> BanksGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '15') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> RealEstateGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '16') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> otherGetCurrentyear(Date Selecteddate);
 		
 		
@@ -780,16 +780,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Select month_end as month_end,Nvl(b.Countrywise_exposure,0) as Countrywise_exposure from Current_yeardates a Left Join \r\n"
 				+ "PercentageCalcu b on a.month_end = b.REPORT_DATE  Order by month_end Asc)",nativeQuery=true)
 		List<Object[]> GetSelectedDayGccexp(Date Selecteddate);
-		
-		///Single and Group Borrower Exposure Details
-		@Query(value="Select * from(\r\n"
-				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
-				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
-		List<Object[]> GetSelectedyearSingorGroupdetails(Date Selecteddate);
+	
 		
 		@Query(value="Select * from(With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
 				+ "Current_Year_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
@@ -836,35 +827,37 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetLongMedTermResourcesLongMedTermAssetsUSD(Date Selecteddate);
 		
-		@Query(value="SELECT TO_CHAR(REPORT_DATE,'DD-MM-YYYY'), HEADROOMLIMIT FROM(WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
-				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
-				+ "'ROW120','ROW124','ROW125')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
-				+ "LEVEL <= 12) GROUP BY REPORT_DATE),\r\n"
-				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
-				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
-				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW113','ROW114','ROW115','ROW124','ROW125')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
-				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
-				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
-				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"
-				+ "FROM TOTAL_DEPOSITS_VALUE A LEFT JOIN CORPORATE B ON A.REPORT_DATE = B.REPORT_DATE Order by A.REPORT_DATE ASC)",nativeQuery=true)
-		List<Object[]> GetDepositconcentrationnonretail(Date Selecteddate);
+//		@Query(value="SELECT TO_CHAR(REPORT_DATE,'DD-MM-YYYY'), HEADROOMLIMIT FROM(WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
+//				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
+//				+ "'ROW120','ROW124','ROW125')\r\n"
+//				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+//				+ "LEVEL <= 12) GROUP BY REPORT_DATE),\r\n"
+//				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
+//				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
+//				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW113','ROW114','ROW115','ROW124','ROW125')\r\n"
+//				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+//				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
+//				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
+//				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"
+//				+ "FROM TOTAL_DEPOSITS_VALUE A LEFT JOIN CORPORATE B ON A.REPORT_DATE = B.REPORT_DATE Order by A.REPORT_DATE ASC)",nativeQuery=true)
+//		List<Object[]> GetDepositconcentrationnonretail(Date Selecteddate);
+// This Query is moved to Risk Matrix table		
 		
-		@Query(value="SELECT TO_CHAR(REPORT_DATE,'DD-MM-YYYY'), HEADROOMLIMIT FROM(WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
-				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
-				+ "'ROW120','ROW124','ROW125')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
-				+ "LEVEL <= 12) GROUP BY REPORT_DATE),\r\n"
-				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
-				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
-				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW118','ROW119','ROW120')\r\n"
-				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
-				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
-				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
-				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"
-				+ "FROM TOTAL_DEPOSITS_VALUE A LEFT JOIN CORPORATE B ON A.REPORT_DATE = B.REPORT_DATE Order by A.REPORT_DATE ASC)",nativeQuery=true)
-		List<Object[]> GetDepositconcentrationretail(Date Selecteddate);
+//		@Query(value="SELECT TO_CHAR(REPORT_DATE,'DD-MM-YYYY'), HEADROOMLIMIT FROM(WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
+//				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
+//				+ "'ROW120','ROW124','ROW125')\r\n"
+//				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+//				+ "LEVEL <= 12) GROUP BY REPORT_DATE),\r\n"
+//				+ "CORPORATE AS (SELECT REPORT_DATE, MAX(ACCT_BALANCE_LC) AS CORP_ACCT_BALANCE_LC  FROM (\r\n"
+//				+ "SELECT CUST_ID, ACCT_NAME,REPORT_DATE, sum(ACCT_BALANCE_LC) AS ACCT_BALANCE_LC\r\n"
+//				+ "FROM brf2_mapping_table WHERE report_lable_1 in ('ROW118','ROW119','ROW120')\r\n"
+//				+ "AND REPORT_DATE IN (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1,'YEAR'),LEVEL-1)) FROM DUAL CONNECT BY \r\n"
+//				+ "LEVEL <= 12)group by CUST_ID, ACCT_NAME,REPORT_DATE ) GROUP BY  REPORT_DATE) \r\n"
+//				+ "SELECT NVL(A.REPORT_DATE,B.REPORT_DATE) AS REPORT_DATE,\r\n"
+//				+ "ROUND(B.CORP_ACCT_BALANCE_LC/A.TOT_ACCT_BALANCE_LC ,4)*100 as Headroomlimit\r\n"
+//				+ "FROM TOTAL_DEPOSITS_VALUE A LEFT JOIN CORPORATE B ON A.REPORT_DATE = B.REPORT_DATE Order by A.REPORT_DATE ASC)",nativeQuery=true)
+//		List<Object[]> GetDepositconcentrationretail(Date Selecteddate);
+// This Query is moved to Risk Matrix table
 		
 		@Query(value="SELECT CUST_ID, ACCT_NAME, BALANCE_IN_MN, HEADROOMLIMIT FROM (\r\n"
 				+ "WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"

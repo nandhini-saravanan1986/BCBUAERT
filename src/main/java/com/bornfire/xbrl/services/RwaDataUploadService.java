@@ -3,8 +3,25 @@ package com.bornfire.xbrl.services;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +30,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bornfire.xbrl.entities.*;
+import com.bornfire.xbrl.entities.Eod_acct_balance_pojo;
+import com.bornfire.xbrl.entities.General_master_tb_pojo;
+import com.bornfire.xbrl.entities.RT_Bank_bill_data_pojo;
+import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
+import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.RT_RWA_NonFund_base_data_entity;
+import com.bornfire.xbrl.entities.RT_RWA_NonFund_base_data_rep;
+
+import oracle.jdbc.driver.OracleConnection;
+import oracle.sql.ARRAY;
+import oracle.sql.ArrayDescriptor;
+import oracle.sql.STRUCT;
+import oracle.sql.StructDescriptor;
 
 @Service
 public class RwaDataUploadService {
@@ -25,7 +54,10 @@ public class RwaDataUploadService {
 
 	@Autowired
 	private RT_RWA_NonFund_base_data_rep nonFundRepo;
-
+	
+	@Autowired
+	private DataSource srcdataSource;
+	
 	@Transactional
 	public String uploadRwaTextFile(MultipartFile file, String reportType, Date toDate) throws Exception {
 
@@ -151,6 +183,345 @@ public class RwaDataUploadService {
 
 		return "Non-Funded: Successfully uploaded " + nonFundMap.size() + " records.";
 	}
+	
+	public String UploadEabandGamdata(MultipartFile file, String reportType, Date toDate) {
+
+		List<General_master_tb_pojo> generalDetail = new ArrayList<>();
+
+		DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().parseCaseInsensitive()
+				.appendPattern("dd-MMM-yyyy").toFormatter(Locale.ENGLISH);
+
+		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		// Step 1: Read file
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+			String line;
+			String delimiter = "\\|";
+
+			while ((line = br.readLine()) != null) {
+
+				line = line.trim();
+				if (line.isEmpty())
+					continue;
+
+				String upper = line.toUpperCase();
+				if (upper.startsWith("SQL") || upper.startsWith("ACID") || upper.startsWith("--"))
+					continue;
+
+					if (Character.isDigit(line.charAt(0)))
+						continue;
+
+					String[] values = line.split(delimiter);
+
+					if (values.length < 12)
+						continue;
+
+					General_master_tb_pojo pojo = new General_master_tb_pojo();
+
+					pojo.setAcct_crncy_code(values[0].trim());
+					pojo.setGl_sub_head_code(values[1].trim());
+					pojo.setSchm_type(values[2].trim());
+					pojo.setSchm_code(values[3].trim());
+					pojo.setCust_id(values[4].trim());
+					pojo.setAcct_number(values[5].trim());
+					pojo.setAcct_name(values[6].trim());
+					pojo.setReport_date(java.sql.Date.valueOf(LocalDate.parse(values[7].trim(), formatter1)));
+					pojo.setAcct_balance_amt_ac(new BigDecimal(values[8].trim()));
+					pojo.setAcid(values[9].trim());
+					pojo.setSol_id(values[10].trim());
+					pojo.setAcct_opn_date(java.sql.Date.valueOf(LocalDate.parse(values[11].trim(), formatter2)));
+
+					generalDetail.add(pojo);
+				
+			}
+
+		} catch (Exception e) {
+			return "ERROR: File reading failed";
+		}
+
+		int batchSize = 5000;
+		int totalInserted = 0;
+		Connection conn = null;
+		try { // ✅ Using centralized connection
+
+			conn = srcdataSource.getConnection();
+			conn.setAutoCommit(false);
+
+			oracle.jdbc.OracleConnection oracleConn = (oracle.jdbc.OracleConnection) conn;
+
+			StructDescriptor structDescriptor = StructDescriptor.createDescriptor("GENERAL_MASTER_OBJECT", oracleConn);
+
+			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("GENERAL_MASTER_UPLOAD_TABLE",
+					oracleConn);
+
+			for (int i = 0; i < generalDetail.size(); i += batchSize) {
+
+				List<General_master_tb_pojo> batch = generalDetail.subList(i,
+						Math.min(i + batchSize, generalDetail.size()));
+
+				STRUCT[] structArray = new STRUCT[batch.size()];
+				int idx = 0;
+
+				for (General_master_tb_pojo pojo : batch) {
+
+					Object[] attributes = new Object[] { pojo.getAcct_crncy_code(), pojo.getGl_sub_head_code(),
+							pojo.getSchm_type(), pojo.getSchm_code(), pojo.getCust_id(), pojo.getAcct_number(),
+							pojo.getAcct_name(), pojo.getReport_date(), pojo.getAcct_balance_amt_ac(), pojo.getAcid(),
+							pojo.getSol_id(), pojo.getAcct_opn_date() };
+
+					structArray[idx++] = new STRUCT(structDescriptor, oracleConn, attributes);
+				}
+
+				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
+
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_GENERAL_MASTER_DATA_UPLOAD_FN(?) }");
+
+				cs.registerOutParameter(1, Types.NUMERIC);
+				cs.setArray(2, oracleArray);
+				cs.execute();
+
+				totalInserted += cs.getInt(1);
+				cs.close();
+			}
+
+			conn.commit();
+
+		} catch (Exception e) {
+			e.getSuppressed();
+			e.printStackTrace();
+			return "ERROR:Gam dump data upload failed";
+			
+		}
+
+		return "Gam dump data Upload Complete. Inserted Rows: " + totalInserted;
+	}
+	
+	public String UploadEabdata(MultipartFile file, String reportType, Date toDate) {
+
+		List<Eod_acct_balance_pojo> EodDetail = new ArrayList<>();
+
+		DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().parseCaseInsensitive()
+				.appendPattern("dd-MMM-yyyy").toFormatter(Locale.ENGLISH);
+
+		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		// Step 1: Read file
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+			String line;
+			String delimiter = "\\|";
+
+			while ((line = br.readLine()) != null) {
+
+				line = line.trim();
+				if (line.isEmpty())
+					continue;
+
+				String upper = line.toUpperCase();
+				if (upper.startsWith("SQL") || upper.startsWith("ACID") || upper.startsWith("--"))
+					continue;
+
+				String[] values = line.split(delimiter);
+
+				if (values.length < 14)
+					continue;
+
+				Eod_acct_balance_pojo pojo = new Eod_acct_balance_pojo();
+
+				pojo.setAcid(values[0].trim());
+				pojo.setEod_date(java.sql.Date.valueOf(LocalDate.parse(values[1].trim(), formatter2)));
+				pojo.setTran_date_bal(new BigDecimal(values[2].trim()));
+				pojo.setTran_date_tot_tran(new BigDecimal(values[3].trim()));
+				pojo.setValue_date_bal(new BigDecimal(values[4].trim()));
+				pojo.setValue_date_tot_tran(new BigDecimal(values[5].trim()));
+				pojo.setEnd_eod_date(java.sql.Date.valueOf(LocalDate.parse(values[6].trim(), formatter2)));
+				pojo.setLchg_user_id(values[7].trim());
+				pojo.setLchg_time(java.sql.Date.valueOf(LocalDate.parse(values[8].trim(), formatter2)));
+				pojo.setRcre_user_id(values[9].trim());
+				pojo.setRcre_time(java.sql.Date.valueOf(LocalDate.parse(values[10].trim(), formatter2)));
+				pojo.setTs_cnt(values[11].trim());
+				pojo.setEab_crncy_code(values[12].trim());
+				pojo.setBank_id(values[13].trim());
+				
+				EodDetail.add(pojo);
+
+			}
+
+		} catch (Exception e) {
+			return "ERROR: File reading failed";
+		}
+
+		int batchSize = 5000;
+		int totalInserted = 0;
+		Connection conn = null;
+		try { // ✅ Using centralized connection
+
+			conn = srcdataSource.getConnection();
+			conn.setAutoCommit(false);
+
+			oracle.jdbc.OracleConnection oracleConn = (oracle.jdbc.OracleConnection) conn;
+
+			StructDescriptor structDescriptor = StructDescriptor.createDescriptor("EOD_ACCT_MASTER_OBJECT", oracleConn);
+
+			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("EOD_ACCT_MASTER_UPLOAD_TABLE",
+					oracleConn);
+
+			for (int i = 0; i < EodDetail.size(); i += batchSize) {
+
+				List<Eod_acct_balance_pojo> batch = EodDetail.subList(i,
+						Math.min(i + batchSize, EodDetail.size()));
+
+				STRUCT[] structArray = new STRUCT[batch.size()];
+				int idx = 0;
+
+				for (Eod_acct_balance_pojo pojo : batch) {
+
+					Object[] attributes = new Object[] {pojo.getAcid(),pojo.getEod_date(),pojo.getTran_date_bal(),pojo.getTran_date_tot_tran(),
+							pojo.getValue_date_bal(),pojo.getValue_date_tot_tran(),pojo.getEnd_eod_date(),pojo.getLchg_user_id(),
+							pojo.getLchg_time(),pojo.getRcre_user_id(),pojo.getRcre_time(),pojo.getTs_cnt(),pojo.getEab_crncy_code(),pojo.getBank_id()};
+
+					structArray[idx++] = new STRUCT(structDescriptor, oracleConn, attributes);
+				}
+
+				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
+
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_EOD_ACCT_MASTER_DATA_UPLOAD_FN(?) }");
+
+				cs.registerOutParameter(1, Types.NUMERIC);
+				cs.setArray(2, oracleArray);
+				cs.execute();
+
+				totalInserted += cs.getInt(1);
+				cs.close();
+			}
+
+			conn.commit();
+
+		} catch (Exception e) {
+			e.getSuppressed();
+			e.printStackTrace();
+			return "ERROR: Upload failed";
+
+		}
+
+		return "Upload Complete. Inserted Rows: " + totalInserted;
+	}
+	
+	
+	public String Uploadrwadata(MultipartFile file, String reportType, Date toDate) {
+
+		List<RT_Bank_bill_data_pojo> EodDetail = new ArrayList<>();
+
+		DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().parseCaseInsensitive()
+				.appendPattern("dd-MMM-yyyy").toFormatter(Locale.ENGLISH);
+
+		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		// Step 1: Read file
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+			String line;
+			String delimiter = "\\|";
+
+			while ((line = br.readLine()) != null) {
+
+				line = line.trim();
+				if (line.isEmpty())
+					continue;
+
+				String upper = line.toUpperCase();
+				if (upper.startsWith("SQL") || upper.startsWith("SOL_") || upper.startsWith("--"))
+					continue;
+
+				String[] values = line.split(delimiter);
+
+				if (values.length < 14)
+					continue;
+
+				RT_Bank_bill_data_pojo pojo = new RT_Bank_bill_data_pojo();
+				pojo.setReport_date(new java.sql.Date(toDate.getTime()));
+				pojo.setSol_(values[0].trim());
+				pojo.setCust_id(values[1].trim());
+				pojo.setForacid(values[2].trim());
+				pojo.setSub_head_gl_code(values[3].trim());
+				pojo.setBill_id(values[4].trim());
+				pojo.setBill_date(java.sql.Date.valueOf(LocalDate.parse(values[5].trim(), formatter2)));
+				pojo.setDue_date(java.sql.Date.valueOf(LocalDate.parse(values[6].trim(), formatter2)));
+				pojo.setBil(values[7].trim());
+				pojo.setBill_os_amt(new BigDecimal(values[8].trim()));
+				pojo.setBill_os_amt_aed(new BigDecimal(values[9].trim()));
+				pojo.setDrawee_bank_code(values[10].trim());
+				pojo.setBank_name(values[11].trim());
+				pojo.setRw(values[12].trim());
+				pojo.setBill_disc_rwa(new BigDecimal(values[13].trim()));
+				
+				
+				EodDetail.add(pojo);
+
+			}
+
+		} catch (Exception e) {
+			return "ERROR: File reading failed";
+		}
+
+		int batchSize = 5000;
+		int totalInserted = 0;
+		Connection conn = null;
+		try { // ✅ Using centralized connection
+
+			conn = srcdataSource.getConnection();
+			conn.setAutoCommit(false);
+
+			oracle.jdbc.OracleConnection oracleConn = (oracle.jdbc.OracleConnection) conn;
+
+			StructDescriptor structDescriptor = StructDescriptor.createDescriptor("RWA_BILL_DATA_OBJECT", oracleConn);
+
+			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("RWA_BILL_DATA_UPLOAD_TABLE",
+					oracleConn);
+
+			for (int i = 0; i < EodDetail.size(); i += batchSize) {
+
+				List<RT_Bank_bill_data_pojo> batch = EodDetail.subList(i,
+						Math.min(i + batchSize, EodDetail.size()));
+
+				STRUCT[] structArray = new STRUCT[batch.size()];
+				int idx = 0;
+
+				for (RT_Bank_bill_data_pojo pojo : batch) {
+
+					Object[] attributes = new Object[] {pojo.getReport_date(),pojo.getSol_(),pojo.getCust_id(),pojo.getForacid(),pojo.getSub_head_gl_code(),
+							pojo.getBill_id(),pojo.getBill_date(),pojo.getDue_date(),pojo.getBil(),pojo.getBill_os_amt(),
+							pojo.getBill_os_amt_aed(),pojo.getDrawee_bank_code(),pojo.getBank_name(),pojo.getRw(),
+							pojo.getBill_disc_rwa()};
+
+					structArray[idx++] = new STRUCT(structDescriptor, oracleConn, attributes);
+				}
+
+				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
+
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_RWA_BILL_DATA_DATA_UPLOAD_FN(?) }");
+
+				cs.registerOutParameter(1, Types.NUMERIC);
+				cs.setArray(2, oracleArray);
+				cs.execute();
+
+				totalInserted += cs.getInt(1);
+				cs.close();
+			}
+
+			conn.commit();
+
+		} catch (Exception e) {
+			e.getSuppressed();
+			e.printStackTrace();
+			return "ERROR: Upload failed";
+
+		}
+
+		return "Upload Complete. Inserted Rows: " + totalInserted;
+	}
+	
 
 	// ================= FUNDED PROCESSING =================
 	private String processFunded(BufferedReader br) throws Exception {
