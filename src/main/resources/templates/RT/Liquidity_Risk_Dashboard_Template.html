@@ -744,7 +744,12 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 			handleClick('data');
 		}
 		if (formmode === 'detail') {
-			handleClick('detail');
+			//handleClick('detail');
+			document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+			const detailPane = document.getElementById('detail');
+			if(detailPane) detailPane.classList.add('show', 'active');
+			document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+			document.getElementById('data-btn').classList.add('active');
 		}
 		else {
 			handleClick('datacontrols'); // default or formmode=add
@@ -837,7 +842,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 				<!-- Data Button -->
 				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
 					Data</button>
-				<button class="role-btn" id="detail-btn" onclick="navigateToTab('detail')">Detail</button>
+			<!-- 	<button class="role-btn" id="detail-btn" onclick="navigateToTab('detail')">Detail</button> -->
 				<!-- CENTER: Title -->
 
 				<!-- RIGHT: Download Button -->
@@ -1384,84 +1389,85 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 							<!-- Balance sheet Asset Composition 23-->
 							<td class="th-right"
 								style="cursor:pointer; color:blue; font-weight:bold; text-decoration:underline;"
-								th:attr="onclick=|handleMultitask(this, 'ALL', true)|">
+								th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ALL', true)|">
 								<span
 									th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed,1,'COMMA',2,'POINT')}"></span>
 							</td>
 
 							<!-- CASH: Show Screen for ROW101 -->
-							<td class="th-right" style="cursor:pointer;"
-								th:attr="onclick=|handleMultitask(this, 'ROW102', false)|">
+							<td class="th-right" style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;"
+								th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ROW102', false)|">
 								<span th:text="${#numbers.formatDecimal(data.cashAed, 1,'COMMA',2,'POINT')}"></span>
 							</td>
 							<td class="th-right" th:text="${data.cashPercent}"></td>
-							<td class="th-right"
+							<td class="th-right" style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE','ROW103,ROW105', false)|"
 								th:text="${#numbers.formatDecimal(data.dueFromCentralBankAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right" th:text="${data.dueFromCentralBankPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ROW110', false)|"
 								th:text="${#numbers.formatDecimal(data.dueFromHoBranchSubsAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right" th:text="${data.dueFromHoBranchSubsPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ROW114,ROW115,ROW116', false)|"
 								th:text="${#numbers.formatDecimal(data.dueFromBanksAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueFromBanksPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ROW121', false)|"
 								th:text="${#numbers.formatDecimal(data.dueFromNbfiAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueFromNbfiPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE', 'ROW131', false)|"
 								th:text="${#numbers.formatDecimal(data.investmentAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.investmentPercent}"></td>
-							<td class="th-right"
+							<td class="th-right" 
 								th:text="${#numbers.formatDecimal(data.otherInvestmentsAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.otherInvestmentsPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE','ROW146,ROW148,ROW149,ROW150,ROW153,ROW154,ROW155,ROW156', false)|"
 								th:text="${#numbers.formatDecimal(data.netCreditPortfolioAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right" th:text="${data.netCreditPortfolioPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"  style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE','ROW142,ROW143', false)|"
 								th:text="${#numbers.formatDecimal(data.tradeBillsAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.tradeBillsPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF1_MAPPING_TABLE','ROW160,ROW165,ROW166,ROW171', false)|"
 								th:text="${#numbers.formatDecimal(data.netFixedOtherAssetsAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td th:text="${data.netFixedOtherAssetsPercent}"></td>
-							<td class="th-right"
+							<td class="th-right" 
 								th:text="${#numbers.formatDecimal(data.positiveFvDerivativesAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right" th:text="${data.positiveFvDerivativesPercent}"></td>
 
 
 							<!-- Balance Sheet Liability composition 19-->
-							<td class="th-right"
+							<td class="th-right" style="cursor:pointer; color:blue; font-weight:bold; text-decoration:underline;"
+								th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE', 'ALL', true)|"
 								th:text="${#numbers.formatDecimal(data.liabilityBalanceSheetSizeAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.dueToCentralBankAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueToCentralBankPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW135', false)|"
 								th:text="${#numbers.formatDecimal(data.dueToHoBranchSubsAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueToHoPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW138,ROW139,ROW140,ROW141', false)|"
 								th:text="${#numbers.formatDecimal(data.dueToBanksAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueToBanksPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"   style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW124,ROW125', false)|"
 								th:text="${#numbers.formatDecimal(data.dueToNbfiAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.dueToNbfiPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"  style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW113,ROW114,ROW115,ROW116,ROW118,ROW119,ROW120,ROW121', false)|"
 								th:text="${#numbers.formatDecimal(data.customerDepositAed,1,'COMMA',2,'POINT')}"></td>
 							<td th:text="${data.customerDepositPercent}"></td>
 							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.longTermFundingAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.longTermFundingPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"  style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW129,ROW145,ROW157,ROW158,ROW159,ROW160,ROW161,ROW162,ROW163,ROW164,ROW165,ROW147,ROW148,ROW149,ROW150,ROW151,ROW152,ROW153,ROW154,ROW155,ROW148', false)|"
 								th:text="${#numbers.formatDecimal(data.otherLiabilitiesAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.otherLiabilitiesPercent}"></td>
 							<td class="th-right"
 								th:text="${#numbers.formatDecimal(data.negativeFvDerivativesAed,1,'COMMA',2,'POINT')}">
 							</td>
 							<td class="th-right" th:text="${data.negativeFvDerivativesPercent}"></td>
-							<td class="th-right"
+							<td class="th-right"  style="cursor:pointer; color:green; font-weight:bold; text-decoration:underline;" th:attr="onclick=|handleMultitask(this, 'BRF2_MAPPING_TABLE','ROW176,ROW177,ROW179,ROW180,ROW181,ROW182,ROW183,ROW185', false)|"
 								th:text="${#numbers.formatDecimal(data.capitalReservesAed,1,'COMMA',2,'POINT')}"></td>
 							<td class="th-right" th:text="${data.capitalReservesPercent}"></td>
 
@@ -3044,6 +3050,22 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="alertpopup">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="menu-title-header">
+                <div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+                    BANK OF BARODA
+                </div>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <p id="alertpopupmsg1"></p>                
+                <button type="button" class="role-btn" id="confirmOkBtn">OK</button>                
+                <button type="button" class="role-btn" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script>
 	$('#usertable').DataTable({
@@ -3333,10 +3355,13 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 	}
 </script>
 <script>
-    function handleMultitask(element, rId, isLarge) {
+    function handleMultitask(element,tablename, rId, isLarge) {
         var rDate = $(element).closest('tr').find('td:eq(1)').text().trim();
         if (isLarge) {
-            $.get('./startBackgroundJob', { report_date: rDate, rowid: rId }, function(jobId) {
+        	$('#alertpopupmsg1').text('The requested cell too many rows. Do you want to download it as excel file ?');
+        	$('#confirmOkBtn').off('click').on('click', function() {
+        		$('#alertpopup').modal('hide');        		
+            $.get('./startBackgroundJob', { report_date: rDate, rowid: rId, tablename: tablename }, function(jobId) {
                 const startTime = Date.now();
                 localStorage.setItem("activeDownloadJob", jobId);
                 localStorage.setItem("downloadStartTime", startTime);
@@ -3344,9 +3369,14 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
                 $("#autoHideAlert").fadeIn();
                 startGlobalPolling(jobId, startTime); 
             });
+        });
         } else {
-            location.href = 'Liquidity_Risk_Dashboard_Template?formmode=detail&report_date=' + rDate + '&rowid=' + rId;
-        }
+        	$('#alertpopupmsg1').text('Detail page for '+rId+' ?');
+        	$('#confirmOkBtn').off('click').on('click', function() {
+            location.href = 'Liquidity_Risk_Dashboard_Template?formmode=detail&report_date=' + rDate + '&tablename=' + tablename + '&rowid=' + rId;
+        	 });
+        	}
+        $('#alertpopup').modal('show');    
     }
 </script>
 <style>

@@ -2879,18 +2879,28 @@ public class XBRLNavigationController {
 	        @RequestParam(required = false) String SI_NO,
 	        @RequestParam(required = false) String formmode, 
 	        @RequestParam(required = false) String report_date,
-	        @RequestParam(required = false) String rowid, 
+	        @RequestParam(required = false) String rowid, @RequestParam(required = false) String tablename,
 	        Model model) {
 
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
 	    if ("detail".equalsIgnoreCase(formmode)) {
+	    	System.out.println("rowid : "+rowid);
 	        String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, "
 	                + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE " 
-	                + "FROM BRF1_MAPPING_TABLE "
-	                + "WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABLE_1 = ?";
+	                + "FROM " + tablename  
+	                + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABLE_1 = ?";
+	        
+			List<Map<String, Object>> allData = new ArrayList<>();
+			String[] rowidarray = rowid.split(",");
 
-	        List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, new Object[] { report_date, rowid });
-	        model.addAttribute("reportdetails", data);
+			for (String singlerowid : rowidarray) {
+				Object[] args = new Object[] { report_date, singlerowid.trim() };
+				List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, args);
+
+				allData.addAll(data);
+			}
+	        
+	        model.addAttribute("reportdetails", allData);
 	        model.addAttribute("formmode", "detail");
 	        model.addAttribute("rowid", rowid);
 	    } 
@@ -2917,11 +2927,11 @@ public class XBRLNavigationController {
 
 	@GetMapping("/startBackgroundJob")
 	@ResponseBody
-	public String startBackgroundJob(@RequestParam String report_date, @RequestParam String rowid) {
+	public String startBackgroundJob(@RequestParam String report_date, @RequestParam String rowid, @RequestParam String tablename) {
 	    String jobId = UUID.randomUUID().toString();
 	    new Thread(() -> {
 	        try {
-	            String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, REPORT_DATE FROM BRF1_MAPPING_TABLE WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ?";
+	            String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, REPORT_DATE FROM " + tablename + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ?";
 	            if(!"ALL".equals(rowid)) { sql += " AND REPORT_LABLE_1 = '" + rowid + "'"; }
 	            
 	            List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, new Object[]{report_date});
