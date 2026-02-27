@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.controllers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +30,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +50,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -2860,34 +2870,123 @@ public class XBRLNavigationController {
 	}
 
 	/* iquidity risk Dashboard template */
+	 @Autowired
+	    private JdbcTemplate jdbcTemplate;
+	private static final Map<String, byte[]> backgroundFileStore = new java.util.concurrent.ConcurrentHashMap<>();
+
 	@RequestMapping(value = "Liquidity_Risk_Dashboard_Template", method = RequestMethod.GET)
-	public String Liquidity_Risk_Dashboard_Template(@RequestParam(required = false) String SI_NO,
-			@RequestParam(required = false) String formmode, Model model, Model md) {
+	public String Liquidity_Risk_Dashboard_Template(
+	        @RequestParam(required = false) String SI_NO,
+	        @RequestParam(required = false) String formmode, 
+	        @RequestParam(required = false) String report_date,
+	        @RequestParam(required = false) String rowid, 
+	        Model model) {
 
-		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
-			md.addAttribute("liquidityriskdashboard", data);
-			System.out.println("edit is formmode");
-			md.addAttribute("formmode", "edit");
+	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
+	    if ("detail".equalsIgnoreCase(formmode)) {
+	        String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, "
+	                + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE " 
+	                + "FROM BRF1_MAPPING_TABLE "
+	                + "WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABLE_1 = ?";
 
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
-			System.out.println("list is formmode");
-			md.addAttribute("formmode", "list");
+	        List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, new Object[] { report_date, rowid });
+	        model.addAttribute("reportdetails", data);
+	        model.addAttribute("formmode", "detail");
+	        model.addAttribute("rowid", rowid);
+	    } 
+	    // 2. LIST MODE (Main Dashboard Table)
+	    else if ("list".equalsIgnoreCase(formmode)) {
+	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
+	        model.addAttribute("formmode", "list");
+	    } 
+	    // 3. EDIT MODE
+	    else if ("edit".equalsIgnoreCase(formmode) && SI_NO != null) {
+	        RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
+	        model.addAttribute("liquidityriskdashboard", data);
+	        model.addAttribute("formmode", "edit");
+	    }
+	    // 4. ADD MODE (Default Data Controls)
+	    else {
+	        model.addAttribute("formmode", "add");
+	        model.addAttribute("data", new RT_DataControl());
+	        model.addAttribute("bankname", "Bank of Baroda");
+	    }
+	    model.addAttribute("bankList", bankRepo.findAllByOrderByBankNameAsc());
+	    return "RT/Liquidity_Risk_Dashboard_Template";
+	}
 
-		} else if ("detail".equalsIgnoreCase(formmode)) {
-			System.out.println("detail is formmode");
-			md.addAttribute("formmode", "detail");
-		} else {
-			model.addAttribute("formmode", "add");
-		}
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+	@GetMapping("/startBackgroundJob")
+	@ResponseBody
+	public String startBackgroundJob(@RequestParam String report_date, @RequestParam String rowid) {
+	    String jobId = UUID.randomUUID().toString();
+	    new Thread(() -> {
+	        try {
+	            String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, REPORT_DATE FROM BRF1_MAPPING_TABLE WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ?";
+	            if(!"ALL".equals(rowid)) { sql += " AND REPORT_LABLE_1 = '" + rowid + "'"; }
+	            
+	            List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, new Object[]{report_date});
+	            if (data.isEmpty()) { backgroundFileStore.put(jobId, "NODATA".getBytes()); return; }
 
-		md.addAttribute("bankList", bankList);
-		md.addAttribute("countryList", countryList);
+	            SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+	            Sheet sheet = workbook.createSheet("Assets Data");
+	            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 
-		return "RT/Liquidity_Risk_Dashboard_Template";
+	            /* --- STYLES --- */
+	            Font headFont = workbook.createFont(); headFont.setBold(true);
+	            CellStyle headStyle = workbook.createCellStyle(); headStyle.setFont(headFont);
+	            setBorders(headStyle);
+
+	            CellStyle dataStyle = workbook.createCellStyle(); setBorders(dataStyle);
+	            
+	            CellStyle dateStyle = workbook.createCellStyle(); setBorders(dateStyle);
+	            dateStyle.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("dd-MM-yyyy"));
+
+	            /* --- HEADER --- */
+	            String[] h = {"CUST ID", "ACCOUNT NO", "NAME", "BALANCE (AED)", "DATE"};
+	            Row hr = sheet.createRow(0);
+	            for(int i=0; i<h.length; i++) { Cell c = hr.createCell(i); c.setCellValue(h[i]); c.setCellStyle(headStyle); }
+
+	            /* --- DATA --- */
+	            int rx = 1;
+	            for (Map<String, Object> m : data) {
+	                Row r = sheet.createRow(rx++);
+	                fillCell(r, 0, String.valueOf(m.get("CUST_ID")), dataStyle);
+	                fillCell(r, 1, String.valueOf(m.get("FORACID")), dataStyle);
+	                fillCell(r, 2, String.valueOf(m.get("ACCT_NAME")), dataStyle);
+	                Cell c3 = r.createCell(3); c3.setCellValue(m.get("ACCT_BALANCE_LC") != null ? Double.parseDouble(m.get("ACCT_BALANCE_LC").toString()) : 0.0); c3.setCellStyle(dataStyle);
+	                Cell c4 = r.createCell(4); 
+	                if (m.get("REPORT_DATE") instanceof Date) c4.setCellValue((Date)m.get("REPORT_DATE"));
+	                c4.setCellStyle(dateStyle);
+	            }
+
+	            for(int i=0; i<h.length; i++) sheet.autoSizeColumn(i);
+
+	            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	            workbook.write(bos);
+	            backgroundFileStore.put(jobId, bos.toByteArray());
+	            workbook.dispose();
+	        } catch (Exception e) { e.printStackTrace(); }
+	    }).start();
+	    return jobId;
+	}
+
+	private void setBorders(CellStyle s) {
+	    s.setBorderTop(BorderStyle.THIN); s.setBorderBottom(BorderStyle.THIN);
+	    s.setBorderLeft(BorderStyle.THIN); s.setBorderRight(BorderStyle.THIN);
+	}
+	private void fillCell(Row r, int i, String v, CellStyle s) { Cell c = r.createCell(i); c.setCellValue(v); c.setCellStyle(s); }
+
+	@GetMapping("/checkJobStatus")
+	@ResponseBody
+	public String checkJobStatus(@RequestParam String jobId) {
+	    if (!backgroundFileStore.containsKey(jobId)) return "PROCESSING";
+	    return new String(backgroundFileStore.get(jobId)).equals("NODATA") ? "ERROR" : "READY";
+	}
+
+	@GetMapping("/getBackgroundFile")
+	public ResponseEntity<byte[]> getFile(@RequestParam String jobId) {
+	    byte[] data = backgroundFileStore.remove(jobId);
+	    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Background_Report.xlsx").body(data);
 	}
 
 	@PostMapping("/updateliquidityriskdashboard")

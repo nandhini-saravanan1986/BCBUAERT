@@ -466,7 +466,61 @@
 			</ul>
 		</div>
 	</nav>
-
+	<div class="alert alert-danger custom-alert shadow-sm" role="alert" id="autoHideAlert" 
+	     style="display:none; position:fixed; top:20px; right:20px; z-index:9999; background-color:white; border-left:5px solid #ff7f27; color:black; padding: 12px 20px; border-radius: 8px; border:1px solid #ddd; width: auto; min-width: 300px;">
+	    <button type="button" class="btn-close" onclick="hideAlert()" style="float:right; border:none; background:none; font-size:12px;"><i class="fa fa-times text-muted"></i></button>
+	    <p id="alertMessage" style="margin:0; font-size:14px; white-space:nowrap; font-weight:500;">
+	        <i class="fa fa-sync fa-spin text-warning"></i> <span>Download request received</span>
+	    </p>
+	</div>
 </body>
+<script>
+    let globalPollInterval;
 
+    $(document).ready(function() {
+        const savedId = localStorage.getItem("activeDownloadJob");
+        const savedTime = localStorage.getItem("downloadStartTime");
+        if (savedId && savedTime) {
+            $("#autoHideAlert").show();
+            startGlobalPolling(savedId, parseInt(savedTime));
+        }
+    });
+
+    function startGlobalPolling(jobId, startTime) {
+        clearInterval(globalPollInterval);
+        globalPollInterval = setInterval(function() {
+            // Timer Calculation using fixed Start Timestamp
+            let secondsNow = Math.floor((Date.now() - startTime) / 1000);
+
+            $.ajax({
+                url: './checkJobStatus', 
+                data: { jobId: jobId },
+                type: 'GET',
+                success: function(status) {
+                    if (status === "READY") {
+                        clearInterval(globalPollInterval);
+                        $("#alertMessage").html('<i class="fa fa-check-circle text-success"></i> <b>Download Ready!</b> (' + secondsNow + 's)');
+                        window.location.href = './getBackgroundFile?jobId=' + jobId;
+                        localStorage.removeItem("activeDownloadJob");
+                        localStorage.removeItem("downloadStartTime");
+                        setTimeout(() => { hideAlert(); }, 10000);
+                    } else if (status === "PROCESSING") {
+                        if (secondsNow > 0 && secondsNow % 30 === 0) {
+                            $("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Still Processing Large Dataset... (' + secondsNow + 's)');
+                        } else {
+                            $("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Download Is Processing... (' + secondsNow + 's)');
+                        }
+                    } else if (status === "ERROR") {
+                        clearInterval(globalPollInterval);
+                        localStorage.removeItem("activeDownloadJob");
+                        localStorage.removeItem("downloadStartTime");
+                        $("#alertMessage").html('<i class="fa fa-times text-danger"></i> No data found.');
+                        setTimeout(() => { hideAlert(); }, 5000);
+                    }
+                }
+            });
+        }, 2000);
+    }
+    function hideAlert() { $("#autoHideAlert").fadeOut(); }
+</script>
 </html>
