@@ -2891,7 +2891,7 @@ public class XBRLNavigationController {
 	                + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABLE_1 = ?";
 	        
 			List<Map<String, Object>> allData = new ArrayList<>();
-			String[] rowidarray = rowid.split(",");
+			String[] rowidarray = rowid.replace(" ", "").split(",");
 
 			for (String singlerowid : rowidarray) {
 				Object[] args = new Object[] { report_date, singlerowid.trim() };
