@@ -659,9 +659,9 @@ public class XBRLNavigationController {
 		System.out.println("report name is: " + report_name);
 
 		String userid = (String) req.getSession().getAttribute("USERID");
-		auditService.createBusinessAudit(userid, "ADD", "DATACONTROL", null, "BCBUAE_DATACONTROL");
+		//auditService.createBusinessAudit(userid, "ADD", "DATACONTROL", null, "BCBUAE_DATACONTROL");  -- call in service
 
-		return RT_DataControlService.createOrUpdate(dto, formmode, report_name);
+		return RT_DataControlService.createOrUpdate(dto, formmode, report_name,userid);
 	}
 
 	// Nostro Report Codes Given Below
@@ -802,7 +802,7 @@ public class XBRLNavigationController {
 
 //Downloading Excel for Repo
 	@RequestMapping(value = "downloadRepoExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadRepoExcel() throws IOException {
+	public ResponseEntity<byte[]> downloadRepoExcel(HttpServletRequest req) throws IOException {
 		System.out.println("Entered controller downloadRepoExcel");
 
 		File excelFile = repoService.generateRepoExcel();
@@ -811,6 +811,12 @@ public class XBRLNavigationController {
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headersResponse.setContentDispositionFormData("attachment", "CBUAE_Repo_Data_Template.xls");
+		
+
+		String userid = (String) req.getSession().getAttribute("USERID");
+
+		auditService.createBusinessAudit(userid, "DOWNLOAD", "REPO_DATA_TEMPLATE_EXCEL", null, "BCBUAE_REPO_DATA_TEMPLATE");
+
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}
@@ -887,7 +893,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadTreasuryCreditExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel() {
+	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Treasury credit Excel download.");
 
 		try {
@@ -905,6 +911,11 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "TREASURY_CREDIT_LIMIT_MANAGEMENT_EXCEL", null, "BCBUAE_TREASURY_CRE_LMT_MANAGEMENT");
+			
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
@@ -1066,7 +1077,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadLiquidityRiskData", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadLiquidityRiskData() {
+	public ResponseEntity<ByteArrayResource> downloadLiquidityRiskData(HttpServletRequest req) {
 		logger.info("Controller: Received request for Trade Market Risk Excel download.");
 
 		try {
@@ -1084,6 +1095,11 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "LIQUIDITY_RISK_DATA_EXCEL", null, "BCBUAE_LIQUIDITY_RISK_DATA_TEMPLATE");
+			
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
@@ -1105,7 +1121,7 @@ public class XBRLNavigationController {
 	// ... other controller methods ...
 
 	@RequestMapping(value = "/downloadInvestmentSecuritiesExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadInvestmentSecuritiesExcel() {
+	public ResponseEntity<ByteArrayResource> downloadInvestmentSecuritiesExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Investment Securities Excel download.");
 
 		try {
@@ -1124,6 +1140,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "INVESTMENT_SECURITIES_DATA_EXCEL", null, "BCBUAE_INVESTMENT_SECURITIES_DATA");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -1329,7 +1349,7 @@ public class XBRLNavigationController {
 	// For download excel for fxriskdata
 
 	@RequestMapping(value = "/downloadFxriskExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadFxriskExcel() {
+	public ResponseEntity<ByteArrayResource> downloadFxriskExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Fx Risk Excel download.");
 
 		try {
@@ -1347,6 +1367,12 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "FX_RISK_DATA_EXCEL", null, "BCBUAE_FX_RISK_DATA");
+
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
@@ -1466,7 +1492,7 @@ public class XBRLNavigationController {
 	private RT_TradeMarketRiskService rtTradeMarketRiskService;
 
 	@RequestMapping(value = "/downloadTradeMarketRiskExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTradeMarketRiskExcel() {
+	public ResponseEntity<ByteArrayResource> downloadTradeMarketRiskExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Trade Market Risk Excel download.");
 
 		try {
@@ -1484,6 +1510,13 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "TRADE_MARKET_RISK_DATA_EXCEL", null, "BCBUAE_TRADE_MARKET_RISK_DATA");
+
+			
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
@@ -1550,7 +1583,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadMmExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadMmExcel() {
+	public ResponseEntity<ByteArrayResource> downloadMmExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for MM Excel download.");
 
 		try {
@@ -1565,7 +1598,12 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Mmdata.xls");
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
 
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "MM_DATA_EXCEL", null, "BCBUAE_MM_DATA");
+
+			
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 
@@ -2277,7 +2315,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadTradeleveldataderivativeExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativeExcel() {
+	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativeExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Trade Level Data Derivative Excel download.");
 
 		try {
@@ -2296,6 +2334,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "TRADE_LEVEL_DATA_DERIVATVE_EXCEL", null, "BCBUAE_TRADE_LEVEL_DERIVATIVES");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2477,7 +2519,7 @@ public class XBRLNavigationController {
 	private RT_CCR_DATA_Service rtCCRDataService;
 
 	@RequestMapping(value = "/downloadCCRDataExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadCCRDataExcel() {
+	public ResponseEntity<ByteArrayResource> downloadCCRDataExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for CCR DATA Excel download.");
 
 		try {
@@ -2495,6 +2537,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "CCR_DATA_TEMPLATE_EXCEL", null, "BCBUAE_CCR_DATA_TABLE");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2670,7 +2716,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadForeigncurrencyExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel() {
+	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Foreign Currency Deposit Excel download.");
 
 		try {
@@ -2688,6 +2734,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "CROSS_CURRENCY_FUNDING_SPREAD_EXCEL", null, "BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2702,7 +2752,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadImpactanalysisExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel() {
+	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Impact Analysis Excel download.");
 
 		try {
@@ -2720,6 +2770,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IMPACT_ANALYSIS_EXCEL", null, "BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2803,7 +2857,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadTradeleveldataderivativesimplifiedExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel() {
+	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Trade Level Data Derivative Simplified Excel download.");
 
 		try {
@@ -2823,6 +2877,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "TRADE_LEVEL_DATA_DERIVATVE_SIMPLIFIED_EXCEL", null, "BCBUAE_TRADE_LEVEL_DERIVATIVES_SIMPLIFIED");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2837,7 +2895,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadInvestmentriskdatadashboardExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel() {
+	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
 
 		try {
@@ -2856,6 +2914,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "INVESTMENT_RISK_DATA_DASHBOARD_TEMPLATE_EXCEL", null, "BCBUAE_INVESTMENT_RISK_DATA_DASHBOARD_TEMPLATE");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -2917,9 +2979,29 @@ public class XBRLNavigationController {
 	    }
 	    // 4. ADD MODE (Default Data Controls)
 	    else {
-	        model.addAttribute("formmode", "add");
-	        model.addAttribute("data", new RT_DataControl());
-	        model.addAttribute("bankname", "Bank of Baroda");
+	    	Timestamp lastdatetimestamp = LiquidityRiskDashboardRepo.findLastReportDate();
+			Timestamp secondlastdatetimestamp = LiquidityRiskDashboardRepo.findSecondLastReportDate();			
+			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String lastDateString = (lastdatetimestamp == null) ? null
+					: lastdatetimestamp.toLocalDateTime().format(formatter);
+			String secondLastDateString =(secondlastdatetimestamp == null) ? null
+					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Liquidity_Risk_Dashboard_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Liquidity_Risk_Dashboard_Template");
+			if (data != null && !data.equals(null)) {
+				model.addAttribute("data", data);
+				model.addAttribute("formmode", "exist");
+			}
+			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				model.addAttribute("data", secondlastdata);
+				model.addAttribute("formmode", "exist");
+			}else {				
+				model.addAttribute("formmode", "null");
+				model.addAttribute("formmode", "add");
+			}
+			model.addAttribute("lastDate", lastDate);
+			model.addAttribute("bankname", "Bank of Baroda");
 	    }
 	    model.addAttribute("bankList", bankRepo.findAllByOrderByBankNameAsc());
 	    return "RT/Liquidity_Risk_Dashboard_Template";
@@ -3014,7 +3096,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadLiquidityriskdashboardExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel() {
+	public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for Liquidity Risk Dashboard Template Excel download.");
 
 		try {
@@ -3033,6 +3115,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "LIQUIDITY_RISK_DASHBOARD_TEMPLATE_EXCEL", null, "BCBUAE_LIQUIDITY_RISK_DASHBOARD_TEMPLATE");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -3086,7 +3172,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadIrrbbeveExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel() {
+	public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
 
 		try {
@@ -3104,6 +3190,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_DATA_TEMPLATE_EVE_EXCEL", null, "BCBUAE_IRRBB_DATA_TEMPLATE");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -3118,7 +3208,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel() {
+	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for IRRBB Data EAR Excel download.");
 
 		try {
@@ -3136,6 +3226,10 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_DATA_TEMPLATE_EAR_EXCEL", null, "BCBUAE_IRRBB_EAR");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -3150,7 +3244,7 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadIrrbbdiscountrateExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel() {
+	public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel(HttpServletRequest req) {
 		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
 
 		try {
@@ -3169,6 +3263,11 @@ public class XBRLNavigationController {
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_DATA_TEMPLATE_DISCOUNT_RATE _EXCEL", null, "BCBUAE_IRRBB_DISCOUNT_RATES");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
