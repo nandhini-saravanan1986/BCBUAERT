@@ -270,10 +270,13 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 			@Override
 			public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
 					Authentication authentication) throws IOException, ServletException {
-				
-				
+
+				Optional<UserProfile> up = userProfileRep.findById(authentication.getName());
+				UserProfile user = up.get();
+				auditService.createLoginAudit(user.getUserid(), "Logout", null, null, "XBRL_USER_PROFILE_TABLE");
+
 				response.sendRedirect("login?logout");
-			
+
 			}
 		
 		

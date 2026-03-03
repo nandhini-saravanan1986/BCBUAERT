@@ -273,7 +273,7 @@
 		#floatingForwardBtn {
 			position: fixed;
 			top: 50%;
-			background-color: #0073e6;
+			background-color: #F8AC46FF;
 			border: none;
 			color: white;
 			font-size: 20px;
@@ -318,7 +318,7 @@
 		/* Hover animation */
 		#floatingBackBtn:hover,
 		#floatingForwardBtn:hover {
-			background-color: #005bb5;
+			background-color: #E67E00;
 			transform: scale(1.1);
 		}
 	</style>
@@ -466,12 +466,99 @@
 		}
 	</style>
 
+<style>
+.scrollable-exist-viewport {
+	max-height: calc(100vh - 195px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 10px;
+}
+
+
+body {
+	overflow: hidden;
+}
+	
+</style>
+</script>
+
+
+<!-- Include this after your DataTable initialization script -->
+
+<style>
+/* Remove top margin/padding from DataTables parent containers */
+#data {
+	padding-top: 0 !important;
+	margin-top: 0 !important;
+}
+
+.table-responsive {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+/* Ensure DataTables filter (search box) doesn't have spacing above it */
+div.dataTables_filter {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+/* FIX: Make search label and box inline */
+.dataTables_filter label {
+	display: flex !important;
+	align-items: center;
+	gap: 8px; /* space between text and input */
+	margin-bottom: 0 !important;
+}
+
+/* DataTables pagination container */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    gap: 8px;
+}
+
+/* All pagination links */
+.dataTables_wrapper .dataTables_paginate .page-link {
+    color: #6c757d !important;
+    background-color: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    padding: 6px 14px;
+}
+
+/* ACTIVE page → ORANGE */
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+    background-color: #ff7f27 !important;
+    border-color: #ff7f27 !important;
+    color: #ffffff !important;
+}
+
+/* Hover */
+.dataTables_wrapper .dataTables_paginate .page-link:hover {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+}
+
+/* Disabled Previous / Next */
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+    color: #adb5bd !important;
+    background-color: #f5f5f5 !important;
+}
+
+
+/* Optional: Style the search input */
+.dataTables_filter input {
+	margin-left: 5px;
+	flex: 1;
+}
+</style>
+
 <script>
 		$(document).ready(function () {
 			// Initialize DataTable
 			var table = $('#audttable').DataTable({
 				scrollX: true,
-				scrollY: "430px",
+				scrollY: "395px",
 				scrollCollapse: true,
 				autoWidth: false,
 				paging: true,
@@ -485,7 +572,7 @@
 			});
 
 			// ✅ Move "Search:" text above the box — simple reliable fix
-			const filter = $('#usertable_filter label');
+			const filter = $('#audttable label');
 			const input = filter.find('input');
 
 			// replace label content: Search above input
@@ -514,8 +601,38 @@
 										    }
 										});
 	</script>
+<script>
+$(document).ready(function () {
+    var table = $('#audttable').DataTable();
+    
+    var dateInput = $('#searchDate');
+    var today = new Date().toISOString().substr(0, 10); 
+    
+    dateInput.val(today);
+    dateInput.attr('max', today);
 
+    function filterDataTableByDate(dateString) {
+        if (!dateString) {
+            table.column(4).search('').draw(); 
+            return;
+        }
+        
+        var parts = dateString.split("-");
+        var formattedDate = parts[2] + "-" + parts[1] + "-" + parts[0];
+        
+        table.column(4).search(formattedDate).draw();
+    }
 
+    filterDataTableByDate(today);
+
+    dateInput.on("change", function () {
+        filterDataTableByDate(this.value);
+    });
+    $(window).on('resize', function () {
+        table.columns.adjust();
+    });    
+});
+</script>
 </head>
 <title>RiskInsights - Service Audit</title>
 
@@ -529,9 +646,9 @@
 				
 					<div class="role-page-header">
 				
-						<div class="role-page-title">
+						<div >
 							<h4>Service Audit</h4>
-							<div class="role-page-underline"></div>
+						<!-- 	<div class="role-page-underline"></div> -->
 						</div>
 				
 				
@@ -542,31 +659,37 @@
 							</div>
 						</div>
 					</div>
-					<br>
+				<!-- 	<br> -->
 				
-					<div class="table-container">
-						<table class="table table-bordered table-striped table-hover fs-6" id="audttable">
+					<div class="table-container m-3">
+						<table class="table table-bordered table-striped table-hover fs-6" id="audttable" >
 							<thead class="table-success">
 								<tr>
 									<th>Ref No.</th>
 									<th>Table Name</th>
-									<th style="width: 11%;">Function Name</th>
-									<th>Old Value</th>
-									<th>New Value</th>
-									<th style="width: 10%;">Modify User</th>
-									<th style="width: 10%;">Modify Date</th>
+									<!-- <th style="width: 10px;">Function Name</th> -->
+									<!-- <th>Old Value</th>
+									<th>New Value</th> -->
+									<th>Function</th> 
+									<th >Entry User</th>
+									<th >Entry Date</th>
+									<th>Entry Time</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr th:each="auditdata : ${AuditList}" class="userlist">
 									<td th:text="${auditdata.audit_ref_no}"></td>
 									<td th:text="${auditdata.audit_table}"></td>
-									<td th:text="${auditdata.audit_screen}"></td>
-									<td th:text="${auditdata.old_value}"></td>
-									<td th:text="${auditdata.new_value}"></td>
+									<!-- <td th:text="${auditdata.audit_screen}"></td> -->
+									<!-- <td th:text="${auditdata.old_value}"></td>
+									<td th:text="${auditdata.new_value}"></td> -->
+									<td th:text="${auditdata.func_code}"></td>
 									<td th:text="${auditdata.entry_user}"></td>
 									<td
 										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'dd-MM-yyyy') : ''}">
+									</td>
+									<td
+										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'HH:mm:ss') : 'N/A'}">
 									</td>
 				
 								</tr>
