@@ -5,10 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -27,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
 import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
+import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
 
 @Service
 public class RT_InvestmentSecurity_Service {
@@ -39,6 +47,9 @@ public class RT_InvestmentSecurity_Service {
 	@Autowired
 	private Environment env;
 
+	@Autowired
+	AuditService auditService;
+
 	// Update existing record
 	public boolean updateInvestmentSecurity(RT_Investment_Securities_Data_Template updatedEntity) {
 		Optional<RT_Investment_Securities_Data_Template> existingOpt = investmentSecuritiesRepo
@@ -46,6 +57,9 @@ public class RT_InvestmentSecurity_Service {
 
 		if (existingOpt.isPresent()) {
 			RT_Investment_Securities_Data_Template existing = existingOpt.get();
+			
+			RT_Investment_Securities_Data_Template dbUser = new RT_Investment_Securities_Data_Template();
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
 
 			// Copy all fields
 			existing.setDataDate(updatedEntity.getDataDate());
@@ -124,7 +138,69 @@ public class RT_InvestmentSecurity_Service {
 
 			existing.setReportSubmitDate(updatedEntity.getReportSubmitDate());
 
+
+
+            List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_Investment_Securities_Data_Template.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(existing);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}
+					}
+
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
+			
+			
 			investmentSecuritiesRepo.save(existing);
+
+			 System.out.println("changes : "+changes);
+
+		        // Audit only if any field was changed
+		        if (!changes.isEmpty()) {
+		        	auditService.createBusinessAudit(
+		        			updatedEntity.getSiNo(),           // Unique ID
+		                "MODIFY",                             // Action
+		                "INVESTMENT_SECURITIES_DATA_EDIT_SCREEN",                  // Screen name
+		                changes,                              // Changed fields map
+		                "BCBUAE_INVESTMENT_SECURITIES_DATA"              // Table name
+		            );
+		        }
 			return true;
 		} else {
 			return false;

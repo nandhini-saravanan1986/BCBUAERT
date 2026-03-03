@@ -4,14 +4,21 @@ import org.springframework.stereotype.Service;
 
 import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
+import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
 
 import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -36,9 +43,17 @@ public class RT_RepoService {
 	 @Autowired
 	private Environment env;
 	 
+		@Autowired
+		AuditService auditService;
+	 
 	    public boolean updateRepoData(RT_RepoDataTemplate newRepoData) {
 	        Optional<RT_RepoDataTemplate> existingDataOpt = repoRepo.findById(newRepoData.getSlNo());
 
+	        RT_RepoDataTemplate existing = existingDataOpt.get();
+
+	        RT_RepoDataTemplate dbUser = new RT_RepoDataTemplate();
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
+			
 	        if (existingDataOpt.isPresent()) {
 	            RT_RepoDataTemplate existingData = existingDataOpt.get();
 
@@ -100,7 +115,68 @@ public class RT_RepoService {
 	            existingData.setMarginCallFreq(newRepoData.getMarginCallFreq());
 
 
+	            List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+				Map<String, String> changes = new LinkedHashMap<>();
+
+				for (Field field : RT_RepoDataTemplate.class.getDeclaredFields()) {
+					field.setAccessible(true);
+					try {
+						Object oldValue = field.get(dbUser);
+						Object newValue = field.get(existingData);
+						if ((oldValue == null || oldValue.toString().trim().isEmpty())
+								&& (newValue == null || newValue.toString().trim().isEmpty())) {
+							continue;
+						}
+						if (ignoreFields.contains(field.getName()) && newValue == null) {
+							continue;
+						}
+
+						if (oldValue instanceof Date || newValue instanceof Date) {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+							String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+							if (Objects.equals(oldDateStr, newDateStr)) {
+								continue;
+							}
+						} else {
+							if (Objects.equals(oldValue, newValue)) {
+								continue;
+							}
+						}
+
+						if (newValue == null) {
+							changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+						} else {
+							changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+						}
+
+						if (newValue != null) {
+							field.set(dbUser, newValue);
+						}
+
+					} catch (IllegalAccessException e) {
+						System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+					}
+				}
+				
 	            repoRepo.save(existingData);
+	            
+
+				 System.out.println("changes : "+changes);
+
+			        // Audit only if any field was changed
+			        if (!changes.isEmpty()) {
+			        	auditService.createBusinessAudit(
+			        			String.valueOf(newRepoData.getSlNo()),           // Unique ID
+			                "MODIFY",                             // Action
+			                "REPO_DATA_TEMPLATE_EDIT_SCREEN",                  // Screen name
+			                changes,                              // Changed fields map
+			                "BCBUAE_REPO_DATA_TEMPLATE"              // Table name
+			            );
+			        }
+			        
 	            return true;
 	        }
 

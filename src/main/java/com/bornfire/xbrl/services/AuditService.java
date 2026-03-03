@@ -94,6 +94,7 @@ public class AuditService {
 	public void createBusinessAudit(final String customerId, final String functionCode, final String screenName,
 			final Map<String, String> changeDetails, final String tableName) {
 		try {
+			System.out.println("Entered Service Audit");
 			final UUID auditID = UUID.randomUUID();
 			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 			String userId = null;

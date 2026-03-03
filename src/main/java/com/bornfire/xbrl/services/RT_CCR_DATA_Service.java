@@ -5,11 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -28,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
 import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 
 @Service
 public class RT_CCR_DATA_Service {
@@ -40,7 +47,8 @@ public class RT_CCR_DATA_Service {
 	@Autowired
 	private RT_CCR_DATA_TEMPLATE_REPOSITORY ccrDataRepo;
 	
-	
+	@Autowired
+	AuditService auditService;
 	
 	/*
 	 * public boolean updateCCRData(RT_CCR_DATA_TEMPLATE updatedEntity) {
@@ -55,6 +63,10 @@ public class RT_CCR_DATA_Service {
 
 	    if (existingOpt.isPresent()) {
 	    	RT_CCR_DATA_TEMPLATE existing = existingOpt.get();
+
+	    	RT_CCR_DATA_TEMPLATE dbUser = new RT_CCR_DATA_TEMPLATE();
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
+			
 
 	        // Basic Information
 	        existing.setTransactionDate(updatedEntity.getTransactionDate());
@@ -101,7 +113,71 @@ public class RT_CCR_DATA_Service {
 
 	        existing.setModifyTime(new Date());
 
+
+
+            List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","modifyTime");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_CCR_DATA_TEMPLATE.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(existing);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}
+					}
+
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
+			
+			
 	        ccrDataRepo.save(existing);
+
+			 System.out.println("changes : "+changes);
+
+		        // Audit only if any field was changed
+		        if (!changes.isEmpty()) {
+		        	auditService.createBusinessAudit(
+		        			updatedEntity.getSiNo(),           // Unique ID
+		                "MODIFY",                             // Action
+		                "CCR_DATA_TEMPLATES_EDIT_SCREEN",                  // Screen name
+		                changes,                              // Changed fields map
+		                "BCBUAE_CCR_DATA_TABLE"              // Table name
+		            );
+		        }
+		        
+		        
 	        return true;
 	    } else {
 	        return false;

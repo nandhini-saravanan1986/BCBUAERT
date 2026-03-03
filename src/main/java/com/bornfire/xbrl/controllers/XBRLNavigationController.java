@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -12,13 +13,16 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -1479,8 +1483,74 @@ public class XBRLNavigationController {
 			data.setEntityFlg("Y");
 			data.setDelFlg("N");
 			data.setModifyUser(userid);
+			
+			Optional<RT_TradeMarketRiskData> existingData = trade_market_risk_repo.findById(data.getReportDate());
+			
+			RT_TradeMarketRiskData existing= existingData.get();
+			
+		    RT_TradeMarketRiskData dbUser = new RT_TradeMarketRiskData();
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
+			List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_TradeMarketRiskData.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(data);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}
+					}
+
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
 
 			trade_market_risk_repo.save(data);
+			
+			 System.out.println("changes : "+changes);
+
+		        // Audit only if any field was changed
+		        if (!changes.isEmpty()) {
+		        	auditService.createBusinessAudit(
+		        			String.valueOf(data.getReportDate()),           // Unique ID
+		                "MODIFY",                             // Action
+		                "TRADE_MARKET_RISK_DATA_EDIT_SCREEN",                  // Screen name
+		                changes,                              // Changed fields map
+		                "BCBUAE_TRADE_MARKET_RISK_DATA"              // Table name
+		            );
+		        }
+		        
 
 			return "Updated successfully";
 		} catch (Exception e) {

@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.SessionFactory;
@@ -21,6 +25,7 @@ import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.io.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -28,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
 
 @Service
@@ -45,10 +51,16 @@ public class RT_ImpactAnalysisService {
     @Autowired
     private SessionFactory sessionFactory;
     
+	@Autowired
+	AuditService auditservice;  
+    
     public boolean updateImpactAnalysis(RT_ImpactAnalysis updatedData) {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
 	    RT_ImpactAnalysis existing = impactanalysisRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+	    
+	    RT_ImpactAnalysis dbUser = new RT_ImpactAnalysis();
+		org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
 
 	    if (existing != null) {
 	    	existing.setDate(updatedData.getDate());
@@ -96,9 +108,70 @@ public class RT_ImpactAnalysisService {
 	    	existing.setMaturityDate(updatedData.getMaturityDate());
 	    	existing.setTenorMths(updatedData.getTenorMths());
 
+			List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_ImpactAnalysis.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(existing);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}
+					}
+
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
 	    	
 
 	    	impactanalysisRepo.save(existing);
+
+	        System.out.println("changes : "+changes);
+
+	        // Audit only if any field was changed
+	        if (!changes.isEmpty()) {
+	            auditservice.createBusinessAudit(
+	            		updatedData.getSI_NO(),           // Unique ID
+	                "MODIFY",                             // Action
+	                "IMPACT_ANALYSIS_EDIT_SCREEN",                  // Screen name
+	                changes,                              // Changed fields map
+	                "BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS"              // Table name
+	            );
+	        }
+	        
+	        
 	        return true;
 	    } else {
 	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());

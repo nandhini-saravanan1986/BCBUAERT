@@ -3,8 +3,10 @@ package com.bornfire.xbrl.services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.bornfire.xbrl.entities.RT_DataControl;
 import com.bornfire.xbrl.entities.RT_NostroAccBalData;
 import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
 
@@ -43,7 +46,11 @@ public class RT_NostroAccBalDataService {
 
 	    if (existingOpt.isPresent()) {
 	        RT_NostroAccBalData existing = existingOpt.get();
-	        Map<String, String> changes = new LinkedHashMap<>();
+	        
+	        RT_NostroAccBalData dbUser = new RT_NostroAccBalData();
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
+			
+	        /*        Map<String, String> changes = new LinkedHashMap<>();
 
 	        // Compare fields before updating and track changes
 	        if (!Objects.equals(existing.getBankName(), updatedData.getBankName())) {
@@ -129,7 +136,7 @@ public class RT_NostroAccBalDataService {
 	        if (!Objects.equals(existing.getReportSubmitDate(), updatedData.getReportSubmitDate())) {
 	            changes.put("reportSubmitDate", "OldValue: " + existing.getReportSubmitDate() + ", NewValue: " + updatedData.getReportSubmitDate());
 	        }
-
+*/
 	        // Update all fields (as you originally had)
 	        existing.setBankName(updatedData.getBankName());
 	        existing.setHeadOfficeSubsidiary(updatedData.getHeadOfficeSubsidiary());
@@ -152,9 +159,68 @@ public class RT_NostroAccBalDataService {
 	        existing.setBankBalanceAed(updatedData.getBankBalanceAed());
 	        existing.setGap(updatedData.getGap());
 	        existing.setReportSubmitDate(updatedData.getReportSubmitDate());
+	        
+
+			List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_NostroAccBalData.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(existing);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}if (oldValue != null && newValue != null) {
+			                try {
+			                    BigDecimal oldNum = new BigDecimal(oldValue.toString());
+			                    BigDecimal newNum = new BigDecimal(newValue.toString());			                    
+			                    if (oldNum.compareTo(newNum) == 0) {
+			                        continue; 
+			                    }
+			                } catch (NumberFormatException ignored) {
+			                }
+			            }
+			        }
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
+	        
 
 	        // Save the data
 	        nostroAccBalRepo.save(existing);
+	        
+	        System.out.println("changes : "+changes);
 
 	        // Audit only if any field was changed
 	        if (!changes.isEmpty()) {

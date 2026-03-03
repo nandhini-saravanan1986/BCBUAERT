@@ -4,10 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Objects;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.io.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -15,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.io.FileNotFoundException;
 
 import org.apache.poi.ss.usermodel.*;
@@ -40,12 +45,18 @@ public class RT_MmdataService {
     private RT_MmDataRepository mmdataRepo;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;    
+
+	@Autowired
+	AuditService auditservice;
     
     public boolean updateMmdata(RT_MmData updatedData) {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
 	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+	    
+	    RT_MmData dbUser = new RT_MmData();
+		org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
 
 	    if (existing != null) {
 	        // Update fields
@@ -79,7 +90,71 @@ public class RT_MmdataService {
 	    	existing.setInterest_profit_rate(updatedData.getInterest_profit_rate());
 
 
+
+			List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+
+			Map<String, String> changes = new LinkedHashMap<>();
+
+			for (Field field : RT_MmData.class.getDeclaredFields()) {
+				field.setAccessible(true);
+				try {
+					Object oldValue = field.get(dbUser);
+					Object newValue = field.get(existing);
+					if ((oldValue == null || oldValue.toString().trim().isEmpty())
+							&& (newValue == null || newValue.toString().trim().isEmpty())) {
+						continue;
+					}
+
+					if (ignoreFields.contains(field.getName()) && newValue == null) {
+						continue;
+					}
+
+					if (oldValue instanceof Date || newValue instanceof Date) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+						String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+
+						if (Objects.equals(oldDateStr, newDateStr)) {
+							continue;
+						}
+					} else {
+						if (Objects.equals(oldValue, newValue)) {
+							continue;
+						}
+					}
+
+					if (newValue == null) {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+					} else {
+						changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+					}
+
+					if (newValue != null) {
+						field.set(dbUser, newValue);
+					}
+
+				} catch (IllegalAccessException e) {
+					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+				}
+			}
+			
 	        mmdataRepo.save(existing);
+	        
+
+	        System.out.println("changes : "+changes);
+
+	        // Audit only if any field was changed
+	        if (!changes.isEmpty()) {
+	            auditservice.createBusinessAudit(
+	                updatedData.getSI_NO(),           // Unique ID
+	                "MODIFY",                             // Action
+	                "MM_DATA_EDIT_SCREEN",                  // Screen name
+	                changes,                              // Changed fields map
+	                "BCBUAE_MM_DATA"              // Table name
+	            );
+	        }
+	        
+	        
 	        return true;
 	    } else {
 	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());
