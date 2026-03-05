@@ -3015,12 +3015,23 @@ public class XBRLNavigationController {
 	        Model model) {
 
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
-	    if ("detail".equalsIgnoreCase(formmode)) {
+		if ("detail".equalsIgnoreCase(formmode)) {
 	    	System.out.println("rowid : "+rowid);
-	        String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, "
+	    	 String sql;
+	    	
+	    	if("BRF8_MAPPING_TABLE".equals(tablename) || tablename=="BRF8_MAPPING_TABLE") {
+	    		sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+		                + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE " 
+		                + "FROM " + tablename  
+		                + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? ";
+	    		
+	    	}
+	    	else {   	
+	        sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, "
 	                + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE " 
 	                + "FROM " + tablename  
 	                + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABLE_1 = ?";
+	    	}
 	        
 			List<Map<String, Object>> allData = new ArrayList<>();
 			String[] rowidarray = rowid.replace(" ", "").split(",");
@@ -3035,7 +3046,7 @@ public class XBRLNavigationController {
 	        model.addAttribute("reportdetails", allData);
 	        model.addAttribute("formmode", "detail");
 	        model.addAttribute("rowid", rowid);
-	    } 
+	    }
 	    // 2. LIST MODE (Main Dashboard Table)
 	    else if ("list".equalsIgnoreCase(formmode)) {
 	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
@@ -3083,11 +3094,34 @@ public class XBRLNavigationController {
 	    String jobId = UUID.randomUUID().toString();
 	    new Thread(() -> {
 	        try {
-	            String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, ACCT_BALANCE_LC, REPORT_DATE FROM " + tablename + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ?";
-	            if(!"ALL".equals(rowid)) { sql += " AND REPORT_LABLE_1 = '" + rowid + "'"; }
-	            
-	            List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, new Object[]{report_date});
-	            if (data.isEmpty()) { backgroundFileStore.put(jobId, "NODATA".getBytes()); return; }
+	        	System.out.println("rowid : " + rowid);
+
+	        	String labelColumn = "BRF8_MAPPING_TABLE".equals(tablename) ? "REPORT_LABEL_1" : "REPORT_LABLE_1";
+	        	String balanceColumn = "BRF8_MAPPING_TABLE".equals(tablename) ? "ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC" : "ACCT_BALANCE_LC";
+
+	        	String sql = "SELECT CUST_ID, FORACID, ACCT_NAME, " + balanceColumn + ", "
+	        	           + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE "
+	        	           + "FROM " + tablename
+	        	           + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ?";
+
+	        	List<Map<String, Object>> allData = new ArrayList<>();
+
+	        	if ("ALL".equalsIgnoreCase(rowid)) {
+	        	    allData = jdbcTemplate.queryForList(sql, new Object[]{report_date});
+	        	} else {
+	        	    sql += " AND " + labelColumn + " = ?";
+	        	    String[] rowidarray = rowid.replace(" ", "").split(",");
+	        	    for (String singlerowid : rowidarray) {
+	        	        Object[] args = new Object[]{report_date, singlerowid.trim()};
+	        	        List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, args);
+	        	        allData.addAll(data);
+	        	    }
+	        	}
+
+	        	if (allData.isEmpty()) {
+	        	    backgroundFileStore.put(jobId, "NODATA".getBytes());
+	        	    return;
+	        	}
 
 	            SXSSFWorkbook workbook = new SXSSFWorkbook(100);
 	            Sheet sheet = workbook.createSheet("Assets Data");
@@ -3110,7 +3144,7 @@ public class XBRLNavigationController {
 
 	            /* --- DATA --- */
 	            int rx = 1;
-	            for (Map<String, Object> m : data) {
+	            for (Map<String, Object> m : allData) {
 	                Row r = sheet.createRow(rx++);
 	                fillCell(r, 0, String.valueOf(m.get("CUST_ID")), dataStyle);
 	                fillCell(r, 1, String.valueOf(m.get("FORACID")), dataStyle);
