@@ -97,29 +97,8 @@ public class UserProfile implements UserDetails {
     private String	pass_exp_days;
     private String	log_in_count;
     private String designation;
-
-    
-    
-    
+    private String department;
    
-    public String getDesignation() {
-		return designation;
-	}
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
-	public String getBrf181_login() {
-		return brf181_login;
-	}
-	public void setBrf181_login(String brf181_login) {
-		this.brf181_login = brf181_login;
-	}
-	public String getAcct_access_code() {
-		return acct_access_code;
-	}
-    public void setAcct_access_code(String acct_access_code) {
-		this.acct_access_code = acct_access_code;
-	}
 	public String getBank_code() {
 		return bank_code;
 	}
@@ -172,11 +151,10 @@ public class UserProfile implements UserDetails {
 		return userid;
 	}
 
-	public void setUserid(String user_id) {
-		this.userid = user_id;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
-	@Override
 	public String getUsername() {
 		return username;
 	}
@@ -199,10 +177,6 @@ public class UserProfile implements UserDetails {
 
 	public void setAcc_exp_date(Date acc_exp_date) {
 		this.acc_exp_date = acc_exp_date;
-	}
-
-	public void setAcc_exp_date(String acc_exp_date) throws ParseException {
-		this.entry_time = new SimpleDateFormat("YYYY-MM-DD").parse(acc_exp_date);
 	}
 
 	public String getLogin_low() {
@@ -236,7 +210,6 @@ public class UserProfile implements UserDetails {
 	public void setDisable_end_date(Date disable_end_date) {
 		this.disable_end_date = disable_end_date;
 	}
-
 	@Override
 	public String getPassword() {
 		return password;
@@ -541,6 +514,7 @@ public class UserProfile implements UserDetails {
 	public void setDisable_flg(String disable_flg) {
 		this.disable_flg = disable_flg;
 	}
+
 	@JsonIgnore
 	public Blob getPhoto() {
 		return photo;
@@ -557,19 +531,59 @@ public class UserProfile implements UserDetails {
 	public void setDomain_id(String domain_id) {
 		this.domain_id = domain_id;
 	}
-	
+
+	public String getAcct_access_code() {
+		return acct_access_code;
+	}
+
+	public void setAcct_access_code(String acct_access_code) {
+		this.acct_access_code = acct_access_code;
+	}
+
+	public String getBrf181_login() {
+		return brf181_login;
+	}
+
+	public void setBrf181_login(String brf181_login) {
+		this.brf181_login = brf181_login;
+	}
+
 	public String getPass_exp_days() {
 		return pass_exp_days;
 	}
+
 	public void setPass_exp_days(String pass_exp_days) {
 		this.pass_exp_days = pass_exp_days;
 	}
+
 	public String getLog_in_count() {
 		return log_in_count;
 	}
+
 	public void setLog_in_count(String log_in_count) {
 		this.log_in_count = log_in_count;
 	}
+
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -138,6 +138,7 @@ import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template_repository;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
+import com.bornfire.xbrl.entities.RT_MC_TABLE1_ENTITY;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
 import com.bornfire.xbrl.entities.RT_MmData;
@@ -182,6 +183,7 @@ import com.bornfire.xbrl.services.RT_Irrbb_Ear_Service;
 import com.bornfire.xbrl.services.RT_Irrbb_Eve_Service;
 import com.bornfire.xbrl.services.RT_Liquidity_Risk_Data_Service;
 import com.bornfire.xbrl.services.RT_LiquidityriskdashboardService;
+import com.bornfire.xbrl.services.RT_MC_TABLE1_Service;
 import com.bornfire.xbrl.services.RT_MID_FX_DEAL_SERVICE;
 import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
@@ -196,6 +198,7 @@ import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.counter_services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
 
 @Controller
 @ConfigurationProperties("default")
@@ -396,7 +399,13 @@ public class XBRLNavigationController {
 
 	@Autowired
 	MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO misCounterPartyLimitDetailsRepo;
-
+	
+	@Autowired
+	RT_MC_TABLE1_REPO RT_MC_TABLE1_REPO;
+	
+	@Autowired
+	RT_MC_TABLE1_Service rT_MC_TABLE1_Service;
+	
 	private String pagesize;
 
 	public String getPagesize() {
@@ -4303,5 +4312,119 @@ public class XBRLNavigationController {
 		model.addAttribute("formmode", formmode);
 
 		return "RT/Liquidity_Risk_Dashboard_Template";
+	}
+	
+	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
+	public String RT_MC_Reports(@RequestParam(required = false) String formmode,@RequestParam(required = false) String branch, Model md,HttpServletRequest req) {
+		
+		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
+		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		md.addAttribute("ROLEID", ROLEID);
+		System.out.println("ROLEID : "+ ROLEID);
+		
+		String DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
+		md.addAttribute("DEPARTMENT", DEPARTMENT);
+		System.out.println("DEPARTMENT : "+ DEPARTMENT);
+		
+		
+		if(branch==null || branch.isEmpty()) {
+			branch=BRANCHCODE;
+			md.addAttribute("BRANCHCODE", BRANCHCODE);
+		}
+		else {
+			md.addAttribute("BRANCHCODE", branch);
+		}
+		
+		System.out.println("branch : "+ branch);
+
+		if ("bankinformation".equalsIgnoreCase(formmode) || formmode==null || "null".equalsIgnoreCase(formmode) ) {
+			
+			List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+			System.out.println("size : "+reportlist.size());
+			md.addAttribute("reportlist", reportlist);
+			md.addAttribute("formmode", "bankinformation");
+		}
+
+		else if ("bankconsumers".equalsIgnoreCase(formmode)) {
+			md.addAttribute("formmode", "bankconsumers");
+		}
+		
+		else if ("complaints".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "complaints");
+		}
+		else if ("retailproducts".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "retailproducts");
+		}
+		else if ("bankeemployee".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "bankeemployee");
+		}
+		else if ("trainings".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "trainings");
+		}
+		else if ("additionalinformation".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "additionalinformation");
+		}
+		else if ("islamicbanking".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "islamicbanking");
+		}
+		else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
+		    md.addAttribute("formmode", "conductcultureassessment");
+		}
+		
+
+		return "RBS_MC_Reports";
+	}
+
+	@PostMapping("/saveMcReport")
+	@ResponseBody
+	public ResponseEntity<String> saveReport(@ModelAttribute RT_MC_TABLE1_ENTITY reportData,HttpServletRequest req) {
+
+		try {
+			System.out.println("branch: " + reportData.getBRANCH_CODE());
+    		String userid = (String) req.getSession().getAttribute("USERID");  	
+    		reportData.setMODIFY_USERID(userid);
+
+			RT_MC_TABLE1_REPO.save(reportData);
+
+			return ResponseEntity.ok("Success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
+		}
+	}
+	
+	@GetMapping("/downloadMcReport")
+    public ResponseEntity<byte[]> downloadReport(@RequestParam("branch") String branch) throws Exception {
+        
+        byte[] fileData = rT_MC_TABLE1_Service.generateReportFile(branch);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=MC_Report_" + branch + ".xlsx");
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        
+        headers.setContentLength(fileData.length);
+
+        return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
+    }
+
+	@PostMapping("/verifyMcReport")
+	@ResponseBody
+	public ResponseEntity<String> verifyReport(@ModelAttribute RT_MC_TABLE1_ENTITY reportData, HttpServletRequest req) {
+		try {
+
+			String userid = (String) req.getSession().getAttribute("USERID");
+			if (reportData.getMODIFY_USERID() == userid || userid.equals(reportData.getMODIFY_USERID())) {
+				return ResponseEntity.status(500).body("Same User can not Verify");
+			} else {
+				reportData.setVERIFY_FLG("Y");
+				reportData.setVERIFY_USERID(userid);
+				RT_MC_TABLE1_REPO.save(reportData);
+
+				return ResponseEntity.ok("Verified");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error verifying data");
+		}
 	}
 }

@@ -1,0 +1,1992 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- CSS -->
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+
+<!-- JavaScript -->
+<!-- jQuery core (required first) -->
+
+
+<!-- ✅ Your manually placed jQuery validation
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	 <script th:src="/jquery/jquery.validate.min.js"></script>
+	 -->
+
+<!-- jQuery (required first) -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- ✅ jQuery Validation -->
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<!-- Bootstrap + Others -->
+<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+<script
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+
+<style>
+body {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	font-size: 14px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	font-family: sans-serif;
+}
+
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 120vw !important; /* 👈 a bit wider than viewport */
+	height: 120vh !important; /* 👈 a bit taller than viewport */
+	background-color: #000; /* 👈 solid black base */
+	opacity: 0.7 !important; /* 👈 slightly darker overlay */
+	z-index: 1062;
+	/* 👈 ensures it sits below modal but above everything else */
+}
+
+/* === ROLE PAGE CUSTOM HEADER === */
+.role-page-header {
+	background-color: #ffffff;
+	padding: 15px 20px;
+}
+
+.role-page-title h4 {
+	color: #003366;
+	font-family: "Segoe UI", Arial, sans-serif;
+	font-size: 20px;
+	font-weight: 700;
+	margin: 0;
+}
+
+.role-page-underline {
+	width: 158px;
+	height: 3px;
+	background-color: #0073e6;
+	border-radius: 2px;
+	margin-top: 6px;
+	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+}
+
+/* Add Button Styling */
+/* Base Button Style */
+.role-btn {
+	background: #ffffff; /* default white background */
+	color: #005fa3; /* blue text */
+	border: 2px solid #005fa3;
+	border-radius: 25px;
+	padding: 8px 18px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+	transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.role-btn:hover {
+	background: linear-gradient(135deg, #005fa3, #007bff);
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+}
+
+/* Active (clicked or selected) button */
+.role-btn.active {
+	background: linear-gradient(135deg, #005fa3, #007bff);
+	color: #fff;
+	border: none;
+	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+	transform: translateY(-1px);
+}
+
+/* Optional: icon spacing */
+.role-btn i {
+	margin-right: 5px;
+}
+</style>
+
+<style>
+:root {
+	--bob-orange: #0073e6;
+	--bob-blue: #004080;
+	--overlay-bg: rgba(255, 255, 255, 0.9);
+}
+
+/* Full-screen overlay */
+.bob-loader {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(226, 232, 237, 0.6); /* lighter background */
+	backdrop-filter: blur(8px); /* ✅ background blur */
+	-webkit-backdrop-filter: blur(8px); /* Safari support */
+	z-index: 9999;
+	transition: opacity 0.25s ease, visibility 0.25s;
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Hide when not active */
+.bob-loader[aria-hidden="true"] {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* Loader card */
+.bob-loader-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* Static logo */
+.logo-imgs {
+	height: 90px;
+	object-fit: contain;
+	display: block;
+}
+
+/* Flowing bar below logo */
+.flow-bar {
+	position: relative;
+	width: 200px; /* ✅ increased width */
+	height: 8px; /* slightly thicker for better visibility */
+	background: #f1f1f1;
+	border-radius: 4px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+
+.flow-line {
+	position: absolute;
+	left: -40%;
+	top: 0;
+	width: 40%;
+	height: 100%;
+	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+	border-radius: 4px;
+	animation: flowMove 1.2s linear infinite;
+}
+
+/* Animation for flowing line */
+@
+keyframes flowMove { 0% {
+	left: -40%;
+}
+100
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%
+{
+left
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+100
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%;
+}
+}
+</style>
+
+<script>
+							function goBack() {
+							    window.history.back();
+							}
+
+							function goForward() {
+							    window.history.forward();
+							}
+
+							// Detect mouse near screen edges
+							document.addEventListener('mousemove', function(e) {
+							    const backBtn = document.getElementById('floatingBackBtn');
+							    const forwardBtn = document.getElementById('floatingForwardBtn');
+							    const screenWidth = window.innerWidth;
+
+							    // Left edge (back)
+							    if (e.clientX < 50) {
+							        backBtn.classList.add('show');
+							    } else {
+							        backBtn.classList.remove('show');
+							    }
+
+							    // Right edge (forward)
+							    if (screenWidth - e.clientX < 50) {
+							        forwardBtn.classList.add('show');
+							    } else {
+							        forwardBtn.classList.remove('show');
+							    }
+							});
+							</script>
+
+<style>
+/* Shared styles for both buttons */
+#floatingBackBtn, #floatingForwardBtn {
+	position: fixed;
+	top: 50%;
+	background-color: #F8AC46FF;
+	border: none;
+	color: white;
+	font-size: 20px;
+	border-radius: 50%;
+	width: 45px;
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.4s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	z-index: 999;
+}
+
+/* Back button */
+#floatingBackBtn {
+	left: -50px;
+	/* hidden off-screen */
+}
+
+/* Forward button */
+#floatingForwardBtn {
+	right: -50px;
+	/* hidden off-screen */
+}
+
+/* Show when near edge */
+#floatingBackBtn.show {
+	left: 20px;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+#floatingForwardBtn.show {
+	right: 20px;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Hover animation */
+#floatingBackBtn:hover, #floatingForwardBtn:hover {
+	background-color: #E67E00;
+	transform: scale(1.1);
+}
+</style>
+
+
+
+
+
+
+
+
+<style>
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
+	.show>.btn-primary.dropdown-toggle {
+	color: #fff;
+	background-color: #cc0000;
+	/* corrected to a valid red */
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+</style>
+
+
+
+
+<style>
+.card {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+.card-header h5 {
+	font-size: 22px;
+	color: #fff;
+	font-weight: 600;
+}
+
+.nav-tabs .nav-link {
+	font-weight: 500;
+	border: 1px solid #dee2e6;
+	border-bottom: none;
+	border-radius: 4px 4px 0 0;
+	background-color: #f1f1f1;
+	margin-right: 5px;
+}
+
+.nav-tabs .nav-link.active {
+	background-color: #ffffff;
+	border-color: #dee2e6 #dee2e6 #ffffff;
+}
+
+.table-responsive {
+	border: 1px solid #dee2e6;
+	border-radius: 4px;
+}
+
+.table-hover tbody tr:hover {
+	background-color: #f3f6f9;
+}
+
+.card-footer {
+	padding: 10px;
+	border-top: 1px solid #ccc;
+}
+
+.btn-xs {
+	padding: 4px 12px;
+	font-size: 14px;
+	border-radius: 4px;
+}
+
+.fa-edit:hover {
+	color: #28a745;
+	transform: scale(1.1);
+}
+
+td {
+	border: 1px solid rgb(0, 164, 166);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+</style>
+
+
+<style>
+.form-group {
+	position: relative;
+	margin-bottom: 1.5rem;
+}
+
+.form-control {
+	width: 100%;
+	border: 2px solid #ccc;
+	border-radius: 8px;
+	font-size: 1rem;
+	outline: none;
+	background: transparent;
+	transition: border-color 0.3s ease, padding-top 0.3s ease;
+}
+
+.error {
+	color: red;
+	padding-top: 15px;
+}
+
+.form-control:focus {
+	border-color: #007bff;
+}
+
+.form-legend {
+	position: absolute;
+	top: 50%;
+	left: 15px;
+	transform: translateY(-50%);
+	font-size: 1rem;
+	color: #aaa;
+	background: white;
+	padding: 0 5px;
+	pointer-events: none;
+	transition: 0.3s ease;
+}
+
+/* When input or select is focused or has a value, move the label up */
+.form-control:focus ~.form-legend, .form-control:not(:placeholder-shown)
+	 ~.form-legend {
+	top: -8px;
+	font-size: 1rem;
+	color: #007bff;
+}
+
+/* Hover effect when the input/select is focused */
+.form-control:focus:hover ~.form-legend {
+	color: #0056b3;
+	/* Darker shade of blue on hover */
+}
+
+/* Ensure the label returns to the normal color after focus or hover is removed */
+.form-control:not(:focus) ~.form-legend {
+	color: #aaa;
+	/* Normal label color */
+}
+</style>
+
+<style>
+/* Red border for invalid inputs */
+input.error, select.error {
+	border: 2px solid red !important;
+}
+
+/* Error message style */
+label.error {
+	color: red;
+	font-size: 0.85em;
+	margin-top: 5px;
+	display: block;
+}
+</style>
+
+<style>
+.role-btnl {
+	min-width: 150px; /* or a value you prefer */
+	padding: 8px 12px;
+	text-align: center;
+}
+</style>
+
+
+<style>
+.form-group {
+	position: relative;
+	margin-bottom: 1.5rem;
+}
+
+.form-control {
+	width: 100%;
+	border: 2px solid #ccc;
+	border-radius: 8px;
+	font-size: 1rem;
+	outline: none;
+	background: transparent;
+	transition: border-color 0.3s ease, padding-top 0.3s ease;
+}
+
+.error {
+	color: red;
+	padding-top: 15px;
+}
+
+.form-control:focus {
+	border-color: #007bff;
+}
+
+.form-legend {
+	position: absolute;
+	top: 50%;
+	left: 15px;
+	transform: translateY(-50%);
+	font-size: 1rem;
+	color: #aaa;
+	background: white;
+	padding: 0 5px;
+	pointer-events: none;
+	transition: 0.3s ease;
+}
+
+/* When input or select is focused or has a value, move the label up */
+.form-control:focus ~.form-legend, .form-control:not(:placeholder-shown)
+	 ~.form-legend {
+	top: -8px;
+	font-size: 1rem;
+	color: #007bff;
+}
+
+/* Hover effect when the input/select is focused */
+.form-control:focus:hover ~.form-legend {
+	color: #0056b3;
+	/* Darker shade of blue on hover */
+}
+
+/* Ensure the label returns to the normal color after focus or hover is removed */
+.form-control:not(:focus) ~.form-legend {
+	color: #aaa;
+	/* Normal label color */
+}
+</style>
+<style>
+.role-btn {
+	background: #ffffff;
+	/* default white */
+	color: #E67E00;
+	/* default orange text */
+	border: 1px solid #E67E00;
+	border-radius: 25px;
+	padding: 8px 18px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+	transition: all 0.3s ease;
+}
+
+/* Hover effect → pastel orange */
+.role-btn:hover {
+	background: #FFF3D1;
+	/* pastel orange (same as submenu hover) */
+	color: #E67E00;
+	/* orange text */
+	transform: translateY(-2px);
+	box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+}
+
+/* Active (selected tab) */
+.role-btn.active {
+	background: #E67E00;
+	/* solid orange */
+	color: #fff;
+	/* white text */
+	border-color: #E67E00;
+	transform: translateY(-1px);
+	box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+}
+
+/* Optional: icon spacing */
+.role-btn i {
+	margin-right: 5px;
+}
+</style>
+<style>
+#pageHeader {
+	position: sticky;
+	top: 110px;
+	z-index: 1050;
+	background: white;
+	padding-top: 10px;
+}
+
+#tabHeader {
+	position: sticky;
+	top: 5px;
+	/* just below page header */
+	z-index: 1040;
+	background: white;
+	padding: 5px 0;
+}
+
+#mainHeader {
+	position: sticky;
+	top: 0;
+	z-index: 9999;
+	background: white;
+}
+</style>
+<style>
+/* DataTables pagination container */
+.dataTables_wrapper .dataTables_paginate {
+	display: flex;
+	gap: 3px;
+	margin-left: 4px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	box-sizing: border-box;
+	display: inline-block;
+	min-width: 1.5em;
+	padding: 0.5em !important;
+	margin-left: -8px;
+	text-align: center;
+	text-decoration: none !important;
+	border: 1px solid transparent;
+	border-radius: 2px;
+}
+
+.mb-2 {
+	margin-bottom: -0.5rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .page-link {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+/* Hover ONLY for Previous & Next */
+.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+	background-color: #e9ecef !important;
+	color: rgb(255, 128, 64) !important;
+}
+
+/* Page numbers should NOT hover */
+.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover
+	{
+	background-color: #f5f5f5 !important;
+	color: #6c757d !important;
+	cursor: default !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+	background-color: #ff7f27 !important;
+	border-color: #ff7f27 !important;
+	color: #ffffff !important;
+	cursor: default !important;
+}
+</style>
+<style>
+#usertable {
+	min-width: 2800px;
+	/* adjust based on columns */
+}
+
+#usertable {
+	border-collapse: collapse !important;
+	font-family: Arial, sans-serif !important;
+	font-size: 12px !important;
+}
+
+/* HEADER */
+/* Update this section in your <style> tag */
+#usertable thead th {
+	background-color: #7b6458;
+	color: #fff;
+	font-family: Arial, sans-serif !important;
+	font-size: 14px !important;
+	/* text-align: center; */
+	vertical-align: middle;
+	white-space: normal;
+	/* ADD THESE THREE LINES */
+	padding: 2px 4px !important;
+	/* Reduces internal spacing */
+	line-height: 1.1 !important;
+	/* Reduces space between wrapped text lines */
+	font-size: 11px !important;
+	/* Optional: slightly smaller font to save space */
+	position: sticky;
+	top: 0;
+	/* Keeps the first row at the top */
+	z-index: 10;
+	background-color: #7b6458 !important;
+	/* Ensures the header isn't transparent */
+	color: white;
+	box-shadow: inset 0 -1px 0 #dee2e6;
+	/* Optional: adds a bottom border to the sticky header */
+}
+
+/* BODY CELLS */
+#usertable td {
+	padding: 5px 6px !important;
+	border: 1px solid #e8e8e8 !important;
+	/* light grey lines */
+	background: #fafafa;
+	white-space: normal !important;
+}
+
+/* ROW EVEN/ODD */
+#usertable tbody tr:nth-child(even) {
+	background-color: #f4f2ef !important;
+}
+
+#usertable tbody tr:nth-child(odd) {
+	background-color: #ffffff !important;
+}
+
+#usertable thead tr:nth-child(2) th {
+	top: 32px;
+	/* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	z-index: 9;
+}
+
+.dataTables_filter label {
+	display: flex !important;
+	gap: 10px;
+	align-items: center;
+}
+
+.dataTables_filter label {
+	display: flex !important;
+	align-items: center;
+	gap: 8px;
+	/* space between text and input */
+	margin-bottom: 0 !important;
+}
+
+.dataTables_filter input {
+	margin-left: 5px;
+	flex: 1;
+}
+
+/* === ROLE PAGE CUSTOM HEADER === */
+.role-page-header {
+	background-color: #ffffff;
+	padding: 15px 20px;
+	display: flex;
+	/* Added for alignment */
+	justify-content: space-between;
+	/* Added for alignment */
+	align-items: center;
+	/* Added for alignment */
+}
+</style>
+<style>
+.liquid-edit-page {
+	font-family: Arial, sans-serif !important;
+	font-size: 12px !important;
+}
+
+.liquid-edit-page label, .liquid-edit-page input, .liquid-edit-page textarea,
+	.liquid-edit-page button {
+	font-size: 12px !important;
+}
+
+.modal-title {
+	background-color: #f7a47c !important;
+}
+
+body {
+	overflow: hidden;
+}
+</style>
+<style>
+.menu-title-header {
+	background-color: #f7a47c !important;
+	color: #ffffff;
+	text-align: center;
+	padding: 10px 15px;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+</style>
+
+
+<script th:inline="javascript">
+
+
+		function home() {
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+						location.href = 'Dashboard'
+		}
+
+		function back() {
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.history.back();
+		}
+
+
+	</script>
+
+</head>
+
+
+<script>
+	function navigateToTab(tabId) {
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId; 
+		
+	}
+
+
+	function handleClick(tabId) {
+		// Remove active class from all buttons
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+		document.getElementById(tabId + '-btn').classList.add('active');
+
+		// Hide all panes
+		document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+		document.getElementById(tabId).classList.add('show', 'active');
+	}
+
+	// On page load, detect formmode and show corresponding tab
+	window.addEventListener('DOMContentLoaded', function () {
+		const params = new URLSearchParams(window.location.search);
+		const formmode = params.get('formmode');
+
+		if (formmode === 'bankinformation' || formmode ===null) {
+			handleClick('bankinformation');
+		} 		
+		else if(formmode === 'bankconsumers'){
+			handleClick('bankconsumers');
+		}
+		else if(formmode==='complaints'){
+			handleClick('complaints');
+		}
+		else if(formmode === 'retailproducts'){
+			handleClick('retailproducts');
+		}
+		else if(formmode==='bankeemployee'){
+			handleClick('bankeemployee');
+		}
+		else if(formmode === 'trainings'){
+			handleClick('trainings');
+		}
+		else if(formmode==='additionalinformation'){
+			handleClick('additionalinformation');
+		}
+		else if(formmode === 'islamicbanking'){
+			handleClick('islamicbanking');
+		}
+		else if(formmode==='conductcultureassessment'){
+			handleClick('conductcultureassessment');
+		}
+		else {
+			handleClick('bankinformation'); // default or formmode=add
+		}
+	});
+
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
+	
+	function filtertable(){		
+		const params = new URLSearchParams(window.location.search);
+		let formmode = params.get('formmode');		
+		if(formmode===null){
+			formmode = 'bankinformation';
+		}
+		let branch = document.getElementById("branch");
+		let branchvalue= branch.value;
+		
+		console.log("formmode : "+ formmode +" branch : "+branchvalue);		
+		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&branch='+branchvalue;		
+	}
+		
+</script>
+
+
+
+
+<title>RiskInsights - RBS MC REPORTS</title>
+
+<body>
+	<div class="container-fluid"
+		style="padding-left: 0px; padding-right: 0px;">
+
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+
+		<div id="pageHeader"
+			class="role-page-header d-flex justify-content-between align-items-center"
+			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankeemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
+			<div class="text-left flex-grow-1">
+				<h4>RBS MC REPORTS</h4>
+
+			</div>
+
+			<div class="d-flex align-items-center gap-2" style="margin-top: 8px;">
+				<div class="float-left">
+					<button class="role-btn" id="bankinformation-btn"
+						onclick="navigateToTab('bankinformation')">Table 1</button>
+					<button class="role-btn" id="bankconsumers-btn"
+						onclick="navigateToTab('bankconsumers')">Table 2</button>
+					<button class="role-btn" id="complaints-btn"
+						onclick="navigateToTab('complaints')">Table 3</button>
+					<button class="role-btn" id="retailproducts-btn"
+						onclick="navigateToTab('retailproducts')">Table 4</button>
+					<button class="role-btn" id="bankeemployee-btn"
+						onclick="navigateToTab('bankeemployee')">Table 5</button>
+					<button class="role-btn" id="trainings-btn"
+						onclick="navigateToTab('trainings')">Table 6</button>
+					<button class="role-btn" id="additionalinformation-btn"
+						onclick="navigateToTab('additionalinformation')">Table 7</button>
+					<button class="role-btn" id="islamicbanking-btn"
+						onclick="navigateToTab('islamicbanking')">Table 8</button>
+					<button class="role-btn" id="conductcultureassessment-btn"
+						onclick="navigateToTab('conductcultureassessment')">Table
+						9</button>
+
+				</div>
+
+				<div class="form-group mb-0"
+					th:hidden="${ROLEID != 'ADM-M' and ROLEID != 'ADM-C' and ROLEID != 'MGR'  and ROLEID != 'SUP-ADM'}">
+					<select id="branch" name="branch"
+						style=" width: 200px"
+						class="form-control form-control-sm " onchange="filtertable()"
+						required>
+						<option value="" selected disabled>-- Select --</option>
+						<option th:selected="${BRANCHCODE == '9001'}" value="9001">9001
+							- Dubai</option>
+						<option th:selected="${BRANCHCODE == '9002'}" value="9002">9002
+							- Abu Dhabi</option>
+						<option th:selected="${BRANCHCODE == '9003'}" value="9003">9003
+							- Deira</option>
+						<option th:selected="${BRANCHCODE == '9004'}" value="9004">9004
+							- Sharjah</option>
+						<option th:selected="${BRANCHCODE == '9005'}" value="9005">9005
+							- Ras AlKhaima</option>
+						<option th:selected="${BRANCHCODE == '9008'}" value="9008">9008
+							- Syndication</option>
+						<option th:selected="${BRANCHCODE == '9010'}" value="9010">9010
+							- Treasury</option>
+						<option th:selected="${BRANCHCODE == '9019'}" value="9019">9019
+							- DFC</option>
+						<option value="consolidated">Consolidated</option>
+					</select> <label class="form-legend" >Branch</label>
+				</div>
+
+			</div>
+		</div>
+
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankeemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
+
+
+			<div class="mr-3 mb-2 text-right"
+				th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+				<button type="button" class="role-btn" id="downloadBtn" th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+					onclick="downloadData()">Download</button>
+				<button type="button" class="role-btn" id="verifyBtn" th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
+					onclick="verifyData()">Verify</button>
+				<button type="button" class="role-btn" id="modifyBtn" th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+					onclick="enableEdit()">Modify</button>
+				<button type="button" class="role-btn" id="cancelBtn"
+					style="display: none;" onclick="cancelEdit()">Cancel</button>
+			</div>
+			<div class="tab-pane fade" id="bankinformation" role="tabpanel"
+				th:if="${formmode=='bankinformation'}">
+				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
+					class="text-center mt-4">
+					<strong>No records found</strong>
+				</div>
+				<form id="reportForm" method="POST"
+					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
+						th:value="${reportlist[0].REPORT_DATE}"> <input
+						type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
+						th:value="${reportlist[0].BRANCH_CODE}"> <input
+						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID" 
+						th:value="${reportlist[0].MODIFY_USERID}">
+					<div class="table-responsive" style="overflow: auto; border: none;">
+						<table id="usertable"
+							class="table table-bordered table-striped table-hover">
+
+							<thead class="thead-light">
+								<tr>
+									<th>Bank</th>
+									<th>Product</th>
+									<th>Number of employees as of the specified time period</th>
+									<th>Number of Consumers as of the specified time period</th>
+									<th>Average Number of employees as of the specified time
+										period</th>
+									<th>Number of branches as of the specified time period</th>
+									<th>Total number of Bank branches designated for PoD or
+										branches catering to the needs of PoD during the specified
+										time period</th>
+									<th>Number of ATMs as of the specified time period</th>
+									<th>Number of ATMs having People of Determination
+										specified requirements as of the specified time period</th>
+									<th>Number of Authorized Agents as of the specified time
+										period</th>
+									<th>Number of instances, wherein service interruptions to
+										internet and mobile Banking is either 1 hour or more than 1
+										hour during the specified time period</th>
+									<th>Number of instances, wherein any scheduled or planned
+										downtime for any critical systems of the Bank extended over
+										the scheduled or planned downtime during the specified time
+										period</th>
+									<th>Number of employees within the second line of defense
+										(Risk /Compliance or any other function which is independent
+										from business) responsible for monitoring Conduct Risk of the
+										Bank as of the specified date</th>
+									<th>Number of external fraud incidents during specified
+										time period</th>
+									<th>Number of internal fraud incidents during specified
+										time period</th>
+									<th>Number of fraud incidents during the specified time
+										period</th>
+									<th>Number of fraud incidents during the previous period</th>
+									<th>Total number of reviews conducted by the Bank on
+										authorised agents during the specified time period</th>
+									<th style="min-width: 325px;">Total number of instances of Unplanned service
+										interuptions including system downtime instances affecting the
+										internet/mobile/devise based instument which resulted in
+										consumer's failure to access Bank's application/website/POS
+										terminals or failure to avail the services provided by the
+										Bank through its application/website/POS terminals during the
+										specified time period</th>
+									<th style="min-width: 325px;">Total number of hours of Unplanned service
+										interuptions including system downtime (in hours) affecting
+										the internet/mobile/devise based instument which resulted in
+										consumer's failure to access Bank's application/website/POS
+										terminals or failure to avail the services provided by the
+										Bank through its application/website/POS terminals during the
+										specified time period</th>
+									<th>Total Number of incidents of system security breaches
+										leading to Consumer data theft (e.g., hacker attacks, personal
+										data leakage, unauthorized access to digital wallets for data
+										theft, etc.) that have impacted consumers as of the specified
+										time period</th>
+									<th>Total number of penetration and cyber-attack
+										simulation testing conducted during the specified time period</th>
+
+									<th>Total Number of Authorised Agents and outsourcing
+										service providers (including services or systems outsourced to
+										authorised agents) during the specified time period</th>
+									<th>Total Number of Point of Sale Terminals during the
+										specified time period</th>
+									<th>Total Number of Merchant tie ups during the specified
+										time period</th>
+									<th>Number of Inquiries received raised during the
+										specified time period</th>
+
+									<th>Number of service interruptions caused by authorised
+										agents that have affected consumers during the specified time
+										period</th>
+
+
+								</tr>
+							</thead>
+							<tbody th:each="report : ${reportlist}">
+								<tr>
+									<td><input type="text" id="R6_BANK" name="R6_BANK"
+										th:value="${report.R6_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R6_PRODUCT" name="R6_PRODUCT"
+										th:value="${report.R6_PRODUCT}" readonly class="table-input"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R7_BANK" name="R7_BANK"
+										th:value="${report.R7_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R7_PRODUCT" name="R7_PRODUCT"
+										th:value="${report.R7_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R8_BANK" name="R8_BANK"
+										th:value="${report.R8_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R8_PRODUCT" name="R8_PRODUCT"
+										th:value="${report.R8_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R9_BANK" name="R9_BANK"
+										th:value="${report.R9_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R9_PRODUCT" name="R9_PRODUCT"
+										th:value="${report.R9_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R10_BANK" name="R10_BANK"
+										th:value="${report.R10_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R10_PRODUCT" name="R10_PRODUCT"
+										th:value="${report.R10_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R11_BANK" name="R11_BANK"
+										th:value="${report.R11_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R11_PRODUCT" name="R11_PRODUCT"
+										th:value="${report.R11_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R12_BANK" name="R12_BANK"
+										th:value="${report.R12_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R12_PRODUCT" name="R12_PRODUCT"
+										th:value="${report.R12_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R13_BANK" name="R13_BANK"
+										th:value="${report.R13_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R13_PRODUCT" name="R13_PRODUCT"
+										th:value="${report.R13_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R14_BANK" name="R14_BANK"
+										th:value="${report.R14_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R14_PRODUCT" name="R14_PRODUCT"
+										th:value="${report.R14_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R15_BANK" name="R15_BANK"
+										th:value="${report.R15_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R15_PRODUCT" name="R15_PRODUCT"
+										th:value="${report.R15_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R16_BANK" name="R16_BANK"
+										th:value="${report.R16_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R16_PRODUCT" name="R16_PRODUCT"
+										th:value="${report.R16_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R17_BANK" name="R17_BANK"
+										th:value="${report.R17_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R17_PRODUCT" name="R17_PRODUCT"
+										th:value="${report.R17_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R18_BANK" name="R18_BANK"
+										th:value="${report.R18_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R18_PRODUCT" name="R18_PRODUCT"
+										th:value="${report.R18_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R19_BANK" name="R19_BANK"
+										th:value="${report.R19_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R19_PRODUCT" name="R19_PRODUCT"
+										th:value="${report.R19_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R20_BANK" name="R20_BANK"
+										th:value="${report.R20_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R20_PRODUCT" name="R20_PRODUCT"
+										th:value="${report.R20_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R21_BANK" name="R21_BANK"
+										th:value="${report.R21_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R21_PRODUCT" name="R21_PRODUCT"
+										th:value="${report.R21_PRODUCT}" readonly class="table-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R22_BANK" name="R22_BANK" 
+										th:value="${report.R22_BANK}" readonly class="table-input "></td>
+									<td><input type="text" id="R22_PRODUCT" name="R22_PRODUCT"
+										th:value="${report.R22_PRODUCT}" readonly class="table-input "></td>
+									<td><input type="text" id="R22_NO_EMP_SPC_TP"
+										name="R22_NO_EMP_SPC_TP" th:classappend="${DEPARTMENT == 'IT'} ? ' editable-input'"
+										th:value="${report.R22_NO_EMP_SPC_TP}" readonly
+										class="table-input "></td>
+									<td><input type="text" id="R22_NO_CON_SPC_TP"
+										name="R22_NO_CON_SPC_TP"
+										th:value="${report.R22_NO_CON_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_AVG_NO_EMP_SPC_TP"
+										name="R22_AVG_NO_EMP_SPC_TP"
+										th:value="${report.R22_AVG_NO_EMP_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_BRN_SPC_TP"
+										name="R22_NO_BRN_SPC_TP"
+										th:value="${report.R22_NO_BRN_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_BRN_POD"
+										name="R22_TOT_NO_BRN_POD"
+										th:value="${report.R22_TOT_NO_BRN_POD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_ATM_SPC_TP"
+										name="R22_NO_ATM_SPC_TP"
+										th:value="${report.R22_NO_ATM_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_ATM_DET_SPC_TP"
+										name="R22_NO_ATM_DET_SPC_TP"
+										th:value="${report.R22_NO_ATM_DET_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_AUT_SPC_TP"
+										name="R22_NO_AUT_SPC_TP"
+										th:value="${report.R22_NO_AUT_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_INS_BNK_SPC_TP"
+										name="R22_NO_INS_BNK_SPC_TP"
+										th:value="${report.R22_NO_INS_BNK_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_INS_DWN_SPC_TP"
+										name="R22_NO_INS_DWN_SPC_TP"
+										th:value="${report.R22_NO_INS_DWN_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_EMP_RSK_SPC_DTE"
+										name="R22_NO_EMP_RSK_SPC_DTE"
+										th:value="${report.R22_NO_EMP_RSK_SPC_DTE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_EXT_FRD_SPC_TP"
+										name="R22_NO_EXT_FRD_SPC_TP"
+										th:value="${report.R22_NO_EXT_FRD_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_INT_FRD_SPC_TP"
+										name="R22_NO_INT_FRD_SPC_TP"
+										th:value="${report.R22_NO_INT_FRD_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_FRD_SPC_TP"
+										name="R22_NO_FRD_SPC_TP"
+										th:value="${report.R22_NO_FRD_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_FRD_PP"
+										name="R22_NO_FRD_PP" th:value="${report.R22_NO_FRD_PP}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_REV_SPC_TP"
+										name="R22_TOT_REV_SPC_TP"
+										th:value="${report.R22_TOT_REV_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_INS_UNP_SPC_TP"
+										name="R22_TOT_INS_UNP_SPC_TP"
+										th:value="${report.R22_TOT_INS_UNP_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_HRS_BNK"
+										name="R22_TOT_NO_HRS_BNK"
+										th:value="${report.R22_TOT_NO_HRS_BNK}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_INC_SPC_TP"
+										name="R22_TOT_NO_INC_SPC_TP"
+										th:value="${report.R22_TOT_NO_INC_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_PEN_SPC_TP"
+										name="R22_TOT_NO_PEN_SPC_TP"
+										th:value="${report.R22_TOT_NO_PEN_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_AUT_SPC_TP"
+										name="R22_TOT_NO_AUT_SPC_TP"
+										th:value="${report.R22_TOT_NO_AUT_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_SAL_SPC_TP"
+										name="R22_TOT_NO_SAL_SPC_TP"
+										th:value="${report.R22_TOT_NO_SAL_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_NO_MER_SPC_TP"
+										name="R22_TOT_NO_MER_SPC_TP"
+										th:value="${report.R22_TOT_NO_MER_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_INQ_SPC_TP"
+										name="R22_NO_INQ_SPC_TP"
+										th:value="${report.R22_NO_INQ_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_SER_SPC_TP"
+										name="R22_NO_SER_SPC_TP"
+										th:value="${report.R22_NO_SER_SPC_TP}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px ">
+						<button type="button" class="role-btn" id="bottomSaveBtn"
+							style="display: none;" onclick="submitForm()">Save</button>
+					</div>
+				</form>
+			</div>
+
+
+			<div class="tab-pane fade" th:if="${formmode == 'bankconsumers'}"
+				id="bankconsumers" role="tabpanel">
+
+
+				<form id="reportForm" method="POST">
+
+
+					<div class="table-responsive" style="overflow: auto; border: none;">
+						<table id="usertable"
+							class="table table-bordered table-striped table-hover">
+
+							<thead class="thead-light">
+								<tr>
+									<th>Bank</th>
+									<th>Product</th>
+									<th>Number of women Consumers as of the specified date</th>
+									<th>Number of Consumers tagged as People of Determination
+										(PoD) as of the specified date</th>
+									<th>Number of Consumers whose data has been accessed by
+										unauthorized parties during the specified time period</th>
+									<th>Number of Consumers having DBR greater than and equal
+										to 45% but less than 50%</th>
+									<th>Number of Consumers having DBR greater than or equal
+										to 50%</th>
+									<th>Number of new Consumers onboarded having disposable
+										income less than 50% of their total income</th>
+									<th>Number of Consumers on the Bank's books that fall
+										under the age bracket: less than 18 years old as of the
+										specified date</th>
+									<th>Number of Consumers on the Bank's books that fall
+										under the age bracket: 18-25 years as of the specified date</th>
+									<th>Number of Consumers on the Bank's books that fall
+										under the age bracket: 26-35 years as of the specified date</th>
+									<th>Number of Consumers on the Bank's books that fall
+										under the age bracket: 36-50 years as of the specified date</th>
+									<th>Number of Consumers on the Bank's books that fall
+										under the age bracket: Greater than 50 years old as of the
+										specified date</th>
+									<th>Number of Consumers on the Bank's books who's primary
+										source of income is Salary as of the specified date</th>
+									<th>Number of Consumers on the Bank's books who's primary
+										source of income is Income from Business as of the specified
+										date</th>
+									<th>Number of Consumers on the Bank's books who's primary
+										source of income is from other sources including Investment
+										properties as of the specified date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of monthly income as <= 5,000 AED as of the specified date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of monthly income as 5,001-10,000 AED as of the specified date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of monthly income as 10,001-20,000 AED as of the specified
+										date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of monthly income as 20,001-35,000 AED as of the specified
+										date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of monthly income as >35,001 AED as of the specified date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of education as Secondary school or below as of the specified
+										date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of education as Bachelor's degree as of the specified date</th>
+									<th>Number of Consumers on the Bank's books with the level
+										of education as Master's degree or above as of the specified
+										date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Abu Dhabi (as per the KYC document submitted to the Bank) as
+										of the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Dubai (as per the KYC document submitted to the Bank) as of
+										the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Sharjah (as per the KYC document submitted to the Bank) as of
+										the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Ajman (as per the KYC document submitted to the Bank) as of
+										the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Fujairah (as per the KYC document submitted to the Bank) as of
+										the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Ras Al Khaimah (as per the KYC document submitted to the Bank)
+										as of the specified date</th>
+									<th>Number of Consumers on the Bank's books that reside in
+										Umm Al Quwain (as per the KYC document submitted to the Bank)
+										as of the specified date</th>
+									<th>Number of Consumers on the Bank's books tagged by the
+										Bank as "Retired" as of the specified date</th>
+									<th>Number of Consumers as of a specified date who were
+										provided a loan when stress testing results revealed a breach
+										of the CBUAE DBR limits incase of a increased interest/profit
+										rate scenario</th>
+									<th>Number of UAE national Consumers during the specified
+										time period</th>
+									<th>Number of UAE national Consumers enrolled for National
+										Loan Scheme during the specified time period</th>
+									<th>Value of financial loss suffered by Consumers due to
+										fraud during the specified time period (AED (000's))</th>
+									<th>Number of new consumer onboarded during the specified
+										time period, who became delinquent and cured within 90 days</th>
+									<th>Number of new Consumers who have received balloon
+										payment options by the Bank</th>
+									<th>Number of Consumers who have received balloon payment
+										options by the Bank during the specified time period</th>
+									<th>Number of Consumers receiving debt counseling services
+										during the specified time period</th>
+									<th>Number of new Consumers onboarded (including consumers
+										onboarded through referrals) during the specified time period</th>
+									<th>Number of new Consumers onboarded by Authorized Agents
+										(including consumers onboarded through referrals) during the
+										specified time period</th>
+									<th>Number of Consumers affected by Unauthorized
+										Transactions during the specified time period</th>
+									<th>Number of accounts held by POD</th>
+									<th>Number of Delinquent Consumers as of the specified
+										date</th>
+									<th>Number of instances where consumer funds are
+										misdirected to an incorrect account or recipient, or not
+										reflected in the correct account, due to errors made by the
+										LFI during the specified time period.</th>
+									<th>Number of customer who provided consent to waive off
+										their cooling off periods for financing products</th>
+									<th>Total number of new customers who availed the
+										financing products</th>
+									<th>Total number of consumers which were onboarded,
+										without signed acknowledgement of the receipt of Key Facts
+										Statement</th>
+									<th>Number of consumers at the start of the period</th>
+									<th>Number of new Consumers onboarded by the Bank during
+										the specified time period</th>
+									<th>Number of contactable Consumers receiving debt
+										counselling services during the specified time period</th>
+									<th>Number of consumers who become delinquent or tagged as
+										NPA during the specified time period</th>
+									<th>Number of Consumers (excluding government housing
+										schemes consumers) having DBR greater than or equal to 50% as
+										of the specified date.</th>
+									<th>Number of SME consumers (including Sole
+										proprietorships)</th>
+									<th>Number of consumers tagged as Vulnerable Consumers</th>
+									<th>Number of new customer onboarded in a given period</th>
+									<th>Number of consumers at end of the period</th>
+
+
+
+								</tr>
+							</thead>
+							<!-- <tbody th:each="report1, stat : ${reportlist1}"
+								th:with="report2=${reportlist2[stat.index]}">
+								<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
+									th:value="${report.REPORT_DATE}">
+								<input type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
+									th:value="${report.BRANCH_CODE}">
+								<tr>
+
+								</tr>
+							</tbody> -->
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 5px ">
+						<button type="button" class="role-btn" id="bottomSaveBtn"
+							style="display: none;" onclick="submitForm()">Save</button>
+					</div>
+				</form>
+
+			</div>
+
+
+			<div class="tab-pane fade" id="complaints" role="tabpanel"
+				th:if="${formmode=='complaints'}"></div>
+
+
+			<div class="tab-pane fade" id="retailproducts" role="tabpanel"
+				th:if="${formmode=='retailproducts'}"></div>
+
+
+			<div class="tab-pane fade" th:if="${formmode == 'bankeemployee'}"
+				id="bankeemployee" role="tabpanel"></div>
+
+
+			<div class="tab-pane fade" id="trainings" role="tabpanel"
+				th:if="${formmode=='trainings'}"></div>
+
+
+			<div class="tab-pane fade" id="additionalinformation" role="tabpanel"
+				th:if="${formmode=='additionalinformation'}"></div>
+
+
+			<div th:if="${formmode == 'islamicbanking'}" id="islamicbanking"
+				role="tabpanel" class="tab-pane fade"></div>
+
+
+			<div class="tab-pane fade" id="conductcultureassessment"
+				role="tabpanel" th:if="${formmode=='conductcultureassessment'}">
+
+
+			</div>
+
+
+
+
+		</div>
+	</div>
+
+
+	<div th:if="${formmode == 'editdiscount'}" class="liquid-edit-page"
+		style="align-items: center"></div>
+
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="role-btn" onclick="list()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- Floating Back Button -->
+	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
+		<i class="fa fa-arrow-left"></i>
+	</button>
+	<!-- Floating Forward Button -->
+	<button id="floatingForwardBtn" onclick="goForward()"
+		title="Go Forward">
+		<i class="fa fa-arrow-right"></i>
+	</button>
+	<div class="modal fade" id="alert1">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="role-btn"
+						onclick="window.location.reload()" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!-- Loader Modal (Using your existing loader image) -->
+	<div class="modal fade" id="loader" data-backdrop="static"
+		data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content"
+				style="background: transparent; border: none;">
+				<div class="modal-body text-center">
+					<img th:src="@{/images/loader.gif}"
+						style="width: 150px; height: auto;" alt="Processing...">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="bob-loader" class="bob-loader" aria-hidden="true"
+		role="status" aria-label="Loading">
+		<div class="bob-loader-card">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
+				class="logo-imgs">
+			<div class="flow-bar">
+				<div class="flow-line"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Custom Alert/Result Modal (Matches your existing style) -->
+	<div class="modal fade" id="resultModal">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<!-- Your custom styled header -->
+				<div class="menu-title-header">
+					<div class="modal-title" id="resultModalLabel"
+						style="text-align: center; color: white;">
+						<!-- Title will be set by JavaScript -->
+					</div>
+				</div>
+				<div class="modal-body"
+					style="text-align: center; font-size: 1.1rem;">
+					<p id="resultModalBody"></p>
+					<!-- Your custom styled button -->
+					<button type="button" class="role-btn" onclick="list()"
+						data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+
+
+
+
+
+
+<style>
+.scrollable-exist-viewport {
+	max-height: calc(100vh - 195px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 10px;
+}
+
+.compact-form {
+	font-size: 12px !important;
+}
+
+.compact-section {
+	padding: 1px 20px 1px;
+	border-radius: 5px;
+}
+
+.vertical-divider {
+	border-left: 4px solid #444;
+	padding-left: 20px;
+}
+
+.centered-content .form-group, .signoff-alignment-wrap .form-group {
+	position: relative;
+	width: 40% !important;
+	margin-bottom: 22px !important;
+}
+
+.centered-content .form-group {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.signoff-alignment-wrap .form-group {
+	margin-left: 85px !important;
+	margin-right: 0 !important;
+}
+
+.section-title {
+	font-weight: 700;
+	font-size: 13px;
+	color: #000;
+	margin-bottom: 20px;
+	display: block;
+	border-bottom: 1px solid #dee2e6;
+	padding-bottom: 5px;
+	text-align: left !important;
+	width: 100%;
+}
+
+label.error {
+	color: red !important;
+	font-size: 11px !important;
+	position: absolute;
+	left: 105%;
+	top: 50%;
+	transform: translateY(-50%);
+	white-space: nowrap;
+	z-index: 10;
+}
+
+.error {
+	padding-top: 0 !important;
+}
+
+.compact-form .form-control-sm {
+	height: 32px !important;
+	font-size: 12px !important;
+	padding: 5px 10px !important;
+	width: 100% !important;
+	border: 1px solid #ced4da !important;
+	border-radius: 8px !important;
+	background-color: #ffffff;
+}
+
+body {
+	overflow: hidden;
+}
+
+.table-responsive {
+	width: 100%;
+	max-height: calc(100vh - 272px);
+	overflow: auto;
+	position: relative;
+}
+
+.table-responsive thead {
+	position: sticky;
+	top: 0;
+	background-color: #e9ecf0;
+	z-index: 1;
+}
+
+#usertable {
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+#floatingBackBtn, #floatingForwardBtn {
+	z-index: 9999;
+}
+
+#usertable thead th {
+	font-size: 14px !important;
+	min-width: 200px;
+}
+
+#usertable td {
+	padding: 2px !important;
+	vertical-align: middle !important;
+}
+
+.table-input {
+	width: 100%;
+	min-width: 85px;
+	box-sizing: border-box;
+	border: 1px solid transparent;
+	background-color: transparent;
+	outline: none;
+	font-size: 12px;
+	font-family: Arial, sans-serif !important;
+	padding: 4px 6px;
+	color: inherit;
+	margin: 0;
+	text-overflow: ellipsis;
+}
+
+.table-input[readonly] {
+	cursor: default;
+}
+
+.editable-input:not([readonly]) {
+	/* border: 1px solid #007bff !important; */
+	background-color: #ffffff !important;
+	border-radius: 4px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+	cursor: text;
+}
+</style>
+
+<script>
+function enableEdit() {
+
+    let modifyBtn = document.getElementById('modifyBtn');
+    if (modifyBtn) modifyBtn.style.display = 'none';
+
+    let cancelBtn = document.getElementById('cancelBtn');
+    if (cancelBtn) cancelBtn.style.display = 'inline-block';
+
+    let downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) downloadBtn.style.display = 'none';
+
+    let verifyBtn = document.getElementById('verifyBtn');
+    if (verifyBtn) verifyBtn.style.display = 'none';
+
+    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+    if (bottomSave) bottomSave.style.display = 'inline-block';
+
+    document.querySelectorAll('.editable-input').forEach(input => {
+        input.setAttribute('data-original-value', input.value);
+        input.removeAttribute('readonly');
+    });
+}
+
+function cancelEdit() {
+
+    let modifyBtn = document.getElementById('modifyBtn');
+    if (modifyBtn) modifyBtn.style.display = 'inline-block';
+
+    let cancelBtn = document.getElementById('cancelBtn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+
+    let downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) downloadBtn.style.display = 'inline-block';
+
+    let verifyBtn = document.getElementById('verifyBtn');
+    if (verifyBtn) verifyBtn.style.display = 'inline-block';
+
+    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+    if (bottomSave) bottomSave.style.display = 'none';
+
+    document.querySelectorAll('.editable-input').forEach(input => {
+        input.setAttribute('readonly', true);
+
+        let originalValue = input.getAttribute('data-original-value');
+        if (originalValue !== null) {
+            input.value = originalValue;
+        }
+    });
+}
+
+    function submitForm() {
+        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+        let formData = $('#reportForm').serialize();        
+        $.ajax({
+            url: './saveMcReport', 
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                document.getElementById('alertmsg1').innerText = "updated successfully";
+                $('#alert1').modal('show');
+                cancelEdit();
+            },
+            error: function(error) {
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");                
+                document.getElementById('alertmsg1').innerText = "Failed to save data. Please try again.";
+                $('#alert1').modal('show');
+            }
+        });
+    }
+    
+    function downloadData() {
+        let branch = document.getElementById('branch') ? document.getElementById('branch').value : '';
+        let downloadUrl = './downloadMcReport?branch=' + encodeURIComponent(branch);
+        window.location.href = downloadUrl; 
+    }
+
+    function verifyData() {
+        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+        
+        let formData = $('#reportForm').serialize();        
+        
+        $.ajax({
+            url: './verifyMcReport', 
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                document.getElementById('alertmsg1').innerText = "Data verified successfully!";
+                $('#alert1').modal('show');
+            },
+            error: function(xhr, status, error) {
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");                              
+                let backendMessage = xhr.responseText;                
+                if(backendMessage && backendMessage.trim() !== "") {
+                    document.getElementById('alertmsg1').innerText = backendMessage;
+                } else {
+                    document.getElementById('alertmsg1').innerText = "Failed to verify data. Please try again.";
+                }
+                
+                $('#alert1').modal('show');
+            }
+        });
+    }
+    
+</script>
+</html>

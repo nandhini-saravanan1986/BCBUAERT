@@ -251,6 +251,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("BRANCHCODE", user.getBranch_code());
 				request.getSession().setAttribute("BRANCHNAME", user.getBranch_name());
 				request.getSession().setAttribute("MENULIST", menus); 
+				request.getSession().setAttribute("DEPARTMENT",  user.getDepartment());
 
 				auditService.createLoginAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE");				
 				
