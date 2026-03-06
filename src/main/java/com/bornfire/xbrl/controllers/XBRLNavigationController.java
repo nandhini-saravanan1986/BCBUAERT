@@ -3126,7 +3126,7 @@ public class XBRLNavigationController {
 	        	}
 
 	            SXSSFWorkbook workbook = new SXSSFWorkbook(100);
-	            Sheet sheet = workbook.createSheet("Assets Data");
+	            Sheet sheet = workbook.createSheet("Detail");
 	            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 
 	            /* --- STYLES --- */
@@ -3145,17 +3145,29 @@ public class XBRLNavigationController {
 	            for(int i=0; i<h.length; i++) { Cell c = hr.createCell(i); c.setCellValue(h[i]); c.setCellStyle(headStyle); }
 
 	            /* --- DATA --- */
-	            int rx = 1;
-	            for (Map<String, Object> m : allData) {
-	                Row r = sheet.createRow(rx++);
-	                fillCell(r, 0, String.valueOf(m.get("CUST_ID")), dataStyle);
-	                fillCell(r, 1, String.valueOf(m.get("FORACID")), dataStyle);
-	                fillCell(r, 2, String.valueOf(m.get("ACCT_NAME")), dataStyle);
-	                Cell c3 = r.createCell(3); c3.setCellValue(m.get("ACCT_BALANCE_LC") != null ? Double.parseDouble(m.get("ACCT_BALANCE_LC").toString()) : 0.0); c3.setCellStyle(dataStyle);
-	                Cell c4 = r.createCell(4); 
-	                if (m.get("REPORT_DATE") instanceof Date) c4.setCellValue((Date)m.get("REPORT_DATE"));
-	                c4.setCellStyle(dateStyle);
-	            }
+				int rx = 1;
+				for (Map<String, Object> m : allData) {
+					Row r = sheet.createRow(rx++);
+					Object custId = m.get("CUST_ID");
+					fillCell(r, 0, custId != null ? custId.toString() : "", dataStyle);
+					Object foracid = m.get("FORACID");
+					fillCell(r, 1, foracid != null ? foracid.toString() : "", dataStyle);
+					Object acctName = m.get("ACCT_NAME");
+					fillCell(r, 2, acctName != null ? acctName.toString() : "", dataStyle);
+					Cell c3 = r.createCell(3);
+					Object balance = m.get("ACCT_BALANCE_LC");
+					if (balance != null) {
+						c3.setCellValue(Double.parseDouble(balance.toString()));
+					}
+					c3.setCellStyle(dataStyle);
+
+					Cell c4 = r.createCell(4);
+					Object reportDate = m.get("REPORT_DATE");
+					if (reportDate instanceof Date) {
+						c4.setCellValue((Date) reportDate);
+					}
+					c4.setCellStyle(dateStyle);
+				}
 
 	            for(int i=0; i<h.length; i++) sheet.autoSizeColumn(i);
 
@@ -3184,7 +3196,7 @@ public class XBRLNavigationController {
 	@GetMapping("/getBackgroundFile")
 	public ResponseEntity<byte[]> getFile(@RequestParam String jobId) {
 	    byte[] data = backgroundFileStore.remove(jobId);
-	    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Background_Report.xlsx").body(data);
+	    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Detail_Report.xlsx").body(data);
 	}
 
 	@PostMapping("/updateliquidityriskdashboard")
@@ -4065,5 +4077,220 @@ public class XBRLNavigationController {
 
 	}
 	
-	
+	@RequestMapping(value = "LRDT_loansAdvancesConvertedAed", method = RequestMethod.GET)
+	public String Liquidity_Risk_Dashboard_Template_loansAdvancesConvertedAed(
+	        @RequestParam(required = false) String report_date, @RequestParam(required = false) String formmode, 
+	        @RequestParam(required = false) String rowcurrency, 
+	        Model model) {
+
+	    List<Map<String, Object>> allData = new ArrayList<>();
+
+	    boolean filterByCurrency = rowcurrency != null && !"ALL".equalsIgnoreCase(rowcurrency.trim());
+
+	    String tablename1 = "BRF7_MAPPING_TABLE";
+	    String rowid1 = "ROW101,ROW102";
+	    
+	    String sql1 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+	            + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename1
+	            + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? ";
+
+	    if (filterByCurrency) {
+	        sql1 += " AND ACCT_CRNCY_CODE = ?";
+	    }
+
+	    String[] rowidarray1 = rowid1.replace(" ", "").split(",");
+	    for (String singlerowid : rowidarray1) {
+	        Object[] args = filterByCurrency 
+	            ? new Object[] { report_date, singlerowid.trim(), rowcurrency.trim() }
+	            : new Object[] { report_date, singlerowid.trim() };
+	            
+	        allData.addAll(jdbcTemplate.queryForList(sql1, args));
+	    }
+
+
+	    String tablename2 = "brf9_detailtable";
+	    String rowid2 = "ROW108";
+	    String report_crit2 = "ROW108G,ROW108H,ROW108I,ROW108J";
+	    
+	    String sql2 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+	            + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename2
+	            + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? AND report_addl_criteria_1 = ? ";
+	    
+	    if (filterByCurrency) {
+	        sql2 += " AND ACCT_CRNCY_CODE = ?";
+	    }
+
+	    String[] report_critarray2 = report_crit2.replace(" ", "").split(",");
+	    for (String singlereport_crit : report_critarray2) {
+	        Object[] args = filterByCurrency
+	            ? new Object[] { report_date, rowid2, singlereport_crit.trim(), rowcurrency.trim() }
+	            : new Object[] { report_date, rowid2, singlereport_crit.trim() };
+	            
+	        allData.addAll(jdbcTemplate.queryForList(sql2, args));
+	    }
+
+	    String tablename3 = "brf9_detailtable";
+	    String rowid3 = "ROW106";
+	    String report_crit3 = "ROW106G,ROW106H,ROW106I,ROW106J";
+
+	    String sql3 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+	            + "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename3
+	            + " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? AND report_addl_criteria_1 = ? ";
+	    
+	    if (filterByCurrency) {
+	        sql3 += " AND ACCT_CRNCY_CODE = ?";
+	    }
+
+	    String[] report_critarray3 = report_crit3.replace(" ", "").split(",");
+	    for (String singlereport_crit : report_critarray3) {
+	        Object[] args = filterByCurrency
+	            ? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+	            : new Object[] { report_date, rowid3, singlereport_crit.trim() };
+	            
+	        allData.addAll(jdbcTemplate.queryForList(sql3, args));
+	    }
+
+
+	    model.addAttribute("reportdetails", allData);
+	    model.addAttribute("formmode", formmode);
+
+	    return "RT/Liquidity_Risk_Dashboard_Template";
+	}
+
+	@RequestMapping(value = "LRDT_stableResourcesConvertedAed", method = RequestMethod.GET)
+	public String Liquidity_Risk_Dashboard_Template_stableResourcesConvertedAed(
+			@RequestParam(required = false) String report_date, @RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String rowcurrency, Model model) {
+
+		List<Map<String, Object>> allData = new ArrayList<>();
+
+		boolean filterByCurrency = rowcurrency != null && !"ALL".equalsIgnoreCase(rowcurrency.trim());
+
+		String tablename1 = "brf2_detailtable";
+		String rowid1 = "ROW151";
+
+		String sql1 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+				+ "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename1
+				+ " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? ";
+
+		if (filterByCurrency) {
+			sql1 += " AND ACCT_CRNCY_CODE = ?";
+		}
+
+		String[] rowidarray1 = rowid1.replace(" ", "").split(",");
+		for (String singlerowid : rowidarray1) {
+			Object[] args = filterByCurrency ? new Object[] { report_date, singlerowid.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, singlerowid.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql1, args));
+		}
+
+		String tablename2 = "BRF7_MAPPING_TABLE";
+		String rowid2 = "ROW111";
+
+		String sql2 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+				+ "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename2
+				+ " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? ";
+
+		if (filterByCurrency) {
+			sql2 += " AND ACCT_CRNCY_CODE = ?";
+		}
+
+		String[] rowidarray2 = rowid2.replace(" ", "").split(",");
+		for (String singlerowid : rowidarray2) {
+			Object[] args = filterByCurrency ? new Object[] { report_date, singlerowid.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, singlerowid.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql2, args));
+		}
+
+		String tablename3 = "brf9_detailtable";
+		String rowid3 = "ROW143";
+		String report_crit3 = "ROW143H,ROW143I,ROW143J";
+
+		String sql3 = "SELECT CUST_ID, FORACID, ACCT_NAME, ACT_BALANCE_AMT_LC AS ACCT_BALANCE_LC, "
+				+ "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename3
+				+ " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL_1 = ? AND report_addl_criteria_1 = ? ";
+
+		if (filterByCurrency) {
+			sql3 += " AND ACCT_CRNCY_CODE = ?";
+		}
+
+		String[] report_critarray3 = report_crit3.replace(" ", "").split(",");
+		for (String singlereport_crit : report_critarray3) {
+			Object[] args = filterByCurrency
+					? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, rowid3, singlereport_crit.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql3, args));
+		}
+
+		rowid3 = "ROW149";
+		report_crit3 = "ROW149H,ROW149I,ROW149J";
+
+		report_critarray3 = report_crit3.replace(" ", "").split(",");
+		for (String singlereport_crit : report_critarray3) {
+			Object[] args = filterByCurrency
+					? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, rowid3, singlereport_crit.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql3, args));
+		}
+
+		rowid3 = "ROW151";
+		report_crit3 = "ROW151H,ROW151I,ROW151J";
+
+		report_critarray3 = report_crit3.replace(" ", "").split(",");
+		for (String singlereport_crit : report_critarray3) {
+			Object[] args = filterByCurrency
+					? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, rowid3, singlereport_crit.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql3, args));
+		}
+
+		rowid3 = "ROW152";
+		report_crit3 = "ROW152H,ROW152I,ROW152J";
+
+		report_critarray3 = report_crit3.replace(" ", "").split(",");
+		for (String singlereport_crit : report_critarray3) {
+			Object[] args = filterByCurrency
+					? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, rowid3, singlereport_crit.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql3, args));
+		}
+
+		String tablename4 = "brf9_laa_cash_flow";
+		String rowid4 = "ROW131";
+
+		String[] columns = { "SIX_MON_12_MON", "ZERO_7_DAYS", "EIGHT_14_DAYS", "FIFTEEN_DAYS_1_MON", "ONE_MON_3_MON",
+				"THREE_MON_6_MON" };
+
+		String[] rowidarray4 = rowid4.replace(" ", "").split(",");
+
+		for (String column : columns) {
+
+			String sql = "SELECT CUST_ID, ACCT_NUMBER AS FORACID, ACCT_NAME, " + column + " AS ACCT_BALANCE_LC, "
+					+ "ROWIDTOCHAR(ROWID) AS RID, REPORT_DATE FROM " + tablename4
+					+ " WHERE TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') = ? AND REPORT_LABEL = ?";
+
+			if (filterByCurrency) {
+				sql += " AND ACCT_CRNCY_CODE = ?";
+			}
+
+			for (String singlerowid : rowidarray4) {
+
+				Object[] args = filterByCurrency ? new Object[] { report_date, singlerowid.trim(), rowcurrency.trim() }
+						: new Object[] { report_date, singlerowid.trim() };
+
+				allData.addAll(jdbcTemplate.queryForList(sql, args));
+			}
+		}
+
+		model.addAttribute("reportdetails", allData);
+		model.addAttribute("formmode", formmode);
+
+		return "RT/Liquidity_Risk_Dashboard_Template";
+	}
 }
