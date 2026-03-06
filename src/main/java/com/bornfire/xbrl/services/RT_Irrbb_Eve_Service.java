@@ -64,7 +64,7 @@ public class RT_Irrbb_Eve_Service {
 
 	    if (existing != null) {
 	        // Update fields
-	    	existing.setDate(updatedData.getDate());
+	    	existing.setReportDate(updatedData.getReportDate());
 	    	existing.setBankName(updatedData.getBankName());
 	    	existing.setGroupHeadOfficeSubsidiary(updatedData.getGroupHeadOfficeSubsidiary());
 	    	existing.setBankSymbol(updatedData.getBankSymbol());

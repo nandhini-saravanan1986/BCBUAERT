@@ -12,7 +12,8 @@ public class RT_IRRBB_Data_EVE_Template_Idclass implements Serializable {
 	private String glLevel2;
 	private String glLevel3;
 	private String instrumentCurrency;
-	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date reportDate;
 	public String getScenario() {
 		return scenario;
 	}
@@ -43,19 +44,28 @@ public class RT_IRRBB_Data_EVE_Template_Idclass implements Serializable {
 	public void setInstrumentCurrency(String instrumentCurrency) {
 		this.instrumentCurrency = instrumentCurrency;
 	}
-	public RT_IRRBB_Data_EVE_Template_Idclass(Date date, String scenario, String glLevel1, String glLevel2,
-			String glLevel3, String instrumentCurrency) {
+	public Date getReportDate() {
+		return reportDate;
+	}
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
+	}
+	public RT_IRRBB_Data_EVE_Template_Idclass(String scenario, String glLevel1, String glLevel2, String glLevel3,
+			String instrumentCurrency, Date reportDate) {
 		super();
 		this.scenario = scenario;
 		this.glLevel1 = glLevel1;
 		this.glLevel2 = glLevel2;
 		this.glLevel3 = glLevel3;
 		this.instrumentCurrency = instrumentCurrency;
+		this.reportDate = reportDate;
 	}
 	public RT_IRRBB_Data_EVE_Template_Idclass() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 	
 	
 	

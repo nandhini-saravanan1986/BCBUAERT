@@ -6,19 +6,21 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+@IdClass(RT_IRRBB_Data_EVE_Template_Idclass.class)
 @Entity
 @Table (name="BCBUAE_IRRBB_EAR")
 public class RT_IRRBB_Data_EAR {
 	
-	@Id
-	@Column(name = "SI_NO")
-	private BigDecimal SI_NO;
 
-
+		@Column(name = "SI_NO")
+		private BigDecimal SI_NO;
+		
+		@Id
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "REPORT_DATE")
 	    private Date reportDate;
@@ -43,16 +45,20 @@ public class RT_IRRBB_Data_EAR {
 
 	    @Column(name = "SUBSIDIARY")
 	    private String subsidiary;
-
+	    
+	    @Id
 	    @Column(name = "SCENARIO")
 	    private String scenario;
-
+	    
+	    @Id
 	    @Column(name = "GL_LEVEL_1")
 	    private String glLevel1;
-
+	    
+	    @Id
 	    @Column(name = "GL_LEVEL_2")
 	    private String glLevel2;
-
+	    
+	    @Id
 	    @Column(name = "GL_LEVEL_3")
 	    private String glLevel3;
 
@@ -65,6 +71,7 @@ public class RT_IRRBB_Data_EAR {
 	    @Column(name = "REFERENCE_RATE")
 	    private String referenceRate;
 
+	    @Id
 	    @Column(name = "INSTRUMENT_CURRENCY")
 	    private String instrumentCurrency;
 

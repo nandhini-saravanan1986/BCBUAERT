@@ -18,10 +18,10 @@ public class RT_IRRBB_Data_EVE_Template {
 	@Column(name = "SI_NO")
 	private BigDecimal SI_NO;
 
-	
+	@Id
 	@Column(name = "REPORT_DATE")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date date;
+	private Date reportDate;
 	
 	@Column(name = "BANK_NAME")
 	private String bankName;
@@ -183,12 +183,12 @@ public class RT_IRRBB_Data_EVE_Template {
 		SI_NO = sI_NO;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getReportDate() {
+		return reportDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
 	}
 
 	public String getBankName() {
@@ -583,12 +583,12 @@ public class RT_IRRBB_Data_EVE_Template {
 		this.verifyTime = verifyTime;
 	}
 
-	public RT_IRRBB_Data_EVE_Template(BigDecimal sI_NO, Date date, String bankName, String groupHeadOfficeSubsidiary,
-			String bankSymbol, String conventionalOrIslamic, String localOrForeign, String cbuaeTiering,
-			String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3, String optionType,
-			String rateType, String referenceRate, String instrumentCurrency, BigDecimal outstandingBalance,
-			BigDecimal overnight, BigDecimal onToOneM, BigDecimal oneMToThreeM, BigDecimal threeMToSixM,
-			BigDecimal sixMonthToNineM, BigDecimal nineMonthToOneY, BigDecimal oneYToFiveY,
+	public RT_IRRBB_Data_EVE_Template(BigDecimal sI_NO, Date reportDate, String bankName,
+			String groupHeadOfficeSubsidiary, String bankSymbol, String conventionalOrIslamic, String localOrForeign,
+			String cbuaeTiering, String subsidiary, String scenario, String glLevel1, String glLevel2, String glLevel3,
+			String optionType, String rateType, String referenceRate, String instrumentCurrency,
+			BigDecimal outstandingBalance, BigDecimal overnight, BigDecimal onToOneM, BigDecimal oneMToThreeM,
+			BigDecimal threeMToSixM, BigDecimal sixMonthToNineM, BigDecimal nineMonthToOneY, BigDecimal oneYToFiveY,
 			BigDecimal onePointFiveYToTwoY, BigDecimal twoYToThreeY, BigDecimal threeYToFourY, BigDecimal fourYToFiveY,
 			BigDecimal fiveYToSixY, BigDecimal sixYToSevenY, BigDecimal sevenYToEightY, BigDecimal eightYToNineY,
 			BigDecimal nineYToTenY, BigDecimal tenYToFifteenY, BigDecimal fifteenYToTwentyY, BigDecimal twentyYearAbove,
@@ -597,7 +597,7 @@ public class RT_IRRBB_Data_EVE_Template {
 			String verifyUser, Date entryTime, Date modifyTime, Date verifyTime) {
 		super();
 		SI_NO = sI_NO;
-		this.date = date;
+		this.reportDate = reportDate;
 		this.bankName = bankName;
 		this.groupHeadOfficeSubsidiary = groupHeadOfficeSubsidiary;
 		this.bankSymbol = bankSymbol;
@@ -654,4 +654,5 @@ public class RT_IRRBB_Data_EVE_Template {
 		// TODO Auto-generated constructor stub
 	}
 
+	
 }

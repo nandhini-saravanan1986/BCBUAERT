@@ -2718,8 +2718,8 @@ public class XBRLNavigationController {
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
 			//RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
 			
-			RT_IRRBB_Data_EAR data =
-				    IRRBB_EAR_Repository.findById(SI_NO).orElse(null);
+			//RT_IRRBB_Data_EAR data =IRRBB_EAR_Repository.findById(SI_NO).orElse(null);
+			RT_IRRBB_Data_EAR data =null;
 
 			md.addAttribute("irrbbear", data);
 			System.out.println("edit is formmode");
@@ -2764,9 +2764,11 @@ public class XBRLNavigationController {
 			System.out.println("Formmode" + formmode);
 		}
 		else if ("Detaillist".equalsIgnoreCase(formmode)) {
-			md.addAttribute("formmode", "Detaillist");
 			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
-			
+
+			System.out.println("IRRBB EVE " + IRRB_EVE_Repo.getAlldetails().size());
+			md.addAttribute("formmode", "list");
+			md.addAttribute("ISList", list); // Used in HTML table
 		}
 
 		/*

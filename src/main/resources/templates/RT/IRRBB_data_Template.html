@@ -807,6 +807,30 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	body {
     overflow: hidden;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 120px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 </style>
 <style>
 	.menu-title-header {
@@ -990,6 +1014,13 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			window.location.href = 'IRRBB_data_Template?formmode=DiscountRate';
 		}
 	}
+	
+	function detailview() {
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			window.location.href = 'IRRBB_data_Template?formmode=Detaillist';
+		
+	}
 
 
 	function handleClick(tabId) {
@@ -1008,8 +1039,16 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		const formmode = params.get('formmode');
 
 		if (formmode === 'list') {
+			
+			document.getElementById('data-btn').innerText = 'EVE';
 			handleClick('data');
+			
 		} 
+		else if (formmode === 'Detaillist'){
+			document.getElementById('data-btn').innerText = 'EVE Detail';
+			handleClick('data');
+			
+		}
 		
 		else if(formmode === 'EAR'){
 			handleClick('ear');
@@ -1017,9 +1056,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		else if(formmode==='DiscountRate'){
 			handleClick('DiscountRate');
 		}
+		
 		else {
 			handleClick('datacontrols'); // default or formmode=add
 		}
+		
+		
 	});
 </script>
 <script>
@@ -1215,6 +1257,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		$('#resultModalBody').text(message);
 
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
+	
+	
+	
 </script>
 
 <title>RiskInsights - IRRBB</title>
@@ -1239,6 +1284,14 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					<button  class="role-btn" id="template-btn" onclick="handleClick('template')">Template
 						Instructions</button>
 					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
+					
+					<div class="dropdown">
+					    <button class="role-btn" id="eveBtn">EVE</button>
+					    <div class="dropdown-content">
+					        <a href="#" id="data-btn" onclick="navigateToTab('data1')">EVE Summary</a>
+					        <a href="#" id="opt2" onclick="navigateToTab('data2')">EVE Detail</a>
+					    </div>
+					</div>
 					<button class="role-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
 					<button style="white-space:nowrap" class="role-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
 					</div>
@@ -1491,7 +1544,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 								</tr>
 							</thead>
 							<tbody th:each="data : ${ISList}">
-								<tr>
+								<tr onclick="detailview()">
 								<!--<td style="text-align: center;"><a
 											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
@@ -1499,7 +1552,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 									
 									<!-- Financial Institution Information 8-->
 									
-									<td th:text="${#dates.format(data?.date, 'dd-MM-yyyy')}"></td>
+									<td th:text="${#dates.format(data?.reportDate, 'dd-MM-yyyy')}"></td>
 								     <td th:text="${data?.bankName}"></td>
 									<td th:text="${data?.groupHeadOfficeSubsidiary}"></td>
 									  <td th:text="${data?.bankSymbol}"></td>
@@ -2080,7 +2133,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 							<thead class="thead-light">
 								 
 								<tr>
-								    <th>Action</th>
+								    <!--<th>Action</th>-->
 									<th style="text-align:left;min-width:80px">Report Date</th>
 									<th>Bank Name</th>
 									<th>Group_Head_Office_Subsidiary</th>
@@ -2125,37 +2178,37 @@ PURPOSE		: IRRBB DATA TEMPLATE
 									
 									<!-- Financial Institution Information 8-->
 									
-									<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
-								     <td th:text="${data.bankName}"></td>
-									<td th:text="${data.groupHeadOfficeSubsidiary}"></td>
-									  <td th:text="${data.bankSymbol}"></td>
-									<td th:text="${data.conventionalOrIslamic}"></td>
-                                    <td th:text="${data.localOrForeign}"></td>
-									<td th:text="${data.cbuaeTiering}"></td>
-									<td th:text="${data.subsidiary}"></td>
-								     <td th:text="${data.scenario}"></td>
-									<td th:text="${data.glLevel1}"></td>
-									  <td th:text="${data.glLevel2}"></td>
-									<td th:text="${data.glLevel3}"></td>
-                                    <td th:text="${data.optionType}"></td>
-									<td th:text="${data.rateType}"></td>
-									<td th:text="${data.referenceRate}"></td>
-								     <td th:text="${data.instrumentCurrency}"></td>
-									<td th:text="${#numbers.formatDecimal(data.passThroughRate,1,'COMMA',2,'POINT')}"></td>
-									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.overnight,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.onToTwoW,1,'COMMA',2,'POINT')}"></td>
-                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twoWToOneM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.oneMToTwoM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.twoMToThreeM,1,'COMMA',2,'POINT')}"></td>
-                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.threeMToFourM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fourMToFiveM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.fiveMToSixM,1,'COMMA',2,'POINT')}"></td>
-								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sixMToSevenM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.sevenMToEightM,1,'COMMA',2,'POINT')}"></td>
-									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.eightMToNineM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.nineMToTenM,1,'COMMA',2,'POINT')}"></td>
-                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data.tenMToElevenM,1,'COMMA',2,'POINT')}"></td>
-									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data.elevenMToTwelveM,1,'COMMA',2,'POINT')}"></td>
+									<td th:text="${#dates.format(data?.reportDate, 'dd-MM-yyyy')}"></td>
+								     <td th:text="${data?.bankName}"></td>
+									<td th:text="${data?.groupHeadOfficeSubsidiary}"></td>
+									  <td th:text="${data?.bankSymbol}"></td>
+									<td th:text="${data?.conventionalOrIslamic}"></td>
+                                    <td th:text="${data?.localOrForeign}"></td>
+									<td th:text="${data?.cbuaeTiering}"></td>
+									<td th:text="${data?.subsidiary}"></td>
+								     <td th:text="${data?.scenario}"></td>
+									<td th:text="${data?.glLevel1}"></td>
+									  <td th:text="${data?.glLevel2}"></td>
+									<td th:text="${data?.glLevel3}"></td>
+                                    <td th:text="${data?.optionType}"></td>
+									<td th:text="${data?.rateType}"></td>
+									<td th:text="${data?.referenceRate}"></td>
+								     <td th:text="${data?.instrumentCurrency}"></td>
+									<td th:text="${#numbers.formatDecimal(data?.passThroughRate,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.overnight,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.onToTwoW,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.twoWToOneM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.oneMToTwoM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.twoMToThreeM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.threeMToFourM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.fourMToFiveM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.fiveMToSixM,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.sixMToSevenM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.sevenMToEightM,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.eightMToNineM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.nineMToTenM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.tenMToElevenM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.elevenMToTwelveM,1,'COMMA',2,'POINT')}"></td>
 									</tr>
 							</tbody>
 						</table>
@@ -2937,6 +2990,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					<div class="card" style="margin: 0 15px;">-->
 
 			<!-- Card Header -->
+			
+			
 
 
 		
@@ -3026,6 +3081,24 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					</div>
 				</div>
 			</div>
+			
+		<div class="modal fade" id="alertpopup">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="menu-title-header">
+                <div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+                    BANK OF BARODA
+                </div>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <p id="alertpopupmsg1" class="text-wrap text-break"></p>                
+                <button type="button" class="role-btn" id="confirmOkBtn">OK</button>                
+                <button type="button" class="role-btn" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>	
+			
 </body>
 <script>
 	$('#usertable').DataTable({
