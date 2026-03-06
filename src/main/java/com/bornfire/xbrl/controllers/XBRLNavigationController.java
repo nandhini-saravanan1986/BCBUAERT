@@ -4236,6 +4236,17 @@ public class XBRLNavigationController {
 
 			allData.addAll(jdbcTemplate.queryForList(sql3, args));
 		}
+		rowid3 = "ROW150";
+		report_crit3 = "ROW150H";
+
+		report_critarray3 = report_crit3.replace(" ", "").split(",");
+		for (String singlereport_crit : report_critarray3) {
+			Object[] args = filterByCurrency
+					? new Object[] { report_date, rowid3, singlereport_crit.trim(), rowcurrency.trim() }
+					: new Object[] { report_date, rowid3, singlereport_crit.trim() };
+
+			allData.addAll(jdbcTemplate.queryForList(sql3, args));
+		}
 
 		rowid3 = "ROW151";
 		report_crit3 = "ROW151H,ROW151I,ROW151J";
