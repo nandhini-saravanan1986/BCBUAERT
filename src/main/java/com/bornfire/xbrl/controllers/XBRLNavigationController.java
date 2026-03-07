@@ -2785,7 +2785,30 @@ public class XBRLNavigationController {
 		 * model.addAttribute("securityData", new
 		 * RT_Investment_Securities_Data_Template()); }
 		 */else {
-			md.addAttribute("formmode", "add");
+			 Timestamp lastdatetimestamp = IRRB_EVE_Repo.findLastReportDate();
+				Timestamp secondlastdatetimestamp = IRRB_EVE_Repo.findSecondLastReportDate();			
+				LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				String lastDateString = (lastdatetimestamp == null) ? null
+						: lastdatetimestamp.toLocalDateTime().format(formatter);
+				String secondLastDateString =(secondlastdatetimestamp == null) ? null
+						:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+				RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_IRRBB_Data_Template");
+				RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_IRRBB_Data_Template");
+				if (data != null && !data.equals(null)) {
+					md.addAttribute("data", data);
+					md.addAttribute("formmode", "exist");
+				}
+				else if(secondlastdata != null && !secondlastdata.equals(null)){
+					md.addAttribute("data", secondlastdata);
+					md.addAttribute("formmode", "exist");
+				}else {					
+					
+					md.addAttribute("formmode", "add");
+					md.addAttribute("formmode", "null");
+				}
+				md.addAttribute("lastDate", lastDate);
+				md.addAttribute("bankname", "Bank of Baroda");			 
 		}
 
 		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();

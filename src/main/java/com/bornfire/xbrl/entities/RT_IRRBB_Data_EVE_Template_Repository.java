@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,13 @@ public interface RT_IRRBB_Data_EVE_Template_Repository  extends JpaRepository <R
 	
 	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DATA_TEMPLATE ", nativeQuery = true)
 	List<Object[]> getirrbbevedatalistdata1();
+	
+
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_IRRBB_DATA_TEMPLATE", nativeQuery = true)
+	Timestamp findLastReportDate();
+
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_IRRBB_DATA_TEMPLATE WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_IRRBB_DATA_TEMPLATE)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
+     
+	
 }
