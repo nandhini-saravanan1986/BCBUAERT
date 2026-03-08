@@ -817,8 +817,6 @@ public class MIS_Rest_Controller {
 		System.out.println("Data Availability : "+ Datacheck.size());
 		if(Datacheck.size() >= 1) {
 			Rtmatrixdata = RT_Matrix_monitoring_rep.GetMatrixbysortedvalue(Selecteddate,Matrixserial_no);
-		}else {
-			Rtmatrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal();
 		}
 		
 		return Rtmatrixdata;

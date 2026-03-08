@@ -11,7 +11,7 @@ public interface BankLimit_Rep extends CrudRepository<BankLimit_Entity,String>{
 	
 	@Query(
 			  value = "SELECT * FROM MIS_BANK_LIMITS " +
-			          "WHERE TRUNC(REPORT_DATE) = TRUNC(:reportDate) " +
+			          "WHERE TRUNC(REPORT_DATE) = TRUNC(:reportDate) and TOTAL_EXPOSURE <> 0 " +
 			          "ORDER BY S_NO",
 			  nativeQuery = true
 			)

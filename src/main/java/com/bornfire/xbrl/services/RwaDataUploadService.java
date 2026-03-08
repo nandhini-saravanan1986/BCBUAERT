@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -254,7 +255,7 @@ public class RwaDataUploadService {
 
 			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("GENERAL_MASTER_UPLOAD_TABLE",
 					oracleConn);
-
+			String loadId = UUID.randomUUID().toString();
 			for (int i = 0; i < generalDetail.size(); i += batchSize) {
 
 				List<General_master_tb_pojo> batch = generalDetail.subList(i,
@@ -275,10 +276,11 @@ public class RwaDataUploadService {
 
 				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
 
-				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_GENERAL_MASTER_DATA_UPLOAD_FN(?) }");
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_GENERAL_MASTER_DATA_UPLOAD_FN(?,?) }");
 
 				cs.registerOutParameter(1, Types.NUMERIC);
 				cs.setArray(2, oracleArray);
+				cs.setString(3, loadId);
 				cs.execute();
 
 				totalInserted += cs.getInt(1);
@@ -366,7 +368,7 @@ public class RwaDataUploadService {
 
 			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("EOD_ACCT_MASTER_UPLOAD_TABLE",
 					oracleConn);
-
+			String loadId = UUID.randomUUID().toString();
 			for (int i = 0; i < EodDetail.size(); i += batchSize) {
 
 				List<Eod_acct_balance_pojo> batch = EodDetail.subList(i,
@@ -386,10 +388,11 @@ public class RwaDataUploadService {
 
 				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
 
-				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_EOD_ACCT_MASTER_DATA_UPLOAD_FN(?) }");
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_EOD_ACCT_MASTER_DATA_UPLOAD_FN(?,?) }");
 
 				cs.registerOutParameter(1, Types.NUMERIC);
 				cs.setArray(2, oracleArray);
+				cs.setString(3, loadId);
 				cs.execute();
 
 				totalInserted += cs.getInt(1);
@@ -479,7 +482,7 @@ public class RwaDataUploadService {
 
 			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("RWA_BILL_DATA_UPLOAD_TABLE",
 					oracleConn);
-
+			String loadId = UUID.randomUUID().toString();
 			for (int i = 0; i < EodDetail.size(); i += batchSize) {
 
 				List<RT_Bank_bill_data_pojo> batch = EodDetail.subList(i,
@@ -500,12 +503,12 @@ public class RwaDataUploadService {
 
 				ARRAY oracleArray = new ARRAY(arrayDescriptor, oracleConn, structArray);
 
-				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_RWA_BILL_DATA_DATA_UPLOAD_FN(?) }");
+				CallableStatement cs = conn.prepareCall("{ ? = call SAVE_RWA_BILL_DATA_DATA_UPLOAD_FN(?,?) }");
 
 				cs.registerOutParameter(1, Types.NUMERIC);
 				cs.setArray(2, oracleArray);
+				cs.setString(3, loadId);
 				cs.execute();
-
 				totalInserted += cs.getInt(1);
 				cs.close();
 			}

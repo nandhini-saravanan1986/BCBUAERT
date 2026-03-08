@@ -634,19 +634,19 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "Report_date = ?1 and is_acct_real_estate_exp = 'Y' ORDER BY TOTAL_RWA DESC ) FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealestateaccountdetail(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Industry' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select  ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Industry' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorIndustrial(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Trading' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Trading' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorTrading(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorServicesexcludingbank(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Real Estate' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select  ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Real Estate' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealEstate(Date Selecteddate);
 		
-		@Query(value="select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenOtherSectors(Date Selecteddate);
 		
 		@Query(value="SELECT SHORT_TERM_RESO, MEDIUM_TERM_RESO, LONG_TERM_RES, SHORT_TERM_ASSET, MEDIUM_TERM_ASSET, LONG_TERM_ASSET,\r\n"
@@ -704,7 +704,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 					+ "GROUP BY CUST_ID,ACCOUNT_NAME,Report_date,branch_name),\r\n"
 					+ "NON_FUND_BALANCE AS (Select branch_name,CUST_ID, CUST_NAME,Report_date,ROUND(Sum(LCBG_BALANCE)/1000000,2) as NfbBalance \r\n"
 					+ "from brf95_rwa_data_nonfundbased Where class <> 'STD' AND report_date = ?1 GROUP BY Report_date,CUST_ID, CUST_NAME,branch_name)\r\n"
-					+ "SELECT NVL(A.branch_name, B.branch_name) AS branch_name,NVL(A.CUST_ID, B.CUST_ID) AS CUST_ID,NVL(A.ACCOUNT_NAME, B.CUST_NAME) AS NAME,\r\n"
+					+ "SELECT NVL(A.ACCOUNT_NAME, B.CUST_NAME) AS NAME,\r\n"
 					+ "NVL(BALANCE,0) AS BALANCE,NVL(NFBBALANCE,0) AS NFBBALANCE,NVL(INT_SUSPENSE,0) AS INT_SUSPENSE, \r\n"
 					+ "NVL(TOT_PROVISION,0) AS TOT_PROVISION FROM FUNDBASE_BALANCE A FULL JOIN NON_FUND_BALANCE B ON \r\n"
 					+ "(A.REPORT_DATE = B.REPORT_DATE AND A.CUST_ID = B.CUST_ID))Order by BALANCE desc fetch first 10 rows only",nativeQuery = true)
@@ -859,7 +859,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 //		List<Object[]> GetDepositconcentrationretail(Date Selecteddate);
 // This Query is moved to Risk Matrix table
 		
-		@Query(value="SELECT CUST_ID, ACCT_NAME, BALANCE_IN_MN, HEADROOMLIMIT FROM (\r\n"
+		@Query(value="SELECT ACCT_NAME, BALANCE_IN_MN, HEADROOMLIMIT FROM (\r\n"
 				+ "WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
 				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
 				+ "'ROW120','ROW124','ROW125')\r\n"
@@ -874,7 +874,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenNonretaildepo(Date Selecteddate);
 		
-		@Query(value="SELECT CUST_ID, ACCT_NAME, BALANCE_IN_MN, HEADROOMLIMIT FROM (\r\n"
+		@Query(value="SELECT ACCT_NAME, BALANCE_IN_MN, HEADROOMLIMIT FROM (\r\n"
 				+ "WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
 				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"
 				+ "'ROW120','ROW124','ROW125')\r\n"
