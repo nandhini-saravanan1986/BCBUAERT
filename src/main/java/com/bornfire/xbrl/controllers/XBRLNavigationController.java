@@ -121,6 +121,7 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
 import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
 import com.bornfire.xbrl.entities.RT_IRS_DETAIL_ENTITY;
@@ -163,6 +164,7 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail_Rep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -209,6 +211,8 @@ public class XBRLNavigationController {
 	 * @PersistenceContext private EntityManager entityManager;
 	 */
 
+	@Autowired
+	RT_IRRBB_Data_EVE_Template_Detail_Rep rt_irrbb_data_eve_template_detail_rep;
 	@Autowired
 	RT_SLSServices RT_SLSServices;
 	
@@ -2721,7 +2725,10 @@ public class XBRLNavigationController {
 
 	/*--IRRBB Data template--*/
 	@RequestMapping(value = "IRRBB_data_Template", method = RequestMethod.GET)
-	public String IRRBB_data_Template(@RequestParam(required = false) BigDecimal SI_NO,
+	public String IRRBB_data_Template(@RequestParam(required = false) BigDecimal SI_NO, @RequestParam(required = false) Date reportDate,
+			@RequestParam(required = false) String scenario,@RequestParam(required = false) String glLevel1,@RequestParam(required = false) String glLevel2,
+			@RequestParam(required = false) String glLevel3,@RequestParam(required = false) String optionType,@RequestParam(required = false) String rateType,
+			@RequestParam(required = false) String referenceRate,@RequestParam(required = false) String instrumentCurrency,
 			@RequestParam(required = false) String formmode, Model md) {
 
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
@@ -2773,10 +2780,9 @@ public class XBRLNavigationController {
 			System.out.println("Formmode" + formmode);
 		}
 		else if ("Detaillist".equalsIgnoreCase(formmode)) {
-			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
-
-			System.out.println("IRRBB EVE " + IRRB_EVE_Repo.getAlldetails().size());
-			md.addAttribute("formmode", "list");
+			List<RT_IRRBB_Data_EVE_Template_Detail> list =rt_irrbb_data_eve_template_detail_rep.getAlldetails(reportDate,scenario,glLevel1,glLevel2,glLevel3,optionType,rateType,referenceRate,instrumentCurrency);
+			System.out.println("IRRBB EVE " + list.size());
+			md.addAttribute("formmode", "Detaillist");
 			md.addAttribute("ISList", list); // Used in HTML table
 		}
 

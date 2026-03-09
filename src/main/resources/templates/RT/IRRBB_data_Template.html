@@ -1015,10 +1015,22 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		}
 	}
 	
-	function detailview() {
+	function detailview(element) {
+	    var reportDate = element.getAttribute("reportDate");
+	    var scenario = element.getAttribute("scenario");
+	    var glLevel1 = element.getAttribute("glLevel1");
+	    var glLevel2 = element.getAttribute("glLevel2");
+	    var glLevel3 = element.getAttribute("glLevel3");
+	    var optionType = element.getAttribute("optionType");
+	    var rateType = element.getAttribute("rateType");
+	    var referenceRate = element.getAttribute("referenceRate");
+	    var instrumentCurrency = element.getAttribute("instrumentCurrency");
+	    
 
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			window.location.href = 'IRRBB_data_Template?formmode=Detaillist';
+			window.location.href = 'IRRBB_data_Template?formmode=Detaillist&reportDate='+reportDate+
+					'&scenario='+scenario+'&glLevel1='+glLevel1+'&glLevel2='+glLevel2+'&glLevel3='+glLevel3+
+					'&optionType='+optionType+'&rateType='+rateType+'&referenceRate='+referenceRate+'&instrumentCurrency='+instrumentCurrency;
 		
 	}
 
@@ -1042,12 +1054,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			
 			document.getElementById('data-btn').innerText = 'EVE';
 			handleClick('data');
-			
+						
 		} 
 		else if (formmode === 'Detaillist'){
-			document.getElementById('data-btn').innerText = 'EVE Detail';
+	
+			document.getElementById('IRRBBheader').innerText = 'EVE Detail Report';
 			handleClick('data');
-			
 		}
 		
 		else if(formmode === 'EAR'){
@@ -1270,9 +1282,9 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			<div  id="mainHeader"  th:insert="XBRLHeaderMenu :: header"></div>
 		
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'  or formmode == 'exist'}">
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'  or formmode == 'exist' or formmode =='Detaillist'}">
 				<div class="text-left flex-grow-1">
-					<h4>IRRBB DATA TEMPLATE</h4>
+					<h4 id="IRRBBheader">IRRBB DATA TEMPLATE</h4>
 					
 				</div>
 				
@@ -1285,13 +1297,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 						Instructions</button>
 					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">EVE</button>
 					
-					<div class="dropdown">
-					    <button class="role-btn" id="eveBtn">EVE</button>
-					    <div class="dropdown-content">
-					        <a href="#" id="data-btn" onclick="navigateToTab('data1')">EVE Summary</a>
-					        <a href="#" id="opt2" onclick="navigateToTab('data2')">EVE Detail</a>
-					    </div>
-					</div>
+					
 					<button class="role-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
 					<button style="white-space:nowrap" class="role-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
 					</div>
@@ -1325,7 +1331,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		
 			<!-- -------------------User List Starts----------------------------------------------------- -->
 			<div id="tabHeader" style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' or formmode == 'exist' }">
+				th:if="${formmode == 'list' or formmode =='Detaillist' or  formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' or formmode == 'exist' }">
 
 
 				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
@@ -1688,7 +1694,8 @@ PURPOSE		: IRRBB DATA TEMPLATE
 								</tr>
 							</thead>
 							<tbody th:each="data : ${ISList}">
-								<tr onclick="detailview()">
+								<tr onclick="detailview(this)" th:attr="reportDate=${data?.reportDate},scenario=${data?.scenario},glLevel1=${data?.glLevel1}
+								,glLevel2=${data?.glLevel2},glLevel3=${data?.glLevel3},optionType=${data?.optionType},rateType=${data?.rateType},referenceRate=${data?.referenceRate},instrumentCurrency=${data?.instrumentCurrency}">
 								<!--<td style="text-align: center;"><a
 											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
 											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
@@ -1752,6 +1759,105 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					</div>
 
 				</div>
+				
+				
+				<!------------------------------- Detail Screen------------------------------------->
+				
+				
+				<div class="tab-pane fade" id="data" role="tabpanel" th:if="${formmode=='Detaillist'}" >
+				
+					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
+						<table id="usertable" class="table table-bordered table-striped table-hover"
+							style="min-width: 2000px;">
+
+							<thead class="thead-light">
+								 
+								<tr>
+								    <!--<th>Action</th>-->
+									<th style="text-align:left;min-width:80px">Report Date</th>
+									<th style="text-align: left;">CUST ID</th>
+			                    	<th style="text-align: left;">ACCOUNT NO</th>
+			                    	<th style="text-align: left;">NAME</th>
+									<th style="text-align: left;">Instrument_currency</th>
+									<th style="text-align:right;">Oustanding_Balance</th>
+									<th style="text-align:right;">Overnight</th>
+									<th style="text-align:right;">ON_to_1M</th>
+									<th style="text-align:right;">1M_to_3M</th>
+									<th style="text-align:right;">3M_to_6M</th>
+                                    <th style="text-align:right;">6M_to_9M</th>
+									<th style="text-align:right;">9M_to_1Y</th>
+									<th style="text-align:right;">1Y_to_5Y</th>
+									<th style="text-align:right;">1.5Y_to_2Y</th>
+									<th style="text-align:right;">2Y_to_3Y</th>
+									<th style="text-align:right;">3Y_to_4Y</th>
+									<th style="text-align:right;">4Y_to_5Y</th>
+									<th style="text-align:right;">5Y_to_6Y</th>
+									<th style="text-align:right;">6Y_to_7Y</th>
+									<th style="text-align:right;">7Y_to_8Y</th>
+									<th style="text-align:right;">8Y_to_9Y</th>
+									<th style="text-align:right;">9Y_to_10Y</th>
+									<th style="text-align:right;">10Y_to_15Y</th>
+									<th style="text-align:right;">15Y_to_20Y</th>
+									<th style="text-align:right;">20Y_Above</th>
+									<th style="text-align:right;">Non_rate_sensitive</th>
+									
+
+								</tr>
+							</thead>
+							<tbody th:each="data : ${ISList}">
+								<tr>
+								<!--<td style="text-align: center;"><a
+											th:href="@{'/IRRBB_data_Template?formmode=editeve&SI_NO=' + ${data.SI_NO}}">
+											<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
+									</td>-->
+									
+									<!-- Financial Institution Information 8-->
+									<td th:text="${#dates.format(data?.date, 'dd-MM-yyyy')}"></td>
+									<td th:text="${data?.custId}"></td>
+									<td th:text="${data?.foracid}"></td>
+									<td th:text="${data?.acctName}"></td>
+								    <td th:text="${data?.instrumentCurrency}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.outstandingBalance,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.overnight,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.onToOneM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.oneMToThreeM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.threeMToSixM,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.sixMonthToNineM,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.nineMonthToOneY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.oneYToFiveY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.onePointFiveYToTwoY,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.twoYToThreeY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.threeYToFourY,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.fourYToFiveY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.fiveYToSixY,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.sixYToSevenY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.sevenYToEightY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.eightYToNineY,1,'COMMA',2,'POINT')}"></td>
+								     <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.nineYToTenY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.tenYToFifteenY,1,'COMMA',2,'POINT')}"></td>
+									  <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.fifteenYToTwentyY,1,'COMMA',2,'POINT')}"></td>
+									<td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.twentyYearAbove,1,'COMMA',2,'POINT')}"></td>
+                                    <td style="text-align:right;" th:text="${#numbers.formatDecimal(data?.nonRateSensitive,1,'COMMA',2,'POINT')}"></td>
+									</tr>
+							</tbody>
+						</table>
+					</div>
+
+
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+					
+
+
+						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
+							onclick="submitForm()">Save</button>
+
+
+
+					</div>
+
+				</div>
+				
 				
 				
 				<!------------------ edit starts for IRRBBEVE-------------------------------------------------------------->
