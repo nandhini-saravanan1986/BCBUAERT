@@ -1,14 +1,15 @@
 package com.bornfire.xbrl.entities;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 @Entity
+@IdClass(MCReportId.class)
 @Table(name = "RT_MC_TABLE4_1")
 public class RT_MC_TABLE4_1_ENTITY {
 	
@@ -518,70 +519,71 @@ public class RT_MC_TABLE4_1_ENTITY {
     public String R13_NO_INS_CRRATE_CON;
     public String R14_BANK;
     public String R14_PRODUCT;
-    public BigDecimal R14_AVG_TME_LWRSK;
-    public BigDecimal R14_AVG_NO_LOAN;
-    public BigDecimal R14_AVG_NO_LWRSK_SME;
-    public BigDecimal R14_AVG_NO_DYS_SME;
-    public BigDecimal R14_NO_REQ_CLO;
-    public BigDecimal R14_NO_PRD_VAR_SPC_TP;
-    public BigDecimal R14_NO_REQ_RES_SPT;
-    public BigDecimal R14_NO_REQ_PAYDEF;
-    public BigDecimal R14_AVG_TME_REPAY;
-    public BigDecimal R14_NO_INST_BAL;
-    public BigDecimal R14_NET_FEE_AED;
-    public BigDecimal R14_NET_PROF_AED;
-    public BigDecimal R14_TOT_NO_ACC_SPD;
-    public BigDecimal R14_TOT_ACCS_DOR;
-    public BigDecimal R14_TOT_NEW_LOAN;
-    public BigDecimal R14_TOT_VAL_NEWACCS_AED;
-    public BigDecimal R14_TOT_NO_LOAN_SPD;
-    public BigDecimal R14_TOT_REQ_OTBNK;
-    public BigDecimal R14_TOT_LOAN_OTBNK;
-    public BigDecimal R14_NO_CRACC_MIN;
-    public BigDecimal R14_AVG_TME_CLSACC;
-    public BigDecimal R14_N0_CON_MORE1_LOAN;
-    public BigDecimal R14_NO_INST_WITH90;
-    public BigDecimal R14_TOT_GROSS_ASET;
-    public BigDecimal R14_RET_LIAB_AED;
-    public BigDecimal R14_HIG_PER_PROD_CAT;
-    public BigDecimal R14_NO_ACCS_TAG_NPA;
-    public BigDecimal R14_NO_CHG_FEE_GRT5;
-    public BigDecimal R14_NO_CON_FLEX_INT;
-    public BigDecimal R14_NO_CON_FIXED_INT;
-    public BigDecimal R14_NO_LOAN_MAY_2011;
-    public BigDecimal R14_VAL_LEGA_MAY_AED;
-    public BigDecimal R14_AVG_DAY_NLL;
-    public BigDecimal R14_PER_DOR_ACCS;
-    public BigDecimal R14_INT_RET_PROF;
-    public BigDecimal R14_FEE_COMM_PROF;
-    public BigDecimal R14_TOT_UNCLM_90;
-    public BigDecimal R14_TOT_VAL_UNBAL;
-    public BigDecimal R14_NO_INST_CONTRACT;
-    public BigDecimal R14_TOT_DORACC_NOTICE;
-    public BigDecimal R14_NO_CONS_LIAB_7DAY;
-    public BigDecimal R14_TOT_REQ_LIAB_NONLIA;
-    public BigDecimal R14_NO_RESTU_ONBO;
-    public BigDecimal R14_TOT_DELAY_TAT;
-    public BigDecimal R14_TOT_FND_TRAN;
-    public BigDecimal R14_NO_FUND_RET24;
-    public BigDecimal R14_NO_FAIL_TRAN;
-    public BigDecimal R14_CUS_FND_SVF_SPT;
-    public BigDecimal R14_CUS_FND_SVF_PRE;
-    public BigDecimal R14_TOT_CRDR_UND_SPT;
-    public BigDecimal R14_TOT_CRD_ISU_SPT;
-    public BigDecimal R14_NO_ACC_BLK_FIN;
-    public BigDecimal R14_NO_INQ_AVL_BAL;
-    public BigDecimal R14_TOT_PRE_EXP_SPT;
-    public BigDecimal R14_TOT_PRE_POS_EXP;
-    public BigDecimal R14_TOT_PRE_CARD_SPD;
-    public BigDecimal R14_TOT_ACCS_SPD;
-    public BigDecimal R14_NO_LANG_VOICE;
-    public BigDecimal R14_AVG_NOD_LOWRSK;
-    public BigDecimal R14_NO_CUST_REISS_LIA;
-    public BigDecimal R14_NO_INS_CRRATE_CON;
+    public String R14_AVG_TME_LWRSK;
+    public String R14_AVG_NO_LOAN;
+    public String R14_AVG_NO_LWRSK_SME;
+    public String R14_AVG_NO_DYS_SME;
+    public String R14_NO_REQ_CLO;
+    public String R14_NO_PRD_VAR_SPC_TP;
+    public String R14_NO_REQ_RES_SPT;
+    public String R14_NO_REQ_PAYDEF;
+    public String R14_AVG_TME_REPAY;
+    public String R14_NO_INST_BAL;
+    public String R14_NET_FEE_AED;
+    public String R14_NET_PROF_AED;
+    public String R14_TOT_NO_ACC_SPD;
+    public String R14_TOT_ACCS_DOR;
+    public String R14_TOT_NEW_LOAN;
+    public String R14_TOT_VAL_NEWACCS_AED;
+    public String R14_TOT_NO_LOAN_SPD;
+    public String R14_TOT_REQ_OTBNK;
+    public String R14_TOT_LOAN_OTBNK;
+    public String R14_NO_CRACC_MIN;
+    public String R14_AVG_TME_CLSACC;
+    public String R14_N0_CON_MORE1_LOAN;
+    public String R14_NO_INST_WITH90;
+    public String R14_TOT_GROSS_ASET;
+    public String R14_RET_LIAB_AED;
+    public String R14_HIG_PER_PROD_CAT;
+    public String R14_NO_ACCS_TAG_NPA;
+    public String R14_NO_CHG_FEE_GRT5;
+    public String R14_NO_CON_FLEX_INT;
+    public String R14_NO_CON_FIXED_INT;
+    public String R14_NO_LOAN_MAY_2011;
+    public String R14_VAL_LEGA_MAY_AED;
+    public String R14_AVG_DAY_NLL;
+    public String R14_PER_DOR_ACCS;
+    public String R14_INT_RET_PROF;
+    public String R14_FEE_COMM_PROF;
+    public String R14_TOT_UNCLM_90;
+    public String R14_TOT_VAL_UNBAL;
+    public String R14_NO_INST_CONTRACT;
+    public String R14_TOT_DORACC_NOTICE;
+    public String R14_NO_CONS_LIAB_7DAY;
+    public String R14_TOT_REQ_LIAB_NONLIA;
+    public String R14_NO_RESTU_ONBO;
+    public String R14_TOT_DELAY_TAT;
+    public String R14_TOT_FND_TRAN;
+    public String R14_NO_FUND_RET24;
+    public String R14_NO_FAIL_TRAN;
+    public String R14_CUS_FND_SVF_SPT;
+    public String R14_CUS_FND_SVF_PRE;
+    public String R14_TOT_CRDR_UND_SPT;
+    public String R14_TOT_CRD_ISU_SPT;
+    public String R14_NO_ACC_BLK_FIN;
+    public String R14_NO_INQ_AVL_BAL;
+    public String R14_TOT_PRE_EXP_SPT;
+    public String R14_TOT_PRE_POS_EXP;
+    public String R14_TOT_PRE_CARD_SPD;
+    public String R14_TOT_ACCS_SPD;
+    public String R14_NO_LANG_VOICE;
+    public String R14_AVG_NOD_LOWRSK;
+    public String R14_NO_CUST_REISS_LIA;
+    public String R14_NO_INS_CRRATE_CON;
     @Id
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     public Date REPORT_DATE;
+    @Id
     public String BRANCH_CODE;
     public String ENTITY_FLG;
     public String MODIFY_FLG;
@@ -3627,370 +3629,370 @@ public class RT_MC_TABLE4_1_ENTITY {
 	public void setR14_PRODUCT(String r14_PRODUCT) {
 		R14_PRODUCT = r14_PRODUCT;
 	}
-	public BigDecimal getR14_AVG_TME_LWRSK() {
+	public String getR14_AVG_TME_LWRSK() {
 		return R14_AVG_TME_LWRSK;
 	}
-	public void setR14_AVG_TME_LWRSK(BigDecimal r14_AVG_TME_LWRSK) {
+	public void setR14_AVG_TME_LWRSK(String r14_AVG_TME_LWRSK) {
 		R14_AVG_TME_LWRSK = r14_AVG_TME_LWRSK;
 	}
-	public BigDecimal getR14_AVG_NO_LOAN() {
+	public String getR14_AVG_NO_LOAN() {
 		return R14_AVG_NO_LOAN;
 	}
-	public void setR14_AVG_NO_LOAN(BigDecimal r14_AVG_NO_LOAN) {
+	public void setR14_AVG_NO_LOAN(String r14_AVG_NO_LOAN) {
 		R14_AVG_NO_LOAN = r14_AVG_NO_LOAN;
 	}
-	public BigDecimal getR14_AVG_NO_LWRSK_SME() {
+	public String getR14_AVG_NO_LWRSK_SME() {
 		return R14_AVG_NO_LWRSK_SME;
 	}
-	public void setR14_AVG_NO_LWRSK_SME(BigDecimal r14_AVG_NO_LWRSK_SME) {
+	public void setR14_AVG_NO_LWRSK_SME(String r14_AVG_NO_LWRSK_SME) {
 		R14_AVG_NO_LWRSK_SME = r14_AVG_NO_LWRSK_SME;
 	}
-	public BigDecimal getR14_AVG_NO_DYS_SME() {
+	public String getR14_AVG_NO_DYS_SME() {
 		return R14_AVG_NO_DYS_SME;
 	}
-	public void setR14_AVG_NO_DYS_SME(BigDecimal r14_AVG_NO_DYS_SME) {
+	public void setR14_AVG_NO_DYS_SME(String r14_AVG_NO_DYS_SME) {
 		R14_AVG_NO_DYS_SME = r14_AVG_NO_DYS_SME;
 	}
-	public BigDecimal getR14_NO_REQ_CLO() {
+	public String getR14_NO_REQ_CLO() {
 		return R14_NO_REQ_CLO;
 	}
-	public void setR14_NO_REQ_CLO(BigDecimal r14_NO_REQ_CLO) {
+	public void setR14_NO_REQ_CLO(String r14_NO_REQ_CLO) {
 		R14_NO_REQ_CLO = r14_NO_REQ_CLO;
 	}
-	public BigDecimal getR14_NO_PRD_VAR_SPC_TP() {
+	public String getR14_NO_PRD_VAR_SPC_TP() {
 		return R14_NO_PRD_VAR_SPC_TP;
 	}
-	public void setR14_NO_PRD_VAR_SPC_TP(BigDecimal r14_NO_PRD_VAR_SPC_TP) {
+	public void setR14_NO_PRD_VAR_SPC_TP(String r14_NO_PRD_VAR_SPC_TP) {
 		R14_NO_PRD_VAR_SPC_TP = r14_NO_PRD_VAR_SPC_TP;
 	}
-	public BigDecimal getR14_NO_REQ_RES_SPT() {
+	public String getR14_NO_REQ_RES_SPT() {
 		return R14_NO_REQ_RES_SPT;
 	}
-	public void setR14_NO_REQ_RES_SPT(BigDecimal r14_NO_REQ_RES_SPT) {
+	public void setR14_NO_REQ_RES_SPT(String r14_NO_REQ_RES_SPT) {
 		R14_NO_REQ_RES_SPT = r14_NO_REQ_RES_SPT;
 	}
-	public BigDecimal getR14_NO_REQ_PAYDEF() {
+	public String getR14_NO_REQ_PAYDEF() {
 		return R14_NO_REQ_PAYDEF;
 	}
-	public void setR14_NO_REQ_PAYDEF(BigDecimal r14_NO_REQ_PAYDEF) {
+	public void setR14_NO_REQ_PAYDEF(String r14_NO_REQ_PAYDEF) {
 		R14_NO_REQ_PAYDEF = r14_NO_REQ_PAYDEF;
 	}
-	public BigDecimal getR14_AVG_TME_REPAY() {
+	public String getR14_AVG_TME_REPAY() {
 		return R14_AVG_TME_REPAY;
 	}
-	public void setR14_AVG_TME_REPAY(BigDecimal r14_AVG_TME_REPAY) {
+	public void setR14_AVG_TME_REPAY(String r14_AVG_TME_REPAY) {
 		R14_AVG_TME_REPAY = r14_AVG_TME_REPAY;
 	}
-	public BigDecimal getR14_NO_INST_BAL() {
+	public String getR14_NO_INST_BAL() {
 		return R14_NO_INST_BAL;
 	}
-	public void setR14_NO_INST_BAL(BigDecimal r14_NO_INST_BAL) {
+	public void setR14_NO_INST_BAL(String r14_NO_INST_BAL) {
 		R14_NO_INST_BAL = r14_NO_INST_BAL;
 	}
-	public BigDecimal getR14_NET_FEE_AED() {
+	public String getR14_NET_FEE_AED() {
 		return R14_NET_FEE_AED;
 	}
-	public void setR14_NET_FEE_AED(BigDecimal r14_NET_FEE_AED) {
+	public void setR14_NET_FEE_AED(String r14_NET_FEE_AED) {
 		R14_NET_FEE_AED = r14_NET_FEE_AED;
 	}
-	public BigDecimal getR14_NET_PROF_AED() {
+	public String getR14_NET_PROF_AED() {
 		return R14_NET_PROF_AED;
 	}
-	public void setR14_NET_PROF_AED(BigDecimal r14_NET_PROF_AED) {
+	public void setR14_NET_PROF_AED(String r14_NET_PROF_AED) {
 		R14_NET_PROF_AED = r14_NET_PROF_AED;
 	}
-	public BigDecimal getR14_TOT_NO_ACC_SPD() {
+	public String getR14_TOT_NO_ACC_SPD() {
 		return R14_TOT_NO_ACC_SPD;
 	}
-	public void setR14_TOT_NO_ACC_SPD(BigDecimal r14_TOT_NO_ACC_SPD) {
+	public void setR14_TOT_NO_ACC_SPD(String r14_TOT_NO_ACC_SPD) {
 		R14_TOT_NO_ACC_SPD = r14_TOT_NO_ACC_SPD;
 	}
-	public BigDecimal getR14_TOT_ACCS_DOR() {
+	public String getR14_TOT_ACCS_DOR() {
 		return R14_TOT_ACCS_DOR;
 	}
-	public void setR14_TOT_ACCS_DOR(BigDecimal r14_TOT_ACCS_DOR) {
+	public void setR14_TOT_ACCS_DOR(String r14_TOT_ACCS_DOR) {
 		R14_TOT_ACCS_DOR = r14_TOT_ACCS_DOR;
 	}
-	public BigDecimal getR14_TOT_NEW_LOAN() {
+	public String getR14_TOT_NEW_LOAN() {
 		return R14_TOT_NEW_LOAN;
 	}
-	public void setR14_TOT_NEW_LOAN(BigDecimal r14_TOT_NEW_LOAN) {
+	public void setR14_TOT_NEW_LOAN(String r14_TOT_NEW_LOAN) {
 		R14_TOT_NEW_LOAN = r14_TOT_NEW_LOAN;
 	}
-	public BigDecimal getR14_TOT_VAL_NEWACCS_AED() {
+	public String getR14_TOT_VAL_NEWACCS_AED() {
 		return R14_TOT_VAL_NEWACCS_AED;
 	}
-	public void setR14_TOT_VAL_NEWACCS_AED(BigDecimal r14_TOT_VAL_NEWACCS_AED) {
+	public void setR14_TOT_VAL_NEWACCS_AED(String r14_TOT_VAL_NEWACCS_AED) {
 		R14_TOT_VAL_NEWACCS_AED = r14_TOT_VAL_NEWACCS_AED;
 	}
-	public BigDecimal getR14_TOT_NO_LOAN_SPD() {
+	public String getR14_TOT_NO_LOAN_SPD() {
 		return R14_TOT_NO_LOAN_SPD;
 	}
-	public void setR14_TOT_NO_LOAN_SPD(BigDecimal r14_TOT_NO_LOAN_SPD) {
+	public void setR14_TOT_NO_LOAN_SPD(String r14_TOT_NO_LOAN_SPD) {
 		R14_TOT_NO_LOAN_SPD = r14_TOT_NO_LOAN_SPD;
 	}
-	public BigDecimal getR14_TOT_REQ_OTBNK() {
+	public String getR14_TOT_REQ_OTBNK() {
 		return R14_TOT_REQ_OTBNK;
 	}
-	public void setR14_TOT_REQ_OTBNK(BigDecimal r14_TOT_REQ_OTBNK) {
+	public void setR14_TOT_REQ_OTBNK(String r14_TOT_REQ_OTBNK) {
 		R14_TOT_REQ_OTBNK = r14_TOT_REQ_OTBNK;
 	}
-	public BigDecimal getR14_TOT_LOAN_OTBNK() {
+	public String getR14_TOT_LOAN_OTBNK() {
 		return R14_TOT_LOAN_OTBNK;
 	}
-	public void setR14_TOT_LOAN_OTBNK(BigDecimal r14_TOT_LOAN_OTBNK) {
+	public void setR14_TOT_LOAN_OTBNK(String r14_TOT_LOAN_OTBNK) {
 		R14_TOT_LOAN_OTBNK = r14_TOT_LOAN_OTBNK;
 	}
-	public BigDecimal getR14_NO_CRACC_MIN() {
+	public String getR14_NO_CRACC_MIN() {
 		return R14_NO_CRACC_MIN;
 	}
-	public void setR14_NO_CRACC_MIN(BigDecimal r14_NO_CRACC_MIN) {
+	public void setR14_NO_CRACC_MIN(String r14_NO_CRACC_MIN) {
 		R14_NO_CRACC_MIN = r14_NO_CRACC_MIN;
 	}
-	public BigDecimal getR14_AVG_TME_CLSACC() {
+	public String getR14_AVG_TME_CLSACC() {
 		return R14_AVG_TME_CLSACC;
 	}
-	public void setR14_AVG_TME_CLSACC(BigDecimal r14_AVG_TME_CLSACC) {
+	public void setR14_AVG_TME_CLSACC(String r14_AVG_TME_CLSACC) {
 		R14_AVG_TME_CLSACC = r14_AVG_TME_CLSACC;
 	}
-	public BigDecimal getR14_N0_CON_MORE1_LOAN() {
+	public String getR14_N0_CON_MORE1_LOAN() {
 		return R14_N0_CON_MORE1_LOAN;
 	}
-	public void setR14_N0_CON_MORE1_LOAN(BigDecimal r14_N0_CON_MORE1_LOAN) {
+	public void setR14_N0_CON_MORE1_LOAN(String r14_N0_CON_MORE1_LOAN) {
 		R14_N0_CON_MORE1_LOAN = r14_N0_CON_MORE1_LOAN;
 	}
-	public BigDecimal getR14_NO_INST_WITH90() {
+	public String getR14_NO_INST_WITH90() {
 		return R14_NO_INST_WITH90;
 	}
-	public void setR14_NO_INST_WITH90(BigDecimal r14_NO_INST_WITH90) {
+	public void setR14_NO_INST_WITH90(String r14_NO_INST_WITH90) {
 		R14_NO_INST_WITH90 = r14_NO_INST_WITH90;
 	}
-	public BigDecimal getR14_TOT_GROSS_ASET() {
+	public String getR14_TOT_GROSS_ASET() {
 		return R14_TOT_GROSS_ASET;
 	}
-	public void setR14_TOT_GROSS_ASET(BigDecimal r14_TOT_GROSS_ASET) {
+	public void setR14_TOT_GROSS_ASET(String r14_TOT_GROSS_ASET) {
 		R14_TOT_GROSS_ASET = r14_TOT_GROSS_ASET;
 	}
-	public BigDecimal getR14_RET_LIAB_AED() {
+	public String getR14_RET_LIAB_AED() {
 		return R14_RET_LIAB_AED;
 	}
-	public void setR14_RET_LIAB_AED(BigDecimal r14_RET_LIAB_AED) {
+	public void setR14_RET_LIAB_AED(String r14_RET_LIAB_AED) {
 		R14_RET_LIAB_AED = r14_RET_LIAB_AED;
 	}
-	public BigDecimal getR14_HIG_PER_PROD_CAT() {
+	public String getR14_HIG_PER_PROD_CAT() {
 		return R14_HIG_PER_PROD_CAT;
 	}
-	public void setR14_HIG_PER_PROD_CAT(BigDecimal r14_HIG_PER_PROD_CAT) {
+	public void setR14_HIG_PER_PROD_CAT(String r14_HIG_PER_PROD_CAT) {
 		R14_HIG_PER_PROD_CAT = r14_HIG_PER_PROD_CAT;
 	}
-	public BigDecimal getR14_NO_ACCS_TAG_NPA() {
+	public String getR14_NO_ACCS_TAG_NPA() {
 		return R14_NO_ACCS_TAG_NPA;
 	}
-	public void setR14_NO_ACCS_TAG_NPA(BigDecimal r14_NO_ACCS_TAG_NPA) {
+	public void setR14_NO_ACCS_TAG_NPA(String r14_NO_ACCS_TAG_NPA) {
 		R14_NO_ACCS_TAG_NPA = r14_NO_ACCS_TAG_NPA;
 	}
-	public BigDecimal getR14_NO_CHG_FEE_GRT5() {
+	public String getR14_NO_CHG_FEE_GRT5() {
 		return R14_NO_CHG_FEE_GRT5;
 	}
-	public void setR14_NO_CHG_FEE_GRT5(BigDecimal r14_NO_CHG_FEE_GRT5) {
+	public void setR14_NO_CHG_FEE_GRT5(String r14_NO_CHG_FEE_GRT5) {
 		R14_NO_CHG_FEE_GRT5 = r14_NO_CHG_FEE_GRT5;
 	}
-	public BigDecimal getR14_NO_CON_FLEX_INT() {
+	public String getR14_NO_CON_FLEX_INT() {
 		return R14_NO_CON_FLEX_INT;
 	}
-	public void setR14_NO_CON_FLEX_INT(BigDecimal r14_NO_CON_FLEX_INT) {
+	public void setR14_NO_CON_FLEX_INT(String r14_NO_CON_FLEX_INT) {
 		R14_NO_CON_FLEX_INT = r14_NO_CON_FLEX_INT;
 	}
-	public BigDecimal getR14_NO_CON_FIXED_INT() {
+	public String getR14_NO_CON_FIXED_INT() {
 		return R14_NO_CON_FIXED_INT;
 	}
-	public void setR14_NO_CON_FIXED_INT(BigDecimal r14_NO_CON_FIXED_INT) {
+	public void setR14_NO_CON_FIXED_INT(String r14_NO_CON_FIXED_INT) {
 		R14_NO_CON_FIXED_INT = r14_NO_CON_FIXED_INT;
 	}
-	public BigDecimal getR14_NO_LOAN_MAY_2011() {
+	public String getR14_NO_LOAN_MAY_2011() {
 		return R14_NO_LOAN_MAY_2011;
 	}
-	public void setR14_NO_LOAN_MAY_2011(BigDecimal r14_NO_LOAN_MAY_2011) {
+	public void setR14_NO_LOAN_MAY_2011(String r14_NO_LOAN_MAY_2011) {
 		R14_NO_LOAN_MAY_2011 = r14_NO_LOAN_MAY_2011;
 	}
-	public BigDecimal getR14_VAL_LEGA_MAY_AED() {
+	public String getR14_VAL_LEGA_MAY_AED() {
 		return R14_VAL_LEGA_MAY_AED;
 	}
-	public void setR14_VAL_LEGA_MAY_AED(BigDecimal r14_VAL_LEGA_MAY_AED) {
+	public void setR14_VAL_LEGA_MAY_AED(String r14_VAL_LEGA_MAY_AED) {
 		R14_VAL_LEGA_MAY_AED = r14_VAL_LEGA_MAY_AED;
 	}
-	public BigDecimal getR14_AVG_DAY_NLL() {
+	public String getR14_AVG_DAY_NLL() {
 		return R14_AVG_DAY_NLL;
 	}
-	public void setR14_AVG_DAY_NLL(BigDecimal r14_AVG_DAY_NLL) {
+	public void setR14_AVG_DAY_NLL(String r14_AVG_DAY_NLL) {
 		R14_AVG_DAY_NLL = r14_AVG_DAY_NLL;
 	}
-	public BigDecimal getR14_PER_DOR_ACCS() {
+	public String getR14_PER_DOR_ACCS() {
 		return R14_PER_DOR_ACCS;
 	}
-	public void setR14_PER_DOR_ACCS(BigDecimal r14_PER_DOR_ACCS) {
+	public void setR14_PER_DOR_ACCS(String r14_PER_DOR_ACCS) {
 		R14_PER_DOR_ACCS = r14_PER_DOR_ACCS;
 	}
-	public BigDecimal getR14_INT_RET_PROF() {
+	public String getR14_INT_RET_PROF() {
 		return R14_INT_RET_PROF;
 	}
-	public void setR14_INT_RET_PROF(BigDecimal r14_INT_RET_PROF) {
+	public void setR14_INT_RET_PROF(String r14_INT_RET_PROF) {
 		R14_INT_RET_PROF = r14_INT_RET_PROF;
 	}
-	public BigDecimal getR14_FEE_COMM_PROF() {
+	public String getR14_FEE_COMM_PROF() {
 		return R14_FEE_COMM_PROF;
 	}
-	public void setR14_FEE_COMM_PROF(BigDecimal r14_FEE_COMM_PROF) {
+	public void setR14_FEE_COMM_PROF(String r14_FEE_COMM_PROF) {
 		R14_FEE_COMM_PROF = r14_FEE_COMM_PROF;
 	}
-	public BigDecimal getR14_TOT_UNCLM_90() {
+	public String getR14_TOT_UNCLM_90() {
 		return R14_TOT_UNCLM_90;
 	}
-	public void setR14_TOT_UNCLM_90(BigDecimal r14_TOT_UNCLM_90) {
+	public void setR14_TOT_UNCLM_90(String r14_TOT_UNCLM_90) {
 		R14_TOT_UNCLM_90 = r14_TOT_UNCLM_90;
 	}
-	public BigDecimal getR14_TOT_VAL_UNBAL() {
+	public String getR14_TOT_VAL_UNBAL() {
 		return R14_TOT_VAL_UNBAL;
 	}
-	public void setR14_TOT_VAL_UNBAL(BigDecimal r14_TOT_VAL_UNBAL) {
+	public void setR14_TOT_VAL_UNBAL(String r14_TOT_VAL_UNBAL) {
 		R14_TOT_VAL_UNBAL = r14_TOT_VAL_UNBAL;
 	}
-	public BigDecimal getR14_NO_INST_CONTRACT() {
+	public String getR14_NO_INST_CONTRACT() {
 		return R14_NO_INST_CONTRACT;
 	}
-	public void setR14_NO_INST_CONTRACT(BigDecimal r14_NO_INST_CONTRACT) {
+	public void setR14_NO_INST_CONTRACT(String r14_NO_INST_CONTRACT) {
 		R14_NO_INST_CONTRACT = r14_NO_INST_CONTRACT;
 	}
-	public BigDecimal getR14_TOT_DORACC_NOTICE() {
+	public String getR14_TOT_DORACC_NOTICE() {
 		return R14_TOT_DORACC_NOTICE;
 	}
-	public void setR14_TOT_DORACC_NOTICE(BigDecimal r14_TOT_DORACC_NOTICE) {
+	public void setR14_TOT_DORACC_NOTICE(String r14_TOT_DORACC_NOTICE) {
 		R14_TOT_DORACC_NOTICE = r14_TOT_DORACC_NOTICE;
 	}
-	public BigDecimal getR14_NO_CONS_LIAB_7DAY() {
+	public String getR14_NO_CONS_LIAB_7DAY() {
 		return R14_NO_CONS_LIAB_7DAY;
 	}
-	public void setR14_NO_CONS_LIAB_7DAY(BigDecimal r14_NO_CONS_LIAB_7DAY) {
+	public void setR14_NO_CONS_LIAB_7DAY(String r14_NO_CONS_LIAB_7DAY) {
 		R14_NO_CONS_LIAB_7DAY = r14_NO_CONS_LIAB_7DAY;
 	}
-	public BigDecimal getR14_TOT_REQ_LIAB_NONLIA() {
+	public String getR14_TOT_REQ_LIAB_NONLIA() {
 		return R14_TOT_REQ_LIAB_NONLIA;
 	}
-	public void setR14_TOT_REQ_LIAB_NONLIA(BigDecimal r14_TOT_REQ_LIAB_NONLIA) {
+	public void setR14_TOT_REQ_LIAB_NONLIA(String r14_TOT_REQ_LIAB_NONLIA) {
 		R14_TOT_REQ_LIAB_NONLIA = r14_TOT_REQ_LIAB_NONLIA;
 	}
-	public BigDecimal getR14_NO_RESTU_ONBO() {
+	public String getR14_NO_RESTU_ONBO() {
 		return R14_NO_RESTU_ONBO;
 	}
-	public void setR14_NO_RESTU_ONBO(BigDecimal r14_NO_RESTU_ONBO) {
+	public void setR14_NO_RESTU_ONBO(String r14_NO_RESTU_ONBO) {
 		R14_NO_RESTU_ONBO = r14_NO_RESTU_ONBO;
 	}
-	public BigDecimal getR14_TOT_DELAY_TAT() {
+	public String getR14_TOT_DELAY_TAT() {
 		return R14_TOT_DELAY_TAT;
 	}
-	public void setR14_TOT_DELAY_TAT(BigDecimal r14_TOT_DELAY_TAT) {
+	public void setR14_TOT_DELAY_TAT(String r14_TOT_DELAY_TAT) {
 		R14_TOT_DELAY_TAT = r14_TOT_DELAY_TAT;
 	}
-	public BigDecimal getR14_TOT_FND_TRAN() {
+	public String getR14_TOT_FND_TRAN() {
 		return R14_TOT_FND_TRAN;
 	}
-	public void setR14_TOT_FND_TRAN(BigDecimal r14_TOT_FND_TRAN) {
+	public void setR14_TOT_FND_TRAN(String r14_TOT_FND_TRAN) {
 		R14_TOT_FND_TRAN = r14_TOT_FND_TRAN;
 	}
-	public BigDecimal getR14_NO_FUND_RET24() {
+	public String getR14_NO_FUND_RET24() {
 		return R14_NO_FUND_RET24;
 	}
-	public void setR14_NO_FUND_RET24(BigDecimal r14_NO_FUND_RET24) {
+	public void setR14_NO_FUND_RET24(String r14_NO_FUND_RET24) {
 		R14_NO_FUND_RET24 = r14_NO_FUND_RET24;
 	}
-	public BigDecimal getR14_NO_FAIL_TRAN() {
+	public String getR14_NO_FAIL_TRAN() {
 		return R14_NO_FAIL_TRAN;
 	}
-	public void setR14_NO_FAIL_TRAN(BigDecimal r14_NO_FAIL_TRAN) {
+	public void setR14_NO_FAIL_TRAN(String r14_NO_FAIL_TRAN) {
 		R14_NO_FAIL_TRAN = r14_NO_FAIL_TRAN;
 	}
-	public BigDecimal getR14_CUS_FND_SVF_SPT() {
+	public String getR14_CUS_FND_SVF_SPT() {
 		return R14_CUS_FND_SVF_SPT;
 	}
-	public void setR14_CUS_FND_SVF_SPT(BigDecimal r14_CUS_FND_SVF_SPT) {
+	public void setR14_CUS_FND_SVF_SPT(String r14_CUS_FND_SVF_SPT) {
 		R14_CUS_FND_SVF_SPT = r14_CUS_FND_SVF_SPT;
 	}
-	public BigDecimal getR14_CUS_FND_SVF_PRE() {
+	public String getR14_CUS_FND_SVF_PRE() {
 		return R14_CUS_FND_SVF_PRE;
 	}
-	public void setR14_CUS_FND_SVF_PRE(BigDecimal r14_CUS_FND_SVF_PRE) {
+	public void setR14_CUS_FND_SVF_PRE(String r14_CUS_FND_SVF_PRE) {
 		R14_CUS_FND_SVF_PRE = r14_CUS_FND_SVF_PRE;
 	}
-	public BigDecimal getR14_TOT_CRDR_UND_SPT() {
+	public String getR14_TOT_CRDR_UND_SPT() {
 		return R14_TOT_CRDR_UND_SPT;
 	}
-	public void setR14_TOT_CRDR_UND_SPT(BigDecimal r14_TOT_CRDR_UND_SPT) {
+	public void setR14_TOT_CRDR_UND_SPT(String r14_TOT_CRDR_UND_SPT) {
 		R14_TOT_CRDR_UND_SPT = r14_TOT_CRDR_UND_SPT;
 	}
-	public BigDecimal getR14_TOT_CRD_ISU_SPT() {
+	public String getR14_TOT_CRD_ISU_SPT() {
 		return R14_TOT_CRD_ISU_SPT;
 	}
-	public void setR14_TOT_CRD_ISU_SPT(BigDecimal r14_TOT_CRD_ISU_SPT) {
+	public void setR14_TOT_CRD_ISU_SPT(String r14_TOT_CRD_ISU_SPT) {
 		R14_TOT_CRD_ISU_SPT = r14_TOT_CRD_ISU_SPT;
 	}
-	public BigDecimal getR14_NO_ACC_BLK_FIN() {
+	public String getR14_NO_ACC_BLK_FIN() {
 		return R14_NO_ACC_BLK_FIN;
 	}
-	public void setR14_NO_ACC_BLK_FIN(BigDecimal r14_NO_ACC_BLK_FIN) {
+	public void setR14_NO_ACC_BLK_FIN(String r14_NO_ACC_BLK_FIN) {
 		R14_NO_ACC_BLK_FIN = r14_NO_ACC_BLK_FIN;
 	}
-	public BigDecimal getR14_NO_INQ_AVL_BAL() {
+	public String getR14_NO_INQ_AVL_BAL() {
 		return R14_NO_INQ_AVL_BAL;
 	}
-	public void setR14_NO_INQ_AVL_BAL(BigDecimal r14_NO_INQ_AVL_BAL) {
+	public void setR14_NO_INQ_AVL_BAL(String r14_NO_INQ_AVL_BAL) {
 		R14_NO_INQ_AVL_BAL = r14_NO_INQ_AVL_BAL;
 	}
-	public BigDecimal getR14_TOT_PRE_EXP_SPT() {
+	public String getR14_TOT_PRE_EXP_SPT() {
 		return R14_TOT_PRE_EXP_SPT;
 	}
-	public void setR14_TOT_PRE_EXP_SPT(BigDecimal r14_TOT_PRE_EXP_SPT) {
+	public void setR14_TOT_PRE_EXP_SPT(String r14_TOT_PRE_EXP_SPT) {
 		R14_TOT_PRE_EXP_SPT = r14_TOT_PRE_EXP_SPT;
 	}
-	public BigDecimal getR14_TOT_PRE_POS_EXP() {
+	public String getR14_TOT_PRE_POS_EXP() {
 		return R14_TOT_PRE_POS_EXP;
 	}
-	public void setR14_TOT_PRE_POS_EXP(BigDecimal r14_TOT_PRE_POS_EXP) {
+	public void setR14_TOT_PRE_POS_EXP(String r14_TOT_PRE_POS_EXP) {
 		R14_TOT_PRE_POS_EXP = r14_TOT_PRE_POS_EXP;
 	}
-	public BigDecimal getR14_TOT_PRE_CARD_SPD() {
+	public String getR14_TOT_PRE_CARD_SPD() {
 		return R14_TOT_PRE_CARD_SPD;
 	}
-	public void setR14_TOT_PRE_CARD_SPD(BigDecimal r14_TOT_PRE_CARD_SPD) {
+	public void setR14_TOT_PRE_CARD_SPD(String r14_TOT_PRE_CARD_SPD) {
 		R14_TOT_PRE_CARD_SPD = r14_TOT_PRE_CARD_SPD;
 	}
-	public BigDecimal getR14_TOT_ACCS_SPD() {
+	public String getR14_TOT_ACCS_SPD() {
 		return R14_TOT_ACCS_SPD;
 	}
-	public void setR14_TOT_ACCS_SPD(BigDecimal r14_TOT_ACCS_SPD) {
+	public void setR14_TOT_ACCS_SPD(String r14_TOT_ACCS_SPD) {
 		R14_TOT_ACCS_SPD = r14_TOT_ACCS_SPD;
 	}
-	public BigDecimal getR14_NO_LANG_VOICE() {
+	public String getR14_NO_LANG_VOICE() {
 		return R14_NO_LANG_VOICE;
 	}
-	public void setR14_NO_LANG_VOICE(BigDecimal r14_NO_LANG_VOICE) {
+	public void setR14_NO_LANG_VOICE(String r14_NO_LANG_VOICE) {
 		R14_NO_LANG_VOICE = r14_NO_LANG_VOICE;
 	}
-	public BigDecimal getR14_AVG_NOD_LOWRSK() {
+	public String getR14_AVG_NOD_LOWRSK() {
 		return R14_AVG_NOD_LOWRSK;
 	}
-	public void setR14_AVG_NOD_LOWRSK(BigDecimal r14_AVG_NOD_LOWRSK) {
+	public void setR14_AVG_NOD_LOWRSK(String r14_AVG_NOD_LOWRSK) {
 		R14_AVG_NOD_LOWRSK = r14_AVG_NOD_LOWRSK;
 	}
-	public BigDecimal getR14_NO_CUST_REISS_LIA() {
+	public String getR14_NO_CUST_REISS_LIA() {
 		return R14_NO_CUST_REISS_LIA;
 	}
-	public void setR14_NO_CUST_REISS_LIA(BigDecimal r14_NO_CUST_REISS_LIA) {
+	public void setR14_NO_CUST_REISS_LIA(String r14_NO_CUST_REISS_LIA) {
 		R14_NO_CUST_REISS_LIA = r14_NO_CUST_REISS_LIA;
 	}
-	public BigDecimal getR14_NO_INS_CRRATE_CON() {
+	public String getR14_NO_INS_CRRATE_CON() {
 		return R14_NO_INS_CRRATE_CON;
 	}
-	public void setR14_NO_INS_CRRATE_CON(BigDecimal r14_NO_INS_CRRATE_CON) {
+	public void setR14_NO_INS_CRRATE_CON(String r14_NO_INS_CRRATE_CON) {
 		R14_NO_INS_CRRATE_CON = r14_NO_INS_CRRATE_CON;
 	}
 	public Date getREPORT_DATE() {
