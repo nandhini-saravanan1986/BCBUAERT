@@ -431,7 +431,7 @@
 				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in AED Million';
 			}
 			// Hide all analytics sections first
-
+			document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "none");
 			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
 			document.querySelectorAll(".StockChart-container").forEach(el => el.style.display = "none");
 			document.querySelector(".LiquidAssetsRatio").style.display = "none";
@@ -599,6 +599,17 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
+					
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
 
 				var trHTML = "";
 				document.getElementById("BPVPV01_TABLEBODY").innerHTML = trHTML;
@@ -639,10 +650,10 @@
 					});
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
-
+				
 				document.querySelector(".chart-card").style.display = "block";
 				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-
+				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
 			} else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -2637,7 +2648,7 @@
 		}
 
 		function updateLiquidAssetsTable(periodKey) {
-
+			document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "none");
 			const dateParts = periodKey.split("-");
 
 			const selectedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
@@ -4038,7 +4049,20 @@
 						$("#invalidfile").modal("toggle");
 					});
 
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + selectedDate) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
+					
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
+				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
+				
 			}else {
 				alert('Sorry invalid operation selected')
 			}
@@ -4604,7 +4628,9 @@
 
 
 		///Progressing chart function for currenct Month
+		// Progressing chart function for current Month (Daily)
 		function Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
+
 			const ctx = document.getElementById("Linechartfordailyreport");
 			if (!ctx) return;
 
@@ -4612,53 +4638,82 @@
 				progressChartInstance.destroy();
 			}
 
-
 			progressChartInstance = new Chart(ctx, {
 				type: "line",
 				data: {
-					labels: labels,          // 🔹 dynamic labels from backend
+					labels: labels,
 					datasets: [
 						{
 							label: "Utilization %",
-							data: dataValues,                        // 🔹 dynamic data
+							data: dataValues,
+							backgroundColor: "rgba(139, 92, 246, 0.65)",
 							borderColor: "#8b5cf6",
-							backgroundColor: "rgba(139, 92, 246, 0.15)",
 							borderWidth: 2,
-							fill: true,
-							tension: 0.35,                           // smooth curve
-							pointRadius: 3,
-							pointHoverRadius: 5,
-							pointBackgroundColor: "#8b5cf6",
-							pointBorderColor: "#ffffff",
-							pointBorderWidth: 1.5
+							tension: 0.3,
+							pointRadius: 4,
+							pointHoverRadius: 6
 						},
 					],
 				},
 				options: {
 					responsive: true,
 					maintainAspectRatio: false,
+
 					plugins: {
-						legend: {display: false},
+						legend: { display: false },
+
 						tooltip: {
 							callbacks: {
 								label: (ctx) => `${ctx.parsed.y}%`
 							}
+						},
+
+						datalabels: {
+							color: "black",
+							font: {
+								weight: "bold",
+								size: 10
+							},
+
+							anchor: function (context) {
+								return context.dataIndex === 0 ? 'end' : 'end';
+							},
+
+							align: function (context) {
+								return context.dataIndex === 0 ? 'right' : 'top';
+							},
+
+							offset: function (context) {
+								return context.dataIndex === 0 ? 6 : 0;
+							},
+
+							display: function (context) {
+								const chart = context.chart;
+								const activePoints = chart.getActiveElements();
+
+								if (activePoints.length) {
+									const { datasetIndex, index } = activePoints[0];
+									if (datasetIndex === context.datasetIndex && index === context.dataIndex) {
+										return false;
+									}
+								}
+								return true;
+							},
+
+							formatter: (value) => value + "%"
 						}
 					},
-					onClick: (evt, elements) => {
-						if (!elements.length) return;
-						const idx = elements[0].index;
-						const period = labels[idx];   // e.g. "Jan"
-						updateLiquidAssetsTable(period);
-					},
+
 					scales: {
 						x: {
-							grid: {
-								display: false
+							grid: { display: false },
+							border: {
+								color: 'black',
+								width: 1.5
 							},
 							ticks: {
-								color: "Black",
-								font: {size: 10},
+								color: "black",
+								font: { size: 10, weight: 'bold' },
 								maxRotation: 45,
 								minRotation: 45
 							},
@@ -4670,29 +4725,34 @@
 									size: 15,
 									weight: '800'
 								},
-								padding: {
-									top: 8    // space between labels and title
-								}
+								padding: { top: 8 }
 							}
 						},
 						y: {
-							beginAtZero: true,
+							beginAtZero: false,
 							max: yaxismaxsize,
 							grid: {
-								color: "White",
+								color: "white",
 								drawBorder: false
+							},
+							border: {
+								color: 'black',
+								width: 1.5
 							},
 							ticks: {
 								stepSize: CalculatedStepSize,
 								autoSkip: false,
-								color: "Black",
-								font: {size: 10},
+								color: "black",
+								font: { size: 10, weight: 'bold' },
 								callback: (value) => value + "%"
 							}
 						}
 					}
 				}
 			});
+
+			var chartDownloadEl = document.getElementById("chartDownloadActions");
+			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
 
 	</script>
@@ -5007,10 +5067,10 @@
 					</div>
 
 					<!--Current Month progressing chart-->
-					<!--<div class="chart-container" style="display: none;">
+					<div class="Dailychart-container" style="display: none;">
 						<canvas id="Linechartfordailyreport"></canvas>
 
-					</div>-->
+					</div>
 
 					<!--	Group and Single Borrower detail -->
 					<div class="UnsecuredPosition" style="display: none;">

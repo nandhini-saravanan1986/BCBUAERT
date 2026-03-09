@@ -153,8 +153,13 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
 			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+			+ "Where a.month_end = b.REPORT_DATE Order by b.REPORT_DATE Asc)",nativeQuery=true)
 	List<Object[]> GetBPVPV01(Date Selecteddate);
+	
+	@Query(value="Select To_char(Report_date,'DD-MM-YYYY'),POSITION_OF_MATRIX from rt_matrix_monitored_table Where S_NO = '22'  and Report_date "
+			+ "between trunc(?1,'MM') and Last_day(Trunc(?1,'MM'))"
+			+ "order by Report_date Asc",nativeQuery=true)
+	List<Object[]> GetBPVPV01Monthdetail(Date Selecteddate);
 	
 	@Query(value="Select * from(\r\n"
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '10') ,\r\n"

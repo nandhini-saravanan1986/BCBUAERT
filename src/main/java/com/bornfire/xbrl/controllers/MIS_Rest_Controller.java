@@ -604,6 +604,11 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyother(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
+		}else if(Matrix_Srl_no.equals("22")) {
+			
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01Monthdetail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
 		}
 		
 		

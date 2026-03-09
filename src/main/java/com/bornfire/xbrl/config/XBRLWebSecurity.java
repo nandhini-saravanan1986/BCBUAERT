@@ -69,7 +69,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 	@Autowired
 	AccessandRolesRepository accessRepository;
 	
-	private final Integer SESSION_TIMEOUT_IN_SECONDS = 650000;
+	private final Integer SESSION_TIMEOUT_IN_SECONDS = 900;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
