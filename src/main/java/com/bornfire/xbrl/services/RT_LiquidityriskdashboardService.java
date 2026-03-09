@@ -317,7 +317,7 @@ public class RT_LiquidityriskdashboardService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp");  // Corrected property key
-        String templateFileName = "CBUAE_Liquidity_Risk_Dashboard_Template.xls";
+        String templateFileName = "CBUAE_Liquidity_Risk_Dashboard_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());

@@ -286,6 +286,35 @@
 			height: 500px;
 		}
 
+		.chart-download-actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: var(--space-sm);
+			margin-bottom: var(--space-md);
+			flex-wrap: wrap;
+		}
+
+		.chart-download-actions .btn-download-chart {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35rem;
+			padding: 0.4rem 0.75rem;
+			font-size: var(--text-sm);
+			font-weight: var(--weight-medium);
+			color: var(--color-primary);
+			background: var(--color-primary-50);
+			border: 1px solid var(--color-primary-200);
+			border-radius: var(--radius-md);
+			cursor: pointer;
+			transition: var(--transition);
+		}
+
+		.chart-download-actions .btn-download-chart:hover {
+			background: var(--color-primary-100);
+			border-color: var(--color-primary);
+			color: var(--color-primary-hover);
+		}
+
 		h4 {
 			position: relative;
 			text-align: center;
@@ -432,6 +461,8 @@
 			document.querySelector(".Depositconcentration").style.display = "none";
 			document.querySelector(".Generalprovisiongrid").style.display = "none";
 			document.querySelector(".BPVPV01_TABLE").style.display = "none";
+			var chartDownloadEl = document.getElementById("chartDownloadActions");
+			if (chartDownloadEl) chartDownloadEl.style.display = "none";
 			// Show sections based on the selected S.No
 			if (labelsrlno === "5") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -4209,6 +4240,69 @@
 		}
 
 
+		/**
+		 * Download the current analytics chart as PNG image with client_Logo_bkp.png as background watermark.
+		 */
+		function downloadChartAsImage() {
+			if (!barChartInstance) {
+				alert("No chart available to download.");
+				return;
+			}
+			var chartCanvas = barChartInstance.canvas;
+			var w = chartCanvas.width;
+			var h = chartCanvas.height;
+			var watermarkImg = document.getElementById("chartWatermarkImg");
+			var chartDataUrl = barChartInstance.toBase64Image("image/png");
+			var fileName = "chart-" + (document.getElementById("Analyticsheadername") ? (document.getElementById("Analyticsheadername").innerText || "chart").replace(/[^a-z0-9]+/gi, "-").substring(0, 40) : "chart") + ".png";
+
+			function doDownload() {
+				var off = document.createElement("canvas");
+				off.width = w;
+				off.height = h;
+				var ctx = off.getContext("2d");
+				// White background for downloaded image
+				ctx.fillStyle = "#ffffff";
+				ctx.fillRect(0, 0, w, h);
+				// Draw watermark first (background), centered and scaled, semi-transparent
+				if (watermarkImg && watermarkImg.complete && watermarkImg.naturalWidth > 0) {
+					ctx.globalAlpha = 0.2;
+					var logoW = watermarkImg.naturalWidth;
+					var logoH = watermarkImg.naturalHeight;
+					var maxLogo = Math.min(w, h) * 0.5;
+					var scale = Math.min(maxLogo / logoW, maxLogo / logoH);
+					var lw = logoW * scale;
+					var lh = logoH * scale;
+					var lx = (w - lw) / 2;
+					var ly = (h - lh) / 2;
+					ctx.drawImage(watermarkImg, lx, ly, lw, lh);
+					ctx.globalAlpha = 1;
+				}
+				// Draw chart on top
+				var chartImg = new Image();
+				chartImg.onload = function () {
+					ctx.drawImage(chartImg, 0, 0);
+					var link = document.createElement("a");
+					link.download = fileName;
+					link.href = off.toDataURL("image/png");
+					link.click();
+				};
+				chartImg.onerror = function () {
+					var link = document.createElement("a");
+					link.download = fileName;
+					link.href = chartDataUrl;
+					link.click();
+				};
+				chartImg.src = chartDataUrl;
+			}
+
+			if (watermarkImg && !watermarkImg.complete) {
+				watermarkImg.onload = doDownload;
+				watermarkImg.onerror = doDownload;
+			} else {
+				doDownload();
+			}
+		}
+
 		document.addEventListener("DOMContentLoaded", function () {
 
 			Initiatemonthlychart(labels, dataValues, 10, 100);
@@ -4380,6 +4474,8 @@
 					}
 				}
 			});
+			var chartDownloadEl = document.getElementById("chartDownloadActions");
+			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
 
 
@@ -4502,6 +4598,8 @@
 					}
 				}
 			});
+			var chartDownloadEl = document.getElementById("chartDownloadActions");
+			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
 
 
@@ -4886,6 +4984,15 @@
 							</div>
 							<div class="stat-card-value" id="Sector_classifi_per">0.00</div>
 						</div>
+					</div>
+
+					<!-- Watermark image for chart download (hidden) -->
+					<img id="chartWatermarkImg" th:src="@{/images/client_Logo_bkp.png}" alt="" style="display: none;" crossorigin="anonymous">
+					<!-- Chart download (shown when chart is visible) -->
+					<div class="chart-download-actions" id="chartDownloadActions" style="display: none;">
+						<button type="button" class="btn-download-chart" onclick="downloadChartAsImage();" title="Download chart as PNG image with watermark">
+							<i class="fas fa-download"></i>
+						</button>
 					</div>
 
 					<!-- Chart -->
