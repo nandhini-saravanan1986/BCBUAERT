@@ -188,18 +188,20 @@ public class RT_RepoService {
 
 	        try {
 	            List<Object[]> repoList = repoRepo.getRepoDataList();
-	            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Repo_Data_Template.xls");
+	            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Repo_Data_Template.xlsx");
 	            Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
-	            Sheet sheet = workbook.getSheetAt(0);
+	            Sheet sheet = workbook.getSheetAt(3);
 
 	            CreationHelper createHelper = workbook.getCreationHelper();
 	            short dateFormat = createHelper.createDataFormat().getFormat("dd-MM-yyyy");
 
 	            int startRow = 3;
+	            System.out.println(" repoList.size()"+ repoList.size());
 
 	            if (!repoList.isEmpty()) {
 	                for (int i = 0; i < repoList.size(); i++) {
 	                    Object[] data = repoList.get(i);
+	                    System.out.println("data of object " +i+" is " +Arrays.toString(data) );
 	                    Row row = sheet.getRow(startRow + i);
 	                    if (row == null)
 	                        row = sheet.createRow(startRow + i);
@@ -233,10 +235,12 @@ public class RT_RepoService {
 	                        }
 	                    }
 	                }
+	                
+	                workbook.setForceFormulaRecalculation(true);
 
-	                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+	                workbook.getCreationHelper().createFormulaEvaluator();
 
-	                outputFile = new File(env.getProperty("output.exportpathfinal") + "CBUAE_Repo_Data_Template.xls");
+	                outputFile = new File(env.getProperty("output.exportpathfinal") + "CBUAE_Repo_Data_Template.xlsx");
 	                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
 	                    workbook.write(fos);
 	                    System.out.println("Repo Excel generated: " + outputFile.getAbsolutePath());
