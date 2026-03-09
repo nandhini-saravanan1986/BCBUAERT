@@ -334,7 +334,7 @@ public class RT_LiquidityriskdashboardService {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(3);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -1322,7 +1322,7 @@ public class RT_LiquidityriskdashboardService {
 		workbook.write(out);
 
 		String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-        File outputFile = new File(finalPath + "CBUAE_Liquidity_Risk_Dashboard_Template.xls");
+        File outputFile = new File(finalPath + "CBUAE_Liquidity_Risk_Dashboard_Template.xlsx");
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
             fos.write(out.toByteArray());
             logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
