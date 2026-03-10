@@ -52,6 +52,14 @@ public class RT_MC_TABLE_ALL_Service {
 	RT_MC_TABLE5_REPO RT_MC_TABLE5_REPO;
 	@Autowired
 	RT_MC_TABLE6_REPO RT_MC_TABLE6_REPO;
+	@Autowired
+	RT_MC_TABLE7_1_REPO RT_MC_TABLE7_1_REPO;
+	@Autowired
+	RT_MC_TABLE7_2_REPO RT_MC_TABLE7_2_REPO;
+	@Autowired
+	RT_MC_TABLE8_REPO RT_MC_TABLE8_REPO;
+	@Autowired
+	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
@@ -73,11 +81,11 @@ public class RT_MC_TABLE_ALL_Service {
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
 			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode);
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
-
+			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode);
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-
+			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode);
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-
+			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode);
 		}
 
 		return file;
@@ -276,7 +284,6 @@ public class RT_MC_TABLE_ALL_Service {
 						row = sheet.createRow(startRow + i);
 					}
 					progressMap.put(jobId, 5);
-					row = sheet.getRow(5);
 					updateCellPreserveStyle(row, 5, record1.getR6_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR6_NO_CON_POD_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record1.getR6_NO_CON_UNAU_SP_TP(), null, createHelper);
@@ -2191,51 +2198,6 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 43, record.getR22_NO_CON_DELAY(), null, createHelper);
 					updateCellPreserveStyle(row, 44, record.getR22_NO_COM_REP_DTE(), null, createHelper);
 
-					row = sheet.getRow(22);
-					updateCellPreserveStyle(row, 5, record.getR23_NO_COM_SPC_TP(), null, createHelper);
-					updateCellPreserveStyle(row, 6, record.getR23_NO_COM_PEN(), null, createHelper);
-					updateCellPreserveStyle(row, 7, record.getR23_AMT_FIN_AED(), null, createHelper);
-					updateCellPreserveStyle(row, 8, record.getR23_NO_COM_ADV_FEES(), null, createHelper);
-					updateCellPreserveStyle(row, 9, record.getR23_NO_COM_DET_SPC_PT(), null, createHelper);
-					updateCellPreserveStyle(row, 10, record.getR23_NO_COM_DEBT(), null, createHelper);
-					updateCellPreserveStyle(row, 11, record.getR23_NO_COM_AGNT(), null, createHelper);
-					updateCellPreserveStyle(row, 12, record.getR23_NO_COM_MISSEL(), null, createHelper);
-					updateCellPreserveStyle(row, 13, record.getR23_NO_COM_FILCOM(), null, createHelper);
-					updateCellPreserveStyle(row, 14, record.getR23_NO_COM_PRO_SER(), null, createHelper);
-					updateCellPreserveStyle(row, 15, record.getR23_NO_ASO_PROD(), null, createHelper);
-					updateCellPreserveStyle(row, 16, record.getR23_NO_CON_PHN(), null, createHelper);
-					updateCellPreserveStyle(row, 17, record.getR23_NO_CON_WEB(), null, createHelper);
-					updateCellPreserveStyle(row, 18, record.getR23_NO_CON_BNK(), null, createHelper);
-					updateCellPreserveStyle(row, 19, record.getR23_NO_OUT_UNRES(), null, createHelper);
-					updateCellPreserveStyle(row, 20, record.getR23_NO_COM_RES_CON(), null, createHelper);
-					updateCellPreserveStyle(row, 21, record.getR23_NO_RES_30_COM(), null, createHelper);
-					updateCellPreserveStyle(row, 22, record.getR23_AVG_TME_RES_COM(), null, createHelper);
-					updateCellPreserveStyle(row, 23, record.getR23_NO_COM_STF_MIS(), null, createHelper);
-					updateCellPreserveStyle(row, 24, record.getR23_NO_COM_ATM_WEB(), null, createHelper);
-					updateCellPreserveStyle(row, 25, record.getR23_NO_COM_FIN_LOS(), null, createHelper);
-					updateCellPreserveStyle(row, 26, record.getR23_NO_COM_FAV_LOS(), null, createHelper);
-					updateCellPreserveStyle(row, 27, record.getR23_NO_COM_PRV_PER(), null, createHelper);
-					updateCellPreserveStyle(row, 28, record.getR23_NO_RES_COM(), null, createHelper);
-					updateCellPreserveStyle(row, 29, record.getR23_NO_STEP_LOS(), null, createHelper);
-					updateCellPreserveStyle(row, 30, record.getR23_NO_CUST_LEGAL(), null, createHelper);
-					updateCellPreserveStyle(row, 31, record.getR23_NO_COM_FAIL(), null, createHelper);
-					// updateCellPreserveStyle(row, 32, record.getR23_NO_COM_EXP_CON(), null,
-					// createHelper);
-					// updateCellPreserveStyle(row, 33, record.getR23_NO_COM_SANA(), null,
-					// createHelper);
-					// updateCellPreserveStyle(row, 34, record.getR23_NO_COM_CBUAE_SD(), null,
-					// createHelper);
-					updateCellPreserveStyle(row, 35, record.getR23_NO_RES_COM_7(), null, createHelper);
-					updateCellPreserveStyle(row, 36, record.getR23_NO_RES_COM_15(), null, createHelper);
-					updateCellPreserveStyle(row, 37, record.getR23_NO_COM_UPHEL(), null, createHelper);
-					updateCellPreserveStyle(row, 38, record.getR23_NO_COM_BNK_STF(), null, createHelper);
-					updateCellPreserveStyle(row, 39, record.getR23_NO_COM_INHOU(), null, createHelper);
-					updateCellPreserveStyle(row, 40, record.getR23_NO_COM_ACK_TT(), null, createHelper);
-					updateCellPreserveStyle(row, 41, record.getR23_NO_COM_DEBT_COLL(), null, createHelper);
-					updateCellPreserveStyle(row, 42, record.getR23_NO_INST_CRE_RATE(), null, createHelper);
-					updateCellPreserveStyle(row, 43, record.getR23_NO_CON_DELAY(), null, createHelper);
-					updateCellPreserveStyle(row, 44, record.getR23_NO_COM_REP_DTE(), null, createHelper);
-
 				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
@@ -3345,6 +3307,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 60, record2.getR20_TOT_PRE_CARD_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 61, record2.getR20_TOT_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 62, record2.getR20_NO_LANG_VOICE(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR20_AVG_NOD_LOWRSK(), null, createHelper);
 					// updateCellPreserveStyle(row, 64, record2.getR20_NO_CUST_REISS_LIA(), null,
 					// createHelper);
 					// updateCellPreserveStyle(row, 65, record2.getR20_NO_INS_CRRATE_CON(), null,
@@ -3610,21 +3573,31 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR10_NO_COM_SPC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR10_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR10_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 65);					
+					progressMap.put(jobId, 65);
 					row = sheet.getRow(10);
-					//updateCellPreserveStyle(row, 5, record.getR11_NO_CON_EMP_SPCD(), null, createHelper);
-					//updateCellPreserveStyle(row, 6, record.getR11_NO_EMP_LFI(), null, createHelper);
-					//updateCellPreserveStyle(row, 7, record.getR11_NO_DIS_POOR(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR11_NO_CON_AGS(), null, createHelper);
-					//updateCellPreserveStyle(row, 9, record.getR11_NO_SAL_STF_EMP(), null, createHelper);
-					//updateCellPreserveStyle(row, 10, record.getR11_NO_FXD_RENUM(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR11_NO_SAL_REN_50(), null, createHelper);
-					//updateCellPreserveStyle(row, 12, record.getR11_AVG_BON_CON(), null, createHelper);
-					//updateCellPreserveStyle(row, 13, record.getR11_NO_EMP_DIS_ACT(), null, createHelper);
-					//updateCellPreserveStyle(row, 14, record.getR11_NO_COM_SPC_PT(), null, createHelper);
+					// updateCellPreserveStyle(row, 5, record.getR11_NO_CON_EMP_SPCD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 6, record.getR11_NO_EMP_LFI(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 7, record.getR11_NO_DIS_POOR(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR11_NO_CON_AGS(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 9, record.getR11_NO_SAL_STF_EMP(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 10, record.getR11_NO_FXD_RENUM(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR11_NO_SAL_REN_50(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 12, record.getR11_AVG_BON_CON(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 13, record.getR11_NO_EMP_DIS_ACT(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 14, record.getR11_NO_COM_SPC_PT(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 15, record.getR11_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR11_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 85);					
+					progressMap.put(jobId, 85);
 					row = sheet.getRow(11);
 					updateCellPreserveStyle(row, 5, record.getR12_NO_CON_EMP_SPCD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR12_NO_EMP_LFI(), null, createHelper);
@@ -3638,7 +3611,6 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR12_NO_COM_SPC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR12_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR12_NO_WSTLE_RSK(), null, createHelper);
-					
 
 				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -3729,50 +3701,67 @@ public class RT_MC_TABLE_ALL_Service {
 					}
 					progressMap.put(jobId, 5);
 
-
 					updateCellPreserveStyle(row, 5, record.getR7_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR7_NO_TRA_SNR_SPT(), null, createHelper);
-					//updateCellPreserveStyle(row, 7, record.getR7_NO_CONS_VC(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR7_NO_CON_FRA(), null, createHelper);
+					// updateCellPreserveStyle(row, 7, record.getR7_NO_CONS_VC(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR7_NO_CON_FRA(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 9, record.getR7_NO_CON_MRK_FRD(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record.getR7_TOT_CON_PRO_CBUAE(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR7_TOT_TRA_CBUAE(), null, createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR7_TOT_TRA_CBUAE(), null,
+					// createHelper);
 					progressMap.put(jobId, 20);
 					row = sheet.getRow(7);
 					updateCellPreserveStyle(row, 5, record.getR8_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR8_NO_TRA_SNR_SPT(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR8_NO_CONS_VC(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR8_NO_CON_FRA(), null, createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR8_NO_CON_FRA(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 9, record.getR8_NO_CON_MRK_FRD(), null, createHelper);
-					//updateCellPreserveStyle(row, 10, record.getR8_TOT_CON_PRO_CBUAE(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR8_TOT_TRA_CBUAE(), null, createHelper);
+					// updateCellPreserveStyle(row, 10, record.getR8_TOT_CON_PRO_CBUAE(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR8_TOT_TRA_CBUAE(), null,
+					// createHelper);
 					progressMap.put(jobId, 35);
 					row = sheet.getRow(8);
 					updateCellPreserveStyle(row, 5, record.getR9_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR9_NO_TRA_SNR_SPT(), null, createHelper);
-					//updateCellPreserveStyle(row, 7, record.getR9_NO_CONS_VC(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR9_NO_CON_FRA(), null, createHelper);
+					// updateCellPreserveStyle(row, 7, record.getR9_NO_CONS_VC(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR9_NO_CON_FRA(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 9, record.getR9_NO_CON_MRK_FRD(), null, createHelper);
-					//updateCellPreserveStyle(row, 10, record.getR9_TOT_CON_PRO_CBUAE(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR9_TOT_TRA_CBUAE(), null, createHelper);
+					// updateCellPreserveStyle(row, 10, record.getR9_TOT_CON_PRO_CBUAE(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR9_TOT_TRA_CBUAE(), null,
+					// createHelper);
 					progressMap.put(jobId, 50);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record.getR10_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR10_NO_TRA_SNR_SPT(), null, createHelper);
-					//updateCellPreserveStyle(row, 7, record.getR10_NO_CONS_VC(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR10_NO_CON_FRA(), null, createHelper);
+					// updateCellPreserveStyle(row, 7, record.getR10_NO_CONS_VC(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR10_NO_CON_FRA(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 9, record.getR10_NO_CON_MRK_FRD(), null, createHelper);
-					//updateCellPreserveStyle(row, 10, record.getR10_TOT_CON_PRO_CBUAE(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR10_TOT_TRA_CBUAE(), null, createHelper);
+					// updateCellPreserveStyle(row, 10, record.getR10_TOT_CON_PRO_CBUAE(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR10_TOT_TRA_CBUAE(), null,
+					// createHelper);
 					progressMap.put(jobId, 65);
 					row = sheet.getRow(10);
 					updateCellPreserveStyle(row, 5, record.getR11_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR11_NO_TRA_SNR_SPT(), null, createHelper);
-					//updateCellPreserveStyle(row, 7, record.getR11_NO_CONS_VC(), null, createHelper);
-					//updateCellPreserveStyle(row, 8, record.getR11_NO_CON_FRA(), null, createHelper);
+					// updateCellPreserveStyle(row, 7, record.getR11_NO_CONS_VC(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 8, record.getR11_NO_CON_FRA(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 9, record.getR11_NO_CON_MRK_FRD(), null, createHelper);
-					//updateCellPreserveStyle(row, 10, record.getR11_TOT_CON_PRO_CBUAE(), null, createHelper);
-					//updateCellPreserveStyle(row, 11, record.getR11_TOT_TRA_CBUAE(), null, createHelper);
+					// updateCellPreserveStyle(row, 10, record.getR11_TOT_CON_PRO_CBUAE(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 11, record.getR11_TOT_TRA_CBUAE(), null,
+					// createHelper);
 
 					progressMap.put(jobId, 85);
 					row = sheet.getRow(11);
@@ -3783,9 +3772,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 9, record.getR12_NO_CON_MRK_FRD(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record.getR12_TOT_CON_PRO_CBUAE(), null, createHelper);
 					updateCellPreserveStyle(row, 11, record.getR12_TOT_TRA_CBUAE(), null, createHelper);
-			
 
-					
 				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
@@ -3800,6 +3787,1352 @@ public class RT_MC_TABLE_ALL_Service {
 		}
 
 	}
+
+	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+			throws Exception {
+		logger.info("Service: Starting Excel generation process in memory.");
+
+		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+
+		if (dataList1.isEmpty() || dataList2.isEmpty()) {
+			logger.warn("Service: No data found for MC report. Returning empty result.");
+			return new byte[0];
+		}
+		String templateDir = env.getProperty("output.exportpathtemp");
+		// String templateFileName = "Table_2.xlsx";
+		System.out.println(templateFileName);
+		Path templatePath = Paths.get(templateDir, templateFileName);
+		System.out.println(templatePath);
+
+		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+		if (!Files.exists(templatePath)) {
+			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+		}
+		if (!Files.isReadable(templatePath)) {
+			throw new SecurityException(
+					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
+		}
+
+		try (InputStream templateInputStream = Files.newInputStream(templatePath);
+				Workbook workbook = WorkbookFactory.create(templateInputStream);
+				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			Sheet sheet = workbook.getSheetAt(9);
+
+			// --- Style Definitions ---
+			CreationHelper createHelper = workbook.getCreationHelper();
+
+			CellStyle dateStyle = workbook.createCellStyle();
+			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+			dateStyle.setBorderBottom(BorderStyle.THIN);
+			dateStyle.setBorderTop(BorderStyle.THIN);
+			dateStyle.setBorderLeft(BorderStyle.THIN);
+			dateStyle.setBorderRight(BorderStyle.THIN);
+
+			CellStyle textStyle = workbook.createCellStyle();
+			textStyle.setBorderBottom(BorderStyle.THIN);
+			textStyle.setBorderTop(BorderStyle.THIN);
+			textStyle.setBorderLeft(BorderStyle.THIN);
+			textStyle.setBorderRight(BorderStyle.THIN);
+
+			// Create the font
+			Font font = workbook.createFont();
+			font.setFontHeightInPoints((short) 8); // size 8
+			font.setFontName("Arial");
+
+			CellStyle numberStyle = workbook.createCellStyle();
+			// numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("0.000"));
+			numberStyle.setBorderBottom(BorderStyle.THIN);
+			numberStyle.setBorderTop(BorderStyle.THIN);
+			numberStyle.setBorderLeft(BorderStyle.THIN);
+			numberStyle.setBorderRight(BorderStyle.THIN);
+			numberStyle.setFont(font);
+			// --- End of Style Definitions ---
+
+			int startRow = 6;
+
+			if (!dataList1.isEmpty() && !dataList2.isEmpty()) {
+				for (int i = 0; i < dataList1.size(); i++) {
+					RT_MC_TABLE7_1_ENTITY record1 = dataList1.get(i);
+					RT_MC_TABLE7_2_ENTITY record2 = dataList2.get(i);
+					System.out.println("rownumber=" + (startRow + i));
+					Row row = sheet.getRow(startRow + i);
+					if (row == null) {
+						row = sheet.createRow(startRow + i);
+					}
+					progressMap.put(jobId, 5);
+
+					updateCellPreserveStyle(row, 9, record1.getR7_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR7_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR7_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR7_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR7_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR7_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR7_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR7_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR7_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR7_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR7_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR7_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR7_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR7_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record1.getR7_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record1.getR7_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR7_NO_CON_ONBO_DIGI(), null, createHelper);
+					updateCellPreserveStyle(row, 54, record1.getR7_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR7_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR7_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR7_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR7_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR7_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR7_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR7_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR7_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR7_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR7_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR7_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR7_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR7_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(7);
+					updateCellPreserveStyle(row, 8, record1.getR8_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR8_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR8_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR8_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR8_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR8_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR8_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR8_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR8_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR8_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR8_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR8_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR8_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR8_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR8_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record1.getR8_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record1.getR8_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR8_NO_CON_ONBO_DIGI(), null, createHelper);
+					updateCellPreserveStyle(row, 54, record1.getR8_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR8_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR8_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR8_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR8_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR8_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR8_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR8_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR8_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR8_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR8_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR8_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR8_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR8_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(8);
+
+					progressMap.put(jobId, 12);
+					updateCellPreserveStyle(row, 8, record1.getR9_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR9_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR9_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR9_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR9_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR9_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR9_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR9_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR9_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR9_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR9_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR9_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR9_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR9_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR9_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record1.getR9_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record1.getR9_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR9_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR9_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR9_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR9_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR9_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR9_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR9_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR9_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR9_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR9_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR9_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR9_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR9_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR9_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR9_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(9);
+
+					updateCellPreserveStyle(row, 8, record1.getR10_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR10_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR10_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR10_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR10_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR10_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR10_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR10_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR10_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR10_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR10_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR10_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR10_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR10_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR10_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR10_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR10_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR10_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR10_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR10_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR10_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR10_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR10_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR10_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR10_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR10_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR10_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR10_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR10_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR10_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR10_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR10_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(10);
+
+					progressMap.put(jobId, 24);
+					updateCellPreserveStyle(row, 8, record1.getR11_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR11_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR11_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR11_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR11_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR11_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR11_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR11_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR11_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR11_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR11_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR11_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR11_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR11_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR11_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR11_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR11_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR11_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR11_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR11_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR11_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR11_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR11_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR11_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR11_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR11_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR11_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR11_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR11_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR11_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR11_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR11_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(11);
+
+					updateCellPreserveStyle(row, 8, record1.getR12_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR12_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR12_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR12_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR12_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR12_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR12_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR12_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR12_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR12_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR12_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR12_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR12_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR12_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR12_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR12_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR12_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR12_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR12_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR12_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR12_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR12_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR12_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR12_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR12_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR12_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR12_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR12_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR12_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR12_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR12_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR12_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(12);
+
+					progressMap.put(jobId, 36);
+					updateCellPreserveStyle(row, 8, record1.getR13_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR13_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR13_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR13_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR13_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR13_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR13_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR13_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR13_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR13_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR13_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR13_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR13_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR13_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR13_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR13_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR13_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR13_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR13_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR13_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR13_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR13_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR13_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR13_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR13_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR13_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR13_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR13_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR13_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR13_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR13_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR13_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(13);
+
+					progressMap.put(jobId, 48);
+					updateCellPreserveStyle(row, 8, record1.getR14_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR14_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR14_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR14_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR14_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR14_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR14_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR14_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR14_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR14_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR14_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR14_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR14_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR14_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR14_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR14_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR14_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR14_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR14_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR14_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR14_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR14_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR14_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR14_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR14_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR14_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR14_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR14_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR14_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR14_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR14_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR14_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(14);
+
+					updateCellPreserveStyle(row, 8, record1.getR15_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record1.getR15_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record1.getR15_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record1.getR15_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record1.getR15_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record1.getR15_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record1.getR15_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record1.getR15_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record1.getR15_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record1.getR15_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record1.getR15_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record1.getR15_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record1.getR15_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record1.getR15_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record1.getR15_TOT_BRAN_PREV(), null, createHelper);
+
+					updateCellPreserveStyle(row, 51, record1.getR15_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record1.getR15_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record1.getR15_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record1.getR15_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record1.getR15_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record1.getR15_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record1.getR15_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record1.getR15_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record1.getR15_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record1.getR15_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record1.getR15_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record1.getR15_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record1.getR15_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record1.getR15_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record1.getR15_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record1.getR15_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record1.getR15_NO_CON_HIGH_RSK(), null, createHelper);
+
+					row = sheet.getRow(15);
+
+					progressMap.put(jobId, 60);
+					updateCellPreserveStyle(row, 8, record2.getR16_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR16_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR16_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR16_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR16_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR16_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR16_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR16_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR16_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR16_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR16_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR16_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR16_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR16_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR16_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR16_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR16_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR16_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR16_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR16_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR16_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR16_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR16_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR16_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR16_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR16_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR16_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR16_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR16_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR16_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR16_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR16_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(16);
+
+					updateCellPreserveStyle(row, 8, record2.getR17_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR17_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR17_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR17_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR17_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR17_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR17_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR17_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR17_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR17_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR17_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR17_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR17_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR17_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR17_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR17_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR17_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR17_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR17_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR17_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR17_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR17_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR17_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR17_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR17_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR17_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR17_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR17_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR17_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR17_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR17_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR17_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(17);
+
+					progressMap.put(jobId, 72);
+					updateCellPreserveStyle(row, 8, record2.getR18_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR18_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR18_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR18_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR18_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR18_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR18_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR18_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR18_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR18_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR18_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR18_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR18_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR18_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR18_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR18_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR18_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR18_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR18_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR18_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR18_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR18_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR18_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR18_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR18_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR18_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR18_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR18_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR18_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR18_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR18_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR18_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(18);
+
+					updateCellPreserveStyle(row, 8, record2.getR19_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR19_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR19_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR19_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR19_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR19_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR19_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR19_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR19_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR19_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR19_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR19_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR19_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR19_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR19_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR19_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR19_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR19_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR19_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR19_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR19_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR19_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR19_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR19_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR19_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR19_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR19_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR19_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR19_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR19_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR19_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR19_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(19);
+
+					progressMap.put(jobId, 84);
+					updateCellPreserveStyle(row, 8, record2.getR20_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR20_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR20_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR20_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR20_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR20_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR20_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR20_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR20_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR20_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR20_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR20_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR20_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR20_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR20_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR20_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR20_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR20_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR20_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR20_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR20_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR20_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR20_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR20_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR20_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR20_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR20_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR20_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR20_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR20_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR20_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR20_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(20);
+
+					updateCellPreserveStyle(row, 8, record2.getR21_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR21_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR21_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR21_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR21_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR21_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR21_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR21_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR21_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR21_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR21_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR21_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR21_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR21_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR21_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR21_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR21_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR21_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR21_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR21_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR21_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR21_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR21_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR21_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR21_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR21_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR21_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR21_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR21_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR21_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR21_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR21_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(21);
+
+					progressMap.put(jobId, 90);
+					updateCellPreserveStyle(row, 8, record2.getR22_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR22_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR22_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR22_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR22_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR22_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR22_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR22_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR22_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR22_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR22_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR22_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR22_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR22_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR22_TOT_BRAN_PREV(), null, createHelper);
+
+					//updateCellPreserveStyle(row, 51, record2.getR22_NPL_SPD(), null, createHelper);
+					//updateCellPreserveStyle(row, 52, record2.getR22_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR22_NO_CON_ONBO_DIGI(), null, createHelper);
+					//updateCellPreserveStyle(row, 54, record2.getR22_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR22_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR22_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR22_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR22_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR22_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR22_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR22_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR22_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR22_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR22_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR22_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR22_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR22_NO_CON_HIGH_RSK(), null, createHelper);
+					row = sheet.getRow(22);
+
+					updateCellPreserveStyle(row, 5, record2.getR23_RET_ASET_LTS(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record2.getR23_RET_ASET_LTSME(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record2.getR23_RET_ASET_SME_GUR(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record2.getR23_RET_LOAN_DIS(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record2.getR23_RET_ASET_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record2.getR23_PER_LOAN_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record2.getR23_LOAN_SME_WEB_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record2.getR23_NO_COMPDIGI_MOB(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR23_NO_COMP_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR23_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR23_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 16, record2.getR23_TOT_REV_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 17, record2.getR23_PROF_LOSS_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR23_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR23_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 20, record2.getR23_NP_LOAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 21, record2.getR23_NON_CON_ONLAST_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR23_TOT_BRAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 23, record2.getR23_TOT_REV_RET_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 24, record2.getR23_PROF_LOS_PORT_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 25, record2.getR23_PROF_MARG_PERC_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 26, record2.getR23_TOT_RET_ASET_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 27, record2.getR23_NON_PER_RET_PORT_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 28, record2.getR23_NO_CON_LAST_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 29, record2.getR23_TOT_BRANCH_CUR(), null, createHelper);
+					updateCellPreserveStyle(row, 30, record2.getR23_TOT_REV_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 31, record2.getR23_PROF_LOS_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 32, record2.getR23_PROF_MARG_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 33, record2.getR23_TOT_RET_ASET_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 34, record2.getR23_NON_PERF_PORT_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 35, record2.getR23_NO_CON_LAST_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 36, record2.getR23_TOT_BRANCH_T1(), null, createHelper);
+					updateCellPreserveStyle(row, 37, record2.getR23_TOT_REV_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 38, record2.getR23_PROF_LOS_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 39, record2.getR23_PROF_MARG_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 40, record2.getR23_TOT_RET_ASET_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 41, record2.getR23_NON_PERF_PORT_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 42, record2.getR23_NO_CON_LAST_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 43, record2.getR23_TOT_BRANCH_T2(), null, createHelper);
+					updateCellPreserveStyle(row, 44, record2.getR23_TOT_REV_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 45, record2.getR23_PROF_LOS_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 46, record2.getR23_PROF_MARG_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 47, record2.getR23_TOT_RET_ASET_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 48, record2.getR23_NON_PERF_PORT_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 49, record2.getR23_NO_CON_LAST_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 50, record2.getR23_TOT_BRANCH_T3(), null, createHelper);
+					updateCellPreserveStyle(row, 51, record2.getR23_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 52, record2.getR23_RECO_NPL_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 53, record2.getR23_NO_CON_ONBO_DIGI(), null, createHelper);
+					updateCellPreserveStyle(row, 54, record2.getR23_NO_ACCS_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 55, record2.getR23_TOT_ACC_LOAN_AML(), null, createHelper);
+					updateCellPreserveStyle(row, 56, record2.getR23_TOT_NEW_ACCS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 57, record2.getR23_TOT_VALS_LOANS_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 58, record2.getR23_NO_INQ_WEBMOB(), null, createHelper);
+					updateCellPreserveStyle(row, 59, record2.getR23_NO_INQ_TRAD(), null, createHelper);
+					updateCellPreserveStyle(row, 60, record2.getR23_NO_RET_POS(), null, createHelper);
+					updateCellPreserveStyle(row, 61, record2.getR23_AMT_POS_GATE(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR23_NO_TRAN_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR23_AMT_RET_SVF_BNK(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR23_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 65, record2.getR23_VAL_UNCL_SVF(), null, createHelper);
+					updateCellPreserveStyle(row, 66, record2.getR23_NO_CON_LOW_RSK(), null, createHelper);
+					updateCellPreserveStyle(row, 67, record2.getR23_NO_CON_HIGH_RSK(), null, createHelper);
+
+				}
+				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+			} else {
+
+			}
+
+			workbook.write(out);
+
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
+		}
+
+	}
+
+	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+			throws Exception {
+		logger.info("Service: Starting Excel generation process in memory.");
+
+		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+
+		if (dataList.isEmpty()) {
+			logger.warn("Service: No data found for MC report. Returning empty result.");
+			return new byte[0];
+		}
+		String templateDir = env.getProperty("output.exportpathtemp");
+		// String templateFileName = "Table_1.xlsx";
+		System.out.println(templateFileName);
+		Path templatePath = Paths.get(templateDir, templateFileName);
+		System.out.println(templatePath);
+
+		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+		if (!Files.exists(templatePath)) {
+			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+		}
+		if (!Files.isReadable(templatePath)) {
+			throw new SecurityException(
+					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
+		}
+
+		try (InputStream templateInputStream = Files.newInputStream(templatePath);
+				Workbook workbook = WorkbookFactory.create(templateInputStream);
+				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			Sheet sheet = workbook.getSheetAt(10);
+
+			// --- Style Definitions ---
+			CreationHelper createHelper = workbook.getCreationHelper();
+
+			CellStyle dateStyle = workbook.createCellStyle();
+			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+			dateStyle.setBorderBottom(BorderStyle.THIN);
+			dateStyle.setBorderTop(BorderStyle.THIN);
+			dateStyle.setBorderLeft(BorderStyle.THIN);
+			dateStyle.setBorderRight(BorderStyle.THIN);
+
+			CellStyle textStyle = workbook.createCellStyle();
+			textStyle.setBorderBottom(BorderStyle.THIN);
+			textStyle.setBorderTop(BorderStyle.THIN);
+			textStyle.setBorderLeft(BorderStyle.THIN);
+			textStyle.setBorderRight(BorderStyle.THIN);
+
+			// Create the font
+			Font font = workbook.createFont();
+			font.setFontHeightInPoints((short) 8); // size 8
+			font.setFontName("Arial");
+
+			CellStyle numberStyle = workbook.createCellStyle();
+			// numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("0.000"));
+			numberStyle.setBorderBottom(BorderStyle.THIN);
+			numberStyle.setBorderTop(BorderStyle.THIN);
+			numberStyle.setBorderLeft(BorderStyle.THIN);
+			numberStyle.setBorderRight(BorderStyle.THIN);
+			numberStyle.setFont(font);
+			// --- End of Style Definitions ---
+
+			int startRow = 7;
+
+			if (!dataList.isEmpty()) {
+				for (int i = 0; i < dataList.size(); i++) {
+					RT_MC_TABLE8_ENTITY record = dataList.get(i);
+					System.out.println("rownumber=" + startRow + i);
+					Row row = sheet.getRow(startRow + i);
+					if (row == null) {
+						row = sheet.createRow(startRow + i);
+					}
+					progressMap.put(jobId, 5);
+
+					updateCellPreserveStyle(row, 5, record.getR8_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR8_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR8_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR8_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR8_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR8_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR8_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR8_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR8_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR8_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR8_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(8);
+					updateCellPreserveStyle(row, 5, record.getR9_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR9_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR9_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR9_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR9_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR9_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR9_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR9_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR9_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR9_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR9_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 12);
+					row = sheet.getRow(9);
+					updateCellPreserveStyle(row, 5, record.getR10_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR10_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR10_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR10_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR10_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR10_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR10_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR10_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR10_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR10_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR10_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(10);
+					updateCellPreserveStyle(row, 5, record.getR11_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR11_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR11_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR11_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR11_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR11_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR11_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR11_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR11_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR11_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR11_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 24);
+					row = sheet.getRow(11);
+					updateCellPreserveStyle(row, 5, record.getR12_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR12_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR12_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR12_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR12_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR12_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR12_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR12_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR12_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR12_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR12_NO_COMP_ISLAMIC(), null, createHelper);
+					row = sheet.getRow(12);
+					updateCellPreserveStyle(row, 5, record.getR13_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR13_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR13_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR13_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR13_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR13_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR13_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR13_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR13_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR13_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR13_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 36);
+					row = sheet.getRow(13);
+					updateCellPreserveStyle(row, 5, record.getR14_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR14_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR14_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR14_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR14_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR14_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR14_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR14_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR14_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR14_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR14_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(14);
+					updateCellPreserveStyle(row, 5, record.getR15_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR15_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR15_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR15_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR15_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR15_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR15_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR15_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR15_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR15_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR15_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 48);
+					row = sheet.getRow(15);
+					updateCellPreserveStyle(row, 5, record.getR16_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR16_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR16_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR16_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR16_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR16_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR16_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR16_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR16_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR16_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR16_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(16);
+					updateCellPreserveStyle(row, 5, record.getR17_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR17_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR17_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR17_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR17_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR17_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR17_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR17_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR17_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR17_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR17_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 60);
+					row = sheet.getRow(17);
+					updateCellPreserveStyle(row, 5, record.getR18_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR18_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR18_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR18_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR18_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR18_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR18_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR18_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR18_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR18_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR18_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(18);
+					updateCellPreserveStyle(row, 5, record.getR19_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR19_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR19_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR19_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR19_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR19_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR19_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR19_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR19_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR19_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR19_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 72);
+					row = sheet.getRow(19);
+					updateCellPreserveStyle(row, 5, record.getR20_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR20_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR20_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR20_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR20_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR20_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR20_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR20_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR20_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR20_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR20_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(20);
+					updateCellPreserveStyle(row, 5, record.getR21_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR21_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR21_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR21_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR21_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR21_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR21_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR21_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR21_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR21_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR21_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 84);
+					row = sheet.getRow(21);
+					updateCellPreserveStyle(row, 5, record.getR22_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR22_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR22_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR22_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR22_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR22_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR22_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR22_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR22_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR22_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR22_NO_COMP_ISLAMIC(), null, createHelper);
+
+					row = sheet.getRow(22);
+					updateCellPreserveStyle(row, 5, record.getR23_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR23_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR23_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR23_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR23_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR23_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR23_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR23_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR23_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR23_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR23_NO_COMP_ISLAMIC(), null, createHelper);
+
+					progressMap.put(jobId, 96);
+					row = sheet.getRow(23);
+					updateCellPreserveStyle(row, 5, record.getR24_NO_RET_CON_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR24_NO_ISC_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record.getR24_NO_SME_CON_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record.getR24_NO_SME_ISC(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR24_TOT_AGE_OUT(), null, createHelper);
+					updateCellPreserveStyle(row, 10, record.getR24_TOT_PONT_SALE(), null, createHelper);
+					updateCellPreserveStyle(row, 11, record.getR24_TOT_MER_SPD(), null, createHelper);
+					updateCellPreserveStyle(row, 12, record.getR24_RET_SIZE_ISC_AED(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record.getR24_RET_ASSE_LON_RET(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record.getR24_RET_ASSE_LOAN_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record.getR24_NO_COMP_ISLAMIC(), null, createHelper);
+
+
+				}
+				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+			} else {
+
+			}
+
+			workbook.write(out);
+
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
+		}
+
+	}
+
+	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+			throws Exception {
+		logger.info("Service: Starting Excel generation process in memory.");
+
+		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+
+		if (dataList.isEmpty()) {
+			logger.warn("Service: No data found for MC report. Returning empty result.");
+			return new byte[0];
+		}
+		String templateDir = env.getProperty("output.exportpathtemp");
+		// String templateFileName = "Table_1.xlsx";
+		System.out.println(templateFileName);
+		Path templatePath = Paths.get(templateDir, templateFileName);
+		System.out.println(templatePath);
+
+		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+
+		if (!Files.exists(templatePath)) {
+			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+		}
+		if (!Files.isReadable(templatePath)) {
+			throw new SecurityException(
+					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
+		}
+
+		try (InputStream templateInputStream = Files.newInputStream(templatePath);
+				Workbook workbook = WorkbookFactory.create(templateInputStream);
+				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			Sheet sheet = workbook.getSheetAt(11);
+
+			// --- Style Definitions ---
+			CreationHelper createHelper = workbook.getCreationHelper();
+
+			CellStyle dateStyle = workbook.createCellStyle();
+			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+			dateStyle.setBorderBottom(BorderStyle.THIN);
+			dateStyle.setBorderTop(BorderStyle.THIN);
+			dateStyle.setBorderLeft(BorderStyle.THIN);
+			dateStyle.setBorderRight(BorderStyle.THIN);
+
+			CellStyle textStyle = workbook.createCellStyle();
+			textStyle.setBorderBottom(BorderStyle.THIN);
+			textStyle.setBorderTop(BorderStyle.THIN);
+			textStyle.setBorderLeft(BorderStyle.THIN);
+			textStyle.setBorderRight(BorderStyle.THIN);
+
+			// Create the font
+			Font font = workbook.createFont();
+			font.setFontHeightInPoints((short) 8); // size 8
+			font.setFontName("Arial");
+
+			CellStyle numberStyle = workbook.createCellStyle();
+			// numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("0.000"));
+			numberStyle.setBorderBottom(BorderStyle.THIN);
+			numberStyle.setBorderTop(BorderStyle.THIN);
+			numberStyle.setBorderLeft(BorderStyle.THIN);
+			numberStyle.setBorderRight(BorderStyle.THIN);
+			numberStyle.setFont(font);
+			// --- End of Style Definitions ---
+
+			int startRow = 8;
+
+			if (!dataList.isEmpty()) {
+				for (int i = 0; i < dataList.size(); i++) {
+					RT_MC_TABLE9_ENTITY record = dataList.get(i);
+					System.out.println("rownumber=" + startRow + i);
+					Row row = sheet.getRow(startRow + i);
+					if (row == null) {
+						row = sheet.createRow(startRow + i);
+					}
+					progressMap.put(jobId, 5);
+
+					updateCellPreserveStyle(row, 4, record.getR9_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR9_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(9);
+
+					updateCellPreserveStyle(row, 4, record.getR10_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR10_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(10);
+
+					updateCellPreserveStyle(row, 4, record.getR11_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR11_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(11);
+
+					updateCellPreserveStyle(row, 4, record.getR12_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR12_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(12);
+
+					updateCellPreserveStyle(row, 4, record.getR13_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR13_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(13);
+
+					updateCellPreserveStyle(row, 4, record.getR14_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR14_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(14);
+
+					progressMap.put(jobId, 10);
+					updateCellPreserveStyle(row, 4, record.getR15_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR15_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(15);
+
+					updateCellPreserveStyle(row, 4, record.getR16_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR16_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(16);
+
+					updateCellPreserveStyle(row, 4, record.getR17_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR17_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(17);
+
+					updateCellPreserveStyle(row, 4, record.getR18_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR18_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(18);
+
+					updateCellPreserveStyle(row, 4, record.getR19_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR19_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(19);
+
+					progressMap.put(jobId, 15);
+					updateCellPreserveStyle(row, 4, record.getR20_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR20_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(20);
+
+					updateCellPreserveStyle(row, 4, record.getR21_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR21_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(21);
+
+					updateCellPreserveStyle(row, 4, record.getR22_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR22_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(22);
+
+					updateCellPreserveStyle(row, 4, record.getR23_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR23_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(23);
+
+					updateCellPreserveStyle(row, 4, record.getR24_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR24_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(24);
+
+					updateCellPreserveStyle(row, 4, record.getR25_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR25_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(25);
+
+					updateCellPreserveStyle(row, 4, record.getR26_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR26_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(26);
+
+					updateCellPreserveStyle(row, 4, record.getR27_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR27_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(27);
+
+					updateCellPreserveStyle(row, 4, record.getR28_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR28_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(28);
+
+					updateCellPreserveStyle(row, 4, record.getR29_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR29_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(29);
+
+					progressMap.put(jobId, 35);
+					updateCellPreserveStyle(row, 4, record.getR30_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR30_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(30);
+
+					updateCellPreserveStyle(row, 4, record.getR31_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR31_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(31);
+
+					updateCellPreserveStyle(row, 4, record.getR32_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR32_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(32);
+
+					updateCellPreserveStyle(row, 4, record.getR33_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR33_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(33);
+
+					updateCellPreserveStyle(row, 4, record.getR34_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR34_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(34);
+
+					updateCellPreserveStyle(row, 4, record.getR35_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR35_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(35);
+
+					updateCellPreserveStyle(row, 4, record.getR36_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR36_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(36);
+
+					updateCellPreserveStyle(row, 4, record.getR37_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR37_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(37);
+
+					updateCellPreserveStyle(row, 4, record.getR38_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR38_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(38);
+
+					updateCellPreserveStyle(row, 4, record.getR39_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR39_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(39);
+
+					progressMap.put(jobId, 55);
+					updateCellPreserveStyle(row, 4, record.getR40_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR40_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(40);
+
+					updateCellPreserveStyle(row, 4, record.getR41_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR41_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(41);
+
+					updateCellPreserveStyle(row, 4, record.getR42_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR42_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(42);
+
+					updateCellPreserveStyle(row, 4, record.getR43_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR43_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(43);
+
+					updateCellPreserveStyle(row, 4, record.getR44_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR44_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(44);
+
+					updateCellPreserveStyle(row, 4, record.getR45_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR45_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(45);
+
+					updateCellPreserveStyle(row, 4, record.getR46_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR46_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(46);
+
+					updateCellPreserveStyle(row, 4, record.getR47_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR47_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(47);
+
+					updateCellPreserveStyle(row, 4, record.getR48_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR48_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(48);
+
+					updateCellPreserveStyle(row, 4, record.getR49_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR49_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(49);
+
+					progressMap.put(jobId, 70);
+					updateCellPreserveStyle(row, 4, record.getR50_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR50_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(50);
+
+					updateCellPreserveStyle(row, 4, record.getR51_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR51_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(51);
+
+					updateCellPreserveStyle(row, 4, record.getR52_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR52_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(52);
+
+					updateCellPreserveStyle(row, 4, record.getR53_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR53_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(53);
+
+					updateCellPreserveStyle(row, 4, record.getR54_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR54_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(54);
+
+					updateCellPreserveStyle(row, 4, record.getR55_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR55_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(55);
+
+					updateCellPreserveStyle(row, 4, record.getR56_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR56_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(56);
+
+					updateCellPreserveStyle(row, 4, record.getR57_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR57_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(57);
+
+					updateCellPreserveStyle(row, 4, record.getR58_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR58_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(58);
+
+					updateCellPreserveStyle(row, 4, record.getR59_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR59_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(59);
+
+					progressMap.put(jobId, 90);
+					updateCellPreserveStyle(row, 4, record.getR60_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR60_EVID_PRO_LFI(), null, createHelper);
+					row = sheet.getRow(60);
+
+					updateCellPreserveStyle(row, 4, record.getR61_LFI_RESP(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record.getR61_EVID_PRO_LFI(), null, createHelper);
+
+				}
+				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+			} else {
+
+			}
+
+			workbook.write(out);
+
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+			return out.toByteArray();
+		}
+
+	}
+
 	/*
 	 * private void updateCellPreserveStyle(Row row, int colIndex, Object value,
 	 * String formatStr, CreationHelper helper) { Cell cell = (row.getCell(colIndex)

@@ -408,21 +408,28 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	RT_MC_TABLE1_REPO RT_MC_TABLE1_REPO;
-	
-	@Autowired
-	RT_MC_TABLE3_REPO RT_MC_TABLE3_REPO;
-	@Autowired
-	RT_MC_TABLE4_1_REPO RT_MC_TABLE4_1_REPO;
-	@Autowired
-	RT_MC_TABLE4_2_REPO RT_MC_TABLE4_2_REPO;
 	@Autowired
 	RT_MC_TABLE2_1_REPO RT_MC_TABLE2_1_REPO;
 	@Autowired
 	RT_MC_TABLE2_2_REPO RT_MC_TABLE2_2_REPO;
 	@Autowired
+	RT_MC_TABLE3_REPO RT_MC_TABLE3_REPO;
+	@Autowired
+	RT_MC_TABLE4_1_REPO RT_MC_TABLE4_1_REPO;
+	@Autowired
+	RT_MC_TABLE4_2_REPO RT_MC_TABLE4_2_REPO;	
+	@Autowired
 	RT_MC_TABLE5_REPO RT_MC_TABLE5_REPO;
 	@Autowired
-	RT_MC_TABLE6_REPO RT_MC_TABLE6_REPO;
+	RT_MC_TABLE6_REPO RT_MC_TABLE6_REPO;	
+	@Autowired
+	RT_MC_TABLE7_1_REPO RT_MC_TABLE7_1_REPO;
+	@Autowired
+	RT_MC_TABLE7_2_REPO RT_MC_TABLE7_2_REPO;
+	@Autowired
+	RT_MC_TABLE8_REPO RT_MC_TABLE8_REPO;
+	@Autowired
+	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 	@Autowired
 	RT_MC_TABLE_ALL_Service rT_MC_TABLE_Service;
 	
@@ -4426,10 +4433,20 @@ public class XBRLNavigationController {
 			md.addAttribute("reportlist", reportlist);
 			md.addAttribute("formmode", "trainings");
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
+			List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+			List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+			md.addAttribute("reportlist1", reportlist1);
+			md.addAttribute("reportlist2", reportlist2);
 			md.addAttribute("formmode", "additionalinformation");
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
+			List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+			System.out.println("size : " + reportlist.size());
+			md.addAttribute("reportlist", reportlist);
 			md.addAttribute("formmode", "islamicbanking");
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
+			List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+			System.out.println("size : " + reportlist.size());
+			md.addAttribute("reportlist", reportlist);
 			md.addAttribute("formmode", "conductcultureassessment");
 		}
 
@@ -4675,6 +4692,128 @@ public class XBRLNavigationController {
 				reportData2.setVERIFY_USERID(userid);
 				RT_MC_TABLE4_1_REPO.save(reportData1);
 				RT_MC_TABLE4_2_REPO.save(reportData2);
+
+				return ResponseEntity.ok("Verified");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error verifying data");
+		}
+	}
+	
+	@PostMapping("/saveMcReport_islamicbanking")
+	@ResponseBody
+	public ResponseEntity<String> saveReport_islamicbanking(@ModelAttribute RT_MC_TABLE8_ENTITY reportData,
+			HttpServletRequest req) {
+
+		try {
+			System.out.println("branch: " + reportData.getBRANCH_CODE());
+			String userid = (String) req.getSession().getAttribute("USERID");
+			reportData.setMODIFY_USERID(userid);
+
+			RT_MC_TABLE8_REPO.save(reportData);
+
+			return ResponseEntity.ok("Success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
+		}
+	}
+
+	@PostMapping("/verifyMcReport_islamicbanking")
+	@ResponseBody
+	public ResponseEntity<String> verifyReport_islamicbanking(@ModelAttribute RT_MC_TABLE8_ENTITY reportData,
+			HttpServletRequest req) {
+		try {
+			String userid = (String) req.getSession().getAttribute("USERID");
+			if (reportData.getMODIFY_USERID() == userid || userid.equals(reportData.getMODIFY_USERID())) {
+				return ResponseEntity.status(500).body("Same User can not Verify");
+			} else {
+				reportData.setVERIFY_FLG("Y");
+				reportData.setVERIFY_USERID(userid);
+				RT_MC_TABLE8_REPO.save(reportData);
+
+				return ResponseEntity.ok("Verified");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error verifying data");
+		}
+	}
+	@PostMapping("/saveMcReport_additionalinformation")
+	@ResponseBody
+	public ResponseEntity<String> saveReport_additionalinformation(@ModelAttribute RT_MC_TABLE7_1_ENTITY reportData1,
+			RT_MC_TABLE7_2_ENTITY reportData2, HttpServletRequest req) {
+
+		try {
+			System.out.println("branch: " + reportData1.getBRANCH_CODE());
+			String userid = (String) req.getSession().getAttribute("USERID");
+			reportData1.setMODIFY_USERID(userid);
+			reportData2.setMODIFY_USERID(userid);
+			RT_MC_TABLE7_1_REPO.save(reportData1);
+			RT_MC_TABLE7_2_REPO.save(reportData2);
+
+			return ResponseEntity.ok("Success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
+		}
+	}
+
+	@PostMapping("/verifyMcReport_additionalinformation")
+	@ResponseBody
+	public ResponseEntity<String> verifyReport_additionalinformation(@ModelAttribute RT_MC_TABLE7_1_ENTITY reportData1,
+			RT_MC_TABLE7_2_ENTITY reportData2, HttpServletRequest req) {
+		try {
+			String userid = (String) req.getSession().getAttribute("USERID");
+			if (reportData1.getMODIFY_USERID() == userid || userid.equals(reportData1.getMODIFY_USERID())) {
+				return ResponseEntity.status(500).body("Same User can not Verify");
+			} else {
+				reportData1.setVERIFY_FLG("Y");
+				reportData1.setVERIFY_USERID(userid);
+				reportData2.setVERIFY_FLG("Y");
+				reportData2.setVERIFY_USERID(userid);
+				RT_MC_TABLE7_1_REPO.save(reportData1);
+				RT_MC_TABLE7_2_REPO.save(reportData2);
+
+				return ResponseEntity.ok("Verified");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error verifying data");
+		}
+	}
+	@PostMapping("/saveMcReport_conductcultureassessment")
+	@ResponseBody
+	public ResponseEntity<String> saveReport_conductcultureassessment(@ModelAttribute RT_MC_TABLE9_ENTITY reportData,
+			HttpServletRequest req) {
+
+		try {
+			System.out.println("branch: " + reportData.getBRANCH_CODE());
+			String userid = (String) req.getSession().getAttribute("USERID");
+			reportData.setMODIFY_USERID(userid);
+
+			RT_MC_TABLE9_REPO.save(reportData);
+
+			return ResponseEntity.ok("Success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
+		}
+	}
+
+	@PostMapping("/verifyMcReport_conductcultureassessment")
+	@ResponseBody
+	public ResponseEntity<String> verifyReport_conductcultureassessment(@ModelAttribute RT_MC_TABLE9_ENTITY reportData,
+			HttpServletRequest req) {
+		try {
+			String userid = (String) req.getSession().getAttribute("USERID");
+			if (reportData.getMODIFY_USERID() == userid || userid.equals(reportData.getMODIFY_USERID())) {
+				return ResponseEntity.status(500).body("Same User can not Verify");
+			} else {
+				reportData.setVERIFY_FLG("Y");
+				reportData.setVERIFY_USERID(userid);
+				RT_MC_TABLE9_REPO.save(reportData);
 
 				return ResponseEntity.ok("Verified");
 			}
