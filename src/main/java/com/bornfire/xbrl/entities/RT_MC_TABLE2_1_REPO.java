@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface RT_MC_TABLE2_1_REPO extends JpaRepository<RT_MC_TABLE2_1_ENTITY, Date> {
+public interface RT_MC_TABLE2_1_REPO extends JpaRepository<RT_MC_TABLE2_1_ENTITY, MCReportId> {
 
 	@Query(value = "SELECT * FROM RT_MC_TABLE2_1 WHERE REPORT_DATE = :reporttDate", nativeQuery = true)
 	List<RT_MC_TABLE2_1_ENTITY> findByReportDate(@Param("reporttDate") Date reporttDate);

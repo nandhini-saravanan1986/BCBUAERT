@@ -1,15 +1,16 @@
 package com.bornfire.xbrl.entities;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
+@IdClass(MCReportId.class)
 @Table(name = "RT_MC_TABLE2_1")
 public class RT_MC_TABLE2_1_ENTITY {
 
@@ -479,71 +480,75 @@ public class RT_MC_TABLE2_1_ENTITY {
 	public String R13_NO_CON_END;
 	public String R14_BANK;
 	public String R14_PRODUCT;
-	public BigDecimal R14_NO_WO_SD;
-	public BigDecimal R14_NO_CON_POD_SD;
-	public BigDecimal R14_NO_CON_UNAU_SP_TP;
-	public BigDecimal R14_NO_CON_45_50;
-	public BigDecimal R14_NO_CON_50;
-	public BigDecimal R14_NO_OF_LES_50;
-	public BigDecimal R14_NO_OF_BNK_18;
-	public BigDecimal R14_NO_OF_BNK_18_25;
-	public BigDecimal R14_NO_OF_BNK_26_35;
-	public BigDecimal R14_NO_OF_BNK_36_50;
-	public BigDecimal R14_NO_CON_BNK_50;
-	public BigDecimal R14_NO_CON_SAL_SPD;
-	public BigDecimal R14_NO_CON_BUS_SPD;
-	public BigDecimal R14_NO_CON_PRO_SPD;
-	public BigDecimal R14_NO_CON_INC_5K;
-	public BigDecimal R14_NO_CON_INC_5K_10K;
-	public BigDecimal R14_NO_CON_INC_10K_20K;
-	public BigDecimal R14_NO_CON_INC_20K_35K;
-	public BigDecimal R14_NO_CON_INC_35K;
-	public BigDecimal R14_NO_CON_BEL_SCL;
-	public BigDecimal R14_NO_CON_BAC;
-	public BigDecimal R14_NO_CON_ABV_MAS;
-	public BigDecimal R14_NO_CON_ABU_KYC;
-	public BigDecimal R14_NO_CON_DUB_KYC;
-	public BigDecimal R14_NO_CON_SHJ_KYC;
-	public BigDecimal R14_NO_CON_AJM_KYC;
-	public BigDecimal R14_NO_CON_FUJ_KYC;
-	public BigDecimal R14_NO_CON_RAK_KYC;
-	public BigDecimal R14_NO_CON_UAQ_KYC;
-	public BigDecimal R14_NO_CON_RET;
-	public BigDecimal R14_NO_CON_DBR_LIM;
-	public BigDecimal R14_NO_UAE_CON_SPC_TP;
-	public BigDecimal R14_NO_UAE_CON_NLS;
-	public BigDecimal R14_VAL_LOS_AED;
-	public BigDecimal R14_NO_CON_ONB_90;
-	public BigDecimal R14_NO_CON_BAL_PAY;
-	public BigDecimal R14_NO_CON_BAL_SPC_TP;
-	public BigDecimal R14_NO_CON_DEBT;
-	public BigDecimal R14_NO_CON_ONB_REF;
-	public BigDecimal R14_NO_CON_ONB_AGE;
-	public BigDecimal R14_NO_CON_AFF_UNAU;
-	public BigDecimal R14_NO_OF_ACCS_POD;
-	public BigDecimal R14_NO_DEL_CON;
-	public BigDecimal R14_NO_INS_FUN_LFI;
-	public BigDecimal R14_NO_CON_COL_FIN;
-	public BigDecimal R14_TOT_NO_NEW_FIN;
-	public BigDecimal R14_TOT_NO_NEW_NOSGN;
-	public BigDecimal R14_NO_CON_START;
-	public BigDecimal R14_NO_NEW_CON_ONBO;
-	public BigDecimal R14_NO_CON_DEBT_COUN;
-	public BigDecimal R14_NO_CON_DEL_NPA;
-	public BigDecimal R14_NO_CON_GOV_50;
-	public BigDecimal R14_NO_SME_SOLE;
-	public BigDecimal R14_NO_CON_TAG_VUL;
-	public BigDecimal R14_NO_NEW_CON_ONB_GNP;
-	public BigDecimal R14_NO_CON_END;
+	public String R14_NO_WO_SD;
+	public String R14_NO_CON_POD_SD;
+	public String R14_NO_CON_UNAU_SP_TP;
+	public String R14_NO_CON_45_50;
+	public String R14_NO_CON_50;
+	public String R14_NO_OF_LES_50;
+	public String R14_NO_OF_BNK_18;
+	public String R14_NO_OF_BNK_18_25;
+	public String R14_NO_OF_BNK_26_35;
+	public String R14_NO_OF_BNK_36_50;
+	public String R14_NO_CON_BNK_50;
+	public String R14_NO_CON_SAL_SPD;
+	public String R14_NO_CON_BUS_SPD;
+	public String R14_NO_CON_PRO_SPD;
+	public String R14_NO_CON_INC_5K;
+	public String R14_NO_CON_INC_5K_10K;
+	public String R14_NO_CON_INC_10K_20K;
+	public String R14_NO_CON_INC_20K_35K;
+	public String R14_NO_CON_INC_35K;
+	public String R14_NO_CON_BEL_SCL;
+	public String R14_NO_CON_BAC;
+	public String R14_NO_CON_ABV_MAS;
+	public String R14_NO_CON_ABU_KYC;
+	public String R14_NO_CON_DUB_KYC;
+	public String R14_NO_CON_SHJ_KYC;
+	public String R14_NO_CON_AJM_KYC;
+	public String R14_NO_CON_FUJ_KYC;
+	public String R14_NO_CON_RAK_KYC;
+	public String R14_NO_CON_UAQ_KYC;
+	public String R14_NO_CON_RET;
+	public String R14_NO_CON_DBR_LIM;
+	public String R14_NO_UAE_CON_SPC_TP;
+	public String R14_NO_UAE_CON_NLS;
+	public String R14_VAL_LOS_AED;
+	public String R14_NO_CON_ONB_90;
+	public String R14_NO_CON_BAL_PAY;
+	public String R14_NO_CON_BAL_SPC_TP;
+	public String R14_NO_CON_DEBT;
+	public String R14_NO_CON_ONB_REF;
+	public String R14_NO_CON_ONB_AGE;
+	public String R14_NO_CON_AFF_UNAU;
+	public String R14_NO_OF_ACCS_POD;
+	public String R14_NO_DEL_CON;
+	public String R14_NO_INS_FUN_LFI;
+	public String R14_NO_CON_COL_FIN;
+	public String R14_TOT_NO_NEW_FIN;
+	public String R14_TOT_NO_NEW_NOSGN;
+	public String R14_NO_CON_START;
+	public String R14_NO_NEW_CON_ONBO;
+	public String R14_NO_CON_DEBT_COUN;
+	public String R14_NO_CON_DEL_NPA;
+	public String R14_NO_CON_GOV_50;
+	public String R14_NO_SME_SOLE;
+	public String R14_NO_CON_TAG_VUL;
+	public String R14_NO_NEW_CON_ONB_GNP;
+	public String R14_NO_CON_END;
 	@Id
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	public Date REPORT_DATE;
+	@Id
 	public String BRANCH_CODE;
 	public String ENTITY_FLG;
 	public String MODIFY_FLG;
 	public String DEL_FLG;
 	public String SOLID;
 	public String BRANCH_NAME;
+	public String MODIFY_USERID;
+	public String VERIFY_FLG;
+	public String VERIFY_USERID;
 
 	public String getR6_BANK() {
 		return R6_BANK;
@@ -4273,451 +4278,451 @@ public class RT_MC_TABLE2_1_ENTITY {
 		R14_PRODUCT = r14_PRODUCT;
 	}
 
-	public BigDecimal getR14_NO_WO_SD() {
+	public String getR14_NO_WO_SD() {
 		return R14_NO_WO_SD;
 	}
 
-	public void setR14_NO_WO_SD(BigDecimal r14_NO_WO_SD) {
+	public void setR14_NO_WO_SD(String r14_NO_WO_SD) {
 		R14_NO_WO_SD = r14_NO_WO_SD;
 	}
 
-	public BigDecimal getR14_NO_CON_POD_SD() {
+	public String getR14_NO_CON_POD_SD() {
 		return R14_NO_CON_POD_SD;
 	}
 
-	public void setR14_NO_CON_POD_SD(BigDecimal r14_NO_CON_POD_SD) {
+	public void setR14_NO_CON_POD_SD(String r14_NO_CON_POD_SD) {
 		R14_NO_CON_POD_SD = r14_NO_CON_POD_SD;
 	}
 
-	public BigDecimal getR14_NO_CON_UNAU_SP_TP() {
+	public String getR14_NO_CON_UNAU_SP_TP() {
 		return R14_NO_CON_UNAU_SP_TP;
 	}
 
-	public void setR14_NO_CON_UNAU_SP_TP(BigDecimal r14_NO_CON_UNAU_SP_TP) {
+	public void setR14_NO_CON_UNAU_SP_TP(String r14_NO_CON_UNAU_SP_TP) {
 		R14_NO_CON_UNAU_SP_TP = r14_NO_CON_UNAU_SP_TP;
 	}
 
-	public BigDecimal getR14_NO_CON_45_50() {
+	public String getR14_NO_CON_45_50() {
 		return R14_NO_CON_45_50;
 	}
 
-	public void setR14_NO_CON_45_50(BigDecimal r14_NO_CON_45_50) {
+	public void setR14_NO_CON_45_50(String r14_NO_CON_45_50) {
 		R14_NO_CON_45_50 = r14_NO_CON_45_50;
 	}
 
-	public BigDecimal getR14_NO_CON_50() {
+	public String getR14_NO_CON_50() {
 		return R14_NO_CON_50;
 	}
 
-	public void setR14_NO_CON_50(BigDecimal r14_NO_CON_50) {
+	public void setR14_NO_CON_50(String r14_NO_CON_50) {
 		R14_NO_CON_50 = r14_NO_CON_50;
 	}
 
-	public BigDecimal getR14_NO_OF_LES_50() {
+	public String getR14_NO_OF_LES_50() {
 		return R14_NO_OF_LES_50;
 	}
 
-	public void setR14_NO_OF_LES_50(BigDecimal r14_NO_OF_LES_50) {
+	public void setR14_NO_OF_LES_50(String r14_NO_OF_LES_50) {
 		R14_NO_OF_LES_50 = r14_NO_OF_LES_50;
 	}
 
-	public BigDecimal getR14_NO_OF_BNK_18() {
+	public String getR14_NO_OF_BNK_18() {
 		return R14_NO_OF_BNK_18;
 	}
 
-	public void setR14_NO_OF_BNK_18(BigDecimal r14_NO_OF_BNK_18) {
+	public void setR14_NO_OF_BNK_18(String r14_NO_OF_BNK_18) {
 		R14_NO_OF_BNK_18 = r14_NO_OF_BNK_18;
 	}
 
-	public BigDecimal getR14_NO_OF_BNK_18_25() {
+	public String getR14_NO_OF_BNK_18_25() {
 		return R14_NO_OF_BNK_18_25;
 	}
 
-	public void setR14_NO_OF_BNK_18_25(BigDecimal r14_NO_OF_BNK_18_25) {
+	public void setR14_NO_OF_BNK_18_25(String r14_NO_OF_BNK_18_25) {
 		R14_NO_OF_BNK_18_25 = r14_NO_OF_BNK_18_25;
 	}
 
-	public BigDecimal getR14_NO_OF_BNK_26_35() {
+	public String getR14_NO_OF_BNK_26_35() {
 		return R14_NO_OF_BNK_26_35;
 	}
 
-	public void setR14_NO_OF_BNK_26_35(BigDecimal r14_NO_OF_BNK_26_35) {
+	public void setR14_NO_OF_BNK_26_35(String r14_NO_OF_BNK_26_35) {
 		R14_NO_OF_BNK_26_35 = r14_NO_OF_BNK_26_35;
 	}
 
-	public BigDecimal getR14_NO_OF_BNK_36_50() {
+	public String getR14_NO_OF_BNK_36_50() {
 		return R14_NO_OF_BNK_36_50;
 	}
 
-	public void setR14_NO_OF_BNK_36_50(BigDecimal r14_NO_OF_BNK_36_50) {
+	public void setR14_NO_OF_BNK_36_50(String r14_NO_OF_BNK_36_50) {
 		R14_NO_OF_BNK_36_50 = r14_NO_OF_BNK_36_50;
 	}
 
-	public BigDecimal getR14_NO_CON_BNK_50() {
+	public String getR14_NO_CON_BNK_50() {
 		return R14_NO_CON_BNK_50;
 	}
 
-	public void setR14_NO_CON_BNK_50(BigDecimal r14_NO_CON_BNK_50) {
+	public void setR14_NO_CON_BNK_50(String r14_NO_CON_BNK_50) {
 		R14_NO_CON_BNK_50 = r14_NO_CON_BNK_50;
 	}
 
-	public BigDecimal getR14_NO_CON_SAL_SPD() {
+	public String getR14_NO_CON_SAL_SPD() {
 		return R14_NO_CON_SAL_SPD;
 	}
 
-	public void setR14_NO_CON_SAL_SPD(BigDecimal r14_NO_CON_SAL_SPD) {
+	public void setR14_NO_CON_SAL_SPD(String r14_NO_CON_SAL_SPD) {
 		R14_NO_CON_SAL_SPD = r14_NO_CON_SAL_SPD;
 	}
 
-	public BigDecimal getR14_NO_CON_BUS_SPD() {
+	public String getR14_NO_CON_BUS_SPD() {
 		return R14_NO_CON_BUS_SPD;
 	}
 
-	public void setR14_NO_CON_BUS_SPD(BigDecimal r14_NO_CON_BUS_SPD) {
+	public void setR14_NO_CON_BUS_SPD(String r14_NO_CON_BUS_SPD) {
 		R14_NO_CON_BUS_SPD = r14_NO_CON_BUS_SPD;
 	}
 
-	public BigDecimal getR14_NO_CON_PRO_SPD() {
+	public String getR14_NO_CON_PRO_SPD() {
 		return R14_NO_CON_PRO_SPD;
 	}
 
-	public void setR14_NO_CON_PRO_SPD(BigDecimal r14_NO_CON_PRO_SPD) {
+	public void setR14_NO_CON_PRO_SPD(String r14_NO_CON_PRO_SPD) {
 		R14_NO_CON_PRO_SPD = r14_NO_CON_PRO_SPD;
 	}
 
-	public BigDecimal getR14_NO_CON_INC_5K() {
+	public String getR14_NO_CON_INC_5K() {
 		return R14_NO_CON_INC_5K;
 	}
 
-	public void setR14_NO_CON_INC_5K(BigDecimal r14_NO_CON_INC_5K) {
+	public void setR14_NO_CON_INC_5K(String r14_NO_CON_INC_5K) {
 		R14_NO_CON_INC_5K = r14_NO_CON_INC_5K;
 	}
 
-	public BigDecimal getR14_NO_CON_INC_5K_10K() {
+	public String getR14_NO_CON_INC_5K_10K() {
 		return R14_NO_CON_INC_5K_10K;
 	}
 
-	public void setR14_NO_CON_INC_5K_10K(BigDecimal r14_NO_CON_INC_5K_10K) {
+	public void setR14_NO_CON_INC_5K_10K(String r14_NO_CON_INC_5K_10K) {
 		R14_NO_CON_INC_5K_10K = r14_NO_CON_INC_5K_10K;
 	}
 
-	public BigDecimal getR14_NO_CON_INC_10K_20K() {
+	public String getR14_NO_CON_INC_10K_20K() {
 		return R14_NO_CON_INC_10K_20K;
 	}
 
-	public void setR14_NO_CON_INC_10K_20K(BigDecimal r14_NO_CON_INC_10K_20K) {
+	public void setR14_NO_CON_INC_10K_20K(String r14_NO_CON_INC_10K_20K) {
 		R14_NO_CON_INC_10K_20K = r14_NO_CON_INC_10K_20K;
 	}
 
-	public BigDecimal getR14_NO_CON_INC_20K_35K() {
+	public String getR14_NO_CON_INC_20K_35K() {
 		return R14_NO_CON_INC_20K_35K;
 	}
 
-	public void setR14_NO_CON_INC_20K_35K(BigDecimal r14_NO_CON_INC_20K_35K) {
+	public void setR14_NO_CON_INC_20K_35K(String r14_NO_CON_INC_20K_35K) {
 		R14_NO_CON_INC_20K_35K = r14_NO_CON_INC_20K_35K;
 	}
 
-	public BigDecimal getR14_NO_CON_INC_35K() {
+	public String getR14_NO_CON_INC_35K() {
 		return R14_NO_CON_INC_35K;
 	}
 
-	public void setR14_NO_CON_INC_35K(BigDecimal r14_NO_CON_INC_35K) {
+	public void setR14_NO_CON_INC_35K(String r14_NO_CON_INC_35K) {
 		R14_NO_CON_INC_35K = r14_NO_CON_INC_35K;
 	}
 
-	public BigDecimal getR14_NO_CON_BEL_SCL() {
+	public String getR14_NO_CON_BEL_SCL() {
 		return R14_NO_CON_BEL_SCL;
 	}
 
-	public void setR14_NO_CON_BEL_SCL(BigDecimal r14_NO_CON_BEL_SCL) {
+	public void setR14_NO_CON_BEL_SCL(String r14_NO_CON_BEL_SCL) {
 		R14_NO_CON_BEL_SCL = r14_NO_CON_BEL_SCL;
 	}
 
-	public BigDecimal getR14_NO_CON_BAC() {
+	public String getR14_NO_CON_BAC() {
 		return R14_NO_CON_BAC;
 	}
 
-	public void setR14_NO_CON_BAC(BigDecimal r14_NO_CON_BAC) {
+	public void setR14_NO_CON_BAC(String r14_NO_CON_BAC) {
 		R14_NO_CON_BAC = r14_NO_CON_BAC;
 	}
 
-	public BigDecimal getR14_NO_CON_ABV_MAS() {
+	public String getR14_NO_CON_ABV_MAS() {
 		return R14_NO_CON_ABV_MAS;
 	}
 
-	public void setR14_NO_CON_ABV_MAS(BigDecimal r14_NO_CON_ABV_MAS) {
+	public void setR14_NO_CON_ABV_MAS(String r14_NO_CON_ABV_MAS) {
 		R14_NO_CON_ABV_MAS = r14_NO_CON_ABV_MAS;
 	}
 
-	public BigDecimal getR14_NO_CON_ABU_KYC() {
+	public String getR14_NO_CON_ABU_KYC() {
 		return R14_NO_CON_ABU_KYC;
 	}
 
-	public void setR14_NO_CON_ABU_KYC(BigDecimal r14_NO_CON_ABU_KYC) {
+	public void setR14_NO_CON_ABU_KYC(String r14_NO_CON_ABU_KYC) {
 		R14_NO_CON_ABU_KYC = r14_NO_CON_ABU_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_DUB_KYC() {
+	public String getR14_NO_CON_DUB_KYC() {
 		return R14_NO_CON_DUB_KYC;
 	}
 
-	public void setR14_NO_CON_DUB_KYC(BigDecimal r14_NO_CON_DUB_KYC) {
+	public void setR14_NO_CON_DUB_KYC(String r14_NO_CON_DUB_KYC) {
 		R14_NO_CON_DUB_KYC = r14_NO_CON_DUB_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_SHJ_KYC() {
+	public String getR14_NO_CON_SHJ_KYC() {
 		return R14_NO_CON_SHJ_KYC;
 	}
 
-	public void setR14_NO_CON_SHJ_KYC(BigDecimal r14_NO_CON_SHJ_KYC) {
+	public void setR14_NO_CON_SHJ_KYC(String r14_NO_CON_SHJ_KYC) {
 		R14_NO_CON_SHJ_KYC = r14_NO_CON_SHJ_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_AJM_KYC() {
+	public String getR14_NO_CON_AJM_KYC() {
 		return R14_NO_CON_AJM_KYC;
 	}
 
-	public void setR14_NO_CON_AJM_KYC(BigDecimal r14_NO_CON_AJM_KYC) {
+	public void setR14_NO_CON_AJM_KYC(String r14_NO_CON_AJM_KYC) {
 		R14_NO_CON_AJM_KYC = r14_NO_CON_AJM_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_FUJ_KYC() {
+	public String getR14_NO_CON_FUJ_KYC() {
 		return R14_NO_CON_FUJ_KYC;
 	}
 
-	public void setR14_NO_CON_FUJ_KYC(BigDecimal r14_NO_CON_FUJ_KYC) {
+	public void setR14_NO_CON_FUJ_KYC(String r14_NO_CON_FUJ_KYC) {
 		R14_NO_CON_FUJ_KYC = r14_NO_CON_FUJ_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_RAK_KYC() {
+	public String getR14_NO_CON_RAK_KYC() {
 		return R14_NO_CON_RAK_KYC;
 	}
 
-	public void setR14_NO_CON_RAK_KYC(BigDecimal r14_NO_CON_RAK_KYC) {
+	public void setR14_NO_CON_RAK_KYC(String r14_NO_CON_RAK_KYC) {
 		R14_NO_CON_RAK_KYC = r14_NO_CON_RAK_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_UAQ_KYC() {
+	public String getR14_NO_CON_UAQ_KYC() {
 		return R14_NO_CON_UAQ_KYC;
 	}
 
-	public void setR14_NO_CON_UAQ_KYC(BigDecimal r14_NO_CON_UAQ_KYC) {
+	public void setR14_NO_CON_UAQ_KYC(String r14_NO_CON_UAQ_KYC) {
 		R14_NO_CON_UAQ_KYC = r14_NO_CON_UAQ_KYC;
 	}
 
-	public BigDecimal getR14_NO_CON_RET() {
+	public String getR14_NO_CON_RET() {
 		return R14_NO_CON_RET;
 	}
 
-	public void setR14_NO_CON_RET(BigDecimal r14_NO_CON_RET) {
+	public void setR14_NO_CON_RET(String r14_NO_CON_RET) {
 		R14_NO_CON_RET = r14_NO_CON_RET;
 	}
 
-	public BigDecimal getR14_NO_CON_DBR_LIM() {
+	public String getR14_NO_CON_DBR_LIM() {
 		return R14_NO_CON_DBR_LIM;
 	}
 
-	public void setR14_NO_CON_DBR_LIM(BigDecimal r14_NO_CON_DBR_LIM) {
+	public void setR14_NO_CON_DBR_LIM(String r14_NO_CON_DBR_LIM) {
 		R14_NO_CON_DBR_LIM = r14_NO_CON_DBR_LIM;
 	}
 
-	public BigDecimal getR14_NO_UAE_CON_SPC_TP() {
+	public String getR14_NO_UAE_CON_SPC_TP() {
 		return R14_NO_UAE_CON_SPC_TP;
 	}
 
-	public void setR14_NO_UAE_CON_SPC_TP(BigDecimal r14_NO_UAE_CON_SPC_TP) {
+	public void setR14_NO_UAE_CON_SPC_TP(String r14_NO_UAE_CON_SPC_TP) {
 		R14_NO_UAE_CON_SPC_TP = r14_NO_UAE_CON_SPC_TP;
 	}
 
-	public BigDecimal getR14_NO_UAE_CON_NLS() {
+	public String getR14_NO_UAE_CON_NLS() {
 		return R14_NO_UAE_CON_NLS;
 	}
 
-	public void setR14_NO_UAE_CON_NLS(BigDecimal r14_NO_UAE_CON_NLS) {
+	public void setR14_NO_UAE_CON_NLS(String r14_NO_UAE_CON_NLS) {
 		R14_NO_UAE_CON_NLS = r14_NO_UAE_CON_NLS;
 	}
 
-	public BigDecimal getR14_VAL_LOS_AED() {
+	public String getR14_VAL_LOS_AED() {
 		return R14_VAL_LOS_AED;
 	}
 
-	public void setR14_VAL_LOS_AED(BigDecimal r14_VAL_LOS_AED) {
+	public void setR14_VAL_LOS_AED(String r14_VAL_LOS_AED) {
 		R14_VAL_LOS_AED = r14_VAL_LOS_AED;
 	}
 
-	public BigDecimal getR14_NO_CON_ONB_90() {
+	public String getR14_NO_CON_ONB_90() {
 		return R14_NO_CON_ONB_90;
 	}
 
-	public void setR14_NO_CON_ONB_90(BigDecimal r14_NO_CON_ONB_90) {
+	public void setR14_NO_CON_ONB_90(String r14_NO_CON_ONB_90) {
 		R14_NO_CON_ONB_90 = r14_NO_CON_ONB_90;
 	}
 
-	public BigDecimal getR14_NO_CON_BAL_PAY() {
+	public String getR14_NO_CON_BAL_PAY() {
 		return R14_NO_CON_BAL_PAY;
 	}
 
-	public void setR14_NO_CON_BAL_PAY(BigDecimal r14_NO_CON_BAL_PAY) {
+	public void setR14_NO_CON_BAL_PAY(String r14_NO_CON_BAL_PAY) {
 		R14_NO_CON_BAL_PAY = r14_NO_CON_BAL_PAY;
 	}
 
-	public BigDecimal getR14_NO_CON_BAL_SPC_TP() {
+	public String getR14_NO_CON_BAL_SPC_TP() {
 		return R14_NO_CON_BAL_SPC_TP;
 	}
 
-	public void setR14_NO_CON_BAL_SPC_TP(BigDecimal r14_NO_CON_BAL_SPC_TP) {
+	public void setR14_NO_CON_BAL_SPC_TP(String r14_NO_CON_BAL_SPC_TP) {
 		R14_NO_CON_BAL_SPC_TP = r14_NO_CON_BAL_SPC_TP;
 	}
 
-	public BigDecimal getR14_NO_CON_DEBT() {
+	public String getR14_NO_CON_DEBT() {
 		return R14_NO_CON_DEBT;
 	}
 
-	public void setR14_NO_CON_DEBT(BigDecimal r14_NO_CON_DEBT) {
+	public void setR14_NO_CON_DEBT(String r14_NO_CON_DEBT) {
 		R14_NO_CON_DEBT = r14_NO_CON_DEBT;
 	}
 
-	public BigDecimal getR14_NO_CON_ONB_REF() {
+	public String getR14_NO_CON_ONB_REF() {
 		return R14_NO_CON_ONB_REF;
 	}
 
-	public void setR14_NO_CON_ONB_REF(BigDecimal r14_NO_CON_ONB_REF) {
+	public void setR14_NO_CON_ONB_REF(String r14_NO_CON_ONB_REF) {
 		R14_NO_CON_ONB_REF = r14_NO_CON_ONB_REF;
 	}
 
-	public BigDecimal getR14_NO_CON_ONB_AGE() {
+	public String getR14_NO_CON_ONB_AGE() {
 		return R14_NO_CON_ONB_AGE;
 	}
 
-	public void setR14_NO_CON_ONB_AGE(BigDecimal r14_NO_CON_ONB_AGE) {
+	public void setR14_NO_CON_ONB_AGE(String r14_NO_CON_ONB_AGE) {
 		R14_NO_CON_ONB_AGE = r14_NO_CON_ONB_AGE;
 	}
 
-	public BigDecimal getR14_NO_CON_AFF_UNAU() {
+	public String getR14_NO_CON_AFF_UNAU() {
 		return R14_NO_CON_AFF_UNAU;
 	}
 
-	public void setR14_NO_CON_AFF_UNAU(BigDecimal r14_NO_CON_AFF_UNAU) {
+	public void setR14_NO_CON_AFF_UNAU(String r14_NO_CON_AFF_UNAU) {
 		R14_NO_CON_AFF_UNAU = r14_NO_CON_AFF_UNAU;
 	}
 
-	public BigDecimal getR14_NO_OF_ACCS_POD() {
+	public String getR14_NO_OF_ACCS_POD() {
 		return R14_NO_OF_ACCS_POD;
 	}
 
-	public void setR14_NO_OF_ACCS_POD(BigDecimal r14_NO_OF_ACCS_POD) {
+	public void setR14_NO_OF_ACCS_POD(String r14_NO_OF_ACCS_POD) {
 		R14_NO_OF_ACCS_POD = r14_NO_OF_ACCS_POD;
 	}
 
-	public BigDecimal getR14_NO_DEL_CON() {
+	public String getR14_NO_DEL_CON() {
 		return R14_NO_DEL_CON;
 	}
 
-	public void setR14_NO_DEL_CON(BigDecimal r14_NO_DEL_CON) {
+	public void setR14_NO_DEL_CON(String r14_NO_DEL_CON) {
 		R14_NO_DEL_CON = r14_NO_DEL_CON;
 	}
 
-	public BigDecimal getR14_NO_INS_FUN_LFI() {
+	public String getR14_NO_INS_FUN_LFI() {
 		return R14_NO_INS_FUN_LFI;
 	}
 
-	public void setR14_NO_INS_FUN_LFI(BigDecimal r14_NO_INS_FUN_LFI) {
+	public void setR14_NO_INS_FUN_LFI(String r14_NO_INS_FUN_LFI) {
 		R14_NO_INS_FUN_LFI = r14_NO_INS_FUN_LFI;
 	}
 
-	public BigDecimal getR14_NO_CON_COL_FIN() {
+	public String getR14_NO_CON_COL_FIN() {
 		return R14_NO_CON_COL_FIN;
 	}
 
-	public void setR14_NO_CON_COL_FIN(BigDecimal r14_NO_CON_COL_FIN) {
+	public void setR14_NO_CON_COL_FIN(String r14_NO_CON_COL_FIN) {
 		R14_NO_CON_COL_FIN = r14_NO_CON_COL_FIN;
 	}
 
-	public BigDecimal getR14_TOT_NO_NEW_FIN() {
+	public String getR14_TOT_NO_NEW_FIN() {
 		return R14_TOT_NO_NEW_FIN;
 	}
 
-	public void setR14_TOT_NO_NEW_FIN(BigDecimal r14_TOT_NO_NEW_FIN) {
+	public void setR14_TOT_NO_NEW_FIN(String r14_TOT_NO_NEW_FIN) {
 		R14_TOT_NO_NEW_FIN = r14_TOT_NO_NEW_FIN;
 	}
 
-	public BigDecimal getR14_TOT_NO_NEW_NOSGN() {
+	public String getR14_TOT_NO_NEW_NOSGN() {
 		return R14_TOT_NO_NEW_NOSGN;
 	}
 
-	public void setR14_TOT_NO_NEW_NOSGN(BigDecimal r14_TOT_NO_NEW_NOSGN) {
+	public void setR14_TOT_NO_NEW_NOSGN(String r14_TOT_NO_NEW_NOSGN) {
 		R14_TOT_NO_NEW_NOSGN = r14_TOT_NO_NEW_NOSGN;
 	}
 
-	public BigDecimal getR14_NO_CON_START() {
+	public String getR14_NO_CON_START() {
 		return R14_NO_CON_START;
 	}
 
-	public void setR14_NO_CON_START(BigDecimal r14_NO_CON_START) {
+	public void setR14_NO_CON_START(String r14_NO_CON_START) {
 		R14_NO_CON_START = r14_NO_CON_START;
 	}
 
-	public BigDecimal getR14_NO_NEW_CON_ONBO() {
+	public String getR14_NO_NEW_CON_ONBO() {
 		return R14_NO_NEW_CON_ONBO;
 	}
 
-	public void setR14_NO_NEW_CON_ONBO(BigDecimal r14_NO_NEW_CON_ONBO) {
+	public void setR14_NO_NEW_CON_ONBO(String r14_NO_NEW_CON_ONBO) {
 		R14_NO_NEW_CON_ONBO = r14_NO_NEW_CON_ONBO;
 	}
 
-	public BigDecimal getR14_NO_CON_DEBT_COUN() {
+	public String getR14_NO_CON_DEBT_COUN() {
 		return R14_NO_CON_DEBT_COUN;
 	}
 
-	public void setR14_NO_CON_DEBT_COUN(BigDecimal r14_NO_CON_DEBT_COUN) {
+	public void setR14_NO_CON_DEBT_COUN(String r14_NO_CON_DEBT_COUN) {
 		R14_NO_CON_DEBT_COUN = r14_NO_CON_DEBT_COUN;
 	}
 
-	public BigDecimal getR14_NO_CON_DEL_NPA() {
+	public String getR14_NO_CON_DEL_NPA() {
 		return R14_NO_CON_DEL_NPA;
 	}
 
-	public void setR14_NO_CON_DEL_NPA(BigDecimal r14_NO_CON_DEL_NPA) {
+	public void setR14_NO_CON_DEL_NPA(String r14_NO_CON_DEL_NPA) {
 		R14_NO_CON_DEL_NPA = r14_NO_CON_DEL_NPA;
 	}
 
-	public BigDecimal getR14_NO_CON_GOV_50() {
+	public String getR14_NO_CON_GOV_50() {
 		return R14_NO_CON_GOV_50;
 	}
 
-	public void setR14_NO_CON_GOV_50(BigDecimal r14_NO_CON_GOV_50) {
+	public void setR14_NO_CON_GOV_50(String r14_NO_CON_GOV_50) {
 		R14_NO_CON_GOV_50 = r14_NO_CON_GOV_50;
 	}
 
-	public BigDecimal getR14_NO_SME_SOLE() {
+	public String getR14_NO_SME_SOLE() {
 		return R14_NO_SME_SOLE;
 	}
 
-	public void setR14_NO_SME_SOLE(BigDecimal r14_NO_SME_SOLE) {
+	public void setR14_NO_SME_SOLE(String r14_NO_SME_SOLE) {
 		R14_NO_SME_SOLE = r14_NO_SME_SOLE;
 	}
 
-	public BigDecimal getR14_NO_CON_TAG_VUL() {
+	public String getR14_NO_CON_TAG_VUL() {
 		return R14_NO_CON_TAG_VUL;
 	}
 
-	public void setR14_NO_CON_TAG_VUL(BigDecimal r14_NO_CON_TAG_VUL) {
+	public void setR14_NO_CON_TAG_VUL(String r14_NO_CON_TAG_VUL) {
 		R14_NO_CON_TAG_VUL = r14_NO_CON_TAG_VUL;
 	}
 
-	public BigDecimal getR14_NO_NEW_CON_ONB_GNP() {
+	public String getR14_NO_NEW_CON_ONB_GNP() {
 		return R14_NO_NEW_CON_ONB_GNP;
 	}
 
-	public void setR14_NO_NEW_CON_ONB_GNP(BigDecimal r14_NO_NEW_CON_ONB_GNP) {
+	public void setR14_NO_NEW_CON_ONB_GNP(String r14_NO_NEW_CON_ONB_GNP) {
 		R14_NO_NEW_CON_ONB_GNP = r14_NO_NEW_CON_ONB_GNP;
 	}
 
-	public BigDecimal getR14_NO_CON_END() {
+	public String getR14_NO_CON_END() {
 		return R14_NO_CON_END;
 	}
 
-	public void setR14_NO_CON_END(BigDecimal r14_NO_CON_END) {
+	public void setR14_NO_CON_END(String r14_NO_CON_END) {
 		R14_NO_CON_END = r14_NO_CON_END;
 	}
 
@@ -4775,6 +4780,30 @@ public class RT_MC_TABLE2_1_ENTITY {
 
 	public void setBRANCH_NAME(String bRANCH_NAME) {
 		BRANCH_NAME = bRANCH_NAME;
+	}
+
+	public String getMODIFY_USERID() {
+		return MODIFY_USERID;
+	}
+
+	public void setMODIFY_USERID(String mODIFY_USERID) {
+		MODIFY_USERID = mODIFY_USERID;
+	}
+
+	public String getVERIFY_FLG() {
+		return VERIFY_FLG;
+	}
+
+	public void setVERIFY_FLG(String vERIFY_FLG) {
+		VERIFY_FLG = vERIFY_FLG;
+	}
+
+	public String getVERIFY_USERID() {
+		return VERIFY_USERID;
+	}
+
+	public void setVERIFY_USERID(String vERIFY_USERID) {
+		VERIFY_USERID = vERIFY_USERID;
 	}
 
 }

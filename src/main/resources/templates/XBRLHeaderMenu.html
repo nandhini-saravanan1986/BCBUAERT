@@ -479,7 +479,6 @@
 	        <i class="fa fa-sync fa-spin text-warning"></i> <span>Download request received</span>
 	    </p>
 	</div>
-</body>
 <script>
     let globalPollInterval;
 
@@ -529,4 +528,268 @@
     }
     function hideAlert() { $("#autoHideAlert").fadeOut(); }
 </script>
+<style>
+#autoHideAlert {
+	position: fixed !important;
+	top: 20px !important;
+	right: 20px !important;
+	bottom: auto !important;
+	left: auto !important;
+	width: 320px !important;
+	height: auto !important;
+	z-index: 999999;
+	background: #ffffff;
+	border-radius: 8px;
+	border-left: 5px solid #E67E00;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+	padding: 15px;
+	display: none;
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	min-width: 320px;
+	max-width: 450px;
+	width: auto !important;
+	word-wrap: break-word;
+}
+#autoHideAlert a {
+    text-decoration: none !important;
+}
+.custom-progress-bg {
+	width: 100%;
+	background-color: #f1f1f1;
+	border-radius: 10px;
+	height: 12px;
+	margin: 10px 0;
+	border: 1px solid #ddd;
+	overflow: hidden;
+}
+
+.custom-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #E67E00, #ff981a, #E67E00);
+	background-size: 200% 100%;
+	animation: progress-glow 2s linear infinite;
+	border-radius: 10px;
+	transition: width 0.3s linear;
+	width: 0%;
+}
+
+@keyframes progress-glow { 0% {
+	background-position: 200% 0;
+}
+
+100%
+{
+background-position
+:
+0%
+0;
+}
+}
+.dl-btn-close {
+	float: right;
+	cursor: pointer;
+	font-size: 20px; /* Slightly larger for easier clicking */
+	color: #999;
+	line-height: 10px;
+	margin-top: -5px;
+	margin-right: -5px;
+}
+
+.dl-btn-close:hover {
+	color: #333;
+}
+</style>
+
+<div id="autoHideAlert">
+    <span class="dl-btn-close" onclick="closeDlAlert()">&times;</span>
+    <div id="alertMessage"></div>
+</div>
+<script>
+    let newTaskInterval;
+    let isFinishing = false; 
+    let targetPct = 5; 
+    let currentDisplayPct = 5;
+    let animationFrame;
+
+    $(document).ready(function() {
+        const savedId = localStorage.getItem("activeNewTaskJob");
+        const savedName = localStorage.getItem("activeNewTaskName");
+        const savedTime = localStorage.getItem("newTaskStartTime");
+        if (savedId && savedTime) {
+            startNewTaskPolling(savedId, parseInt(savedTime), savedName);
+        }
+    });
+    function cancelCurrentTask() {
+        if(confirm("Are you sure you want to cancel this download?")) {
+            isFinishing = true;
+            clearInterval(newTaskInterval);
+            cancelAnimationFrame(animationFrame);
+            
+            // Optional: Call server to kill the thread if you have a cancel endpoint
+            // $.get('./cancelTask', { jobId: localStorage.getItem("activeNewTaskJob") });
+
+            clearNewTaskStorage();
+            $("#alertMessage").html("<div style='text-align:center; color:#dc3545; font-size:12px; padding:10px;'>Download Cancelled</div>");
+            setTimeout(() => { closeDlAlert(); }, 2000);
+        }
+    }
+    function triggerGlobalDownload(startUrl, params, fileName) {
+        if (localStorage.getItem("activeNewTaskJob")) {
+            const currentJobName = localStorage.getItem("activeNewTaskName");
+            
+            // Store current HTML to restore it if they click "Keep Waiting"
+            const previousHtml = $("#alertMessage").html();
+
+            let resetHtml = `
+                <div style="text-align:center; padding: 5px;">
+                    <strong style="color:#dc3545; font-size:13px;">Task already in progress</strong>
+                    <p style="font-size:11px; color:#666; margin: 5px 0; word-break: break-all;">${currentJobName}</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                        <button id="btnKeepWaiting" style="padding:4px 12px; font-size:11px; cursor:pointer; border:1px solid #ccc; background:#fff; border-radius:4px;">Keep Waiting</button>
+                        <button onclick="forceResetTask()" style="padding:4px 12px; font-size:11px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Force Reset</button>
+                    </div>
+                </div>`;
+            
+            $("#alertMessage").html(resetHtml);
+            $("#autoHideAlert").fadeIn();
+
+            // When "Keep Waiting" is clicked, put the loader back
+            $("#btnKeepWaiting").one("click", function() {
+                if (previousHtml) {
+                    $("#alertMessage").html(previousHtml);
+                } else {
+                    closeDlAlert();
+                }
+            });
+            return;
+        }
+
+        renderTaskUI(fileName, 5, "Connecting...", "init-id");
+        $("#autoHideAlert").fadeIn();
+
+        $.get(startUrl, params, function(jobId) {
+            const startTime = Date.now();
+            localStorage.setItem("activeNewTaskJob", jobId);
+            localStorage.setItem("activeNewTaskName", fileName);
+            localStorage.setItem("newTaskStartTime", startTime);
+            startNewTaskPolling(jobId, startTime, fileName);
+        }).fail(function() {
+            handleTaskError("Connection failed.");
+        });
+    }
+    function forceResetTask() {
+        if(confirm("This will stop tracking the current download. Continue?")) {
+
+            clearInterval(newTaskInterval);
+            cancelAnimationFrame(animationFrame);
+            isFinishing = true;
+
+            clearNewTaskStorage();
+
+            $("#autoHideAlert").fadeOut(300, function() {
+                $("#alertMessage").html("");
+                console.log("System reset complete. You can now start a new download.");
+            });
+        }
+    }
+    let pollStartTime;
+    const POLL_TIMEOUT_MS = 30000; 
+
+    function startNewTaskPolling(jobId, startTime, fileName) {
+        $("#autoHideAlert").show();
+        clearInterval(newTaskInterval);
+        cancelAnimationFrame(animationFrame);
+        
+        isFinishing = false; 
+        targetPct = 5;
+        currentDisplayPct = 5;
+        pollStartTime = Date.now(); 
+
+        function animateBar() {
+            if (currentDisplayPct < targetPct) {
+                currentDisplayPct += 3.0; 
+                if (currentDisplayPct > targetPct) currentDisplayPct = targetPct;
+                
+                let diff = Math.floor((Date.now() - startTime) / 1000);
+                let timeLabel = (diff >= 60) ? Math.floor(diff/60) + "m " + (diff%60) + "s" : diff + "s";
+                renderTaskUI(fileName, Math.floor(currentDisplayPct), timeLabel, jobId);
+            }
+            if (!isFinishing || currentDisplayPct < 100) {
+                animationFrame = requestAnimationFrame(animateBar);
+            }
+        }
+        animateBar();
+
+        newTaskInterval = setInterval(function() {
+            if (isFinishing) return;
+
+            if (Date.now() - pollStartTime > POLL_TIMEOUT_MS) {
+                handleTaskError("Request timed out. Please try again.");
+                return;
+            }
+
+            $.get('./checkNewTaskStatus', { jobId: jobId }, function(res) {
+                pollStartTime = Date.now(); 
+
+                let serverPct = res.percent;
+                if (serverPct > targetPct) targetPct = serverPct;
+
+                if (serverPct === 100 && !isFinishing) {
+                    isFinishing = true;
+                    targetPct = 100;
+                    let checkEnd = setInterval(() => {
+                        if (currentDisplayPct >= 99) {
+                            clearInterval(checkEnd);
+                            clearInterval(newTaskInterval);
+                            handleTaskSuccess(jobId, fileName, "Done");
+                        }
+                    }, 50);
+                } else if (serverPct === -1) {
+                    handleTaskError("Server reported an error.");
+                }
+            }).fail(function() {
+                console.log("Polling attempt failed...");
+            });
+        }, 800); 
+    }
+
+    function renderTaskUI(name, pct, time, id) {
+        let html = `
+            <div style="margin-right: 15px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                    <strong style="font-size:13px; color:#333; word-break: break-all; flex:1;">${name}</strong>
+                    <span style="font-size:11px; color:#888; white-space:nowrap;">${time}</span>
+                </div>
+                <div class="custom-progress-bg">
+                    <div class="custom-progress-fill" style="width: ${pct}%;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:#E67E00; font-weight:bold;">${pct}% Processing...</span>
+                    <a href="javascript:void(0)" onclick="cancelCurrentTask()" style="color:#dc3545; font-size:11px; text-decoration:none !important;">Cancel</a>
+                </div>
+            </div>`;
+        $("#alertMessage").html(html);
+    }
+
+    function handleTaskSuccess(jobId, name, time) {
+        clearNewTaskStorage();
+        window.location.href = `./getNewTaskFile?jobId=${jobId}&fileName=${encodeURIComponent(name)}`;
+        
+        $("#alertMessage").html(`
+            <div style="text-align:center; padding: 10px 0;">
+                <i class="fa fa-check-circle" style="color:#E67E00; font-size:28px;"></i>
+                <div style="margin:8px 0; font-weight:bold; font-size:14px; color:#333;">${name} Ready!</div>
+            </div>`);
+        setTimeout(() => { $("#autoHideAlert").fadeOut(); }, 5000);
+    }
+
+    function closeDlAlert() { $("#autoHideAlert").fadeOut(); cancelAnimationFrame(animationFrame); }
+    function clearNewTaskStorage() {
+        localStorage.removeItem("activeNewTaskJob");
+        localStorage.removeItem("activeNewTaskName");
+        localStorage.removeItem("newTaskStartTime");
+    }
+</script>
+</body>
 </html>
