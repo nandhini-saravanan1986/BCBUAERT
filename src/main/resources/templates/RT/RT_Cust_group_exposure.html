@@ -110,21 +110,15 @@
         }
 
         .container-fluid {
-            margin-top: 130px;
+            margin-top: 115px;
         }
 
-        .menuname {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 10px 20px;
-            margin-bottom: 10px;
-            background: rgba(33, 37, 41, 65%);
-            border-bottom: 2px solid #E3E6EF;
-            color: white;
-            font-family: "Inter", Arial, sans-serif;
-        }
+		.menuname {
+		    width: 100%;
+		    display: flex;
+		    justify-content: space-between;   /* heading left, button right */
+		    align-items: center;
+		}
 
         .menuname h3 {
             margin: 0;
@@ -183,7 +177,7 @@
             text-align: left;
             margin-bottom: 30px;
             font-size: 0.70rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
             padding: 10px;
         }
 
@@ -237,7 +231,71 @@
                 margin-bottom: 5px;
             }
         }
+		
+		#usertable {
+		    border-collapse: collapse !important;
+		    font-family: Arial, sans-serif !important;
+		    font-size: 12px !important;
+		}
+
+		/* HEADER */
+		#usertable thead th {
+		    background-color: #7b6458;
+		    color: #fff;
+		    font-family: Arial, sans-serif !important;
+		    font-size: 14px !important;
+		    text-align: center;
+		    vertical-align: middle;
+		    padding: 10px 4px !important;
+		    line-height: 1.1 !important;
+		}
+
+		/* BODY CELLS */
+		#usertable td {
+		    padding: 5px 6px !important;
+		    border: 1px solid #e8e8e8 !important;
+		    background: #fafafa;
+		}
+
+		/* EVEN ROW */
+		#usertable tbody tr:nth-child(even) {
+		    background-color: #f4f2ef !important;
+		}
+
+		/* ODD ROW */
+		#usertable tbody tr:nth-child(odd) {
+		    background-color: #ffffff !important;
+		}
+
+		/* HOVER */
+		#usertable tbody tr:hover {
+		    background-color: #f1f1f1;
+		}
+		.table-container{
+		    overflow-x:auto;
+		}
     </style>
+<style>
+	.static-back-btn {
+			    background-color: #ff7f27;
+			    border: none;
+			    color: white;
+			    font-size: 16px;
+			    border-radius: 50%;
+			    width: 36px;
+			    height: 36px;
+			    display: flex;
+			    align-items: center;
+			    justify-content: center;
+			    margin-right: 10px;
+			    transition: all 0.2s ease;
+			}
+
+			.static-back-btn:hover {
+			    background-color: #E67E00;
+			    transform: scale(1.05);
+			}
+</style>
 </head>
 
 <body>
@@ -403,20 +461,47 @@
             // Initialize selected list in edit mode
             updateCustomerIds();
         });
+		
+		function goBack() {
+			    window.history.back();
+			}
     </script>
 
     <div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
 
     <div class="container-fluid main-content">
-        <div class="menuname">
-            <h3 th:text="${menuname}">Menu Name</h3>
-            <button class="my-button" type="button" onclick="Addgroup();" th:if="${formmode} == 'list'">Add Group</button>
-        </div>
+		<div class="d-flex align-items-center">
 
+													<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																			        <i class="fa fa-arrow-left"></i>
+																			    </button>
+        <div class="menuname">
+            			<h4 th:text="${menuname}" 
+		style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+		
+	</h4>
+	
+	<!-- Add Button (only in list mode) -->
+	<button class="my-button"
+	        type="button"
+	        onclick="Addgroup();"
+	        th:if="${formmode} == 'list'">
+	    Add Group
+	</button>
+
+	<!-- List Button (only in add mode) -->
+	<button class="my-button"
+	        type="button"
+	        onclick="location.href='CustomerGrp_Maintenance?formmode=list'"
+	        th:if="${formmode} == 'add'">
+	    List
+	</button>		
+        </div>
+		</div>
         <!-- LIST MODE -->
         <div th:if="${formmode}=='list'">
-            <div class="table-wrap" style="padding-top: 10px;">
-                <table class="table refund-table align-middle mb-0" id="Portfolio_summary_table">
+            <div class="table-container" style="padding:0px 5px;">
+                <table id="usertable" class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Group Id</th>

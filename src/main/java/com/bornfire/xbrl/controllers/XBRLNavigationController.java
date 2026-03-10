@@ -486,9 +486,13 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "list");
 			md.addAttribute("AccessandRoles", accessandrolesrepository.rulelist());
 		} else if (formmode.equals("add")) {
-			md.addAttribute("menuname", "ACCESS AND ROLES - ADD");
-			md.addAttribute("formmode", "add");
-		} else if (formmode.equals("edit")) {
+		    md.addAttribute("menuname", "ACCESS AND ROLES - ADD");
+		    md.addAttribute("formmode", "add");
+
+		    // Create a new empty AccessAndRoles object
+		    AccessAndRoles newRole = new AccessAndRoles();
+		    md.addAttribute("IPSAccessRole", newRole);
+		}else if (formmode.equals("edit")) {
 			md.addAttribute("menuname", "ACCESS AND ROLES - EDIT");
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("IPSAccessRole", AccessRoleService.getRoleId(userid));

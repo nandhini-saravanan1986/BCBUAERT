@@ -473,12 +473,31 @@
 	overflow-x: hidden;
 	padding-right: 10px;
 }
-
+.table .thead-light th {
+			    color: #fff;
+			    background-color: #7b6458;
+			    border-color: #dee2e6;
+				font-family: sans-serif;
+			}
 
 body {
 	overflow: hidden;
 }
-	
+.role-btn {
+		    background: #ffffff;
+		    color: #E67E00;
+		    border: 1px solid #E67E00;
+		    border-radius: 25px;
+		    padding: 8px 18px;
+		    font-size: 13px;
+		    font-weight: 600;
+		    cursor: pointer;
+		}
+
+		.role-btn:hover {
+		    background: #FFF3D1;
+		    color: #E67E00;
+		}
 </style>
 </script>
 
@@ -551,6 +570,30 @@ div.dataTables_filter {
 	margin-left: 5px;
 	flex: 1;
 }
+#audttable thead th {
+    background-color: #e9ecf0 !important;
+    border-bottom: 0 !important;
+}
+
+.static-back-btn {
+				    background-color: #ff7f27;
+				    border: none;
+				    color: white;
+				    font-size: 16px;
+				    border-radius: 50%;
+				    width: 36px;
+				    height: 36px;
+				    display: flex;
+				    align-items: center;
+				    justify-content: center;
+				    margin-right: 10px;
+				    transition: all 0.2s ease;
+				}
+
+				.static-back-btn:hover {
+				    background-color: #E67E00;
+				    transform: scale(1.05);
+				}
 </style>
 
 <script>
@@ -632,6 +675,13 @@ $(document).ready(function () {
         table.columns.adjust();
     });    
 });
+function goBack() {
+			    window.history.back();
+			}
+
+			window.addEventListener("pageshow", function () {
+			    hideLoader();
+			});
 </script>
 </head>
 <title>RiskInsights - Service Audit</title>
@@ -647,23 +697,39 @@ $(document).ready(function () {
 					<div class="role-page-header">
 				
 						<div >
-							<h4>Service Audit</h4>
+							<div class="d-flex align-items-center">
+
+									        <button class="static-back-btn" onclick="goBack()" title="Go Back">
+									            <i class="fa fa-arrow-left"></i>
+									        </button>
+							<h4 style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+										SERVICE AUDIT
+										</h4>
 						<!-- 	<div class="role-page-underline"></div> -->
+						</div>
 						</div>
 				
 				
-						<div class="btn-group">
+						<div class="form-inline">
 							<div class="d-flex align-items-center">
 								<label for="searchDate" class="mb-0 mr-2">Date:</label>
 								<input type="date" id="searchDate" class="form-control form-control-sm" />
 							</div>
-						</div>
+						
+						
+						<button type="button"
+				        class="role-btn mr-3"
+				        id="downloadfile"
+				        onclick="downloadAuditReport();">
+				    <i class="fa fa-download"></i> Download
+				</button>
+				</div>
 					</div>
 				<!-- 	<br> -->
 				
 					<div class="table-container m-3">
-						<table class="table table-bordered table-striped table-hover fs-6" id="audttable" >
-							<thead class="table-success">
+						<table class="table table-striped table-bordered table-hover" id="audttable" >
+							<thead style="background-color: #e9ecf0; " class="thead-light">
 								<tr>
 									<th>Ref No.</th>
 									<th>Table Name</th>
@@ -714,13 +780,13 @@ $(document).ready(function () {
 		</div>
 	</div>
 	
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-						<i class="fa fa-arrow-left"></i>
-					</button>
-					<!-- Floating Forward Button -->
-					<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-						<i class="fa fa-arrow-right"></i>
-					</button>
+<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--						<i class="fa fa-arrow-left"></i>-->
+<!--					</button>-->
+<!--					 Floating Forward Button -->
+<!--					<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">-->
+<!--						<i class="fa fa-arrow-right"></i>-->
+<!--					</button>-->
 </body>
 
 </html>

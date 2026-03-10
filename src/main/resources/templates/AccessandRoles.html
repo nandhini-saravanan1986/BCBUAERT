@@ -534,58 +534,57 @@ PURPOSE		: Access the Modules by Role
 			color: white;
 		}
 	</style>
-	<script>
-		function goBack() {
-			window.history.back();
-		}
+	<!--	<script>-->
+	<!--		function goBack() {-->
+	<!--			window.history.back();-->
+	<!--		}-->
 
-		function goForward() {
-			window.history.forward();
-		}
+	<!--		function goForward() {-->
+	<!--			window.history.forward();-->
+	<!--		}-->
 
-		// Detect mouse near screen edges
-		document.addEventListener('mousemove', function (e) {
-			const backBtn = document.getElementById('floatingBackBtn');
-			const forwardBtn = document.getElementById('floatingForwardBtn');
-			const screenWidth = window.innerWidth;
+	<!--		// Detect mouse near screen edges-->
+	<!--		document.addEventListener('mousemove', function (e) {-->
+	<!--			const backBtn = document.getElementById('floatingBackBtn');-->
+	<!--			const forwardBtn = document.getElementById('floatingForwardBtn');-->
+	<!--			const screenWidth = window.innerWidth;-->
 
-			// Left edge (back)
-			if (e.clientX < 50) {
-				backBtn.classList.add('show');
-			} else {
-				backBtn.classList.remove('show');
-			}
+	<!--			// Left edge (back)-->
+	<!--			if (e.clientX < 500) {-->
+	<!--				backBtn.classList.add('show');-->
+	<!--			} else {-->
+	<!--				backBtn.classList.remove('show');-->
+	<!--			}-->
 
-			// Right edge (forward)
-			if (screenWidth - e.clientX < 50) {
-				forwardBtn.classList.add('show');
-			} else {
-				forwardBtn.classList.remove('show');
-			}
-		});
-	</script>
+	<!--			// Right edge (forward)-->
+	<!--			if (screenWidth - e.clientX < 50) {-->
+	<!--				forwardBtn.classList.add('show');-->
+	<!--			} else {-->
+	<!--				forwardBtn.classList.remove('show');-->
+	<!--			}-->
+	<!--		});-->
+	<!--	</script>-->
 
 	<style>
 		/* Shared styles for both buttons */
-		#floatingBackBtn,
-		#floatingForwardBtn {
-			position: fixed;
-			top: 50%;
-			background-color: #F8AC46FF;
+		.static-back-btn {
+			background-color: #ff7f27;
 			border: none;
 			color: white;
-			font-size: 20px;
+			font-size: 16px;
 			border-radius: 50%;
-			width: 45px;
-			height: 45px;
+			width: 36px;
+			height: 36px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			opacity: 0;
-			pointer-events: none;
-			transition: all 0.4s ease;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-			z-index: 999;
+			margin-right: 10px;
+			transition: all 0.2s ease;
+		}
+
+		.static-back-btn:hover {
+			background-color: #E67E00;
+			transform: scale(1.05);
 		}
 
 		/* Back button */
@@ -619,7 +618,24 @@ PURPOSE		: Access the Modules by Role
 			background-color: #E67E00;
 			transform: scale(1.1);
 		}
-	</style>
+		
+		#menuPopupDialog{
+		    margin-top: 30vh;   /* move popup vertically */
+		    max-width: 700px;
+		}
+
+		#fullMenuList{
+		    max-height: 300px;
+		    overflow-y: auto;
+		    overflow-x: hidden;
+		    word-break: break-word;
+		    font-size: 14px;
+		}
+		
+		body.modal-open {
+		    overflow: hidden !important;
+		}
+		</style>
 	<script th:inline="javascript">
 		function home() {
 			location.href = 'Dashboard'
@@ -723,7 +739,8 @@ PURPOSE		: Access the Modules by Role
 						"ADM-M": "ADMIN-MAKER",
 						"ADM-C": "ADMIN-CHECKER",
 						"USR-M": "USER-MAKER",
-						"USR-C": "USER CHECKER"
+						"USR-C": "USER CHECKER",
+						"SUPER": "SUPER USER"
 					};
 
 					if (roleIdSelect) {
@@ -943,14 +960,20 @@ PURPOSE		: Access the Modules by Role
 					<div class="card">
 						<!-- White Minimal Header Section -->
 						<div class="role-page-header d-flex justify-content-between align-items-center">
-							<!-- Left: Page Title -->
-							<div class="role-page-title">
-								<h4 th:text="${menu}"></h4>
-								<!--<div class="role-page-underline"></div>-->
+							<div class="d-flex align-items-center">
+
+								<button class="static-back-btn" onclick="goBack()" title="Go Back">
+									<i class="fa fa-arrow-left"></i>
+								</button>
+
+								<div class="role-page-title">
+									<h4 th:text="${menu}"></h4>
+								</div>
+
 							</div>
 
 							<!-- Right: Add Button -->
-							<div th:if="${AccessandRoles.size() < 5}">
+							<div th:if="${AccessandRoles.size() < 6}">
 								<button type="button" class="role-btn" onclick="addrole();">
 									<i class="fa fa-plus-circle"></i> Add Role
 								</button>
@@ -963,18 +986,18 @@ PURPOSE		: Access the Modules by Role
 								<div class="table-container" style="padding: 0px 15px;">
 									<div id="liquidity-edit-page" class="table-responsive">
 										<table id="usertable" class="table table-bordered table-striped table-hover"
-											style="min-width: 2000px;">
+											style="min-width: 200px;">
 											<!--<thead class="thead-light">-->
 											<thead style="background-color: #e9ecf0; " class="thead-light">
 												<tr>
 
 
-													<th class="th-left" style="width: 10%">Role Id</th>
-													<th class="th-left" style="width: 20%">Role Description</th>
-													<th class="th-left" style="width: 10%">Work Class</th>
-													<th class="th-left" style="width: 35%">Menu List</th>
-													<th class="th-left" style="width: 15%">Status</th>
-													<th class="th-left" style="width: 10%">Select</th>
+													<th class="th-left" style="width: 5%">Role Id</th>
+													<th class="th-left" style="width: 7%">Role Description</th>
+													<th class="th-left" style="width: 7%">Work Class</th>
+													<th class="th-left" style="width: 15%">Menu List</th>
+													<th class="th-left" style="width: 7%">Status</th>
+													<th class="th-left" style="width: 8%">Select</th>
 
 
 												</tr>
@@ -990,7 +1013,15 @@ PURPOSE		: Access the Modules by Role
 														<td th:case="'M'">Maker</td>
 														<td th:case="'C'">Checker</td>
 													</th:block>
-													<td style="width: 250px" th:text="${AccessRole?.menulist}"></td>
+													<td style="width:250px; cursor:pointer;"
+													    th:attr="data-menu=${AccessRole?.menulist},data-role=${AccessRole?.roleId}"
+													    onclick="showMenuPopup(this)">
+
+													<span th:text="${#strings.length(AccessRole?.menulist) > 40 ? 
+													#strings.substring(AccessRole?.menulist,0,40) + '...' : AccessRole?.menulist}">
+													</span>
+
+													</td>
 													<th:block th:switch="${AccessRole?.entityFlg}">
 														<td th:case="'Y'" style="color: green;">Verified</td>
 														<td th:case="'N'" style="color: red;">UnVerified</td>
@@ -1027,6 +1058,22 @@ PURPOSE		: Access the Modules by Role
 									 Removed Home and Back buttons as requested 
 								</div>-->
 							</div>
+							<div class="modal fade" id="menuPopup">
+							  <div class="modal-dialog modal-dialog-centered">
+							    <div class="modal-content">
+
+							      <div class="modal-header" style="background:#ff7f27;color:white;">
+							        <h5 id="menuPopupTitle"></h5>
+							        <button type="button" class="close" data-dismiss="modal">&times;</button>
+							      </div>
+
+							      <div class="modal-body">
+							        <div id="fullMenuList"></div>
+							      </div>
+
+							    </div>
+							  </div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1041,41 +1088,50 @@ PURPOSE		: Access the Modules by Role
 									<div class="card" style="margin-left: 10px; margin-right: 10px;">
 										<!-- White Minimal Header Section -->
 										<div class="role-page-header d-flex justify-content-between align-items-center">
-											<!-- Left: Page Title -->
-											<div class="role-page-title">
-												<div>
-													<h4 th:if="${formmode}=='add'"
-														style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-														ACCESS AND ROLE - ADD
-													</h4>
-													<h4 th:if="${formmode}=='edit'"
-														style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-														ACCESS AND ROLE - EDIT
-													</h4>
-													<h4 th:if="${formmode}=='view'"
-														style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-														ACCESS AND ROLE - VIEW
-													</h4>
-													<h4 th:if="${formmode}=='verify'"
-														style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-														ACCESS AND ROLE - VERIFY
-													</h4>
-													<h4 th:if="${formmode}=='delete'"
-														style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-														ACCESS AND ROLE - DELETE
-													</h4>
+											<div class="d-flex align-items-center">
 
-													<!-- Underline just below the heading -->
-													<!--	<div th:if="${formmode} != 'delete'" class="role-page-underline"
+												<button class="static-back-btn" onclick="goBack()" title="Go Back">
+													<i class="fa fa-arrow-left"></i>
+												</button>
+												<div class="role-page-title">
+													<div>
+														<h4 th:if="${formmode}=='add'"
+															style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+															ACCESS AND ROLE - ADD
+														</h4>
+														<h4 th:if="${formmode}=='edit'"
+															style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+															ACCESS AND ROLE - EDIT
+														</h4>
+														<h4 th:if="${formmode}=='view'"
+															style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+															ACCESS AND ROLE - VIEW
+														</h4>
+														<h4 th:if="${formmode}=='verify'"
+															style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+															ACCESS AND ROLE - VERIFY
+														</h4>
+														<h4 th:if="${formmode}=='delete'"
+															style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
+															ACCESS AND ROLE - DELETE
+														</h4>
+
+														<!-- Underline just below the heading -->
+														<!--	<div th:if="${formmode} != 'delete'" class="role-page-underline"
 														style="width: 290px; height: 3px; background-color: #0073e6; border-radius: 2px;">
 													</div>
 
 													<div th:if="${formmode} == 'delete'" class="role-page-underline"
 														style="width: 320px; height: 3px; background-color: #0073e6; border-radius: 2px;">
 													</div>-->
+													</div>
 												</div>
 											</div>
-
+											<div>
+												<button type="button" class="role-btn" onclick="list()">
+													<i class="fa fa-list"></i> List
+												</button>
+											</div>
 										</div>
 
 
@@ -1083,15 +1139,15 @@ PURPOSE		: Access the Modules by Role
 										<div class="card-body"
 											style="max-height: 500px; overflow-y: auto; padding-right: 15px;">
 											<input type="hidden" id="existingMenus"
-												th:value="${IPSAccessRole.menulist}" />   <!--Read old db value-->
+												th:value="${IPSAccessRole.menulist}" /> <!--Read old db value-->
 
 											<input type="hidden" id="menulistHidden" name="menulist"
-												th:value="*{menulist}">   <!--Store updated selection-->
+												th:value="*{menulist}"> <!--Store updated selection-->
 											<form action="#" th:object="${IPSAccessRole}" method="post"
 												style="margin: 52px;" autocomplete="off" id="IPSAccessRole"
 												th:fragment="finuserapply">
 
-												<div class="row formline" style="    font-size: 12px;">
+												<div class="row formline">
 													<!--<label class="col-sm-2">Role Id <span
 															style="color: red !important">*</span></label>
 													<div class="col-sm-3" th:if="${formmode}=='add'">
@@ -1111,6 +1167,7 @@ PURPOSE		: Access the Modules by Role
 															<option value="ADM-C">ADM-C</option>
 															<option value="USR-M">USR-M</option>
 															<option value="USR-C">USR-C</option>
+															<option value="SUPER">SUPER</option>
 														</select>
 													</div>
 
@@ -1257,9 +1314,8 @@ PURPOSE		: Access the Modules by Role
 													<div class="col-sm-1"></div>
 
 													<label class="col-sm-2">Menu List
-														<a th:if="${formmode}=='add' or ${formmode}=='edit'"
-														href="#">
-														<i class="fas fa-search searchico" data-toggle="modal"
+														<a th:if="${formmode}=='add' or ${formmode}=='edit'" href="#">
+															<i class="fas fa-search searchico" data-toggle="modal"
 																data-target="#finusers" id="iconacc"></i>
 														</a>
 													</label>
@@ -1284,7 +1340,7 @@ PURPOSE		: Access the Modules by Role
 															</div>
 															<input type="hidden" id="menulistHidden" name="menulist">
 														</div>
-														
+
 													</div>
 												</div>
 
@@ -1391,7 +1447,8 @@ PURPOSE		: Access the Modules by Role
 																			value="ASL-Sblc_maint"> SBLC Maintenance
 																	</li>
 																	<li><input type="checkbox" class="menu-item"
-																			value="ASL-Bank-Limit-Check"> Bank Limit Check
+																			value="ASL-Bank-Limit-Check"> Bank Limit
+																		Check
 																	</li>
 																	<li><input type="checkbox" class="menu-item"
 																			value="ASL-Limit-Request"> Limit Request
@@ -1495,13 +1552,13 @@ PURPOSE		: Access the Modules by Role
 			</div>
 
 			<!-- Floating Back Button -->
-			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-				<i class="fa fa-arrow-left"></i>
-			</button>
-			<!-- Floating Forward Button -->
-			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-				<i class="fa fa-arrow-right"></i>
-			</button>
+			<!--			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+			<!--				<i class="fa fa-arrow-left"></i>-->
+			<!--			</button>-->
+			<!--			 Floating Forward Button -->
+			<!--			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">-->
+			<!--				<i class="fa fa-arrow-right"></i>-->
+			<!--			</button>-->
 
 			<div class="modal fade" id="alert">
 				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -1684,7 +1741,22 @@ PURPOSE		: Access the Modules by Role
 		});
 	});
 
+	function showMenuPopup(el){
 
+	    var fullMenu = el.getAttribute("data-menu");
+	    var roleId = el.getAttribute("data-role");
+
+	    // Title
+	    document.getElementById("menuPopupTitle").innerText =
+	        "Menu List - " + roleId;
+
+	    // Convert comma list to lines
+	    var formatted = fullMenu.split(",").join("<br>");
+
+	    document.getElementById("fullMenuList").innerHTML = formatted;
+
+	    $("#menuPopup").modal("show");
+	}
 </script>
 
 <script th:inline="javascript">
@@ -1852,6 +1924,10 @@ PURPOSE		: Access the Modules by Role
 		}
 
 	});
+
+	function goBack() {
+		window.history.back();
+	}
 </script>
 <style>
 	.liquid-edit-page {
