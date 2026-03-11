@@ -1,15 +1,14 @@
 package com.bornfire.xbrl.services;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -27,66 +26,115 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_DC;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_REPO;
 
+
+
+
+
+
+
 @Service
 public class RT_MID_FX_DEAL_SERVICE {
 
 	// Fixed syntax error here: added .class and closing parentheses
 	private static final Logger logger = LoggerFactory.getLogger(RT_MID_FX_DEAL_SERVICE.class);
 
-	@Autowired
-	RT_MID_FX_DEAL_REPO repo;
+	    @Autowired
+	    RT_MID_FX_DEAL_REPO repo;
 
-	public String uploadMidFxDealData(MultipartFile file, Date fromDate, Date toDate, String username) throws Exception {
-		
-		repo.deleteByReportDate(toDate);
-		
-		Workbook workbook = new XSSFWorkbook(file.getInputStream());
-		RT_MID_FX_DEAL_DC entity = new RT_MID_FX_DEAL_DC();
-		int sheetCount = workbook.getNumberOfSheets();
-       
-        boolean totalFound = false;
-        for (int i = 0; i < sheetCount; i++) {
-            String sheetName = workbook.getSheetName(i);
-            System.out.println("Sheet " + (i + 1) + ": " + sheetName);
-            Sheet sheet = workbook.getSheetAt(i);
-            if(sheetName.contains("Bonds")) {
-            	String Bondvalue = processSheet(sheet);
-            	
-            	entity.setActualBonds(new BigDecimal(Bondvalue.replaceAll("[^0-9.-]", "")));
-            	entity.setAbsBonds(new BigDecimal(Bondvalue.replaceAll("[^0-9.]", "")));
-            }else if(sheetName.contains("FxSwaps")) {
-            	String Fxswapvalue = processSheet(sheet);
-            	 entity.setActualFxSwaps(new BigDecimal(Fxswapvalue.replaceAll("[^0-9.-]", "")));
-            	 entity.setAbsFxSwaps(new BigDecimal(Fxswapvalue.replaceAll("[^0-9.]", "")));
-            }else if(sheetName.contains("Outright Forwards")) {
-            	String Outrightforw = processSheet(sheet);
-            	entity.setActualOutrightForwards(new BigDecimal(Outrightforw.replaceAll("[^0-9.-]", "")));
-            	entity.setAbsOutrightForwards(new BigDecimal(Outrightforw.replaceAll("[^0-9.]", "")));
-            }else if(sheetName.contains("IRS CIRS")) {
-            	String irscirs = processSheet(sheet);
-            	entity.setActualIrsCirs(new BigDecimal(irscirs.replaceAll("[^0-9.-]", "")));
-            	entity.setAbsIrsCirs(new BigDecimal(irscirs.replaceAll("[^0-9.]", "")));
-            }
-        }
-        
-        
-        entity.setSrlNo(UUID.randomUUID().toString().substring(0, 20));
-		entity.setReportDate(toDate);
-		entity.setCreateUser(username);
-		entity.setCreateTime(new Date());
-		entity.setReportFromDate(fromDate);
-		entity.setReportToDate(toDate);
-		entity.setRcreUserId(username);
-		entity.setRcreTime(new Date());
-		entity.setDelFlg("N");
-		entity.setEntityFlg("N");
-		entity.setModifyFlg("N");
+	    // Get already uploaded dates
+	    public List<String> getUploadedDates() {
+	        List<Date> dates = repo.findUploadedDates();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        return dates.stream()
+	                .map(sdf::format)
+	                .collect(Collectors.toList());
+	    }
 
-		repo.save(entity);
-		
-		return "AE_MID_FX_DEAL data processed successfully: Records for " + toDate + " updated/appended.";
-	}
+
+	    // Upload MFD File
+	    @Transactional
+	    public String uploadMidFxDealData(MultipartFile file, Date toDate, String username) throws Exception {
+
+	        Date today = new Date();
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	        boolean exists = repo.existsByReportDate(toDate);
+	        //  Past date already uploaded → block
+	        if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+	            throw new RuntimeException("Data already uploaded for this report date: " + toDate);
+	        }
+	        //  If today upload again → replace
+	        if (exists) {
+	            repo.deleteByReportDate(toDate);
+	        }
+
+	        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
+	        RT_MID_FX_DEAL_DC entity = new RT_MID_FX_DEAL_DC();
+
+	        int sheetCount = workbook.getNumberOfSheets();
+
+	        for (int i = 0; i < sheetCount; i++) {
+
+	            String sheetName = workbook.getSheetName(i);
+	            Sheet sheet = workbook.getSheetAt(i);
+
+	            if (sheetName.contains("Bonds")) {
+
+	                String value = processSheet(sheet);
+
+	                entity.setActualBonds(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
+	                entity.setAbsBonds(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+
+	            } 
+	            else if (sheetName.contains("FxSwaps")) {
+
+	                String value = processSheet(sheet);
+
+	                entity.setActualFxSwaps(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
+	                entity.setAbsFxSwaps(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+
+	            } 
+	            else if (sheetName.contains("Outright Forwards")) {
+
+	                String value = processSheet(sheet);
+
+	                entity.setActualOutrightForwards(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
+	                entity.setAbsOutrightForwards(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+
+	            } 
+	            else if (sheetName.contains("IRS CIRS")) {
+
+	                String value = processSheet(sheet);
+
+	                entity.setActualIrsCirs(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
+	                entity.setAbsIrsCirs(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+
+	            }
+	        }
+
+	        entity.setSrlNo(UUID.randomUUID().toString().substring(0, 20));
+	        entity.setReportDate(toDate);
+	        entity.setReportToDate(toDate);
+
+	        entity.setCreateUser(username);
+	        entity.setCreateTime(new Date());
+
+	        entity.setRcreUserId(username);
+	        entity.setRcreTime(new Date());
+
+	        entity.setDelFlg("N");
+	        entity.setEntityFlg("N");
+	        entity.setModifyFlg("N");
+
+	        repo.save(entity);
+
+	        workbook.close();
+
+	        return "AE_MID_FX_DEAL data processed successfully for Report Date: " + toDate;
+	    }
 	
+
+
 	private String processSheet(Sheet sheet) {
 
 	    DataFormatter formatter = new DataFormatter();

@@ -25,4 +25,9 @@ public interface RT_MID_FX_DEAL_REPO extends JpaRepository<RT_MID_FX_DEAL_DC, St
 			+ "and Last_day(Trunc(?1,'MM'))",nativeQuery = true)
 	List<Object[]> GetselectedmonthBPVdata(Date Selecteddate);
 	
+    boolean existsByReportDate(Date reportDate);
+
+    @Query("SELECT DISTINCT r.reportDate FROM RT_MID_FX_DEAL_DC r")
+    List<Date> findUploadedDates();
+	
 }

@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,56 +29,96 @@ public class RT_SLS_BEHAVIOURAL_PER_SERVICES {
 
 	@Autowired
 	private RT_SLS_BEHAVIOURAL_PER_REP rtSlsRepository;
+	 
+	public List<String> getUploadedDates() {
+	        List<Date> dates = rtSlsRepository.findUploadedDates();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        return dates.stream()
+	                .map(sdf::format)
+	                .collect(Collectors.toList());
+	    }
+	
+	public String processAndSaveFile(MultipartFile file, Date fromDate, Date toDate, String username) throws IOException {
 
-	public void processAndSaveFile(MultipartFile file, Date reportDate, String username) throws IOException {
-		logger.info("Processing SLS File. User: {}, Date: {}", username, reportDate);
+	    logger.info("Processing SLS File. User: {}, Reference Date: {}", username, toDate);
 
-		try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-			Sheet sheet = workbook.getSheetAt(0);
-			RT_SLS_BEHAVIOURAL_PER_ENTITY entity = new RT_SLS_BEHAVIOURAL_PER_ENTITY();
+	    Date today = new Date();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-			String uniqueId = UUID.randomUUID().toString().replace("-", "").toUpperCase();
-			if (uniqueId.length() > 20)
-				uniqueId = uniqueId.substring(0, 20);
+	    boolean exists = rtSlsRepository.existsByReportDate(toDate);
 
-			entity.setSrl_no(uniqueId);
-			entity.setReport_date(reportDate);
-			entity.setCreate_user(username);
-			entity.setCreate_time(new Date());
-			entity.setEntity_flg("N");
-			entity.setDel_flg("N");
-			entity.setReport_from_date(reportDate);
-			entity.setReport_to_date(reportDate);
+	    // Block if past date already uploaded
+	    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+	        throw new RuntimeException("Data already uploaded for this report date: " + toDate);
+	    }
 
-			mapSbSection(sheet, entity, 2);
-			mapCaSection(sheet, entity, 8);
-			mapOdSection(sheet, entity, 14);
-			mapBillsSection(sheet, entity, 20);
-			mapUndrawnSection(sheet, entity, 2);
-			mapNonFundSection(sheet, entity, 9);
+	    // If today upload again → replace
+	    if (exists) {
+	        rtSlsRepository.deleteByReportDate(toDate);
+	    }
 
-			// Term Deposit (Row 4, Cols 9-12)
-			Row tdRow = sheet.getRow(4);
-			if (tdRow != null) {
-				entity.setTerm_deposit_retail__rollover_sdr(getNumVal(tdRow, 9));
-				entity.setTerm_deposit_retail__rollover_fdr(getNumVal(tdRow, 10));
-				entity.setTerm_deposit_retail__premature_sdr(getNumVal(tdRow, 11));
-				entity.setTerm_deposit_retail__premature_fdr(getNumVal(tdRow, 12));
-			}
+	    try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
 
-			// Prepayment (Row 1, Col 28)
-			Row ppRow = sheet.getRow(1);
-			if (ppRow != null) {
-				entity.setSp_prepayment(getNumVal(ppRow, 28));
-			}
+	        Sheet sheet = workbook.getSheetAt(0);
 
-			rtSlsRepository.save(entity);
-			logger.info("Saved SLS entity ID: {}", entity.getSrl_no());
+	        RT_SLS_BEHAVIOURAL_PER_ENTITY entity = new RT_SLS_BEHAVIOURAL_PER_ENTITY();
 
-		} catch (Exception e) {
-			logger.error("Error processing file: {}", e.getMessage());
-			throw new IOException("Failed to process file: " + e.getMessage(), e);
-		}
+	        String uniqueId = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+	        if (uniqueId.length() > 20) {
+	            uniqueId = uniqueId.substring(0, 20);
+	        }
+
+	        entity.setSrl_no(uniqueId);
+
+	        // Set dates correctly
+	        entity.setReport_from_date(fromDate);
+	        entity.setReport_to_date(toDate);
+	        entity.setReportDate(toDate);
+
+	        entity.setCreate_user(username);
+	        entity.setCreate_time(new Date());
+
+	        entity.setEntity_flg("N");
+	        entity.setDel_flg("N");
+
+	        /* -------- Excel Mapping -------- */
+
+	        mapSbSection(sheet, entity, 2);
+	        mapCaSection(sheet, entity, 8);
+	        mapOdSection(sheet, entity, 14);
+	        mapBillsSection(sheet, entity, 20);
+	        mapUndrawnSection(sheet, entity, 2);
+	        mapNonFundSection(sheet, entity, 9);
+
+	        /* -------- Term Deposit -------- */
+
+	        Row tdRow = sheet.getRow(4);
+	        if (tdRow != null) {
+	            entity.setTerm_deposit_retail__rollover_sdr(getNumVal(tdRow, 9));
+	            entity.setTerm_deposit_retail__rollover_fdr(getNumVal(tdRow, 10));
+	            entity.setTerm_deposit_retail__premature_sdr(getNumVal(tdRow, 11));
+	            entity.setTerm_deposit_retail__premature_fdr(getNumVal(tdRow, 12));
+	        }
+
+	        /* -------- Prepayment -------- */
+
+	        Row ppRow = sheet.getRow(1);
+	        if (ppRow != null) {
+	            entity.setSp_prepayment(getNumVal(ppRow, 28));
+	        }
+
+	        rtSlsRepository.save(entity);
+
+	        logger.info("Saved SLS entity ID: {}", entity.getSrl_no());
+
+	        return "SLS data uploaded successfully!";
+
+	    } catch (Exception e) {
+
+	        logger.error("Error processing SLS file: {}", e.getMessage());
+
+	        throw new IOException("Failed to process file: " + e.getMessage(), e);
+	    }
 	}
 
 	private void mapSbSection(Sheet sheet, RT_SLS_BEHAVIOURAL_PER_ENTITY e, int startRow) {

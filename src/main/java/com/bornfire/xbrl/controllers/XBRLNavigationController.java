@@ -123,6 +123,7 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail;
+import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail_Rep;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
 import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
 import com.bornfire.xbrl.entities.RT_IRS_DETAIL_ENTITY;
@@ -141,6 +142,7 @@ import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template_repositor
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
 import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
 import com.bornfire.xbrl.entities.RT_MC_TABLE1_ENTITY;
+import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
 import com.bornfire.xbrl.entities.RT_MmData;
@@ -165,7 +167,6 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
 import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail_Rep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -485,7 +486,15 @@ public class XBRLNavigationController {
 			md.addAttribute("menuname", "ACCESS AND ROLES");
 			md.addAttribute("formmode", "list");
 			md.addAttribute("AccessandRoles", accessandrolesrepository.rulelist());
+
 		} else if (formmode.equals("add")) {
+
+		} /*
+			 * else if (formmode.equals("add")) { md.addAttribute("menuname",
+			 * "ACCESS AND ROLES - ADD"); md.addAttribute("formmode", "add"); }
+			 */
+		else if (formmode.equals("add")) {
+
 		    md.addAttribute("menuname", "ACCESS AND ROLES - ADD");
 		    md.addAttribute("formmode", "add");
 
@@ -3891,59 +3900,117 @@ public class XBRLNavigationController {
 		return "RT_FX_Upload";
 	}
 
+	@GetMapping("/getUploadedDates")
+	@ResponseBody
+	public List<String> getUploadedDates(@RequestParam String reportType) {
+
+	    if ("MFD".equals(reportType)) {
+	        return rtmidFxDealservice.getUploadedDates();
+	    } else if ("SLS".equals(reportType)) {
+	        return rtSlsService.getUploadedDates();
+	    } else if ("ACPR".equals(reportType)) {
+	        return acprService.getUploadedDates();
+	    }else if ("ACPRNF".equals(reportType)) {
+	        return acprService.getUploadedDate();
+	    }
+
+	    return new ArrayList<>();
+	}
 	// THE COMMON UPLOAD METHOD
 	@PostMapping("/commonUploadFile")
 	@ResponseBody
-	public ResponseEntity<String> commonUploadFile(@RequestParam("file") MultipartFile file,
-			@RequestParam("reportType") String reportType,
-			@RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-			@RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate, HttpServletRequest request) {
+	public ResponseEntity<String> commonUploadFile(
+	        @RequestParam("file") MultipartFile file,
+	        @RequestParam("reportType") String reportType,
+	        @RequestParam(value = "fromDate", required = false) String fromDateStr,
+	        @RequestParam("toDate") String toDateStr,
+	        HttpServletRequest request) {
 
-		String username = (String) request.getSession().getAttribute("USERNAME");
-		if (username == null)
-			username = "SYSTEM";
+	    String username = (String) request.getSession().getAttribute("USERNAME");
+	    if (username == null)
+	        username = "SYSTEM";
 
-		logger.info("Initiating Common Upload. Type: {}, User: {}, Reference Date: {}", reportType, username, toDate);
+	    try {
+	    	 if (reportType != null && reportType.contains(",")) {
+	             reportType = reportType.split(",")[0].trim();
+	         }
+	        // 🔹 Convert String → Date
+	    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-		try {
-			if (file.isEmpty()) {
-				return ResponseEntity.badRequest().body("Please select a valid file.");
-			}
+	      //  Date toDate = sdf.parse(toDateStr);
+	       // Date fromDate = null;
 
-			String resultMsg = "";
+	       // if (fromDateStr != null && !fromDateStr.isEmpty()) {
+	       //     fromDate = sdf.parse(fromDateStr);
+	      //  }
 
-			if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
-				resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
-			} else if ("FXP".equals(reportType)) {
-				// 1. Process FX (The image data)
-				resultMsg = rtFxPositionService.uploadFxData(file, fromDate, toDate, username);
-			} else if ("SLS".equals(reportType)) {
-				// 2. Process SLS (Your existing service)
-				// Note: Using toDate as the reportDate for your SLS service
-				rtSlsService.processAndSaveFile(file, toDate, username);
-				resultMsg = "SLS data uploaded and saved successfully!";
-			} else if ("ACPR".equals(reportType)) {
-				resultMsg = acprService.uploadAcprFile(file, fromDate, toDate, username);
-			} else if ("ACPRNF".equals(reportType)) {
-				resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
-			} else if ("MFD".equals(reportType)) {
-				resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, fromDate, toDate, username);
-			} else if ("GAMDATADUMP".equals(reportType)) {
-				resultMsg = rwaService.UploadEabandGamdata(file, reportType, toDate);
-			} else if ("ONLY_EAB_TABLE_DATA".equals(reportType)) {
-				resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
-			} else if ("RWABILLDETAIL".equals(reportType)) {
-				resultMsg = rwaService.Uploadrwadata(file, reportType, toDate);
-			} else {
-				return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
-			}
+            Date toDate = null;
+            Date fromDate = null;
+	        if (toDateStr != null && !toDateStr.trim().isEmpty() && !",".equals(toDateStr.trim())) {
+	            toDate = sdf.parse(toDateStr.trim());
+	        } else {
+	            return ResponseEntity.badRequest().body("Reference Date is required.");
+	        }
+	        /* Parse Start Date (only if present) */
+	        if (fromDateStr != null && !fromDateStr.trim().isEmpty() && !",".equals(fromDateStr.trim())) {
+	            fromDate = sdf.parse(fromDateStr.trim());
+	        }
+	        logger.info("Initiating Common Upload. Type: {}, User: {}, Reference Date: {}", reportType, username, toDate);
 
-			return ResponseEntity.ok(resultMsg);
+	        if (file.isEmpty()) {
+	            return ResponseEntity.badRequest().body("Please select a valid file.");
+	        }
 
-		} catch (Exception e) {
-			logger.error("Upload Error", e);
-			return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-		}
+	        String resultMsg = "";
+
+	        if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
+
+	            resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
+
+	        } else if ("FXP".equals(reportType)) {
+
+	            resultMsg = rtFxPositionService.uploadFxData(file, fromDate, toDate, username);
+
+	        } else if ("SLS".equals(reportType)) {
+
+	            resultMsg = rtSlsService.processAndSaveFile(file, fromDate, toDate, username);
+
+	        }else if ("ACPR".equals(reportType)) {
+
+	            resultMsg = acprService.uploadAcprFile(file, toDate, username);
+
+	        } else if ("ACPRNF".equals(reportType)) {
+
+	            resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
+
+	        } else if ("MFD".equals(reportType)) {
+
+	            resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, toDate, username);
+
+	        } else if ("GAMDATADUMP".equals(reportType)) {
+
+	            resultMsg = rwaService.UploadEabandGamdata(file, reportType, toDate);
+
+	        } else if ("ONLY_EAB_TABLE_DATA".equals(reportType)) {
+
+	            resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
+
+	        } else if ("RWABILLDETAIL".equals(reportType)) {
+
+	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate);
+
+	        } else {
+
+	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
+	        }
+
+	        return ResponseEntity.ok(resultMsg);
+
+	    } catch (Exception e) {
+
+	        logger.error("Upload Error", e);
+	        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+	    }
 	}
 
 	@RequestMapping(value = "rt-sls/downloadTemplate", method = RequestMethod.GET)

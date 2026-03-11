@@ -193,6 +193,7 @@ public class RT_ACPR_ENTITY {
 	@Column(name = "CREATE_USER")
 	private String createUser;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_TIME")
 	private Date createTime;
 
@@ -725,6 +726,62 @@ public class RT_ACPR_ENTITY {
 		this.rcreTime = rcreTime;
 	}
 
+	@Override
+	public String toString() {
+		return "RT_ACPR_ENTITY [srlNo=" + srlNo + ", reportDate=" + reportDate + ", territoryName=" + territoryName
+				+ ", solId=" + solId + ", custId=" + custId + ", accountId=" + accountId + ", accountName="
+				+ accountName + ", openingDate=" + openingDate + ", sanctDate=" + sanctDate + ", glHead=" + glHead
+				+ ", scheme=" + scheme + ", constCode=" + constCode + ", docuDate=" + docuDate + ", ladDate=" + ladDate
+				+ ", nextReview=" + nextReview + ", limitExpiry=" + limitExpiry + ", assetClass=" + assetClass
+				+ ", npaDate=" + npaDate + ", fraud=" + fraud + ", restrDate=" + restrDate + ", intRate=" + intRate
+				+ ", currency=" + currency + ", sanctionLimit=" + sanctionLimit + ", adhocLimit=" + adhocLimit
+				+ ", balance=" + balance + ", interestSuspense=" + interestSuspense + ", deduction=" + deduction
+				+ ", stockDate=" + stockDate + ", stockAmount=" + stockAmount + ", bookDebtAmount=" + bookDebtAmount
+				+ ", fdAmount=" + fdAmount + ", residentialAmount=" + residentialAmount + ", othersSecurityAmount="
+				+ othersSecurityAmount + ", secValDate=" + secValDate + ", allocSecAmount=" + allocSecAmount
+				+ ", securedAmount=" + securedAmount + ", homeSecProv=" + homeSecProv + ", homeUnsecProv="
+				+ homeUnsecProv + ", homeTotProv=" + homeTotProv + ", hostSecProv=" + hostSecProv + ", hostUnsecProv="
+				+ hostUnsecProv + ", hostTotProv=" + hostTotProv + ", stringentSecProv=" + stringentSecProv
+				+ ", stringentUnsecProv=" + stringentUnsecProv + ", stringentProv=" + stringentProv
+				+ ", additionalProvision=" + additionalProvision + ", totalProvision=" + totalProvision + ", netAmount="
+				+ netAmount + ", secured=" + secured + ", bankGovtGtee=" + bankGovtGtee + ", unsecured=" + unsecured
+				+ ", sectorCode=" + sectorCode + ", activityCode=" + activityCode + ", industryDetails="
+				+ industryDetails + ", panNumber=" + panNumber + ", customerHealth=" + customerHealth
+				+ ", reportFromDate=" + reportFromDate + ", reportToDate=" + reportToDate + ", delFlg=" + delFlg
+				+ ", rcreUserId=" + rcreUserId + ", createUser=" + createUser + ", createTime=" + createTime
+				+ ", entityFlg=" + entityFlg + ", modifyFlg=" + modifyFlg + ", rcreTime=" + rcreTime + ", getSrlNo()="
+				+ getSrlNo() + ", getReportDate()=" + getReportDate() + ", getTerritoryName()=" + getTerritoryName()
+				+ ", getSolId()=" + getSolId() + ", getCustId()=" + getCustId() + ", getAccountId()=" + getAccountId()
+				+ ", getAccountName()=" + getAccountName() + ", getOpeningDate()=" + getOpeningDate()
+				+ ", getSanctDate()=" + getSanctDate() + ", getGlHead()=" + getGlHead() + ", getScheme()=" + getScheme()
+				+ ", getConstCode()=" + getConstCode() + ", getDocuDate()=" + getDocuDate() + ", getLadDate()="
+				+ getLadDate() + ", getNextReview()=" + getNextReview() + ", getLimitExpiry()=" + getLimitExpiry()
+				+ ", getAssetClass()=" + getAssetClass() + ", getNpaDate()=" + getNpaDate() + ", getFraud()="
+				+ getFraud() + ", getRestrDate()=" + getRestrDate() + ", getIntRate()=" + getIntRate()
+				+ ", getCurrency()=" + getCurrency() + ", getSanctionLimit()=" + getSanctionLimit()
+				+ ", getAdhocLimit()=" + getAdhocLimit() + ", getBalance()=" + getBalance() + ", getInterestSuspense()="
+				+ getInterestSuspense() + ", getDeduction()=" + getDeduction() + ", getStockDate()=" + getStockDate()
+				+ ", getStockAmount()=" + getStockAmount() + ", getBookDebtAmount()=" + getBookDebtAmount()
+				+ ", getFdAmount()=" + getFdAmount() + ", getResidentialAmount()=" + getResidentialAmount()
+				+ ", getOthersSecurityAmount()=" + getOthersSecurityAmount() + ", getSecValDate()=" + getSecValDate()
+				+ ", getAllocSecAmount()=" + getAllocSecAmount() + ", getSecuredAmount()=" + getSecuredAmount()
+				+ ", getHomeSecProv()=" + getHomeSecProv() + ", getHomeUnsecProv()=" + getHomeUnsecProv()
+				+ ", getHomeTotProv()=" + getHomeTotProv() + ", getHostSecProv()=" + getHostSecProv()
+				+ ", getHostUnsecProv()=" + getHostUnsecProv() + ", getHostTotProv()=" + getHostTotProv()
+				+ ", getStringentSecProv()=" + getStringentSecProv() + ", getStringentUnsecProv()="
+				+ getStringentUnsecProv() + ", getStringentProv()=" + getStringentProv() + ", getAdditionalProvision()="
+				+ getAdditionalProvision() + ", getTotalProvision()=" + getTotalProvision() + ", getNetAmount()="
+				+ getNetAmount() + ", getSecured()=" + getSecured() + ", getBankGovtGtee()=" + getBankGovtGtee()
+				+ ", getUnsecured()=" + getUnsecured() + ", getSectorCode()=" + getSectorCode() + ", getActivityCode()="
+				+ getActivityCode() + ", getIndustryDetails()=" + getIndustryDetails() + ", getPanNumber()="
+				+ getPanNumber() + ", getCustomerHealth()=" + getCustomerHealth() + ", getReportFromDate()="
+				+ getReportFromDate() + ", getReportToDate()=" + getReportToDate() + ", getDelFlg()=" + getDelFlg()
+				+ ", getRcreUserId()=" + getRcreUserId() + ", getCreateUser()=" + getCreateUser() + ", getCreateTime()="
+				+ getCreateTime() + ", getEntityFlg()=" + getEntityFlg() + ", getModifyFlg()=" + getModifyFlg()
+				+ ", getRcreTime()=" + getRcreTime() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+				+ ", toString()=" + super.toString() + "]";
+	}
+
 	public RT_ACPR_ENTITY(String srlNo, Date reportDate, String territoryName, String solId, String custId,
 			String accountId, String accountName, Date openingDate, Date sanctDate, String glHead, String scheme,
 			String constCode, Date docuDate, Date ladDate, Date nextReview, Date limitExpiry, String assetClass,
@@ -807,64 +864,9 @@ public class RT_ACPR_ENTITY {
 		this.rcreTime = rcreTime;
 	}
 
-	@Override
-	public String toString() {
-		return "RT_ACPR_ENTITY [srlNo=" + srlNo + ", reportDate=" + reportDate + ", territoryName=" + territoryName
-				+ ", solId=" + solId + ", custId=" + custId + ", accountId=" + accountId + ", accountName="
-				+ accountName + ", openingDate=" + openingDate + ", sanctDate=" + sanctDate + ", glHead=" + glHead
-				+ ", scheme=" + scheme + ", constCode=" + constCode + ", docuDate=" + docuDate + ", ladDate=" + ladDate
-				+ ", nextReview=" + nextReview + ", limitExpiry=" + limitExpiry + ", assetClass=" + assetClass
-				+ ", npaDate=" + npaDate + ", fraud=" + fraud + ", restrDate=" + restrDate + ", intRate=" + intRate
-				+ ", currency=" + currency + ", sanctionLimit=" + sanctionLimit + ", adhocLimit=" + adhocLimit
-				+ ", balance=" + balance + ", interestSuspense=" + interestSuspense + ", deduction=" + deduction
-				+ ", stockDate=" + stockDate + ", stockAmount=" + stockAmount + ", bookDebtAmount=" + bookDebtAmount
-				+ ", fdAmount=" + fdAmount + ", residentialAmount=" + residentialAmount + ", othersSecurityAmount="
-				+ othersSecurityAmount + ", secValDate=" + secValDate + ", allocSecAmount=" + allocSecAmount
-				+ ", securedAmount=" + securedAmount + ", homeSecProv=" + homeSecProv + ", homeUnsecProv="
-				+ homeUnsecProv + ", homeTotProv=" + homeTotProv + ", hostSecProv=" + hostSecProv + ", hostUnsecProv="
-				+ hostUnsecProv + ", hostTotProv=" + hostTotProv + ", stringentSecProv=" + stringentSecProv
-				+ ", stringentUnsecProv=" + stringentUnsecProv + ", stringentProv=" + stringentProv
-				+ ", additionalProvision=" + additionalProvision + ", totalProvision=" + totalProvision + ", netAmount="
-				+ netAmount + ", secured=" + secured + ", bankGovtGtee=" + bankGovtGtee + ", unsecured=" + unsecured
-				+ ", sectorCode=" + sectorCode + ", activityCode=" + activityCode + ", industryDetails="
-				+ industryDetails + ", panNumber=" + panNumber + ", customerHealth=" + customerHealth
-				+ ", reportFromDate=" + reportFromDate + ", reportToDate=" + reportToDate + ", delFlg=" + delFlg
-				+ ", rcreUserId=" + rcreUserId + ", createUser=" + createUser + ", createTime=" + createTime
-				+ ", entityFlg=" + entityFlg + ", modifyFlg=" + modifyFlg + ", rcreTime=" + rcreTime + ", getSrlNo()="
-				+ getSrlNo() + ", getReportDate()=" + getReportDate() + ", getTerritoryName()=" + getTerritoryName()
-				+ ", getSolId()=" + getSolId() + ", getCustId()=" + getCustId() + ", getAccountId()=" + getAccountId()
-				+ ", getAccountName()=" + getAccountName() + ", getOpeningDate()=" + getOpeningDate()
-				+ ", getSanctDate()=" + getSanctDate() + ", getGlHead()=" + getGlHead() + ", getScheme()=" + getScheme()
-				+ ", getConstCode()=" + getConstCode() + ", getDocuDate()=" + getDocuDate() + ", getLadDate()="
-				+ getLadDate() + ", getNextReview()=" + getNextReview() + ", getLimitExpiry()=" + getLimitExpiry()
-				+ ", getAssetClass()=" + getAssetClass() + ", getNpaDate()=" + getNpaDate() + ", getFraud()="
-				+ getFraud() + ", getRestrDate()=" + getRestrDate() + ", getIntRate()=" + getIntRate()
-				+ ", getCurrency()=" + getCurrency() + ", getSanctionLimit()=" + getSanctionLimit()
-				+ ", getAdhocLimit()=" + getAdhocLimit() + ", getBalance()=" + getBalance() + ", getInterestSuspense()="
-				+ getInterestSuspense() + ", getDeduction()=" + getDeduction() + ", getStockDate()=" + getStockDate()
-				+ ", getStockAmount()=" + getStockAmount() + ", getBookDebtAmount()=" + getBookDebtAmount()
-				+ ", getFdAmount()=" + getFdAmount() + ", getResidentialAmount()=" + getResidentialAmount()
-				+ ", getOthersSecurityAmount()=" + getOthersSecurityAmount() + ", getSecValDate()=" + getSecValDate()
-				+ ", getAllocSecAmount()=" + getAllocSecAmount() + ", getSecuredAmount()=" + getSecuredAmount()
-				+ ", getHomeSecProv()=" + getHomeSecProv() + ", getHomeUnsecProv()=" + getHomeUnsecProv()
-				+ ", getHomeTotProv()=" + getHomeTotProv() + ", getHostSecProv()=" + getHostSecProv()
-				+ ", getHostUnsecProv()=" + getHostUnsecProv() + ", getHostTotProv()=" + getHostTotProv()
-				+ ", getStringentSecProv()=" + getStringentSecProv() + ", getStringentUnsecProv()="
-				+ getStringentUnsecProv() + ", getStringentProv()=" + getStringentProv() + ", getAdditionalProvision()="
-				+ getAdditionalProvision() + ", getTotalProvision()=" + getTotalProvision() + ", getNetAmount()="
-				+ getNetAmount() + ", getSecured()=" + getSecured() + ", getBankGovtGtee()=" + getBankGovtGtee()
-				+ ", getUnsecured()=" + getUnsecured() + ", getSectorCode()=" + getSectorCode() + ", getActivityCode()="
-				+ getActivityCode() + ", getIndustryDetails()=" + getIndustryDetails() + ", getPanNumber()="
-				+ getPanNumber() + ", getCustomerHealth()=" + getCustomerHealth() + ", getReportFromDate()="
-				+ getReportFromDate() + ", getReportToDate()=" + getReportToDate() + ", getDelFlg()=" + getDelFlg()
-				+ ", getRcreUserId()=" + getRcreUserId() + ", getCreateUser()=" + getCreateUser() + ", getCreateTime()="
-				+ getCreateTime() + ", getEntityFlg()=" + getEntityFlg() + ", getModifyFlg()=" + getModifyFlg()
-				+ ", getRcreTime()=" + getRcreTime() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
-	}
-
 	public RT_ACPR_ENTITY() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
 }
