@@ -147,10 +147,8 @@
 								<label for="reportId" class="col-sm-4 col-form-label text-left">Regulatory
 									Return</label>
 								<div class="col-sm-8">
-									<select id="reportId"
-									        name="reportType"
-									        class="form-control"
-									        onchange="updateFormatOptions()">
+									<select id="reportId" name="reportType" class="form-control"
+										onchange="updateFormatOptions()">
 										<option value="" selected disabled>-- Select Return --</option>
 										<option value="SLS">SLS - Structural Liquidity Statement</option>
 										<option value="FXP">FXP - Foreign Exchange Position</option>
@@ -196,46 +194,23 @@
 								</div>
 							</div>-->
 							<div class="form-group row">
-							<label class="col-sm-4 col-form-label text-left">Reporting Period</label>
+								<label class="col-sm-4 col-form-label text-left">Reporting Period</label>
 
-							<div class="col-sm-4" id="fromDateDiv" style="display:none;">
-							<label class="sr-only" for="fromDate">From</label>
+								<div class="col-sm-4" id="fromDateDiv" style="display:none;">
+									<label class="sr-only" for="fromDate">From</label>
+									<input class="form-control" type="text" id="fromDate" name="fromDate"
+										title="Period Start Date">
 
-							<input 
-							       class="form-control"
-							        type="text" id="fromDate"
-							       name="fromDate"
-							       title="Period Start Date">
-								   
-						
+									<small class="form-text text-muted">Start Date</small>
+								</div>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="toDate" name="toDate" autocomplete="off"
+										required>
 
-							<small class="form-text text-muted">Start Date</small>
-							</div>
-
-							<div class="col-sm-4">
-							<input type="text"
-							       class="form-control"
-							       id="toDate"
-							       name="toDate"
-							       autocomplete="off"
-							       required>
-
-							<small class="form-text text-muted">Reference Date (Report Date)</small>
-							</div>
+									<small class="form-text text-muted">Reference Date (Report Date)</small>
+								</div>
 							</div>
 							<!-- 4. File Attachment -->
-							<!--<div class="form-group row mt-4 border-top pt-4">
-								<label for="fileInput" class="col-sm-4 col-form-label text-right">Source File</label>
-								<div class="col-sm-8">
-									<div class="custom-file">
-										<input type="file" class="custom-file-input" id="fileInput" name="file"
-											required>
-										<label class="custom-file-label" for="fileInput">Choose file...</label>
-									</div>
-									<small class="form-text text-muted" id="fileConstraints">Supported formats: Select
-										Format first</small>
-								</div>
-							</div>-->
 							<!-- 4. File Attachment -->
 							<div class="form-group row mt-4 border-top pt-4">
 								<label class="col-sm-4 col-form-label text-left">Source File</label>
@@ -261,10 +236,8 @@
 							</div>
 							<div class="row mt-4">
 								<div class="col-12 text-right">
-									<button type="button" class="btn btn-secondary mr-2"
-										onclick="window.location.href='/Dashboard'">
-										<i class="fas fa-times mr-1"></i> Cancel
-									</button>
+									<button type="button" class="btn btn-secondary"
+										onclick="location.reload()">Cancel</button>
 									<button type="button" class="btn btn-corporate" onclick="submitIngestion()">
 										<i class="fas fa-upload mr-1"></i> Upload Data
 									</button>
@@ -307,95 +280,95 @@
 	</div>
 	<!-- Confirm Upload Modal -->
 	<div class="modal fade" id="confirmUploadModal" tabindex="-1">
-	    <div class="modal-dialog modal-lg modal-dialog-centered">
-	        <div class="modal-content">
-	            <div class="modal-header confirm-header">
-	                <h5 class="modal-title">Confirm Upload</h5>
-	                <button type="button" class="close text-white" data-dismiss="modal">
-	                    &times;
-	                </button>
-	            </div>
-	            <div class="modal-body text-center">
-	                <p class="confirm-text">
-	                    Do you want to upload again for today's date?
-	                </p>
-	            </div>
-	            <div class="modal-footer justify-content-center">
-	                <button class="btn btn-secondary" data-dismiss="modal">No</button>
-	                <button class="btn btn-primary" id="confirmUploadBtn">Yes</button>
-	            </div>
-	        </div>
-	    </div>
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header confirm-header">
+					<h5 class="modal-title">Confirm Upload</h5>
+					<button type="button" class="close text-white" data-dismiss="modal">
+						&times;
+					</button>
+				</div>
+				<div class="modal-body text-center">
+					<p class="confirm-text">
+						Do you want to upload again for today's date?
+					</p>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button class="btn btn-secondary" data-dismiss="modal">No</button>
+					<button class="btn btn-primary" id="confirmUploadBtn">Yes</button>
+				</div>
+			</div>
+		</div>
 	</div>
-	
+
 	<!-- Success Modal -->
 	<div class="modal fade" id="successModal" tabindex="-1">
-	    <div class="modal-dialog modal-md modal-dialog-centered">
-	        <div class="modal-content">
-	            <div class="modal-header success-header">
-	                <h5 class="modal-title">Upload Status</h5>
-	                <button type="button" class="close text-white" data-dismiss="modal">
-	                    &times;
-	                </button>
-	            </div>
-	            <div class="modal-body text-center">
-	                <div class="success-icon">
-	                    ✔
-	                </div>
-	                <p id="successMessage" class="success-text">
-	                    File uploaded successfully.
-	                </p>
-	            </div>
-	            <div class="modal-footer justify-content-center">
-	                <button class="btn btn-success" data-dismiss="modal">
-	                    OK
-	                </button>
-	            </div>
-	        </div>
-	    </div>
+		<div class="modal-dialog modal-md modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header success-header">
+					<h5 class="modal-title">Upload Status</h5>
+					<button type="button" class="close text-white" data-dismiss="modal">
+						&times;
+					</button>
+				</div>
+				<div class="modal-body text-center">
+					<div class="success-icon">
+						✔
+					</div>
+					<p id="successMessage" class="success-text">
+						File uploaded successfully.
+					</p>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button class="btn btn-success" data-dismiss="modal">
+						OK
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<script>
 		var uploadedDates = [];
 
 		$(document).ready(function () {
-		    $("#reportId").trigger("change");
-		    // File name display
-		    $("#fileInput").change(function () {
-		        var fileName = $(this).val().split("\\").pop();
-		        $("#fileName").val(fileName);
-		    });
+			$("#reportId").trigger("change");
+			// File name display
+			$("#fileInput").change(function () {
+				var fileName = $(this).val().split("\\").pop();
+				$("#fileName").val(fileName);
+			});
 
-		    // Datepicker
+			// Datepicker
 			$("#fromDate").datepicker({
-			       dateFormat: "dd-mm-yy",
-			       changeMonth: true,
-			       changeYear: true
-			   });
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true
+			});
 
-			   $("#toDate").datepicker({
-			       dateFormat: "dd-mm-yy",
-			       changeMonth: true,
-			       changeYear: true
-			   });
+			$("#toDate").datepicker({
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true
+			});
 
 		});
-			// Date Logic: Auto-validate
-			$("#toDate, #fromDate").change(function () {
-				var from = $("#fromDate").val();
-				var to = $("#toDate").val();
-				if (from && to) {
-					var fromParts = from.split("-");
-					var toParts = to.split("-");
-					var fromDate = new Date(fromParts[2], fromParts[1] - 1, fromParts[0]);
-					var toDate = new Date(toParts[2], toParts[1] - 1, toParts[0]);
-					if (fromDate > toDate) {
-						$("#alertMsg").text("Start Date cannot be greater than Reference Date.");
-						$("#alertModal").modal('show');
-						$(this).val("");
-					}
+		// Date Logic: Auto-validate
+		$("#toDate, #fromDate").change(function () {
+			var from = $("#fromDate").val();
+			var to = $("#toDate").val();
+			if (from && to) {
+				var fromParts = from.split("-");
+				var toParts = to.split("-");
+				var fromDate = new Date(fromParts[2], fromParts[1] - 1, fromParts[0]);
+				var toDate = new Date(toParts[2], toParts[1] - 1, toParts[0]);
+				if (fromDate > toDate) {
+					$("#alertMsg").text("Start Date cannot be greater than Reference Date.");
+					$("#alertModal").modal('show');
+					$(this).val("");
 				}
-			});
-		
+			}
+		});
+
 
 		// 1. Dynamic Dropdown Logic
 		function updateFormatOptions() {
@@ -463,242 +436,226 @@
 
 		$("#reportId").change(function () {
 
-		    var reportType = $(this).val();
+			var reportType = $(this).val();
 
-		    /* SHOW START DATE ONLY FOR SLS */
+			/* SHOW START DATE ONLY FOR SLS */
 
-		    if (reportType === "SLS") {
+			if (reportType === "SLS") {
 
-		        $("#fromDateDiv").show();
-		        $("#fromDate").prop("required", true);
+				$("#fromDateDiv").show();
+				$("#fromDate").prop("required", true);
 
-		        $("#downloadBtn").show();
+				$("#downloadBtn").show();
 
-		    } 
-		    else {
+			}
+			else {
 
-		        $("#fromDateDiv").hide();
-		        $("#fromDate").prop("required", false);
-		        $("#fromDate").val("");
+				$("#fromDateDiv").hide();
+				$("#fromDate").prop("required", false);
+				$("#fromDate").val("");
 
-		        $("#downloadBtn").hide();
-		    }
+				$("#downloadBtn").hide();
+			}
 
-		    /* FETCH UPLOADED DATES */
+			/* FETCH UPLOADED DATES */
 
-		    $.ajax({
-
-		        url: "getUploadedDates",
-		        type: "GET",
-		        data: { reportType: reportType },
-
-		        success: function (data) {
-
-		            uploadedDates = data;
-
-		            $("#toDate").datepicker("destroy");
-
-		            $("#toDate").datepicker({
-
-		                dateFormat: "dd-mm-yy",
-		                changeMonth: true,
-		                changeYear: true,
-
-		                beforeShowDay: function (date) {
-
-		                    var d = $.datepicker.formatDate('dd-mm-yy', date);
-		                    var today = $.datepicker.formatDate('dd-mm-yy', new Date());
-
-		                    if (uploadedDates.includes(d) && d !== today) {
-
-		                        return [false, "disabled-date", "Already Uploaded"];
-		                    }
-
-		                    return [true, ""];
-		                }
-		            });
-
-		        },
-
-		        error: function () {
-
-		            console.log("Error fetching uploaded dates");
-
-		        }
-
-		    });
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					uploadedDates = data;
+					$("#toDate").datepicker("destroy");
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						changeMonth: true,
+						changeYear: true,
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+							if (uploadedDates.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
+							}
+							return [true, ""];
+						}
+					});
+				},
+				error: function () {
+					console.log("Error fetching uploaded dates");
+				}
+			});
 
 		});
-			if (reportType === "MFD") {
+		if (reportType === "MFD") {
 
-				$.ajax({
-					url: "getUploadedDates",
-					type: "GET",
-					data: {reportType: reportType},
-					success: function (data) {
-						$("#toDate").datepicker("destroy");
-						uploadedDates = data;
-						$("#toDate").datepicker({
-							dateFormat: "dd-mm-yy",
-							beforeShowDay: function (date) {
-								var d = $.datepicker.formatDate('dd-mm-yy', date);
-								var today = $.datepicker.formatDate('dd-mm-yy', new Date());
-								// Past uploaded dates disable
-								if (data.includes(d) && d !== today) {
-									return [false, "disabled-date", "Already Uploaded"];
-								}
-								// Today always enable
-								return [true, ""];
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					$("#toDate").datepicker("destroy");
+					uploadedDates = data;
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+							// Past uploaded dates disable
+							if (data.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
 							}
-						});
-					}
-				});
-			}
-			if (reportType === "ACPR") {
+							// Today always enable
+							return [true, ""];
+						}
+					});
+				}
+			});
+		}
+		if (reportType === "ACPR") {
 
-				$.ajax({
-					url: "getUploadedDates",
-					type: "GET",
-					data: {reportType: reportType},
-					success: function (data) {
-						uploadedDates = data;
-						$("#toDate").datepicker("destroy");
-						$("#toDate").datepicker({
-							dateFormat: "dd-mm-yy",
-							beforeShowDay: function (date) {
-								var d = $.datepicker.formatDate('dd-mm-yy', date);
-								var today = $.datepicker.formatDate('dd-mm-yy', new Date());
-								// Past uploaded dates disable
-								if (data.includes(d) && d !== today) {
-									return [false, "disabled-date", "Already Uploaded"];
-								}
-								// Today always enable
-								return [true, ""];
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					uploadedDates = data;
+					$("#toDate").datepicker("destroy");
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+							// Past uploaded dates disable
+							if (data.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
 							}
-						});
-					}
-				});
-			}
-			if (reportType === "ACPRNF") {
+							// Today always enable
+							return [true, ""];
+						}
+					});
+				}
+			});
+		}
+		if (reportType === "ACPRNF") {
 
-				$.ajax({
-					url: "getUploadedDates",
-					type: "GET",
-					data: {reportType: reportType},
-					success: function (data) {
-						uploadedDates = data;
-						$("#toDate").datepicker("destroy");
-						$("#toDate").datepicker({
-							dateFormat: "dd-mm-yy",
-							beforeShowDay: function (date) {
-								var d = $.datepicker.formatDate('dd-mm-yy', date);
-								var today = $.datepicker.formatDate('dd-mm-yy', new Date());
-								// Past uploaded dates disable
-								if (data.includes(d) && d !== today) {
-									return [false, "disabled-date", "Already Uploaded"];
-								}
-								// Today always enable
-								return [true, ""];
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					uploadedDates = data;
+					$("#toDate").datepicker("destroy");
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+							// Past uploaded dates disable
+							if (data.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
 							}
-						});
-					}
-				});
-			}
-	
+							// Today always enable
+							return [true, ""];
+						}
+					});
+				}
+			});
+		}
+
 		// 4. Submission Logic
 		function submitIngestion() {
 
-		    var reportType = $("#reportId").val();
-		    var format = $("#submissionFormat").val();
-		    var fromDate = $("#fromDate").val();
-		    var toDate = $("#toDate").val();
-		    var fileVal = $('#fileInput').val().toLowerCase();
+			var reportType = $("#reportId").val();
+			var format = $("#submissionFormat").val();
+			var fromDate = $("#fromDate").val();
+			var toDate = $("#toDate").val();
+			var fileVal = $('#fileInput').val().toLowerCase();
 
-		    var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+			var today = $.datepicker.formatDate('dd-mm-yy', new Date());
 
-		    /* Mandatory field check */
+			/* Mandatory field check */
 
-		    if (!reportType || !format || !toDate || !fileVal) {
+			if (!reportType || !format || !toDate || !fileVal) {
 
-		        $("#alertMsg").text("All fields are mandatory.");
-		        $("#alertModal").modal("show");
-		        return;
-		    }
+				$("#alertMsg").text("All fields are mandatory.");
+				$("#alertModal").modal("show");
+				return;
+			}
 
-		    /* Validate extension */
+			/* Validate extension */
 
-		    var isValid = false;
+			var isValid = false;
 
-		    if (format === "EXCEL" && (fileVal.endsWith(".xlsx") || fileVal.endsWith(".xls")))
-		        isValid = true;
+			if (format === "EXCEL" && (fileVal.endsWith(".xlsx") || fileVal.endsWith(".xls")))
+				isValid = true;
 
-		    if (format === "TEXT" && (fileVal.endsWith(".txt") || fileVal.endsWith(".csv")))
-		        isValid = true;
+			if (format === "TEXT" && (fileVal.endsWith(".txt") || fileVal.endsWith(".csv")))
+				isValid = true;
 
-		    if (!isValid) {
+			if (!isValid) {
 
-		        $("#alertMsg").text("File extension does not match format.");
-		        $("#alertModal").modal("show");
-		        return;
-		    }
+				$("#alertMsg").text("File extension does not match format.");
+				$("#alertModal").modal("show");
+				return;
+			}
 
-		    /* Confirm Upload if Today Already Uploaded */
+			/* Confirm Upload if Today Already Uploaded */
 
-		    if (toDate === today && uploadedDates.includes(today)) {
+			if (toDate === today && uploadedDates.includes(today)) {
 
-		        $("#confirmUploadModal").modal("show");
+				$("#confirmUploadModal").modal("show");
 
-		        $("#confirmUploadBtn").off("click").on("click", function () {
+				$("#confirmUploadBtn").off("click").on("click", function () {
 
-		            $("#confirmUploadModal").modal("hide");
+					$("#confirmUploadModal").modal("hide");
 
-		            uploadFile();   // Upload only after YES
-		        });
+					uploadFile();   // Upload only after YES
+				});
 
-		        return;  // Stop execution here
-		    }
+				return;  // Stop execution here
+			}
 
-		    /* Normal upload */
+			/* Normal upload */
 
-		    uploadFile();
+			uploadFile();
 		}
 
 
 		/* ============================== Actual Upload AJAX */
 		function uploadFile() {
-		    var form = $('#uploadForm')[0];
-		    var data = new FormData(form);
-		    var reportType = $("#reportId").val();
-		    var fromDate = $("#fromDate").val();
-		    var toDate = $("#toDate").val();
-		    data.append("reportType", reportType);
-			if(fromDate && fromDate !== ""){
-			    data.append("fromDate", fromDate);
+			var form = $('#uploadForm')[0];
+			var data = new FormData(form);
+			var reportType = $("#reportId").val();
+			var fromDate = $("#fromDate").val();
+			var toDate = $("#toDate").val();
+			data.append("reportType", reportType);
+			if (fromDate && fromDate !== "") {
+				data.append("fromDate", fromDate);
 			}
-		    data.append("toDate", toDate);
-		    $('#loader').show();
-		    $.ajax({
-		        type: "POST",
-		        url: "commonUploadFile",
-		        enctype: 'multipart/form-data',
-		        data: data,
-		        processData: false,
-		        contentType: false,
-		        success: function (response) {
-		            $('#loader').hide();
-		            $("#successMessage").text(response);
-		            $("#successModal").modal("show");
-		            $('#uploadForm')[0].reset();
-		        },
-		        error: function (e) {
-		            $('#loader').hide();
-		            var msg = e.responseText || "System encountered an error.";
+			data.append("toDate", toDate);
+			$('#loader').show();
+			$.ajax({
+				type: "POST",
+				url: "commonUploadFile",
+				enctype: 'multipart/form-data',
+				data: data,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					$('#loader').hide();
+					$("#successMessage").text(response);
+					$("#successModal").modal("show");
+					$('#uploadForm')[0].reset();
+				},
+				error: function (e) {
+					$('#loader').hide();
+					var msg = e.responseText || "System encountered an error.";
 
-		            $('#uploadResult').html(
-		                '<div class="alert alert-danger">' + msg + '</div>'
-		            );
-		        }
-		    });
+					$('#uploadResult').html(
+						'<div class="alert alert-danger">' + msg + '</div>'
+					);
+				}
+			});
 		}
 	</script>
 	<style>
@@ -740,38 +697,39 @@
 		}
 	</style>
 	<style>
-	.confirm-header{
-	    background:#E67E00;
-	    color:white;
-	}
+		.confirm-header {
+			background: #E67E00;
+			color: white;
+		}
 
-	.confirm-text{
-	    font-size:18px;
-	    font-weight:500;
-	}
+		.confirm-text {
+			font-size: 18px;
+			font-weight: 500;
+		}
 
-	#confirmUploadModal .btn-primary{
-	    background:#E67E00;
-	}
+		#confirmUploadModal .btn-primary {
+			background: #E67E00;
+		}
 
-	.modal-content{
-	    border-radius:10px;
-	}
-	.success-header{
-	background:#E67E00;
-	color:white;
-	}
+		.modal-content {
+			border-radius: 10px;
+		}
 
-	.success-text{
-	font-size:18px;
-	font-weight:500;
-	}
+		.success-header {
+			background: #E67E00;
+			color: white;
+		}
 
-	.success-icon{
-	font-size:40px;
-	color:#28a745;
-	margin-bottom:10px;
-	}
+		.success-text {
+			font-size: 18px;
+			font-weight: 500;
+		}
+
+		.success-icon {
+			font-size: 40px;
+			color: #28a745;
+			margin-bottom: 10px;
+		}
 	</style>
 </body>
 
