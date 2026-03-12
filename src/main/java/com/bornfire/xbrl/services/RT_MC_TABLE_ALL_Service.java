@@ -4936,14 +4936,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR17_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR17_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(17);
-
-					updateCellPreserveStyle(row, 4, record.getR18_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR18_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(18);
-
-					updateCellPreserveStyle(row, 4, record.getR19_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR19_EVID_PRO_LFI(), null, createHelper);
+					
 					row = sheet.getRow(19);
 
 					progressMap.put(jobId, 15);
@@ -4953,14 +4946,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR21_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR21_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(21);
-
-					updateCellPreserveStyle(row, 4, record.getR22_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR22_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(22);
-
-					updateCellPreserveStyle(row, 4, record.getR23_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR23_EVID_PRO_LFI(), null, createHelper);
+					
 					row = sheet.getRow(23);
 
 					updateCellPreserveStyle(row, 4, record.getR24_LFI_RESP(), null, createHelper);
@@ -4994,14 +4980,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR31_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR31_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(31);
-
-					updateCellPreserveStyle(row, 4, record.getR32_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR32_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(32);
-
-					updateCellPreserveStyle(row, 4, record.getR33_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR33_EVID_PRO_LFI(), null, createHelper);
+					
 					row = sheet.getRow(33);
 
 					updateCellPreserveStyle(row, 4, record.getR34_LFI_RESP(), null, createHelper);
@@ -5010,14 +4989,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR35_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR35_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(35);
-
-					updateCellPreserveStyle(row, 4, record.getR36_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR36_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(36);
-
-					updateCellPreserveStyle(row, 4, record.getR37_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR37_EVID_PRO_LFI(), null, createHelper);
+					
 					row = sheet.getRow(37);
 
 					updateCellPreserveStyle(row, 4, record.getR38_LFI_RESP(), null, createHelper);
@@ -5026,15 +4998,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR39_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR39_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(39);
-
-					progressMap.put(jobId, 55);
-					updateCellPreserveStyle(row, 4, record.getR40_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR40_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(40);
-
-					updateCellPreserveStyle(row, 4, record.getR41_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR41_EVID_PRO_LFI(), null, createHelper);
+				
 					row = sheet.getRow(41);
 
 					updateCellPreserveStyle(row, 4, record.getR42_LFI_RESP(), null, createHelper);
@@ -5047,26 +5011,13 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR44_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR44_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(44);
-
-					updateCellPreserveStyle(row, 4, record.getR45_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR45_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(45);
-
-					updateCellPreserveStyle(row, 4, record.getR46_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR46_EVID_PRO_LFI(), null, createHelper);
+					
 					row = sheet.getRow(46);
 
 					updateCellPreserveStyle(row, 4, record.getR47_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR47_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(47);
 
-					updateCellPreserveStyle(row, 4, record.getR48_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR48_EVID_PRO_LFI(), null, createHelper);
-					row = sheet.getRow(48);
 
-					updateCellPreserveStyle(row, 4, record.getR49_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR49_EVID_PRO_LFI(), null, createHelper);
 					row = sheet.getRow(49);
 
 					progressMap.put(jobId, 70);

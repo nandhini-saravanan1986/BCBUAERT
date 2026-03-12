@@ -599,7 +599,7 @@ label.error {
 <style>
 #pageHeader {
 	position: sticky;
-	top: 110px;
+	/*top: 110px;*/
 	z-index: 1050;
 	background: white;
 	padding-top: 10px;
@@ -901,13 +901,13 @@ body {
 
 .table-responsive {
 	width: 100%;
-	max-height: calc(100vh - 272px);
+	max-height: calc(100vh - 285px);
 	overflow: auto;
 	position: relative;
 }
 
 .table-responsive thead {
-	position: sticky;
+	/* position: sticky; */
 	top: 0;
 	background-color: #e9ecf0;
 	z-index: 1;
@@ -959,6 +959,238 @@ body {
 	cursor: text;
 }
 </style>
+<style>
+.role-page-header {
+	position: relative !important;
+	margin-bottom: 10px !important;
+}
+
+.role-page-header .d-flex.align-items-center.gap-2 {
+	flex-grow: 1;
+	justify-content: flex-end;
+}
+
+.role-page-header .float-left {
+	position: absolute !important;
+	top: 100% !important;
+	left: 0 !important;
+	width: 100% !important;
+	padding: 28px 20px 0 20px !important;
+	display: flex !important;
+	align-items: flex-end !important;
+	/* border-bottom: 3px solid #E67E00 !important;  */
+	z-index: 1040;
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+.role-page-header .float-left::-webkit-scrollbar {
+	display: none;
+}
+
+.role-page-header .float-left .role-btn {
+	position: relative;
+	background: #ffffff !important;
+	color: #E67E00 !important;
+	border: none !important;
+	border-radius: 10px 10px 0 0 !important;
+	padding: 10px 10px !important;
+	margin-right: 2px !important;
+	height: 44px !important;
+	font-weight: 600 !important;
+	box-shadow: none !important;
+	transform: none !important;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+}
+
+.role-page-header .float-left .role-btn:not(.active):hover {
+	background: #FFF3D1 !important;
+}
+
+.role-page-header .float-left .role-btn:not(.active)+.role-btn:not(.active)::before
+	{
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: 25%;
+	height: 50%;
+	width: 1px;
+	background-color: #dee2e6;
+}
+
+.role-page-header .float-left .role-btn.active {
+	background: #E67E00 !important;
+	color: #ffffff !important;
+	z-index: 2;
+}
+
+#tabHeader {
+	position: relative !important;
+	margin-top: 0 !important;
+}
+
+#tabHeader>.mr-3.mb-2.text-right {
+	position: absolute !important;
+	top: auto !important;
+	bottom: 100% !important;
+	right: 20px !important;
+	z-index: 1050;
+	display: flex !important;
+	gap: 12px !important;
+	margin: 0 0 3px 0 !important;
+}
+
+#tabHeader>.mr-3.mb-2.text-right .role-btn {
+	border-radius: 25px !important;
+	border: 1px solid #E67E00 !important;
+	background: #ffffff !important;
+	color: #E67E00 !important;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+	transform: none !important;
+	padding: 6px 24px !important;
+	height: 38px !important;
+	font-weight: 600 !important;
+	display: flex !important;
+	align-items: center !important;
+}
+
+#tabHeader>.mr-3.mb-2.text-right .role-btn:hover {
+	background: #E67E00 !important;
+	color: #ffffff !important;
+}
+
+.role-page-header .form-group {
+	display: flex !important;
+	flex-direction: row-reverse;
+	align-items: center !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.role-page-header .form-group select {
+	margin-top: 0 !important;
+	border: 1px solid #E67E00 !important;
+	color: #333 !important;
+}
+
+.role-page-header .form-legend {
+	position: static !important;
+	transform: none !important;
+	margin-top: 0 !important;
+	padding-right: 12px !important;
+	color: #E67E00 !important;
+	font-weight: 600 !important;
+	font-size: 14px !important;
+}
+
+.role-page-header .float-left {
+	pointer-events: none !important;
+}
+
+.role-page-header .float-left .role-btn {
+	pointer-events: auto !important;
+}
+
+#tabHeader>.mr-3.mb-2.text-right {
+	pointer-events: auto !important;
+}
+</style>
+<style>
+
+
+/* Ensure the table wrapper allows scrolling */
+.table-responsive {
+  max-height: calc(100vh - 285px);
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+}
+
+/* 1. Master Header Layer  */
+.tab-pane:not(#conductcultureassessment) table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #7b6458 !important; 
+    z-index: 50 !important; 
+    box-shadow: inset 0 -1px 0 #dee2e6;
+}
+
+/* Override 2nd-row header rule if it exists */
+.tab-pane:not(#conductcultureassessment) table thead tr:nth-child(2) th {
+    z-index: 49 !important; 
+}
+
+/* 2. Sticky Body Columns  */
+.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(1) {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 20 !important; 
+    min-width: 150px !important; 
+    max-width: 150px !important;
+}
+
+.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(2) {
+    position: sticky !important;
+    left: 150px !important; 
+    z-index: 20 !important; 
+}
+
+
+/* Anchors the top-left headers both vertically (top:0) AND horizontally (left) */
+.tab-pane:not(#conductcultureassessment) table thead th:nth-child(1) {
+    left: 0 !important; 
+    z-index: 60 !important; 
+    background-color: #7b6458 !important; 
+}
+
+.tab-pane:not(#conductcultureassessment) table thead th:nth-child(2) {
+    left: 150px !important; 
+    z-index: 60 !important; 
+    background-color: #7b6458 !important; 
+}
+
+/* Same for the 2nd header row if it exists */
+.tab-pane:not(#conductcultureassessment) table thead tr:nth-child(2) th:nth-child(1) {
+    left: 0 !important; 
+    z-index: 59 !important;
+    background-color: #7b6458 !important; 
+}
+
+.tab-pane:not(#conductcultureassessment) table thead tr:nth-child(2) th:nth-child(2) {
+    left: 150px !important; 
+    z-index: 59 !important;
+    background-color: #7b6458 !important; 
+}
+
+
+/* Force Column 1 to be exactly forever */
+.tab-pane:not(#conductcultureassessment) table thead th:nth-child(1),
+.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(1) {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important; /* Forces text to wrap instead of stretching the column */
+}
+
+/* Force Column 2 to be exactly forever */
+.tab-pane:not(#conductcultureassessment) table thead th:nth-child(2),
+.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(2) {
+    width: 370px !important;
+    min-width: 370px !important;
+    max-width: 370px !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+}
+
+.tab-pane:not(#conductcultureassessment) table thead th:nth-child(2),
+.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(2) {
+    left: 150px !important;
+}
+</style>
+
 </head>
 
 
@@ -966,7 +1198,7 @@ body {
 
 
 
-<title>RiskInsights - RBS MC REPORTS</title>
+<title>RiskInsights - RBS Market Conduct Reports</title>
 
 <body>
 
@@ -979,31 +1211,32 @@ body {
 			class="role-page-header d-flex justify-content-between align-items-center"
 			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
 			<div class="text-left flex-grow-1">
-				<h4>RBS MC REPORTS</h4>
-
+				<h4 style="margin-bottom: 0px;">RBS Market Conduct Reports</h4>
 			</div>
 
 			<div class="d-flex align-items-center gap-2" style="margin-top: 8px;">
 				<div class="float-left">
 					<button class="role-btn" id="bankinformation-btn"
-						onclick="navigateToTab('bankinformation')">Table 1</button>
+						onclick="navigateToTab('bankinformation')">Bank
+						Information</button>
 					<button class="role-btn" id="bankconsumers-btn"
-						onclick="navigateToTab('bankconsumers')">Table 2</button>
+						onclick="navigateToTab('bankconsumers')">Bank Consumers</button>
 					<button class="role-btn" id="complaints-btn"
-						onclick="navigateToTab('complaints')">Table 3</button>
+						onclick="navigateToTab('complaints')">Complaints</button>
 					<button class="role-btn" id="retailproducts-btn"
-						onclick="navigateToTab('retailproducts')">Table 4</button>
+						onclick="navigateToTab('retailproducts')">Retail Products</button>
 					<button class="role-btn" id="bankemployee-btn"
-						onclick="navigateToTab('bankemployee')">Table 5</button>
+						onclick="navigateToTab('bankemployee')">Bank Employee</button>
 					<button class="role-btn" id="trainings-btn"
-						onclick="navigateToTab('trainings')">Table 6</button>
+						onclick="navigateToTab('trainings')">Trainings</button>
 					<button class="role-btn" id="additionalinformation-btn"
-						onclick="navigateToTab('additionalinformation')">Table 7</button>
+						onclick="navigateToTab('additionalinformation')">Additional
+						Information</button>
 					<button class="role-btn" id="islamicbanking-btn"
-						onclick="navigateToTab('islamicbanking')">Table 8</button>
+						onclick="navigateToTab('islamicbanking')">Islamic Banking</button>
 					<button class="role-btn" id="conductcultureassessment-btn"
-						onclick="navigateToTab('conductcultureassessment')">Table
-						9</button>
+						onclick="navigateToTab('conductcultureassessment')">Conduct
+						Culture Assessment</button>
 
 				</div>
 
@@ -1030,7 +1263,8 @@ body {
 						<option th:selected="${BRANCHCODE == '9019'}" value="9019">9019
 							- DFC</option>
 						<option value="consolidated">Consolidated</option>
-					</select> <label class="form-legend">Branch</label>
+					</select> <label class="form-legend" style="margin-bottom: 0px;">Branch
+						:</label>
 				</div>
 
 			</div>
@@ -1041,11 +1275,9 @@ body {
 
 			<div class="tab-pane fade" id="bankinformation" role="tabpanel"
 				th:if="${formmode=='bankinformation'}">
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -1054,6 +1286,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
@@ -1393,11 +1631,9 @@ body {
 			<div class="tab-pane fade" th:if="${formmode == 'bankconsumers'}"
 				id="bankconsumers" role="tabpanel">
 
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -1406,6 +1642,13 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
+
 				</div>
 				<div
 					th:if="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }"
@@ -5261,11 +5504,9 @@ body {
 
 			<div class="tab-pane fade" id="complaints" role="tabpanel"
 				th:if="${formmode=='complaints'}">
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -5274,6 +5515,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
@@ -7428,11 +7675,9 @@ body {
 
 			<div class="tab-pane fade" id="retailproducts" role="tabpanel"
 				th:if="${formmode=='retailproducts'}">
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -7441,6 +7686,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
@@ -10638,11 +10889,9 @@ body {
 			<div class="tab-pane fade" th:if="${formmode == 'bankemployee'}"
 				id="bankemployee" role="tabpanel">
 
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -10651,6 +10900,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
@@ -10926,11 +11181,9 @@ body {
 				th:if="${formmode=='trainings'}">
 
 
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -10939,6 +11192,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
@@ -11135,11 +11394,9 @@ body {
 			<div class="tab-pane fade" id="additionalinformation" role="tabpanel"
 				th:if="${formmode=='additionalinformation'}">
 
-				<div class="mr-3 mb-2 text-right"
+				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
-					<button type="button" class="role-btn" id="downloadBtn"
-						th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
-						onclick="downloadData()">Download</button>
+
 					<button type="button" class="role-btn" id="verifyBtn"
 						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' }"
 						onclick="verifyData()">Verify</button>
@@ -11148,6 +11405,12 @@ body {
 						onclick="enableEdit()">Modify</button>
 					<button type="button" class="role-btn" id="cancelBtn"
 						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
 				</div>
 				<div
 					th:if="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }"
@@ -11364,16 +11627,6 @@ body {
 										readonly class="table-input editable-input"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
-								<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-									<td rowspan="16"></td>
-								<td rowspan="16"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
@@ -11383,7 +11636,17 @@ body {
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
-								<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
+									<td rowspan="16"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
 									<td rowspan="16"></td>
@@ -11510,7 +11773,7 @@ body {
 										name="R8_TOT_BRAN_PREV" th:value="${report1.R8_TOT_BRAN_PREV}"
 										readonly class="table-input editable-input"></td>
 
-									
+
 									<td><input type="text" id="R8_NO_CON_ONBO_DIGI"
 										name="R8_NO_CON_ONBO_DIGI"
 										th:value="${report1.R8_NO_CON_ONBO_DIGI}" readonly
@@ -11629,7 +11892,7 @@ body {
 										name="R9_TOT_BRAN_PREV" th:value="${report1.R9_TOT_BRAN_PREV}"
 										readonly class="table-input editable-input"></td>
 
-									
+
 									<td><input type="text" id="R9_NO_CON_ONBO_DIGI"
 										name="R9_NO_CON_ONBO_DIGI"
 										th:value="${report1.R9_NO_CON_ONBO_DIGI}" readonly
@@ -11757,7 +12020,7 @@ body {
 										name="R10_NO_CON_ONBO_DIGI"
 										th:value="${report1.R10_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R10_TOT_ACC_LOAN_AML"
 										name="R10_TOT_ACC_LOAN_AML"
 										th:value="${report1.R10_TOT_ACC_LOAN_AML}" readonly
@@ -11881,7 +12144,7 @@ body {
 										name="R11_NO_CON_ONBO_DIGI"
 										th:value="${report1.R11_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R11_TOT_ACC_LOAN_AML"
 										name="R11_TOT_ACC_LOAN_AML"
 										th:value="${report1.R11_TOT_ACC_LOAN_AML}" readonly
@@ -12005,7 +12268,7 @@ body {
 										name="R12_NO_CON_ONBO_DIGI"
 										th:value="${report1.R12_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-									
+
 									<td><input type="text" id="R12_TOT_ACC_LOAN_AML"
 										name="R12_TOT_ACC_LOAN_AML"
 										th:value="${report1.R12_TOT_ACC_LOAN_AML}" readonly
@@ -12128,7 +12391,7 @@ body {
 										name="R13_NO_CON_ONBO_DIGI"
 										th:value="${report1.R13_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R13_TOT_ACC_LOAN_AML"
 										name="R13_TOT_ACC_LOAN_AML"
 										th:value="${report1.R13_TOT_ACC_LOAN_AML}" readonly
@@ -12252,7 +12515,7 @@ body {
 										name="R14_NO_CON_ONBO_DIGI"
 										th:value="${report1.R14_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-									
+
 									<td><input type="text" id="R14_TOT_ACC_LOAN_AML"
 										name="R14_TOT_ACC_LOAN_AML"
 										th:value="${report1.R14_TOT_ACC_LOAN_AML}" readonly
@@ -12376,7 +12639,7 @@ body {
 										name="R15_NO_CON_ONBO_DIGI"
 										th:value="${report1.R15_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R15_TOT_ACC_LOAN_AML"
 										name="R15_TOT_ACC_LOAN_AML"
 										th:value="${report1.R15_TOT_ACC_LOAN_AML}" readonly
@@ -12498,7 +12761,7 @@ body {
 										name="R16_NO_CON_ONBO_DIGI"
 										th:value="${report2.R16_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-									
+
 									<td><input type="text" id="R16_TOT_ACC_LOAN_AML"
 										name="R16_TOT_ACC_LOAN_AML"
 										th:value="${report2.R16_TOT_ACC_LOAN_AML}" readonly
@@ -12612,12 +12875,12 @@ body {
 										th:value="${report2.R17_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-									
+
 									<td><input type="text" id="R17_NO_CON_ONBO_DIGI"
 										name="R17_NO_CON_ONBO_DIGI"
 										th:value="${report2.R17_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-									
+
 									<td><input type="text" id="R17_TOT_ACC_LOAN_AML"
 										name="R17_TOT_ACC_LOAN_AML"
 										th:value="${report2.R17_TOT_ACC_LOAN_AML}" readonly
@@ -12732,12 +12995,12 @@ body {
 										th:value="${report2.R18_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-								
+
 									<td><input type="text" id="R18_NO_CON_ONBO_DIGI"
 										name="R18_NO_CON_ONBO_DIGI"
 										th:value="${report2.R18_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-									
+
 									<td><input type="text" id="R18_TOT_ACC_LOAN_AML"
 										name="R18_TOT_ACC_LOAN_AML"
 										th:value="${report2.R18_TOT_ACC_LOAN_AML}" readonly
@@ -12851,12 +13114,12 @@ body {
 										th:value="${report2.R19_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-									
+
 									<td><input type="text" id="R19_NO_CON_ONBO_DIGI"
 										name="R19_NO_CON_ONBO_DIGI"
 										th:value="${report2.R19_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R19_TOT_ACC_LOAN_AML"
 										name="R19_TOT_ACC_LOAN_AML"
 										th:value="${report2.R19_TOT_ACC_LOAN_AML}" readonly
@@ -12970,12 +13233,12 @@ body {
 										th:value="${report2.R20_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-									
+
 									<td><input type="text" id="R20_NO_CON_ONBO_DIGI"
 										name="R20_NO_CON_ONBO_DIGI"
 										th:value="${report2.R20_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R20_TOT_ACC_LOAN_AML"
 										name="R20_TOT_ACC_LOAN_AML"
 										th:value="${report2.R20_TOT_ACC_LOAN_AML}" readonly
@@ -13088,12 +13351,12 @@ body {
 										th:value="${report2.R21_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-								
+
 									<td><input type="text" id="R21_NO_CON_ONBO_DIGI"
 										name="R21_NO_CON_ONBO_DIGI"
 										th:value="${report2.R21_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R21_TOT_ACC_LOAN_AML"
 										name="R21_TOT_ACC_LOAN_AML"
 										th:value="${report2.R21_TOT_ACC_LOAN_AML}" readonly
@@ -13206,12 +13469,12 @@ body {
 										th:value="${report2.R22_TOT_BRAN_PREV}" readonly
 										class="table-input editable-input"></td>
 
-								
+
 									<td><input type="text" id="R22_NO_CON_ONBO_DIGI"
 										name="R22_NO_CON_ONBO_DIGI"
 										th:value="${report2.R22_NO_CON_ONBO_DIGI}" readonly
 										class="table-input editable-input"></td>
-								
+
 									<td><input type="text" id="R22_TOT_ACC_LOAN_AML"
 										name="R22_TOT_ACC_LOAN_AML"
 										th:value="${report2.R22_TOT_ACC_LOAN_AML}" readonly
@@ -13512,1578 +13775,1594 @@ body {
 
 			</div>
 
+
+
+			<div th:if="${formmode == 'islamicbanking'}" id="islamicbanking"
+				role="tabpanel" class="tab-pane fade">
+				<div class="mr-3 mb-2 mt-2 text-right"
+					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+
+					<button type="button" class="role-btn" id="verifyBtn"
+						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
+						onclick="verifyData()">Verify</button>
+					<button type="button" class="role-btn" id="modifyBtn"
+						th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+						onclick="enableEdit()">Modify</button>
+					<button type="button" class="role-btn" id="cancelBtn"
+						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
+				</div>
+
+				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
+					class="text-center mt-4">
+					<strong>No records found</strong>
+				</div>
+				<form id="reportForm" method="POST"
+					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
+						th:value="${reportlist[0].REPORT_DATE}"> <input
+						type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
+						th:value="${reportlist[0].BRANCH_CODE}"> <input
+						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
+						th:value="${reportlist[0].MODIFY_USERID}">
+					<div class="table-responsive" style="overflow: auto; border: none;">
+						<table id="usertable"
+							class="table table-bordered table-striped table-hover">
+
+							<thead class="thead-light">
+								<tr>
+									<th>Bank</th>
+									<th>Product</th>
+									<th>Number of Retail Consumers (Conventional and Islamic)
+										as of the specified time period</th>
+									<th>Number of Retail Consumers (Islamic) as of the
+										specified time period</th>
+									<th>Number of SME consumers (including Sole
+										proprietorships) - Conventional and Islamic</th>
+									<th>Number of SME consumers (including Sole
+										proprietorships) - Islamic</th>
+									<th>Total Number of Authorised Agents and outsourcing
+										service providers (including services or systems outsourced to
+										authorised agents)</th>
+									<th>Total Number of Point of Sale Terminals during the
+										specified time period</th>
+									<th>Total Number of Merchant tie ups during the specified
+										time period</th>
+									<th>Retail Asset/liability Size as of the specified
+										date(Islamic Only) (AED (000's))</th>
+									<th>Retail Asset Composition as of the specified date
+										(Loan to Retail Consumers)</th>
+									<th>Retail Asset Composition as of the specified date
+										(Loan to SME)</th>
+									<th>Number of complaints received during the specified
+										time period (Islamic Only)</th>
+
+								</tr>
+							</thead>
+							<tbody th:each="report : ${reportlist}">
+								<tr>
+									<td><input type="text" id="R8_BANK" name="R8_BANK"
+										th:value="${report.R8_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R8_PRODUCT" name="R8_PRODUCT"
+										th:value="${report.R8_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R8_NO_RET_CON_SPD"
+										name="R8_NO_RET_CON_SPD"
+										th:value="${report.R8_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R8_NO_ISC_SPD"
+										name="R8_NO_ISC_SPD" th:value="${report.R8_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R8_NO_SME_CON_ISC"
+										name="R8_NO_SME_CON_ISC"
+										th:value="${report.R8_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R8_NO_SME_ISC"
+										name="R8_NO_SME_ISC" th:value="${report.R8_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R8_TOT_AGE_OUT"
+										name="R8_TOT_AGE_OUT" th:value="${report.R8_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R8_TOT_PONT_SALE"
+										name="R8_TOT_PONT_SALE" th:value="${report.R8_TOT_PONT_SALE}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R8_TOT_MER_SPD"
+										name="R8_TOT_MER_SPD" th:value="${report.R8_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R8_RET_SIZE_ISC_AED"
+										name="R8_RET_SIZE_ISC_AED"
+										th:value="${report.R8_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R8_RET_ASSE_LON_RET"
+										name="R8_RET_ASSE_LON_RET"
+										th:value="${report.R8_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R8_RET_ASSE_LOAN_SME"
+										name="R8_RET_ASSE_LOAN_SME"
+										th:value="${report.R8_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R8_NO_COMP_ISLAMIC"
+										name="R8_NO_COMP_ISLAMIC"
+										th:value="${report.R8_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R9_BANK" name="R9_BANK"
+										th:value="${report.R9_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R9_PRODUCT" name="R9_PRODUCT"
+										th:value="${report.R9_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R9_NO_RET_CON_SPD"
+										name="R9_NO_RET_CON_SPD"
+										th:value="${report.R9_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_NO_ISC_SPD"
+										name="R9_NO_ISC_SPD" th:value="${report.R9_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R9_NO_SME_CON_ISC"
+										name="R9_NO_SME_CON_ISC"
+										th:value="${report.R9_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_NO_SME_ISC"
+										name="R9_NO_SME_ISC" th:value="${report.R9_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R9_TOT_AGE_OUT"
+										name="R9_TOT_AGE_OUT" th:value="${report.R9_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R9_TOT_PONT_SALE"
+										name="R9_TOT_PONT_SALE" th:value="${report.R9_TOT_PONT_SALE}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R9_TOT_MER_SPD"
+										name="R9_TOT_MER_SPD" th:value="${report.R9_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R9_RET_SIZE_ISC_AED"
+										name="R9_RET_SIZE_ISC_AED"
+										th:value="${report.R9_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_RET_ASSE_LON_RET"
+										name="R9_RET_ASSE_LON_RET"
+										th:value="${report.R9_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_RET_ASSE_LOAN_SME"
+										name="R9_RET_ASSE_LOAN_SME"
+										th:value="${report.R9_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_NO_COMP_ISLAMIC"
+										name="R9_NO_COMP_ISLAMIC"
+										th:value="${report.R9_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R10_BANK" name="R10_BANK"
+										th:value="${report.R10_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R10_PRODUCT" name="R10_PRODUCT"
+										th:value="${report.R10_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R10_NO_RET_CON_SPD"
+										name="R10_NO_RET_CON_SPD"
+										th:value="${report.R10_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_NO_ISC_SPD"
+										name="R10_NO_ISC_SPD" th:value="${report.R10_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R10_NO_SME_CON_ISC"
+										name="R10_NO_SME_CON_ISC"
+										th:value="${report.R10_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_NO_SME_ISC"
+										name="R10_NO_SME_ISC" th:value="${report.R10_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R10_TOT_AGE_OUT"
+										name="R10_TOT_AGE_OUT" th:value="${report.R10_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R10_TOT_PONT_SALE"
+										name="R10_TOT_PONT_SALE"
+										th:value="${report.R10_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_TOT_MER_SPD"
+										name="R10_TOT_MER_SPD" th:value="${report.R10_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R10_RET_SIZE_ISC_AED"
+										name="R10_RET_SIZE_ISC_AED"
+										th:value="${report.R10_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_RET_ASSE_LON_RET"
+										name="R10_RET_ASSE_LON_RET"
+										th:value="${report.R10_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_RET_ASSE_LOAN_SME"
+										name="R10_RET_ASSE_LOAN_SME"
+										th:value="${report.R10_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_NO_COMP_ISLAMIC"
+										name="R10_NO_COMP_ISLAMIC"
+										th:value="${report.R10_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R11_BANK" name="R11_BANK"
+										th:value="${report.R11_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R11_PRODUCT" name="R11_PRODUCT"
+										th:value="${report.R11_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R11_NO_RET_CON_SPD"
+										name="R11_NO_RET_CON_SPD"
+										th:value="${report.R11_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_NO_ISC_SPD"
+										name="R11_NO_ISC_SPD" th:value="${report.R11_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R11_NO_SME_CON_ISC"
+										name="R11_NO_SME_CON_ISC"
+										th:value="${report.R11_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_NO_SME_ISC"
+										name="R11_NO_SME_ISC" th:value="${report.R11_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R11_TOT_AGE_OUT"
+										name="R11_TOT_AGE_OUT" th:value="${report.R11_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R11_TOT_PONT_SALE"
+										name="R11_TOT_PONT_SALE"
+										th:value="${report.R11_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_TOT_MER_SPD"
+										name="R11_TOT_MER_SPD" th:value="${report.R11_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R11_RET_SIZE_ISC_AED"
+										name="R11_RET_SIZE_ISC_AED"
+										th:value="${report.R11_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_RET_ASSE_LON_RET"
+										name="R11_RET_ASSE_LON_RET"
+										th:value="${report.R11_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_RET_ASSE_LOAN_SME"
+										name="R11_RET_ASSE_LOAN_SME"
+										th:value="${report.R11_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_NO_COMP_ISLAMIC"
+										name="R11_NO_COMP_ISLAMIC"
+										th:value="${report.R11_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R12_BANK" name="R12_BANK"
+										th:value="${report.R12_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R12_PRODUCT" name="R12_PRODUCT"
+										th:value="${report.R12_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R12_NO_RET_CON_SPD"
+										name="R12_NO_RET_CON_SPD"
+										th:value="${report.R12_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_NO_ISC_SPD"
+										name="R12_NO_ISC_SPD" th:value="${report.R12_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R12_NO_SME_CON_ISC"
+										name="R12_NO_SME_CON_ISC"
+										th:value="${report.R12_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_NO_SME_ISC"
+										name="R12_NO_SME_ISC" th:value="${report.R12_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R12_TOT_AGE_OUT"
+										name="R12_TOT_AGE_OUT" th:value="${report.R12_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R12_TOT_PONT_SALE"
+										name="R12_TOT_PONT_SALE"
+										th:value="${report.R12_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_TOT_MER_SPD"
+										name="R12_TOT_MER_SPD" th:value="${report.R12_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R12_RET_SIZE_ISC_AED"
+										name="R12_RET_SIZE_ISC_AED"
+										th:value="${report.R12_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_RET_ASSE_LON_RET"
+										name="R12_RET_ASSE_LON_RET"
+										th:value="${report.R12_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_RET_ASSE_LOAN_SME"
+										name="R12_RET_ASSE_LOAN_SME"
+										th:value="${report.R12_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_NO_COMP_ISLAMIC"
+										name="R12_NO_COMP_ISLAMIC"
+										th:value="${report.R12_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R13_BANK" name="R13_BANK"
+										th:value="${report.R13_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R13_PRODUCT" name="R13_PRODUCT"
+										th:value="${report.R13_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R13_NO_RET_CON_SPD"
+										name="R13_NO_RET_CON_SPD"
+										th:value="${report.R13_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_NO_ISC_SPD"
+										name="R13_NO_ISC_SPD" th:value="${report.R13_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R13_NO_SME_CON_ISC"
+										name="R13_NO_SME_CON_ISC"
+										th:value="${report.R13_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_NO_SME_ISC"
+										name="R13_NO_SME_ISC" th:value="${report.R13_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R13_TOT_AGE_OUT"
+										name="R13_TOT_AGE_OUT" th:value="${report.R13_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R13_TOT_PONT_SALE"
+										name="R13_TOT_PONT_SALE"
+										th:value="${report.R13_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_TOT_MER_SPD"
+										name="R13_TOT_MER_SPD" th:value="${report.R13_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R13_RET_SIZE_ISC_AED"
+										name="R13_RET_SIZE_ISC_AED"
+										th:value="${report.R13_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_RET_ASSE_LON_RET"
+										name="R13_RET_ASSE_LON_RET"
+										th:value="${report.R13_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_RET_ASSE_LOAN_SME"
+										name="R13_RET_ASSE_LOAN_SME"
+										th:value="${report.R13_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_NO_COMP_ISLAMIC"
+										name="R13_NO_COMP_ISLAMIC"
+										th:value="${report.R13_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R14_BANK" name="R14_BANK"
+										th:value="${report.R14_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R14_PRODUCT" name="R14_PRODUCT"
+										th:value="${report.R14_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R14_NO_RET_CON_SPD"
+										name="R14_NO_RET_CON_SPD"
+										th:value="${report.R14_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_NO_ISC_SPD"
+										name="R14_NO_ISC_SPD" th:value="${report.R14_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R14_NO_SME_CON_ISC"
+										name="R14_NO_SME_CON_ISC"
+										th:value="${report.R14_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_NO_SME_ISC"
+										name="R14_NO_SME_ISC" th:value="${report.R14_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R14_TOT_AGE_OUT"
+										name="R14_TOT_AGE_OUT" th:value="${report.R14_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R14_TOT_PONT_SALE"
+										name="R14_TOT_PONT_SALE"
+										th:value="${report.R14_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_TOT_MER_SPD"
+										name="R14_TOT_MER_SPD" th:value="${report.R14_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R14_RET_SIZE_ISC_AED"
+										name="R14_RET_SIZE_ISC_AED"
+										th:value="${report.R14_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_RET_ASSE_LON_RET"
+										name="R14_RET_ASSE_LON_RET"
+										th:value="${report.R14_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_RET_ASSE_LOAN_SME"
+										name="R14_RET_ASSE_LOAN_SME"
+										th:value="${report.R14_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_NO_COMP_ISLAMIC"
+										name="R14_NO_COMP_ISLAMIC"
+										th:value="${report.R14_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R15_BANK" name="R15_BANK"
+										th:value="${report.R15_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R15_PRODUCT" name="R15_PRODUCT"
+										th:value="${report.R15_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R15_NO_RET_CON_SPD"
+										name="R15_NO_RET_CON_SPD"
+										th:value="${report.R15_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_NO_ISC_SPD"
+										name="R15_NO_ISC_SPD" th:value="${report.R15_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R15_NO_SME_CON_ISC"
+										name="R15_NO_SME_CON_ISC"
+										th:value="${report.R15_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_NO_SME_ISC"
+										name="R15_NO_SME_ISC" th:value="${report.R15_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R15_TOT_AGE_OUT"
+										name="R15_TOT_AGE_OUT" th:value="${report.R15_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R15_TOT_PONT_SALE"
+										name="R15_TOT_PONT_SALE"
+										th:value="${report.R15_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_TOT_MER_SPD"
+										name="R15_TOT_MER_SPD" th:value="${report.R15_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R15_RET_SIZE_ISC_AED"
+										name="R15_RET_SIZE_ISC_AED"
+										th:value="${report.R15_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_RET_ASSE_LON_RET"
+										name="R15_RET_ASSE_LON_RET"
+										th:value="${report.R15_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_RET_ASSE_LOAN_SME"
+										name="R15_RET_ASSE_LOAN_SME"
+										th:value="${report.R15_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_NO_COMP_ISLAMIC"
+										name="R15_NO_COMP_ISLAMIC"
+										th:value="${report.R15_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R16_BANK" name="R16_BANK"
+										th:value="${report.R16_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R16_PRODUCT" name="R16_PRODUCT"
+										th:value="${report.R16_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R16_NO_RET_CON_SPD"
+										name="R16_NO_RET_CON_SPD"
+										th:value="${report.R16_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_NO_ISC_SPD"
+										name="R16_NO_ISC_SPD" th:value="${report.R16_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R16_NO_SME_CON_ISC"
+										name="R16_NO_SME_CON_ISC"
+										th:value="${report.R16_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_NO_SME_ISC"
+										name="R16_NO_SME_ISC" th:value="${report.R16_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R16_TOT_AGE_OUT"
+										name="R16_TOT_AGE_OUT" th:value="${report.R16_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R16_TOT_PONT_SALE"
+										name="R16_TOT_PONT_SALE"
+										th:value="${report.R16_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_TOT_MER_SPD"
+										name="R16_TOT_MER_SPD" th:value="${report.R16_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R16_RET_SIZE_ISC_AED"
+										name="R16_RET_SIZE_ISC_AED"
+										th:value="${report.R16_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_RET_ASSE_LON_RET"
+										name="R16_RET_ASSE_LON_RET"
+										th:value="${report.R16_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_RET_ASSE_LOAN_SME"
+										name="R16_RET_ASSE_LOAN_SME"
+										th:value="${report.R16_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_NO_COMP_ISLAMIC"
+										name="R16_NO_COMP_ISLAMIC"
+										th:value="${report.R16_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R17_BANK" name="R17_BANK"
+										th:value="${report.R17_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R17_PRODUCT" name="R17_PRODUCT"
+										th:value="${report.R17_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R17_NO_RET_CON_SPD"
+										name="R17_NO_RET_CON_SPD"
+										th:value="${report.R17_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_NO_ISC_SPD"
+										name="R17_NO_ISC_SPD" th:value="${report.R17_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R17_NO_SME_CON_ISC"
+										name="R17_NO_SME_CON_ISC"
+										th:value="${report.R17_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_NO_SME_ISC"
+										name="R17_NO_SME_ISC" th:value="${report.R17_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R17_TOT_AGE_OUT"
+										name="R17_TOT_AGE_OUT" th:value="${report.R17_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R17_TOT_PONT_SALE"
+										name="R17_TOT_PONT_SALE"
+										th:value="${report.R17_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_TOT_MER_SPD"
+										name="R17_TOT_MER_SPD" th:value="${report.R17_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R17_RET_SIZE_ISC_AED"
+										name="R17_RET_SIZE_ISC_AED"
+										th:value="${report.R17_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_RET_ASSE_LON_RET"
+										name="R17_RET_ASSE_LON_RET"
+										th:value="${report.R17_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_RET_ASSE_LOAN_SME"
+										name="R17_RET_ASSE_LOAN_SME"
+										th:value="${report.R17_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_NO_COMP_ISLAMIC"
+										name="R17_NO_COMP_ISLAMIC"
+										th:value="${report.R17_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R18_BANK" name="R18_BANK"
+										th:value="${report.R18_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R18_PRODUCT" name="R18_PRODUCT"
+										th:value="${report.R18_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R18_NO_RET_CON_SPD"
+										name="R18_NO_RET_CON_SPD"
+										th:value="${report.R18_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_NO_ISC_SPD"
+										name="R18_NO_ISC_SPD" th:value="${report.R18_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R18_NO_SME_CON_ISC"
+										name="R18_NO_SME_CON_ISC"
+										th:value="${report.R18_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_NO_SME_ISC"
+										name="R18_NO_SME_ISC" th:value="${report.R18_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R18_TOT_AGE_OUT"
+										name="R18_TOT_AGE_OUT" th:value="${report.R18_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R18_TOT_PONT_SALE"
+										name="R18_TOT_PONT_SALE"
+										th:value="${report.R18_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_TOT_MER_SPD"
+										name="R18_TOT_MER_SPD" th:value="${report.R18_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R18_RET_SIZE_ISC_AED"
+										name="R18_RET_SIZE_ISC_AED"
+										th:value="${report.R18_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_RET_ASSE_LON_RET"
+										name="R18_RET_ASSE_LON_RET"
+										th:value="${report.R18_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_RET_ASSE_LOAN_SME"
+										name="R18_RET_ASSE_LOAN_SME"
+										th:value="${report.R18_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R18_NO_COMP_ISLAMIC"
+										name="R18_NO_COMP_ISLAMIC"
+										th:value="${report.R18_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R19_BANK" name="R19_BANK"
+										th:value="${report.R19_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R19_PRODUCT" name="R19_PRODUCT"
+										th:value="${report.R19_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R19_NO_RET_CON_SPD"
+										name="R19_NO_RET_CON_SPD"
+										th:value="${report.R19_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_NO_ISC_SPD"
+										name="R19_NO_ISC_SPD" th:value="${report.R19_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R19_NO_SME_CON_ISC"
+										name="R19_NO_SME_CON_ISC"
+										th:value="${report.R19_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_NO_SME_ISC"
+										name="R19_NO_SME_ISC" th:value="${report.R19_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R19_TOT_AGE_OUT"
+										name="R19_TOT_AGE_OUT" th:value="${report.R19_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R19_TOT_PONT_SALE"
+										name="R19_TOT_PONT_SALE"
+										th:value="${report.R19_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_TOT_MER_SPD"
+										name="R19_TOT_MER_SPD" th:value="${report.R19_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R19_RET_SIZE_ISC_AED"
+										name="R19_RET_SIZE_ISC_AED"
+										th:value="${report.R19_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_RET_ASSE_LON_RET"
+										name="R19_RET_ASSE_LON_RET"
+										th:value="${report.R19_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_RET_ASSE_LOAN_SME"
+										name="R19_RET_ASSE_LOAN_SME"
+										th:value="${report.R19_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R19_NO_COMP_ISLAMIC"
+										name="R19_NO_COMP_ISLAMIC"
+										th:value="${report.R19_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R20_BANK" name="R20_BANK"
+										th:value="${report.R20_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R20_PRODUCT" name="R20_PRODUCT"
+										th:value="${report.R20_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R20_NO_RET_CON_SPD"
+										name="R20_NO_RET_CON_SPD"
+										th:value="${report.R20_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_NO_ISC_SPD"
+										name="R20_NO_ISC_SPD" th:value="${report.R20_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R20_NO_SME_CON_ISC"
+										name="R20_NO_SME_CON_ISC"
+										th:value="${report.R20_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_NO_SME_ISC"
+										name="R20_NO_SME_ISC" th:value="${report.R20_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R20_TOT_AGE_OUT"
+										name="R20_TOT_AGE_OUT" th:value="${report.R20_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R20_TOT_PONT_SALE"
+										name="R20_TOT_PONT_SALE"
+										th:value="${report.R20_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_TOT_MER_SPD"
+										name="R20_TOT_MER_SPD" th:value="${report.R20_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R20_RET_SIZE_ISC_AED"
+										name="R20_RET_SIZE_ISC_AED"
+										th:value="${report.R20_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_RET_ASSE_LON_RET"
+										name="R20_RET_ASSE_LON_RET"
+										th:value="${report.R20_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_RET_ASSE_LOAN_SME"
+										name="R20_RET_ASSE_LOAN_SME"
+										th:value="${report.R20_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_NO_COMP_ISLAMIC"
+										name="R20_NO_COMP_ISLAMIC"
+										th:value="${report.R20_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R21_BANK" name="R21_BANK"
+										th:value="${report.R21_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R21_PRODUCT" name="R21_PRODUCT"
+										th:value="${report.R21_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R21_NO_RET_CON_SPD"
+										name="R21_NO_RET_CON_SPD"
+										th:value="${report.R21_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_NO_ISC_SPD"
+										name="R21_NO_ISC_SPD" th:value="${report.R21_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R21_NO_SME_CON_ISC"
+										name="R21_NO_SME_CON_ISC"
+										th:value="${report.R21_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_NO_SME_ISC"
+										name="R21_NO_SME_ISC" th:value="${report.R21_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R21_TOT_AGE_OUT"
+										name="R21_TOT_AGE_OUT" th:value="${report.R21_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R21_TOT_PONT_SALE"
+										name="R21_TOT_PONT_SALE"
+										th:value="${report.R21_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_TOT_MER_SPD"
+										name="R21_TOT_MER_SPD" th:value="${report.R21_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R21_RET_SIZE_ISC_AED"
+										name="R21_RET_SIZE_ISC_AED"
+										th:value="${report.R21_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_RET_ASSE_LON_RET"
+										name="R21_RET_ASSE_LON_RET"
+										th:value="${report.R21_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_RET_ASSE_LOAN_SME"
+										name="R21_RET_ASSE_LOAN_SME"
+										th:value="${report.R21_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_NO_COMP_ISLAMIC"
+										name="R21_NO_COMP_ISLAMIC"
+										th:value="${report.R21_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R22_BANK" name="R22_BANK"
+										th:value="${report.R22_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R22_PRODUCT" name="R22_PRODUCT"
+										th:value="${report.R22_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R22_NO_RET_CON_SPD"
+										name="R22_NO_RET_CON_SPD"
+										th:value="${report.R22_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_ISC_SPD"
+										name="R22_NO_ISC_SPD" th:value="${report.R22_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_SME_CON_ISC"
+										name="R22_NO_SME_CON_ISC"
+										th:value="${report.R22_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_SME_ISC"
+										name="R22_NO_SME_ISC" th:value="${report.R22_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_AGE_OUT"
+										name="R22_TOT_AGE_OUT" th:value="${report.R22_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_PONT_SALE"
+										name="R22_TOT_PONT_SALE"
+										th:value="${report.R22_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_TOT_MER_SPD"
+										name="R22_TOT_MER_SPD" th:value="${report.R22_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R22_RET_SIZE_ISC_AED"
+										name="R22_RET_SIZE_ISC_AED"
+										th:value="${report.R22_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_RET_ASSE_LON_RET"
+										name="R22_RET_ASSE_LON_RET"
+										th:value="${report.R22_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_RET_ASSE_LOAN_SME"
+										name="R22_RET_ASSE_LOAN_SME"
+										th:value="${report.R22_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R22_NO_COMP_ISLAMIC"
+										name="R22_NO_COMP_ISLAMIC"
+										th:value="${report.R22_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R23_BANK" name="R23_BANK"
+										th:value="${report.R23_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R23_PRODUCT" name="R23_PRODUCT"
+										th:value="${report.R23_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R23_NO_RET_CON_SPD"
+										name="R23_NO_RET_CON_SPD"
+										th:value="${report.R23_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_NO_ISC_SPD"
+										name="R23_NO_ISC_SPD" th:value="${report.R23_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R23_NO_SME_CON_ISC"
+										name="R23_NO_SME_CON_ISC"
+										th:value="${report.R23_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_NO_SME_ISC"
+										name="R23_NO_SME_ISC" th:value="${report.R23_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R23_TOT_AGE_OUT"
+										name="R23_TOT_AGE_OUT" th:value="${report.R23_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R23_TOT_PONT_SALE"
+										name="R23_TOT_PONT_SALE"
+										th:value="${report.R23_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_TOT_MER_SPD"
+										name="R23_TOT_MER_SPD" th:value="${report.R23_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R23_RET_SIZE_ISC_AED"
+										name="R23_RET_SIZE_ISC_AED"
+										th:value="${report.R23_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_RET_ASSE_LON_RET"
+										name="R23_RET_ASSE_LON_RET"
+										th:value="${report.R23_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_RET_ASSE_LOAN_SME"
+										name="R23_RET_ASSE_LOAN_SME"
+										th:value="${report.R23_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R23_NO_COMP_ISLAMIC"
+										name="R23_NO_COMP_ISLAMIC"
+										th:value="${report.R23_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R24_BANK" name="R24_BANK"
+										th:value="${report.R24_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R24_PRODUCT" name="R24_PRODUCT"
+										th:value="${report.R24_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R24_NO_RET_CON_SPD"
+										name="R24_NO_RET_CON_SPD"
+										th:value="${report.R24_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_NO_ISC_SPD"
+										name="R24_NO_ISC_SPD" th:value="${report.R24_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R24_NO_SME_CON_ISC"
+										name="R24_NO_SME_CON_ISC"
+										th:value="${report.R24_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_NO_SME_ISC"
+										name="R24_NO_SME_ISC" th:value="${report.R24_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R24_TOT_AGE_OUT"
+										name="R24_TOT_AGE_OUT" th:value="${report.R24_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R24_TOT_PONT_SALE"
+										name="R24_TOT_PONT_SALE"
+										th:value="${report.R24_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_TOT_MER_SPD"
+										name="R24_TOT_MER_SPD" th:value="${report.R24_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R24_RET_SIZE_ISC_AED"
+										name="R24_RET_SIZE_ISC_AED"
+										th:value="${report.R24_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_RET_ASSE_LON_RET"
+										name="R24_RET_ASSE_LON_RET"
+										th:value="${report.R24_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_RET_ASSE_LOAN_SME"
+										name="R24_RET_ASSE_LOAN_SME"
+										th:value="${report.R24_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_NO_COMP_ISLAMIC"
+										name="R24_NO_COMP_ISLAMIC"
+										th:value="${report.R24_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R25_BANK" name="R25_BANK"
+										th:value="${report.R25_BANK}" readonly class="table-input"></td>
+									<td><input type="text" id="R25_PRODUCT" name="R25_PRODUCT"
+										th:value="${report.R25_PRODUCT}" readonly class="table-input"></td>
+									<td><input type="text" id="R25_NO_RET_CON_SPD"
+										name="R25_NO_RET_CON_SPD"
+										th:value="${report.R25_NO_RET_CON_SPD}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_NO_ISC_SPD"
+										name="R25_NO_ISC_SPD" th:value="${report.R25_NO_ISC_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R25_NO_SME_CON_ISC"
+										name="R25_NO_SME_CON_ISC"
+										th:value="${report.R25_NO_SME_CON_ISC}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_NO_SME_ISC"
+										name="R25_NO_SME_ISC" th:value="${report.R25_NO_SME_ISC}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R25_TOT_AGE_OUT"
+										name="R25_TOT_AGE_OUT" th:value="${report.R25_TOT_AGE_OUT}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R25_TOT_PONT_SALE"
+										name="R25_TOT_PONT_SALE"
+										th:value="${report.R25_TOT_PONT_SALE}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_TOT_MER_SPD"
+										name="R25_TOT_MER_SPD" th:value="${report.R25_TOT_MER_SPD}"
+										readonly class="table-input editable-input"></td>
+									<td><input type="text" id="R25_RET_SIZE_ISC_AED"
+										name="R25_RET_SIZE_ISC_AED"
+										th:value="${report.R25_RET_SIZE_ISC_AED}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_RET_ASSE_LON_RET"
+										name="R25_RET_ASSE_LON_RET"
+										th:value="${report.R25_RET_ASSE_LON_RET}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_RET_ASSE_LOAN_SME"
+										name="R25_RET_ASSE_LOAN_SME"
+										th:value="${report.R25_RET_ASSE_LOAN_SME}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_NO_COMP_ISLAMIC"
+										name="R25_NO_COMP_ISLAMIC"
+										th:value="${report.R25_NO_COMP_ISLAMIC}" readonly
+										class="table-input editable-input"></td>
+
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
+						<button type="button" class="role-btn" id="bottomSaveBtn"
+							style="display: none;" onclick="submitForm()">Save</button>
+					</div>
+				</form>
+			</div>
+
+
+			<div class="tab-pane fade" id="conductcultureassessment"
+				role="tabpanel" th:if="${formmode=='conductcultureassessment'}">
+
+				<div class="mr-3 mb-2 mt-2 text-right"
+					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+
+					<button type="button" class="role-btn" id="verifyBtn"
+						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
+						onclick="verifyData()">Verify</button>
+					<button type="button" class="role-btn" id="modifyBtn"
+						th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+						onclick="enableEdit()">Modify</button>
+					<button type="button" class="role-btn" id="cancelBtn"
+						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
+				</div>
+
+				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
+					class="text-center mt-4">
+					<strong>No records found</strong>
+				</div>
+				<form id="reportForm" method="POST"
+					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
+						th:value="${reportlist[0].REPORT_DATE}"> <input
+						type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
+						th:value="${reportlist[0].BRANCH_CODE}"> <input
+						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
+						th:value="${reportlist[0].MODIFY_USERID}">
+					<div class="table-responsive" style="overflow: auto; border: none;">
+						<table id="usertable"
+							class="table table-bordered table-striped table-hover">
+
+							<thead class="thead-light">
+								<tr>
+									<th style="width: 100px">Sr. No</th>
+									<th style="width: 500px;">Assessment Clarification</th>
+									<th style="width: 500px;">LFI Response</th>
+									<th style="width: 500px;">Evidence to be provided by LFI</th>
+								</tr>
+							</thead>
+							<tbody th:each="report : ${reportlist}">
+								<tr>
+									<td colspan="4">Sub-section 1: Leadership and Governance</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R9_SR_NO" name="R9_SR_NO"
+										th:value="${report.R9_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R9_ASSES_CLASS}"></span><input
+										type="hidden" id="R9_ASSES_CLASS" name="R9_ASSES_CLASS"
+										th:value="${report.R9_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R9_LFI_RESP" name="R9_LFI_RESP"
+										th:value="${report.R9_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R9_EVID_PRO_LFI"
+										name="R9_EVID_PRO_LFI" th:value="${report.R9_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R10_SR_NO" name="R10_SR_NO"
+										th:value="${report.R10_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R10_ASSES_CLASS}"></span><input
+										type="hidden" id="R10_ASSES_CLASS" name="R10_ASSES_CLASS"
+										th:value="${report.R10_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R10_LFI_RESP"
+										name="R10_LFI_RESP" th:value="${report.R10_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R10_EVID_PRO_LFI"
+										name="R10_EVID_PRO_LFI" th:value="${report.R10_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R11_SR_NO" name="R11_SR_NO"
+										th:value="${report.R11_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R11_ASSES_CLASS}"></span><input
+										type="hidden" id="R11_ASSES_CLASS" name="R11_ASSES_CLASS"
+										th:value="${report.R11_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R11_LFI_RESP"
+										name="R11_LFI_RESP" th:value="${report.R11_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R11_EVID_PRO_LFI"
+										name="R11_EVID_PRO_LFI" th:value="${report.R11_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R12_SR_NO" name="R12_SR_NO"
+										th:value="${report.R12_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R12_ASSES_CLASS}"></span><input
+										type="hidden" id="R12_ASSES_CLASS" name="R12_ASSES_CLASS"
+										th:value="${report.R12_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R12_LFI_RESP"
+										name="R12_LFI_RESP" th:value="${report.R12_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R12_EVID_PRO_LFI"
+										name="R12_EVID_PRO_LFI" th:value="${report.R12_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R13_SR_NO" name="R13_SR_NO"
+										th:value="${report.R13_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R13_ASSES_CLASS}"></span><input
+										type="hidden" id="R13_ASSES_CLASS" name="R13_ASSES_CLASS"
+										th:value="${report.R13_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R13_LFI_RESP"
+										name="R13_LFI_RESP" th:value="${report.R13_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R13_EVID_PRO_LFI"
+										name="R13_EVID_PRO_LFI" th:value="${report.R13_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R14_SR_NO" name="R14_SR_NO"
+										th:value="${report.R14_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R14_ASSES_CLASS}"></span><input
+										type="hidden" id="R14_ASSES_CLASS" name="R14_ASSES_CLASS"
+										th:value="${report.R14_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R14_LFI_RESP"
+										name="R14_LFI_RESP" th:value="${report.R14_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R14_EVID_PRO_LFI"
+										name="R14_EVID_PRO_LFI" th:value="${report.R14_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R15_SR_NO" name="R15_SR_NO"
+										th:value="${report.R15_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R15_ASSES_CLASS}"></span><input
+										type="hidden" id="R15_ASSES_CLASS" name="R15_ASSES_CLASS"
+										th:value="${report.R15_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R15_LFI_RESP"
+										name="R15_LFI_RESP" th:value="${report.R15_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R15_EVID_PRO_LFI"
+										name="R15_EVID_PRO_LFI" th:value="${report.R15_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R16_SR_NO" name="R16_SR_NO"
+										th:value="${report.R16_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R16_ASSES_CLASS}"></span><input
+										type="hidden" id="R16_ASSES_CLASS" name="R16_ASSES_CLASS"
+										th:value="${report.R16_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R16_LFI_RESP"
+										name="R16_LFI_RESP" th:value="${report.R16_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R16_EVID_PRO_LFI"
+										name="R16_EVID_PRO_LFI" th:value="${report.R16_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R17_SR_NO" name="R17_SR_NO"
+										th:value="${report.R17_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R17_ASSES_CLASS}"></span><input
+										type="hidden" id="R17_ASSES_CLASS" name="R17_ASSES_CLASS"
+										th:value="${report.R17_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R17_LFI_RESP"
+										name="R17_LFI_RESP" th:value="${report.R17_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R17_EVID_PRO_LFI"
+										name="R17_EVID_PRO_LFI" th:value="${report.R17_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 2: Purpose and Vision</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R20_SR_NO" name="R20_SR_NO"
+										th:value="${report.R20_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R20_ASSES_CLASS}"></span><input
+										type="hidden" id="R20_ASSES_CLASS" name="R20_ASSES_CLASS"
+										th:value="${report.R20_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R20_LFI_RESP"
+										name="R20_LFI_RESP" th:value="${report.R20_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R20_EVID_PRO_LFI"
+										name="R20_EVID_PRO_LFI" th:value="${report.R20_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R21_SR_NO" name="R21_SR_NO"
+										th:value="${report.R21_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R21_ASSES_CLASS}"></span><input
+										type="hidden" id="R21_ASSES_CLASS" name="R21_ASSES_CLASS"
+										th:value="${report.R21_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R21_LFI_RESP"
+										name="R21_LFI_RESP" th:value="${report.R21_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R21_EVID_PRO_LFI"
+										name="R21_EVID_PRO_LFI" th:value="${report.R21_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 3: Incentive Structures and
+										People Practices</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R24_SR_NO" name="R24_SR_NO"
+										th:value="${report.R24_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R24_ASSES_CLASS}"></span><input
+										type="hidden" id="R24_ASSES_CLASS" name="R24_ASSES_CLASS"
+										th:value="${report.R24_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R24_LFI_RESP"
+										name="R24_LFI_RESP" th:value="${report.R24_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R24_EVID_PRO_LFI"
+										name="R24_EVID_PRO_LFI" th:value="${report.R24_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R25_SR_NO" name="R25_SR_NO"
+										th:value="${report.R25_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R25_ASSES_CLASS}"></span><input
+										type="hidden" id="R25_ASSES_CLASS" name="R25_ASSES_CLASS"
+										th:value="${report.R25_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R25_LFI_RESP"
+										name="R25_LFI_RESP" th:value="${report.R25_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R25_EVID_PRO_LFI"
+										name="R25_EVID_PRO_LFI" th:value="${report.R25_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R26_SR_NO" name="R26_SR_NO"
+										th:value="${report.R26_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R26_ASSES_CLASS}"></span><input
+										type="hidden" id="R26_ASSES_CLASS" name="R26_ASSES_CLASS"
+										th:value="${report.R26_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R26_LFI_RESP"
+										name="R26_LFI_RESP" th:value="${report.R26_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R26_EVID_PRO_LFI"
+										name="R26_EVID_PRO_LFI" th:value="${report.R26_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R27_SR_NO" name="R27_SR_NO"
+										th:value="${report.R27_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R27_ASSES_CLASS}"></span><input
+										type="hidden" id="R27_ASSES_CLASS" name="R27_ASSES_CLASS"
+										th:value="${report.R27_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R27_LFI_RESP"
+										name="R27_LFI_RESP" th:value="${report.R27_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R27_EVID_PRO_LFI"
+										name="R27_EVID_PRO_LFI" th:value="${report.R27_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R28_SR_NO" name="R28_SR_NO"
+										th:value="${report.R28_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R28_ASSES_CLASS}"></span><input
+										type="hidden" id="R28_ASSES_CLASS" name="R28_ASSES_CLASS"
+										th:value="${report.R28_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R28_LFI_RESP"
+										name="R28_LFI_RESP" th:value="${report.R28_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R28_EVID_PRO_LFI"
+										name="R28_EVID_PRO_LFI" th:value="${report.R28_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R29_SR_NO" name="R29_SR_NO"
+										th:value="${report.R29_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R29_ASSES_CLASS}"></span><input
+										type="hidden" id="R29_ASSES_CLASS" name="R29_ASSES_CLASS"
+										th:value="${report.R29_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R29_LFI_RESP"
+										name="R29_LFI_RESP" th:value="${report.R29_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R29_EVID_PRO_LFI"
+										name="R29_EVID_PRO_LFI" th:value="${report.R29_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R30_SR_NO" name="R30_SR_NO"
+										th:value="${report.R30_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R30_ASSES_CLASS}"></span><input
+										type="hidden" id="R30_ASSES_CLASS" name="R30_ASSES_CLASS"
+										th:value="${report.R30_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R30_LFI_RESP"
+										name="R30_LFI_RESP" th:value="${report.R30_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R30_EVID_PRO_LFI"
+										name="R30_EVID_PRO_LFI" th:value="${report.R30_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R31_SR_NO" name="R31_SR_NO"
+										th:value="${report.R31_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R31_ASSES_CLASS}"></span><input
+										type="hidden" id="R31_ASSES_CLASS" name="R31_ASSES_CLASS"
+										th:value="${report.R31_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R31_LFI_RESP"
+										name="R31_LFI_RESP" th:value="${report.R31_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R31_EVID_PRO_LFI"
+										name="R31_EVID_PRO_LFI" th:value="${report.R31_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 4: Trainings of Bank's staff</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R34_SR_NO" name="R34_SR_NO"
+										th:value="${report.R34_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R34_ASSES_CLASS}"></span><input
+										type="hidden" id="R34_ASSES_CLASS" name="R34_ASSES_CLASS"
+										th:value="${report.R34_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R34_LFI_RESP"
+										name="R34_LFI_RESP" th:value="${report.R34_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R34_EVID_PRO_LFI"
+										name="R34_EVID_PRO_LFI" th:value="${report.R34_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R35_SR_NO" name="R35_SR_NO"
+										th:value="${report.R35_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R35_ASSES_CLASS}"></span><input
+										type="hidden" id="R35_ASSES_CLASS" name="R35_ASSES_CLASS"
+										th:value="${report.R35_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R35_LFI_RESP"
+										name="R35_LFI_RESP" th:value="${report.R35_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R35_EVID_PRO_LFI"
+										name="R35_EVID_PRO_LFI" th:value="${report.R35_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 5: Consumer Awareness</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R38_SR_NO" name="R38_SR_NO"
+										th:value="${report.R38_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R38_ASSES_CLASS}"></span><input
+										type="hidden" id="R38_ASSES_CLASS" name="R38_ASSES_CLASS"
+										th:value="${report.R38_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R38_LFI_RESP"
+										name="R38_LFI_RESP" th:value="${report.R38_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R38_EVID_PRO_LFI"
+										name="R38_EVID_PRO_LFI" th:value="${report.R38_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R39_SR_NO" name="R39_SR_NO"
+										th:value="${report.R39_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R39_ASSES_CLASS}"></span><input
+										type="hidden" id="R39_ASSES_CLASS" name="R39_ASSES_CLASS"
+										th:value="${report.R39_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R39_LFI_RESP"
+										name="R39_LFI_RESP" th:value="${report.R39_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R39_EVID_PRO_LFI"
+										name="R39_EVID_PRO_LFI" th:value="${report.R39_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 6: Product Design</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R42_SR_NO" name="R42_SR_NO"
+										th:value="${report.R42_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R42_ASSES_CLASS}"></span><input
+										type="hidden" id="R42_ASSES_CLASS" name="R42_ASSES_CLASS"
+										th:value="${report.R42_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R42_LFI_RESP"
+										name="R42_LFI_RESP" th:value="${report.R42_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R42_EVID_PRO_LFI"
+										name="R42_EVID_PRO_LFI" th:value="${report.R42_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R43_SR_NO" name="R43_SR_NO"
+										th:value="${report.R43_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R43_ASSES_CLASS}"></span><input
+										type="hidden" id="R43_ASSES_CLASS" name="R43_ASSES_CLASS"
+										th:value="${report.R43_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R43_LFI_RESP"
+										name="R43_LFI_RESP" th:value="${report.R43_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R43_EVID_PRO_LFI"
+										name="R43_EVID_PRO_LFI" th:value="${report.R43_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R44_SR_NO" name="R44_SR_NO"
+										th:value="${report.R44_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R44_ASSES_CLASS}"></span><input
+										type="hidden" id="R44_ASSES_CLASS" name="R44_ASSES_CLASS"
+										th:value="${report.R44_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R44_LFI_RESP"
+										name="R44_LFI_RESP" th:value="${report.R44_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R44_EVID_PRO_LFI"
+										name="R44_EVID_PRO_LFI" th:value="${report.R44_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 7:Transformational Initiatives
+									</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R47_SR_NO" name="R47_SR_NO"
+										th:value="${report.R47_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R47_ASSES_CLASS}"></span><input
+										type="hidden" id="R47_ASSES_CLASS" name="R47_ASSES_CLASS"
+										th:value="${report.R47_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R47_LFI_RESP"
+										name="R47_LFI_RESP" th:value="${report.R47_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R47_EVID_PRO_LFI"
+										name="R47_EVID_PRO_LFI" th:value="${report.R47_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">Sub-section 8: Appropriate Conduct
+										Standards</td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R50_SR_NO" name="R50_SR_NO"
+										th:value="${report.R50_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R50_ASSES_CLASS}"></span><input
+										type="hidden" id="R50_ASSES_CLASS" name="R50_ASSES_CLASS"
+										th:value="${report.R50_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R50_LFI_RESP"
+										name="R50_LFI_RESP" th:value="${report.R50_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R50_EVID_PRO_LFI"
+										name="R50_EVID_PRO_LFI" th:value="${report.R50_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R51_SR_NO" name="R51_SR_NO"
+										th:value="${report.R51_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R51_ASSES_CLASS}"></span><input
+										type="hidden" id="R51_ASSES_CLASS" name="R51_ASSES_CLASS"
+										th:value="${report.R51_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R51_LFI_RESP"
+										name="R51_LFI_RESP" th:value="${report.R51_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R51_EVID_PRO_LFI"
+										name="R51_EVID_PRO_LFI" th:value="${report.R51_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R52_SR_NO" name="R52_SR_NO"
+										th:value="${report.R52_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R52_ASSES_CLASS}"></span><input
+										type="hidden" id="R52_ASSES_CLASS" name="R52_ASSES_CLASS"
+										th:value="${report.R52_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R52_LFI_RESP"
+										name="R52_LFI_RESP" th:value="${report.R52_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R52_EVID_PRO_LFI"
+										name="R52_EVID_PRO_LFI" th:value="${report.R52_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R53_SR_NO" name="R53_SR_NO"
+										th:value="${report.R53_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R53_ASSES_CLASS}"></span><input
+										type="hidden" id="R53_ASSES_CLASS" name="R53_ASSES_CLASS"
+										th:value="${report.R53_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R53_LFI_RESP"
+										name="R53_LFI_RESP" th:value="${report.R53_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R53_EVID_PRO_LFI"
+										name="R53_EVID_PRO_LFI" th:value="${report.R53_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R54_SR_NO" name="R54_SR_NO"
+										th:value="${report.R54_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R54_ASSES_CLASS}"></span><input
+										type="hidden" id="R54_ASSES_CLASS" name="R54_ASSES_CLASS"
+										th:value="${report.R54_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R54_LFI_RESP"
+										name="R54_LFI_RESP" th:value="${report.R54_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R54_EVID_PRO_LFI"
+										name="R54_EVID_PRO_LFI" th:value="${report.R54_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R55_SR_NO" name="R55_SR_NO"
+										th:value="${report.R55_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R55_ASSES_CLASS}"></span><input
+										type="hidden" id="R55_ASSES_CLASS" name="R55_ASSES_CLASS"
+										th:value="${report.R55_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R55_LFI_RESP"
+										name="R55_LFI_RESP" th:value="${report.R55_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R55_EVID_PRO_LFI"
+										name="R55_EVID_PRO_LFI" th:value="${report.R55_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R56_SR_NO" name="R56_SR_NO"
+										th:value="${report.R56_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R56_ASSES_CLASS}"></span><input
+										type="hidden" id="R56_ASSES_CLASS" name="R56_ASSES_CLASS"
+										th:value="${report.R56_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R56_LFI_RESP"
+										name="R56_LFI_RESP" th:value="${report.R56_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R56_EVID_PRO_LFI"
+										name="R56_EVID_PRO_LFI" th:value="${report.R56_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R57_SR_NO" name="R57_SR_NO"
+										th:value="${report.R57_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R57_ASSES_CLASS}"></span><input
+										type="hidden" id="R57_ASSES_CLASS" name="R57_ASSES_CLASS"
+										th:value="${report.R57_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R57_LFI_RESP"
+										name="R57_LFI_RESP" th:value="${report.R57_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R57_EVID_PRO_LFI"
+										name="R57_EVID_PRO_LFI" th:value="${report.R57_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R58_SR_NO" name="R58_SR_NO"
+										th:value="${report.R58_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R58_ASSES_CLASS}"></span><input
+										type="hidden" id="R58_ASSES_CLASS" name="R58_ASSES_CLASS"
+										th:value="${report.R58_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R58_LFI_RESP"
+										name="R58_LFI_RESP" th:value="${report.R58_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R58_EVID_PRO_LFI"
+										name="R58_EVID_PRO_LFI" th:value="${report.R58_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R59_SR_NO" name="R59_SR_NO"
+										th:value="${report.R59_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R59_ASSES_CLASS}"></span><input
+										type="hidden" id="R59_ASSES_CLASS" name="R59_ASSES_CLASS"
+										th:value="${report.R59_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R59_LFI_RESP"
+										name="R59_LFI_RESP" th:value="${report.R59_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R59_EVID_PRO_LFI"
+										name="R59_EVID_PRO_LFI" th:value="${report.R59_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R60_SR_NO" name="R60_SR_NO"
+										th:value="${report.R60_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R60_ASSES_CLASS}"></span><input
+										type="hidden" id="R60_ASSES_CLASS" name="R60_ASSES_CLASS"
+										th:value="${report.R60_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R60_LFI_RESP"
+										name="R60_LFI_RESP" th:value="${report.R60_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R60_EVID_PRO_LFI"
+										name="R60_EVID_PRO_LFI" th:value="${report.R60_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="R61_SR_NO" name="R61_SR_NO"
+										th:value="${report.R61_SR_NO}" readonly class="table-input"></td>
+									<td><span th:text="${report.R61_ASSES_CLASS}"></span><input
+										type="hidden" id="R61_ASSES_CLASS" name="R61_ASSES_CLASS"
+										th:value="${report.R61_ASSES_CLASS}" readonly
+										class="table-input"></td>
+									<td><input type="text" id="R61_LFI_RESP"
+										name="R61_LFI_RESP" th:value="${report.R61_LFI_RESP}" readonly
+										class="table-input editable-input"></td>
+									<td><input type="text" id="R61_EVID_PRO_LFI"
+										name="R61_EVID_PRO_LFI" th:value="${report.R61_EVID_PRO_LFI}"
+										readonly class="table-input editable-input"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
+						<button type="button" class="role-btn" id="bottomSaveBtn"
+							style="display: none;" onclick="submitForm()">Save</button>
+					</div>
+				</form>
+			</div>
+
+
+
+
 		</div>
-
-
-		<div th:if="${formmode == 'islamicbanking'}" id="islamicbanking"
-			role="tabpanel" class="tab-pane fade">
-			<div class="mr-3 mb-2 text-right"
-				th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-				<button type="button" class="role-btn" id="downloadBtn"
-					th:if="${reportlist[0].VERIFY_FLG == 'Y'}" onclick="downloadData()">Download</button>
-				<button type="button" class="role-btn" id="verifyBtn"
-					th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
-					onclick="verifyData()">Verify</button>
-				<button type="button" class="role-btn" id="modifyBtn"
-					th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
-					onclick="enableEdit()">Modify</button>
-				<button type="button" class="role-btn" id="cancelBtn"
-					style="display: none;" onclick="cancelEdit()">Cancel</button>
-			</div>
-
-			<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
-				class="text-center mt-4">
-				<strong>No records found</strong>
-			</div>
-			<form id="reportForm" method="POST"
-				th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-				<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
-					th:value="${reportlist[0].REPORT_DATE}"> <input
-					type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
-					th:value="${reportlist[0].BRANCH_CODE}"> <input
-					type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
-					th:value="${reportlist[0].MODIFY_USERID}">
-				<div class="table-responsive" style="overflow: auto; border: none;">
-					<table id="usertable"
-						class="table table-bordered table-striped table-hover">
-
-						<thead class="thead-light">
-							<tr>
-								<th>Bank</th>
-								<th>Product</th>
-								<th>Number of Retail Consumers (Conventional and Islamic)
-									as of the specified time period</th>
-								<th>Number of Retail Consumers (Islamic) as of the
-									specified time period</th>
-								<th>Number of SME consumers (including Sole
-									proprietorships) - Conventional and Islamic</th>
-								<th>Number of SME consumers (including Sole
-									proprietorships) - Islamic</th>
-								<th>Total Number of Authorised Agents and outsourcing
-									service providers (including services or systems outsourced to
-									authorised agents)</th>
-								<th>Total Number of Point of Sale Terminals during the
-									specified time period</th>
-								<th>Total Number of Merchant tie ups during the specified
-									time period</th>
-								<th>Retail Asset/liability Size as of the specified
-									date(Islamic Only) (AED (000's))</th>
-								<th>Retail Asset Composition as of the specified date (Loan
-									to Retail Consumers)</th>
-								<th>Retail Asset Composition as of the specified date (Loan
-									to SME)</th>
-								<th>Number of complaints received during the specified time
-									period (Islamic Only)</th>
-
-							</tr>
-						</thead>
-						<tbody th:each="report : ${reportlist}">
-							<tr>
-								<td><input type="text" id="R8_BANK" name="R8_BANK"
-									th:value="${report.R8_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R8_PRODUCT" name="R8_PRODUCT"
-									th:value="${report.R8_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R8_NO_RET_CON_SPD"
-									name="R8_NO_RET_CON_SPD" th:value="${report.R8_NO_RET_CON_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_NO_ISC_SPD"
-									name="R8_NO_ISC_SPD" th:value="${report.R8_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_NO_SME_CON_ISC"
-									name="R8_NO_SME_CON_ISC" th:value="${report.R8_NO_SME_CON_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_NO_SME_ISC"
-									name="R8_NO_SME_ISC" th:value="${report.R8_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_TOT_AGE_OUT"
-									name="R8_TOT_AGE_OUT" th:value="${report.R8_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_TOT_PONT_SALE"
-									name="R8_TOT_PONT_SALE" th:value="${report.R8_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_TOT_MER_SPD"
-									name="R8_TOT_MER_SPD" th:value="${report.R8_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R8_RET_SIZE_ISC_AED"
-									name="R8_RET_SIZE_ISC_AED"
-									th:value="${report.R8_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R8_RET_ASSE_LON_RET"
-									name="R8_RET_ASSE_LON_RET"
-									th:value="${report.R8_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R8_RET_ASSE_LOAN_SME"
-									name="R8_RET_ASSE_LOAN_SME"
-									th:value="${report.R8_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R8_NO_COMP_ISLAMIC"
-									name="R8_NO_COMP_ISLAMIC"
-									th:value="${report.R8_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R9_BANK" name="R9_BANK"
-									th:value="${report.R9_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R9_PRODUCT" name="R9_PRODUCT"
-									th:value="${report.R9_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R9_NO_RET_CON_SPD"
-									name="R9_NO_RET_CON_SPD" th:value="${report.R9_NO_RET_CON_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_NO_ISC_SPD"
-									name="R9_NO_ISC_SPD" th:value="${report.R9_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_NO_SME_CON_ISC"
-									name="R9_NO_SME_CON_ISC" th:value="${report.R9_NO_SME_CON_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_NO_SME_ISC"
-									name="R9_NO_SME_ISC" th:value="${report.R9_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_TOT_AGE_OUT"
-									name="R9_TOT_AGE_OUT" th:value="${report.R9_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_TOT_PONT_SALE"
-									name="R9_TOT_PONT_SALE" th:value="${report.R9_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_TOT_MER_SPD"
-									name="R9_TOT_MER_SPD" th:value="${report.R9_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R9_RET_SIZE_ISC_AED"
-									name="R9_RET_SIZE_ISC_AED"
-									th:value="${report.R9_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R9_RET_ASSE_LON_RET"
-									name="R9_RET_ASSE_LON_RET"
-									th:value="${report.R9_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R9_RET_ASSE_LOAN_SME"
-									name="R9_RET_ASSE_LOAN_SME"
-									th:value="${report.R9_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R9_NO_COMP_ISLAMIC"
-									name="R9_NO_COMP_ISLAMIC"
-									th:value="${report.R9_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R10_BANK" name="R10_BANK"
-									th:value="${report.R10_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R10_PRODUCT" name="R10_PRODUCT"
-									th:value="${report.R10_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R10_NO_RET_CON_SPD"
-									name="R10_NO_RET_CON_SPD"
-									th:value="${report.R10_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_NO_ISC_SPD"
-									name="R10_NO_ISC_SPD" th:value="${report.R10_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R10_NO_SME_CON_ISC"
-									name="R10_NO_SME_CON_ISC"
-									th:value="${report.R10_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_NO_SME_ISC"
-									name="R10_NO_SME_ISC" th:value="${report.R10_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R10_TOT_AGE_OUT"
-									name="R10_TOT_AGE_OUT" th:value="${report.R10_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R10_TOT_PONT_SALE"
-									name="R10_TOT_PONT_SALE" th:value="${report.R10_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R10_TOT_MER_SPD"
-									name="R10_TOT_MER_SPD" th:value="${report.R10_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R10_RET_SIZE_ISC_AED"
-									name="R10_RET_SIZE_ISC_AED"
-									th:value="${report.R10_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_RET_ASSE_LON_RET"
-									name="R10_RET_ASSE_LON_RET"
-									th:value="${report.R10_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_RET_ASSE_LOAN_SME"
-									name="R10_RET_ASSE_LOAN_SME"
-									th:value="${report.R10_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_NO_COMP_ISLAMIC"
-									name="R10_NO_COMP_ISLAMIC"
-									th:value="${report.R10_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R11_BANK" name="R11_BANK"
-									th:value="${report.R11_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R11_PRODUCT" name="R11_PRODUCT"
-									th:value="${report.R11_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R11_NO_RET_CON_SPD"
-									name="R11_NO_RET_CON_SPD"
-									th:value="${report.R11_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_NO_ISC_SPD"
-									name="R11_NO_ISC_SPD" th:value="${report.R11_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R11_NO_SME_CON_ISC"
-									name="R11_NO_SME_CON_ISC"
-									th:value="${report.R11_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_NO_SME_ISC"
-									name="R11_NO_SME_ISC" th:value="${report.R11_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R11_TOT_AGE_OUT"
-									name="R11_TOT_AGE_OUT" th:value="${report.R11_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R11_TOT_PONT_SALE"
-									name="R11_TOT_PONT_SALE" th:value="${report.R11_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R11_TOT_MER_SPD"
-									name="R11_TOT_MER_SPD" th:value="${report.R11_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R11_RET_SIZE_ISC_AED"
-									name="R11_RET_SIZE_ISC_AED"
-									th:value="${report.R11_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_RET_ASSE_LON_RET"
-									name="R11_RET_ASSE_LON_RET"
-									th:value="${report.R11_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_RET_ASSE_LOAN_SME"
-									name="R11_RET_ASSE_LOAN_SME"
-									th:value="${report.R11_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_NO_COMP_ISLAMIC"
-									name="R11_NO_COMP_ISLAMIC"
-									th:value="${report.R11_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R12_BANK" name="R12_BANK"
-									th:value="${report.R12_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R12_PRODUCT" name="R12_PRODUCT"
-									th:value="${report.R12_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R12_NO_RET_CON_SPD"
-									name="R12_NO_RET_CON_SPD"
-									th:value="${report.R12_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_NO_ISC_SPD"
-									name="R12_NO_ISC_SPD" th:value="${report.R12_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R12_NO_SME_CON_ISC"
-									name="R12_NO_SME_CON_ISC"
-									th:value="${report.R12_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_NO_SME_ISC"
-									name="R12_NO_SME_ISC" th:value="${report.R12_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R12_TOT_AGE_OUT"
-									name="R12_TOT_AGE_OUT" th:value="${report.R12_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R12_TOT_PONT_SALE"
-									name="R12_TOT_PONT_SALE" th:value="${report.R12_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R12_TOT_MER_SPD"
-									name="R12_TOT_MER_SPD" th:value="${report.R12_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R12_RET_SIZE_ISC_AED"
-									name="R12_RET_SIZE_ISC_AED"
-									th:value="${report.R12_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_RET_ASSE_LON_RET"
-									name="R12_RET_ASSE_LON_RET"
-									th:value="${report.R12_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_RET_ASSE_LOAN_SME"
-									name="R12_RET_ASSE_LOAN_SME"
-									th:value="${report.R12_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_NO_COMP_ISLAMIC"
-									name="R12_NO_COMP_ISLAMIC"
-									th:value="${report.R12_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R13_BANK" name="R13_BANK"
-									th:value="${report.R13_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R13_PRODUCT" name="R13_PRODUCT"
-									th:value="${report.R13_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R13_NO_RET_CON_SPD"
-									name="R13_NO_RET_CON_SPD"
-									th:value="${report.R13_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_NO_ISC_SPD"
-									name="R13_NO_ISC_SPD" th:value="${report.R13_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R13_NO_SME_CON_ISC"
-									name="R13_NO_SME_CON_ISC"
-									th:value="${report.R13_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_NO_SME_ISC"
-									name="R13_NO_SME_ISC" th:value="${report.R13_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R13_TOT_AGE_OUT"
-									name="R13_TOT_AGE_OUT" th:value="${report.R13_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R13_TOT_PONT_SALE"
-									name="R13_TOT_PONT_SALE" th:value="${report.R13_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R13_TOT_MER_SPD"
-									name="R13_TOT_MER_SPD" th:value="${report.R13_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R13_RET_SIZE_ISC_AED"
-									name="R13_RET_SIZE_ISC_AED"
-									th:value="${report.R13_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_RET_ASSE_LON_RET"
-									name="R13_RET_ASSE_LON_RET"
-									th:value="${report.R13_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_RET_ASSE_LOAN_SME"
-									name="R13_RET_ASSE_LOAN_SME"
-									th:value="${report.R13_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_NO_COMP_ISLAMIC"
-									name="R13_NO_COMP_ISLAMIC"
-									th:value="${report.R13_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R14_BANK" name="R14_BANK"
-									th:value="${report.R14_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R14_PRODUCT" name="R14_PRODUCT"
-									th:value="${report.R14_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R14_NO_RET_CON_SPD"
-									name="R14_NO_RET_CON_SPD"
-									th:value="${report.R14_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_NO_ISC_SPD"
-									name="R14_NO_ISC_SPD" th:value="${report.R14_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R14_NO_SME_CON_ISC"
-									name="R14_NO_SME_CON_ISC"
-									th:value="${report.R14_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_NO_SME_ISC"
-									name="R14_NO_SME_ISC" th:value="${report.R14_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R14_TOT_AGE_OUT"
-									name="R14_TOT_AGE_OUT" th:value="${report.R14_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R14_TOT_PONT_SALE"
-									name="R14_TOT_PONT_SALE" th:value="${report.R14_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R14_TOT_MER_SPD"
-									name="R14_TOT_MER_SPD" th:value="${report.R14_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R14_RET_SIZE_ISC_AED"
-									name="R14_RET_SIZE_ISC_AED"
-									th:value="${report.R14_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_RET_ASSE_LON_RET"
-									name="R14_RET_ASSE_LON_RET"
-									th:value="${report.R14_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_RET_ASSE_LOAN_SME"
-									name="R14_RET_ASSE_LOAN_SME"
-									th:value="${report.R14_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_NO_COMP_ISLAMIC"
-									name="R14_NO_COMP_ISLAMIC"
-									th:value="${report.R14_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R15_BANK" name="R15_BANK"
-									th:value="${report.R15_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R15_PRODUCT" name="R15_PRODUCT"
-									th:value="${report.R15_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R15_NO_RET_CON_SPD"
-									name="R15_NO_RET_CON_SPD"
-									th:value="${report.R15_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_NO_ISC_SPD"
-									name="R15_NO_ISC_SPD" th:value="${report.R15_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R15_NO_SME_CON_ISC"
-									name="R15_NO_SME_CON_ISC"
-									th:value="${report.R15_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_NO_SME_ISC"
-									name="R15_NO_SME_ISC" th:value="${report.R15_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R15_TOT_AGE_OUT"
-									name="R15_TOT_AGE_OUT" th:value="${report.R15_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R15_TOT_PONT_SALE"
-									name="R15_TOT_PONT_SALE" th:value="${report.R15_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R15_TOT_MER_SPD"
-									name="R15_TOT_MER_SPD" th:value="${report.R15_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R15_RET_SIZE_ISC_AED"
-									name="R15_RET_SIZE_ISC_AED"
-									th:value="${report.R15_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_RET_ASSE_LON_RET"
-									name="R15_RET_ASSE_LON_RET"
-									th:value="${report.R15_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_RET_ASSE_LOAN_SME"
-									name="R15_RET_ASSE_LOAN_SME"
-									th:value="${report.R15_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_NO_COMP_ISLAMIC"
-									name="R15_NO_COMP_ISLAMIC"
-									th:value="${report.R15_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R16_BANK" name="R16_BANK"
-									th:value="${report.R16_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R16_PRODUCT" name="R16_PRODUCT"
-									th:value="${report.R16_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R16_NO_RET_CON_SPD"
-									name="R16_NO_RET_CON_SPD"
-									th:value="${report.R16_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_NO_ISC_SPD"
-									name="R16_NO_ISC_SPD" th:value="${report.R16_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R16_NO_SME_CON_ISC"
-									name="R16_NO_SME_CON_ISC"
-									th:value="${report.R16_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_NO_SME_ISC"
-									name="R16_NO_SME_ISC" th:value="${report.R16_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R16_TOT_AGE_OUT"
-									name="R16_TOT_AGE_OUT" th:value="${report.R16_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R16_TOT_PONT_SALE"
-									name="R16_TOT_PONT_SALE" th:value="${report.R16_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R16_TOT_MER_SPD"
-									name="R16_TOT_MER_SPD" th:value="${report.R16_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R16_RET_SIZE_ISC_AED"
-									name="R16_RET_SIZE_ISC_AED"
-									th:value="${report.R16_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_RET_ASSE_LON_RET"
-									name="R16_RET_ASSE_LON_RET"
-									th:value="${report.R16_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_RET_ASSE_LOAN_SME"
-									name="R16_RET_ASSE_LOAN_SME"
-									th:value="${report.R16_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_NO_COMP_ISLAMIC"
-									name="R16_NO_COMP_ISLAMIC"
-									th:value="${report.R16_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R17_BANK" name="R17_BANK"
-									th:value="${report.R17_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R17_PRODUCT" name="R17_PRODUCT"
-									th:value="${report.R17_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R17_NO_RET_CON_SPD"
-									name="R17_NO_RET_CON_SPD"
-									th:value="${report.R17_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_NO_ISC_SPD"
-									name="R17_NO_ISC_SPD" th:value="${report.R17_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R17_NO_SME_CON_ISC"
-									name="R17_NO_SME_CON_ISC"
-									th:value="${report.R17_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_NO_SME_ISC"
-									name="R17_NO_SME_ISC" th:value="${report.R17_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R17_TOT_AGE_OUT"
-									name="R17_TOT_AGE_OUT" th:value="${report.R17_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R17_TOT_PONT_SALE"
-									name="R17_TOT_PONT_SALE" th:value="${report.R17_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R17_TOT_MER_SPD"
-									name="R17_TOT_MER_SPD" th:value="${report.R17_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R17_RET_SIZE_ISC_AED"
-									name="R17_RET_SIZE_ISC_AED"
-									th:value="${report.R17_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_RET_ASSE_LON_RET"
-									name="R17_RET_ASSE_LON_RET"
-									th:value="${report.R17_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_RET_ASSE_LOAN_SME"
-									name="R17_RET_ASSE_LOAN_SME"
-									th:value="${report.R17_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_NO_COMP_ISLAMIC"
-									name="R17_NO_COMP_ISLAMIC"
-									th:value="${report.R17_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R18_BANK" name="R18_BANK"
-									th:value="${report.R18_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R18_PRODUCT" name="R18_PRODUCT"
-									th:value="${report.R18_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R18_NO_RET_CON_SPD"
-									name="R18_NO_RET_CON_SPD"
-									th:value="${report.R18_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_NO_ISC_SPD"
-									name="R18_NO_ISC_SPD" th:value="${report.R18_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R18_NO_SME_CON_ISC"
-									name="R18_NO_SME_CON_ISC"
-									th:value="${report.R18_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_NO_SME_ISC"
-									name="R18_NO_SME_ISC" th:value="${report.R18_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R18_TOT_AGE_OUT"
-									name="R18_TOT_AGE_OUT" th:value="${report.R18_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R18_TOT_PONT_SALE"
-									name="R18_TOT_PONT_SALE" th:value="${report.R18_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R18_TOT_MER_SPD"
-									name="R18_TOT_MER_SPD" th:value="${report.R18_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R18_RET_SIZE_ISC_AED"
-									name="R18_RET_SIZE_ISC_AED"
-									th:value="${report.R18_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_RET_ASSE_LON_RET"
-									name="R18_RET_ASSE_LON_RET"
-									th:value="${report.R18_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_RET_ASSE_LOAN_SME"
-									name="R18_RET_ASSE_LOAN_SME"
-									th:value="${report.R18_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_NO_COMP_ISLAMIC"
-									name="R18_NO_COMP_ISLAMIC"
-									th:value="${report.R18_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R19_BANK" name="R19_BANK"
-									th:value="${report.R19_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R19_PRODUCT" name="R19_PRODUCT"
-									th:value="${report.R19_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R19_NO_RET_CON_SPD"
-									name="R19_NO_RET_CON_SPD"
-									th:value="${report.R19_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R19_NO_ISC_SPD"
-									name="R19_NO_ISC_SPD" th:value="${report.R19_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R19_NO_SME_CON_ISC"
-									name="R19_NO_SME_CON_ISC"
-									th:value="${report.R19_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R19_NO_SME_ISC"
-									name="R19_NO_SME_ISC" th:value="${report.R19_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R19_TOT_AGE_OUT"
-									name="R19_TOT_AGE_OUT" th:value="${report.R19_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R19_TOT_PONT_SALE"
-									name="R19_TOT_PONT_SALE" th:value="${report.R19_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R19_TOT_MER_SPD"
-									name="R19_TOT_MER_SPD" th:value="${report.R19_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R19_RET_SIZE_ISC_AED"
-									name="R19_RET_SIZE_ISC_AED"
-									th:value="${report.R19_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R19_RET_ASSE_LON_RET"
-									name="R19_RET_ASSE_LON_RET"
-									th:value="${report.R19_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R19_RET_ASSE_LOAN_SME"
-									name="R19_RET_ASSE_LOAN_SME"
-									th:value="${report.R19_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R19_NO_COMP_ISLAMIC"
-									name="R19_NO_COMP_ISLAMIC"
-									th:value="${report.R19_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R20_BANK" name="R20_BANK"
-									th:value="${report.R20_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R20_PRODUCT" name="R20_PRODUCT"
-									th:value="${report.R20_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R20_NO_RET_CON_SPD"
-									name="R20_NO_RET_CON_SPD"
-									th:value="${report.R20_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_NO_ISC_SPD"
-									name="R20_NO_ISC_SPD" th:value="${report.R20_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R20_NO_SME_CON_ISC"
-									name="R20_NO_SME_CON_ISC"
-									th:value="${report.R20_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_NO_SME_ISC"
-									name="R20_NO_SME_ISC" th:value="${report.R20_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R20_TOT_AGE_OUT"
-									name="R20_TOT_AGE_OUT" th:value="${report.R20_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R20_TOT_PONT_SALE"
-									name="R20_TOT_PONT_SALE" th:value="${report.R20_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R20_TOT_MER_SPD"
-									name="R20_TOT_MER_SPD" th:value="${report.R20_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R20_RET_SIZE_ISC_AED"
-									name="R20_RET_SIZE_ISC_AED"
-									th:value="${report.R20_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_RET_ASSE_LON_RET"
-									name="R20_RET_ASSE_LON_RET"
-									th:value="${report.R20_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_RET_ASSE_LOAN_SME"
-									name="R20_RET_ASSE_LOAN_SME"
-									th:value="${report.R20_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_NO_COMP_ISLAMIC"
-									name="R20_NO_COMP_ISLAMIC"
-									th:value="${report.R20_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R21_BANK" name="R21_BANK"
-									th:value="${report.R21_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R21_PRODUCT" name="R21_PRODUCT"
-									th:value="${report.R21_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R21_NO_RET_CON_SPD"
-									name="R21_NO_RET_CON_SPD"
-									th:value="${report.R21_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_NO_ISC_SPD"
-									name="R21_NO_ISC_SPD" th:value="${report.R21_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R21_NO_SME_CON_ISC"
-									name="R21_NO_SME_CON_ISC"
-									th:value="${report.R21_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_NO_SME_ISC"
-									name="R21_NO_SME_ISC" th:value="${report.R21_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R21_TOT_AGE_OUT"
-									name="R21_TOT_AGE_OUT" th:value="${report.R21_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R21_TOT_PONT_SALE"
-									name="R21_TOT_PONT_SALE" th:value="${report.R21_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R21_TOT_MER_SPD"
-									name="R21_TOT_MER_SPD" th:value="${report.R21_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R21_RET_SIZE_ISC_AED"
-									name="R21_RET_SIZE_ISC_AED"
-									th:value="${report.R21_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_RET_ASSE_LON_RET"
-									name="R21_RET_ASSE_LON_RET"
-									th:value="${report.R21_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_RET_ASSE_LOAN_SME"
-									name="R21_RET_ASSE_LOAN_SME"
-									th:value="${report.R21_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_NO_COMP_ISLAMIC"
-									name="R21_NO_COMP_ISLAMIC"
-									th:value="${report.R21_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R22_BANK" name="R22_BANK"
-									th:value="${report.R22_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R22_PRODUCT" name="R22_PRODUCT"
-									th:value="${report.R22_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R22_NO_RET_CON_SPD"
-									name="R22_NO_RET_CON_SPD"
-									th:value="${report.R22_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_NO_ISC_SPD"
-									name="R22_NO_ISC_SPD" th:value="${report.R22_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R22_NO_SME_CON_ISC"
-									name="R22_NO_SME_CON_ISC"
-									th:value="${report.R22_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_NO_SME_ISC"
-									name="R22_NO_SME_ISC" th:value="${report.R22_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R22_TOT_AGE_OUT"
-									name="R22_TOT_AGE_OUT" th:value="${report.R22_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R22_TOT_PONT_SALE"
-									name="R22_TOT_PONT_SALE" th:value="${report.R22_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R22_TOT_MER_SPD"
-									name="R22_TOT_MER_SPD" th:value="${report.R22_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R22_RET_SIZE_ISC_AED"
-									name="R22_RET_SIZE_ISC_AED"
-									th:value="${report.R22_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_RET_ASSE_LON_RET"
-									name="R22_RET_ASSE_LON_RET"
-									th:value="${report.R22_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_RET_ASSE_LOAN_SME"
-									name="R22_RET_ASSE_LOAN_SME"
-									th:value="${report.R22_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_NO_COMP_ISLAMIC"
-									name="R22_NO_COMP_ISLAMIC"
-									th:value="${report.R22_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R23_BANK" name="R23_BANK"
-									th:value="${report.R23_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R23_PRODUCT" name="R23_PRODUCT"
-									th:value="${report.R23_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R23_NO_RET_CON_SPD"
-									name="R23_NO_RET_CON_SPD"
-									th:value="${report.R23_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R23_NO_ISC_SPD"
-									name="R23_NO_ISC_SPD" th:value="${report.R23_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R23_NO_SME_CON_ISC"
-									name="R23_NO_SME_CON_ISC"
-									th:value="${report.R23_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R23_NO_SME_ISC"
-									name="R23_NO_SME_ISC" th:value="${report.R23_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R23_TOT_AGE_OUT"
-									name="R23_TOT_AGE_OUT" th:value="${report.R23_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R23_TOT_PONT_SALE"
-									name="R23_TOT_PONT_SALE" th:value="${report.R23_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R23_TOT_MER_SPD"
-									name="R23_TOT_MER_SPD" th:value="${report.R23_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R23_RET_SIZE_ISC_AED"
-									name="R23_RET_SIZE_ISC_AED"
-									th:value="${report.R23_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R23_RET_ASSE_LON_RET"
-									name="R23_RET_ASSE_LON_RET"
-									th:value="${report.R23_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R23_RET_ASSE_LOAN_SME"
-									name="R23_RET_ASSE_LOAN_SME"
-									th:value="${report.R23_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R23_NO_COMP_ISLAMIC"
-									name="R23_NO_COMP_ISLAMIC"
-									th:value="${report.R23_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R24_BANK" name="R24_BANK"
-									th:value="${report.R24_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R24_PRODUCT" name="R24_PRODUCT"
-									th:value="${report.R24_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R24_NO_RET_CON_SPD"
-									name="R24_NO_RET_CON_SPD"
-									th:value="${report.R24_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_NO_ISC_SPD"
-									name="R24_NO_ISC_SPD" th:value="${report.R24_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R24_NO_SME_CON_ISC"
-									name="R24_NO_SME_CON_ISC"
-									th:value="${report.R24_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_NO_SME_ISC"
-									name="R24_NO_SME_ISC" th:value="${report.R24_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R24_TOT_AGE_OUT"
-									name="R24_TOT_AGE_OUT" th:value="${report.R24_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R24_TOT_PONT_SALE"
-									name="R24_TOT_PONT_SALE" th:value="${report.R24_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R24_TOT_MER_SPD"
-									name="R24_TOT_MER_SPD" th:value="${report.R24_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R24_RET_SIZE_ISC_AED"
-									name="R24_RET_SIZE_ISC_AED"
-									th:value="${report.R24_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_RET_ASSE_LON_RET"
-									name="R24_RET_ASSE_LON_RET"
-									th:value="${report.R24_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_RET_ASSE_LOAN_SME"
-									name="R24_RET_ASSE_LOAN_SME"
-									th:value="${report.R24_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_NO_COMP_ISLAMIC"
-									name="R24_NO_COMP_ISLAMIC"
-									th:value="${report.R24_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R25_BANK" name="R25_BANK"
-									th:value="${report.R25_BANK}" readonly class="table-input"></td>
-								<td><input type="text" id="R25_PRODUCT" name="R25_PRODUCT"
-									th:value="${report.R25_PRODUCT}" readonly class="table-input"></td>
-								<td><input type="text" id="R25_NO_RET_CON_SPD"
-									name="R25_NO_RET_CON_SPD"
-									th:value="${report.R25_NO_RET_CON_SPD}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_NO_ISC_SPD"
-									name="R25_NO_ISC_SPD" th:value="${report.R25_NO_ISC_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R25_NO_SME_CON_ISC"
-									name="R25_NO_SME_CON_ISC"
-									th:value="${report.R25_NO_SME_CON_ISC}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_NO_SME_ISC"
-									name="R25_NO_SME_ISC" th:value="${report.R25_NO_SME_ISC}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R25_TOT_AGE_OUT"
-									name="R25_TOT_AGE_OUT" th:value="${report.R25_TOT_AGE_OUT}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R25_TOT_PONT_SALE"
-									name="R25_TOT_PONT_SALE" th:value="${report.R25_TOT_PONT_SALE}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R25_TOT_MER_SPD"
-									name="R25_TOT_MER_SPD" th:value="${report.R25_TOT_MER_SPD}"
-									readonly class="table-input editable-input"></td>
-								<td><input type="text" id="R25_RET_SIZE_ISC_AED"
-									name="R25_RET_SIZE_ISC_AED"
-									th:value="${report.R25_RET_SIZE_ISC_AED}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_RET_ASSE_LON_RET"
-									name="R25_RET_ASSE_LON_RET"
-									th:value="${report.R25_RET_ASSE_LON_RET}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_RET_ASSE_LOAN_SME"
-									name="R25_RET_ASSE_LOAN_SME"
-									th:value="${report.R25_RET_ASSE_LOAN_SME}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_NO_COMP_ISLAMIC"
-									name="R25_NO_COMP_ISLAMIC"
-									th:value="${report.R25_NO_COMP_ISLAMIC}" readonly
-									class="table-input editable-input"></td>
-
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="card-footer text-center"
-					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
-					<button type="button" class="role-btn" id="bottomSaveBtn"
-						style="display: none;" onclick="submitForm()">Save</button>
-				</div>
-			</form>
-		</div>
-
-
-		<div class="tab-pane fade" id="conductcultureassessment"
-			role="tabpanel" th:if="${formmode=='conductcultureassessment'}">
-
-			<div class="mr-3 mb-2 text-right"
-				th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-				<button type="button" class="role-btn" id="downloadBtn"
-					th:if="${reportlist[0].VERIFY_FLG == 'Y'}" onclick="downloadData()">Download</button>
-				<button type="button" class="role-btn" id="verifyBtn"
-					th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
-					onclick="verifyData()">Verify</button>
-				<button type="button" class="role-btn" id="modifyBtn"
-					th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
-					onclick="enableEdit()">Modify</button>
-				<button type="button" class="role-btn" id="cancelBtn"
-					style="display: none;" onclick="cancelEdit()">Cancel</button>
-			</div>
-
-			<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
-				class="text-center mt-4">
-				<strong>No records found</strong>
-			</div>
-			<form id="reportForm" method="POST"
-				th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-				<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
-					th:value="${reportlist[0].REPORT_DATE}"> <input
-					type="hidden" id="BRANCH_CODE" name="BRANCH_CODE"
-					th:value="${reportlist[0].BRANCH_CODE}"> <input
-					type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
-					th:value="${reportlist[0].MODIFY_USERID}">
-				<div class="table-responsive" style="overflow: auto; border: none;">
-					<table id="usertable" 
-						class="table table-bordered table-striped table-hover">
-
-						<thead class="thead-light">
-							<tr>
-								<th style="width: 100px">Sr. No</th>
-								<th  style="width:500px;" >Assessment Clarification</th>
-								<th style="width:500px;" >LFI Response</th>
-								<th style="width:500px;" >Evidence to be provided by LFI</th>
-							</tr>
-						</thead>
-						<tbody th:each="report : ${reportlist}">
-							<tr>
-								<td colspan="4">Sub-section 1: Leadership and Governance</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R9_SR_NO" name="R9_SR_NO"
-									th:value="${report.R9_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R9_ASSES_CLASS}"><input type="hidden" id="R9_ASSES_CLASS"
-									name="R9_ASSES_CLASS" th:value="${report.R9_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R9_LFI_RESP" name="R9_LFI_RESP"
-									th:value="${report.R9_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R9_EVID_PRO_LFI"
-									name="R9_EVID_PRO_LFI" th:value="${report.R9_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R10_SR_NO" name="R10_SR_NO"
-									th:value="${report.R10_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R10_ASSES_CLASS}"><input type="hidden" id="R10_ASSES_CLASS"
-									name="R10_ASSES_CLASS" th:value="${report.R10_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R10_LFI_RESP"
-									name="R10_LFI_RESP" th:value="${report.R10_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R10_EVID_PRO_LFI"
-									name="R10_EVID_PRO_LFI" th:value="${report.R10_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R11_SR_NO" name="R11_SR_NO"
-									th:value="${report.R11_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R11_ASSES_CLASS}"><input type="hidden" id="R11_ASSES_CLASS"
-									name="R11_ASSES_CLASS" th:value="${report.R11_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R11_LFI_RESP"
-									name="R11_LFI_RESP" th:value="${report.R11_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R11_EVID_PRO_LFI"
-									name="R11_EVID_PRO_LFI" th:value="${report.R11_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R12_SR_NO" name="R12_SR_NO"
-									th:value="${report.R12_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R12_ASSES_CLASS}"><input type="hidden" id="R12_ASSES_CLASS"
-									name="R12_ASSES_CLASS" th:value="${report.R12_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R12_LFI_RESP"
-									name="R12_LFI_RESP" th:value="${report.R12_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R12_EVID_PRO_LFI"
-									name="R12_EVID_PRO_LFI" th:value="${report.R12_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R13_SR_NO" name="R13_SR_NO"
-									th:value="${report.R13_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R13_ASSES_CLASS}"><input type="hidden" id="R13_ASSES_CLASS"
-									name="R13_ASSES_CLASS" th:value="${report.R13_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R13_LFI_RESP"
-									name="R13_LFI_RESP" th:value="${report.R13_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R13_EVID_PRO_LFI"
-									name="R13_EVID_PRO_LFI" th:value="${report.R13_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R14_SR_NO" name="R14_SR_NO"
-									th:value="${report.R14_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R14_ASSES_CLASS}"><input type="hidden" id="R14_ASSES_CLASS"
-									name="R14_ASSES_CLASS" th:value="${report.R14_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R14_LFI_RESP"
-									name="R14_LFI_RESP" th:value="${report.R14_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R14_EVID_PRO_LFI"
-									name="R14_EVID_PRO_LFI" th:value="${report.R14_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R15_SR_NO" name="R15_SR_NO"
-									th:value="${report.R15_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R15_ASSES_CLASS}"><input type="hidden" id="R15_ASSES_CLASS"
-									name="R15_ASSES_CLASS" th:value="${report.R15_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R15_LFI_RESP"
-									name="R15_LFI_RESP" th:value="${report.R15_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R15_EVID_PRO_LFI"
-									name="R15_EVID_PRO_LFI" th:value="${report.R15_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R16_SR_NO" name="R16_SR_NO"
-									th:value="${report.R16_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R16_ASSES_CLASS}"><input type="hidden" id="R16_ASSES_CLASS"
-									name="R16_ASSES_CLASS" th:value="${report.R16_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R16_LFI_RESP"
-									name="R16_LFI_RESP" th:value="${report.R16_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R16_EVID_PRO_LFI"
-									name="R16_EVID_PRO_LFI" th:value="${report.R16_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R17_SR_NO" name="R17_SR_NO"
-									th:value="${report.R17_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R17_ASSES_CLASS}"><input type="hidden" id="R17_ASSES_CLASS"
-									name="R17_ASSES_CLASS" th:value="${report.R17_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R17_LFI_RESP"
-									name="R17_LFI_RESP" th:value="${report.R17_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R17_EVID_PRO_LFI"
-									name="R17_EVID_PRO_LFI" th:value="${report.R17_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R18_SR_NO" name="R18_SR_NO"
-									th:value="${report.R18_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R18_ASSES_CLASS}"><input type="hidden" id="R18_ASSES_CLASS"
-									name="R18_ASSES_CLASS" th:value="${report.R18_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R18_LFI_RESP"
-									name="R18_LFI_RESP" th:value="${report.R18_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R18_EVID_PRO_LFI"
-									name="R18_EVID_PRO_LFI" th:value="${report.R18_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 2: Purpose and Vision</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R20_SR_NO" name="R20_SR_NO"
-									th:value="${report.R20_SR_NO}" readonly class="table-input"></td>
-								<td><input type="text" id="R20_ASSES_CLASS"
-									name="R20_ASSES_CLASS" th:value="${report.R20_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R20_LFI_RESP"
-									name="R20_LFI_RESP" th:value="${report.R20_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R20_EVID_PRO_LFI"
-									name="R20_EVID_PRO_LFI" th:value="${report.R20_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R21_SR_NO" name="R21_SR_NO"
-									th:value="${report.R21_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R21_ASSES_CLASS}"><input type="hidden" id="R21_ASSES_CLASS"
-									name="R21_ASSES_CLASS" th:value="${report.R21_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R21_LFI_RESP"
-									name="R21_LFI_RESP" th:value="${report.R21_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R21_EVID_PRO_LFI"
-									name="R21_EVID_PRO_LFI" th:value="${report.R21_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R22_SR_NO" name="R22_SR_NO"
-									th:value="${report.R22_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R22_ASSES_CLASS}"><input type="hidden" id="R22_ASSES_CLASS"
-									name="R22_ASSES_CLASS" th:value="${report.R22_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R22_LFI_RESP"
-									name="R22_LFI_RESP" th:value="${report.R22_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R22_EVID_PRO_LFI"
-									name="R22_EVID_PRO_LFI" th:value="${report.R22_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 3: Incentive Structures and
-									People Practices</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R24_SR_NO" name="R24_SR_NO"
-									th:value="${report.R24_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R24_ASSES_CLASS}"><input type="hidden" id="R24_ASSES_CLASS"
-									name="R24_ASSES_CLASS" th:value="${report.R24_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R24_LFI_RESP"
-									name="R24_LFI_RESP" th:value="${report.R24_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R24_EVID_PRO_LFI"
-									name="R24_EVID_PRO_LFI" th:value="${report.R24_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R25_SR_NO" name="R25_SR_NO"
-									th:value="${report.R25_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R25_ASSES_CLASS}"><input type="hidden" id="R25_ASSES_CLASS"
-									name="R25_ASSES_CLASS" th:value="${report.R25_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R25_LFI_RESP"
-									name="R25_LFI_RESP" th:value="${report.R25_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R25_EVID_PRO_LFI"
-									name="R25_EVID_PRO_LFI" th:value="${report.R25_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R26_SR_NO" name="R26_SR_NO"
-									th:value="${report.R26_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R26_ASSES_CLASS}"><input type="hidden" id="R26_ASSES_CLASS"
-									name="R26_ASSES_CLASS" th:value="${report.R26_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R26_LFI_RESP"
-									name="R26_LFI_RESP" th:value="${report.R26_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R26_EVID_PRO_LFI"
-									name="R26_EVID_PRO_LFI" th:value="${report.R26_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R27_SR_NO" name="R27_SR_NO"
-									th:value="${report.R27_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R27_ASSES_CLASS}"><input type="hidden" id="R27_ASSES_CLASS"
-									name="R27_ASSES_CLASS" th:value="${report.R27_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R27_LFI_RESP"
-									name="R27_LFI_RESP" th:value="${report.R27_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R27_EVID_PRO_LFI"
-									name="R27_EVID_PRO_LFI" th:value="${report.R27_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R28_SR_NO" name="R28_SR_NO"
-									th:value="${report.R28_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R28_ASSES_CLASS}"><input type="hidden" id="R28_ASSES_CLASS"
-									name="R28_ASSES_CLASS" th:value="${report.R28_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R28_LFI_RESP"
-									name="R28_LFI_RESP" th:value="${report.R28_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R28_EVID_PRO_LFI"
-									name="R28_EVID_PRO_LFI" th:value="${report.R28_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R29_SR_NO" name="R29_SR_NO"
-									th:value="${report.R29_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R29_ASSES_CLASS}"><input type="hidden" id="R29_ASSES_CLASS"
-									name="R29_ASSES_CLASS" th:value="${report.R29_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R29_LFI_RESP"
-									name="R29_LFI_RESP" th:value="${report.R29_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R29_EVID_PRO_LFI"
-									name="R29_EVID_PRO_LFI" th:value="${report.R29_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R30_SR_NO" name="R30_SR_NO"
-									th:value="${report.R30_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R30_ASSES_CLASS}"><input type="hidden" id="R30_ASSES_CLASS"
-									name="R30_ASSES_CLASS" th:value="${report.R30_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R30_LFI_RESP"
-									name="R30_LFI_RESP" th:value="${report.R30_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R30_EVID_PRO_LFI"
-									name="R30_EVID_PRO_LFI" th:value="${report.R30_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R31_SR_NO" name="R31_SR_NO"
-									th:value="${report.R31_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R31_ASSES_CLASS}"><input type="hidden" id="R31_ASSES_CLASS"
-									name="R31_ASSES_CLASS" th:value="${report.R31_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R31_LFI_RESP"
-									name="R31_LFI_RESP" th:value="${report.R31_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R31_EVID_PRO_LFI"
-									name="R31_EVID_PRO_LFI" th:value="${report.R31_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R32_SR_NO" name="R32_SR_NO"
-									th:value="${report.R32_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R32_ASSES_CLASS}"><input type="hidden" id="R32_ASSES_CLASS"
-									name="R32_ASSES_CLASS" th:value="${report.R32_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R32_LFI_RESP"
-									name="R32_LFI_RESP" th:value="${report.R32_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R32_EVID_PRO_LFI"
-									name="R32_EVID_PRO_LFI" th:value="${report.R32_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 4: Trainings of Bank's staff</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R34_SR_NO" name="R34_SR_NO"
-									th:value="${report.R34_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R34_ASSES_CLASS}"><input type="hidden" id="R34_ASSES_CLASS"
-									name="R34_ASSES_CLASS" th:value="${report.R34_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R34_LFI_RESP"
-									name="R34_LFI_RESP" th:value="${report.R34_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R34_EVID_PRO_LFI"
-									name="R34_EVID_PRO_LFI" th:value="${report.R34_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R35_SR_NO" name="R35_SR_NO"
-									th:value="${report.R35_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R35_ASSES_CLASS}"><input type="hidden" id="R35_ASSES_CLASS"
-									name="R35_ASSES_CLASS" th:value="${report.R35_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R35_LFI_RESP"
-									name="R35_LFI_RESP" th:value="${report.R35_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R35_EVID_PRO_LFI"
-									name="R35_EVID_PRO_LFI" th:value="${report.R35_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R36_SR_NO" name="R36_SR_NO"
-									th:value="${report.R36_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R36_ASSES_CLASS}"><input type="hidden" id="R36_ASSES_CLASS"
-									name="R36_ASSES_CLASS" th:value="${report.R36_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R36_LFI_RESP"
-									name="R36_LFI_RESP" th:value="${report.R36_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R36_EVID_PRO_LFI"
-									name="R36_EVID_PRO_LFI" th:value="${report.R36_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 5: Consumer Awareness</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R38_SR_NO" name="R38_SR_NO"
-									th:value="${report.R38_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R38_ASSES_CLASS}"><input type="hidden" id="R38_ASSES_CLASS"
-									name="R38_ASSES_CLASS" th:value="${report.R38_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R38_LFI_RESP"
-									name="R38_LFI_RESP" th:value="${report.R38_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R38_EVID_PRO_LFI"
-									name="R38_EVID_PRO_LFI" th:value="${report.R38_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R39_SR_NO" name="R39_SR_NO"
-									th:value="${report.R39_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R39_ASSES_CLASS}"><input type="hidden" id="R39_ASSES_CLASS"
-									name="R39_ASSES_CLASS" th:value="${report.R39_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R39_LFI_RESP"
-									name="R39_LFI_RESP" th:value="${report.R39_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R39_EVID_PRO_LFI"
-									name="R39_EVID_PRO_LFI" th:value="${report.R39_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R40_SR_NO" name="R40_SR_NO"
-									th:value="${report.R40_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R40_ASSES_CLASS}"><input type="hidden" id="R40_ASSES_CLASS"
-									name="R40_ASSES_CLASS" th:value="${report.R40_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R40_LFI_RESP"
-									name="R40_LFI_RESP" th:value="${report.R40_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R40_EVID_PRO_LFI"
-									name="R40_EVID_PRO_LFI" th:value="${report.R40_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 6: Product Design</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R42_SR_NO" name="R42_SR_NO"
-									th:value="${report.R42_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R42_ASSES_CLASS}"><input type="hidden" id="R42_ASSES_CLASS"
-									name="R42_ASSES_CLASS" th:value="${report.R42_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R42_LFI_RESP"
-									name="R42_LFI_RESP" th:value="${report.R42_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R42_EVID_PRO_LFI"
-									name="R42_EVID_PRO_LFI" th:value="${report.R42_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R43_SR_NO" name="R43_SR_NO"
-									th:value="${report.R43_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R43_ASSES_CLASS}"><input type="hidden" id="R43_ASSES_CLASS"
-									name="R43_ASSES_CLASS" th:value="${report.R43_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R43_LFI_RESP"
-									name="R43_LFI_RESP" th:value="${report.R43_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R43_EVID_PRO_LFI"
-									name="R43_EVID_PRO_LFI" th:value="${report.R43_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R44_SR_NO" name="R44_SR_NO"
-									th:value="${report.R44_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R44_ASSES_CLASS}"><input type="hidden" id="R44_ASSES_CLASS"
-									name="R44_ASSES_CLASS" th:value="${report.R44_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R44_LFI_RESP"
-									name="R44_LFI_RESP" th:value="${report.R44_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R44_EVID_PRO_LFI"
-									name="R44_EVID_PRO_LFI" th:value="${report.R44_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R45_SR_NO" name="R45_SR_NO"
-									th:value="${report.R45_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R45_ASSES_CLASS}"><input type="hidden" id="R45_ASSES_CLASS"
-									name="R45_ASSES_CLASS" th:value="${report.R45_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R45_LFI_RESP"
-									name="R45_LFI_RESP" th:value="${report.R45_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R45_EVID_PRO_LFI"
-									name="R45_EVID_PRO_LFI" th:value="${report.R45_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 7:Transformational Initiatives
-								</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R47_SR_NO" name="R47_SR_NO"
-									th:value="${report.R47_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R47_ASSES_CLASS}"><input type="hidden" id="R47_ASSES_CLASS"
-									name="R47_ASSES_CLASS" th:value="${report.R47_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R47_LFI_RESP"
-									name="R47_LFI_RESP" th:value="${report.R47_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R47_EVID_PRO_LFI"
-									name="R47_EVID_PRO_LFI" th:value="${report.R47_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R48_SR_NO" name="R48_SR_NO"
-									th:value="${report.R48_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R48_ASSES_CLASS}"><input type="hidden" id="R48_ASSES_CLASS"
-									name="R48_ASSES_CLASS" th:value="${report.R48_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R48_LFI_RESP"
-									name="R48_LFI_RESP" th:value="${report.R48_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R48_EVID_PRO_LFI"
-									name="R48_EVID_PRO_LFI" th:value="${report.R48_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td colspan="4">Sub-section 8: Appropriate Conduct
-									Standards</td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R50_SR_NO" name="R50_SR_NO"
-									th:value="${report.R50_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R50_ASSES_CLASS}"><input type="hidden" id="R50_ASSES_CLASS"
-									name="R50_ASSES_CLASS" th:value="${report.R50_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R50_LFI_RESP"
-									name="R50_LFI_RESP" th:value="${report.R50_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R50_EVID_PRO_LFI"
-									name="R50_EVID_PRO_LFI" th:value="${report.R50_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R51_SR_NO" name="R51_SR_NO"
-									th:value="${report.R51_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R51_ASSES_CLASS}"><input type="hidden" id="R51_ASSES_CLASS"
-									name="R51_ASSES_CLASS" th:value="${report.R51_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R51_LFI_RESP"
-									name="R51_LFI_RESP" th:value="${report.R51_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R51_EVID_PRO_LFI"
-									name="R51_EVID_PRO_LFI" th:value="${report.R51_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R52_SR_NO" name="R52_SR_NO"
-									th:value="${report.R52_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R52_ASSES_CLASS}"><input type="hidden" id="R52_ASSES_CLASS"
-									name="R52_ASSES_CLASS" th:value="${report.R52_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R52_LFI_RESP"
-									name="R52_LFI_RESP" th:value="${report.R52_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R52_EVID_PRO_LFI"
-									name="R52_EVID_PRO_LFI" th:value="${report.R52_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R53_SR_NO" name="R53_SR_NO"
-									th:value="${report.R53_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R53_ASSES_CLASS}"><input type="hidden" id="R53_ASSES_CLASS"
-									name="R53_ASSES_CLASS" th:value="${report.R53_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R53_LFI_RESP"
-									name="R53_LFI_RESP" th:value="${report.R53_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R53_EVID_PRO_LFI"
-									name="R53_EVID_PRO_LFI" th:value="${report.R53_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R54_SR_NO" name="R54_SR_NO"
-									th:value="${report.R54_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R54_ASSES_CLASS}"><input type="hidden" id="R54_ASSES_CLASS"
-									name="R54_ASSES_CLASS" th:value="${report.R54_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R54_LFI_RESP"
-									name="R54_LFI_RESP" th:value="${report.R54_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R54_EVID_PRO_LFI"
-									name="R54_EVID_PRO_LFI" th:value="${report.R54_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R55_SR_NO" name="R55_SR_NO"
-									th:value="${report.R55_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R55_ASSES_CLASS}"><input type="hidden" id="R55_ASSES_CLASS"
-									name="R55_ASSES_CLASS" th:value="${report.R55_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R55_LFI_RESP"
-									name="R55_LFI_RESP" th:value="${report.R55_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R55_EVID_PRO_LFI"
-									name="R55_EVID_PRO_LFI" th:value="${report.R55_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R56_SR_NO" name="R56_SR_NO"
-									th:value="${report.R56_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R56_ASSES_CLASS}"><input type="hidden" id="R56_ASSES_CLASS"
-									name="R56_ASSES_CLASS" th:value="${report.R56_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R56_LFI_RESP"
-									name="R56_LFI_RESP" th:value="${report.R56_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R56_EVID_PRO_LFI"
-									name="R56_EVID_PRO_LFI" th:value="${report.R56_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R57_SR_NO" name="R57_SR_NO"
-									th:value="${report.R57_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R57_ASSES_CLASS}"><input type="hidden" id="R57_ASSES_CLASS"
-									name="R57_ASSES_CLASS" th:value="${report.R57_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R57_LFI_RESP"
-									name="R57_LFI_RESP" th:value="${report.R57_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R57_EVID_PRO_LFI"
-									name="R57_EVID_PRO_LFI" th:value="${report.R57_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R58_SR_NO" name="R58_SR_NO"
-									th:value="${report.R58_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R58_ASSES_CLASS}"><input type="hidden" id="R58_ASSES_CLASS"
-									name="R58_ASSES_CLASS" th:value="${report.R58_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R58_LFI_RESP"
-									name="R58_LFI_RESP" th:value="${report.R58_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R58_EVID_PRO_LFI"
-									name="R58_EVID_PRO_LFI" th:value="${report.R58_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R59_SR_NO" name="R59_SR_NO"
-									th:value="${report.R59_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R59_ASSES_CLASS}"><input type="hidden" id="R59_ASSES_CLASS"
-									name="R59_ASSES_CLASS" th:value="${report.R59_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R59_LFI_RESP"
-									name="R59_LFI_RESP" th:value="${report.R59_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R59_EVID_PRO_LFI"
-									name="R59_EVID_PRO_LFI" th:value="${report.R59_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R60_SR_NO" name="R60_SR_NO"
-									th:value="${report.R60_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R60_ASSES_CLASS}"><input type="hidden" id="R60_ASSES_CLASS"
-									name="R60_ASSES_CLASS" th:value="${report.R60_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R60_LFI_RESP"
-									name="R60_LFI_RESP" th:value="${report.R60_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R60_EVID_PRO_LFI"
-									name="R60_EVID_PRO_LFI" th:value="${report.R60_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-							<tr>
-								<td><input type="text" id="R61_SR_NO" name="R61_SR_NO"
-									th:value="${report.R61_SR_NO}" readonly class="table-input"></td>
-								<td th:text="${report.R61_ASSES_CLASS}"><input type="hidden" id="R61_ASSES_CLASS"
-									name="R61_ASSES_CLASS" th:value="${report.R61_ASSES_CLASS}"
-									readonly class="table-input"></td>
-								<td><input type="text" id="R61_LFI_RESP"
-									name="R61_LFI_RESP" th:value="${report.R61_LFI_RESP}" readonly
-									class="table-input editable-input"></td>
-								<td><input type="text" id="R61_EVID_PRO_LFI"
-									name="R61_EVID_PRO_LFI" th:value="${report.R61_EVID_PRO_LFI}"
-									readonly class="table-input editable-input"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="card-footer text-center"
-					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
-					<button type="button" class="role-btn" id="bottomSaveBtn"
-						style="display: none;" onclick="submitForm()">Save</button>
-				</div>
-			</form>
-		</div>
-
-
-
-
 	</div>
-	</div>
 
-
-	<div th:if="${formmode == 'editdiscount'}" class="liquid-edit-page"
-		style="align-items: center"></div>
 
 	<div class="modal fade" id="alert">
 		<div

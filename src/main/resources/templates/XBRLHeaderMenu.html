@@ -530,26 +530,36 @@
 </script>
 <style>
 #autoHideAlert {
-	position: fixed !important;
-	top: 20px !important;
-	right: 20px !important;
-	bottom: auto !important;
-	left: auto !important;
-	width: 320px !important;
-	height: auto !important;
-	z-index: 999999;
-	background: #ffffff;
-	border-radius: 8px;
-	border-left: 5px solid #E67E00;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-	padding: 15px;
-	display: none;
-	box-sizing: border-box;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	min-width: 320px;
-	max-width: 450px;
-	width: auto !important;
-	word-wrap: break-word;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    
+    /* Make it flexible based on content */
+    width: auto !important; 
+    min-width: 300px; /* Base size so it looks good for short names */
+    max-width: 500px; /* Prevents it from covering the whole screen */
+    
+    height: auto !important; 
+    z-index: 999999;
+    background: #ffffff;
+    border-radius: 8px;
+    border-left: 5px solid #E67E00;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 15px 25px 15px 15px; /* Added right padding for the close button */
+    display: none;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.success-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 0;
 }
 #autoHideAlert a {
     text-decoration: none !important;
@@ -586,18 +596,20 @@ background-position
 0;
 }
 }
+
+/* Adjust the close button so it doesn't overlap text */
 .dl-btn-close {
-	float: right;
-	cursor: pointer;
-	font-size: 20px; /* Slightly larger for easier clicking */
-	color: #999;
-	line-height: 10px;
-	margin-top: -5px;
-	margin-right: -5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #999;
+    line-height: 1;
 }
 
 .dl-btn-close:hover {
-	color: #333;
+    color: #333;
 }
 </style>
 
@@ -756,17 +768,23 @@ background-position
 
     function renderTaskUI(name, pct, time, id) {
         let html = `
-            <div style="margin-right: 15px;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-                    <strong style="font-size:13px; color:#333; word-break: break-all; flex:1;">${name}</strong>
-                    <span style="font-size:11px; color:#888; white-space:nowrap;">${time}</span>
+            <div style="width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 15px; margin-bottom: 8px;">
+                    <strong style="font-size:13px; color:#333; line-height: 1.4; word-break: break-word;">
+                        ${name}
+                    </strong>
+                    <span style="font-size:11px; color:#888; white-space: nowrap;">
+                        ${time}
+                    </span>
                 </div>
-                <div class="custom-progress-bg">
+                
+                <div class="custom-progress-bg" style="margin: 8px 0;">
                     <div class="custom-progress-fill" style="width: ${pct}%;"></div>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px;">
                     <span style="font-size:12px; color:#E67E00; font-weight:bold;">${pct}% Processing...</span>
-                    <a href="javascript:void(0)" onclick="cancelCurrentTask()" style="color:#dc3545; font-size:11px; text-decoration:none !important;">Cancel</a>
+                    <a href="javascript:void(0)" onclick="cancelCurrentTask()" style="color:#dc3545; font-size:11px; text-decoration:none !important; padding-left: 10px;">Cancel</a>
                 </div>
             </div>`;
         $("#alertMessage").html(html);
@@ -776,12 +794,17 @@ background-position
         clearNewTaskStorage();
         window.location.href = `./getNewTaskFile?jobId=${jobId}&fileName=${encodeURIComponent(name)}`;
         
-        $("#alertMessage").html(`
-            <div style="text-align:center; padding: 10px 0;">
-                <i class="fa fa-check-circle" style="color:#E67E00; font-size:28px;"></i>
-                <div style="margin:8px 0; font-weight:bold; font-size:14px; color:#333;">${name} Ready!</div>
-            </div>`);
-        setTimeout(() => { $("#autoHideAlert").fadeOut(); }, 5000);
+        let successHtml = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px 0; width: 100%;">
+                <i class="fa fa-check-circle" style="color:#E67E00; font-size:32px; margin-bottom: 10px;"></i>
+                <div style="font-weight:bold; font-size:14px; color:#333; word-break: break-word;">
+                    ${name} Ready!
+                </div>
+                <div style="font-size:11px; color:#888; margin-top: 5px;">Completed</div>
+            </div>`;
+        
+        $("#alertMessage").html(successHtml);
+        setTimeout(() => { closeDlAlert(); }, 5000);
     }
 
     function closeDlAlert() { $("#autoHideAlert").fadeOut(); cancelAnimationFrame(animationFrame); }
