@@ -3,11 +3,17 @@ package com.bornfire.xbrl.services;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.bornfire.xbrl.entities.RT_MC_TABLE1_ENTITY;
-import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
 import com.bornfire.xbrl.entities.*;
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
 
@@ -35,6 +39,9 @@ public class RT_MC_TABLE_ALL_Service {
 
 	@Autowired
 	private Environment env;
+
+	@Autowired
+	AuditService auditservice;
 
 	@Autowired
 	RT_MC_TABLE1_REPO RT_MC_TABLE1_REPO;
@@ -63,28 +70,42 @@ public class RT_MC_TABLE_ALL_Service {
 
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
-	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String userid)
 			throws Exception {
 
 		byte[] file = null;
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
+					"RT_MC_TABLE1");
 			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode);
 		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
+					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2");
 			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode);
 		} else if ("complaints".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null, "RT_MC_TABLE3");
 			file = GenerateTable_3_Excel(branch, jobId, progressMap, formmode);
 		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
+					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2");
 			file = GenerateTable_4_Excel(branch, jobId, progressMap, formmode);
 		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null, "RT_MC_TABLE5");
 			file = GenerateTable_5_Excel(branch, jobId, progressMap, formmode);
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null, "RT_MC_TABLE6");
 			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode);
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
+					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2");
 			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode);
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null, "RT_MC_TABLE8");
 			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode);
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
+			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,
+					"RT_MC_TABLE9");
 			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode);
 		}
 
@@ -3879,8 +3900,10 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record1.getR7_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record1.getR7_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record1.getR7_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record1.getR7_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record1.getR7_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record1.getR7_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR7_NO_CON_ONBO_DIGI(), null, createHelper);
 					updateCellPreserveStyle(row, 54, record1.getR7_NO_ACCS_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR7_TOT_ACC_LOAN_AML(), null, createHelper);
@@ -3913,8 +3936,10 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record1.getR8_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record1.getR8_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record1.getR8_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record1.getR8_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record1.getR8_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record1.getR8_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR8_NO_CON_ONBO_DIGI(), null, createHelper);
 					updateCellPreserveStyle(row, 54, record1.getR8_NO_ACCS_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR8_TOT_ACC_LOAN_AML(), null, createHelper);
@@ -3949,10 +3974,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record1.getR9_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record1.getR9_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record1.getR9_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record1.getR9_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record1.getR9_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record1.getR9_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR9_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR9_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR9_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR9_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR9_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR9_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -3987,7 +4015,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR10_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR10_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR10_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR10_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR10_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR10_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR10_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR10_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4023,7 +4052,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR11_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR11_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR11_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR11_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR11_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR11_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR11_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR11_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4058,7 +4088,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR12_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR12_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR12_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR12_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR12_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR12_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR12_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR12_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4094,7 +4125,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR13_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR13_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR13_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR13_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR13_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR13_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR13_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR13_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4130,7 +4162,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR14_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR14_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR14_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR14_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR14_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR14_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR14_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR14_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4165,7 +4198,8 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 51, record1.getR15_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 52, record1.getR15_RECO_NPL_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 53, record1.getR15_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record1.getR15_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record1.getR15_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record1.getR15_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record1.getR15_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record1.getR15_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4199,10 +4233,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR16_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR16_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR16_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR16_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR16_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR16_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR16_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR16_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR16_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR16_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR16_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR16_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4234,10 +4271,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR17_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR17_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR17_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR17_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR17_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR17_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR17_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR17_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR17_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR17_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR17_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR17_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4270,10 +4310,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR18_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR18_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR18_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR18_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR18_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR18_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR18_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR18_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR18_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR18_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR18_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR18_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4305,10 +4348,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR19_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR19_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR19_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR19_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR19_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR19_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR19_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR19_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR19_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR19_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR19_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR19_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4341,10 +4387,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR20_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR20_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR20_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR20_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR20_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR20_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR20_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR20_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR20_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR20_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR20_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR20_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4376,10 +4425,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR21_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR21_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR21_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR21_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR21_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR21_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR21_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR21_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR21_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR21_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR21_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR21_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4412,10 +4464,13 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 21, record2.getR22_NON_CON_ONLAST_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR22_TOT_BRAN_PREV(), null, createHelper);
 
-					//updateCellPreserveStyle(row, 51, record2.getR22_NPL_SPD(), null, createHelper);
-					//updateCellPreserveStyle(row, 52, record2.getR22_RECO_NPL_SPD(), null, createHelper);
+					// updateCellPreserveStyle(row, 51, record2.getR22_NPL_SPD(), null,
+					// createHelper);
+					// updateCellPreserveStyle(row, 52, record2.getR22_RECO_NPL_SPD(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 53, record2.getR22_NO_CON_ONBO_DIGI(), null, createHelper);
-					//updateCellPreserveStyle(row, 54, record2.getR22_NO_ACCS_AML(), null, createHelper);
+					// updateCellPreserveStyle(row, 54, record2.getR22_NO_ACCS_AML(), null,
+					// createHelper);
 					updateCellPreserveStyle(row, 55, record2.getR22_TOT_ACC_LOAN_AML(), null, createHelper);
 					updateCellPreserveStyle(row, 56, record2.getR22_TOT_NEW_ACCS_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 57, record2.getR22_TOT_VALS_LOANS_SPD(), null, createHelper);
@@ -4811,7 +4866,6 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR24_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR24_NO_COMP_ISLAMIC(), null, createHelper);
 
-
 				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
@@ -4936,7 +4990,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR17_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR17_EVID_PRO_LFI(), null, createHelper);
-					
+
 					row = sheet.getRow(19);
 
 					progressMap.put(jobId, 15);
@@ -4946,7 +5000,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR21_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR21_EVID_PRO_LFI(), null, createHelper);
-					
+
 					row = sheet.getRow(23);
 
 					updateCellPreserveStyle(row, 4, record.getR24_LFI_RESP(), null, createHelper);
@@ -4980,7 +5034,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR31_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR31_EVID_PRO_LFI(), null, createHelper);
-					
+
 					row = sheet.getRow(33);
 
 					updateCellPreserveStyle(row, 4, record.getR34_LFI_RESP(), null, createHelper);
@@ -4989,7 +5043,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR35_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR35_EVID_PRO_LFI(), null, createHelper);
-					
+
 					row = sheet.getRow(37);
 
 					updateCellPreserveStyle(row, 4, record.getR38_LFI_RESP(), null, createHelper);
@@ -4998,7 +5052,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR39_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR39_EVID_PRO_LFI(), null, createHelper);
-				
+
 					row = sheet.getRow(41);
 
 					updateCellPreserveStyle(row, 4, record.getR42_LFI_RESP(), null, createHelper);
@@ -5011,12 +5065,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 					updateCellPreserveStyle(row, 4, record.getR44_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR44_EVID_PRO_LFI(), null, createHelper);
-					
+
 					row = sheet.getRow(46);
 
 					updateCellPreserveStyle(row, 4, record.getR47_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, record.getR47_EVID_PRO_LFI(), null, createHelper);
-
 
 					row = sheet.getRow(49);
 
@@ -5117,6 +5170,654 @@ public class RT_MC_TABLE_ALL_Service {
 		} else {
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellValue(value.toString());
+		}
+	}
+
+	public void MC_TABLE1_Modify(RT_MC_TABLE1_ENTITY updatedData) {
+		RT_MC_TABLE1_ENTITY existing = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE1_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE1_Bank_Information", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE1" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE2_1_Modify(RT_MC_TABLE2_1_ENTITY updatedData) {
+		RT_MC_TABLE2_1_ENTITY existing = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE2_1_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE2_Bank_Consumers", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE2_1" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE2_2_Modify(RT_MC_TABLE2_2_ENTITY updatedData) {
+		RT_MC_TABLE2_2_ENTITY existing = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE2_2_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE2_Bank_Consumers", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE2_2" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE3_Modify(RT_MC_TABLE3_ENTITY updatedData) {
+		RT_MC_TABLE3_ENTITY existing = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE3_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE3_Complaints", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE3" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE4_1_Modify(RT_MC_TABLE4_1_ENTITY updatedData) {
+		RT_MC_TABLE4_1_ENTITY existing = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE4_1_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE4_Retail_Products", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE4_1" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE4_2_Modify(RT_MC_TABLE4_2_ENTITY updatedData) {
+		RT_MC_TABLE4_2_ENTITY existing = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE4_2_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE4_Retail_Products", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE4_2" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE5_Modify(RT_MC_TABLE5_ENTITY updatedData) {
+		RT_MC_TABLE5_ENTITY existing = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE5_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE5_Bank_Employee", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE5" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE6_Modify(RT_MC_TABLE6_ENTITY updatedData) {
+		RT_MC_TABLE6_ENTITY existing = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE6_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE6_Trainings", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE6" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE7_1_Modify(RT_MC_TABLE7_1_ENTITY updatedData) {
+		RT_MC_TABLE7_1_ENTITY existing = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE7_1_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE7_Additional_Information", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE7_1" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE7_2_Modify(RT_MC_TABLE7_2_ENTITY updatedData) {
+		RT_MC_TABLE7_2_ENTITY existing = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE7_2_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE7_Additional_Information", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE7_2" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE8_Modify(RT_MC_TABLE8_ENTITY updatedData) {
+		RT_MC_TABLE8_ENTITY existing = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE8_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE8_Islamic_Banking", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE8" // Table name
+			);
+		}
+	}
+
+	public void MC_TABLE9_Modify(RT_MC_TABLE9_ENTITY updatedData) {
+		RT_MC_TABLE9_ENTITY existing = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+				updatedData.getBRANCH_CODE());
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		Map<String, String> changes = new LinkedHashMap<>();
+		for (Field field : RT_MC_TABLE9_ENTITY.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(existing);
+				Object newValue = field.get(updatedData);
+				if ((oldValue == null || oldValue.toString().trim().isEmpty())
+						&& (newValue == null || newValue.toString().trim().isEmpty())) {
+					continue;
+				}
+				if (ignoreFields.contains(field.getName()) && newValue == null) {
+					continue;
+				}
+				if (oldValue instanceof Date || newValue instanceof Date) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
+					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
+					if (Objects.equals(oldDateStr, newDateStr)) {
+						continue;
+					}
+				} else {
+					if (Objects.equals(oldValue, newValue)) {
+						continue;
+					}
+				}
+				if (newValue == null) {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
+				} else {
+					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
+				}
+				if (newValue != null) {
+					field.set(existing, newValue);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
+			}
+		}
+		System.out.println("changes : " + changes);
+		// Audit only if any field was changed
+		if (!changes.isEmpty()) {
+			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
+																													// ID
+					"MODIFY", // Action
+					"RBS_MC_TABLE9_Conduct_Culture_Assessment", // Screen name
+					changes, // Changed fields map
+					"RT_MC_TABLE9" // Table name
+			);
 		}
 	}
 }

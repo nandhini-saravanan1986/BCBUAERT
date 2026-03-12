@@ -4533,12 +4533,10 @@ public class XBRLNavigationController {
 		try {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
+			rT_MC_TABLE_Service.MC_TABLE1_Modify(reportData);
 			reportData.setMODIFY_USERID(userid);
-
 			RT_MC_TABLE1_REPO.save(reportData);
-
 			return ResponseEntity.ok("Success");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
@@ -4556,8 +4554,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE1_Bank_Information", null,"RT_MC_TABLE1");
 				RT_MC_TABLE1_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4573,11 +4571,12 @@ public class XBRLNavigationController {
 		try {
 			System.out.println("branch: " + reportData1.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
+			rT_MC_TABLE_Service.MC_TABLE2_1_Modify(reportData1);
+			rT_MC_TABLE_Service.MC_TABLE2_2_Modify(reportData2);
 			reportData1.setMODIFY_USERID(userid);
 			reportData2.setMODIFY_USERID(userid);
 			RT_MC_TABLE2_1_REPO.save(reportData1);
 			RT_MC_TABLE2_2_REPO.save(reportData2);
-
 			return ResponseEntity.ok("Success");
 
 		} catch (Exception e) {
@@ -4599,9 +4598,10 @@ public class XBRLNavigationController {
 				reportData1.setVERIFY_USERID(userid);
 				reportData2.setVERIFY_FLG("Y");
 				reportData2.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData1.getREPORT_DATE() + " - " + reportData1.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE2_Bank_Consumers", null,"RT_MC_TABLE2_1");
+				auditService.createBusinessAudit(reportData2.getREPORT_DATE() + " - " + reportData2.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE2_Bank_Consumers", null,"RT_MC_TABLE2_2");
 				RT_MC_TABLE2_1_REPO.save(reportData1);
 				RT_MC_TABLE2_2_REPO.save(reportData2);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4618,7 +4618,7 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
 			reportData.setMODIFY_USERID(userid);
-
+			rT_MC_TABLE_Service.MC_TABLE5_Modify(reportData);
 			RT_MC_TABLE5_REPO.save(reportData);
 
 			return ResponseEntity.ok("Success");
@@ -4640,8 +4640,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE5_Bank_Employee", null,"RT_MC_TABLE5");
 				RT_MC_TABLE5_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4658,7 +4658,7 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
 			reportData.setMODIFY_USERID(userid);
-
+			rT_MC_TABLE_Service.MC_TABLE6_Modify(reportData);
 			RT_MC_TABLE6_REPO.save(reportData);
 
 			return ResponseEntity.ok("Success");
@@ -4680,8 +4680,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE6_Trainings", null,"RT_MC_TABLE6");
 				RT_MC_TABLE6_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4698,6 +4698,7 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
 			reportData.setMODIFY_USERID(userid);
+			rT_MC_TABLE_Service.MC_TABLE3_Modify(reportData);
 			RT_MC_TABLE3_REPO.save(reportData);
 			return ResponseEntity.ok("Success");
 		} catch (Exception e) {
@@ -4717,8 +4718,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE3_Complaints", null,"RT_MC_TABLE3");
 				RT_MC_TABLE3_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4735,11 +4736,12 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData1.getBRANCH_CODE());
 			System.out.println("R6_BANK: " + reportData1.getR6_BANK());
 			String userid = (String) req.getSession().getAttribute("USERID");
+			rT_MC_TABLE_Service.MC_TABLE4_1_Modify(reportData1);
+			rT_MC_TABLE_Service.MC_TABLE4_2_Modify(reportData2);
 			reportData1.setMODIFY_USERID(userid);
 			reportData2.setMODIFY_USERID(userid);
 			RT_MC_TABLE4_1_REPO.save(reportData1);
 			RT_MC_TABLE4_2_REPO.save(reportData2);
-
 			return ResponseEntity.ok("Success");
 
 		} catch (Exception e) {
@@ -4761,6 +4763,8 @@ public class XBRLNavigationController {
 				reportData1.setVERIFY_USERID(userid);
 				reportData2.setVERIFY_FLG("Y");
 				reportData2.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData1.getREPORT_DATE() + " - " + reportData1.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE4_Retail_Products", null,"RT_MC_TABLE4_1");
+				auditService.createBusinessAudit(reportData2.getREPORT_DATE() + " - " + reportData2.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE4_Retail_Products", null,"RT_MC_TABLE2_2");
 				RT_MC_TABLE4_1_REPO.save(reportData1);
 				RT_MC_TABLE4_2_REPO.save(reportData2);
 
@@ -4780,11 +4784,9 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
 			reportData.setMODIFY_USERID(userid);
-
+			rT_MC_TABLE_Service.MC_TABLE8_Modify(reportData);
 			RT_MC_TABLE8_REPO.save(reportData);
-
 			return ResponseEntity.ok("Success");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
@@ -4802,8 +4804,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE8_Islamic_Banking", null,"RT_MC_TABLE8");
 				RT_MC_TABLE8_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4818,11 +4820,12 @@ public class XBRLNavigationController {
 		try {
 			System.out.println("branch: " + reportData1.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
+			rT_MC_TABLE_Service.MC_TABLE7_1_Modify(reportData1);
+			rT_MC_TABLE_Service.MC_TABLE7_2_Modify(reportData2);
 			reportData1.setMODIFY_USERID(userid);
 			reportData2.setMODIFY_USERID(userid);
 			RT_MC_TABLE7_1_REPO.save(reportData1);
 			RT_MC_TABLE7_2_REPO.save(reportData2);
-
 			return ResponseEntity.ok("Success");
 
 		} catch (Exception e) {
@@ -4844,9 +4847,10 @@ public class XBRLNavigationController {
 				reportData1.setVERIFY_USERID(userid);
 				reportData2.setVERIFY_FLG("Y");
 				reportData2.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData1.getREPORT_DATE() + " - " + reportData1.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE7_Additional_Information", null,"RT_MC_TABLE7_1");
+				auditService.createBusinessAudit(reportData2.getREPORT_DATE() + " - " + reportData2.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE7_Additional_Information", null,"RT_MC_TABLE7_2");
 				RT_MC_TABLE7_1_REPO.save(reportData1);
 				RT_MC_TABLE7_2_REPO.save(reportData2);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4862,11 +4866,9 @@ public class XBRLNavigationController {
 			System.out.println("branch: " + reportData.getBRANCH_CODE());
 			String userid = (String) req.getSession().getAttribute("USERID");
 			reportData.setMODIFY_USERID(userid);
-
+			rT_MC_TABLE_Service.MC_TABLE9_Modify(reportData);
 			RT_MC_TABLE9_REPO.save(reportData);
-
 			return ResponseEntity.ok("Success");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data");
@@ -4884,8 +4886,8 @@ public class XBRLNavigationController {
 			} else {
 				reportData.setVERIFY_FLG("Y");
 				reportData.setVERIFY_USERID(userid);
+				auditService.createBusinessAudit(reportData.getREPORT_DATE() + " - " + reportData.getBRANCH_CODE(), "VERIFY", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,"RT_MC_TABLE9");
 				RT_MC_TABLE9_REPO.save(reportData);
-
 				return ResponseEntity.ok("Verified");
 			}
 		} catch (Exception e) {
@@ -4898,14 +4900,16 @@ public class XBRLNavigationController {
 
 	@GetMapping("/startMcReportJob")
 	@ResponseBody
-	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode) {
+	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
 
 		new Thread(() -> {
 			try {				
-				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode);
+				String userid = (String) req.getSession().getAttribute("USERID");
+				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,userid);
 				System.out.println("File : "+((fileData==null)?"fail":"pass"));
+				System.out.println("Formmode : "+formmode);
 				newTaskFileStore.put(jobId, fileData);
 				newTaskProgress.put(jobId, 100);
 			} catch (Exception e) {

@@ -14,4 +14,9 @@ public interface RT_MC_TABLE6_REPO extends JpaRepository<RT_MC_TABLE6_ENTITY, MC
 
 	@Query(value = "SELECT * FROM RT_MC_TABLE6 WHERE BRANCH_CODE = :branch", nativeQuery = true)
 	List<RT_MC_TABLE6_ENTITY> findBybranchcode(@Param("branch") String branch);
+
+	@Query(value = "SELECT * FROM RT_MC_TABLE6 WHERE REPORT_DATE = :reportDate AND BRANCH_CODE = :branchCode", nativeQuery = true)
+	RT_MC_TABLE6_ENTITY findByReportDateAndBranchCode(@Param("reportDate") Date reportDate,
+			@Param("branchCode") String branchCode);
+
 }
