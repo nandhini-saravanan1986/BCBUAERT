@@ -218,17 +218,17 @@ left
 </style>
 
 <script>
-							function goBack() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			//				function goBack() {
+				//				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-							    window.history.back();
-							}
+//							    window.history.back();
+//							}
 
-							function goForward() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+//							function goForward() {
+	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-							    window.history.forward();
-							}
+//							    window.history.forward();
+	//						}
 
 							// Detect mouse near screen edges
 							document.addEventListener('mousemove', function(e) {
@@ -541,6 +541,34 @@ label.error {
 	margin-top: 5px;
 	display: block;
 }
+
+.static-back-btn {
+						    background-color: rgb(255, 255, 255);
+						    border: none;
+						    color: rgb(255, 128, 0);
+						    font-size: 16px;
+						    border-radius: 50%;
+						    width: 36px;
+						    height: 36px;
+						    display: flex;
+						    align-items: center;
+						    justify-content: center;
+						    margin-right: 10px;
+						    transition: background-color 0.25s ease, transform 0.15s ease;
+						    cursor: pointer;
+						}
+
+						/* Hover effect */
+						.static-back-btn:hover {
+						    background-color: rgb(255, 128, 0);   /* darker orange */
+						    color: rgb(255, 255, 255);
+						    transform: scale(1.08);
+						}
+
+						/* Optional click effect */
+						.static-back-btn:active {
+						    transform: scale(0.95);
+						}
 </style>
 <script>
 $(document).ready(function () {
@@ -851,9 +879,15 @@ $(document).ready(function () {
 
 					<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
 						th:if="${formmode != 'edit'}">
+						
+						<div class="d-flex align-items-center">
+
+																	<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																		<i class="fa fa-arrow-left"></i>
+																	</button>
 						<div class="text-left flex-grow-1">
 										<h4>INVESTMENT RISK DATA DASHBOARD TEMPLATE</h4>
-
+										</div>
 									</div>
 									<div
 											class="role-page-header d-flex justify-content-between align-items-center">
@@ -2376,14 +2410,14 @@ $(document).ready(function () {
 		</div>
 	</div>
 	<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--		<i class="fa fa-arrow-left"></i>-->
+<!--	</button>-->
+<!--	 Floating Forward Button -->
+<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
+<!--		title="Go Forward">-->
+<!--		<i class="fa fa-arrow-right"></i>-->
+<!--	</button>-->
 	<div class="modal fade" id="formmsg">
 		<div
 			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -2772,6 +2806,14 @@ function handleBankChange(select) {
 			}
 		}
 	});
+	
+	function goBack() {
+				    window.history.back();
+				}
+
+				window.addEventListener("pageshow", function () {
+				    hideLoader();
+				});
 </script>
 <style>
 		.role-btn {

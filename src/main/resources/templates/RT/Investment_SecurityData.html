@@ -231,15 +231,15 @@ TESTED BY   : RAJALAKSHMI R
 	</style>
 
 	<script>
-		function goBack() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			window.history.back();
-		}
+//		function goBack() {
+	//		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//	window.history.back();
+	//	}
 
-		function goForward() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			window.history.forward();
-		}
+	//	function goForward() {
+		//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			// window.history.forward();
+//		}
 
 		// Detect mouse near screen edges
 		document.addEventListener('mousemove', function (e) {
@@ -679,6 +679,34 @@ TESTED BY   : RAJALAKSHMI R
 			margin-top: 5px;
 			display: block;
 		}
+		
+		.static-back-btn {
+								    background-color: rgb(255, 255, 255);
+								    border: none;
+								    color: rgb(255, 128, 0);
+								    font-size: 16px;
+								    border-radius: 50%;
+								    width: 36px;
+								    height: 36px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    margin-right: 10px;
+								    transition: background-color 0.25s ease, transform 0.15s ease;
+								    cursor: pointer;
+								}
+
+								/* Hover effect */
+								.static-back-btn:hover {
+								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    color: rgb(255, 255, 255);
+								    transform: scale(1.08);
+								}
+
+								/* Optional click effect */
+								.static-back-btn:active {
+								    transform: scale(0.95);
+								}
 	</style>
 	<script>
 		$(document).ready(function () {
@@ -893,6 +921,14 @@ TESTED BY   : RAJALAKSHMI R
 		$('#resultModalBody').text(message);
 		$('#resultModal').modal('show');
 	}
+	
+	function goBack() {
+	 			    window.history.back();
+	 			}
+
+	 			window.addEventListener("pageshow", function () {
+	 			    hideLoader();
+	 			});
 </script>
 
 <title>RiskInsights</title>
@@ -905,10 +941,16 @@ TESTED BY   : RAJALAKSHMI R
 
 		<div class="role-page-header d-flex justify-content-between align-items-center"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-			<div class="float-left">
+			<div class="d-flex align-items-center">
+
+														<button class="static-back-btn" onclick="goBack()" title="Go Back">
+															<i class="fa fa-arrow-left"></i>
+														</button>
+														<div class="float-left">
 				<h4>
 					INVESTMENT SECURITIES DATA</h4>
 
+			</div>
 			</div>
 			<div class="role-page-header d-flex justify-content-between align-items-center">
 				<div class="float-left">
@@ -2142,13 +2184,13 @@ TESTED BY   : RAJALAKSHMI R
 		</div>
 	</div>
 	<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--		<i class="fa fa-arrow-left"></i>-->
+<!--	</button>-->
+<!--	 Floating Forward Button -->
+<!--	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">-->
+<!--		<i class="fa fa-arrow-right"></i>-->
+<!--	</button>-->
 	<div class="modal fade" id="alert1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">

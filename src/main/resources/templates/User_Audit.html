@@ -355,9 +355,9 @@
 		}
 		
 		.static-back-btn {
-						    background-color: #ff7f27;
+						    background-color: rgb(255, 255, 255);
 						    border: none;
-						    color: white;
+						    color: rgb(255, 128, 0);
 						    font-size: 16px;
 						    border-radius: 50%;
 						    width: 36px;
@@ -366,12 +366,20 @@
 						    align-items: center;
 						    justify-content: center;
 						    margin-right: 10px;
-						    transition: all 0.2s ease;
+						    transition: background-color 0.25s ease, transform 0.15s ease;
+						    cursor: pointer;
 						}
 
+						/* Hover effect */
 						.static-back-btn:hover {
-						    background-color: #E67E00;
-						    transform: scale(1.05);
+						    background-color: rgb(255, 128, 0);   /* darker orange */
+						    color: rgb(255, 255, 255);
+						    transform: scale(1.08);
+						}
+
+						/* Optional click effect */
+						.static-back-btn:active {
+						    transform: scale(0.95);
 						}
 	</style>
 <script th:inline="javascript">
@@ -655,6 +663,65 @@
 				}
 			}
 		}
+	}
+	
+	function downloadAuditReport() {
+
+	    var table = document.getElementById("userAuditLevelTb");
+
+	    var html = "<table border='1'>";
+
+	    // Header with color
+	    html += "<thead style='background-color:#7b6458;color:white;font-weight:bold;'>";
+
+	    var headerCells = table.querySelectorAll("thead th");
+	    html += "<tr>";
+	    headerCells.forEach(function(th) {
+	        html += "<th style='padding:8px;'>" + th.innerText + "</th>";
+	    });
+	    html += "</tr></thead>";
+
+	    // Body
+	    html += "<tbody>";
+
+	    var rows = table.querySelectorAll("tbody tr");
+
+	    rows.forEach(function(row) {
+
+	        if (row.style.display !== "none") { // only visible rows
+
+	            html += "<tr>";
+
+	            var cols = row.querySelectorAll("td");
+
+	            cols.forEach(function(col) {
+
+	                html += "<td style='padding:6px; white-space:normal;'>"
+	                        + col.innerText +
+	                        "</td>";
+
+	            });
+
+	            html += "</tr>";
+	        }
+	    });
+
+	    html += "</tbody></table>";
+
+	    var blob = new Blob(['\ufeff', html], {
+	        type: "application/vnd.ms-excel"
+	    });
+
+	    var url = URL.createObjectURL(blob);
+
+	    var a = document.createElement("a");
+	    a.href = url;
+	    a.download = "User_Audit_Report.xls";
+
+	    document.body.appendChild(a);
+	    a.click();
+
+	    document.body.removeChild(a);
 	}
 </script>
 

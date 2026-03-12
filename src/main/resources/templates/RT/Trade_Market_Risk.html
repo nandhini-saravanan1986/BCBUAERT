@@ -213,15 +213,15 @@ left
 </style>
 
 <script>
-							function goBack() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.back();
-							}
+						//	function goBack() {
+							//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+							  //  window.history.back();
+							//}
 
-							function goForward() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.forward();
-							}
+//							function goForward() {
+//								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	//						    window.history.forward();
+		//					}
 
 							// Detect mouse near screen edges
 							document.addEventListener('mousemove', function(e) {
@@ -646,6 +646,34 @@ label.error {
 			color: #ffffff !important;
 			cursor: default !important;
 		}
+		
+		.static-back-btn {
+								    background-color: rgb(255, 255, 255);
+								    border: none;
+								    color: rgb(255, 128, 0);
+								    font-size: 16px;
+								    border-radius: 50%;
+								    width: 36px;
+								    height: 36px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    margin-right: 10px;
+								    transition: background-color 0.25s ease, transform 0.15s ease;
+								    cursor: pointer;
+								}
+
+								/* Hover effect */
+								.static-back-btn:hover {
+								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    color: rgb(255, 255, 255);
+								    transform: scale(1.08);
+								}
+
+								/* Optional click effect */
+								.static-back-btn:active {
+								    transform: scale(0.95);
+								}
 	</style>
 </style>
 <script type="text/javascript">
@@ -923,10 +951,14 @@ label.error {
 					th:if="${formmode != 'edit'}">
 
 
-						<!-- LEFT: Buttons -->
+						<!-- LEFT: Buttons -->					<div class="d-flex align-items-center">
+
+													<button class="static-back-btn" onclick="goBack()" title="Go Back">
+														<i class="fa fa-arrow-left"></i>
+													</button>
 						<div  class="text-left flex-grow-1">
 							<h4 class="m-0">TRADE MARKET RISK DATA</h4>
-
+							</div>
 						</div>
 						<div class="d-flex align-items-center gap-2">
 
@@ -2316,14 +2348,14 @@ label.error {
 		</div>
 	</div>
 	<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--		<i class="fa fa-arrow-left"></i>-->
+<!--	</button>-->
+<!--	 Floating Forward Button -->
+<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
+<!--		title="Go Forward">-->
+<!--		<i class="fa fa-arrow-right"></i>-->
+<!--	</button>-->
 
 	<div class="modal fade" id="alert1">
 		<div
@@ -2681,6 +2713,14 @@ window.onload = function() {
       }
     }
   });
+  
+  function goBack() {
+   			    window.history.back();
+   			}
+
+   			window.addEventListener("pageshow", function () {
+   			    hideLoader();
+   			});
 </script>
 <style>
 	#pageHeader {
