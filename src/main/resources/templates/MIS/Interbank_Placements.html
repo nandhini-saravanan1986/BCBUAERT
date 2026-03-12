@@ -206,13 +206,13 @@
 			}
 	</style>
 	<script>
-		function goBack() {
-			window.history.back();
-		}
+//		function goBack() {
+//			window.history.back();
+	//	}
 
-		function goForward() {
-			window.history.forward();
-		}
+	//	function goForward() {
+		//	window.history.forward();
+//		}
 
 		// Detect mouse near screen edges
 		document.addEventListener('mousemove', function (e) {
@@ -413,6 +413,34 @@
 		.invalids {
 			color: red;
 		}
+		
+		.static-back-btn {
+								    background-color: rgb(255, 255, 255);
+								    border: none;
+								    color: rgb(255, 128, 0);
+								    font-size: 16px;
+								    border-radius: 50%;
+								    width: 36px;
+								    height: 36px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    margin-right: 10px;
+								    transition: background-color 0.25s ease, transform 0.15s ease;
+								    cursor: pointer;
+								}
+
+								/* Hover effect */
+								.static-back-btn:hover {
+								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    color: rgb(255, 255, 255);
+								    transform: scale(1.08);
+								}
+
+								/* Optional click effect */
+								.static-back-btn:active {
+								    transform: scale(0.95);
+								}
 	</style>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
@@ -912,6 +940,19 @@
 				default: $("#iBranchName").val(""); // clear if not matched
 			}
 		}
+		
+		function goBack() {
+								    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+								    window.history.back();
+								}
+
+								function hideLoader() {
+								    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+								}
+
+								window.addEventListener("pageshow", function () {
+								    hideLoader();
+								});
 	</script>
 </head>
 <title>Riskinsights - ASL</title>
@@ -936,7 +977,13 @@
 									<div id="pageHeader"
 										class="role-page-header d-flex justify-content-between align-items-center">
 										<!-- Left: Page Title -->
+										
 										<div class="role-page-title">
+											<div class="d-flex align-items-center">
+
+														<button class="static-back-btn" onclick="goBack()" title="Go Back">
+															<i class="fa fa-arrow-left"></i>
+														</button>
 											<h4 th:text="${menu}"></h4>
 											<!--<div style="width: 327px;
 																				    height: 3px;
@@ -945,7 +992,7 @@
 																				    margin-top: 6px;
 																				    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>-->
 										</div>
-
+										</div>
 										<!-- Right: Add Button -->
 										<div>
 											<button type="button" class="role-btn"
@@ -1066,9 +1113,15 @@
 							style="background-color: white; border: none; padding: 10px 15px;">
 
 							<!-- 🔹 Left side: Title + underline -->
+							<div class="d-flex align-items-center">
+
+																								<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																									<i class="fa fa-arrow-left"></i>
+																								</button>
 							<div class="role-page-title mb-2 mb-md-0">
 								<h4 th:text="${menu}" class="mb-1" style="font-weight: 600; color: #333;"></h4>
 								<!--<div class="role-page-underline"></div>-->
+							</div>
 							</div>
 
 							<!-- 🔹 Right side: Report date + Download button -->
@@ -1267,12 +1320,12 @@
 			</div>
 				</div>
 			<!-- Floating Navigation Buttons -->
-			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-			    <i class="fa fa-arrow-left"></i>
-			</button>
-			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-			    <i class="fa fa-arrow-right"></i>
-			</button>
+<!--			<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--			    <i class="fa fa-arrow-left"></i>-->
+<!--			</button>-->
+<!--			<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">-->
+<!--			    <i class="fa fa-arrow-right"></i>-->
+<!--			</button>-->
 
 			<!-- Replace Confirmation Modal -->
 			<div class="modal fade" id="alert1">

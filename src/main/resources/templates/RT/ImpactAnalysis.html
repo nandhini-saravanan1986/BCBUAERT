@@ -180,15 +180,15 @@ left
 </style>
 
 <script>
-							function goBack() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.back();
-							}
+//							function goBack() {
+	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//					    window.history.back();
+			//				}
 
-							function goForward() {
-								document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.forward();
-							}
+//							function goForward() {
+	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//					    window.history.forward();
+			//				}
 
 							// Detect mouse near screen edges
 							document.addEventListener('mousemove', function(e) {
@@ -209,6 +209,19 @@ left
 							    } else {
 							        forwardBtn.classList.remove('show');
 							    }
+							});
+							
+							function goBack() {
+							    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+							    window.history.back();
+							}
+
+							function hideLoader() {
+							    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+							}
+
+							window.addEventListener("pageshow", function () {
+							    hideLoader();
 							});
 							</script>
 
@@ -847,6 +860,34 @@ left
 	body {
     overflow: hidden;
 }
+
+.static-back-btn {
+						    background-color: rgb(255, 255, 255);
+						    border: none;
+						    color: rgb(255, 128, 0);
+						    font-size: 16px;
+						    border-radius: 50%;
+						    width: 36px;
+						    height: 36px;
+						    display: flex;
+						    align-items: center;
+						    justify-content: center;
+						    margin-right: 10px;
+						    transition: background-color 0.25s ease, transform 0.15s ease;
+						    cursor: pointer;
+						}
+
+						/* Hover effect */
+						.static-back-btn:hover {
+						    background-color: rgb(255, 128, 0);   /* darker orange */
+						    color: rgb(255, 255, 255);
+						    transform: scale(1.08);
+						}
+
+						/* Optional click effect */
+						.static-back-btn:active {
+						    transform: scale(0.95);
+						}
 </style>
 	<script>
 		$(document).ready(function () {
@@ -1132,7 +1173,18 @@ left
 		});
 	}
 
+//	function goBack() {
+	//    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	  //  window.history.back();
+//	}
 
+	function hideLoader() {
+	    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+	}
+
+	window.addEventListener("pageshow", function () {
+	    hideLoader();
+	});
 </script>
 <title>RiskInsights</title>
 
@@ -1143,9 +1195,15 @@ left
 			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-				<div class="text-left flex-grow-1">
+
+				<div class="d-flex align-items-center">
+
+															<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																<i class="fa fa-arrow-left"></i>
+															</button>
+															<div class="text-left flex-grow-1">
 					<h4>IMPACT ANALYSIS</h4>
-					
+					</div>	
 			</div>
 							<!-- Tabs -->
 				<div class="d-flex align-items-center gap-2">
@@ -1954,14 +2012,14 @@ left
 				</div>
 			</div>
 		</div>
-		<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()"
-		title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+<!--		<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--		<i class="fa fa-arrow-left"></i>-->
+<!--	</button>-->
+<!--	 Floating Forward Button -->
+<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
+<!--		title="Go Forward">-->
+<!--		<i class="fa fa-arrow-right"></i>-->
+<!--	</button>-->
 		<div class="modal fade" id="formmsg">
 			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">

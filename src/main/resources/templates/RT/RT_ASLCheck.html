@@ -581,6 +581,34 @@
 					font-size: 0.80rem;
 
 				}
+				
+				.static-back-btn {
+										    background-color: rgb(255, 255, 255);
+										    border: none;
+										    color: rgb(255, 128, 0);
+										    font-size: 16px;
+										    border-radius: 50%;
+										    width: 36px;
+										    height: 36px;
+										    display: flex;
+										    align-items: center;
+										    justify-content: center;
+										    margin-right: 10px;
+										    transition: background-color 0.25s ease, transform 0.15s ease;
+										    cursor: pointer;
+										}
+
+										/* Hover effect */
+										.static-back-btn:hover {
+										    background-color: rgb(255, 128, 0);   /* darker orange */
+										    color: rgb(255, 255, 255);
+										    transform: scale(1.08);
+										}
+
+										/* Optional click effect */
+										.static-back-btn:active {
+										    transform: scale(0.95);
+										}
 	</style>
 	<script>
 	function initUserTable() {
@@ -691,7 +719,18 @@
 		}
 		
 		
-		
+		function goBack() {
+									    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+									    window.history.back();
+									}
+
+									function hideLoader() {
+									    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+									}
+
+									window.addEventListener("pageshow", function () {
+									    hideLoader();
+									});
 	</script>
 	
 	<script type="text/javascript">
@@ -803,10 +842,15 @@
 						<div id="pageHeader" class="role-page-header">
 
 							<div class="role-page-title">
+								<div class="d-flex align-items-center">
+
+								<button class="static-back-btn" onclick="goBack()" title="Go Back">
+									<i class="fa fa-arrow-left"></i>
+										</button>
 								<h4 th:text="${menu}"></h4>
 
 							</div>
-							
+							</div>
 							
 						</div>
 
@@ -922,10 +966,15 @@
 						<div id="pageHeader" class="role-page-header">
 
 							<div class="role-page-title">
+								<div class="d-flex align-items-center">
+
+									<button class="static-back-btn" onclick="goBack()" title="Go Back">
+										<i class="fa fa-arrow-left"></i>
+														</button>
 								<h4 th:text="${menu}"></h4>
 
 							</div>
-							
+							</div>
 							<div class="btn-group">
 								<button type="button" class="role-btn" th:if="${roleId}=='ADM-M'" onclick="getbranchrequestlist();">
 									Limit Request List

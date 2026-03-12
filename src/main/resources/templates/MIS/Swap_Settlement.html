@@ -202,14 +202,25 @@
 		}
 	</style>
 	<script>
-		function goBack() {
-			window.history.back();
-		}
+//		function goBack() {
+	//		window.history.back();
+	//	}
 
-		function goForward() {
-			window.history.forward();
-		}
+		// function goForward() {
+		//	window.history.forward();
+	//	}
+	function goBack() {
+							    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+							    window.history.back();
+							}
 
+							function hideLoader() {
+							    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+							}
+
+							window.addEventListener("pageshow", function () {
+							    hideLoader();
+							});
 		// Detect mouse near screen edges
 		document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
@@ -763,6 +774,33 @@
 			font-weight: 500;
 			margin: 0;
 		}
+		.static-back-btn {
+								    background-color: rgb(255, 255, 255);
+								    border: none;
+								    color: rgb(255, 128, 0);
+								    font-size: 16px;
+								    border-radius: 50%;
+								    width: 36px;
+								    height: 36px;
+								    display: flex;
+								    align-items: center;
+								    justify-content: center;
+								    margin-right: 10px;
+								    transition: background-color 0.25s ease, transform 0.15s ease;
+								    cursor: pointer;
+								}
+
+								/* Hover effect */
+								.static-back-btn:hover {
+								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    color: rgb(255, 255, 255);
+								    transform: scale(1.08);
+								}
+
+								/* Optional click effect */
+								.static-back-btn:active {
+								    transform: scale(0.95);
+								}
 	</style>
 	<script>
 		$(document).ready(function () {
@@ -1041,14 +1079,15 @@
 
 									<div class="role-page-header d-flex justify-content-between align-items-center">
 										<!-- Left: Page Title -->
+										
 										<div class="role-page-title">
+											<div class="d-flex align-items-center">
+
+																												<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																													<i class="fa fa-arrow-left"></i>
+																												</button>							
 											<h4 th:text="${menu}"></h4>
-											<!--<div style="width: 300px;
-																											    height: 3px;
-																											    background-color: #0073e6;
-																											    border-radius: 2px;
-																											    margin-top: 6px;
-																											    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);"></div>-->
+											</div>
 										</div>
 										<!-- Right: Add Button -->
 										<div>
@@ -1172,9 +1211,14 @@
 						<div class="role-page-header d-flex justify-content-between align-items-center">
 							<!-- Left: Page Title -->
 							<div class="role-page-title">
+								<div class="d-flex align-items-center">
+
+																									<button class="static-back-btn" onclick="goBack()" title="Go Back">
+																										<i class="fa fa-arrow-left"></i>
+																									</button>
 								<h4 th:text="${menu}"></h4>
 							</div>
-
+							</div>
 							<!-- Right: Add Button -->
 							<div class="form-inline">
 								<label for="reportDate" class="mr-2">Report Date:</label> <input type="date"
@@ -1292,13 +1336,13 @@
 
 
 	<!-- Floating Back Button -->
-	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">
-		<i class="fa fa-arrow-left"></i>
-	</button>
-	<!-- Floating Forward Button -->
-	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">
-		<i class="fa fa-arrow-right"></i>
-	</button>
+<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<!--		<i class="fa fa-arrow-left"></i>-->
+<!--	</button>-->
+<!--	 Floating Forward Button -->
+<!--	<button id="floatingForwardBtn" onclick="goForward()" title="Go Forward">-->
+<!--		<i class="fa fa-arrow-right"></i>-->
+<!--	</button>-->
 	<div class="modal fade" id="alert1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">

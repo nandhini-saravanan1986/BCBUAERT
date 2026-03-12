@@ -2137,12 +2137,17 @@ window.onload = function() {
   });
   
   function goBack() {
-  			    window.history.back();
-  			}
+      document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+      window.history.back();
+  }
 
-  			window.addEventListener("pageshow", function () {
-  			    hideLoader();
-  			});
+  function hideLoader() {
+      document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+  }
+
+  window.addEventListener("pageshow", function () {
+      hideLoader();
+  });
 </script>
 
 <style>
