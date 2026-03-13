@@ -3912,6 +3912,10 @@ public class XBRLNavigationController {
 	        return acprService.getUploadedDates();
 	    }else if ("ACPRNF".equals(reportType)) {
 	        return acprService.getUploadedDate();
+	    }else if ("RWAFUND".equals(reportType)) {
+	        return rwaService.getUploadedFundDates();
+	    } else if ("RWANONFUND".equals(reportType)) {
+	        return rwaService.getUploadedNonFundDates();
 	    }
 
 	    return new ArrayList<>();

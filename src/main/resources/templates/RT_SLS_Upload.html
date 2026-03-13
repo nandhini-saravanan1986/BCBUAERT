@@ -387,7 +387,6 @@
 			}
 			else if (report === "SLS") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
 			} else if (report === "MFD") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			} else {
@@ -430,7 +429,7 @@
 				return;
 			}
 
-			window.location.href = "upload/downloadCommonTemplate?reportType=" + report + "&fileFormat=" + format;
+			window.location.href = "rt-sls/downloadTemplate?reportType=" + report + "&fileFormat=" + format;
 		}
 		var uploadedDates = [];
 
@@ -555,6 +554,58 @@
 								return [false, "disabled-date", "Already Uploaded"];
 							}
 							// Today always enable
+							return [true, ""];
+						}
+					});
+				}
+			});
+		}if (reportType === "RWAFUND") {
+
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					uploadedDates = data;
+					$("#toDate").datepicker("destroy");
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+
+							// Disable already uploaded past dates
+							if (data.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
+							}
+
+							// Allow today
+							return [true, ""];
+						}
+					});
+				}
+			});
+		}		if (reportType === "RWANONFUND") {
+
+			$.ajax({
+				url: "getUploadedDates",
+				type: "GET",
+				data: {reportType: reportType},
+				success: function (data) {
+					uploadedDates = data;
+					$("#toDate").datepicker("destroy");
+					$("#toDate").datepicker({
+						dateFormat: "dd-mm-yy",
+						beforeShowDay: function (date) {
+							var d = $.datepicker.formatDate('dd-mm-yy', date);
+							var today = $.datepicker.formatDate('dd-mm-yy', new Date());
+
+							// Disable already uploaded past dates
+							if (data.includes(d) && d !== today) {
+								return [false, "disabled-date", "Already Uploaded"];
+							}
+
+							// Allow today
 							return [true, ""];
 						}
 					});

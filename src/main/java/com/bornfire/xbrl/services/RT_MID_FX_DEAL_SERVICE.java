@@ -26,12 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_DC;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_REPO;
 
-
-
-
-
-
-
 @Service
 public class RT_MID_FX_DEAL_SERVICE {
 
@@ -40,6 +34,8 @@ public class RT_MID_FX_DEAL_SERVICE {
 
 	    @Autowired
 	    RT_MID_FX_DEAL_REPO repo;
+	    @Autowired
+		AuditService auditservice;
 
 	    // Get already uploaded dates
 	    public List<String> getUploadedDates() {
@@ -125,7 +121,10 @@ public class RT_MID_FX_DEAL_SERVICE {
 	        entity.setDelFlg("N");
 	        entity.setEntityFlg("N");
 	        entity.setModifyFlg("N");
-
+	        
+	        auditservice.createBusinessAudit(entity.getSrlNo(), "UPLOAD", " Regulatory_Data_Ingestion_MIS_FX_DEAL", null,
+					"RT_MID_FX_DEAL");
+	        
 	        repo.save(entity);
 
 	        workbook.close();

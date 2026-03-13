@@ -21,6 +21,9 @@ public class RT_ACPR_SERVICE {
 
 	@Autowired
 	private RT_ACPRNF_REPO rtAcprnfRepo;
+	
+	@Autowired
+	AuditService auditservice;
 
 	 // Get already uploaded dates
     public List<String> getUploadedDates() {
@@ -200,7 +203,10 @@ public class RT_ACPR_SERVICE {
                     rowError.printStackTrace();
                 }
             }
-
+            String reportDateStr = new SimpleDateFormat("dd-MM-yyyy").format(toDate);
+            auditservice.createBusinessAudit(  reportDateStr, "UPLOAD",  "Regulatory_Data_Ingestion_ACPR", null,
+                    "RT_ACPR_TABLE");
+            
             // Save remaining records
             if (!batchList.isEmpty()) {
                 rtAcprRepo.saveAll(batchList);
@@ -270,6 +276,11 @@ public class RT_ACPR_SERVICE {
 					list.add(entity);
 				}
 			}
+			
+			 String reportDateStr = new SimpleDateFormat("dd-MM-yyyy").format(toDate);
+	            auditservice.createBusinessAudit(  reportDateStr, "UPLOAD",  "Regulatory_Data_Ingestion_ACPRNF", null,
+	                    "RT_ACPRNF_TABLE");
+		        
 			rtAcprnfRepo.saveAll(list);
 			return "ACPRNF (Non-Fund) processed successfully: " + list.size() + " records.";
 		}

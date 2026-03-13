@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,13 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -39,7 +34,6 @@ import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
 import com.bornfire.xbrl.entities.RT_RWA_NonFund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_NonFund_base_data_rep;
 
-import oracle.jdbc.driver.OracleConnection;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import oracle.sql.STRUCT;
@@ -57,8 +51,25 @@ public class RwaDataUploadService {
 	private RT_RWA_NonFund_base_data_rep nonFundRepo;
 	
 	@Autowired
+	AuditService auditservice;
+	
+	@Autowired
 	private DataSource srcdataSource;
 	
+	  public List<String> getUploadedFundDates() {
+	        List<Date> dates = fundRepo.findUploadedDates();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        return dates.stream()
+	                .map(sdf::format)
+	                .collect(Collectors.toList());
+	    }
+	  public List<String> getUploadedNonFundDates() {
+	        List<Date> dates = nonFundRepo.findUploadedDates();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        return dates.stream()
+	                .map(sdf::format)
+	                .collect(Collectors.toList());
+	    }
 	@Transactional
 	public String uploadRwaTextFile(MultipartFile file, String reportType, Date toDate) throws Exception {
 
@@ -67,9 +78,9 @@ public class RwaDataUploadService {
 			br.readLine(); // Skip Header
 
 			if ("RWAFUND".equals(reportType)) {
-				return processFunded(br);
+				return processFunded(br, toDate);
 			} else if ("RWANONFUND".equals(reportType)) {
-				return processNonFunded(br);
+				return processNonFunded(br, toDate);
 			} else {
 				throw new Exception("Unsupported Report Type");
 			}
@@ -77,112 +88,130 @@ public class RwaDataUploadService {
 	}
 
 	// ================= NON-FUNDED PROCESSING =================
-	private String processNonFunded(BufferedReader br) throws Exception {
-		Map<String, RT_RWA_NonFund_base_data_entity> nonFundMap = new LinkedHashMap<>();
-		Set<Date> datesToDelete = new HashSet<>();
-		String line;
-		int rowCount = 1;
+	private String processNonFunded(BufferedReader br, Date toDate) throws Exception {
 
-		while ((line = br.readLine()) != null) {
-			rowCount++;
-			if (line.trim().isEmpty())
-				continue;
+	    Date today = new Date();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-			// Detect Delimiter (Pipe or Tab)
-			String delimiter = line.contains("|") ? "\\|" : "\t";
-			String[] data = line.split(delimiter, -1);
+	    boolean exists = nonFundRepo.existsReportDate(toDate) > 0;
 
-			// Expecting 58 columns based on your Row 1 & 2 analysis (Index 0 to 57)
-			if (data.length < 58) {
-				logger.warn("Non-Fund Row {} skipped: Insufficient columns ({})", rowCount, data.length);
-				continue;
-			}
+	    // Block duplicate for past date
+	    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+	        throw new RuntimeException("Data already uploaded for report date : " + toDate);
+	    }
 
-			try {
-				RT_RWA_NonFund_base_data_entity ent = new RT_RWA_NonFund_base_data_entity();
+	    // Allow overwrite for today
+	    if (exists) {
+	        nonFundRepo.deleteByReportDate(toDate);
+	    }
 
-				Date rowDate = parseDateSafe(data[0]);
-				if (rowDate == null)
-					continue;
-				ent.setReport_date(rowDate);
-				datesToDelete.add(rowDate);
+	    List<RT_RWA_NonFund_base_data_entity> nonFundList = new ArrayList<>();
 
-				ent.setMoc(parseDecimal(data[1]));
-				ent.setTerritory(data[2]);
-				ent.setBranch_name(data[3]);
-				ent.setCust_id(data[4]);
-				ent.setCust_name(data[5]);
-				ent.setType(data[6]);
-				ent.setLcbg_id(data[7].trim()); // PRIMARY KEY
-				ent.setGl_code(data[8]);
-				ent.setGl_code_description(data[9]);
-				ent.setConst_id(data[10]);
-				ent.setConst_description(data[11]);
-				ent.setPurpose(data[12]);
-				ent.setPurpose_description(data[13]);
-				ent.setNationality(data[14]);
-				ent.setLegal_entity(data[15]);
-				ent.setClass_val(data[16]);
-				ent.setSub_class(data[17]);
-				ent.setNpa_date(parseDateSafe(data[18]));
-				ent.setTot_provision(parseDecimal(data[19]));
-				ent.setLcbg_prov(parseDecimal(data[20]));
-				ent.setProvision_percent(data[21]);
-				ent.setCategory(data[22]);
-				ent.setSub_category(data[23]);
-				ent.setBs_turnover(parseDecimal(data[24]));
-				ent.setNet_worth(parseDecimal(data[25]));
-				ent.setLcbg_limit(parseDecimal(data[26]));
-				ent.setSecurity_fd_primary(parseDecimal(data[27]));
-				ent.setSecurity_fd_collat(parseDecimal(data[28]));
-				ent.setCurrency(data[29]);
-				ent.setLcbg_balance(parseDecimal(data[30]));
-				ent.setLcbg_exposure(parseDecimal(data[31]));
-				ent.setCcf(parseDecimal(data[32]));
-				ent.setLcbg_ccf_adj_amt(parseDecimal(data[33]));
-				ent.setLcbg_crm(parseDecimal(data[34]));
-				ent.setCrm(parseDecimal(data[35]));
-				ent.setCrm_adj_bal(parseDecimal(data[36]));
-				ent.setAcceptance_amount(parseDecimal(data[37]));
-				ent.setRisk_pcnt(parseDecimal(data[38]));
-				ent.setRwa(parseDecimal(data[39]));
-				ent.setAc_rwp(parseDecimal(data[40]));
+	    String line;
+	    int rowCount = 1;
 
-				ent.setRating(data[41]); // Taking first rating
-				ent.setUndrwn_balance(parseDecimal(data[42]));
-				ent.setUndrwn_ccf(parseDecimal(data[43]));
-				ent.setUndrwn_ccf_balance(parseDecimal(data[44]));
-				ent.setUndrwn_crm(parseDecimal(data[45]));
-				ent.setUndrwn_rwa(parseDecimal(data[46]));
-				ent.setBg_type(data[47]);
-				ent.setRrp_exp(parseDecimal(data[48]));
-				ent.setLc_nature(data[49]);
+	    while ((line = br.readLine()) != null) {
 
-				// Index 50 is duplicate rating -> Skip
-				ent.setRating_date(parseDateSafe(data[51]));
-				ent.setRating_expiry(parseDateSafe(data[52]));
+	        rowCount++;
 
-				// Index 53 is the "UNDEFINED" blank gap in your file -> Skip
+	        if (line.trim().isEmpty())
+	            continue;
 
-				ent.setInd_report_order(parseDecimal(data[54]));
-				ent.setInd_desc(data[55]);
-				ent.setNo_of_employees(parseDecimal(data[56]));
-				ent.setMaturity_date(parseDateSafe(data[57]));
+	        String delimiter = line.contains("|") ? "\\|" : "\t";
+	        String[] data = line.split(delimiter, -1);
 
-				nonFundMap.put(ent.getLcbg_id(), ent);
-			} catch (Exception e) {
-				logger.error("Error at Non-Fund Row {}: {}", rowCount, e.getMessage());
-			}
-		}
+	        if (data.length < 58) {
+	            logger.warn("Non-Fund Row {} skipped: insufficient columns {}", rowCount, data.length);
+	            continue;
+	        }
 
-		// REPLACE LOGIC
-		for (Date d : datesToDelete) {
-			nonFundRepo.deleteByReportDate(d);
-		}
-		nonFundRepo.flush();
-		nonFundRepo.saveAll(nonFundMap.values());
+	        try {
 
-		return "Non-Funded: Successfully uploaded " + nonFundMap.size() + " records.";
+	            RT_RWA_NonFund_base_data_entity ent = new RT_RWA_NonFund_base_data_entity();
+
+	            // Always use UI selected date
+	            ent.setReport_date(toDate);
+
+	            ent.setMoc(parseDecimal(data[1]));
+	            ent.setTerritory(data[2]);
+	            ent.setBranch_name(data[3]);
+	            ent.setCust_id(data[4]);
+	            ent.setCust_name(data[5]);
+	            ent.setType(data[6]);
+	            ent.setLcbg_id(data[7].trim());
+
+	            ent.setGl_code(data[8]);
+	            ent.setGl_code_description(data[9]);
+	            ent.setConst_id(data[10]);
+	            ent.setConst_description(data[11]);
+	            ent.setPurpose(data[12]);
+	            ent.setPurpose_description(data[13]);
+	            ent.setNationality(data[14]);
+	            ent.setLegal_entity(data[15]);
+	            ent.setClass_val(data[16]);
+	            ent.setSub_class(data[17]);
+	            ent.setNpa_date(parseDateSafe(data[18]));
+	            ent.setTot_provision(parseDecimal(data[19]));
+	            ent.setLcbg_prov(parseDecimal(data[20]));
+	            ent.setProvision_percent(data[21]);
+	            ent.setCategory(data[22]);
+	            ent.setSub_category(data[23]);
+	            ent.setBs_turnover(parseDecimal(data[24]));
+	            ent.setNet_worth(parseDecimal(data[25]));
+	            ent.setLcbg_limit(parseDecimal(data[26]));
+	            ent.setSecurity_fd_primary(parseDecimal(data[27]));
+	            ent.setSecurity_fd_collat(parseDecimal(data[28]));
+	            ent.setCurrency(data[29]);
+	            ent.setLcbg_balance(parseDecimal(data[30]));
+	            ent.setLcbg_exposure(parseDecimal(data[31]));
+	            ent.setCcf(parseDecimal(data[32]));
+	            ent.setLcbg_ccf_adj_amt(parseDecimal(data[33]));
+	            ent.setLcbg_crm(parseDecimal(data[34]));
+	            ent.setCrm(parseDecimal(data[35]));
+	            ent.setCrm_adj_bal(parseDecimal(data[36]));
+	            ent.setAcceptance_amount(parseDecimal(data[37]));
+	            ent.setRisk_pcnt(parseDecimal(data[38]));
+	            ent.setRwa(parseDecimal(data[39]));
+	            ent.setAc_rwp(parseDecimal(data[40]));
+	            ent.setRating(data[41]);
+	            ent.setUndrwn_balance(parseDecimal(data[42]));
+	            ent.setUndrwn_ccf(parseDecimal(data[43]));
+	            ent.setUndrwn_ccf_balance(parseDecimal(data[44]));
+	            ent.setUndrwn_crm(parseDecimal(data[45]));
+	            ent.setUndrwn_rwa(parseDecimal(data[46]));
+	            ent.setBg_type(data[47]);
+	            ent.setRrp_exp(parseDecimal(data[48]));
+	            ent.setLc_nature(data[49]);
+
+	            ent.setRating_date(parseDateSafe(data[51]));
+	            ent.setRating_expiry(parseDateSafe(data[52]));
+
+	            ent.setInd_report_order(parseDecimal(data[54]));
+	            ent.setInd_desc(data[55]);
+	            ent.setNo_of_employees(parseDecimal(data[56]));
+	            ent.setMaturity_date(parseDateSafe(data[57]));
+
+	            nonFundList.add(ent);
+
+	        } catch (Exception e) {
+	            logger.error("Error at Non-Fund Row {} : {}", rowCount, e.getMessage());
+	        }
+	    }
+
+	    logger.info("Total Non-Fund rows parsed : {}", nonFundList.size());
+
+	  //  auditservice.createBusinessAudit(entity.getReport_date(), "UPLOAD", " Regulatory_Data_Ingestion_RWA_NONFUNDDATA", null,
+			//	"BRF95_RWA_DATA_NONFUNDBASED");
+	    String reportDateStr = new SimpleDateFormat("dd-MM-yyyy").format(toDate);
+        auditservice.createBusinessAudit(  reportDateStr, "UPLOAD",  "Regulatory_Data_Ingestion_RWA_NONFUNDDATA", null,
+                "BRF95_RWA_DATA_NONFUNDBASED");
+	    
+	    if (!nonFundList.isEmpty()) {
+	        nonFundRepo.saveAll(nonFundList);
+	        nonFundRepo.flush();
+	    }
+
+	    return "Non-Funded: Successfully uploaded " + nonFundList.size() + " records.";
 	}
 	
 	public String UploadEabandGamdata(MultipartFile file, String reportType, Date toDate) {
@@ -527,115 +556,140 @@ public class RwaDataUploadService {
 	
 
 	// ================= FUNDED PROCESSING =================
-	private String processFunded(BufferedReader br) throws Exception {
-		Map<String, RT_RWA_Fund_base_data_entity> fundMap = new LinkedHashMap<>();
-		Set<Date> datesToDelete = new HashSet<>();
-		String line;
-		int rowCount = 1;
+	private String processFunded(BufferedReader br, Date toDate) throws Exception {
 
-		while ((line = br.readLine()) != null) {
-			rowCount++;
-			if (line.trim().isEmpty())
-				continue;
+	    Date today = new Date();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-			String delimiter = line.contains("|") ? "\\|" : "\t";
-			String[] data = line.split(delimiter, -1);
+	    boolean exists = fundRepo.existsReportDate(toDate) > 0;
 
-			if (data.length < 71)
-				continue;
+	    // Block past duplicate upload
+	    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+	        throw new RuntimeException("Data already uploaded for this report date : " + toDate);
+	    }
 
-			try {
-				RT_RWA_Fund_base_data_entity ent = new RT_RWA_Fund_base_data_entity();
-				Date rowDate = parseDateSafe(data[0]);
-				if (rowDate == null)
-					continue;
-				ent.setReport_date(rowDate);
-				datesToDelete.add(rowDate);
+	    // Allow overwrite for today
+	    if (exists) {
+	        fundRepo.deleteByReportDate(toDate);
+	    }
 
-				ent.setMoc(parseDecimal(data[1]));
-				ent.setTerritory(data[2]);
-				ent.setBranch_name(data[3]);
-				ent.setCust_id(data[4]);
-				ent.setAccount_id(data[5].trim());
-				ent.setAccount_name(data[6]);
-				ent.setGl_code(data[7]);
-				ent.setGl_code_description(data[8]);
-				ent.setConst_id(data[9]);
-				ent.setConst_description(data[10]);
-				ent.setPurpose(data[11]);
-				ent.setPurpose_description(data[12]);
-				ent.setScheme(data[13]);
-				ent.setSchm_code_desc(data[14]);
-				ent.setNationality(data[15]);
-				ent.setLegal_entity(data[16]);
-				ent.setOpen_date(parseDateSafe(data[17]));
-				ent.setRwa_class(data[18]);
-				ent.setSub_class(data[19]);
-				ent.setNpa_date(parseDateSafe(data[20]));
-				ent.setInt_suspense(parseDecimal(data[21]));
-				ent.setTot_provision(parseDecimal(data[22]));
-				ent.setProv_pcnt(parseDecimal(data[23]));
-				ent.setCategory(data[24]);
-				ent.setSub_category(data[25]);
-				ent.setBs_turnover(parseDecimal(data[26]));
-				ent.setNet_worth(parseDecimal(data[27]));
-				ent.setReshdl_date(parseDateSafe(data[28]));
-				ent.setRes_sec_value(parseDecimal(data[29]));
-				ent.setLtv(data[30]);
-				ent.setGov_guarantee(parseDecimal(data[31]));
-				ent.setCurrency(data[32]);
-				ent.setLimit(parseDecimal(data[33]));
-				ent.setBalance(parseDecimal(data[34]));
-				ent.setExposure(parseDecimal(data[35]));
-				ent.setSecurity_fdr(parseDecimal(data[36]));
-				ent.setFdr_currency(data[37]);
-				ent.setAdjusted_fdr(parseDecimal(data[38]));
-				ent.setCrm(parseDecimal(data[39]));
-				ent.setCrm_adj_bal(parseDecimal(data[40]));
-				ent.setCrm_gnt_adj_bal(parseDecimal(data[41]));
-				ent.setRw(parseDecimal(data[42]));
-				ent.setRwa(parseDecimal(data[43]));
-				ent.setBill_amount(parseDecimal(data[44]));
-				ent.setBill_disc_rwa(parseDecimal(data[45]));
-				ent.setTotal_drawn_rwa(parseDecimal(data[46]));
-				ent.setBill_disc_dtls(data[47]);
-				ent.setConditional_cancel(data[48]);
-				ent.setUndrwn_balance(parseDecimal(data[49]));
-				ent.setDisb_amt1(parseDecimal(data[50]));
-				ent.setDisb_amt2(parseDecimal(data[51]));
-				ent.setLoan_disb_amt(parseDecimal(data[52]));
-				ent.setUndrwn_ccf(parseDecimal(data[53]));
-				ent.setUndrwn_crm(parseDecimal(data[54]));
-				ent.setUndrwn_ccf_balance(parseDecimal(data[55]));
-				ent.setUndrwn_rwa(parseDecimal(data[56]));
-				ent.setUndrwn_disb(data[57]);
-				ent.setAc_rwp(parseDecimal(data[58]));
+	    List<RT_RWA_Fund_base_data_entity> fundList = new ArrayList<>();
 
-				ent.setRating(data[59]);
-				ent.setRating_date(parseDateSafe(data[61]));
-				ent.setRating_expiry(parseDateSafe(data[62]));
-				ent.setPan_number(data[63]);
-				ent.setInd_report_order(parseDecimal(data[64]));
-				ent.setInd_desc(data[65]);
-				ent.setInt_rate(parseDecimal(data[66]));
-				ent.setNo_of_employees(parseDecimal(data[67]));
-				ent.setInt_tbl_code(data[68]);
-				ent.setMaturity_date(parseDateSafe(data[69]));
-				ent.setFrequency(data[70]);
+	    String line;
+	    int rowCount = 1;
 
-				fundMap.put(ent.getAccount_id(), ent);
-			} catch (Exception e) {
-				logger.error("Error at Funded Row {}: {}", rowCount, e.getMessage());
-			}
-		}
+	    while ((line = br.readLine()) != null) {
 
-		for (Date d : datesToDelete) {
-			fundRepo.deleteByReportDate(d);
-		}
-		fundRepo.flush();
-		fundRepo.saveAll(fundMap.values());
+	        rowCount++;
 
-		return "Funded: Successfully uploaded " + fundMap.size() + " records.";
+	        if (line.trim().isEmpty())
+	            continue;
+
+	        String delimiter = line.contains("|") ? "\\|" : "\t";
+	        String[] data = line.split(delimiter, -1);
+
+	        if (data.length < 71) {
+	            logger.warn("Skipped row {} : insufficient columns {}", rowCount, data.length);
+	            continue;
+	        }
+
+	        try {
+
+	            RT_RWA_Fund_base_data_entity ent = new RT_RWA_Fund_base_data_entity();
+
+	            // Always use selected UI report date
+	            ent.setReport_date(toDate);
+
+	            ent.setMoc(parseDecimal(data[1]));
+	            ent.setTerritory(data[2]);
+	            ent.setBranch_name(data[3]);
+	            ent.setCust_id(data[4]);
+	            ent.setAccount_id(data[5].trim());
+	            ent.setAccount_name(data[6]);
+	            ent.setGl_code(data[7]);
+	            ent.setGl_code_description(data[8]);
+	            ent.setConst_id(data[9]);
+	            ent.setConst_description(data[10]);
+	            ent.setPurpose(data[11]);
+	            ent.setPurpose_description(data[12]);
+	            ent.setScheme(data[13]);
+	            ent.setSchm_code_desc(data[14]);
+	            ent.setNationality(data[15]);
+	            ent.setLegal_entity(data[16]);
+	            ent.setOpen_date(parseDateSafe(data[17]));
+	            ent.setRwa_class(data[18]);
+	            ent.setSub_class(data[19]);
+	            ent.setNpa_date(parseDateSafe(data[20]));
+	            ent.setInt_suspense(parseDecimal(data[21]));
+	            ent.setTot_provision(parseDecimal(data[22]));
+	            ent.setProv_pcnt(parseDecimal(data[23]));
+	            ent.setCategory(data[24]);
+	            ent.setSub_category(data[25]);
+	            ent.setBs_turnover(parseDecimal(data[26]));
+	            ent.setNet_worth(parseDecimal(data[27]));
+	            ent.setReshdl_date(parseDateSafe(data[28]));
+	            ent.setRes_sec_value(parseDecimal(data[29]));
+	            ent.setLtv(data[30]);
+	            ent.setGov_guarantee(parseDecimal(data[31]));
+	            ent.setCurrency(data[32]);
+	            ent.setLimit(parseDecimal(data[33]));
+	            ent.setBalance(parseDecimal(data[34]));
+	            ent.setExposure(parseDecimal(data[35]));
+	            ent.setSecurity_fdr(parseDecimal(data[36]));
+	            ent.setFdr_currency(data[37]);
+	            ent.setAdjusted_fdr(parseDecimal(data[38]));
+	            ent.setCrm(parseDecimal(data[39]));
+	            ent.setCrm_adj_bal(parseDecimal(data[40]));
+	            ent.setCrm_gnt_adj_bal(parseDecimal(data[41]));
+	            ent.setRw(parseDecimal(data[42]));
+	            ent.setRwa(parseDecimal(data[43]));
+	            ent.setBill_amount(parseDecimal(data[44]));
+	            ent.setBill_disc_rwa(parseDecimal(data[45]));
+	            ent.setTotal_drawn_rwa(parseDecimal(data[46]));
+	            ent.setBill_disc_dtls(data[47]);
+	            ent.setConditional_cancel(data[48]);
+	            ent.setUndrwn_balance(parseDecimal(data[49]));
+	            ent.setDisb_amt1(parseDecimal(data[50]));
+	            ent.setDisb_amt2(parseDecimal(data[51]));
+	            ent.setLoan_disb_amt(parseDecimal(data[52]));
+	            ent.setUndrwn_ccf(parseDecimal(data[53]));
+	            ent.setUndrwn_crm(parseDecimal(data[54]));
+	            ent.setUndrwn_ccf_balance(parseDecimal(data[55]));
+	            ent.setUndrwn_rwa(parseDecimal(data[56]));
+	            ent.setUndrwn_disb(data[57]);
+	            ent.setAc_rwp(parseDecimal(data[58]));
+
+	            ent.setRating(data[59]);
+	            ent.setRating_date(parseDateSafe(data[61]));
+	            ent.setRating_expiry(parseDateSafe(data[62]));
+	            ent.setPan_number(data[63]);
+	            ent.setInd_report_order(parseDecimal(data[64]));
+	            ent.setInd_desc(data[65]);
+	            ent.setInt_rate(parseDecimal(data[66]));
+	            ent.setNo_of_employees(parseDecimal(data[67]));
+	            ent.setInt_tbl_code(data[68]);
+	            ent.setMaturity_date(parseDateSafe(data[69]));
+	            ent.setFrequency(data[70]);
+
+	            fundList.add(ent);
+
+	        } catch (Exception e) {
+	            logger.error("Error at Funded Row {} : {}", rowCount, e.getMessage());
+	        }
+	    }
+
+	    logger.info("Total Fund rows parsed: {}", fundList.size());
+	    
+	    String reportDateStr = new SimpleDateFormat("dd-MM-yyyy").format(toDate);
+        auditservice.createBusinessAudit(  reportDateStr, "UPLOAD",  "Regulatory_Data_Ingestion_RWA_FUNDDATA", null,
+                "BRF95_RWA_DATA_FUNDBASED");
+	    
+	    if (!fundList.isEmpty()) {
+	        fundRepo.saveAll(fundList);
+	        fundRepo.flush();
+	    }
+
+	    return "Funded: Successfully uploaded " + fundList.size() + " records.";
 	}
 
 	// ================= UTIL METHODS =================

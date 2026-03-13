@@ -13,12 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_base_data_entity,RT_RWA_Fund_base_id_class> {
 	
-	@Transactional
-	@Modifying
-	@Query(value = "DELETE FROM BRF95_RWA_DATA_FUNDBASED WHERE REPORT_DATE = ?1", nativeQuery = true)
-	void deleteByReportDate(Date reportDate);
-
-	
 	@Query(value="Select Distinct cust_id from brf95_rwa_data_fundbased fetch first 100 rows only",nativeQuery=true)
 	List<String> getcustomerdetail();
 	
@@ -888,5 +882,18 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "FROM TOTAL_DEPOSITS_VALUE A LEFT JOIN CORPORATE B ON A.REPORT_DATE = B.REPORT_DATE Order by B.CORP_ACCT_BALANCE_LC DESC)\r\n"
 				+ "FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenretaildepo(Date Selecteddate);
-		
+	
+		// Deletes records for a specific date to prevent duplicates
+
+		@Transactional
+	    @Modifying
+	    @Query(value = "DELETE FROM BRF95_RWA_DATA_FUNDBASED WHERE REPORT_DATE = ?1", nativeQuery = true)
+	    void deleteByReportDate(Date reportDate);
+
+		@Query(value = "SELECT COUNT(*) FROM BRF95_RWA_DATA_FUNDBASED WHERE REPORT_DATE = ?1", nativeQuery = true)
+		long existsReportDate(Date reportDate);
+
+	    @Query(value = "SELECT DISTINCT REPORT_DATE FROM BRF95_RWA_DATA_FUNDBASED ORDER BY REPORT_DATE", nativeQuery = true)
+	    List<Date> findUploadedDates();
+
 }

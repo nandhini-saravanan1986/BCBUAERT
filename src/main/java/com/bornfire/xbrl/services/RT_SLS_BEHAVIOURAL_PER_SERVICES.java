@@ -22,11 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bornfire.xbrl.entities.RT_SLS_BEHAVIOURAL_PER_ENTITY;
 import com.bornfire.xbrl.entities.RT_SLS_BEHAVIOURAL_PER_REP;
 
+
 @Service
 public class RT_SLS_BEHAVIOURAL_PER_SERVICES {
 
 	private static final Logger logger = LoggerFactory.getLogger(RT_SLS_BEHAVIOURAL_PER_SERVICES.class);
-
+	
+	@Autowired
+	AuditService auditservice;
 	@Autowired
 	private RT_SLS_BEHAVIOURAL_PER_REP rtSlsRepository;
 	 
@@ -106,7 +109,10 @@ public class RT_SLS_BEHAVIOURAL_PER_SERVICES {
 	        if (ppRow != null) {
 	            entity.setSp_prepayment(getNumVal(ppRow, 28));
 	        }
-
+	        
+	        auditservice.createBusinessAudit(entity.getSrl_no(), "UPLOAD", " Regulatory_Data_Ingestion_SLS", null,
+					"RT_SLS_BEHAVIOURAL_PER_SC_TABLE");
+	        
 	        rtSlsRepository.save(entity);
 
 	        logger.info("Saved SLS entity ID: {}", entity.getSrl_no());

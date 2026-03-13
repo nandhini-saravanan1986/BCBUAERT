@@ -17,8 +17,14 @@ public interface RT_RWA_NonFund_base_data_rep extends JpaRepository<RT_RWA_NonFu
 	@Transactional
 	@Modifying
 	@Query(value = "DELETE FROM BRF95_RWA_DATA_NONFUNDBASED WHERE REPORT_DATE = ?1", nativeQuery = true)
-	void deleteByReportDate(Date reportDate);
+	void deleteByReportDate(Date report_date);
+	
+	@Query(value = "SELECT COUNT(*) FROM BRF95_RWA_DATA_NONFUNDBASED WHERE REPORT_DATE = ?1", nativeQuery = true)
+	int existsReportDate(Date reportDate);
 
+	    @Query(value = "SELECT DISTINCT REPORT_DATE FROM BRF95_RWA_DATA_NONFUNDBASED ORDER BY REPORT_DATE", nativeQuery = true)
+	    List<Date> findUploadedDates();
+	    
 	// 2. Fetch unique customers for non-fund based
 	@Query(value = "SELECT DISTINCT cust_id FROM BRF95_RWA_DATA_NONFUNDBASED FETCH FIRST 100 ROWS ONLY", nativeQuery = true)
 	List<String> getCustomerDetails();
