@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.bornfire.xbrl.entities.*;
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
@@ -70,42 +71,42 @@ public class RT_MC_TABLE_ALL_Service {
 
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
-	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String userid)
-			throws Exception {
+	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String userid, ServletRequestAttributes attr) throws Exception {
 
 		byte[] file = null;
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
-					"RT_MC_TABLE1");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
+					"RT_MC_TABLE1", attr);
 			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode);
 		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
-					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
+					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", attr);
 			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode);
 		} else if ("complaints".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null, "RT_MC_TABLE3");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null, "RT_MC_TABLE3", attr);
 			file = GenerateTable_3_Excel(branch, jobId, progressMap, formmode);
 		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
-					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
+					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", attr);
 			file = GenerateTable_4_Excel(branch, jobId, progressMap, formmode);
 		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null, "RT_MC_TABLE5");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null, "RT_MC_TABLE5", attr);
 			file = GenerateTable_5_Excel(branch, jobId, progressMap, formmode);
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null, "RT_MC_TABLE6");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null, "RT_MC_TABLE6", attr);
 			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode);
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
-					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
+					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", attr);
 			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode);
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null, "RT_MC_TABLE8");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null, "RT_MC_TABLE8", attr);
 			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode);
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAudit(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,
-					"RT_MC_TABLE9");
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,
+					"RT_MC_TABLE9", attr);
 			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode);
 		}
 

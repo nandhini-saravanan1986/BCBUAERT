@@ -67,6 +67,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -4907,11 +4909,11 @@ public class XBRLNavigationController {
 	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
-
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
 			try {				
 				String userid = (String) req.getSession().getAttribute("USERID");
-				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,userid);
+				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,userid,attr);
 				System.out.println("File : "+((fileData==null)?"fail":"pass"));
 				System.out.println("Formmode : "+formmode);
 				newTaskFileStore.put(jobId, fileData);
@@ -4924,6 +4926,7 @@ public class XBRLNavigationController {
 
 		return jobId;
 	}
+
 
 	@GetMapping("/checkNewTaskStatus")
 	@ResponseBody

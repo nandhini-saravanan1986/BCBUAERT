@@ -602,6 +602,12 @@ div.dataTables_filter {
 				.static-back-btn:active {
 				    transform: scale(0.95);
 				}
+				.clickable {
+    				cursor: pointer;
+    				color: #2563eb; 
+				}
+				
+
 </style>
 
 <script>
@@ -632,6 +638,7 @@ div.dataTables_filter {
 		});
 		
 		// Detect mouse near screen edges
+		/*
 										document.addEventListener('mousemove', function(e) {
 										    const backBtn = document.getElementById('floatingBackBtn');
 										    const forwardBtn = document.getElementById('floatingForwardBtn');
@@ -650,7 +657,7 @@ div.dataTables_filter {
 										    } else {
 										        forwardBtn.classList.remove('show');
 										    }
-										});
+										});*/
 	</script>
 <script>
 $(document).ready(function () {
@@ -692,45 +699,36 @@ function goBack() {
 			});
 			
 			function downloadAuditReport() {
-
-			    var table = document.getElementById("audttable");
+			    var dt = $('#audttable').DataTable();
 
 			    var html = "<table border='1'>";
 
 			    // Header style
 			    html += "<thead style='background-color:#7b6458;color:white;font-weight:bold;'>";
 
-			    var headerCells = table.querySelectorAll("thead th");
+			    var tableDOM = document.getElementById("audttable");
+			    var headerCells = tableDOM.querySelectorAll("thead th");
 			    html += "<tr>";
 
 			    headerCells.forEach(function(th) {
-			        html += "<th style='padding:8px;'>" + th.innerText + "</th>";
+			    	html += "<th style='padding:8px;'>" + th.textContent + "</th>";
 			    });
 
 			    html += "</tr></thead>";
-
 			    html += "<tbody>";
 
-			    var rows = table.querySelectorAll("tbody tr");
+			    var rows = dt.rows({ search: 'applied' }).nodes().toArray();
 
 			    rows.forEach(function(row) {
+			        html += "<tr>";
 
-			        if (row.style.display !== "none") { // only visible rows
+			        var cols = row.querySelectorAll("td");
 
-			            html += "<tr>";
+			        cols.forEach(function(col) {
+			            html += "<td style='padding:6px; white-space:normal;'>" + col.textContent + "</td>";
+			        });
 
-			            var cols = row.querySelectorAll("td");
-
-			            cols.forEach(function(col) {
-
-			                html += "<td style='padding:6px; white-space:normal;'>"
-			                        + col.innerText +
-			                        "</td>";
-
-			            });
-
-			            html += "</tr>";
-			        }
+			        html += "</tr>";
 			    });
 
 			    html += "</tbody></table>";
@@ -750,6 +748,52 @@ function goBack() {
 
 			    document.body.removeChild(a);
 			}
+			
+			function modifypopup(rowId) {
+			    
+				const myModal = document.getElementById('modifyModal');
+				myModal.classList.add('show');
+				myModal.style.display = 'block';
+				document.body.classList.add('modal-open'); 
+			    
+			    const tableBody = document.getElementById('modalTableBody');
+			    tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">Loading...</td></tr>';
+			    fetch(`./details?id=${rowId}`)
+			        .then(response => {
+			            if (!response.ok) throw new Error("Network response was not ok");
+			            return response.json(); 
+			        })
+			        .then(data => {
+			            tableBody.innerHTML = '';
+			            
+			            if (!data || data.length === 0) {
+			                tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">No modifications found.</td></tr>';
+			                return;
+			            }
+
+			            data.forEach(item => {
+			                const tr = document.createElement('tr');
+			                tr.innerHTML = `
+			                    <td >${item.columnName}</td>
+			                    <td >${item.oldValue}</td>
+			                    <td >${item.newValue}</td>
+			                `;
+			                tableBody.appendChild(tr);
+			            });
+			        })
+			        .catch(error => {
+			            console.error('Error fetching details:', error);
+			            tableBody.innerHTML = '<tr><td colspan="3" class="text-center text-danger p-4">Failed to load data.</td></tr>';
+			        });
+			}
+			
+			$(document).ready(function() {
+			    $('#closeModifyBtn').on('click', function() {
+			        $('#modifyModal').removeClass('show').css('display', 'none');			        
+			        $('.modal-backdrop').remove();
+			        $('body').removeClass('modal-open').css('padding-right', '');
+			    });
+			});
 </script>
 </head>
 <title>RiskInsights - Service Audit</title>
@@ -779,7 +823,7 @@ function goBack() {
 				
 				
 						<div class="form-inline">
-							<div class="d-flex align-items-center">
+							<div class="d-flex align-items-center" style="padding-right: 15px;">
 								<label for="searchDate" class="mb-0 mr-2">Date:</label>
 								<input type="date" id="searchDate" class="form-control form-control-sm" />
 							</div>
@@ -817,7 +861,13 @@ function goBack() {
 									<!-- <td th:text="${auditdata.audit_screen}"></td> -->
 									<!-- <td th:text="${auditdata.old_value}"></td>
 									<td th:text="${auditdata.new_value}"></td> -->
-									<td th:text="${auditdata.func_code}"></td>
+									<!-- <td th:text="${auditdata.func_code}"></td> -->
+									<td>
+										<div th:text="${auditdata.func_code}"
+											th:attr="onclick=${auditdata.func_code == 'MODIFY' ? 'modifypopup(''' + auditdata.audit_ref_no + ''')' : null}"
+											th:classappend="${auditdata.func_code == 'MODIFY' ? 'clickable' : ''}">
+										</div>
+									</td>
 									<td th:text="${auditdata.entry_user}"></td>
 									<td
 										th:text="${auditdata.entry_time != null ? #dates.format(auditdata.entry_time, 'dd-MM-yyyy') : ''}">
@@ -847,8 +897,36 @@ function goBack() {
 			</div>
 		</div>
 	</div>
-	
-<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" style="padding-top: 100px;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 550px;">
+        <div class="modal-content">
+            
+            <div class="menu-title-header" style="padding: 5px; background-color: #ff7f27;"> 
+                <div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white; font-weight: bold; background-color: #ff7f27;">
+                    BANK OF BARODA
+                </div>
+            </div>
+            
+            <div class="modal-body" style="text-align: center; padding: 20px;max-height:500px">
+                <p id="alertpopupmsg1" class="text-wrap text-break" style="display:none;"></p>   
+
+                <table class="table table-bordered table-hover w-100 mb-4 text-left">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Old Value</th>
+                            <th>New Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                    </tbody>
+                </table>
+                <button type="button" class="role-btn" id="closeModifyBtn">Close</button>
+            </div>            
+        </div>
+    </div>
+</div>
+	<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
 <!--						<i class="fa fa-arrow-left"></i>-->
 <!--					</button>-->
 <!--					 Floating Forward Button -->

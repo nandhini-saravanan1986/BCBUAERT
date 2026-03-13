@@ -2,19 +2,27 @@ package com.bornfire.xbrl.controllers;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bornfire.xbrl.entities.Service_audit_table_Rep;
+import com.bornfire.xbrl.entities.Service_audit_table_entity;
 import com.bornfire.xbrl.services.AuditService;
 
 @Controller
@@ -72,5 +80,44 @@ public class AuditController {
 
 		return changeDetails; // Return the formatted changes
 	}
+	
+	@GetMapping("/details")
+    public ResponseEntity<List<Map<String, String>>> getModifyDetails(@RequestParam("id") String id) {
+        
+		Optional<Service_audit_table_entity> entity=Service_audit_table_Reps.findById(id);
+		System.out.println(entity.get().getModi_details());
+        String modify_details = entity.get().getModi_details(); 
+        List<Map<String, String>> parsedList = new ArrayList<>();
+
+        if (modify_details != null && !modify_details.trim().isEmpty()) {
+            String[] records = modify_details.split("\\|\\|\\|");
+            
+            for (String record : records) {
+                if (record.trim().isEmpty()) continue;
+                
+                try {
+                    int oldValIdx = record.indexOf(": OldValue: ");
+                    int newValIdx = record.indexOf(", NewValue: ");
+                    
+                    String columnName = record.substring(0, oldValIdx).trim();
+                    String oldValue = record.substring(oldValIdx + 12, newValIdx).trim();
+                    String newValue = record.substring(newValIdx + 12).trim();
+                    
+                    Map<String, String> rowMap = new HashMap<>();
+                    rowMap.put("columnName", columnName);
+                    rowMap.put("oldValue", oldValue);
+                    rowMap.put("newValue", newValue);
+                    
+                    parsedList.add(rowMap);
+                } catch (Exception e) {
+                    System.err.println("Could not parse record fragment: " + record);
+                }
+            }
+        }
+        
+        return ResponseEntity.ok(parsedList);
+    }
+	
+	
 
 }
