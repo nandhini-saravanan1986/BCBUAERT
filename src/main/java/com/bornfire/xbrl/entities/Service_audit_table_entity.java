@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +20,7 @@ public class Service_audit_table_entity {
 	    private String audit_screen;
 	    private String event_id;
 	    private String event_name;
+	    @Lob
 	    private String modi_details;
 	    private String entry_user;
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")

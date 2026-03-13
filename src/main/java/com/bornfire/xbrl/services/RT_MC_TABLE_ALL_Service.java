@@ -5176,7 +5176,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE1_Modify(RT_MC_TABLE1_ENTITY updatedData) {
 		RT_MC_TABLE1_ENTITY existing = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5230,7 +5230,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE2_1_Modify(RT_MC_TABLE2_1_ENTITY updatedData) {
 		RT_MC_TABLE2_1_ENTITY existing = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE2_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5284,7 +5284,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE2_2_Modify(RT_MC_TABLE2_2_ENTITY updatedData) {
 		RT_MC_TABLE2_2_ENTITY existing = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE2_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5338,7 +5338,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE3_Modify(RT_MC_TABLE3_ENTITY updatedData) {
 		RT_MC_TABLE3_ENTITY existing = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE3_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5392,7 +5392,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE4_1_Modify(RT_MC_TABLE4_1_ENTITY updatedData) {
 		RT_MC_TABLE4_1_ENTITY existing = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE4_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5446,7 +5446,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE4_2_Modify(RT_MC_TABLE4_2_ENTITY updatedData) {
 		RT_MC_TABLE4_2_ENTITY existing = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE4_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5500,7 +5500,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE5_Modify(RT_MC_TABLE5_ENTITY updatedData) {
 		RT_MC_TABLE5_ENTITY existing = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE5_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5554,7 +5554,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE6_Modify(RT_MC_TABLE6_ENTITY updatedData) {
 		RT_MC_TABLE6_ENTITY existing = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE6_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5608,7 +5608,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE7_1_Modify(RT_MC_TABLE7_1_ENTITY updatedData) {
 		RT_MC_TABLE7_1_ENTITY existing = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE7_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5662,7 +5662,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE7_2_Modify(RT_MC_TABLE7_2_ENTITY updatedData) {
 		RT_MC_TABLE7_2_ENTITY existing = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE7_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5716,7 +5716,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE8_Modify(RT_MC_TABLE8_ENTITY updatedData) {
 		RT_MC_TABLE8_ENTITY existing = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE8_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5770,7 +5770,7 @@ public class RT_MC_TABLE_ALL_Service {
 	public void MC_TABLE9_Modify(RT_MC_TABLE9_ENTITY updatedData) {
 		RT_MC_TABLE9_ENTITY existing = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE9_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);

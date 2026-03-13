@@ -253,7 +253,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("MENULIST", menus); 
 				request.getSession().setAttribute("DEPARTMENT",  user.getDepartment());
 
-				auditService.createLoginAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE");				
+				auditService.createLoginAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE",user);				
 				
 				response.sendRedirect("Dashboard");
 				
@@ -274,7 +274,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 
 				Optional<UserProfile> up = userProfileRep.findById(authentication.getName());
 				UserProfile user = up.get();
-				auditService.createLoginAudit(user.getUserid(), "Logout", null, null, "XBRL_USER_PROFILE_TABLE");
+				auditService.createLoginAudit(user.getUserid(), "Logout", null, null, "XBRL_USER_PROFILE_TABLE",user);
 
 				response.sendRedirect("login?logout");
 

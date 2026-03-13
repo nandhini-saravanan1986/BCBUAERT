@@ -20,6 +20,7 @@ import com.bornfire.xbrl.entities.AuditServicesEntity;
 import com.bornfire.xbrl.entities.AuditServicesRep;
 import com.bornfire.xbrl.entities.Service_audit_table_Rep;
 import com.bornfire.xbrl.entities.Service_audit_table_entity;
+import com.bornfire.xbrl.entities.UserProfile;
 
 @Service
 public class AuditService {
@@ -41,7 +42,7 @@ public class AuditService {
 	}
 
 	public void createLoginAudit(final String customerId, final String functionCode, final String screenName,
-			final Map<String, String> changeDetails, final String tableName) {
+			final Map<String, String> changeDetails, final String tableName, final UserProfile user) {
 		try {
 			final UUID auditID = UUID.randomUUID();
 			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -58,13 +59,13 @@ public class AuditService {
 			audit.setAudit_ref_no(auditID.toString());
 			audit.setAudit_date(currentDate);
 			audit.setEntry_time(currentDate);
-			audit.setEntry_user(userId);
-			audit.setEntry_user_name(username);
+			audit.setEntry_user(user.getUserid());
+			audit.setEntry_user_name(user.getUsername());
 			audit.setFunc_code(functionCode);
 			audit.setAudit_table(tableName);
 			audit.setAudit_screen(screenName);
-			audit.setEvent_id(userId);
-			audit.setEvent_name(username);
+			audit.setEvent_id(user.getUserid());
+			audit.setEvent_name(user.getUsername());
 
 			if (changeDetails != null && !changeDetails.isEmpty()) {
 				StringBuilder changes = new StringBuilder();
