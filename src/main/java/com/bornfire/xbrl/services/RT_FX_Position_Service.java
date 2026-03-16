@@ -1,7 +1,10 @@
 package com.bornfire.xbrl.services;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -22,10 +25,36 @@ public class RT_FX_Position_Service {
 
 	@Autowired
 	RT_FX_Position_Rep rtFxPositionRep;
+    @Autowired
+    AuditService auditservice;
 
+	  // Get already uploaded dates
+    public List<String> getUploadedDates() {
+        List<Date> dates = rtFxPositionRep.findUploadedDates();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        return dates.stream()
+                .map(sdf::format)
+                .collect(Collectors.toList());
+    }
+	
 	@Transactional
 	public String uploadFxData(MultipartFile file, Date fromDate, Date toDate, String user) throws Exception {
 
+		  Date today = new Date();
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+		    boolean exists = rtFxPositionRep.existsByReportDate(toDate) > 0;
+
+		    // Past date already uploaded → block
+		    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+		        throw new RuntimeException("Data already uploaded for this report date: " + toDate);
+		    }
+
+		    // If today upload again → replace
+		    if (exists) {
+		        rtFxPositionRep.deleteByReportDate(toDate);
+		    }
+		
 		Workbook workbook = new XSSFWorkbook(file.getInputStream());
 		// As per your requirement: Sheet index 2
 		Sheet sheet = workbook.getSheetAt(2);
@@ -88,9 +117,12 @@ public class RT_FX_Position_Service {
 
 			// 3. Save to Database (JPA automatically Updates if ID exists, otherwise
 			// Inserts)
+		   
 			rtFxPositionRep.save(entity);
 		}
-
+		auditservice.createBusinessAudit( String.valueOf(toDate), "UPLOAD",
+		        "Regulatory_Data_Ingestion_FXP", null,  "RT_FX_POSITION_TABLE"
+		);
 		workbook.close();
 		return "FX Position data processed successfully: Records for " + toDate + " updated/appended.";
 	}

@@ -3918,11 +3918,15 @@ public class XBRLNavigationController {
 	        return rwaService.getUploadedFundDates();
 	    } else if ("RWANONFUND".equals(reportType)) {
 	        return rwaService.getUploadedNonFundDates();
+	    } else if ("RWABILLDETAIL".equals(reportType)) {
+	        return rwaService.getUploadedBillDates();
+	    }
+	    else if ("FXP".equals(reportType)) {
+	        return rtFxPositionService.getUploadedDates();
 	    }
 
 	    return new ArrayList<>();
 	}
-	// THE COMMON UPLOAD METHOD
 	@PostMapping("/commonUploadFile")
 	@ResponseBody
 	public ResponseEntity<String> commonUploadFile(
@@ -3930,6 +3934,7 @@ public class XBRLNavigationController {
 	        @RequestParam("reportType") String reportType,
 	        @RequestParam(value = "fromDate", required = false) String fromDateStr,
 	        @RequestParam("toDate") String toDateStr,
+	        @RequestParam(value = "forceUpload", defaultValue = "false") boolean forceUpload,
 	        HttpServletRequest request) {
 
 	    String username = (String) request.getSession().getAttribute("USERNAME");
@@ -3937,28 +3942,23 @@ public class XBRLNavigationController {
 	        username = "SYSTEM";
 
 	    try {
-	    	 if (reportType != null && reportType.contains(",")) {
-	             reportType = reportType.split(",")[0].trim();
-	         }
-	        // 🔹 Convert String → Date
-	    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-	      //  Date toDate = sdf.parse(toDateStr);
-	       // Date fromDate = null;
+	        if (reportType != null && reportType.contains(",")) {
+	            reportType = reportType.split(",")[0].trim();
+	        }
 
-	       // if (fromDateStr != null && !fromDateStr.isEmpty()) {
-	       //     fromDate = sdf.parse(fromDateStr);
-	      //  }
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-            Date toDate = null;
-            Date fromDate = null;
-	        if (toDateStr != null && !toDateStr.trim().isEmpty() && !",".equals(toDateStr.trim())) {
+	        Date toDate = null;
+	        Date fromDate = null;
+
+	        if (toDateStr != null && !toDateStr.trim().isEmpty()) {
 	            toDate = sdf.parse(toDateStr.trim());
 	        } else {
 	            return ResponseEntity.badRequest().body("Reference Date is required.");
 	        }
-	        /* Parse Start Date (only if present) */
-	        if (fromDateStr != null && !fromDateStr.trim().isEmpty() && !",".equals(fromDateStr.trim())) {
+
+	        if (fromDateStr != null && !fromDateStr.trim().isEmpty()) {
 	            fromDate = sdf.parse(fromDateStr.trim());
 	        }
 	        logger.info("Initiating Common Upload. Type: {}, User: {}, Reference Date: {}", reportType, username, toDate);
@@ -3969,9 +3969,17 @@ public class XBRLNavigationController {
 
 	        String resultMsg = "";
 
-	        if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
+	        if ("ACPR".equals(reportType)) {
 
-	            resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate);
+	            resultMsg = acprService.uploadAcprFile(file, toDate, username, forceUpload);
+
+	        } else if ("ACPRNF".equals(reportType)) {
+
+	            resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username, forceUpload);
+
+	        } else if ("RWAFUND".equals(reportType) || "RWANONFUND".equals(reportType)) {
+
+	            resultMsg = rwaService.uploadRwaTextFile(file, reportType, toDate, forceUpload);
 
 	        } else if ("FXP".equals(reportType)) {
 
@@ -3981,29 +3989,13 @@ public class XBRLNavigationController {
 
 	            resultMsg = rtSlsService.processAndSaveFile(file, fromDate, toDate, username);
 
-	        }else if ("ACPR".equals(reportType)) {
-
-	            resultMsg = acprService.uploadAcprFile(file, toDate, username);
-
-	        } else if ("ACPRNF".equals(reportType)) {
-
-	            resultMsg = acprService.uploadAcprnfFile(file, fromDate, toDate, username);
-
 	        } else if ("MFD".equals(reportType)) {
 
 	            resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, toDate, username);
 
-	        } else if ("GAMDATADUMP".equals(reportType)) {
-
-	            resultMsg = rwaService.UploadEabandGamdata(file, reportType, toDate);
-
-	        } else if ("ONLY_EAB_TABLE_DATA".equals(reportType)) {
-
-	            resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
-
 	        } else if ("RWABILLDETAIL".equals(reportType)) {
 
-	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate);
+	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate, forceUpload);
 
 	        } else {
 
@@ -4012,9 +4004,12 @@ public class XBRLNavigationController {
 
 	        return ResponseEntity.ok(resultMsg);
 
+	    } catch (RuntimeException e) {
+
+	        return ResponseEntity.badRequest().body(e.getMessage());
+
 	    } catch (Exception e) {
 
-	        logger.error("Upload Error", e);
 	        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
 	    }
 	}

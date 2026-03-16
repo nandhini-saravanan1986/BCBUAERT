@@ -60,25 +60,49 @@ public class RT_ACPR_SERVICE {
         }
         return null;
     }
+    private Date getAcprFileReportDate(MultipartFile file) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        String line;
+        int rowNum = 0;
+        while ((line = br.readLine()) != null) {
+            rowNum++;
+            if (rowNum == 1 || line.trim().isEmpty()) {
+                continue;
+            }
+            String[] data = line.split("\\|", -1);
+            if (data.length > 0) {
+                return new SimpleDateFormat("dd-MM-yyyy").parse(data[0].trim());
+            }
+        }
+        return null;
+    }
 	// 1. Method for ACPR (Fund Based - 55 Columns)
     @Transactional
-    public String uploadAcprFile(MultipartFile file, Date toDate, String username) throws Exception {
+    public String uploadAcprFile(MultipartFile file, Date toDate, String username, boolean forceUpload) throws Exception {
 
-       // String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        Date today = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    	  Date today = new Date();
+    	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-        boolean exists = rtAcprRepo.existsByReportDate(toDate);
+    	    Date fileReportDate = getAcprFileReportDate(file);
 
-        // Block if past date already uploaded
-        if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
-            throw new RuntimeException("ACPRNF already uploaded for this report date: " + toDate);
-        }
+    	    SimpleDateFormat compare = new SimpleDateFormat("ddMMyyyy");
 
-        // Replace if today upload again
-        if (exists) {
-        	rtAcprRepo.deleteByReportDate(toDate);
-        }
+    	    if (!forceUpload &&
+    	        fileReportDate != null &&
+    	        !compare.format(fileReportDate).equals(compare.format(toDate))) {
+
+    	    	throw new RuntimeException("REPORT_DATE_MISMATCH");
+    	    }
+
+    	    boolean exists = rtAcprRepo.existsByReportDate(toDate);
+
+    	    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
+    	        throw new RuntimeException("ACPR already uploaded for this report date");
+    	    }
+
+    	    if (exists) {
+    	        rtAcprRepo.deleteByReportDate(toDate);
+    	    }
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         List<RT_ACPR_ENTITY> batchList = new ArrayList<>();
         int batchSize = 500;
@@ -222,19 +246,31 @@ public class RT_ACPR_SERVICE {
     }
 
 	// 2. Method for ACPRNF (Non-Fund Based - 11 Columns)
-	public String uploadAcprnfFile(MultipartFile file, Date fromDate, Date toDate, String username) throws Exception {
+	public String uploadAcprnfFile(MultipartFile file, Date fromDate, Date toDate, String username, boolean forceUpload) throws Exception {
 		//SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		 Date today = new Date();
+		   Date today = new Date();
 		    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		    SimpleDateFormat compare = new SimpleDateFormat("ddMMyyyy");
 
+		    Date fileReportDate = getAcprFileReportDate(file);   // reuse same method
+
+		    // Check mismatch
+		    if (!forceUpload &&
+		        fileReportDate != null &&
+		        !compare.format(fileReportDate).equals(compare.format(toDate))) {
+
+		        throw new RuntimeException("REPORT_DATE_MISMATCH");
+		    }
+
+		    //already uploaded
 		    boolean exists = rtAcprnfRepo.existsByReportDate(toDate);
 
-		    // Block if past date already uploaded
+		    // Block if past date uploaded
 		    if (exists && !sdf.format(today).equals(sdf.format(toDate))) {
 		        throw new RuntimeException("ACPRNF already uploaded for this report date: " + toDate);
 		    }
 
-		    // Replace if today upload again
+		    //if today upload again
 		    if (exists) {
 		    	rtAcprnfRepo.deleteByReportDate(toDate);
 		    }

@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +50,10 @@ public class RwaDataUploadService {
 
 	@Autowired
 	private RT_RWA_NonFund_base_data_rep nonFundRepo;
-	
 	@Autowired
 	AuditService auditservice;
-	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private DataSource srcdataSource;
 	
@@ -69,23 +70,82 @@ public class RwaDataUploadService {
 	        return dates.stream()
 	                .map(sdf::format)
 	                .collect(Collectors.toList());
+	    } public List<String> getUploadedBillDates() {
+	        String sql = "SELECT DISTINCT REPORT_DATE FROM brf95_rwa_data_bill ORDER BY REPORT_DATE";
+	        List<Date> dates = jdbcTemplate.query(sql,(rs, rowNum) -> rs.getDate("REPORT_DATE"));
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        return dates.stream()
+	                .map(sdf::format)
+	                .collect(Collectors.toList());
 	    }
-	@Transactional
-	public String uploadRwaTextFile(MultipartFile file, String reportType, Date toDate) throws Exception {
+	    private Date getRwaFileReportDate(MultipartFile file) throws Exception {
+	        BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+	        String line;
+	        while ((line = br.readLine()) != null) {
+	            line = line.trim();
+	            if (line.isEmpty()) {
+	                continue;
+	            }
+	            String delimiter = line.contains("|") ? "\\|" : "\t";
+	            String[] data = line.split(delimiter, -1);
+	            if (data.length == 0) {
+	                continue;
+	            }
+	            String firstCol = data[0].trim();
+	            // Skip header rows safely
+	            if (firstCol.equalsIgnoreCase("DATE")
+	                    || firstCol.equalsIgnoreCase("REPORT_DATE")
+	                    || firstCol.equalsIgnoreCase("MOC")
+	                    || firstCol.contains("DATE")) {
+	                continue;
+	            }
+	            try {
+	                return new SimpleDateFormat("dd-MM-yyyy").parse(firstCol);
+	            } catch (Exception e) {
+	                continue;
+	            }
+	        }
+	        return null;
+	    }
+	    @Transactional
+	    public String uploadRwaTextFile(MultipartFile file, String reportType, Date toDate, boolean forceUpload) throws Exception {
+	        Date fileReportDate = getRwaFileReportDate(file);
+	        SimpleDateFormat compare = new SimpleDateFormat("ddMMyyyy");
+	        // Step 1: Report date mismatch first
+	        if (!forceUpload &&
+	                fileReportDate != null &&
+	                !compare.format(fileReportDate).equals(compare.format(toDate))) {
 
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-			String line;
-			br.readLine(); // Skip Header
-
-			if ("RWAFUND".equals(reportType)) {
-				return processFunded(br, toDate);
-			} else if ("RWANONFUND".equals(reportType)) {
-				return processNonFunded(br, toDate);
-			} else {
-				throw new Exception("Unsupported Report Type");
-			}
-		}
-	}
+	            throw new RuntimeException("REPORT_DATE_MISMATCH");
+	        }
+	        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+	            if ("RWAFUND".equals(reportType)) {
+	                return processFunded(br, toDate);
+	            } else if ("RWANONFUND".equals(reportType)) {
+	                return processNonFunded(br, toDate);
+	            } else {
+	                throw new Exception("Unsupported Report Type");
+	            }
+	        }
+	    }
+	/*
+	 * public String uploadRwaTextFile(MultipartFile file, String reportType, Date
+	 * toDate, boolean forceUpload) throws Exception { Date fileReportDate =
+	 * getRwaFileReportDate(file);
+	 * 
+	 * SimpleDateFormat compare = new SimpleDateFormat("ddMMyyyy");
+	 * 
+	 * if (!forceUpload && fileReportDate != null &&
+	 * !compare.format(fileReportDate).equals(compare.format(toDate))) {
+	 * 
+	 * throw new RuntimeException("REPORT_DATE_MISMATCH"); } try (BufferedReader br
+	 * = new BufferedReader(new InputStreamReader(file.getInputStream()))) { String
+	 * line; br.readLine(); // Skip Header
+	 * 
+	 * if ("RWAFUND".equals(reportType)) { return processFunded(br, toDate); } else
+	 * if ("RWANONFUND".equals(reportType)) { return processNonFunded(br, toDate); }
+	 * else { throw new Exception("Unsupported Report Type"); } } }
+	 */
 
 	// ================= NON-FUNDED PROCESSING =================
 	private String processNonFunded(BufferedReader br, Date toDate) throws Exception {
@@ -441,9 +501,35 @@ public class RwaDataUploadService {
 	}
 	
 	
-	public String Uploadrwadata(MultipartFile file, String reportType, Date toDate) {
+	public String Uploadrwadata(MultipartFile file, String reportType, Date toDate, boolean forceUpload) throws Exception {
 
-		List<RT_Bank_bill_data_pojo> EodDetail = new ArrayList<>();
+		String checkSql = "SELECT COUNT(*) FROM brf95_rwa_data_bill WHERE TRUNC(REPORT_DATE)=TRUNC(?)";
+
+	    Integer count = jdbcTemplate.queryForObject(
+	            checkSql,
+	            Integer.class,
+	            new java.sql.Date(toDate.getTime())
+	    );
+
+	    Date today = new Date();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+	    // Block if past date uploaded
+	    if (count != null && count > 0 && !sdf.format(today).equals(sdf.format(toDate))) {
+	        throw new RuntimeException("Data already uploaded for report date : " + toDate);
+	    }
+
+	    // Today duplicate 
+	    if (count != null && count > 0 && sdf.format(today).equals(sdf.format(toDate)) && !forceUpload) {
+	        throw new RuntimeException("already uploaded");
+	    }
+	    // Today duplicate confirmed replace
+	    if (count != null && count > 0 && forceUpload) {
+	        String deleteSql = "DELETE FROM brf95_rwa_data_bill WHERE TRUNC(REPORT_DATE)=TRUNC(?)";
+	        jdbcTemplate.update(deleteSql, new java.sql.Date(toDate.getTime()));
+	    }
+
+	    List<RT_Bank_bill_data_pojo> EodDetail = new ArrayList<>();
 
 		DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().parseCaseInsensitive()
 				.appendPattern("dd-MMM-yyyy").toFormatter(Locale.ENGLISH);
@@ -543,10 +629,20 @@ public class RwaDataUploadService {
 			}
 
 			conn.commit();
+			String reportDateStr = new SimpleDateFormat("dd-MM-yyyy").format(toDate);
 
+			auditservice.createBusinessAudit(reportDateStr,"UPLOAD",
+			    "Regulatory_Data_Ingestion_RWA_BILL_DATA",  null,  "BRF95_RWA_DATA_BILL");
 		} catch (Exception e) {
 			e.getSuppressed();
 			e.printStackTrace();
+			 auditservice.createBusinessAudit(
+				        new SimpleDateFormat("dd-MM-yyyy").format(toDate),
+				        "UPLOAD_FAILED",
+				        "Regulatory_Data_Ingestion_EAB_DATA",
+				        null,
+				        "EOD_ACCT_BALANCE"
+				    );
 			return "ERROR: Upload failed";
 
 		}
@@ -656,7 +752,8 @@ public class RwaDataUploadService {
 	            ent.setUndrwn_crm(parseDecimal(data[54]));
 	            ent.setUndrwn_ccf_balance(parseDecimal(data[55]));
 	            ent.setUndrwn_rwa(parseDecimal(data[56]));
-	            ent.setUndrwn_disb(data[57]);
+	            //ent.setUndrwn_disb(data[57]);
+	            ent.setUndrwn_disb(trimToLength(data[57], 10));
 	            ent.setAc_rwp(parseDecimal(data[58]));
 
 	            ent.setRating(data[59]);
@@ -719,5 +816,10 @@ public class RwaDataUploadService {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	private String trimToLength(String value, int len) {
+	    if (value == null) return null;
+	    value = value.trim();
+	    return value.length() > len ? value.substring(0, len) : value;
 	}
 }
