@@ -16,8 +16,8 @@ public interface Stableresourcesratio_rep extends JpaRepository<Stableresourcesr
 	@Query(value="Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R27_AMOUNT from (\r\n"
 			+ "With Eligibility_ratio as(\r\n"
 			+ "Select (R27_AMOUNT) as R27_AMOUNT, REPORT_DATE from BRF7_SUMMARYTABLE),\r\n"
-			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 			+ "Select month_end,NVL(R27_AMOUNT,0) AS R27_AMOUNT\r\n"
 			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)",nativeQuery=true)
 	List<Object[]> GetAsrr_curryear_report(Date Selecteddate);

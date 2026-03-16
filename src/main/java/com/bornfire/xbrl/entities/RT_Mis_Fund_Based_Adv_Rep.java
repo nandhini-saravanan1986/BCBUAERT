@@ -47,15 +47,15 @@ public interface RT_Mis_Fund_Based_Adv_Rep extends JpaRepository<RT_Mis_Fund_bas
 	// Monthly
 	@Query(value="Select To_char(month_end,'DD-MM-YYYY') as month_end,Percentage from(\r\n"
 			+ "With Total_balanceP_fb as (Select Report_date,abs(sum(Balance)) as Tot_bal from brf95_rwa_data_fundbased \r\n"
-			+ "Where report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )Group by Report_date),\r\n"
+			+ "Where report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)Group by Report_date),\r\n"
 			+ "Mortgage_loan as (Select Report_date,abs(sum(Balance)) as Mortgage_bal from brf95_rwa_data_fundbased \r\n"
-			+ "where scheme in('LA106','LA110') and report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) Group by Report_Date),\r\n"
+			+ "where scheme in('LA106','LA110') and report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12) Group by Report_Date),\r\n"
 			+ "Mortgage_loan_cal as( Select a.Report_date as Report_date,Round(b.Mortgage_bal/a.Tot_bal,4)*100 as Percentage\r\n"
 			+ "from Total_balanceP_fb a left join Mortgage_loan b on a.report_date = b.Report_date Order by a.report_date asc),\r\n"
-			+ "Current_year_Dates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) \r\n"
+			+ "Current_year_Dates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12) \r\n"
 			+ "Select a.month_end as month_end,Nvl(Percentage,0) as Percentage\r\n"
 			+ "from Current_year_Dates a left join Mortgage_loan_cal b on a.month_end = b.Report_date Order by a.month_end Asc) ",nativeQuery=true)
 	List<Object[]> GetMortgageratio_curryear_report(Date Selecteddate);

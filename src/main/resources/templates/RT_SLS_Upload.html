@@ -160,6 +160,10 @@
 										<option value="MFD">MFD - Mid FX Deal & Exposure</option>
 										<option value="GAMDATADUMP">EOD & GAM DATA</option>
 										<option value="ONLY_EAB_TABLE_DATA">Only Eab data</option>
+										<option value="TR_PLC">Treasury Placement</option>
+										<option value="TR_INV">Treasury Investment</option>
+										<option value="TR_TB">Treasury TB</option>
+										<option value="TR_SWD">Treasury SWD</option>
 									</select>
 								</div>
 							</div>
@@ -207,7 +211,7 @@
 									<input type="text" class="form-control" id="toDate" name="toDate" autocomplete="off"
 										required>
 
-									<small class="form-text text-muted">Reference Date (Report Date)</small>
+									<small class="form-text text-muted">Reference Date (Report Date DD-MM-YYYY)</small>
 								</div>
 							</div>
 							<!-- 4. File Attachment -->
@@ -415,7 +419,8 @@
 			else if (report === "FXP") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
-			else if (report === "SLS") {
+			else if (report === "SLS" ||report === "TR_PLC" ||report === "TR_INV" ||report === "TR_TB"
+			||report === "TR_SWD") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			} else if (report === "MFD") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');

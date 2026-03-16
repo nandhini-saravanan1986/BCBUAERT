@@ -26,6 +26,11 @@ public interface Mis_treasury_placement_repo extends JpaRepository<MIS_TREASURY_
     @Query(value = "Delete From MIS_TREASURY_PLACEMENT where report_date = ?1 and branch_name =?2", nativeQuery = true)
     void Deletedatabyreport_date(Date report_date,String Branchname);
     
+    @Transactional
+    @Modifying
+    @Query(value = "Delete From MIS_TREASURY_PLACEMENT where report_date = ?1", nativeQuery = true)
+    void Deletebydaterecord(Date report_date);
+    
     @Query(value = "SELECT * FROM MIS_TREASURY_PLACEMENT WHERE REPORT_DATE = ?1", nativeQuery = true)
     List<MIS_TREASURY_PLACEMENT_ENTITY> getAllListByDate(Date report_date);
     

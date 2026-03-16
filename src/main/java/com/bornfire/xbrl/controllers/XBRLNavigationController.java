@@ -3997,6 +3997,10 @@ public class XBRLNavigationController {
 
 	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate, forceUpload);
 
+	        }else if ("TR_PLC".equals(reportType) || "TR_TB".equals(reportType) || "TR_SWD".equals(reportType) ) {
+
+	            resultMsg = rtmidFxDealservice.UploadTrplorTb(file, toDate, username,reportType); //Mid Service used as upload Service treasury details
+
 	        } else {
 
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);

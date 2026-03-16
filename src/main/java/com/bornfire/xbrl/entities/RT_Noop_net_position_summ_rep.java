@@ -17,10 +17,10 @@ public interface RT_Noop_net_position_summ_rep extends JpaRepository<RT_Noop_net
 	
 	@Query(value="With Available_head_room as (\r\n"
 			+ "Select Report_date,Round(NOOP_AMOUNT_IN_INR/10000000,2)/Round(LIMIT_AMOUNT_IN_INR/10000000,2) as HEADROOM_AVAL_AMOUNT_IN_INR\r\n"
-			+ "from rt_net_position_limit_noop_summ where report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )),\r\n"
-			+ "Current_year_dates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "from rt_net_position_limit_noop_summ where report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)),\r\n"
+			+ "Current_year_dates as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 			+ "Select To_char(a.month_end,'DD-MM-YYYY'),Round(Nvl(HEADROOM_AVAL_AMOUNT_IN_INR,0)*100,2) from \r\n"
 			+ "Current_year_dates a left join Available_head_room b on a.month_end = b.Report_date Order by a.month_end asc",nativeQuery=true)
 	List<Object[]> GetCurrentYear_NoopGraph(Date Selecteddate);

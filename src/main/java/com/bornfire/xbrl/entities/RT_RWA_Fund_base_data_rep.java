@@ -624,7 +624,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		/////Get Top 10 Real Estate Details
 		@Query(value="SELECT * FROM (\r\n"
-				+ "Select BRANCH_NAME, CUST_ID, ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where \r\n"
+				+ "Select ACCOUNT_NAME, ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where \r\n"
 				+ "Report_date = ?1 and is_acct_real_estate_exp = 'Y' ORDER BY TOTAL_RWA DESC ) FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealestateaccountdetail(Date Selecteddate);
 		
@@ -787,8 +787,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		/////SLS AED Limit
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '38') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
@@ -796,8 +796,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '39') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
@@ -805,8 +805,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '40') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
@@ -814,8 +814,8 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '41') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)

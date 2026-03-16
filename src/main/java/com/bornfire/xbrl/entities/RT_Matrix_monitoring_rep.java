@@ -63,8 +63,8 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	/// Deposit concentration non Retail - 42
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '42') ,\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
@@ -72,8 +72,8 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 		/// Deposit concentration Retail - 43
 				@Query(value="Select * from(\r\n"
 						+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '43') ,\r\n"
-						+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC( ?1 , 'YEAR'), LEVEL - 1))\r\n"
-						+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+						+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+						+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 						+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
 						+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
 						+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
@@ -89,8 +89,8 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\r\n"
 			+ "With Eligibility_ratio as(\r\n"
 			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable),\r\n"
-			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\r\n"
 			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)", nativeQuery = true)
 	List<Object[]> GetElar_curryear_report(Date Selecteddate);

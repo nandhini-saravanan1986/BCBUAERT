@@ -549,7 +549,7 @@ public class RwaDataUploadService {
 					continue;
 
 				String upper = line.toUpperCase();
-				if (upper.startsWith("SQL") || upper.startsWith("SOL_") || upper.startsWith("--"))
+				if (upper.startsWith("SQL") || upper.startsWith("SOL_") || upper.startsWith("SOL") || upper.startsWith("--"))
 					continue;
 
 				String[] values = line.split(delimiter);
