@@ -19,22 +19,9 @@
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<!-- JavaScript -->
-	<!-- jQuery core (required first) -->
-
-
-	<!-- ✅ Your manually placed jQuery validation
-	
-	 <script th:src="/jquery/jquery.validate.min.js"></script>
-	 -->
-
-	<!-- jQuery (required first) -->
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-
-	<!-- ✅ jQuery Validation -->
 	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
 		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
-
-	<!-- Bootstrap + Others -->
 	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
@@ -60,12 +47,11 @@ body {
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
+	width: 120vw !important;
+	height: 120vh !important;
+	background-color: #000;
+	opacity: 0.7 !important;
 	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
 }
 
 /* === ROLE PAGE CUSTOM HEADER === */
@@ -88,10 +74,8 @@ body {
 	background-color: #0073e6;
 	border-radius: 2px;
 	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
+	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
 }
-
-
 </style>
 
 <style>
@@ -101,48 +85,43 @@ body {
 	--overlay-bg: rgba(255, 255, 255, 0.9);
 }
 
-/* Full-screen overlay */
 .bob-loader {
 	position: fixed;
 	inset: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
+	background: rgba(226, 232, 237, 0.6);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 	z-index: 9999;
 	transition: opacity 0.25s ease, visibility 0.25s;
 	opacity: 1;
 	visibility: visible;
 }
 
-/* Hide when not active */
 .bob-loader[aria-hidden="true"] {
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
 }
 
-/* Loader card */
 .bob-loader-card {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
-/* Static logo */
 .logo-imgs {
 	height: 90px;
 	object-fit: contain;
 	display: block;
 }
 
-/* Flowing bar below logo */
 .flow-bar {
 	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
+	width: 200px;
+	height: 8px;
 	background: #f1f1f1;
 	border-radius: 4px;
 	overflow: hidden;
@@ -160,73 +139,44 @@ body {
 	animation: flowMove 1.2s linear infinite;
 }
 
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
-
-
-:
-
-
-100%;
-
-
-}
+@keyframes flowMove {
+	0% { left: -40%; }
+	100% { left: 100%; }
 }
 </style>
 
 <script>
-//							function goBack() {
-	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		//					    window.history.back();
-			//				}
+	document.addEventListener('mousemove', function(e) {
+	    const backBtn = document.getElementById('floatingBackBtn');
+	    const forwardBtn = document.getElementById('floatingForwardBtn');
+	    const screenWidth = window.innerWidth;
+	    if (e.clientX < 50) {
+	        backBtn.classList.add('show');
+	    } else {
+	        backBtn.classList.remove('show');
+	    }
+	    if (screenWidth - e.clientX < 50) {
+	        forwardBtn.classList.add('show');
+	    } else {
+	        forwardBtn.classList.remove('show');
+	    }
+	});
+	
+	function goBack() {
+	    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	    window.history.back();
+	}
 
-//							function goForward() {
-	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		//					    window.history.forward();
-			//				}
+	function hideLoader() {
+	    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+	}
 
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
-
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
-
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							
-							function goBack() {
-							    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    window.history.back();
-							}
-
-							function hideLoader() {
-							    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-							}
-
-							window.addEventListener("pageshow", function () {
-							    hideLoader();
-							});
-							</script>
+	window.addEventListener("pageshow", function () {
+	    hideLoader();
+	});
+</script>
 
 	<style>
-		/* Shared styles for both buttons */
 		#floatingBackBtn,
 		#floatingForwardBtn {
 			position: fixed;
@@ -248,19 +198,9 @@ left
 			z-index: 999;
 		}
 
-		/* Back button */
-		#floatingBackBtn {
-			left: -50px;
-			/* hidden off-screen */
-		}
+		#floatingBackBtn { left: -50px; }
+		#floatingForwardBtn { right: -50px; }
 
-		/* Forward button */
-		#floatingForwardBtn {
-			right: -50px;
-			/* hidden off-screen */
-		}
-
-		/* Show when near edge */
 		#floatingBackBtn.show {
 			left: 20px;
 			opacity: 1;
@@ -273,7 +213,6 @@ left
 			pointer-events: auto;
 		}
 
-		/* Hover animation */
 		#floatingBackBtn:hover,
 		#floatingForwardBtn:hover {
 			background-color: #E67E00;
@@ -283,27 +222,11 @@ left
 
 
 	<style>
-		.btns {
-			float: right;
-			margin: 5px;
-		}
-
-		.col-sm-5 {
-			padding-bottom: 15px;
-		}
-
-		.list-body {
-			padding: 0px;
-		}
-
-		.error {
-			color: red;
-			padding-left: 10px;
-		}
-
-		.formline {
-			padding-bottom: 15px;
-		}
+		.btns { float: right; margin: 5px; }
+		.col-sm-5 { padding-bottom: 15px; }
+		.list-body { padding: 0px; }
+		.error { color: red; padding-left: 10px; }
+		.formline { padding-bottom: 15px; }
 
 		.btn-primary {
 			background-color: #E77400;
@@ -314,21 +237,16 @@ left
 		.btn-primary:not(:disabled):not(.disabled):active,
 		.show > .btn-primary.dropdown-toggle {
 		    color: #fff;
-		    background-color: #cc0000; /* Removed extra zeros */
+		    background-color: #cc0000;
 		    border-color: #161617;
 		}
 
-
-		#finusertb {
-			width: 460px;
-		}
+		#finusertb { width: 460px; }
 
 		.dataTables_wrapper .dataTables_paginate .paginate_button {
 			padding: 0px;
 		}
 	</style>
-
-
 
 
 	<style>
@@ -366,13 +284,6 @@ left
 			background-color: #f3f6f9;
 		}
 
-		thead th {
-			position: sticky;
-			top: 0;
-			background-color: #e9ecf0;
-			z-index: 1;
-		}
-
 		.card-footer {
 			padding: 10px;
 			border-top: 1px solid #ccc;
@@ -384,20 +295,10 @@ left
 			border-radius: 4px;
 		}
 
-		/* #usertable th,
-		#usertable td {
-			vertical-align: middle;
-			text-align: left;
-			font-size: 17px;
-			font-family: Verdana, sans-serif;
-		} */
-
 		.fa-edit:hover {
 			color: #28a745;
 			transform: scale(1.1);
 		}
-
-
 
 		td {
 			border: 1px solid rgb(0, 164, 166);
@@ -424,16 +325,9 @@ left
 			transition: border-color 0.3s ease, padding-top 0.3s ease;
 		}
 
-		.error {
-			color: red;
-			padding-top: 15px;
-		}
+		.error { color: red; padding-top: 15px; }
 
-
-
-		.form-control:focus {
-			border-color: #007bff;
-		}
+		.form-control:focus { border-color: #007bff; }
 
 		.form-legend {
 			position: absolute;
@@ -448,7 +342,6 @@ left
 			transition: 0.3s ease;
 		}
 
-		/* When input or select is focused or has a value, move the label up */
 		.form-control:focus~.form-legend,
 		.form-control:not(:placeholder-shown)~.form-legend {
 			top: -8px;
@@ -456,100 +349,19 @@ left
 			color: #007bff;
 		}
 
-		/* Hover effect when the input/select is focused */
-		.form-control:focus:hover~.form-legend {
-			color: #0056b3;
-			/* Darker shade of blue on hover */
-		}
-
-		/* Ensure the label returns to the normal color after focus or hover is removed */
-		.form-control:not(:focus)~.form-legend {
-			color: #aaa;
-			/* Normal label color */
-		}
+		.form-control:focus:hover~.form-legend { color: #0056b3; }
+		.form-control:not(:focus)~.form-legend { color: #aaa; }
 	</style>
 
 	<style>
-		/* Red border for invalid inputs */
-		input.error,
-		select.error {
-			border: 2px solid red !important;
-		}
-
-		/* Error message style */
-		label.error {
-			color: red;
-			font-size: 0.85em;
-			margin-top: 5px;
-			display: block;
-		}
+		input.error, select.error { border: 2px solid red !important; }
+		label.error { color: red; font-size: 0.85em; margin-top: 5px; display: block; }
 	</style>
-	
-	
+
 	<style>
-		.form-group {
-			position: relative;
-			margin-bottom: 1.5rem;
-		}
-
-		.form-control {
-			width: 100%;
-			border: 2px solid #ccc;
-			border-radius: 8px;
-			font-size: 1rem;
-			outline: none;
-			background: transparent;
-			transition: border-color 0.3s ease, padding-top 0.3s ease;
-		}
-
-		.error {
-			color: red;
-			padding-top: 15px;
-		}
-
-		.form-control:focus {
-			border-color: #007bff;
-		}
-
-		.form-legend {
-			position: absolute;
-			top: 50%;
-			left: 15px;
-			transform: translateY(-50%);
-			font-size: 1rem;
-			color: #aaa;
-			background: white;
-			padding: 0 5px;
-			pointer-events: none;
-			transition: 0.3s ease;
-		}
-
-		/* When input or select is focused or has a value, move the label up */
-		.form-control:focus~.form-legend,
-		.form-control:not(:placeholder-shown)~.form-legend {
-			top: -8px;
-			font-size: 1rem;
-			color: #007bff;
-		}
-
-		/* Hover effect when the input/select is focused */
-		.form-control:focus:hover~.form-legend {
-			color: #0056b3;
-			/* Darker shade of blue on hover */
-		}
-
-		/* Ensure the label returns to the normal color after focus or hover is removed */
-		.form-control:not(:focus)~.form-legend {
-			color: #aaa;
-			/* Normal label color */
-		}
-	</style>
-		<style>
 		.role-btn {
 			background: #ffffff;
-			/* default white */
 			color: #E67E00;
-			/* default orange text */
 			border: 1px solid #E67E00;
 			border-radius: 25px;
 			padding: 8px 18px;
@@ -560,32 +372,24 @@ left
 			transition: all 0.3s ease;
 		}
 
-		/* Hover effect → pastel orange */
 		.role-btn:hover {
 			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
 			color: #E67E00;
-			/* orange text */
 			transform: translateY(-2px);
 			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
 		}
 
-		/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
-			/* solid orange */
 			color: #fff;
-			/* white text */
 			border-color: #E67E00;
 			transform: translateY(-1px);
 			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
 		}
 
-		/* Optional: icon spacing */
-		.role-btn i {
-			margin-right: 5px;
-		}
+		.role-btn i { margin-right: 5px; }
 	</style>
+
 	<style>
 		#pageHeader {
 			position: sticky;
@@ -598,7 +402,6 @@ left
 		#tabHeader {
 			position: sticky;
 			top: 5px;
-			/* just below page header */
 			z-index: 1040;
 			background: white;
 			padding: 5px 0;
@@ -611,6 +414,7 @@ left
 			background: white;
 		}
 	</style>
+
 	<style>
 	/* DataTables pagination container */
 	.dataTables_wrapper .dataTables_paginate {
@@ -631,131 +435,114 @@ left
 		border-radius: 2px;
 	}
 
-	.mb-2 {
-		margin-bottom: -0.5rem !important;
-	}
+	.mb-2 { margin-bottom: -0.5rem !important; }
 
 	.dataTables_wrapper .dataTables_paginate .page-link {
 		outline: none !important;
 		box-shadow: none !important;
+		color: #ff7f27 !important;
 	}
 
-	/* Hover ONLY for Previous & Next */
+	/* Previous / Next hover */
 	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
 	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
-		background-color: #e9ecef !important;
-		color: rgb(255, 128, 64) !important;
+		background-color: #fff3e0 !important;
+		color: #e65c00 !important;
 	}
 
-	/* Page numbers should NOT hover */
+	/* Inactive page numbers — orange text, no hover effect */
+	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link {
+		color: #ff7f27 !important;
+	}
+
 	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
-		background-color: #f5f5f5 !important;
-		color: #6c757d !important;
+		background-color: #fff3e0 !important;
+		color: #e65c00 !important;
 		cursor: default !important;
 	}
 
-	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+	/* Active page — beat Bootstrap's .page-item.active .page-link blue */
+	.dataTables_wrapper .dataTables_paginate .pagination .page-item.active .page-link,
+	.dataTables_wrapper .dataTables_paginate .pagination li.active a,
+	.dataTables_wrapper .dataTables_paginate .pagination li.page-item.active a.page-link,
+	#dt-controls-bar .page-item.active .page-link,
+	#dt-controls-bar li.active a {
 		background-color: #ff7f27 !important;
 		border-color: #ff7f27 !important;
 		color: #ffffff !important;
 		cursor: default !important;
 	}
-</style>
-<style>
-	#usertable {
-		min-width: 2800px;
-		/* adjust based on columns */
+
+	/* paginate_button class used by plain DataTables (non-Bootstrap) */
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		color: #ff7f27 !important;
 	}
 
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+		background: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #fff !important;
+	}
+</style>
+
+<style>
 	#usertable {
 		border-collapse: collapse !important;
 		font-family: Arial, sans-serif !important;
 		font-size: 12px !important;
 	}
 
-	/* HEADER */
-	/* Update this section in your <style> tag */
 	#usertable thead th {
 		background-color: #7b6458;
 		color: #fff;
 		font-family: Arial, sans-serif !important;
-		font-size: 14px !important;
-/* 		text-align: center; */
 		vertical-align: middle;
 		white-space: normal;
-
-		/* ADD THESE THREE LINES */
 		padding: 2px 4px !important;
-		/* Reduces internal spacing */
 		line-height: 1.1 !important;
-		/* Reduces space between wrapped text lines */
 		font-size: 11px !important;
-		/* Optional: slightly smaller font to save space */
 		position: sticky;
 		top: 0;
-		/* Keeps the first row at the top */
 		z-index: 10;
 		background-color: #7b6458 !important;
-		/* Ensures the header isn't transparent */
 		color: white;
 		box-shadow: inset 0 -1px 0 #dee2e6;
-		/* Optional: adds a bottom border to the sticky header */
 	}
 
-
-	/* BODY CELLS */
 	#usertable td {
 		padding: 5px 6px !important;
 		border: 1px solid #e8e8e8 !important;
-		/* light grey lines */
 		background: #fafafa;
 		white-space: normal !important;
 	}
 
-	/* ROW EVEN/ODD */
-	#usertable tbody tr:nth-child(even) {
-		background-color: #f4f2ef !important;
-	}
+	#usertable tbody tr:nth-child(even) { background-color: #f4f2ef !important; }
+	#usertable tbody tr:nth-child(odd)  { background-color: #ffffff !important; }
 
-	#usertable tbody tr:nth-child(odd) {
-		background-color: #ffffff !important;
-	}
 	#usertable thead tr:nth-child(2) th {
-	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	    top: 32px;
 	    z-index: 9;
-}
-	/* SEARCH BOX FIX */
-	.dataTables_filter label {
-		display: flex !important;
-		gap: 10px;
-		align-items: center;
 	}
 
 	.dataTables_filter label {
 		display: flex !important;
 		align-items: center;
 		gap: 8px;
-		/* space between text and input */
 		margin-bottom: 0 !important;
 	}
 
-	.dataTables_filter input {
-		margin-left: 5px;
-		flex: 1;
-	}
+	.dataTables_filter input { margin-left: 5px; flex: 1; }
 
-	/* === ROLE PAGE CUSTOM HEADER === */
 	.role-page-header {
 		background-color: #ffffff;
 		padding: 15px 20px;
 		display: flex;
-		/* Added for alignment */
 		justify-content: space-between;
-		/* Added for alignment */
 		align-items: center;
-		/* Added for alignment */
 	}
 </style>
+
 	<style>
 	.liquid-edit-page {
 		font-family: Arial, sans-serif !important;
@@ -769,57 +556,27 @@ left
 		font-size: 12px !important;
 	}
 
-	.modal-title {
-		background-color: #f7a47c;
-	}
+	.modal-title { background-color: #f7a47c; }
 </style>
 
 <style>
-	/* Default header alignment */
-	#usertable thead th {
-		/* text-align: center !important; */
-		vertical-align: middle !important;
-	}
+	#usertable thead th { vertical-align: middle !important; }
+	#usertable thead th.th-left { text-align: left !important; }
+	#usertable thead th.th-right { text-align: right !important; width: 50px !important; }
+	#usertable td.th-left { text-align: left !important; }
+	#usertable td.th-right { text-align: right !important; width: 50px !important; }
+	#usertable { table-layout: auto !important; width: 100% !important; }
 
-	/* Left aligned headers */
-	#usertable thead th.th-left {
-		text-align: left !important;
-	}
-
-	/* Right aligned headers */
-	#usertable thead th.th-right {
-		text-align: right !important;
-		width: 50px !important;
-	}
-
-	#usertable td.th-left {
-		text-align: left !important;
-	}
-
-	/* Right aligned headers */
-	#usertable td.th-right {
-		text-align: right !important;
-		width: 50px !important;
-	}
-
-	#usertable {
-		table-layout: auto !important;
-		width: 100% !important;
-	}
-
-	/* Report Date column – prevent wrap + increase width */
 	#usertable th.col-report-date,
 	#usertable td.col-report-date {
 		min-width: 120px !important;
-		/* increase as needed */
 		white-space: nowrap !important;
 		text-align: center;
 	}
 </style>
+
 <style>
-	body:has(#liquidity-edit-page) {
-		overflow: hidden;
-	}
+	body:has(#liquidity-edit-page) { overflow: hidden; }
 
 	#liquidity-edit-page .card-body {
 		max-height: calc(100vh - 280px);
@@ -827,10 +584,9 @@ left
 		overflow-x: hidden;
 	}
 
-	#liquidity-edit-page .card {
-		margin-bottom: 0;
-	}
+	#liquidity-edit-page .card { margin-bottom: 0; }
 </style>
+
 <style>
 	.menu-title-header {
 		background-color: #f7a47c !important;
@@ -841,87 +597,55 @@ left
 		border-top-right-radius: 6px;
 	}
 </style>
+
 <style>
-	.liquid-edit-page {
-		font-family: Arial, sans-serif !important;
-		font-size: 12px !important;
+	body { overflow: hidden; }
+
+	.static-back-btn {
+	    background-color: rgb(255, 255, 255);
+	    border: none;
+	    color: rgb(255, 128, 0);
+	    font-size: 16px;
+	    border-radius: 50%;
+	    width: 36px;
+	    height: 36px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    margin-right: 10px;
+	    transition: background-color 0.25s ease, transform 0.15s ease;
+	    cursor: pointer;
 	}
 
-	.liquid-edit-page label,
-	.liquid-edit-page input,
-	.liquid-edit-page textarea,
-	.liquid-edit-page button {
-		font-size: 12px !important;
+	.static-back-btn:hover {
+	    background-color: rgb(255, 128, 0);
+	    color: rgb(255, 255, 255);
+	    transform: scale(1.08);
 	}
 
-	.modal-title {
-		background-color: #f7a47c;
-	}
-	body {
-    overflow: hidden;
-}
-
-.static-back-btn {
-						    background-color: rgb(255, 255, 255);
-						    border: none;
-						    color: rgb(255, 128, 0);
-						    font-size: 16px;
-						    border-radius: 50%;
-						    width: 36px;
-						    height: 36px;
-						    display: flex;
-						    align-items: center;
-						    justify-content: center;
-						    margin-right: 10px;
-						    transition: background-color 0.25s ease, transform 0.15s ease;
-						    cursor: pointer;
-						}
-
-						/* Hover effect */
-						.static-back-btn:hover {
-						    background-color: rgb(255, 128, 0);   /* darker orange */
-						    color: rgb(255, 255, 255);
-						    transform: scale(1.08);
-						}
-
-						/* Optional click effect */
-						.static-back-btn:active {
-						    transform: scale(0.95);
-						}
+	.static-back-btn:active { transform: scale(0.95); }
 </style>
+
 	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
-				errorClass: "error", // use 'error' class for styling
-				errorElement: "label", // wrap error messages in <label>
-
-				// Place the error after the input field
+				errorClass: "error",
+				errorElement: "label",
 				errorPlacement: function (error, element) {
 					if (element.parent('.form-group').length) {
-						error.insertAfter(element); // default
+						error.insertAfter(element);
 					} else {
 						error.insertAfter(element);
 					}
 				},
-
-				// Highlight and unhighlight fields
-				highlight: function (element) {
-					$(element).addClass("error");
-				},
-				unhighlight: function (element) {
-					$(element).removeClass("error");
-				},
-
-				// On successful validation, run this
-				submitHandler: function (form) {
-					submitForm(); // your custom submit function
-				}
+				highlight: function (element) { $(element).addClass("error"); },
+				unhighlight: function (element) { $(element).removeClass("error"); },
+				submitHandler: function (form) { submitForm(); }
 			});
 		});
 	</script>
 
 	<script>
-
 		function submitForm() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
@@ -934,27 +658,20 @@ left
 				type: "POST",
 				data: formData,
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
-
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					$("#alertmsg1").text(response);
 					$("#alert1").modal("toggle");
-					//location.href = 'Nostro_Account_Bal';
 				},
 				error: function (xhr, status, error) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
-
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					console.error("Error:", error);
 					alert("Error occurred: " + error);
 				}
 			});
 		}
-
-
 	</script>
 
 	<script th:inline="javascript">
-
-
 		function home() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = 'Dashboard'
@@ -962,7 +679,6 @@ left
 
 		function back() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
 			window.history.back();
 		}
 
@@ -975,17 +691,14 @@ left
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			location.href = './Impact_Analysis?formmode=list&tab=dataimpact';
 		}
+
 		$(document).ready(function () {
-			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Impact_Analysis';
 			});
 		});
 
-
-
 		function updateform(event) {
-
 			event.preventDefault();
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
@@ -994,51 +707,34 @@ left
 				type: 'POST',
 				data: $('#impactanalysis').serialize(),
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
-
-
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
-
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
-
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 					alert("Failed to modify. Please try again.");
 				}
 			});
-
 		}
-
 	</script>
-<script>
+
+	<script>
 		$(document).ready(function () {
 			$("#fxriskForm").validate({
-				errorClass: "error", // use 'error' class for styling
-				errorElement: "label", // wrap error messages in <label>
-
-				// Place the error after the input field
+				errorClass: "error",
+				errorElement: "label",
 				errorPlacement: function (error, element) {
 					if (element.parent('.form-group').length) {
-						error.insertAfter(element); // default
+						error.insertAfter(element);
 					} else {
 						error.insertAfter(element);
 					}
 				},
-
-				// Highlight and unhighlight fields
-				highlight: function (element) {
-					$(element).addClass("error");
-				},
-				unhighlight: function (element) {
-					$(element).removeClass("error");
-				},
-
-				// On successful validation, run this
-				submitHandler: function (form) {
-					submitForm(); // your custom submit function
-				}
+				highlight: function (element) { $(element).addClass("error"); },
+				unhighlight: function (element) { $(element).removeClass("error"); },
+				submitHandler: function (form) { submitForm(); }
 			});
 		});
 	</script>
@@ -1062,49 +758,34 @@ left
 				break;
 			default:
 				console.warn("Unknown tabId:", tabId);
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				return;
 		}
 
-		// Add a timestamp to prevent cache
 		const timestamp = new Date().getTime();
 		window.location.href = baseUrl + '&_ts=' + timestamp;
 	}
 
-
-
 	function handleClick(tabId) {
-		// Remove active class from all buttons
 		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
 
-		// Add active to selected button
 		const activeBtn = document.getElementById(tabId + '-btn');
-		if (activeBtn) {
-			activeBtn.classList.add('active');
-		}
+		if (activeBtn) activeBtn.classList.add('active');
 
-		// Hide all tab panes
 		document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
 
-		// Show selected tab pane
 		const activePane = document.getElementById(tabId);
-		if (activePane) {
-			activePane.classList.add('show', 'active');
-		}
+		if (activePane) activePane.classList.add('show', 'active');
 	}
 
-
-	// On page load, detect formmode and show corresponding tab
 	window.addEventListener('DOMContentLoaded', function () {
 		const params = new URLSearchParams(window.location.search);
 		const tabId = params.get('tab');
 		const formmode = params.get('formmode');
 
-		// Set the active tab based on URL
 		if (tabId) {
 			handleClick(tabId);
 		} else {
-			// Fallback logic if tab param is missing
 			if (formmode === 'list') {
 				handleClick('dataimpact');
 			} else {
@@ -1112,29 +793,19 @@ left
 			}
 		}
 	});
-
-
-
 </script>
 
 
-
-
 <script>
-
 	function downloadImpactanalysisExcel() {
-		// 1. Show the loader modal
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
 		$.ajax({
 			url: './downloadImpactanalysisExcel',
 			type: 'GET',
-			xhrFields: {
-				responseType: 'blob'
-			},
+			xhrFields: { responseType: 'blob' },
 			success: function (data) {
-				// Always hide loader first
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
 				let message = '';
 
@@ -1146,37 +817,25 @@ left
 					a.href = url;
 					a.download = 'ImpactAnalysis.xls';
 					document.body.appendChild(a);
-
 					a.click();
-
 					window.URL.revokeObjectURL(url);
 					document.body.removeChild(a);
-
 					message = 'ImpactAnalysis.xls has been downloaded successfully.';
 				} else {
 					message = 'No data available to download.';
 				}
 
-				// Show custom alert modal with the message
 				$('#alertmsg').text(message);
 				$('#alert').modal('show');
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");     
-
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				console.error("Download failed:", textStatus, errorThrown);
-
-				// Show error message in your custom alert
 				$('#alertmsg').text('An error occurred while downloading ImpactAnalysis.xls.');
 				$('#alert').modal('show');
 			}
 		});
 	}
-
-//	function goBack() {
-	//    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-	  //  window.history.back();
-//	}
 
 	function hideLoader() {
 	    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
@@ -1186,76 +845,57 @@ left
 	    hideLoader();
 	});
 </script>
+
 <title>RiskInsights</title>
 
 <body>
 	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
-		<!-- <div class="row"> -->
 
-			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
-
-				<div class="d-flex align-items-center">
-
-															<button class="static-back-btn" onclick="goBack()" title="Go Back">
-																<i class="fa fa-arrow-left"></i>
-															</button>
-															<div class="text-left flex-grow-1">
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center" th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+			<div class="d-flex align-items-center">
+				<button class="static-back-btn" onclick="goBack()" title="Go Back">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<div class="text-left flex-grow-1">
 					<h4>IMPACT ANALYSIS</h4>
-					</div>	
-			</div>
-							<!-- Tabs -->
-				<div class="d-flex align-items-center gap-2">
-
-					<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
-						Controls</button>
-					<button class="role-btn" id="template-btn" onclick="handleClick('template')">Template
-						Instructions</button>
-					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">Foreign Curr
-						Deposit</button>
-					<button class="role-btn" id="dataimpact-btn" onclick="navigateToTab('dataimpact')">Impact
-						Analysis</button>
-
-						<button th:if="${formmode} =='list'" type="button" class="role-btn"
-							onclick="downloadImpactanalysisExcel();">
-							<i class="fa fa-download"></i> Download
-						</button>
-				
 				</div>
-				</div>
-
-
 			</div>
-			<!-- -------------------User List Starts----------------------------------------------------- -->
-			<div style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+
+			<div class="d-flex align-items-center gap-2">
+				<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data Controls</button>
+				<button class="role-btn" id="template-btn" onclick="handleClick('template')">Template Instructions</button>
+				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">Foreign Curr Deposit</button>
+				<button class="role-btn" id="dataimpact-btn" onclick="navigateToTab('dataimpact')">Impact Analysis</button>
+				<button th:if="${formmode} =='list'" type="button" class="role-btn" onclick="downloadImpactanalysisExcel();">
+					<i class="fa fa-download"></i> Download
+				</button>
+			</div>
+		</div>
 
 
-				<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
-					<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+		<!-- -------------------User List Starts----------------------------------------------------- -->
+		<div style="padding-right: 10px;padding-left: 20px;"
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 15px;" th:if="${formmode} =='null'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="nostroForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="nostroForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
-
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
-												class="form-control form-control-sm" required>
+											<select id="submittingInstitution" name="submittingInstitution" class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
-												<option th:selected="${bankname == 'Bank of Baroda'}"
-													value="Bank of Baroda">Bank of Baroda</option>
-											</select> <label class="form-legend">Submitting Institution</label>
+												<option th:selected="${bankname == 'Bank of Baroda'}" value="Bank of Baroda">Bank of Baroda</option>
+											</select>
+											<label class="form-legend">Submitting Institution</label>
 										</div>
-										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
-												date</label>
+										<div class="form-group" style="width:20%">
+											<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm" required />
+											<label class="form-legend">Portfolio date</label>
 										</div>
 									</div>
 
@@ -1265,25 +905,16 @@ left
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Name1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Name</label>
+														<input type="text" name="contactEmployee1Name1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Title1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Title</label>
+														<input type="text" name="contactEmployee1Title1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee1Email1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Email</label>
+														<input type="email" name="contactEmployee1Email1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Email</label>
 													</div>
 												</div>
 											</div>
@@ -1292,25 +923,16 @@ left
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Name2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Name</label>
+														<input type="text" name="contactEmployee2Name2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Title2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Title</label>
+														<input type="text" name="contactEmployee2Title2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee2Email2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Email</label>
+														<input type="email" name="contactEmployee2Email2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Email</label>
 													</div>
 												</div>
 											</div>
@@ -1321,42 +943,28 @@ left
 												<label class="section-title">SIGN OFF</label>
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+														<input type="text" name="signOffCroName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CRO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															name="signOffCroEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Email</label>
+														<input type="email" name="signOffCroEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CRO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+														<input type="text" name="signOffCfoName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CFO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email" 
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+														<input type="email" name="signOffCfoEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CFO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+														<input type="text" name="signOffHeadOfTreasuryName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Head of Treasury Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Email</label>
+														<input type="email" name="signOffHeadOfTreasuryEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Head of Treasury Email</label>
 													</div>
 												</div>
 											</div>
@@ -1366,39 +974,30 @@ left
 							</form>
 
 							<div class="card-footer text-center mt-3">
-								<button th:if="${formmode == 'null'}" id="savebutton"
-									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+								<button th:if="${formmode == 'null'}" id="savebutton" type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				</div>
-				
-				<div class="tab-content" id="myTabContent" style="margin-top: 20px;"
-				th:if="${formmode} =='exist'">
-				<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+			</div>
+			
+			<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='exist'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="nostroForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="nostroForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
-
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
-												class="form-control form-control-sm" required>
+											<select id="submittingInstitution" name="submittingInstitution" class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
-												<option th:selected="${bankname == 'Bank of Baroda'}"
-													value="Bank of Baroda">Bank of Baroda</option>
-											</select> <label class="form-legend">Submitting Institution</label>
+												<option th:selected="${bankname == 'Bank of Baroda'}" value="Bank of Baroda">Bank of Baroda</option>
+											</select>
+											<label class="form-legend">Submitting Institution</label>
 										</div>
-										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
-												date</label>
+										<div class="form-group" style="width:20%">
+											<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm" required />
+											<label class="form-legend">Portfolio date</label>
 										</div>
 									</div>
 
@@ -1408,25 +1007,16 @@ left
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Name1}"
-															name="contactEmployee1Name1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Name</label>
+														<input type="text" th:value="${data.contactEmployee1Name1}" name="contactEmployee1Name1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Title1}"
-															name="contactEmployee1Title1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Title</label>
+														<input type="text" th:value="${data.contactEmployee1Title1}" name="contactEmployee1Title1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee1Email1}"
-															name="contactEmployee1Email1"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Email</label>
+														<input type="email" th:value="${data.contactEmployee1Email1}" name="contactEmployee1Email1" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Email</label>
 													</div>
 												</div>
 											</div>
@@ -1435,25 +1025,16 @@ left
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Name2}"
-															name="contactEmployee2Name2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Name</label>
+														<input type="text" th:value="${data.contactEmployee2Name2}" name="contactEmployee2Name2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Title2}"
-															name="contactEmployee2Title2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Title</label>
+														<input type="text" th:value="${data.contactEmployee2Title2}" name="contactEmployee2Title2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee2Email2}"
-															name="contactEmployee2Email2"
-															class="form-control form-control-sm" placeholder=" "
-															required /><label class="form-legend">Email</label>
+														<input type="email" th:value="${data.contactEmployee2Email2}" name="contactEmployee2Email2" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Email</label>
 													</div>
 												</div>
 											</div>
@@ -1464,42 +1045,28 @@ left
 												<label class="section-title">SIGN OFF</label>
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
-														<input type="text" th:value="${data.signOffCroName}"
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+														<input type="text" th:value="${data.signOffCroName}" name="signOffCroName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CRO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email" th:value="${data.signOffCroEmail}"
-															name="signOffCroEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Email</label>
+														<input type="email" th:value="${data.signOffCroEmail}" name="signOffCroEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CRO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text" th:value="${data.signOffCfoName}"
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+														<input type="text" th:value="${data.signOffCfoName}" name="signOffCfoName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CFO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email" th:value="${data.signOffCfoEmail}"
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+														<input type="email" th:value="${data.signOffCfoEmail}" name="signOffCfoEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">CFO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.signOffHeadOfTreasuryName}"
-															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+														<input type="text" th:value="${data.signOffHeadOfTreasuryName}" name="signOffHeadOfTreasuryName" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Head of Treasury Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.signOffHeadOfTreasuryEmail}"
-															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Email</label>
+														<input type="email" th:value="${data.signOffHeadOfTreasuryEmail}" name="signOffHeadOfTreasuryEmail" class="form-control form-control-sm" placeholder=" " required />
+														<label class="form-legend">Head of Treasury Email</label>
 													</div>
 												</div>
 											</div>
@@ -1509,641 +1076,557 @@ left
 							</form>
 
 							<div class="card-footer text-center mt-3">
-								<button th:if="${formmode == 'exist'}" id="savebutton"
-									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+								<button th:if="${formmode == 'exist'}" id="savebutton" type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-				<!-- --------------------------------------DATA CONTROL ENDS--------------------------------------------- -->
-
-				<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
-
-				<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
-					<p>Templates tabs</p>
-					<div class="card-footer text-center"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<!-- <button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button> -->
+			<!-- --------------------------------------TEMPLATE STARTS--------------------------------------------- -->
+			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
+				<p>Templates tabs</p>
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+				</div>
+			</div>
+			<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
 
-						<!--<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="custom-tab-btn"
-							onclick="submitForm()">Save</button>-->
+			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
+			<div class="tab-pane fade" id="dataimpact" role="tabpanel">
 
+				<!-- =====================================================================
+				     FIX: dt-controls bar (search + pagination) sits OUTSIDE the
+				     scrollable div so it never scrolls away with the table content.
+				     DataTables injects into #dt-controls-bar via the dom option.
+				===================================================================== -->
+				<div id="dt-controls-bar" class="dt-controls-bar"></div>
 
-						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button> -->
-
-					</div>
+				<!-- Only the table itself is inside the scrollable container -->
+				<div class="table-responsive-fixed">
+					<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
+						<thead class="thead-light">
+							<tr>
+								<th style="text-align: center;width: 100px;">Action</th>
+								<th style="min-width: 80px;">Date</th>
+								<th>Bank Name</th>
+								<th>Head Office Subsidiary</th>
+								<th>Subsidiary</th>
+								<th>Bank Symbol</th>
+								<th>Conventional/Islamic</th>
+								<th>Local/Foreign</th>
+								<th>CBUAE Tiering</th>
+								<th>Deal Internal Reference</th>
+								<th>Leg Type</th>
+								<th>Internal Counterparty Reference</th>
+								<th>Cpty Name</th>
+								<th>Derivatives Cpty Country of Risk</th>
+								<th>CBUAE Regional zone</th>
+								<th>Ccy Bought</th>
+								<th style="text-align:right;">Amount Bought</th>
+								<th>Deal Rate</th>
+								<th>Ccy Sold</th>
+								<th style="text-align:right;">Amount Sold</th>
+								<th style="min-width: 80px;">Value Date</th>
+								<th style="min-width: 80px;">Deal Date</th>
+								<th>Derivatives Tenor (Months)</th>
+								<th>Maturity Period</th>
+								<th>Dealer Name</th>
+								<th style="min-width: 80px;">MTM AED equivalent Reporting Date</th>
+								<th style="text-align:right;">MTM AED equivalent Previous Quarter</th>
+								<th style="text-align:right;">MTM Change</th>
+								<th>Funding/Loans Internal Reference</th>
+								<th>On-Balance Sheet Item Type</th>
+								<th>On-Balance Item Counterparty</th>
+								<th>Counterparty Country of Risk</th>
+								<th>CBUAE Regional zne</th>
+								<th style="text-align:right;">Nominal</th>
+								<th>Currency</th>
+								<th style="text-align:right;">Overall Impact</th>
+								<th style="text-align:right;">Accrual Impact</th>
+								<th>Rate Type</th>
+								<th>Deposit Fixed Rate/Administrative Rate (%)</th>
+								<th>Fixed Deposit Rate equivalent</th>
+								<th>Floating Rate Type</th>
+								<th>Benchmark Floating Rate</th>
+								<th>Spread Over Benchmark Rate</th>
+								<th style="min-width: 80px;">Maturity Date</th>
+								<th>Tenor (Mths)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="data : ${branchList}">
+								<td style="text-align: center;min-width: 100px;">
+									<a th:href="@{'/Impact_Analysis?formmode=edit&SI_NO=' + ${data.SI_NO}}">
+										<i class="fa fa-edit" style="color: #ff7f27;"></i>
+									</a>
+								</td>
+								<td th:text="${#dates.format(data.date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${data.bankName}"></td>
+								<td th:text="${data.headOfficeSubsidiary}"></td>
+								<td th:text="${data.subsidiary}"></td>
+								<td th:text="${data.bankSymbol}"></td>
+								<td th:text="${data.conventionalOrIslamic}"></td>
+								<td th:text="${data.localOrForeign}"></td>
+								<td th:text="${data.cbuaeTiering}"></td>
+								<td th:text="${data.dealInternalReference}"></td>
+								<td th:text="${data.legType}"></td>
+								<td th:text="${data.internalCounterpartyReference}"></td>
+								<td th:text="${data.cptyName}"></td>
+								<td th:text="${data.derivativesCptyCountryOfRisk}"></td>
+								<td th:text="${data.cbuaeRegionalZone}"></td>
+								<td th:text="${data.ccyBought}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.amountBought, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dealRate, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${data.ccySold}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.amountSold, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${#dates.format(data.valueDate, 'dd-MM-yyyy')}"></td>
+								<td th:text="${#dates.format(data.dealDate, 'dd-MM-yyyy')}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.derivativesTenorMonths, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${data.maturityPeriod}"></td>
+								<td th:text="${data.dealerName}"></td>
+								<td th:text="${#dates.format(data.mtmAedEquivalentReportingDate, 'dd-MM-yyyy')}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.mtmAedEquivalentPreviousQuarter, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.mtmChange, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${data.fundingOrLoansInternalReference}"></td>
+								<td th:text="${data.onBalanceSheetItemType}"></td>
+								<td th:text="${data.onBalanceItemCounterparty}"></td>
+								<td th:text="${data.counterpartyCountryOfRisk}"></td>
+								<td th:text="${data.cbuaeRegionalZne}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${data.currency}"></td>
+								<td th:text="${#numbers.formatDecimal(data.overallImpact, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.accrualImpact, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${data.rateType}"></td>
+								<td th:text="${data.depositFixedRateOrAdministrativeRate}"></td>
+								<td th:text="${data.fixedDepositRateEquivalent}"></td>
+								<td th:text="${data.floatingRateType}"></td>
+								<td th:text="${data.benchmarkFloatingRate}"></td>
+								<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}"></td>
+								<td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
+								<td th:text="${data.tenorMths}"></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
-
-
-
-				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-				<div class="tab-pane fade" id="dataimpact" role="tabpanel">
-					<!-- Move your existing table content here -->
-
-					<!-- 	<div class="row">
-				<div class="col-sm-12">
-					<div class="container-fluid">
-   -->
-
-
-
-
-					<div class="table-responsive" style="max-height: 400px; overflow: auto; border:none;">
-						<table id="usertable" class="table table-bordered table-striped table-hover"
-							style="min-width: 2000px; ">
-
-							<thead class="thead-light">
-
-								<tr>
-
-									<th style="text-align: center;width: 100px;">Action</th>
-									<th style="min-width: 80px; ">Date</th>
-									<th>Bank Name</th>
-									<th>Head Office Subsidiary</th>
-									<th>Subsidiary</th>
-									<th>Bank Symbol</th>
-									<th>Conventional/Islamic</th>
-									<th>Local/Foreign</th>
-									<th>CBUAE Tiering</th>
-									<th>Deal Internal Reference</th>
-									<th>Leg Type</th>
-									<th>Internal Counterparty Reference</th>
-									<th>Cpty Name</th>
-									<th>Derivatives Cpty Country of Risk</th>
-									<th>CBUAE Regional zone</th>
-									<th>Ccy Bought</th>
-									<th style="text-align:right;">Amount Bought</th>
-									<th>Deal Rate</th>
-									<th>Ccy Sold</th>
-									<th style="text-align:right;">Amount Sold</th>
-									<th style="min-width: 80px; ">Value Date</th>
-									<th style="min-width: 80px; ">Deal Date</th>
-									<th>Derivatives Tenor (Months)</th>
-									<th>Maturity Period</th>
-									<th>Dealer Name</th>
-									<th style="min-width: 80px; ">MTM AED equivalent Reporting Date</th>
-									<th style="text-align:right;">MTM AED equivalent Previous Quarter</th>
-									<th style="text-align:right;">MTM Change</th>
-									<th>Funding/Loans Internal Reference</th>
-									<th>On-Balance Sheet Item Type</th>
-									<th>On-Balance Item Counterparty</th>
-									<th>Counterparty Country of Risk</th>
-									<th>CBUAE Regional zne</th>
-									<th style="text-align:right;">Nominal</th>
-									<th>Currency</th>
-									<th style="text-align:right;">Overall Impact</th>
-									<th style="text-align:right;">Accrual Impact</th>
-									<th>Rate Type</th>
-									<th>Deposit Fixed Rate/Administrative Rate (%)</th>
-									<th>Fixed Deposit Rate equivalent</th>
-									<th>Floating Rate Type</th>
-									<th>Benchmark Floating Rate</th>
-									<th>Spread Over Benchmark Rate</th>
-									<th style="min-width: 80px; ">Maturity Date</th>
-									<th>Tenor (Mths)</th>
-
-
-
-								</tr>
-							</thead>
-							<tbody >
-
-								<!-- Loop to render data dynamically -->
-								<tr th:each="data : ${branchList}">
-									<td style="text-align: center;min-width: 100px;">
-										<a th:href="@{'/Impact_Analysis?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-
-											<i class="fa fa-edit" style="color: #ff7f27;"></i>
-										</a>
-									</td>
-
-									<td th:text="${#dates.format(data.date, 'dd-MM-yyyy')}"></td>
-									<td th:text="${data.bankName}"></td>
-									<td th:text="${data.headOfficeSubsidiary}"></td>
-									<td th:text="${data.subsidiary}"></td>
-									<td th:text="${data.bankSymbol}"></td>
-									<td th:text="${data.conventionalOrIslamic}"></td>
-									<td th:text="${data.localOrForeign}"></td>
-									<td th:text="${data.cbuaeTiering}"></td>
-									<td th:text="${data.dealInternalReference}"></td>
-									<td th:text="${data.legType}"></td>
-									<td th:text="${data.internalCounterpartyReference}"></td>
-									<td th:text="${data.cptyName}"></td>
-									<td th:text="${data.derivativesCptyCountryOfRisk}"></td>
-									<td th:text="${data.cbuaeRegionalZone}"></td>
-									<td th:text="${data.ccyBought}"></td>
-									<td style="text-align: right;"th:text="${#numbers.formatDecimal(data.amountBought, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.dealRate, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${data.ccySold}"></td>
-									<!--<td th:text="${data.amountSold}"></td>-->
-									<td  style="text-align: right;" th:text="${#numbers.formatDecimal(data.amountSold, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${#dates.format(data.valueDate, 'dd-MM-yyyy')}"></td>
-									<td th:text="${#dates.format(data.dealDate, 'dd-MM-yyyy')}"></td>
-									<!--<td th:text="${data.derivativesTenorMonths}"></td>-->
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.derivativesTenorMonths, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.maturityPeriod}"></td>
-									<td th:text="${data.dealerName}"></td>
-									<td th:text="${#dates.format(data.mtmAedEquivalentReportingDate, 'dd-MM-yyyy')}">
-									</td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.mtmAedEquivalentPreviousQuarter, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.mtmChange, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.fundingOrLoansInternalReference}"></td>
-									<td th:text="${data.onBalanceSheetItemType}"></td>
-									<td th:text="${data.onBalanceItemCounterparty}"></td>
-									<td th:text="${data.counterpartyCountryOfRisk}"></td>
-									<td th:text="${data.cbuaeRegionalZne}"></td>
-
-									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.nominal, 1, 'COMMA', 2, 'POINT')}"></td>
-									<td th:text="${data.currency}"></td>
-									<td th:text="${#numbers.formatDecimal(data.overallImpact, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td style="text-align: right;" th:text="${#numbers.formatDecimal(data.accrualImpact, 1, 'COMMA', 2, 'POINT')}">
-									</td>
-									<td th:text="${data.rateType}"></td>
-									<td th:text="${data.depositFixedRateOrAdministrativeRate}"></td>
-									<td th:text="${data.fixedDepositRateEquivalent}"></td>
-									<td th:text="${data.floatingRateType}"></td>
-									<td th:text="${data.benchmarkFloatingRate}"></td>
-									<td style="text-align: right;"
-										th:text="${#numbers.formatDecimal(data.spreadOverBenchmarkRate, 1, 'COMMA', 2, 'POINT')}">
-										< <td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}">
-									</td>
-									<td th:text="${data.tenorMths}"></td>
-
-
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
-
-					<div class="card-footer text-center"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<!-- <button type="button" class="custom-tab-btn" onclick="home();">
-							<i class="fa fa-home"></i> Home
-						</button> -->
-
-
-						<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
-							onclick="submitForm()">Save</button>
-
-
-						<!-- <button type="button" class="custom-tab-btn" onclick="back();">
-							<i class="fa fa-arrow-left"></i> Back
-						</button> -->
-
-					</div>
-
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+					<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn" onclick="submitForm()">Save</button>
 				</div>
-
-
 
 			</div>
+			<!-- -----------------------------------DATA LIST ENDS -------------------------------------------- -->
 
-			<!------------------ edit starts-------------------------------------------------------------->
+		</div>
 
-			<div th:if="${formmode}=='edit'" class="liquid-edit-page"  style="align-items:center">
-
-				<div class="row">
-					<form th:action="@{/updateImpactAnalysis}" th:object="${ImpactAnalysis}" method="post"
-						id="impactanalysis">
-						<div class="card" style="margin-left: 15px;margin-right: 15px;">
-							<div class="role-page-header d-flex justify-content-between align-items-center" >
-								<div >
-									<h4>Impact Analysis - Edit</h4>
-								
-									
-								</div>
-
+		<!------------------ edit starts-------------------------------------------------------------->
+		<div th:if="${formmode}=='edit'" class="liquid-edit-page" style="align-items:center">
+			<div class="row">
+				<form th:action="@{/updateImpactAnalysis}" th:object="${ImpactAnalysis}" method="post" id="impactanalysis">
+					<div class="card" style="margin-left: 15px;margin-right: 15px;">
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+							<div>
+								<h4>Impact Analysis - Edit</h4>
 							</div>
-							<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-								<input type="hidden" th:field="*{SI_NO}" />
-
-								<!-- Row 1 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Report Date</label>
-									<div class="col-sm-4">
-										<input type="date" class="form-control" th:field="*{date}" required readonly/>
-									</div>
-									<label class="col-sm-2 col-form-label">Bank Name</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{bankName}"
-											onchange="handleBankChange(this)">
-											<option value="" disabled selected>-- Select Bank --</option>
-											<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
-												th:text="${bank.bankName}"></option>
-										</select>
-									</div>
-								</div>
-
-								<!-- Row 2 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{headOfficeSubsidiary}">
-											<option value="" disabled selected>-- Select --</option>
-											<option value="Head Office">Head Office</option>
-											<option value="Subsidiary">Subsidiary</option>
-										</select>
-									</div>
-									<label class="col-sm-2 col-form-label">Subsidiary</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{subsidiary}" id="subsidiary" /></div>
-								</div>
-
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Bank Symbol</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{bankSymbol}" id="bankSymbol" readonly /></div>
-									<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{conventionalOrIslamic}" id="conventionalIslamic" readonly />
-									</div>
-								</div>
-
-								<!-- Row 4 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Local/Foreign</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{localOrForeign}" id="localForeign" readonly /></div>
-									<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly /></div>
-								</div>
-
-								<!-- Row 5 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Deal Internal Ref</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{dealInternalReference}" id="dealInternalReference" /></div>
-									<label class="col-sm-2 col-form-label">Leg Type</label>
-									<div class="col-sm-4"><input type="text" class="form-control" th:field="*{legType}"
-											id="legType" /></div>
-								</div>
-
-								<!-- Row 6 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Internal CPTY Ref</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{internalCounterpartyReference}"
-											id="internalCounterpartyReference" /></div>
-									<label class="col-sm-2 col-form-label">CPTY Name</label>
-									<div class="col-sm-4"><input type="text" class="form-control" th:field="*{cptyName}"
-											id="cptyName" /></div>
-								</div>
-
-								<!-- Row 7 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">CPTY Country of Risk</label>
-									<div class="col-sm-4">
-										<select class="form-control" th:field="*{derivativesCptyCountryOfRisk}"
-											id="derivativesCptyCountryOfRisk" onchange="handleCountryChange(this)">
-											<option value="" disabled selected>-- Select Country --</option>
-											<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
-												th:text="${c.countryOfRisk}"></option>
-										</select>
-									</div>
-
-									<label class="col-sm-2 col-form-label">CBUAE Regional Zone</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{cbuaeRegionalZone}" id="cbuaeGeographicalZone" readonly / />
-									</div>
-								</div>
-
-								<!-- Row 8 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Currency Bought</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{ccyBought}" id="ccyBought" /></div>
-									<label class="col-sm-2 col-form-label">Amount Bought</label>
-									<div class="col-sm-4"><input type="number" class="form-control  number-24-2 no-spinner"
-											th:field="*{amountBought}" id="amountBought" /></div>
-								</div>
-
-								<!-- Row 9 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Deal Rate</label>
-									<div class="col-sm-4"><input type="number" class="form-control  number-24-2 no-spinner"
-											th:field="*{dealRate}" id="dealRate" /></div>
-									<label class="col-sm-2 col-form-label">Currency Sold</label>
-									<div class="col-sm-4"><input type="text" class="form-control" th:field="*{ccySold}"
-											id="ccySold" /></div>
-								</div>
-
-								<!-- Row 10 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Amount Sold</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control  number-24-2"
-											th:field="*{amountSold}" id="amountSold" /></div>
-									<label class="col-sm-2 col-form-label">Value Date</label>
-									<div class="col-sm-4"><input type="date" class="form-control"
-											th:field="*{valueDate}" id="valueDate" /></div>
-								</div>
-
-								<!-- Row 11 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Deal Date</label>
-									<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dealDate}"
-											id="dealDate" /></div>
-									<label class="col-sm-2 col-form-label">Derivatives Tenor (Months)</label>
-									<div class="col-sm-4"><input type="number" step="0.01" class="form-control number-24-2"
-											th:field="*{derivativesTenorMonths}" id="derivativesTenorMonths" /></div>
-								</div>
-
-								<!-- Row 12 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Maturity Period</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control"
-											th:field="*{maturityPeriod}" id="maturityPeriod" /></div>
-									<label class="col-sm-2 col-form-label">Dealer Name</label>
-									<div class="col-sm-4"><input type="text" class="form-control"
-											th:field="*{dealerName}" id="dealerName" /></div>
-								</div>
-
-								<!-- Row 13 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">MTM AED (Reporting Date)</label>
-									<div class="col-sm-4"><input type="date" class="form-control"
-											th:field="*{mtmAedEquivalentReportingDate}" id="dealerName" /></div>
-									<label class="col-sm-2 col-form-label">MTM AED (Previous Quarter)</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control  number-24-2 no-spinner"
-											th:field="*{mtmAedEquivalentPreviousQuarter}"
-											id="mtmAedEquivalentPreviousQuarter" /></div>
-								</div>
-
-								<!-- Row 14 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">MTM Change</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2"
-											th:field="*{mtmChange}" id="mtmChange" /></div>
-									<label class="col-sm-2 col-form-label">Funding/Loan Ref</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{fundingOrLoansInternalReference}"
-											id="fundingOrLoansInternalReference" /></div>
-								</div>
-
-								<!-- Row 15 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Balance Sheet Item Type</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{onBalanceSheetItemType}" id="onBalanceSheetItemType" /></div>
-									<label class="col-sm-2 col-form-label">Item Counterparty</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{onBalanceItemCounterparty}" id="onBalanceItemCounterparty" />
-									</div>
-								</div>
-
-								<!-- Row 16 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Counterparty Country of Risk</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{counterpartyCountryOfRisk}" id="counterpartyCountryOfRisk" />
-									</div>
-									<label class="col-sm-2 col-form-label">CBUAE Regional ZNE</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{cbuaeRegionalZne}" id="cbuaeRegionalZne" /></div>
-								</div>
-
-								<!-- Row 17 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Nominal</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control  no-spinner"
-											th:field="*{nominal}" id="nominal" /></div>
-									<label class="col-sm-2 col-form-label">Currency</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{currency}"
-											id="currency" /></div>
-								</div>
-
-								<!-- Row 18 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Overall Impact</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control no-spinner"
-											th:field="*{overallImpact}" id="overallImpact" /></div>
-									<label class="col-sm-2 col-form-label">Accrual Impact</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control no-spinner"
-											th:field="*{accrualImpact}" id="accrualImpact" /></div>
-								</div>
-
-								<!-- Row 19 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Rate Type</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{rateType}"
-											id="rateType" /></div>
-									<label class="col-sm-2 col-form-label">Fixed/Admin Rate</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2  no-spinner"
-											th:field="*{depositFixedRateOrAdministrativeRate}"
-											id="depositFixedRateOrAdministrativeRate" /></div>
-								</div>
-
-								<!-- Row 20 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Fixed Deposit Rate Eq</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2  no-spinner"
-											th:field="*{fixedDepositRateEquivalent}" id="fixedDepositRateEquivalent" />
-									</div>
-									<label class="col-sm-2 col-form-label">Floating Rate Type</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{floatingRateType}" id="floatingRateType" /></div>
-								</div>
-
-								<!-- Row 21 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Benchmark Rate</label>
-									<div class="col-sm-4"><input type="text" class="form-control vchar-50"
-											th:field="*{benchmarkFloatingRate}" id="benchmarkFloatingRate" /></div>
-									<label class="col-sm-2 col-form-label">Spread Over Benchmark</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2  no-spinner"
-											th:field="*{spreadOverBenchmarkRate}" id="spreadOverBenchmarkRate" /></div>
-								</div>
-
-								<!-- Row 22 -->
-								<div class="form-group row">
-									<label class="col-sm-2 col-form-label">Maturity Date</label>
-									<div class="col-sm-4"><input type="date" class="form-control"
-											th:field="*{maturityDate}" id="maturityDate" /></div>
-									<label class="col-sm-2 col-form-label">Tenor Months</label>
-									<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2  no-spinner"
-											th:field="*{tenorMths}" id="tenorMths" /></div>
-								</div>
-
-							
-
-							<!-- Submit -->
-							<div class="card-footer text-center">
-								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-								<a th:href="@{/Impact_Analysis}" class="role-btn" style="text-decoration: none;">Cancel</a>
-							</div>
-</div>
 						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+							<input type="hidden" th:field="*{SI_NO}" />
 
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Report Date</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{date}" required readonly/></div>
+								<label class="col-sm-2 col-form-label">Bank Name</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
+										<option value="" disabled selected>-- Select Bank --</option>
+										<option th:each="bank : ${bankList}" th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+									</select>
+								</div>
+							</div>
 
-		<div class="modal fade" id="datadelete">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
-						<button type="button" class="close" data-dismiss="modal">×</button>
-						Are you Sure want to delete?
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-							th:attr="data-formmode=delete">Submit</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-					</div>
-				</div>
-			</div>
-		</div>
-<!--		<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
-<!--		<i class="fa fa-arrow-left"></i>-->
-<!--	</button>-->
-<!--	 Floating Forward Button -->
-<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
-<!--		title="Go Forward">-->
-<!--		<i class="fa fa-arrow-right"></i>-->
-<!--	</button>-->
-		<div class="modal fade" id="formmsg">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
-						<button type="button" class="close" data-dismiss="modal">×</button>
-						<a th:value="${msg}"></a>
-					</div>
-					<div class="modal-footer"
-						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-						<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
-							th:attr="data-formmode=delete">Submit</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-					</div>
-				</div>
-			</div>
-		</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Head Office Subsidiary</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{headOfficeSubsidiary}">
+										<option value="" disabled selected>-- Select --</option>
+										<option value="Head Office">Head Office</option>
+										<option value="Subsidiary">Subsidiary</option>
+									</select>
+								</div>
+								<label class="col-sm-2 col-form-label">Subsidiary</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{subsidiary}" id="subsidiary" /></div>
+							</div>
 
-		<div class="modal fade" id="alert">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
-							OF BARODA</div>
-					</div>
-					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg"></p>
-						<button type="button" class="role-btn" onclick="list()"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Bank Symbol</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol" readonly /></div>
+								<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{conventionalOrIslamic}" id="conventionalIslamic" readonly /></div>
+							</div>
 
-		<div class="modal fade" id="alert1">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="menu-title-header">
-						<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK
-							OF BARODA</div>
-					</div>
-					<div class="modal-body" style="text-align: center">
-						<p id="alertmsg1"></p>
-						<button type="button" class="role-btn" onclick="impact()"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content" style="background: transparent;">
-					<div class="modal-body" style="text-align: center">
-						<div>
-							<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-								border-color: transparent;" alt="Bornfire">
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Local/Foreign</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{localOrForeign}" id="localForeign" readonly /></div>
+								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Deal Internal Ref</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dealInternalReference}" id="dealInternalReference" /></div>
+								<label class="col-sm-2 col-form-label">Leg Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{legType}" id="legType" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Internal CPTY Ref</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{internalCounterpartyReference}" id="internalCounterpartyReference" /></div>
+								<label class="col-sm-2 col-form-label">CPTY Name</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{cptyName}" id="cptyName" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">CPTY Country of Risk</label>
+								<div class="col-sm-4">
+									<select class="form-control" th:field="*{derivativesCptyCountryOfRisk}" id="derivativesCptyCountryOfRisk" onchange="handleCountryChange(this)">
+										<option value="" disabled selected>-- Select Country --</option>
+										<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+									</select>
+								</div>
+								<label class="col-sm-2 col-form-label">CBUAE Regional Zone</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{cbuaeRegionalZone}" id="cbuaeGeographicalZone" readonly /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Currency Bought</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{ccyBought}" id="ccyBought" /></div>
+								<label class="col-sm-2 col-form-label">Amount Bought</label>
+								<div class="col-sm-4"><input type="number" class="form-control number-24-2 no-spinner" th:field="*{amountBought}" id="amountBought" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Deal Rate</label>
+								<div class="col-sm-4"><input type="number" class="form-control number-24-2 no-spinner" th:field="*{dealRate}" id="dealRate" /></div>
+								<label class="col-sm-2 col-form-label">Currency Sold</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{ccySold}" id="ccySold" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Amount Sold</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2" th:field="*{amountSold}" id="amountSold" /></div>
+								<label class="col-sm-2 col-form-label">Value Date</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{valueDate}" id="valueDate" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Deal Date</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{dealDate}" id="dealDate" /></div>
+								<label class="col-sm-2 col-form-label">Derivatives Tenor (Months)</label>
+								<div class="col-sm-4"><input type="number" step="0.01" class="form-control number-24-2" th:field="*{derivativesTenorMonths}" id="derivativesTenorMonths" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Maturity Period</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control" th:field="*{maturityPeriod}" id="maturityPeriod" /></div>
+								<label class="col-sm-2 col-form-label">Dealer Name</label>
+								<div class="col-sm-4"><input type="text" class="form-control" th:field="*{dealerName}" id="dealerName" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">MTM AED (Reporting Date)</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{mtmAedEquivalentReportingDate}" /></div>
+								<label class="col-sm-2 col-form-label">MTM AED (Previous Quarter)</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2 no-spinner" th:field="*{mtmAedEquivalentPreviousQuarter}" id="mtmAedEquivalentPreviousQuarter" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">MTM Change</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2" th:field="*{mtmChange}" id="mtmChange" /></div>
+								<label class="col-sm-2 col-form-label">Funding/Loan Ref</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{fundingOrLoansInternalReference}" id="fundingOrLoansInternalReference" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Balance Sheet Item Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{onBalanceSheetItemType}" id="onBalanceSheetItemType" /></div>
+								<label class="col-sm-2 col-form-label">Item Counterparty</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{onBalanceItemCounterparty}" id="onBalanceItemCounterparty" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Counterparty Country of Risk</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{counterpartyCountryOfRisk}" id="counterpartyCountryOfRisk" /></div>
+								<label class="col-sm-2 col-form-label">CBUAE Regional ZNE</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{cbuaeRegionalZne}" id="cbuaeRegionalZne" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Nominal</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control no-spinner" th:field="*{nominal}" id="nominal" /></div>
+								<label class="col-sm-2 col-form-label">Currency</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{currency}" id="currency" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Overall Impact</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control no-spinner" th:field="*{overallImpact}" id="overallImpact" /></div>
+								<label class="col-sm-2 col-form-label">Accrual Impact</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control no-spinner" th:field="*{accrualImpact}" id="accrualImpact" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Rate Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{rateType}" id="rateType" /></div>
+								<label class="col-sm-2 col-form-label">Fixed/Admin Rate</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2 no-spinner" th:field="*{depositFixedRateOrAdministrativeRate}" id="depositFixedRateOrAdministrativeRate" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Fixed Deposit Rate Eq</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2 no-spinner" th:field="*{fixedDepositRateEquivalent}" id="fixedDepositRateEquivalent" /></div>
+								<label class="col-sm-2 col-form-label">Floating Rate Type</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{floatingRateType}" id="floatingRateType" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Benchmark Rate</label>
+								<div class="col-sm-4"><input type="text" class="form-control vchar-50" th:field="*{benchmarkFloatingRate}" id="benchmarkFloatingRate" /></div>
+								<label class="col-sm-2 col-form-label">Spread Over Benchmark</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2 no-spinner" th:field="*{spreadOverBenchmarkRate}" id="spreadOverBenchmarkRate" /></div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Maturity Date</label>
+								<div class="col-sm-4"><input type="date" class="form-control" th:field="*{maturityDate}" id="maturityDate" /></div>
+								<label class="col-sm-2 col-form-label">Tenor Months</label>
+								<div class="col-sm-4"><input type="number" step="0.0001" class="form-control number-24-2 no-spinner" th:field="*{tenorMths}" id="tenorMths" /></div>
+							</div>
+
+						</div>
+
+						<div class="card-footer text-center">
+							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/Impact_Analysis}" class="role-btn" style="text-decoration: none;">Cancel</a>
 						</div>
 					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="datadelete">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
-			<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
+	</div>
+
+	<div class="modal fade" id="formmsg">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<a th:value="${msg}"></a>
+				</div>
+				<div class="modal-footer" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="role-btn" onclick="impact()" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent; border-color: transparent;" alt="Bornfire">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
 			<div class="flow-bar">
 				<div class="flow-line"></div>
 			</div>
 		</div>
 	</div>
-		
-		<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
-			aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="downloadProcessingModalLabel">Download
-							Processing...</h5>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Download Message -->
-		<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
-			aria-labelledby="customAlertModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
-					</div>
-					<div class="modal-body" id="customAlertBody"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
-					</div>
+
+	<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog" aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="downloadProcessingModalLabel">Download Processing...</h5>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+				</div>
+				<div class="modal-body" id="customAlertBody"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </body>
+
 <script>
-$('#usertable').DataTable({
-	scrollX: false,
-	autoWidth: false,
-	paging: true,
-	searching: true,
-	lengthChange: false,
-	ordering: false,
-	pageLength: 50,
-	fixedHeader: true,
+$(document).ready(function () {
 
-	// Layout: search (left) + pagination (right)
-	dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+	// Step 1: Init DataTable normally (controls go inside .dataTables_wrapper)
+	$('#usertable').DataTable({
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 50,
+		dom: '<"d-flex justify-content-between align-items-center"f p>t',
+		language: { search: "Search:" }
+	});
 
+	// Step 2: After init, physically move the generated controls bar
+	// OUT of .table-responsive-fixed and INTO #dt-controls-bar above it.
+	var $wrapper   = $('#usertable').closest('.dataTables_wrapper');
+	var $controlsRow = $wrapper.find('.d-flex').first();
+	$controlsRow.detach().prependTo('#dt-controls-bar');
 
-	// Optional: language tweak for better label
-	language: {
-		search: "Search:"
+	// Step 3: Force orange on active page button — overrides Bootstrap inline styles
+	function fixPaginationColors() {
+		$('#dt-controls-bar .page-item.active .page-link').css({
+			'background-color': '#ff7f27',
+			'border-color': '#ff7f27',
+			'color': '#ffffff'
+		});
+		$('#dt-controls-bar .page-link').not('.active').css('color', '#ff7f27');
 	}
+
+	fixPaginationColors();
+
+	// Re-apply on every page change
+	$('#usertable').on('draw.dt', function () {
+		setTimeout(fixPaginationColors, 0);
+	});
+
 });
 </script>
 
+<style>
+/* ── Static controls bar above the scroll container ── */
+#dt-controls-bar {
+	position: sticky;
+	top: 0;
+	z-index: 25;
+	background: #fff;
+	padding: 6px 8px;
+	border-bottom: 1px solid #dee2e6;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	flex-wrap: nowrap !important;
+	min-height: 44px;
+}
 
-<!-- Include this after your DataTable initialization script -->
+/* Force the injected inner div to also stretch full width */
+#dt-controls-bar > div {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	width: 100% !important;
+	flex-wrap: nowrap !important;
+}
 
+/* ── Scrollable table container only ── */
+.table-responsive-fixed {
+	width: 100%;
+	max-height: calc(100vh - 240px);
+	overflow: auto;
+	border: none;
+	position: relative;
+}
+
+/* ── Sticky thead inside the scroll container ── */
+.table-responsive-fixed thead th {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background-color: #7b6458 !important;
+	color: white;
+	box-shadow: inset 0 -1px 0 #dee2e6;
+}
+
+/* ── Reset the old broken sticky rule ── */
+.dataTables_wrapper .d-flex {
+	position: static !important;
+}
+
+/* ── DataTables filter label alignment ── */
+.dataTables_filter label {
+	display: flex !important;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 0 !important;
+	white-space: nowrap;
+}
+
+/* ── Pagination alignment ── */
+#dt-controls-bar .dataTables_paginate {
+	margin-left: 0;
+}
+</style>
 
 
 <script>
@@ -2151,7 +1634,6 @@ $('#usertable').DataTable({
 		const selectedBank = select.value;
 
 		if (!selectedBank) {
-			// Clear the fields
 			$('#bankSymbol').val('');
 			$('#conventionalIslamic').val('');
 			$('#localForeign').val('');
@@ -2176,6 +1658,7 @@ $('#usertable').DataTable({
 		});
 	}
 </script>
+
 <script>
 	function handleCountryChange(select) {
 		const selectedCountry = select.value;
@@ -2199,7 +1682,6 @@ $('#usertable').DataTable({
 		});
 	}
 
-	// Run on page load (for edit mode)
 	window.onload = function () {
 		const countrySelect = document.getElementById("countryOfRisk");
 		if (countrySelect && countrySelect.value) {
@@ -2207,6 +1689,7 @@ $('#usertable').DataTable({
 		}
 	};
 </script>
+
 <style>
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
@@ -2214,13 +1697,11 @@ $('#usertable').DataTable({
 		margin: 0;
 	}
 
-	input[type=number] {
-		-moz-appearance: textfield;
-	}
+	input[type=number] { -moz-appearance: textfield; }
 </style>
+
 <script>
   const fieldRules = {
-    // VARCHAR2 fields
     bankName: 100,
     headOfficeSubsidiary: 20,
     subsidiary: 50,
@@ -2247,9 +1728,6 @@ $('#usertable').DataTable({
     rateType: 50,
     floatingRateType: 50,
     benchmarkFloatingRate: 50,
-    
-
-    // NUMBER(p,s) fields
     amountBought: "24,2",
     dealRate: "24,2",
     amountSold: "24,2",
@@ -2262,11 +1740,9 @@ $('#usertable').DataTable({
     fixedDepositRateEquivalent: "24,2",
     spreadOverBenchmarkRate: "24,2",
     tenorMths: "24,2"
-    
   };
 
   function showError(input, msg) {
-    console.log("Showing error for", input.id, msg); // Debug
     let span = document.getElementById(input.id + "-error");
     if (!span) {
       span = document.createElement("small");
@@ -2278,7 +1754,6 @@ $('#usertable').DataTable({
     span.innerText = msg;
   }
 
-
   function clearError(input) {
     const span = document.getElementById(input.id + "-error");
     if (span) span.innerText = "";
@@ -2289,20 +1764,15 @@ $('#usertable').DataTable({
     const rule = fieldRules[input.id];
     const value = input.value.trim();
 
-    if (!rule || !value) {
-      clearError(input);
-      return;
-    }
+    if (!rule || !value) { clearError(input); return; }
 
     if (typeof rule === "number") {
-      // Text field with max length
       if (value.length > rule) {
         showError(input, `Max ${rule} characters allowed`);
       } else {
         clearError(input);
       }
     } else if (typeof rule === "string" && rule.includes(",")) {
-      // Number field
       const [total, decimal] = rule.split(",").map(Number);
       const parts = value.split(".");
       const intLen = parts[0].replace(/^0+/, "").length;
@@ -2321,8 +1791,6 @@ $('#usertable').DataTable({
       const input = document.getElementById(id);
       if (input) {
         input.addEventListener("input", validateInput);
-
-        // Optional: Add maxlength attribute to text fields
         if (typeof fieldRules[id] === "number") {
           input.setAttribute("maxlength", fieldRules[id]);
         }
@@ -2330,23 +1798,6 @@ $('#usertable').DataTable({
     }
   });
 </script>
-<style>
-	.liquid-edit-page {
-		font-family: Arial, sans-serif !important;
-		font-size: 12px !important;
-	}
-
-	.liquid-edit-page label,
-	.liquid-edit-page input,
-	.liquid-edit-page textarea,
-	.liquid-edit-page button {
-		font-size: 12px !important;
-	}
-
-	.modal-title {
-		background-color: #f7a47c;
-	}
-</style>
 
 <style>
 .scrollable-exist-viewport {
@@ -2356,9 +1807,7 @@ $('#usertable').DataTable({
 	padding-right: 10px;
 }
 
-.compact-form {
-	font-size: 12px !important;
-}
+.compact-form { font-size: 12px !important; }
 
 .compact-section {
 	padding: 1px 20px 1px;
@@ -2370,7 +1819,8 @@ $('#usertable').DataTable({
 	padding-left: 20px;
 }
 
-.centered-content .form-group, .signoff-alignment-wrap .form-group {
+.centered-content .form-group,
+.signoff-alignment-wrap .form-group {
 	position: relative;
 	width: 40% !important;
 	margin-bottom: 22px !important;
@@ -2409,9 +1859,7 @@ label.error {
 	z-index: 10;
 }
 
-.error {
-	padding-top: 0 !important;
-}
+.error { padding-top: 0 !important; }
 
 .compact-form .form-control-sm {
 	height: 32px !important;
@@ -2423,32 +1871,8 @@ label.error {
 	background-color: #ffffff;
 }
 
-body {
-	overflow: hidden;
-}
+#floatingBackBtn, #floatingForwardBtn { z-index: 9999; }
 
-.table-responsive {
-	width: 100%;
-	max-height: calc(100vh - 190px);
-	overflow: auto;
-	position: relative;
-}
-
-.table-responsive thead {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
-
-#usertable {
-	overflow-y: auto;
-	overflow-x: auto;
-}
-
-#floatingBackBtn, #floatingForwardBtn {
-	z-index: 9999;
-}
 #usertable thead th {
 	font-size: 14px !important;
 	font-family: Arial, sans-serif !important;
@@ -2459,4 +1883,5 @@ body {
 	font-family: Arial, sans-serif !important;
 }
 </style>
+
 </html>

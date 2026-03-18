@@ -686,6 +686,34 @@
 	    outline: none !important;
 	    box-shadow: none !important;
 	}
+	
+	.static-back-btn {
+									    background-color: rgb(255, 255, 255);
+									    border: none;
+									    color: rgb(255, 128, 0);
+									    font-size: 16px;
+									    border-radius: 50%;
+									    width: 36px;
+									    height: 36px;
+									    display: flex;
+									    align-items: center;
+									    justify-content: center;
+									    margin-right: 10px;
+									    transition: background-color 0.25s ease, transform 0.15s ease;
+									    cursor: pointer;
+									}
+
+									/* Hover effect */
+									.static-back-btn:hover {
+									    background-color: rgb(255, 128, 0);   /* darker orange */
+									    color: rgb(255, 255, 255);
+									    transform: scale(1.08);
+									}
+
+									/* Optional click effect */
+									.static-back-btn:active {
+									    transform: scale(0.95);
+									}
 
 	</style>
 
@@ -775,11 +803,11 @@
 			location.href = 'Dashboard'
 		}
 
-		function back() {
-			$("#loader").modal("toggle");
+//		function back() {
+	//		$("#loader").modal("toggle");
 
-			window.history.back();
-		}
+		//	window.history.back();
+		// }
 
 	</script>
 
@@ -938,7 +966,18 @@
 				});
 		}
 
+		function goBack() {
+								
+									    window.history.back();
+									}
 
+									function hideLoader() {
+									    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+									}
+
+									window.addEventListener("pageshow", function () {
+									    hideLoader();
+									});
 		function downloadDetailfile(jobId,filename) {
 			
 			//$('#loader').modal('show');
@@ -1076,8 +1115,14 @@
 
 				<!-- LEFT: Buttons -->
 				<div class="text-left flex-grow-1">
+					<div class="d-flex align-items-center">
+
+													<button class="static-back-btn" onclick="goBack()" title="Go Back">
+														<i class="fa fa-arrow-left"></i>
+													</button>	
 					<h4 style="padding-right:12px;">Statement Of Interest Rate Sensitivity (USD)</h4>
 
+				</div>
 				</div>
 
 				<div class="custom-tab-btn-group nav-buttons"

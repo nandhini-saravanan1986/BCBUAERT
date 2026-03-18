@@ -175,7 +175,7 @@ public class RT_ForeignCurrencyDepositService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
-        String templateFileName = "CBUAE_Foreign_Currency_Deposit_Template.xls";
+        String templateFileName = "CBUAE_Foreign_Currency_Deposit_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -192,7 +192,7 @@ public class RT_ForeignCurrencyDepositService {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(2);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -392,7 +392,8 @@ public class RT_ForeignCurrencyDepositService {
 				    sheet.autoSizeColumn(i);
 				}
 
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				//workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				workbook.setForceFormulaRecalculation(true);
 			} else {
 				System.out.println("No Fx Risk data found to generate the Excel file.");
 			}

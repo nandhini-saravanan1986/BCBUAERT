@@ -396,6 +396,33 @@ label.error {
 		    background-color: #e6e6e6;
 		}
 
+		.static-back-btn {
+										    background-color: rgb(255, 255, 255);
+										    border: none;
+										    color: rgb(255, 128, 0);
+										    font-size: 16px;
+										    border-radius: 50%;
+										    width: 36px;
+										    height: 36px;
+										    display: flex;
+										    align-items: center;
+										    justify-content: center;
+										    margin-right: 10px;
+										    transition: background-color 0.25s ease, transform 0.15s ease;
+										    cursor: pointer;
+										}
+
+										/* Hover effect */
+										.static-back-btn:hover {
+										    background-color: rgb(255, 128, 0);   /* darker orange */
+										    color: rgb(255, 255, 255);
+										    transform: scale(1.08);
+										}
+
+										/* Optional click effect */
+										.static-back-btn:active {
+										    transform: scale(0.95);
+										}
 	</style>
 <style>
 .inner {
@@ -504,11 +531,23 @@ div.dataTables_wrapper div.dataTables_info {
 		location.href = 'Dashboard'
 	}
 
-	function back() {
-        $("#loader").modal("toggle");
+//	function back() {
+ //       $("#loader").modal("toggle");
 
-		window.history.back();
-	}
+//		window.history.back();
+//	}
+	function goBack() {
+			   
+			    window.history.back();
+			}
+
+			function hideLoader() {
+			    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+			}
+
+			window.addEventListener("pageshow", function () {
+			    hideLoader();
+			});
 	
 </script>
 <script>
@@ -588,8 +627,14 @@ function getreport(a){
 		        <!--<div class="left-arrow-circle">
 		            <i class="fa fa-arrow-left"></i>
 		        </div>-->
+				<div class="d-flex align-items-center">
+
+													<button class="static-back-btn" onclick="goBack()" title="Go Back">
+														<i class="fa fa-arrow-left"></i>
+													</button>
 		        <h5>Statement Of Interest Rate Sensitivity (USD)</h5>
 		    </div>
+			</div>
 		</div>
 		</div>
 
