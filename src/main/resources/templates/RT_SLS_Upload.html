@@ -164,6 +164,9 @@
 										<option value="TR_INV">Treasury Investment</option>
 										<option value="TR_TB">Treasury TB</option>
 										<option value="TR_SWD">Treasury SWD</option>
+										<option value="TR_INV_DEAL_DUMP">Treasury Investment Deal Dump Data</option>
+										<option value="plcdealdump">Treasury Placement Deal Dump Data</option>
+										
 									</select>
 								</div>
 							</div>
@@ -422,7 +425,12 @@
 			else if (report === "SLS" ||report === "TR_PLC" ||report === "TR_INV" ||report === "TR_TB"
 			||report === "TR_SWD") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
-			} else if (report === "MFD") {
+			}
+			else if (report === "TR_INV_DEAL_DUMP" || report === "plcdealdump") {
+					formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+			}
+			
+			else if (report === "MFD") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			} else {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
@@ -594,6 +602,8 @@
 		        },
 
 		        error: function (xhr) {
+		        	
+		        	
 
 		            $("#loader").hide();
 

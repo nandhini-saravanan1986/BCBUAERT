@@ -202,6 +202,8 @@ import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.counter_services;
+import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
@@ -214,7 +216,11 @@ public class XBRLNavigationController {
 	private static final Logger logger = LoggerFactory.getLogger(XBRLNavigationController.class);
 	/*
 	 * @PersistenceContext private EntityManager entityManager;
+	 * 
 	 */
+	
+	@Autowired
+	RtInvestmentDealDataDump_Service rtinvestmentdealdatadump_service;
 
 	@Autowired
 	RT_IRRBB_Data_EVE_Template_Detail_Rep rt_irrbb_data_eve_template_detail_rep;
@@ -4001,7 +4007,12 @@ public class XBRLNavigationController {
 
 	            resultMsg = rtmidFxDealservice.UploadTrplorTb(file, toDate, username,reportType); //Mid Service used as upload Service treasury details
 
-	        } else {
+	        }else if("TR_INV_DEAL_DUMP".equals(reportType) || "plcdealdump".equals(reportType)) {
+	        	resultMsg =rtinvestmentdealdatadump_service.Uploadinvdump(file, toDate, username,reportType);
+	        }
+	        
+	        
+	        else {
 
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
 	        }
