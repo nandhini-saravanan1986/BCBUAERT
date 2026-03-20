@@ -172,5 +172,8 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	
 	@Query(value="Select R20_RATIOS2 As General_Provision,R22_RATIOS2 As CRWA,report_date from car Where rePort_date = ?1",nativeQuery=true)
 	List<Object[]> GetSelecteddateGenepro(Date Selecteddate);
+
+	@Query(value = "SELECT COUNT(*) FROM rt_matrix_monitored_table WHERE report_date = ?1 and s_no=?2", nativeQuery = true)
+	Long countByReportDate(Date reportDate,String Serialno);
 	
 }

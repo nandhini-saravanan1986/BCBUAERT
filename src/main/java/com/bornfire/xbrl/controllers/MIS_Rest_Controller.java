@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Leverage_ratio_rep;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
+import com.bornfire.xbrl.entities.MatrixRunJobEntity;
 import com.bornfire.xbrl.entities.RT_Chart_pojo;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_REPO;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
@@ -52,6 +54,7 @@ import com.bornfire.xbrl.entities.Stableresourcesratio_entity;
 import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
+import com.bornfire.xbrl.services.MatrixRunService;
 import com.bornfire.xbrl.services.counter_services;
 
 @RestController
@@ -105,6 +108,9 @@ public class MIS_Rest_Controller {
     
     @Autowired
     RT_MID_FX_DEAL_REPO RT_MID_FX_DEAL_REPO;
+
+    @Autowired
+    MatrixRunService matrixRunService;
     
     @GetMapping("/download/excel")
     public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
@@ -826,6 +832,44 @@ public class MIS_Rest_Controller {
 		
 		return Rtmatrixdata;
 		
+	}
+
+	@PostMapping("/matrix/runForDate")
+	@ResponseBody
+	public Map<String, Object> runMatrixForDate(
+			@RequestParam(value = "reportDate", required = true) String reportDate,
+			@RequestParam(value = "Serialno", required = true) String Serialno,
+			HttpServletRequest request) throws ParseException {
+
+		String normalized = normalizeDate(reportDate);
+		Date selectedDate = java.sql.Date.valueOf(normalized);
+		String user = (String) request.getSession().getAttribute("USERID");
+		if (user == null || user.trim().isEmpty()) {
+			user = "SYSTEM";
+		}
+		System.out.println("Calculation initiated for Serial no : "+ Serialno + " Report Date : "+selectedDate);
+		return matrixRunService.queueRun(selectedDate, user,Serialno);
+	}
+
+	@GetMapping("/matrix/runStatus")
+	@ResponseBody
+	public Map<String, Object> getRunStatus(@RequestParam("jobId") String jobId) {
+		MatrixRunJobEntity job = matrixRunService.getStatus(jobId);
+		Map<String, Object> response = new java.util.HashMap<String, Object>();
+		if (job == null) {
+			response.put("found", false);
+			response.put("status", "NOT_FOUND");
+			response.put("message", "Job not found.");
+			return response;
+		}
+
+		response.put("found", true);
+		response.put("jobId", job.getJobId());
+		response.put("status", job.getStatus());
+		response.put("processedRatioCount", job.getProcessedRatioCount());
+		response.put("message", job.getErrorMessage());
+		response.put("selectedReportDate", job.getSelectedReportDate());
+		return response;
 	}
 	
 	@PostMapping("/GetExposuredata")

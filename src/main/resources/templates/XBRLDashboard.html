@@ -288,7 +288,7 @@
 
 		.Dailychart-container {
 			position: relative;
-			height: 500px;
+			height: 300px;
 		}
 
 		.chart-download-actions {
@@ -361,6 +361,61 @@
 			animation: blinkBackground 0.5s ease-in-out;
 			animation-iteration-count: 30;
 			/* Blink 10 times */
+		}
+
+		.run-date-wrap {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.btn-run-date {
+			border: 1px solid #1d4e89;
+			background: #1d4e89;
+			color: #fff;
+			border-radius: 8px;
+			padding: 3px 10px;
+			font-size: 11px;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		.btn-run-date:disabled {
+			opacity: .65;
+			cursor: not-allowed;
+		}
+
+		#sessionToggleMessage {
+			display: none;
+			padding: 10px 14px;
+			border-radius: 8px;
+			margin-bottom: 10px;
+			font-weight: 600;
+			color: #fff;
+			position: relative;
+		}
+
+		#sessionToggleMessage.info {
+			background: #1d4e89;
+		}
+
+		#sessionToggleMessage.success {
+			background: #198754;
+		}
+
+		#sessionToggleMessage.error {
+			background: #c0392b;
+		}
+
+		#sessionToggleMessage button {
+			position: absolute;
+			right: 8px;
+			top: 6px;
+			border: none;
+			background: transparent;
+			color: #fff;
+			font-size: 16px;
+			cursor: pointer;
 		}
 
 		@keyframes blinkBackground {
@@ -4159,7 +4214,7 @@
 			var trHTML = "";
 			document.getElementById("Matrixtablebody").innerHTML = trHTML;
 
-			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo + '&MatrixLabel' +
+			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo + '&MatrixLabel=' +
 				label, {
 				method: 'POST',
 				headers: {
@@ -4182,12 +4237,12 @@
 						statusDiv.style.color = "white";
 						statusDiv.innerText = "No data available for the selected date.";
 
-						document.getElementById("Matrixtablebody").innerHTML =
-							`<tr>
-					               <td colspan="7" style="text-align:center;font-weight:600;">
-					                   No records found  for selected date : `+ selectedDate + ` label : ` + label + `
-					               </td>
-					            </tr>`;
+						const runNow = window.confirm("No data found for selected date. Do you want to run the procedure now?");
+						if (runNow) {
+							runMatrixForDateDirect(selectedDate, sNo, label, function () {
+								onDateChange(input);
+							});
+						}
 
 						return; // stop further processing
 					}
@@ -4234,12 +4289,15 @@
 
 						            <!-- Date -->
 						            <td style="text-align: center;">
+						            	<div class="run-date-wrap">
 						                <input class="badge-status"
 						                       type="date"
 						                       value="${formatDateForInput(data.report_date) ?? ""}"
 						                       data-sno="${data.s_no ?? ""}"
 						                       data-label="${data.matrix_label ?? ""}"
 						                       onchange="onDateChange(this)">
+										<button class="btn-run-date" type="button" onclick="runMatrixForDate(this)">Run</button>
+										</div>
 						            </td>
 
 						            <!-- Status -->
@@ -4263,6 +4321,141 @@
 				});
 
 		}
+
+		function setSessionToggle(type, text) {
+			const payload = {type: type || "info", text: text || "", ts: Date.now()};
+			sessionStorage.setItem("dashboardRunToggle", JSON.stringify(payload));
+			showSessionToggleIfAny();
+		}
+
+		function showSessionToggleIfAny() {
+			const el = document.getElementById("sessionToggleMessage");
+			if (!el) return;
+			const raw = sessionStorage.getItem("dashboardRunToggle");
+			if (!raw) {
+				el.style.display = "none";
+				return;
+			}
+
+			try {
+				const item = JSON.parse(raw);
+				el.classList.remove("info", "success", "error");
+				el.classList.add(item.type || "info");
+				el.style.display = "block";
+				el.querySelector(".msg").textContent = item.text || "";
+			} catch (e) {
+				el.style.display = "none";
+			}
+		}
+
+		function clearSessionToggle() {
+			sessionStorage.removeItem("dashboardRunToggle");
+			const el = document.getElementById("sessionToggleMessage");
+			if (el) el.style.display = "none";
+		}
+
+		function runMatrixForDate(button) {
+			const dateInput = button.closest(".run-date-wrap").querySelector("input[type='date']");
+			if (!dateInput || !dateInput.value) {
+				setSessionToggle("error", "Please select a date before running calculation.");
+				return;
+			}
+
+			const reportDate = dateInput.value;
+			const sNo = dateInput.dataset.sno;
+			const label = dateInput.dataset.label;
+			button.disabled = true;
+			button.textContent = "Running...";
+			runMatrixForDateDirect(reportDate, sNo, label, function () {
+				onDateChange(dateInput);
+			}, button);
+		}
+
+		function runMatrixForDateDirect(reportDate, sNo, label, onSuccess, button) {
+			setSessionToggle("info", "Calculation started for " + reportDate + ". Please wait .....");
+
+			fetch("./matrix/runForDate?reportDate=" + encodeURIComponent(reportDate)+"&Serialno="+sNo, {
+				method: "POST",
+				headers: {"Content-Type": "application/x-www-form-urlencoded"}
+			})
+				.then(function (response) {
+					if (!response.ok) throw new Error("Failed to queue run");
+					return response.json();
+				})
+				.then(function (data) {
+					if (!data.accepted) {
+						if (button) {
+							button.disabled = false;
+							button.textContent = "Run";
+						}
+						setSessionToggle("error", data.message || "Unable to start run.");
+						return;
+					}
+					pollMatrixRunStatus(data.jobId, button, onSuccess);
+				})
+				.catch(function (error) {
+					if (button) {
+						button.disabled = false;
+						button.textContent = "Run";
+					}
+					setSessionToggle("error", "Run trigger failed: " + error.message);
+				});
+		}
+
+		function pollMatrixRunStatus(jobId, button, onSuccess) {
+			const interval = setInterval(function () {
+				fetch("./matrix/runStatus?jobId=" + encodeURIComponent(jobId))
+					.then(function (response) {
+						if (!response.ok) throw new Error("Unable to fetch status");
+						return response.json();
+					})
+					.then(function (status) {
+						if (!status || !status.found) {
+							clearInterval(interval);
+							if (button) {
+								button.disabled = false;
+								button.textContent = "Run";
+							}
+							setSessionToggle("error", "Unable to find run status.");
+							return;
+						}
+
+						if (status.status === "SUCCESS") {
+							clearInterval(interval);
+							if (button) {
+								button.disabled = false;
+								button.textContent = "Run";
+							}
+							setSessionToggle("success", status.message || "Calculation completed successfully.");
+							if (typeof onSuccess === "function") {
+								onSuccess();
+							}
+							return;
+						}
+
+						if (status.status === "FAILED") {
+							clearInterval(interval);
+							if (button) {
+								button.disabled = false;
+								button.textContent = "Run";
+							}
+							setSessionToggle("error", status.message || "Calculation failed.");
+						}
+					})
+					.catch(function () {
+						clearInterval(interval);
+						if (button) {
+							button.disabled = false;
+							button.textContent = "Run";
+						}
+						setSessionToggle("error", "Unable to poll run status.");
+					});
+			}, 2500);
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			showSessionToggleIfAny();
+		});
 
 
 		/**
@@ -4591,14 +4784,20 @@
 						x: {
 							grid: {display: false},
 							border: {
-								color: 'black',
-								width: 1.5
+								color: 'rgba(15, 23, 42, 0.15)',
+								width: 1
 							},
 							ticks: {
-								color: "black",
-								font: {size: 10, weight: 'bold'},
-								maxRotation: 45,
-								minRotation: 45
+								color: "#0f172a",
+								autoSkip: false,
+								maxTicksLimit: labels.length,
+								padding: 10,
+								font: {
+									size: 11,
+									weight: '700'
+								},
+								maxRotation: 55,
+								minRotation: 55
 							}
 						},
 						y: {
@@ -4609,13 +4808,13 @@
 								drawBorder: false
 							},
 							border: {
-								color: 'black',
-								width: 1.5
+								color: 'rgba(15, 23, 42, 0.15)',
+								width: 1
 							},
 							ticks: {
 								stepSize: CalculatedStepSize,
 								autoSkip: false,
-								color: "black",
+								color: "#0f172a",
 								font: {size: 10, weight: 'bold'},
 								callback: (value) => value + "%"
 							}
@@ -4663,6 +4862,36 @@
 		            plugins: {
 		                legend: { display: false },
 
+		                datalabels: {
+		                    color: "black",
+		                    font: {
+		                        weight: "bold",
+		                        size: 10
+		                    },
+		                    anchor: function (context) {
+		                        return 'end';
+		                    },
+		                    align: function (context) {
+		                        return 'top';
+		                    },
+		                    offset: function (context) {
+		                        return 0;
+		                    },
+		                    // Hide label on hover for hovered point (match monthly chart UX)
+		                    display: function (context) {
+		                        const chart = context.chart;
+		                        const activePoints = chart.getActiveElements();
+		                        if (activePoints.length) {
+		                            const {datasetIndex, index} = activePoints[0];
+		                            if (datasetIndex === context.datasetIndex && index === context.dataIndex) {
+		                                return false;
+		                            }
+		                        }
+		                        return true;
+		                    },
+		                    formatter: (value) => value + "%"
+		                },
+
 		                tooltip: {
 		                    callbacks: {
 		                        label: (ctx) => `${ctx.parsed.y}%`
@@ -4675,27 +4904,20 @@
 		                    grid: { display: false },
 
 		                    border: {
-		                        color: 'black',
-		                        width: 1.5
+		                        color: 'rgba(15, 23, 42, 0.15)',
+		                        width: 1
 		                    },
 
 		                    ticks: {
-		                        color: "black",
-		                        font: { size: 10, weight: 'bold' },
-		                        maxRotation: 45,
-		                        minRotation: 45
+		                        color: "#0f172a",
+		                        autoSkip: false,
+		                        maxTicksLimit: labels.length,
+		                        padding: 10,
+		                        font: { size: 11, weight: '700' },
+		                        maxRotation: 55,
+		                        minRotation: 55
 		                    },
-
-		                    title: {
-		                        display: true,
-		                        text: 'Daily Trend (↑)',
-		                        color: '#6b7280',
-		                        font: {
-		                            size: 15,
-		                            weight: '800'
-		                        },
-		                        padding: { top: 8 }
-		                    }
+		                    
 		                },
 
 		                y: {
@@ -4708,15 +4930,15 @@
 		                    },
 
 		                    border: {
-		                        color: 'black',
-		                        width: 1.5
+		                        color: 'rgba(15, 23, 42, 0.15)',
+		                        width: 1
 		                    },
 
 		                    ticks: {
 		                        stepSize: CalculatedStepSize,
 		                        autoSkip: false,
-		                        color: "black",
-		                        font: { size: 10, weight: 'bold' },
+		                        color: "#0f172a",
+		                        font: { size: 10, weight: '700' },
 		                        callback: (value) => value + "%"
 		                    }
 		                }
@@ -4742,6 +4964,10 @@
 				</h4>
 				<div id="dataStatus" style="display:none;padding:8px;margin-bottom:10px;
 				     font-weight:600;border-radius:5px;">
+				</div>
+				<div id="sessionToggleMessage" class="info">
+					<span class="msg"></span>
+					<button type="button" onclick="clearSessionToggle()">&times;</button>
 				</div>
 
 				<div class="table-wrap">
@@ -4788,9 +5014,12 @@
 								<!-- Date -->
 								<td style="text-align: center;">
 
-									<input class="badge-status" type="date" th:attr="data-sno=${Matrixlist.s_no},
+									<div class="run-date-wrap">
+										<input class="badge-status" type="date" th:attr="data-sno=${Matrixlist.s_no},
 										data-label=${Matrixlist.matrix_label}" onchange="onDateChange(this)"
 										th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
+										<button class="btn-run-date" type="button" onclick="runMatrixForDate(this)">Run</button>
+									</div>
 								</td>
 								<th:block th:switch="${Matrixlist.status}">
 									<td th:case="'Y'" style="background-color:green;color: white;font-weight: 600;">

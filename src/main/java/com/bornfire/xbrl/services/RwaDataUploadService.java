@@ -327,7 +327,7 @@ public class RwaDataUploadService {
 			}
 
 		} catch (Exception e) {
-			return "ERROR: File reading failed";
+			throw new RuntimeException("ERROR: File reading failed", e);
 		}
 
 		int batchSize = 5000;
@@ -381,7 +381,7 @@ public class RwaDataUploadService {
 		} catch (Exception e) {
 			e.getSuppressed();
 			e.printStackTrace();
-			return "ERROR:Gam dump data upload failed";
+			throw new RuntimeException("ERROR:Gam dump data upload failed", e);
 			
 		}
 
@@ -440,7 +440,7 @@ public class RwaDataUploadService {
 			}
 
 		} catch (Exception e) {
-			return "ERROR: File reading failed";
+			throw new RuntimeException("ERROR: File reading failed", e);
 		}
 
 		int batchSize = 5000;
@@ -493,7 +493,7 @@ public class RwaDataUploadService {
 		} catch (Exception e) {
 			e.getSuppressed();
 			e.printStackTrace();
-			return "ERROR: Upload failed";
+			throw new RuntimeException("ERROR: Upload failed", e);
 
 		}
 
@@ -580,7 +580,7 @@ public class RwaDataUploadService {
 			}
 
 		} catch (Exception e) {
-			return "ERROR: File reading failed";
+			throw new RuntimeException("ERROR: Upload failed", e);
 		}
 
 		int batchSize = 5000;
@@ -643,7 +643,7 @@ public class RwaDataUploadService {
 				        null,
 				        "EOD_ACCT_BALANCE"
 				    );
-			return "ERROR: Upload failed";
+			 throw new RuntimeException("ERROR: Upload failed", e);
 
 		}
 

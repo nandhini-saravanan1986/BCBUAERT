@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -62,6 +64,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -203,6 +206,7 @@ import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
+import com.bornfire.xbrl.services.UploadMonitorService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -441,6 +445,9 @@ public class XBRLNavigationController {
 	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 	@Autowired
 	RT_MC_TABLE_ALL_Service rT_MC_TABLE_Service;
+
+	@Autowired
+	private UploadMonitorService uploadMonitorService;
 	
 	private String pagesize;
 
@@ -3947,6 +3954,7 @@ public class XBRLNavigationController {
 	    if (username == null)
 	        username = "SYSTEM";
 
+	    String uploadId = null;
 	    try {
 
 	        if (reportType != null && reportType.contains(",")) {
@@ -3972,6 +3980,10 @@ public class XBRLNavigationController {
 	        if (file.isEmpty()) {
 	            return ResponseEntity.badRequest().body("Please select a valid file.");
 	        }
+
+	        UploadMonitorEntity startedMonitor = uploadMonitorService.startUpload(
+	                reportType, toDate, fromDate, file, username, forceUpload);
+	        uploadId = startedMonitor.getUploadId();
 
 	        String resultMsg = "";
 
@@ -4003,7 +4015,15 @@ public class XBRLNavigationController {
 
 	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate, forceUpload);
 
-	        }else if ("TR_PLC".equals(reportType) || "TR_TB".equals(reportType) || "TR_SWD".equals(reportType) ) {
+	        }else if ("GAMDATADUMP".equals(reportType)) {
+
+	            resultMsg = rwaService.UploadEabandGamdata(file, reportType, toDate);
+
+	        } else if ("ONLY_EAB_TABLE_DATA".equals(reportType)) {
+
+	            resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
+
+	        } else if ("TR_PLC".equals(reportType) || "TR_TB".equals(reportType) || "TR_SWD".equals(reportType) ) {
 
 	            resultMsg = rtmidFxDealservice.UploadTrplorTb(file, toDate, username,reportType); //Mid Service used as upload Service treasury details
 
@@ -4013,20 +4033,124 @@ public class XBRLNavigationController {
 	        
 	        
 	        else {
-
+	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
 	        }
 
+	        Map<String, Long> metrics = extractUploadMetrics(resultMsg);
+	        uploadMonitorService.completeSuccess(
+	                uploadId,
+	                resultMsg,
+	                metrics.get("total"),
+	                metrics.get("loaded"),
+	                metrics.get("failed"));
 	        return ResponseEntity.ok(resultMsg);
 
 	    } catch (RuntimeException e) {
-
+	        if (uploadId != null) {
+	            uploadMonitorService.completeFailure(uploadId, e.getMessage());
+	        }
 	        return ResponseEntity.badRequest().body(e.getMessage());
 
 	    } catch (Exception e) {
-
+	        if (uploadId != null) {
+	            uploadMonitorService.completeFailure(uploadId, e.getMessage());
+	        }
 	        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
 	    }
+	}
+
+	@GetMapping("/upload-monitor/summary")
+	@ResponseBody
+	public ResponseEntity<?> getUploadMonitorSummary(
+	        @RequestParam("reportType") String reportType,
+	        @RequestParam(value = "reportDate", required = false) String reportDateStr,
+	        @RequestParam(value = "fromDate", required = false) String fromDateStr,
+	        @RequestParam(value = "toDate", required = false) String toDateStr) {
+	    try {
+	        Date reportDate = parseDdMmYyyyDate(reportDateStr);
+	        Date fromDate = parseDdMmYyyyDate(fromDateStr);
+	        Date toDate = parseDdMmYyyyDate(toDateStr);
+	        return ResponseEntity.ok(uploadMonitorService.getSummary(reportType, reportDate, fromDate, toDate));
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Error fetching summary: " + e.getMessage());
+	    }
+	}
+
+	@GetMapping("/upload-monitor/history")
+	@ResponseBody
+	public ResponseEntity<?> getUploadMonitorHistory(
+	        @RequestParam("reportType") String reportType,
+	        @RequestParam(value = "reportDate", required = false) String reportDateStr,
+	        @RequestParam(value = "page", defaultValue = "0") int page,
+	        @RequestParam(value = "size", defaultValue = "10") int size) {
+	    try {
+	        Date reportDate = parseDdMmYyyyDate(reportDateStr);
+	        return ResponseEntity.ok(uploadMonitorService.getHistory(reportType, reportDate, page, size));
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Error fetching history: " + e.getMessage());
+	    }
+	}
+
+	@GetMapping("/upload-monitor/details/{uploadId}")
+	@ResponseBody
+	public ResponseEntity<?> getUploadMonitorDetails(@PathVariable("uploadId") String uploadId) {
+	    UploadMonitorEntity details = uploadMonitorService.getDetails(uploadId);
+	    if (details == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Upload monitor record not found.");
+	    }
+	    return ResponseEntity.ok(details);
+	}
+
+	private Date parseDdMmYyyyDate(String value) throws ParseException {
+	    if (value == null || value.trim().isEmpty()) {
+	        return null;
+	    }
+	    return new SimpleDateFormat("dd-MM-yyyy").parse(value.trim());
+	}
+
+	private Map<String, Long> extractUploadMetrics(String message) {
+	    Map<String, Long> metrics = new HashMap<String, Long>();
+	    metrics.put("total", 0L);
+	    metrics.put("loaded", 0L);
+	    metrics.put("failed", 0L);
+	    if (message == null || message.trim().isEmpty()) {
+	        return metrics;
+	    }
+
+	    Long total = extractMetricValue(message, "(?i)(total\\s*(records|rows)?|records\\s*total)\\D*(\\d+)");
+	    Long loaded = extractMetricValue(message, "(?i)(loaded|inserted|processed\\s*success|success\\s*count)\\D*(\\d+)");
+	    Long failed = extractMetricValue(message, "(?i)(failed|rejected|error\\s*count)\\D*(\\d+)");
+
+	    if (total != null) {
+	        metrics.put("total", total);
+	    }
+	    if (loaded != null) {
+	        metrics.put("loaded", loaded);
+	    }
+	    if (failed != null) {
+	        metrics.put("failed", failed);
+	    }
+	    if (metrics.get("total") == 0L && (metrics.get("loaded") > 0 || metrics.get("failed") > 0)) {
+	        metrics.put("total", metrics.get("loaded") + metrics.get("failed"));
+	    }
+	    return metrics;
+	}
+
+	private Long extractMetricValue(String message, String regex) {
+	    Pattern pattern = Pattern.compile(regex);
+	    Matcher matcher = pattern.matcher(message);
+	    if (!matcher.find()) {
+	        return null;
+	    }
+
+	    for (int i = matcher.groupCount(); i >= 1; i--) {
+	        String group = matcher.group(i);
+	        if (group != null && group.matches("\\d+")) {
+	            return Long.parseLong(group);
+	        }
+	    }
+	    return null;
 	}
 
 	@RequestMapping(value = "rt-sls/downloadTemplate", method = RequestMethod.GET)
