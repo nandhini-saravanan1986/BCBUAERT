@@ -197,7 +197,7 @@ public class RT_MmdataService {
 
             // Define cell styles
             CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("MM-dd-yyyy"));
             dateStyle.setBorderBottom(BorderStyle.THIN);
             dateStyle.setBorderTop(BorderStyle.THIN);
             dateStyle.setBorderLeft(BorderStyle.THIN);
@@ -215,6 +215,8 @@ public class RT_MmdataService {
             numberStyle.setBorderTop(BorderStyle.THIN);
             numberStyle.setBorderLeft(BorderStyle.THIN);
             numberStyle.setBorderRight(BorderStyle.THIN);
+            
+         
 
             int startRow = 3; // Assuming data starts from row index 3 (4rd row)
 
@@ -272,11 +274,7 @@ public class RT_MmdataService {
                     // 8 - NUMBER(20,4) BigDecimal
                     Cell cell8 = row.getCell(8);
                     if (cell8 == null) cell8 = row.createCell(8);
-                    if (mm[8] instanceof BigDecimal) {
-                        cell8.setCellValue(((BigDecimal) mm[8]).doubleValue());
-                    } else {
-                        cell8.setCellValue(0);
-                    }
+                    cell8.setCellValue(mm[8] == null ? "" : mm[8].toString());
 
                     // 9 - VARCHAR2
                     Cell cell9 = row.getCell(9);
