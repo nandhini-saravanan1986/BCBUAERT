@@ -6,11 +6,13 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
+@IdClass(mc_invdealdumpreportid.class)
 @Table(name = "RT_PLACEMENT_DEAL_DATA_DUMP")
 public class RtPlacementDealDataDump {
 	 	@Id
@@ -133,6 +135,7 @@ public class RtPlacementDealDataDump {
 	    @Column(name = "MODIFY_FLG")
 	    private String modifyFlg;
 
+	    @Id
 	    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	    @Column(name = "REPORT_DATE")
 	    private Date reportDate;
