@@ -5,15 +5,17 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
+@IdClass(mc_mmreportid.class)
 @Table(name = "BCBUAE_MM_DATA")
 public class RT_MmData {
 	
-	@Id
+	
 	private String SI_NO;
 	
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
@@ -27,7 +29,9 @@ public class RT_MmData {
     private String local_foreign;
     private String cbuae_tiering;
 
-    private BigDecimal deal_no;
+    @Id
+    private String deal_no;
+    @Id
     private String customer_id;
     private String counterparty_name;
     private String final_rating_banks;
@@ -40,15 +44,16 @@ public class RT_MmData {
     private Date maturity_date;
      private BigDecimal initial_maturity;
     private BigDecimal initial_maturity_rounded;
-    private BigDecimal initial_maturity_period;
+    private String initial_maturity_period;
     private BigDecimal residual_maturity;
     private BigDecimal residual_maturity_rounded;
-    private BigDecimal maturity_period;
+    private String maturity_period;
     private String currency;
     private BigDecimal principal;
     private BigDecimal principal_aed;
     private String interest_profit_rate;
     private Date	report_submit_date;
+    @Id
     private Date	report_date;
     private String	entity_flg;
     private String	modify_flg;
@@ -115,10 +120,10 @@ public class RT_MmData {
 	public void setCbuae_tiering(String cbuae_tiering) {
 		this.cbuae_tiering = cbuae_tiering;
 	}
-	public BigDecimal getDeal_no() {
+	public String getDeal_no() {
 		return deal_no;
 	}
-	public void setDeal_no(BigDecimal deal_no) {
+	public void setDeal_no(String deal_no) {
 		this.deal_no = deal_no;
 	}
 	public String getCustomer_id() {
@@ -187,10 +192,10 @@ public class RT_MmData {
 	public void setInitial_maturity_rounded(BigDecimal initial_maturity_rounded) {
 		this.initial_maturity_rounded = initial_maturity_rounded;
 	}
-	public BigDecimal getInitial_maturity_period() {
+	public String getInitial_maturity_period() {
 		return initial_maturity_period;
 	}
-	public void setInitial_maturity_period(BigDecimal initial_maturity_period) {
+	public void setInitial_maturity_period(String initial_maturity_period) {
 		this.initial_maturity_period = initial_maturity_period;
 	}
 	public BigDecimal getResidual_maturity() {
@@ -205,10 +210,10 @@ public class RT_MmData {
 	public void setResidual_maturity_rounded(BigDecimal residual_maturity_rounded) {
 		this.residual_maturity_rounded = residual_maturity_rounded;
 	}
-	public BigDecimal getMaturity_period() {
+	public String getMaturity_period() {
 		return maturity_period;
 	}
-	public void setMaturity_period(BigDecimal maturity_period) {
+	public void setMaturity_period(String maturity_period) {
 		this.maturity_period = maturity_period;
 	}
 	public String getCurrency() {
@@ -315,11 +320,11 @@ public class RT_MmData {
 	}
 	public RT_MmData(String sI_NO, Date bank_date, String bank_name, String head_office_subsidiary, String subsidiary,
 			String bank_symbol, String conventional_islamic, String local_foreign, String cbuae_tiering,
-			BigDecimal deal_no, String customer_id, String counterparty_name, String final_rating_banks,
+			String deal_no, String customer_id, String counterparty_name, String final_rating_banks,
 			String final_rating_cbuae, String country_of_risk, String cbuae_geographical_zone, String deal_type,
 			Date value_date, Date maturity_date, BigDecimal initial_maturity, BigDecimal initial_maturity_rounded,
-			BigDecimal initial_maturity_period, BigDecimal residual_maturity, BigDecimal residual_maturity_rounded,
-			BigDecimal maturity_period, String currency, BigDecimal principal, BigDecimal principal_aed,
+			String initial_maturity_period, BigDecimal residual_maturity, BigDecimal residual_maturity_rounded,
+			String maturity_period, String currency, BigDecimal principal, BigDecimal principal_aed,
 			String interest_profit_rate, Date report_submit_date, Date report_date, String entity_flg,
 			String modify_flg, String del_flg, Date report_from_date, Date report_to_date, String report_code,
 			String entry_user, String modify_user, String verify_user, Date entry_time, Date modify_time) {

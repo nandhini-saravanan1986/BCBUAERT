@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_MmDataRepository extends JpaRepository<RT_MmData, String> {
+public interface RT_MmDataRepository extends JpaRepository<RT_MmData,  mc_mmreportid> {
 	// Add custom queries if needed
 
 	@Query(value = "select * from BCBUAE_MM_DATA  ", nativeQuery = true)

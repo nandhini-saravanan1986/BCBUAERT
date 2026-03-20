@@ -405,8 +405,17 @@ left
 
 .table-responsive {
 	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		    border-radius: 4px;
+		    width: 100%;
+		    position: relative;
+		}
+
+		/* scroll only table */
+		#usertable {
+		    display: block;
+		    max-height: calc(100vh - 240px);
+		    overflow-y: auto;
+		}
 
 .table-hover tbody tr:hover {
 	background-color: #f3f6f9;
@@ -1339,10 +1348,10 @@ function downloadMm() {
 
 
 			<div class="table-responsive"
-				style="max-height: 400px; overflow: auto; border: none;">
+				style=" border: none;">
 				<table  id="usertable" 
 					class="table table-bordered table-striped table-hover"
-					style="min-width: 2000px;">
+					>
 
 					<thead class="thead-light">
 
@@ -1397,7 +1406,7 @@ function downloadMm() {
 							<td th:text="${data.local_foreign}"></td>
 							<td th:text="${data.cbuae_tiering}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.deal_no, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${data.deal_no}"></td>
 							<td style="text-align: right;" th:text="${data.customer_id}"></td>
 							<td th:text="${data.counterparty_name}"></td>
 							<td th:text="${data.final_rating_banks}"></td>
@@ -1412,13 +1421,13 @@ function downloadMm() {
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.initial_maturity_rounded , 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.initial_maturity_period , 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${data.initial_maturity_period}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.residual_maturity , 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.residual_maturity_rounded , 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.maturity_period , 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${data.maturity_period}"></td>
 							<td th:text="${data.currency}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.principal , 1, 'COMMA', 2, 'POINT')}"></td>
@@ -1662,7 +1671,7 @@ function downloadMm() {
 							<label class="col-sm-2 col-form-label">Initial Maturity
 								Period</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control number-24-2"
+								<input type="text" class="form-control number-24-2"
 									th:field="*{initial_maturity_period}" readonly />
 							</div>
 
@@ -1684,7 +1693,7 @@ function downloadMm() {
 
 							<label class="col-sm-2 col-form-label">Maturity Period</label>
 							<div class="col-sm-4">
-								<input type="number" class="form-control number-24-2"
+								<input type="text" class="form-control number-24-2"
 									th:field="*{maturity_period}" readonly />
 							</div>
 						</div>
@@ -2314,10 +2323,7 @@ body {
 	z-index: 1;
 }
 
-#usertable {
-	overflow-y: auto;
-	overflow-x: auto;
-}
+
 
 #floatingBackBtn, #floatingForwardBtn {
 	z-index: 9999;
