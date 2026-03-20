@@ -82,7 +82,7 @@ public class RtInvestmentDealDataDump_Service {
 								continue;
 
 							RtInvestmentDealDataDump invdealdump = new RtInvestmentDealDataDump();
-							invdealdump.setDealId(formatter.formatCellValue(row.getCell(0)));
+							invdealdump.setDealId(formatter.formatCellValue(row.getCell(0)).split(":")[1]);
 							invdealdump.setTypeOfDeal(formatter.formatCellValue(row.getCell(1)));
 							invdealdump.setType(formatter.formatCellValue(row.getCell(2)));
 							invdealdump.setOptionType(formatter.formatCellValue(row.getCell(3)));
@@ -165,7 +165,7 @@ public class RtInvestmentDealDataDump_Service {
 								continue;
 
 							RtPlacementDealDataDump plcdealdump = new RtPlacementDealDataDump();
-							plcdealdump.setDealId(getSafeString(row.getCell(0), formatter));
+							plcdealdump.setDealId(getSafeString(row.getCell(0), formatter).split(":")[1]);
 							plcdealdump.setTypeOfDeal(getSafeString(row.getCell(1), formatter));
 							plcdealdump.setType(getSafeString(row.getCell(2), formatter));
 							plcdealdump.setOptionType(getSafeString(row.getCell(3), formatter));
