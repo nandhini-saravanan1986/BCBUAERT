@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -24,4 +25,9 @@ public interface RT_ForeignCurrencyDepositRepository extends JpaRepository<RT_Fo
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS where SI_NO =?1 ", nativeQuery = true)
 	RT_ForeignCurrencyDeposit getParticularDataBySI_NO(String SI_NO);
 	
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS", nativeQuery = true)
+	Timestamp findLastReportDate();
+
+	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS)", nativeQuery = true)
+	Timestamp findSecondLastReportDate();
 }
