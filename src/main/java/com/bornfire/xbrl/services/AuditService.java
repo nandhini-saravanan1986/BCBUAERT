@@ -98,7 +98,7 @@ public class AuditService {
 			System.out.println("Entered Service Audit");
 			final UUID auditID = UUID.randomUUID();
 			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-			System.out.println("ServletRequestAttributes : "+attr);
+			//System.out.println("ServletRequestAttributes : "+attr);
 			String userId = null;
 			String username = null;
 			if (attr != null) {
@@ -151,7 +151,7 @@ public class AuditService {
 			System.out.println("Entered Service Audit");
 			final UUID auditID = UUID.randomUUID();
 			//ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-			System.out.println("ServletRequestAttributes : "+attr);
+			//System.out.println("ServletRequestAttributes : "+attr);
 			String userId = null;
 			String username = null;
 			if (attr != null) {
