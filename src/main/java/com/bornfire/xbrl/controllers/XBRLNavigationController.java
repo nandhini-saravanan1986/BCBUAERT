@@ -1469,7 +1469,7 @@ public class XBRLNavigationController {
 
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xls");
+		headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xlsx");
 
 		return ResponseEntity.ok().headers(headersResponse).body(excelData);
 	}

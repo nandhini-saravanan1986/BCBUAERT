@@ -245,9 +245,9 @@ public class RT_NostroAccBalDataService {
 		try {
 			List<Object[]> nostroList = nostroAccBalRepo.getnostrodatalistdata1();
 			File templateFile = new File(
-					env.getProperty("output.exportpathtemp") + "CBUAE_Nostro Account_Balance_Data_Template.xls");
+					env.getProperty("output.exportpathtemp") + "CBUAE_Nostro Account_Balance_Data_Template.xlsx");
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
-			Sheet sheet = workbook.getSheetAt(0);
+			Sheet sheet = workbook.getSheetAt(2);
 
 			CreationHelper createHelper = workbook.getCreationHelper();
 			CellStyle dateStyle = workbook.createCellStyle();
@@ -413,7 +413,7 @@ public class RT_NostroAccBalDataService {
 
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-				outputFile = new File(env.getProperty("output.exportpathfinal") + "NostroAccBalance.xls");
+				outputFile = new File(env.getProperty("output.exportpathfinal") + "NostroAccBalance.xlsx");
 				try (FileOutputStream fos = new FileOutputStream(outputFile)) {
 					workbook.write(fos);
 					System.out.println("Nostro Excel generated: " + outputFile.getAbsolutePath());
