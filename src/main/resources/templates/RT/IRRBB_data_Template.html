@@ -1107,7 +1107,64 @@ PURPOSE		: IRRBB DATA TEMPLATE
 	</script>
 
 
+<script>
+	function Consolidateddownload() {
 
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$.ajax({
+			url: './downloadIrrbbExcel', // This URL must match your controller endpoint
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob' // Essential for handling binary file data
+			},
+			success: function (data, textStatus, jqXHR) {
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				  let message = '';
+				// Check for a "No Content" response from the server
+				if (jqXHR.status === 204 || !data || data.size < 100) {
+					message='Information', 'No data was available to create the report.';
+					 $('#alertmsg').text(message);
+			         $('#alert').modal('show');
+					return;
+				}
+
+				const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+
+				a.style.display = 'none';
+				a.href = url;
+				a.download = 'CBUAE_IRRBB_Data_template.xlsx'; // The filename for the user
+
+				document.body.appendChild(a);
+				a.click();
+
+				// Clean up the temporary URL and link
+				window.URL.revokeObjectURL(url);
+				document.body.removeChild(a);
+				message = 'CBUAE_IRRBB_Data_template.xlsx has been downloaded successfully.';
+				// Display result in alert modal
+	            $('#alertmsg').text(message);
+	            $('#alert').modal('show');
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
+				console.error("Download failed:", textStatus, errorThrown);
+				$('#alertmsg').text('An error occurred while downloading CBUAE_IRRBB_Data_template.xlsx.');
+				$('#alert').modal('show');	
+			}
+		});
+	}
+
+	function showResultModal(title, message) {
+		$('#resultModalLabel').text(title);
+		$('#resultModalBody').text(message);
+
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");	}
+</script>
 
 
 <script>
@@ -1123,9 +1180,12 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			success: function (data, textStatus, jqXHR) {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				let message = '';
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
-					showResultModal('Information', 'No data was available to create the report.');
+					message='Information', 'No data was available to create the report.';
+					 $('#alertmsg').text(message);
+			         $('#alert').modal('show');
 					return;
 				}
 
@@ -1135,7 +1195,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'IRRBB_DATA_EVE.xls'; // The filename for the user
+				a.download = 'IRRBB_DATA_EVE.xlsx'; // The filename for the user
 
 				document.body.appendChild(a);
 				a.click();
@@ -1144,14 +1204,19 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				window.URL.revokeObjectURL(url);
 				document.body.removeChild(a);
 
-				showResultModal('Success', 'The file has been downloaded successfully.');
+				message = 'IRRBB_DATA_EVE.xlsx has been downloaded successfully.';
+				// Display result in alert modal
+	            $('#alertmsg').text(message);
+	            $('#alert').modal('show');
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
-							console.error("Download failed:", textStatus, errorThrown);
-				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
+			console.error("Download failed:", textStatus, errorThrown);
+            $('#alertmsg').text('An error occurred while downloading IRRBB_DATA_EVE.xlsx.');
+            $('#alert').modal('show');		
+			
 			}
 		});
 	}
@@ -1177,6 +1242,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			success: function (data, textStatus, jqXHR) {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				let message = '';
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
 					showResultModal('Information', 'No data was available to create the report.');
@@ -1189,7 +1255,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'IRRBB_DATA_EAR.xls'; // The filename for the user
+				a.download = 'IRRBB_DATA_EAR.xlsx'; // The filename for the user
 
 				document.body.appendChild(a);
 				a.click();
@@ -1198,14 +1264,19 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				window.URL.revokeObjectURL(url);
 				document.body.removeChild(a);
 
-				showResultModal('Success', 'The file has been downloaded successfully.');
+				message = 'IRRBB_DATA_EAR.xlsx has been downloaded successfully.';
+				// Display result in alert modal
+	            $('#alertmsg').text(message);
+	            $('#alert').modal('show');
+
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");	
-							console.error("Download failed:", textStatus, errorThrown);
-				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
+				console.error("Download failed:", textStatus, errorThrown);
+				$('#alertmsg').text('An error occurred while downloading IRRBB_DATA_EAR.xlsx');
+				$('#alert').modal('show');	
 			}
 		});
 	}
@@ -1231,6 +1302,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 			success: function (data, textStatus, jqXHR) {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				let message = '';
 				// Check for a "No Content" response from the server
 				if (jqXHR.status === 204 || !data || data.size < 100) {
 					showResultModal('Information', 'No data was available to create the report.');
@@ -1243,7 +1315,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 
 				a.style.display = 'none';
 				a.href = url;
-				a.download = 'IRRBB_DATA_DISCOUNT_RATE.xls'; // The filename for the user
+				a.download = 'IRRBB_DATA_DISCOUNT_RATE.xlsx'; // The filename for the user
 
 				document.body.appendChild(a);
 				a.click();
@@ -1252,14 +1324,18 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				window.URL.revokeObjectURL(url);
 				document.body.removeChild(a);
 
-				showResultModal('Success', 'The file has been downloaded successfully.');
+				message = 'IRRBB_DATA_DISCOUNT_RATE.xlsx has been downloaded successfully.';
+				// Display result in alert modal
+	            $('#alertmsg').text(message);
+	            $('#alert').modal('show');
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");		
-						console.error("Download failed:", textStatus, errorThrown);
-				showResultModal('Error', 'An error occurred while downloading the file. Please check server logs and try again.');
+				console.error("Download failed:", textStatus, errorThrown);
+				$('#alertmsg').text('An error occurred while downloading IRRBB_DATA_DISCOUNT_RATE.xlsx.');
+				$('#alert').modal('show');	
 			}
 		});
 	}
@@ -1304,24 +1380,27 @@ PURPOSE		: IRRBB DATA TEMPLATE
 					<div class="float-right" >
 					
 					<!-- ---LIST MEAN--EVE-- -->
-						<button th:if="${formmode} =='list'" type="button" class="role-btn"
-							onclick="downloadIrrbbeve();">
-							<i class="fa fa-download"></i> Download
-						</button>
-						
-						<!-- ---EAR DOWNLOAD-->
-						<button th:if="${formmode} =='EAR'" type="button" class="role-btn"
-							onclick="downloadIrrbbear();">
-							<i class="fa fa-download"></i> Download
-						</button>
-						
-						<!-- ---DiscountRate DOWNLOAD-->
-						<button th:if="${formmode} =='DiscountRate'" type="button" class="role-btn"
-							onclick="downloadIrrbbdiscount();">
-							<i class="fa fa-download"></i> Download
-						</button>
+					<div class="dropdown">
+    <button class="role-btn dropdown-toggle" type="button" data-toggle="dropdown">
+        <i class="fa fa-download"></i> Download
+    </button>
 
-
+					    <div class="dropdown-menu">
+					        <a class="dropdown-item" href="#" onclick="Consolidateddownload()">
+					            Consolidated
+					        </a>
+					        <a class="dropdown-item" th:if="${formmode} =='list'" href="#" onclick="downloadIrrbbeve();">
+					            EVE Download
+					        </a>
+					        <a class="dropdown-item" th:if="${formmode} =='EAR'" href="#" onclick="downloadIrrbbear();">
+					            EAR Download
+					        </a>
+					        <a class="dropdown-item" th:if="${formmode} =='DiscountRate'" href="#" onclick="downloadIrrbbdiscount();">
+					            DiscountRate Download
+					        </a>
+					    </div>
+					</div>
+											
 
 					</div>
 				</div>

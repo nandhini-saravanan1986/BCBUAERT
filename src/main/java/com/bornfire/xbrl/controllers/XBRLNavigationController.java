@@ -3414,7 +3414,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "IrrbbDataEVE.xls";
+			String filename = "IrrbbDataEVE.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
@@ -3435,6 +3435,43 @@ public class XBRLNavigationController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@RequestMapping(value = "/downloadIrrbbExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadIrrbbExcel(HttpServletRequest req) {
+		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+
+		try {
+			byte[] excelData = irrbbeveService.generateIrrbbExcel();
+
+			if (excelData.length == 0) {
+				logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
+				return ResponseEntity.noContent().build();
+			}
+
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+
+			String filename = "IrrbbDataEVE.xlsx";
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
+			
+			String userid = (String) req.getSession().getAttribute("USERID");
+
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_DATA_TEMPLATE_EVE_EXCEL", null, "BCBUAE_IRRBB_DATA_TEMPLATE");
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Controller ERROR: IRRBB Data EVE Excel template file not found.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Unexpected error occurred during file generation.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
 
 	@RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
 	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel(HttpServletRequest req) {
@@ -3450,7 +3487,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "IrrbbDataEAR.xls";
+			String filename = "IrrbbDataEAR.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 

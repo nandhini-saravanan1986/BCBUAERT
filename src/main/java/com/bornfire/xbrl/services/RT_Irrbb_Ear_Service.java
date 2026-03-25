@@ -119,7 +119,7 @@ public class RT_Irrbb_Ear_Service {
 	        }
 
 	        String templateDir = env.getProperty("output.exportpathtemp");  // Corrected property key
-	        String templateFileName = "CBUAE_Irrbb_Data_EAR_Template.xls";
+	        String templateFileName = "CBUAE_Irrbb_Data_EAR_Template.xlsx";
 	        Path templatePath = Paths.get(templateDir, templateFileName);
 
 	        logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -390,7 +390,7 @@ public class RT_Irrbb_Ear_Service {
 	                }
 
 	            
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+	                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			} else {
 				System.out.println("No Mm data found to generate the Excel file.");
 			}
