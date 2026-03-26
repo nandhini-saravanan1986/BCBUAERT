@@ -190,7 +190,7 @@ public class RT_ImpactAnalysisService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp");
-        String templateFileName = "CBUAE_Impact_Analysis_Template.xls";
+        String templateFileName = "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -202,12 +202,13 @@ public class RT_ImpactAnalysisService {
         if (!Files.isReadable(templatePath)) {
             throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
         }
-
+     // This has been commented out because of the large file size and nill report 
+        /*
         try (InputStream templateInputStream = Files.newInputStream(templatePath);
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(3);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -552,7 +553,8 @@ public class RT_ImpactAnalysisService {
 
             logger.info("Service: IMPACT ANALYSIS Excel data successfully written to memory buffer ({} bytes).", out.size());
             return out.toByteArray();
-		}
+		}*/
+        return Files.readAllBytes(templatePath);// comment this out if its not a nill report
 	}
     
 

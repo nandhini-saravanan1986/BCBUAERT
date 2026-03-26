@@ -175,7 +175,7 @@ public class RT_ForeignCurrencyDepositService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
-        String templateFileName = "CBUAE_Foreign_Currency_Deposit_Template.xlsx";
+        String templateFileName = "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -187,12 +187,14 @@ public class RT_ForeignCurrencyDepositService {
         if (!Files.isReadable(templatePath)) {
             throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
         }
-
+        
+     // This has been commented out because of the large file size and nill report 
+/*
         try (InputStream templateInputStream = Files.newInputStream(templatePath);
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(2);
+            Sheet sheet = workbook.getSheetAt(0);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -402,15 +404,16 @@ public class RT_ForeignCurrencyDepositService {
 			workbook.write(out);
 
 			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-            File outputFile = new File(finalPath + "CBUAE_Foreign_Currency_Deposit_Template.xls");
+            File outputFile = new File(finalPath + "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx");
             try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 fos.write(out.toByteArray());
                 logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
             }
 
             logger.info("Service: Foreign Currency Deposit Excel data successfully written to memory buffer ({} bytes).", out.size());
-            return out.toByteArray();
-		}
+            return out.toByteArray();           
+		}*/
+        return Files.readAllBytes(templatePath);// comment this out if its not a nill report
 	}
     
 

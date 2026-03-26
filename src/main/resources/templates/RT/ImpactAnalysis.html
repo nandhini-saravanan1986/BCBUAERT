@@ -556,7 +556,7 @@ body {
 		font-size: 12px !important;
 	}
 
-	.modal-title { background-color: #f7a47c; }
+	.modal-title { background-color: #f7a47c ! important ; }
 </style>
 
 <style>
@@ -754,7 +754,7 @@ body {
 				baseUrl = 'Impact_Analysis?formmode=list&tab=dataimpact';
 				break;
 			case 'datacontrols':
-				baseUrl = 'Impact_Analysis?formmode=null&tab=datacontrols';
+				baseUrl = 'Foreign_Currency_Deposit?formmode=null&tab=datacontrols';
 				break;
 			default:
 				console.warn("Unknown tabId:", tabId);
@@ -815,12 +815,12 @@ body {
 					const a = document.createElement('a');
 					a.style.display = 'none';
 					a.href = url;
-					a.download = 'ImpactAnalysis.xls';
+					a.download = 'CBUAE_Cross_Currency_Funding_Spread_Template.xlsx';
 					document.body.appendChild(a);
 					a.click();
 					window.URL.revokeObjectURL(url);
 					document.body.removeChild(a);
-					message = 'ImpactAnalysis.xls has been downloaded successfully.';
+					message = 'CBUAE_Cross_Currency_Funding_Spread_Template.xlsx has been downloaded successfully.';
 				} else {
 					message = 'No data available to download.';
 				}
@@ -831,7 +831,7 @@ body {
 			error: function (jqXHR, textStatus, errorThrown) {
 				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 				console.error("Download failed:", textStatus, errorThrown);
-				$('#alertmsg').text('An error occurred while downloading ImpactAnalysis.xls.');
+				$('#alertmsg').text('An error occurred while downloading CBUAE_Foreign_Currency_Deposit_Template.xlsx.');
 				$('#alert').modal('show');
 			}
 		});
@@ -859,7 +859,7 @@ body {
 					<i class="fa fa-arrow-left"></i>
 				</button>
 				<div class="text-left flex-grow-1">
-					<h4>IMPACT ANALYSIS</h4>
+					<h4>CROSS CURRENCY FUNDING SPREAD</h4>
 				</div>
 			</div>
 

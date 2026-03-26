@@ -2911,8 +2911,8 @@ public class XBRLNavigationController {
 			}
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
-
-			String filename = "CBUAE_Foreign_Currency_Deposit_Template.xls";
+			
+			String filename = "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
@@ -2948,7 +2948,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "Impactanalysis.xls";
+			String filename ="CBUAE_Cross_Currency_Funding_Spread_Template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
