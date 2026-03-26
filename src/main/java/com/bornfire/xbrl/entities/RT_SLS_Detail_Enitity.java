@@ -1,18 +1,21 @@
 package com.bornfire.xbrl.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "RT_SLS_DETAILTABLE")
-public class RT_SLS_Detail_Enitity {
+@IdClass(RT_SLS_Detail_Id_Class.class)
+public class RT_SLS_Detail_Enitity implements Serializable {
 	
 	
     @Column(name = "CUST_ID")
@@ -153,7 +156,7 @@ public class RT_SLS_Detail_Enitity {
     @Column(name = "NRE_STATUS")
     private String nreStatus;
 
-    
+    @Id
     @Column(name = "REPORT_DATE")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date reportDate;

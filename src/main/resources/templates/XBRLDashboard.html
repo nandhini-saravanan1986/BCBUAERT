@@ -543,12 +543,17 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 50);
+						
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-
+				
+				
+				
 
 
 				fetch("./GetElarreport?Report_date=" + encodeURIComponent(labelReport_date))
@@ -642,8 +647,8 @@
 						Initiatedailychart(labels, dataValues, 5, 50);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 			} else if (labelsrlno === "22") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -711,9 +716,9 @@
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
+				
+				
+				
 			} else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -729,13 +734,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 50);
-					});
+//				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+//					.then(response => response.json())
+//					.then(result => {
+//						const labels = result.map(row => row.date);
+//						const dataValues = result.map(row => parseFloat(row.value));
+//						Initiatedailychart(labels, dataValues, 5, 50);
+//					});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Leverageratio', {
 					method: 'POST',
@@ -769,9 +774,6 @@
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
 				document.querySelector(".Leverageratiosummblock").style.display = "grid";
 			} else if (labelsrlno === "38") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -834,8 +836,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -902,8 +904,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -970,8 +972,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -1039,8 +1041,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -1068,8 +1070,8 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				fetch("./GetAsrrreport?Report_date=" + encodeURIComponent(labelReport_date))
 					.then(response => response.json())
 					.then(result => {
@@ -1147,13 +1149,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 50);
-					});
+		//		fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+		//			.then(response => response.json())
+		//			.then(result => {
+		//				const labels = result.map(row => row.date);
+		//				const dataValues = result.map(row => parseFloat(row.value));
+		//				Initiatedailychart(labels, dataValues, 5, 50);
+		//			});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -1194,8 +1196,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (labelsrlno === "2") {
 
@@ -1219,7 +1221,7 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 150);
 					});
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
 
 				var trHTML = "";
 				document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
@@ -1312,7 +1314,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
 			} else if (labelsrlno === "9") {
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Mortageloanappetite', {
@@ -1369,8 +1371,8 @@
 						Initiatedailychart(labels, dataValues, 1, 15);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 
 				document.querySelector(".Mortageloan_block").style.display = "grid";
@@ -1448,8 +1450,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'FreshslippageQoQ', {
@@ -1574,8 +1576,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 
 				document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
@@ -1678,8 +1680,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 
 				document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
@@ -1781,8 +1783,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
@@ -1884,8 +1886,8 @@
 						Initiatedailychart(labels, dataValues, 2, 20);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
@@ -1986,8 +1988,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
@@ -2087,8 +2089,8 @@
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
@@ -2188,8 +2190,8 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 5, 20);
 					});
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2252,8 +2254,8 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				var trHTML = "";
 				document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
@@ -2317,11 +2319,15 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 200, 2000);
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
-				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
+				
+				
+				
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'NetOvernight_noop', {
 					method: 'POST',
 					headers: {
@@ -2358,6 +2364,8 @@
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
+				document.getElementById("NoopreportBtn").dataset.reportDate = labelReport_date;
+				document.getElementById("NoopreportBtn").dataset.matrixSrl = labelsrlno;
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 			}
@@ -2387,8 +2395,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(labelReport_date))
 					.then(response => response.json())
@@ -2444,8 +2452,8 @@
 						InitiatemonthlychartStockratio(labels, dataValues1, dataValues2, dataValues3, dataValues4, dataValues5, dataValues6, dataValues7, 10, 200);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".StockChart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Stockapproachratio', {
 					method: 'POST',
@@ -2519,8 +2527,8 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositnonretail', {
 					method: 'POST',
@@ -2573,8 +2581,8 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositretail', {
 					method: 'POST',
@@ -2715,7 +2723,7 @@
 			document.getElementById("Sector_classifi_per").textContent = formatDecimalValue(0);
 
 			if (Selectedmatrixlabel == "5") {
-
+				
 				fetch("./GetElarreport?Report_date=" + encodeURIComponent(selectedDate))
 					.then(response => response.json())
 					.then(result => {
@@ -2962,8 +2970,8 @@
 					});
 
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (Selectedmatrixlabel === "3") {
 				var trHTML = "";
@@ -3743,6 +3751,7 @@
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
+				document.getElementById("NoopreportBtn").dataset.reportDate = selectedDate;
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 
@@ -3951,8 +3960,8 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				document.querySelector(".chart-card").style.display = "block";
-				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+				
+				
 				document.querySelector(".Leverageratiosummblock").style.display = "grid"
 
 			} else if (Selectedmatrixlabel === "47") {
@@ -4067,6 +4076,7 @@
 					});
 				document.querySelector(".Exposure_Only_GCC").style.display = "block";
 			} else if (Selectedmatrixlabel === "22") {
+				
 				var trHTML = "";
 				document.getElementById("BPVPV01_TABLEBODY").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'BPVPV01_Detail', {
@@ -4117,7 +4127,7 @@
 					});
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
-				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
+				
 
 			} else {
 				alert('Sorry invalid operation selected')
@@ -4248,14 +4258,14 @@
 					}
 
 					// Use plain JS loop; you already use jQuery only for DOM
-					list.forEach(function (data) {
+					list.forEach(function (data,index) {
 						const statusText = data.status === 'Y' ? 'Within limit' : 'Breach';
 						const statusColor = data.status === 'Y' ? 'green' : 'coral';
 
 
 						trHTML += `
 						        <tr style="font-size: small;">
-						            <td>${data.s_no ?? ""}</td>
+						           <td style="font-weight: 600;">${index + 1}</td>
 
 						            <td class="truncate" style="font-weight:600;">
 						                <a href="#"
@@ -4529,6 +4539,22 @@
 
 
 
+		// Centralized chart visibility toggling so limit branches don't need to repeat "display=block".
+		function showGraphUI({monthly = false, daily = false, stock = false} = {}) {
+			const chartCard = document.querySelector(".chart-card");
+			if (chartCard) chartCard.style.display = "block";
+
+			if (monthly) {
+				document.querySelectorAll(".chart-container").forEach(el => el.style.display = "block");
+			}
+			if (daily) {
+				document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "block");
+			}
+			if (stock) {
+				document.querySelectorAll(".StockChart-container").forEach(el => el.style.display = "block");
+			}
+		}
+
 		function InitiatemonthlychartStockratio(labels, position_1, position_2,
 			position_3, position_4, position_5, position_6, position_7, CalculatedStepSize, yaxismaxsize) {
 			const ctx = document.getElementById("StockLinechartformonthlyreport");
@@ -4692,6 +4718,7 @@
 					}
 				}
 			});
+			showGraphUI({stock: true});
 			var chartDownloadEl = document.getElementById("chartDownloadActions");
 			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
@@ -4822,6 +4849,7 @@
 					}
 				}
 			});
+			showGraphUI({monthly: true});
 			var chartDownloadEl = document.getElementById("chartDownloadActions");
 			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
@@ -4898,6 +4926,12 @@
 		                    }
 		                }
 		            },
+					onClick: (evt, elements) => {
+						if (!elements.length) return;
+						const idx = elements[0].index;
+						const period = labels[idx];
+						updateLiquidAssetsTable(period);
+					},
 
 		            scales: {
 		                x: {
@@ -4945,10 +4979,22 @@
 		            }
 		        }
 		    });
+		    showGraphUI({daily: true});
 
 		    var chartDownloadEl = document.getElementById("chartDownloadActions");
 		    if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
+		
+		function Downloadexcelreport(btn) {
+				const reportDate = btn.dataset.reportDate;
+				const matrixSrlNo = btn.dataset.matrixSrl;
+
+				// Build URL with query params
+				const url = `/Riskinsights/Limitdetaildownload?Matrix_Srl_no=${encodeURIComponent(matrixSrlNo)}&Report_date=${encodeURIComponent(reportDate)}`;
+
+				// Trigger file download
+				window.location.href = url;
+			}
 
 	</script>
 
@@ -5616,6 +5662,7 @@
 
 					<div class="ProvisionCoverage" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
+							<thead>
 							<tr>
 								<th id="Provlabletype" colspan="3"> Top 10 Borrower </th>
 								<th id="ToptenProvisiondate" colspan="2">Report date</th>
@@ -5753,8 +5800,12 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th colspan="2" id="Netovernight_noop_table_name" style="text-align: center;">Table
+									<th id="Netovernight_noop_table_name">Table
 										Name
+									</th>
+									<th><button id="NoopreportBtn" class="btn-run-date"  onclick="Downloadexcelreport(this)">
+										<i class="fa fa-file-excel" aria-hidden="true"></i> Detail
+									</button>
 									</th>
 								</tr>
 							</thead>

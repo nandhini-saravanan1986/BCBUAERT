@@ -86,22 +86,24 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	@Query(value = "Select * from rt_matrix_monitored_table Where REPORT_DATE=?1 and S_NO =?2", nativeQuery = true)
 	List<RT_Matrix_monitoring_entity> checkdataavail(Date Report_date,String Srl_no);
 	
-	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\r\n"
-			+ "With Eligibility_ratio as(\r\n"
-			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable),\r\n"
-			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
-			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\r\n"
+	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\n"
+			+ "With Eligibility_ratio as(\n"
+			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable\n"
+			+ "Where report_date in(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)),\n"
+			+ "Month_end_data as (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\n"
+			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\n"
 			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)", nativeQuery = true)
 	List<Object[]> GetElar_curryear_report(Date Selecteddate);
 
-	@Query(value = "Select month_dates,R15_ELIGI_LIQ_ASSETS from (\r\n"
-			+ "With Eligibility_ratio as(\r\n"
-			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable),\r\n"
-			+ "Current_month_date as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-			+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) )\r\n"
-			+ "Select To_char(month_dates,'DD-MM-YYYY') AS month_dates,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\r\n"
-			+ "from Current_month_date a left join Eligibility_ratio b on a.month_dates = b.report_date Order by month_dates asc)", nativeQuery = true)
+	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\n"
+			+ "With Eligibility_ratio as(\n"
+			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable\n"
+			+ "Where report_date in(SELECT trunc(?1) -level AS month_end FROM dual CONNECT BY LEVEL <= 31)),\n"
+			+ "Month_end_data as (SELECT trunc(?1) -level AS month_end FROM dual CONNECT BY LEVEL <= 31)\n"
+			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\n"
+			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)", nativeQuery = true)
 	List<Object[]> GetElarcurrentmonthgraph(Date Selecteddate);
 	
 	@Query(value = "SELECT *\r\n"

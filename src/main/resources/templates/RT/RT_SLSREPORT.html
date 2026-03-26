@@ -820,11 +820,102 @@
 										.static-back-btn:active {
 										    transform: scale(0.95);
 										}
+
+		/* Loader (same pattern as RT_SLS_Upload.html) */
+		.loader-overlay {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(10, 22, 45, 0.65);
+			backdrop-filter: blur(4px);
+			z-index: 2050;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.loader-card {
+			width: 320px;
+			background: #ffffff;
+			border-radius: 16px;
+			padding: 22px 20px 18px;
+			box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+			text-align: center;
+			border: 1px solid #e7eef8;
+		}
+
+		.loader-logo-wrap {
+			position: relative;
+			width: 86px;
+			height: 86px;
+			margin: 0 auto 14px auto;
+		}
+
+		.loader-logo {
+			width: 68px;
+			height: 68px;
+			object-fit: contain;
+			position: absolute;
+			top: 9px;
+			left: 9px;
+			border-radius: 50%;
+			background: #fff;
+			padding: 6px;
+			box-shadow: 0 4px 12px rgba(11, 94, 215, 0.2);
+			animation: loaderPulse 1.6s ease-in-out infinite;
+		}
+
+		.loader-ring {
+			width: 86px;
+			height: 86px;
+			border-radius: 50%;
+			border: 3px solid #d6e4ff;
+			border-top-color: #0d6efd;
+			animation: loaderSpin 1s linear infinite;
+		}
+
+		.loader-title {
+			color: #173a6b;
+			font-size: 16px;
+			font-weight: 700;
+			letter-spacing: .2px;
+		}
+
+		.loader-progress {
+			margin-top: 14px;
+			height: 6px;
+			border-radius: 999px;
+			background: #e9f1ff;
+			overflow: hidden;
+		}
+
+		.loader-progress-bar {
+			height: 100%;
+			width: 42%;
+			background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			border-radius: 999px;
+			animation: loaderProgress 1.6s ease-in-out infinite;
+		}
+
+		@keyframes loaderSpin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		@keyframes loaderPulse {
+			0%, 100% { transform: scale(1); opacity: 1; }
+			50% { transform: scale(1.07); opacity: .92; }
+		}
+
+		@keyframes loaderProgress {
+			0% { transform: translateX(-110%); }
+			50% { transform: translateX(70%); }
+			100% { transform: translateX(210%); }
+		}
 		</style>
 	<script th:inline="javascript">
 
 		function home() {
-			$("#loader").modal("toggle");
+			$("#loader").css("display", "flex");
 			location.href = 'Dashboard'
 		}
 
@@ -932,6 +1023,7 @@
 
 			var reportdate = document.getElementById("reportDate").innerText;
 			var currency = document.getElementById("currency").value;
+			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
 
 		}
@@ -940,6 +1032,7 @@
 
 			var reportdate = document.getElementById("reportDate").innerText;
 			var currency = '[[${currency}]]'
+			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
 
 		}
@@ -947,6 +1040,7 @@
 		function getdetails() {
 			var reportdate = document.getElementById("reportDate").innerText;
 			var currency = document.getElementById("currencyin").value;
+			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?reportdate=' + reportdate + '&formmode=Detail&currency=' + currency
 
 		}
@@ -959,7 +1053,7 @@
 			var filename = button.getAttribute('data-filename');
 			var report = button.getAttribute('data-report'); 
 
-			$('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 
 			$.ajax({
 				url: './downloadExcel',
@@ -976,7 +1070,7 @@
 				},
 
 				success: function (data, status, xhr) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 
 					if (xhr.status === 204) {
 						showResultModal(
@@ -1008,7 +1102,7 @@
 				},
 
 				error: function (xhr) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 
 					if (xhr.status === 204) {
 						showResultModal(
@@ -1027,7 +1121,7 @@
 
 		function startReport(button) {
 
-			$('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 		    const params = new URLSearchParams({
 		        reportdate: button.getAttribute('data-reportdate'),
 		        currency: button.getAttribute('data-currency'),
@@ -1040,13 +1134,17 @@
 		            sessionStorage.setItem("jobId", jobId);
 		            sessionStorage.setItem("filename", button.getAttribute('data-filename'));
 		            checkReport(jobId);
+		        })
+		        .catch(function () {
+		            $('#loader').hide();
+		            showResultModal('Error', 'Could not start report generation. Please try again.');
 		        });
 		}
 
 
 		function checkReport(jobId) {
 
-			$('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 		    fetch('checkreport?jobId=' + jobId)
 		        .then(res => res.text())
 		        .then(status => {
@@ -1055,10 +1153,15 @@
 		                downloadDetailfile(jobId,
 		                    sessionStorage.getItem("filename"));
 		            } else if (status === "FAILED") {
+		                $('#loader').hide();
 		                alert("Report generation failed");
 		            } else {
 		                setTimeout(() => checkReport(jobId), 10000);
 		            }
+		        })
+		        .catch(function () {
+		            $('#loader').hide();
+		            showResultModal('Error', 'Could not check report status. Please try again.');
 		        });
 		}
 
@@ -1067,9 +1170,7 @@
 
 		function downloadDetailfile(jobId, filename) {
 
-			$('#loader').modal('show');
-			//alert("inside downloadDetailfile")
-			//$('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 
 			$.ajax({
 				url: './downloaddetailExcel?jobId=' + jobId +
@@ -1079,7 +1180,7 @@
 					responseType: 'blob'
 				},
 				success: function (data) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 
 					if (data && data.size > 100) {
 						const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
@@ -1099,7 +1200,7 @@
 					}
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 					console.error("Download failed:", textStatus, errorThrown);
 					showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
 				}
@@ -1110,6 +1211,7 @@
 			var reportdate = document.getElementById("reportDate").innerText;
 			var currency = '[[${currency}]]'
 			var Rowid = a.getAttribute('data-rowid')
+			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?reportdate=' + reportdate + '&formmode=Detail&Rowid=' + Rowid + '&currency=' + currency
 		}
 		
@@ -1119,7 +1221,7 @@
 									}
 
 									function hideLoader() {
-									    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+									    $("#loader").hide();
 									}
 
 									window.addEventListener("pageshow", function () {
@@ -2768,15 +2870,16 @@
 	</div>
 	</div>
 
-	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content" style="background: transparent;">
-				<div class="modal-body" style="text-align: center">
-					<div>
-						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-										border-color: transparent;" alt="Bornfire">
-					</div>
-				</div>
+	<!-- Loader (same markup as RT_SLS_Upload.html) -->
+	<div id="loader" class="loader-overlay">
+		<div class="loader-card">
+			<div class="loader-logo-wrap">
+				<div class="loader-ring"></div>
+				<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Client Logo" />
+			</div>
+			<div class="loader-title">Request Processing</div>
+			<div class="loader-progress">
+				<div class="loader-progress-bar"></div>
 			</div>
 		</div>
 	</div>

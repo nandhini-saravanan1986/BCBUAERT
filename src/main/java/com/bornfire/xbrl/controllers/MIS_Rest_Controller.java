@@ -1,7 +1,7 @@
 package com.bornfire.xbrl.controllers;
 
-
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -18,14 +19,30 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,221 +78,220 @@ import com.bornfire.xbrl.services.counter_services;
 public class MIS_Rest_Controller {
 	private static final Logger logger = LoggerFactory.getLogger(MIS_Rest_Controller.class);
 
-    @Autowired
-    private Excel_Services excelServices;
-    
-    @Autowired
-    Rt_AcprSecuredUnsecuredrep rt_acprsecuredunsecuredrep;
-    
-    @Autowired
-    AuditService auditService;
-    
-    @Autowired
-    counter_services counter_services;
-    
-    @Autowired
-    RT_Matrix_monitoring_rep RT_Matrix_monitoring_rep;
-    
-    @Autowired
-    Elar_summary_report_rep Elar_summary_report_rep;
-    
-    @Autowired
-    RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
-    
-    @Autowired
-    Stableresourcesratio_rep Stableresourcesratio_rep;
-    
-    @Autowired
-    Leverage_ratio_rep Leverage_ratio_rep;
-    
-    @Autowired
-    Capitaladequacyratio_rep Capitaladequacyratio_rep;
+	@Autowired
+	private Excel_Services excelServices;
 
-    @Autowired
-    RT_Mis_Fund_Based_Adv_Rep RT_Mis_Fund_Based_Adv_Rep;
-    
-    @Autowired
-    RT_Noop_net_position_rep RT_Noop_net_position_rep;
-    
-    @Autowired
-    RT_Noop_net_position_summ_rep RT_Noop_net_position_summ_rep;
-    
-    @Autowired
-    Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
-    
-    @Autowired
-    RT_SLS_Repository RT_SLS_Repository;
-    
-    @Autowired
-    RT_MID_FX_DEAL_REPO RT_MID_FX_DEAL_REPO;
+	@Autowired
+	Rt_AcprSecuredUnsecuredrep rt_acprsecuredunsecuredrep;
 
-    @Autowired
-    MatrixRunService matrixRunService;
-    
-    @GetMapping("/download/excel")
-    public void downloadExcel(HttpServletResponse response,@RequestParam(required = false) String mode) {
+	@Autowired
+	AuditService auditService;
 
+	@Autowired
+	counter_services counter_services;
 
-    	if(mode.equals("exposure")) {
-        try {
-            logger.info("Template download for Exposure Data...");
-            byte[] fileData = excelServices.generateExcel();
-            logger.info("Generated file size: {}", fileData.length);
+	@Autowired
+	RT_Matrix_monitoring_rep RT_Matrix_monitoring_rep;
 
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Exposure Data.xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-        } catch (Exception e) {
-            logger.error("Error while generating  Excel file For Exposure Data", e);
-        }
-        }else if(mode.equals("placement")) {
-        	  try {
-                  logger.info("Template download for Treasury Placement...");
-                  byte[] fileData = excelServices.generateExcel_placement();
-                  logger.info("Generated file size: {}", fileData.length);
+	@Autowired
+	Elar_summary_report_rep Elar_summary_report_rep;
 
-                  response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                  response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Placements.xlsx\"");
-                  response.getOutputStream().write(fileData);
-                  response.getOutputStream().flush();
-              } catch (Exception e) {
-                  logger.error("Error while generating for Treasury Placement", e);
-              }
-        	
-        }else if(mode.equals("settlement")) {
-        	  try {
-                  logger.info("Template download for settlement...");
-                  byte[] fileData = excelServices.generateExcel_Settlement();
-                  logger.info("Generated file size: {}", fileData.length);
+	@Autowired
+	RT_RWA_Fund_base_data_rep RT_RWA_Fund_base_data_rep;
 
-                  response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                  response.setHeader("Content-Disposition", "attachment; filename=\"Settlement.xlsx\"");
-                  response.getOutputStream().write(fileData);
-                  response.getOutputStream().flush();
-              } catch (Exception e) {
-                  logger.error("Error while generating  Excel file for settlement", e);
-              }
-        	
-        }
-    }
-    
-    @GetMapping("/download/final")
-    public void final_sheet(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
-        try {
-            byte[] fileData = excelServices.generate_final_sheet(ReportDate);
-            logger.info("Generated file size: {}", fileData.length);
-            String userid = (String) req.getSession().getAttribute("USERID");
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition",
-            	    "attachment; filename=\"Counterparty Bank Exposure (ASL) statement " + ReportDate + ".xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null,"MIS_BANK_LIMITS");
-        } catch (Exception e) {
-            logger.error("Error while generating Final sheet Excel file", e);
-        }
-    }
-    
-    @GetMapping("/download/Download_detail_report")
-    public void Download_detail_report(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
-        try {
-            byte[] fileData = excelServices.Generate_detail_statement(ReportDate);
-            logger.info("Generated file size: {}", fileData.length);
-            String userid = (String) req.getSession().getAttribute("USERID");
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition",
-            	    "attachment; filename=\"Counterparty Bank Exposure (ASL) detail statement " + ReportDate + ".xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null,"MIS_BANK_LIMITS");
-        } catch (Exception e) {
-            logger.error("Error while generating Final sheet Excel file", e);
-        }
-    }
-    
-    @GetMapping("/download/Exposure")
-    public void Exposure(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate,
-            @RequestParam(required = false) String branch) {
-    	String userid = (String) req.getSession().getAttribute("USERID");
-        try {
-            byte[] fileData = excelServices.generate_Exposure(ReportDate, branch);
-            logger.info("Generated file size: {}", fileData.length);
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Exposure Data.xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Exposure Data", null,"MIS_ASL_DETAIL_REPORT");
-        } catch (Exception e) {
-            logger.error("Error while generating Exposure Excel file", e);
-        }
-    }
-    
-    
-    @GetMapping("/download/Placement")
-    public void Placement(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("Report_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate Report_date) {
-    	
-        try {
-            byte[] fileData = excelServices.generate_Placement(Report_date);
-            logger.info("Generated file size: {}", fileData.length);
-            String userid = (String) req.getSession().getAttribute("USERID");
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Placement.xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Treasury Placement", null,"MIS_TREASURY_PLACEMENT");
-        } catch (Exception e) {
-            logger.error("Error while generating Exposure Excel file", e);
-        }
-    }
+	@Autowired
+	Stableresourcesratio_rep Stableresourcesratio_rep;
 
-    @GetMapping("/download/treasuryLimit")
-    public void treasuryLimit(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
-    	String userid = (String) req.getSession().getAttribute("USERID");
-        try {
-            byte[] fileData = excelServices.treasuryLimit(ReportDate);
-            logger.info("Generated file size: {}", fileData.length);
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Limit.xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Treasury Limit", null,"MIS_TREASURY_LIMITS");
-        } catch (Exception e) {
-            logger.error("Error while generating Exposure Excel file", e);
-        }
-    }
-    
-    
-    @GetMapping("/download/SettlementLimit")
-    public void SettlementLimit(HttpServletResponse response,HttpServletRequest req,
-            @RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
-    	String userid = (String) req.getSession().getAttribute("USERID");
-        try {
-            byte[] fileData = excelServices.SettlementLimit(ReportDate);
-            logger.info("Generated file size: {}", fileData.length);
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Settlement Limit.xlsx\"");
-            response.getOutputStream().write(fileData);
-            response.getOutputStream().flush();
-            auditService.createBusinessAudit(userid, "DOWNLOAD", "Settlement Limit", null,"MIS_SETTLEMENT");
-        } catch (Exception e) {
-            logger.error("Error while generating Exposure Excel file", e);
-        }
-    }
-    
+	@Autowired
+	Leverage_ratio_rep Leverage_ratio_rep;
+
+	@Autowired
+	Capitaladequacyratio_rep Capitaladequacyratio_rep;
+
+	@Autowired
+	RT_Mis_Fund_Based_Adv_Rep RT_Mis_Fund_Based_Adv_Rep;
+
+	@Autowired
+	RT_Noop_net_position_rep RT_Noop_net_position_rep;
+
+	@Autowired
+	RT_Noop_net_position_summ_rep RT_Noop_net_position_summ_rep;
+
+	@Autowired
+	Groupexp_cust_maintain_rep Groupexp_cust_maintain_rep;
+
+	@Autowired
+	RT_SLS_Repository RT_SLS_Repository;
+
+	@Autowired
+	RT_MID_FX_DEAL_REPO RT_MID_FX_DEAL_REPO;
+
+	@Autowired
+	MatrixRunService matrixRunService;
+
+	@GetMapping("/download/excel")
+	public void downloadExcel(HttpServletResponse response, @RequestParam(required = false) String mode) {
+
+		if (mode.equals("exposure")) {
+			try {
+				logger.info("Template download for Exposure Data...");
+				byte[] fileData = excelServices.generateExcel();
+				logger.info("Generated file size: {}", fileData.length);
+
+				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				response.setHeader("Content-Disposition", "attachment; filename=\"Exposure Data.xlsx\"");
+				response.getOutputStream().write(fileData);
+				response.getOutputStream().flush();
+			} catch (Exception e) {
+				logger.error("Error while generating  Excel file For Exposure Data", e);
+			}
+		} else if (mode.equals("placement")) {
+			try {
+				logger.info("Template download for Treasury Placement...");
+				byte[] fileData = excelServices.generateExcel_placement();
+				logger.info("Generated file size: {}", fileData.length);
+
+				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Placements.xlsx\"");
+				response.getOutputStream().write(fileData);
+				response.getOutputStream().flush();
+			} catch (Exception e) {
+				logger.error("Error while generating for Treasury Placement", e);
+			}
+
+		} else if (mode.equals("settlement")) {
+			try {
+				logger.info("Template download for settlement...");
+				byte[] fileData = excelServices.generateExcel_Settlement();
+				logger.info("Generated file size: {}", fileData.length);
+
+				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				response.setHeader("Content-Disposition", "attachment; filename=\"Settlement.xlsx\"");
+				response.getOutputStream().write(fileData);
+				response.getOutputStream().flush();
+			} catch (Exception e) {
+				logger.error("Error while generating  Excel file for settlement", e);
+			}
+
+		}
+	}
+
+	@GetMapping("/download/final")
+	public void final_sheet(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+		try {
+			byte[] fileData = excelServices.generate_final_sheet(ReportDate);
+			logger.info("Generated file size: {}", fileData.length);
+			String userid = (String) req.getSession().getAttribute("USERID");
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition",
+					"attachment; filename=\"Counterparty Bank Exposure (ASL) statement " + ReportDate + ".xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null, "MIS_BANK_LIMITS");
+		} catch (Exception e) {
+			logger.error("Error while generating Final sheet Excel file", e);
+		}
+	}
+
+	@GetMapping("/download/Download_detail_report")
+	public void Download_detail_report(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+		try {
+			byte[] fileData = excelServices.Generate_detail_statement(ReportDate);
+			logger.info("Generated file size: {}", fileData.length);
+			String userid = (String) req.getSession().getAttribute("USERID");
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition",
+					"attachment; filename=\"Counterparty Bank Exposure (ASL) detail statement " + ReportDate
+							+ ".xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Final Sheet", null, "MIS_BANK_LIMITS");
+		} catch (Exception e) {
+			logger.error("Error while generating Final sheet Excel file", e);
+		}
+	}
+
+	@GetMapping("/download/Exposure")
+	public void Exposure(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate,
+			@RequestParam(required = false) String branch) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		try {
+			byte[] fileData = excelServices.generate_Exposure(ReportDate, branch);
+			logger.info("Generated file size: {}", fileData.length);
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition", "attachment; filename=\"Exposure Data.xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Exposure Data", null, "MIS_ASL_DETAIL_REPORT");
+		} catch (Exception e) {
+			logger.error("Error while generating Exposure Excel file", e);
+		}
+	}
+
+	@GetMapping("/download/Placement")
+	public void Placement(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("Report_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate Report_date) {
+
+		try {
+			byte[] fileData = excelServices.generate_Placement(Report_date);
+			logger.info("Generated file size: {}", fileData.length);
+			String userid = (String) req.getSession().getAttribute("USERID");
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Placement.xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Treasury Placement", null, "MIS_TREASURY_PLACEMENT");
+		} catch (Exception e) {
+			logger.error("Error while generating Exposure Excel file", e);
+		}
+	}
+
+	@GetMapping("/download/treasuryLimit")
+	public void treasuryLimit(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		try {
+			byte[] fileData = excelServices.treasuryLimit(ReportDate);
+			logger.info("Generated file size: {}", fileData.length);
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition", "attachment; filename=\"Treasury Limit.xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Treasury Limit", null, "MIS_TREASURY_LIMITS");
+		} catch (Exception e) {
+			logger.error("Error while generating Exposure Excel file", e);
+		}
+	}
+
+	@GetMapping("/download/SettlementLimit")
+	public void SettlementLimit(HttpServletResponse response, HttpServletRequest req,
+			@RequestParam("ReportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ReportDate) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		try {
+			byte[] fileData = excelServices.SettlementLimit(ReportDate);
+			logger.info("Generated file size: {}", fileData.length);
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader("Content-Disposition", "attachment; filename=\"Settlement Limit.xlsx\"");
+			response.getOutputStream().write(fileData);
+			response.getOutputStream().flush();
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "Settlement Limit", null, "MIS_SETTLEMENT");
+		} catch (Exception e) {
+			logger.error("Error while generating Exposure Excel file", e);
+		}
+	}
+
 	@PostMapping("/Exposurebillservice")
 	@ResponseBody
-	public String Exposurebillservice(@ModelAttribute Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity, Model md,
-			HttpServletResponse response,HttpServletRequest rq, @RequestParam(required = false) String formmode) {
+	public String Exposurebillservice(@ModelAttribute Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity,
+			Model md, HttpServletResponse response, HttpServletRequest rq,
+			@RequestParam(required = false) String formmode) {
 		logger.info("==> Entered Exposure bill service api controller");
-		
+
 		try {
-			
+
 			String msg = counter_services.Exposurebillservice(Mis_exposure_bill_detail_entity, formmode, rq);
 			logger.info("✅ Returning message to UI: {}", msg);
 			return msg;
@@ -284,10 +300,11 @@ public class MIS_Rest_Controller {
 			return e.getMessage();
 		}
 	}
-	///Group detail / Updated Del Flg
+
+	/// Group detail / Updated Del Flg
 	@GetMapping("/UpdatedCustgroupdetail")
-	public String Groupdetailservice(@RequestParam(value="Group_id",required=true) String Group_id,
-			@RequestParam(value="funtion_code",required=true) String funtion_code,
+	public String Groupdetailservice(@RequestParam(value = "Group_id", required = true) String Group_id,
+			@RequestParam(value = "funtion_code", required = true) String funtion_code,
 			@ModelAttribute Groupexp_cust_maintain_entity Groupdetail_entry) {
 		String response_msg = "";
 		if (funtion_code.equals("00")) {
@@ -295,551 +312,541 @@ public class MIS_Rest_Controller {
 
 			Groupdetail.setDel_flg("Y");
 			Groupexp_cust_maintain_rep.save(Groupdetail);
-			
+
 			response_msg = "Group " + Group_id + " was successfully marked as Inactive.";
-		}else if(funtion_code.equals("01")) {
+		} else if (funtion_code.equals("01")) {
 			Groupexp_cust_maintain_entity New_group_entry = new Groupexp_cust_maintain_entity();
-			
+
 			New_group_entry.setGroup_id(Groupdetail_entry.getGroup_id());
 			New_group_entry.setGroup_name(Groupdetail_entry.getGroup_name());
 			New_group_entry.setBelonging_customer_id(Groupdetail_entry.getBelonging_customer_id());
 			New_group_entry.setDel_flg("N");
-			
+
 			Groupexp_cust_maintain_rep.save(New_group_entry);
 		}
-		
+
 		return response_msg;
-		
+
 	}
-	
+
 	@PostMapping("/CustomerGrp_Maintenance_Rest")
-	public String CustomerGrp_Maintenance(@RequestParam(value="Group_id",required=false) String Group_id,
+	public String CustomerGrp_Maintenance(@RequestParam(value = "Group_id", required = false) String Group_id,
 			@ModelAttribute Groupexp_cust_maintain_entity Groupdetail_entry) {
-			String response_msg = "";
-			System.out.println("Entered");
-			Groupexp_cust_maintain_entity New_group_entry = new Groupexp_cust_maintain_entity();
-			
-			New_group_entry.setGroup_id(Groupdetail_entry.getGroup_id());
-			New_group_entry.setGroup_name(Groupdetail_entry.getGroup_name());
-			New_group_entry.setBelonging_customer_id(Groupdetail_entry.getBelonging_customer_id());
-			New_group_entry.setDel_flg("N");
-			
-			Groupexp_cust_maintain_rep.save(New_group_entry);
-			response_msg = "Added Successfully";
-		
+		String response_msg = "";
+		System.out.println("Entered");
+		Groupexp_cust_maintain_entity New_group_entry = new Groupexp_cust_maintain_entity();
+
+		New_group_entry.setGroup_id(Groupdetail_entry.getGroup_id());
+		New_group_entry.setGroup_name(Groupdetail_entry.getGroup_name());
+		New_group_entry.setBelonging_customer_id(Groupdetail_entry.getBelonging_customer_id());
+		New_group_entry.setDel_flg("N");
+
+		Groupexp_cust_maintain_rep.save(New_group_entry);
+		response_msg = "Added Successfully";
+
 		return response_msg;
-		
+
 	}
-	
+
 	@GetMapping("/GetStocklimitdetail")
-	public List<Object[]> GetStocklimitdetail(@RequestParam(value="Matrix_Srl_no",required=true) String Matrix_Srl_no,
-			@RequestParam(value="Report_date",required=false) String Report_date) {
-		List<Object[]>  Exposuredata = new ArrayList<>();
+	public List<Object[]> GetStocklimitdetail(
+			@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
+			@RequestParam(value = "Report_date", required = false) String Report_date) {
+		List<Object[]> Exposuredata = new ArrayList<>();
 		System.out.println("Bar chart Entered");
-		
-		if(Report_date.contains("T")) {
+
+		if (Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
 			System.out.println(Report_date + " Splitted date");
 		}
-		
+
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		
-		 if(Matrix_Srl_no.equals("45")) {
-				 Exposuredata = RT_SLS_Repository.GetStockapproachratioGraph(Selecteddate);
-			}
+
+		if (Matrix_Srl_no.equals("45")) {
+			Exposuredata = RT_SLS_Repository.GetStockapproachratioGraph(Selecteddate);
+		}
 		return Exposuredata;
 	}
-	
+
 	@GetMapping("/Getbarchart")
-	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value="Matrix_Srl_no",required=true) String Matrix_Srl_no,
-			@RequestParam(value="Report_date",required=false) String Report_date) {
+	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
+			@RequestParam(value = "Report_date", required = false) String Report_date) {
 		System.out.println("Bar chart Entered");
-		
-		if(Report_date.contains("T")) {
+
+		if (Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
 			System.out.println(Report_date + " Splitted date");
 		}
-		
+
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		 List<RT_Chart_pojo> finalList = new ArrayList<>();
+		List<RT_Chart_pojo> finalList = new ArrayList<>();
 		if (Matrix_Srl_no.equals("1")) {
-			//Advances to Stable Resources Ratio
-	///		List<Object[]> getchartval = Capitaladequacyratio_rep.GetCapitalratio_curryear_report(Selecteddate);
-	
+			// Advances to Stable Resources Ratio
+			/// List<Object[]> getchartval =
+			/// Capitaladequacyratio_rep.GetCapitalratio_curryear_report(Selecteddate);
+
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetCapitalAdequecy_Ratio(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("2")) {
-			
+		} else if (Matrix_Srl_no.equals("2")) {
+
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Group_Single_Exposure_Position(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("3")) {
-			//Mortgage loan appetite ratio
+		} else if (Matrix_Srl_no.equals("3")) {
+			// Mortgage loan appetite ratio
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.RealEstateconcentration_Position(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("4")) { //Leverage Ratio
-		//	List<Object[]> getchartval = Leverage_ratio_rep.GetLeverageration_curryear_report(Selecteddate);
+		} else if (Matrix_Srl_no.equals("4")) { // Leverage Ratio
+			// List<Object[]> getchartval =
+			// Leverage_ratio_rep.GetLeverageration_curryear_report(Selecteddate);
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Leverage_ratio_position(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("5")) {//Eligible Liquid Assets Ratio
+		} else if (Matrix_Srl_no.equals("5")) {// Eligible Liquid Assets Ratio
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElar_curryear_report(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("6")) {//Advances to Stable Resources Ratio
+		} else if (Matrix_Srl_no.equals("6")) {// Advances to Stable Resources Ratio
 			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrr_curryear_report(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("7")) {
-		//	List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedyearslippagedetails(Selecteddate);
+		} else if (Matrix_Srl_no.equals("7")) {
+			// List<Object[]> getchartval =
+			// RT_RWA_Fund_base_data_rep.GetSelectedyearslippagedetails(Selecteddate);
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Freshslippage_position(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("8")) {
-			//Mortgage loan appetite ratio
+		} else if (Matrix_Srl_no.equals("8")) {
+			// Mortgage loan appetite ratio
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentyear_prov_cover(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("9")) {
-			//Mortgage loan appetite ratio
+		} else if (Matrix_Srl_no.equals("9")) {
+			// Mortgage loan appetite ratio
 			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_curryear_report(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("10")) {
-			
+		} else if (Matrix_Srl_no.equals("10")) {
+
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Exposure_Outsidegccper(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("11")) {
+		} else if (Matrix_Srl_no.equals("11")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Industry_ClassiGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		} else if(Matrix_Srl_no.equals("12")) {
+		} else if (Matrix_Srl_no.equals("12")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Trading_ClassiGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("13")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("13")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.ServicesGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("14")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("14")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.BanksGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("15")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("15")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.RealEstateGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("16")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("16")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.otherGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("22")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("22")) {
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("24")) {
-			//Mortgage loan appetite ratio
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("24")) {
+			// Mortgage loan appetite ratio
 			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentYear_NoopGraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		} else if(Matrix_Srl_no.equals("38")) {
+		} else if (Matrix_Srl_no.equals("38")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsaed(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("39")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("39")) {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsUSD(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("40")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("40")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
+					.GetLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("41")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("41")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
+					.GetLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("42")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("42")) {
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDepositconcentrationnonretail(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("43")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("43")) {
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDepositconcentrationretail(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("47")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("47")) {
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.General_provision_of_CRWA(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList()); 
-		}else if(Matrix_Srl_no.equals("46")) {
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("46")) {
 			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		} 
-	    
-	    return finalList;   
+		}
+
+		return finalList;
 	}
-	
+
 	@GetMapping("/groupdetail/customer-search")
-	public List<String> GetGroupCustomerlist(@RequestParam(value="term",required=true) String term){
+	public List<String> GetGroupCustomerlist(@RequestParam(value = "term", required = true) String term) {
 		List<String> Customerlist = new ArrayList<>();
 		System.out.println("Enterd");
 		Customerlist = RT_RWA_Fund_base_data_rep.Getsortingcustomerlist(term);
 		System.out.println(Customerlist.size());
 		return Customerlist;
 	}
-	
+
 	@GetMapping("/Getprogresschart")
 	public List<RT_Chart_pojo> Getprogresschart(
 			@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
-			@RequestParam(value="Report_date",required=false) String Report_date) {
+			@RequestParam(value = "Report_date", required = false) String Report_date) {
 		System.out.println("Progress Chart Entered");
-		
-		if(Report_date.contains("T")) {
+
+		if (Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
 			System.out.println(Report_date + " Splitted date");
 		}
-		
+
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		
+
 		List<RT_Chart_pojo> finalList = new ArrayList<>();
-		if (Matrix_Srl_no.equals("4")) {//Leverage Ratio
+		if (Matrix_Srl_no.equals("4")) {// Leverage Ratio
 			List<Object[]> getchartval = Leverage_ratio_rep.GetLeveragerationcurrentmonthgraph(Selecteddate);
 
 			// Convert Object[] → RT_Chart_pojo
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("5")) {//Eligible Liquid Assets Ratio
+		} else if (Matrix_Srl_no.equals("5")) {// Eligible Liquid Assets Ratio
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElarcurrentmonthgraph(Selecteddate);
 
 			// Convert Object[] → RT_Chart_pojo
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("6")) {//Advances to Stable Resources Ratio
+		} else if (Matrix_Srl_no.equals("6")) {// Advances to Stable Resources Ratio
 			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrrcurrentmonthgraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("1")) {
-			//Advances to Stable Resources Ratio
+		} else if (Matrix_Srl_no.equals("1")) {
+			// Advances to Stable Resources Ratio
 			List<Object[]> getchartval = Capitaladequacyratio_rep.GetCapitalratio_currentmonthgraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("9")) {
-			//Advances to Stable Resources Ratio
+		} else if (Matrix_Srl_no.equals("9")) {
+			// Advances to Stable Resources Ratio
 			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_currentmonthgraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("3")) {
-			//Real Estate Concentration
+		} else if (Matrix_Srl_no.equals("3")) {
+			// Real Estate Concentration
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentMonth_realestate_concen_per(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("8")) {
-			//Real Estate Concentration
+		} else if (Matrix_Srl_no.equals("8")) {
+			// Real Estate Concentration
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentmonth_prov_cover(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("24")) {
-			//Noop 
+		} else if (Matrix_Srl_no.equals("24")) {
+			// Noop
 			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentMonth_NoopGraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}
-		else if(Matrix_Srl_no.equals("46")) {
-			
+		} else if (Matrix_Srl_no.equals("46")) {
+
 			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("7")) {
-			
+		} else if (Matrix_Srl_no.equals("7")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthslippagedetails(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("10A")) {
-			
+		} else if (Matrix_Srl_no.equals("10A")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayOutsideGccexp(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("10B")) {
-			
+		} else if (Matrix_Srl_no.equals("10B")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayGccexp(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("2")) {
-			
+		} else if (Matrix_Srl_no.equals("2")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedmonSingorGroupdetails(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}
-		else if(Matrix_Srl_no.equals("11")) {
-			
+		} else if (Matrix_Srl_no.equals("11")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyIndustryRatio(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
-		
-		else if(Matrix_Srl_no.equals("12")) {
-			
+
+		else if (Matrix_Srl_no.equals("12")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyTradingRatio(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
-		
-		else if(Matrix_Srl_no.equals("13")) {
-			
+
+		else if (Matrix_Srl_no.equals("13")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyServicesRatio(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}
-		else if(Matrix_Srl_no.equals("14")) {
-			
+		} else if (Matrix_Srl_no.equals("14")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyBanks(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}
-		else if(Matrix_Srl_no.equals("15")) {
-			
+		} else if (Matrix_Srl_no.equals("15")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyRealEstate(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}
-		else if(Matrix_Srl_no.equals("16")) {
-			
+		} else if (Matrix_Srl_no.equals("16")) {
+
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyother(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
-		}else if(Matrix_Srl_no.equals("22")) {
-			
+		} else if (Matrix_Srl_no.equals("22")) {
+
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01Monthdetail(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
-		
-		
+
 		return finalList;
 	}
-	
-	
+
 	@GetMapping("/GetSecuredUnsecureddata")
-	public Rt_AcprSecuredUnsecuredEntity GetSecuredUnsecureddata(@RequestParam("Report_date") String Report_date) throws ParseException {
-		
-		
-		if(Report_date.contains("T")) {
+	public Rt_AcprSecuredUnsecuredEntity GetSecuredUnsecureddata(@RequestParam("Report_date") String Report_date)
+			throws ParseException {
+
+		if (Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
 			System.out.println(Report_date + " Splitted date");
 		}
-		
+
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
 		System.out.println(Selecteddate);
-		Rt_AcprSecuredUnsecuredEntity Rt_AcprSecuredlist = rt_acprsecuredunsecuredrep.GetSecuredUnsecuredreport(Selecteddate);
-		
-		
-		
+		Rt_AcprSecuredUnsecuredEntity Rt_AcprSecuredlist = rt_acprsecuredunsecuredrep
+				.GetSecuredUnsecuredreport(Selecteddate);
+
 		return Rt_AcprSecuredlist;
-		
+
 	}
-	
+
 	@GetMapping("/GetElarreport")
-	public Elar_summary_report_entity GetElarreport(@RequestParam("Report_date") String Report_date) throws ParseException {
-		
+	public Elar_summary_report_entity GetElarreport(@RequestParam("Report_date") String Report_date)
+			throws ParseException {
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(Report_date);
-		
+
 		Elar_summary_report_entity Elar_summary_report_entity = Elar_summary_report_rep.Getelarreport(Selecteddate);
-		
-		
-		
+
 		return Elar_summary_report_entity;
-		
+
 	}
-	
+
 	@GetMapping("/GetAsrrreport")
-	public Stableresourcesratio_entity GetAsrrreport(@RequestParam("Report_date") String Report_date) throws ParseException {
-		
+	public Stableresourcesratio_entity GetAsrrreport(@RequestParam("Report_date") String Report_date)
+			throws ParseException {
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(Report_date);
-		
+
 		Stableresourcesratio_entity Elar_summary_report_entity = Stableresourcesratio_rep.GetAsrrreport(Selecteddate);
-		
-		
-		
+
 		return Elar_summary_report_entity;
-		
+
 	}
-	
+
 	@GetMapping("/Getcategorychart")
-	public List<RT_Chart_pojo> Getcategorychart(@RequestParam("Report_date") String Report_date,@RequestParam("Branch_name") String Branch_name) throws ParseException {
-		
+	public List<RT_Chart_pojo> Getcategorychart(@RequestParam("Report_date") String Report_date,
+			@RequestParam("Branch_name") String Branch_name) throws ParseException {
+
 		List<RT_Chart_pojo> chartList = new ArrayList<>();
-		
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(Report_date);
-		
-		List<Object[]> RT_Chart_Data = RT_RWA_Fund_base_data_rep.getcatorywiseportfolio(Selecteddate,Branch_name);
-		
-		for(Object[] RT_data : RT_Chart_Data) {
-			
+
+		List<Object[]> RT_Chart_Data = RT_RWA_Fund_base_data_rep.getcatorywiseportfolio(Selecteddate, Branch_name);
+
+		for (Object[] RT_data : RT_Chart_Data) {
+
 			RT_Chart_pojo RT_Chart_pojo = new RT_Chart_pojo();
-			
+
 			RT_Chart_pojo.setClassification(String.valueOf(RT_data[0] != null ? RT_data[0] : ""));
 			RT_Chart_pojo.setExposurebal(new BigDecimal(String.valueOf(RT_data[1] != null ? RT_data[1] : "0.00")));
 			RT_Chart_pojo.setExposureperc(new BigDecimal(String.valueOf(RT_data[2] != null ? RT_data[2] : "0.00")));
-			
+
 			chartList.add(RT_Chart_pojo);
 		}
-		
-		
+
 		return chartList;
-		
+
 	}
-	//This is used to pull the list of data's for the dashboard page
+
+	// This is used to pull the list of data's for the dashboard page
 	@PostMapping("Limitdetaildata")
 	@ResponseBody
 	public List<Object[]> GetSingleandGroupExposurevalue(
-			@RequestParam(value="Report_date",required=true) String Report_date,
-			@RequestParam(value="Data_Type_Used",required=true)String Data_Type_Used,
-			@RequestParam(value="Tier1capital",required=false)String Tier1capital) throws ParseException{
-		
-		System.out.println("Tier 1 Capital for the year "+Tier1capital+"\r\n and Report date is : "+Report_date);
-		
+			@RequestParam(value = "Report_date", required = true) String Report_date,
+			@RequestParam(value = "Data_Type_Used", required = true) String Data_Type_Used,
+			@RequestParam(value = "Tier1capital", required = false) String Tier1capital) throws ParseException {
+
+		System.out.println("Tier 1 Capital for the year " + Tier1capital + "\r\n and Report date is : " + Report_date);
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		
-		if(Report_date.contains("T")) {
+
+		if (Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
 			System.out.println(Report_date + " Splitted date");
 		}
-		
+
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		
-		System.out.println("Final Date for Searching - "+ Selecteddate);
-		
-		List<Object[]>  Exposuredata = new ArrayList<>();
-		if(Data_Type_Used.equals("ToptenSingleExposure")) {
+
+		System.out.println("Final Date for Searching - " + Selecteddate);
+
+		List<Object[]> Exposuredata = new ArrayList<>();
+		if (Data_Type_Used.equals("ToptenSingleExposure")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetsingleExposure(Selecteddate);
-		}else if (Data_Type_Used.equals("ToptenGroupExposure")) {
+		} else if (Data_Type_Used.equals("ToptenGroupExposure")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Getgroupexposure(Selecteddate);
-		}else if (Data_Type_Used.equals("Exposureoutsidegcc")) {
+		} else if (Data_Type_Used.equals("Exposureoutsidegcc")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetoutsideGccExposure(Selecteddate);
-		}else if(Data_Type_Used.equals("Exposureonlygcc")) {
+		} else if (Data_Type_Used.equals("Exposureonlygcc")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetGccExposure(Selecteddate);
-		}else if(Data_Type_Used.equals("Exposuresummarydata")) {
+		} else if (Data_Type_Used.equals("Exposuresummarydata")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.CountryExpSummary(Selecteddate);
-		}else if (Data_Type_Used.equals("Mortageloanappetite")) {
+		} else if (Data_Type_Used.equals("Mortageloanappetite")) {
 			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetMortageloanappetite(Selecteddate);
-		}else if (Data_Type_Used.equals("Toptenhousingloandata")) {
+		} else if (Data_Type_Used.equals("Toptenhousingloandata")) {
 			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetHousingloantoptencust(Selecteddate);
-		}else if (Data_Type_Used.equals("Toptentopuploandata")) {
+		} else if (Data_Type_Used.equals("Toptentopuploandata")) {
 			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetTopuploantoptencust(Selecteddate);
-		}else if (Data_Type_Used.equals("Mortgageloantopten")) {
+		} else if (Data_Type_Used.equals("Mortgageloantopten")) {
 			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetMortgageloantencust(Selecteddate);
-		}else if (Data_Type_Used.equals("FreshslippageQoQ")) {
-			//Here it is based in Quaterly Calculation so that i am taking RWA Table
+		} else if (Data_Type_Used.equals("FreshslippageQoQ")) {
+			// Here it is based in Quaterly Calculation so that i am taking RWA Table
 			Exposuredata = RT_RWA_Fund_base_data_rep.Freshslippage(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Industry")) {
+		} else if (Data_Type_Used.equals("Sector_Industry")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Industry_Classifi(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Trading")) {
+		} else if (Data_Type_Used.equals("Sector_Trading")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Trading_Classifi(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Services")) {
+		} else if (Data_Type_Used.equals("Sector_Services")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Services_Classifi(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Banks")) {
+		} else if (Data_Type_Used.equals("Sector_Banks")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Banks_Classifi(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Real_Estate")) {
+		} else if (Data_Type_Used.equals("Sector_Real_Estate")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.RealEstate_Classifi(Selecteddate);
-		}else if (Data_Type_Used.equals("Sector_Others")) {
+		} else if (Data_Type_Used.equals("Sector_Others")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Others_Classifi(Selecteddate);
-		}else if(Data_Type_Used.equals("CapitalAdequacyratio")) {
+		} else if (Data_Type_Used.equals("CapitalAdequacyratio")) {
 			Exposuredata = Capitaladequacyratio_rep.GetCapitalAdequecyvalues(Selecteddate);
-			
-			System.out.println("Size of the Exposure data : "+Exposuredata.size());
-			
-		}else if(Data_Type_Used.equals("NetOvernight_noop")) {
+
+			System.out.println("Size of the Exposure data : " + Exposuredata.size());
+
+		} else if (Data_Type_Used.equals("NetOvernight_noop")) {
 			Exposuredata = RT_Noop_net_position_summ_rep.Get_Noop_netposition(Selecteddate);
-		}else if(Data_Type_Used.equals("RealEstateaccountdetail")) {
+		} else if (Data_Type_Used.equals("RealEstateaccountdetail")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenRealestateaccountdetail(Selecteddate);
-			System.out.println("Selected Real Estate Detail size : "+Exposuredata.size());
-		}
-		else if(Data_Type_Used.equals("tenaccountdetailSlippage")) {
+			System.out.println("Selected Real Estate Detail size : " + Exposuredata.size());
+		} else if (Data_Type_Used.equals("tenaccountdetailSlippage")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSlippage(Selecteddate);
-		}else if(Data_Type_Used.equals("teaccountProvisionCoverageRatio")) {
+		} else if (Data_Type_Used.equals("teaccountProvisionCoverageRatio")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenProvision(Selecteddate);
+		} else if (Data_Type_Used.equals("tenaccountMortgageLoanAppetite")) {
+			Exposuredata = RT_Mis_Fund_Based_Adv_Rep.GetTopteMort(Selecteddate);
 		}
-		else if(Data_Type_Used.equals("tenaccountMortgageLoanAppetite")) {
-			Exposuredata =RT_Mis_Fund_Based_Adv_Rep.GetTopteMort(Selecteddate);
-		}
-		
-		else if(Data_Type_Used.equals("tenaccountSectorIndustrial")) {
+
+		else if (Data_Type_Used.equals("tenaccountSectorIndustrial")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorIndustrial(Selecteddate);
-		}
-		else if(Data_Type_Used.equals("tenaccountSectorTrading")) {
+		} else if (Data_Type_Used.equals("tenaccountSectorTrading")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorTrading(Selecteddate);
-		}
-		else if(Data_Type_Used.equals("tenaccountServicesexcludingbank")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
-		}
-		else if(Data_Type_Used.equals("tenaccountBank")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
-		}
-		else if(Data_Type_Used.equals("tenaccountRealEstate")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenRealEstate(Selecteddate);
-		}
-		else if(Data_Type_Used.equals("tenaccountOtherSectors")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenOtherSectors(Selecteddate);
-		}else if(Data_Type_Used.equals("LongTermAED")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetlongtermAED(Selecteddate);
-		}else if(Data_Type_Used.equals("LongTermUSD")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetlongtermUSD(Selecteddate);
-		}else if (Data_Type_Used.equals("Stockapproachratio")) {
-			Exposuredata=RT_SLS_Repository.GetStockapproachratio(Selecteddate);
-		}else if (Data_Type_Used.equals("Depositnonretail")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenNonretaildepo(Selecteddate);
-		}else if (Data_Type_Used.equals("Depositretail")) {
-			Exposuredata=RT_RWA_Fund_base_data_rep.GetToptenretaildepo(Selecteddate);
-		}else if (Data_Type_Used.equals("Leverageratio")) {
-			Exposuredata=Leverage_ratio_rep.GetLeverageratiodata(Selecteddate);
-		}else if (Data_Type_Used.equals("Generalprovision")) {
+		} else if (Data_Type_Used.equals("tenaccountServicesexcludingbank")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
+		} else if (Data_Type_Used.equals("tenaccountBank")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
+		} else if (Data_Type_Used.equals("tenaccountRealEstate")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenRealEstate(Selecteddate);
+		} else if (Data_Type_Used.equals("tenaccountOtherSectors")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenOtherSectors(Selecteddate);
+		} else if (Data_Type_Used.equals("LongTermAED")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetlongtermAED(Selecteddate);
+		} else if (Data_Type_Used.equals("LongTermUSD")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetlongtermUSD(Selecteddate);
+		} else if (Data_Type_Used.equals("Stockapproachratio")) {
+			Exposuredata = RT_SLS_Repository.GetStockapproachratio(Selecteddate);
+		} else if (Data_Type_Used.equals("Depositnonretail")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenNonretaildepo(Selecteddate);
+		} else if (Data_Type_Used.equals("Depositretail")) {
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenretaildepo(Selecteddate);
+		} else if (Data_Type_Used.equals("Leverageratio")) {
+			Exposuredata = Leverage_ratio_rep.GetLeverageratiodata(Selecteddate);
+		} else if (Data_Type_Used.equals("Generalprovision")) {
 			Exposuredata = RT_Matrix_monitoring_rep.GetSelecteddateGenepro(Selecteddate);
-		}else if(Data_Type_Used.equals("BPVPV01_Detail")) {
+		} else if (Data_Type_Used.equals("BPVPV01_Detail")) {
 			Exposuredata = RT_MID_FX_DEAL_REPO.GetselectedmonthBPVdata(Selecteddate);
 		}
-		
+
 		return Exposuredata;
-		
+
 	}
-	
+
 	@PostMapping("GetRT_Matrix_monitoring_entity")
 	@ResponseBody
 	public List<RT_Matrix_monitoring_entity> GetRT_Matrix_monitoring_entity(
-			@RequestParam(value="Report_date",required=true) String Report_date,
-			@RequestParam(value="Matrixserial_no",required=false)String Matrixserial_no,
-			@RequestParam(value="MatrixLabel",required=false)String MatrixLabel) throws ParseException{
-		
-		System.out.println("Received Report date and Serial No is : "+Report_date+" "+Matrixserial_no);
-		
+			@RequestParam(value = "Report_date", required = true) String Report_date,
+			@RequestParam(value = "Matrixserial_no", required = false) String Matrixserial_no,
+			@RequestParam(value = "MatrixLabel", required = false) String MatrixLabel) throws ParseException {
+
+		System.out.println("Received Report date and Serial No is : " + Report_date + " " + Matrixserial_no);
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		System.out.println("Received Report date and Serial No is : "+Selecteddate+" "+Matrixserial_no);
-		List<RT_Matrix_monitoring_entity>  Rtmatrixdata = new ArrayList<RT_Matrix_monitoring_entity>();
-		
-		//Check the data is present for the selected date
-		
-		List<RT_Matrix_monitoring_entity> Datacheck = RT_Matrix_monitoring_rep.checkdataavail(Selecteddate,Matrixserial_no);
-		System.out.println("Data Availability : "+ Datacheck.size());
-		if(Datacheck.size() >= 1) {
-			Rtmatrixdata = RT_Matrix_monitoring_rep.GetMatrixbysortedvalue(Selecteddate,Matrixserial_no);
+		System.out.println("Received Report date and Serial No is : " + Selecteddate + " " + Matrixserial_no);
+		List<RT_Matrix_monitoring_entity> Rtmatrixdata = new ArrayList<RT_Matrix_monitoring_entity>();
+
+		// Check the data is present for the selected date
+
+		List<RT_Matrix_monitoring_entity> Datacheck = RT_Matrix_monitoring_rep.checkdataavail(Selecteddate,
+				Matrixserial_no);
+		System.out.println("Data Availability : " + Datacheck.size());
+		if (Datacheck.size() >= 1) {
+			Rtmatrixdata = RT_Matrix_monitoring_rep.GetMatrixbysortedvalue(Selecteddate, Matrixserial_no);
 		}
-		
+
 		return Rtmatrixdata;
-		
+
 	}
 
 	@PostMapping("/matrix/runForDate")
 	@ResponseBody
-	public Map<String, Object> runMatrixForDate(
-			@RequestParam(value = "reportDate", required = true) String reportDate,
-			@RequestParam(value = "Serialno", required = true) String Serialno,
-			HttpServletRequest request) throws ParseException {
+	public Map<String, Object> runMatrixForDate(@RequestParam(value = "reportDate", required = true) String reportDate,
+			@RequestParam(value = "Serialno", required = true) String Serialno, HttpServletRequest request)
+			throws ParseException {
 
 		String normalized = normalizeDate(reportDate);
 		Date selectedDate = java.sql.Date.valueOf(normalized);
@@ -847,8 +854,8 @@ public class MIS_Rest_Controller {
 		if (user == null || user.trim().isEmpty()) {
 			user = "SYSTEM";
 		}
-		System.out.println("Calculation initiated for Serial no : "+ Serialno + " Report Date : "+selectedDate);
-		return matrixRunService.queueRun(selectedDate, user,Serialno);
+		System.out.println("Calculation initiated for Serial no : " + Serialno + " Report Date : " + selectedDate);
+		return matrixRunService.queueRun(selectedDate, user, Serialno);
 	}
 
 	@GetMapping("/matrix/runStatus")
@@ -871,120 +878,261 @@ public class MIS_Rest_Controller {
 		response.put("selectedReportDate", job.getSelectedReportDate());
 		return response;
 	}
-	
+
 	@PostMapping("/GetExposuredata")
 	@ResponseBody
 	public List<RT_RWA_Fund_base_data_entity> GetExposuredata(
-	        @RequestParam(value="Report_date",required=false) String reportDate,
-	        @RequestParam(value="classification",required=false) String classification,
-	        @RequestParam(value="Branch_name",required=false) String Branch_name,
-	        @RequestParam(value="Data_table_type",required=false) String Data_table_type) throws ParseException {
-		
+			@RequestParam(value = "Report_date", required = false) String reportDate,
+			@RequestParam(value = "classification", required = false) String classification,
+			@RequestParam(value = "Branch_name", required = false) String Branch_name,
+			@RequestParam(value = "Data_table_type", required = false) String Data_table_type) throws ParseException {
+
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(reportDate);
-		
+
 		System.out.println(Selecteddate);
-		List<Object[]>  TopExposuredata = new ArrayList<>();
-		
-		
+		List<Object[]> TopExposuredata = new ArrayList<>();
+
 		System.out.println(TopExposuredata.size());
 		List<RT_RWA_Fund_base_data_entity> RT_RWA_Fund_base = new ArrayList<>();
-		
-		if(Data_table_type.equals("TopExposuredata")) {
-			TopExposuredata = RT_RWA_Fund_base_data_rep.Gettopexpposure(Selecteddate,classification,Branch_name);
-		for(Object[] loopingExposuredata : TopExposuredata) {
-			
-			RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
-			System.out.println(String.valueOf(loopingExposuredata[0]));
-			Entitydata.setBranch_name(String.valueOf(loopingExposuredata[0] != null ? loopingExposuredata[0] : ""));
-			Entitydata.setAccount_name(String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : ""));
-			Entitydata.setGl_code(String.valueOf(loopingExposuredata[2] != null ? loopingExposuredata[2] : ""));
-			Entitydata.setConst_id(String.valueOf(loopingExposuredata[3] != null ? loopingExposuredata[3] : ""));
-			Entitydata.setPurpose(String.valueOf(loopingExposuredata[4] != null ? loopingExposuredata[4] : ""));
-			Entitydata.setScheme(String.valueOf(loopingExposuredata[5] != null ? loopingExposuredata[5] : ""));
-			Entitydata.setRwa_class(String.valueOf(loopingExposuredata[6] != null ? loopingExposuredata[6] : ""));
-			Entitydata.setInt_suspense(new BigDecimal(String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
-			Entitydata.setTot_provision(new BigDecimal(String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
-			Entitydata.setLimit(new BigDecimal(String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
-			Entitydata.setBalance(new BigDecimal(String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
-			Entitydata.setExposure(new BigDecimal(String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
-			Entitydata.setRw(new BigDecimal(String.valueOf(loopingExposuredata[12] != null ? loopingExposuredata[12] : "0.00")));
-			Entitydata.setRwa(new BigDecimal(String.valueOf(loopingExposuredata[13] != null ? loopingExposuredata[13] : "0.00")));
-			Entitydata.setTotal_drawn_rwa(new BigDecimal(String.valueOf(loopingExposuredata[14] != null ? loopingExposuredata[14] : "0.00")));
-			Entitydata.setTotal_rwa(new BigDecimal(String.valueOf(loopingExposuredata[15] != null ? loopingExposuredata[15] : "0.00")));
-			RT_RWA_Fund_base.add(Entitydata);
-		}
-		}else if(Data_table_type.equals("Branchsnapshot")) {
-			
-			TopExposuredata = RT_RWA_Fund_base_data_rep.Getbranchportfoliosnap(Selecteddate,Branch_name);
-			
-			System.out.println(TopExposuredata.size() + " Selected Data Size");
-			
-			for(Object[] loopingExposuredata : TopExposuredata) {
-			RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
-				
-				Entitydata.setBranch_name(String.valueOf(loopingExposuredata[0] != null ? loopingExposuredata[0] : ""));
-				Entitydata.setBalance(new BigDecimal(String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : "0.00"))); // This balance is having the total Exposure value (if branch or overall as per query)
-				Entitydata.setTotal_rwa(new BigDecimal(String.valueOf(loopingExposuredata[2] != null ? loopingExposuredata[2] : "0.00"))); // This balance is having the total RWA (if branch or overall as per query)
-				Entitydata.setLimit(new BigDecimal(String.valueOf(loopingExposuredata[3] != null ? loopingExposuredata[3] : "0.00"))); // Branch Level ratio
-				Entitydata.setAdjusted_fdr(new BigDecimal(String.valueOf(loopingExposuredata[4] != null ? loopingExposuredata[4] : "0.00")));
-				Entitydata.setCrm(new BigDecimal(String.valueOf(loopingExposuredata[5] != null ? loopingExposuredata[5] : "0.00")));
-				Entitydata.setCrm_adj_bal(new BigDecimal(String.valueOf(loopingExposuredata[6] != null ? loopingExposuredata[6] : "0.00")));
-				Entitydata.setCrm_gnt_adj_bal(new BigDecimal(String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
-				Entitydata.setRw(new BigDecimal(String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
-				Entitydata.setRwa(new BigDecimal(String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
-				Entitydata.setBill_amount(new BigDecimal(String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
-				Entitydata.setBill_disc_rwa(new BigDecimal(String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
-				RT_RWA_Fund_base.add(Entitydata);
-			}
-			
-		}else if (Data_table_type.equals("Branchsnapshotdetail")) {
-			
-			if(classification.equals("BranchTotExp")) {
-				//Take the value as per the classification
-				System.out.println("Selected Report Date : "+ Selecteddate +" and Branch name : "+Branch_name);
-				TopExposuredata = RT_RWA_Fund_base_data_rep.Gettotalexpobranch(Selecteddate,Branch_name);
-			}else if(classification.equals("BranchTotRWA")) {
-				TopExposuredata = RT_RWA_Fund_base_data_rep.Gettotalexpobranch(Selecteddate,Branch_name);
-			}else if(classification.equals("BranchActvExp")) {
-				TopExposuredata = RT_RWA_Fund_base_data_rep.Getactiveexpobranch(Selecteddate,Branch_name);
-			}else if(classification.equals("BranchNPAExp")) {
-				TopExposuredata = RT_RWA_Fund_base_data_rep.GetNPAexpobranch(Selecteddate,Branch_name);
-			}else if(classification.equals("BranchWatchExp")) {
-				TopExposuredata = RT_RWA_Fund_base_data_rep.GetWatchlistexpobranch(Selecteddate,Branch_name);
-			}else if(classification.equals("BranchOverdueExp")) {
-				TopExposuredata = RT_RWA_Fund_base_data_rep.GetOverdueexpobranch(Selecteddate,Branch_name);
-			}
-			
-			//Then loop the data to show in front end
-			for(Object[] loopingExposuredata : TopExposuredata) {
-				
+
+		if (Data_table_type.equals("TopExposuredata")) {
+			TopExposuredata = RT_RWA_Fund_base_data_rep.Gettopexpposure(Selecteddate, classification, Branch_name);
+			for (Object[] loopingExposuredata : TopExposuredata) {
+
 				RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
 				System.out.println(String.valueOf(loopingExposuredata[0]));
 				Entitydata.setBranch_name(String.valueOf(loopingExposuredata[0] != null ? loopingExposuredata[0] : ""));
-				Entitydata.setAccount_name(String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : ""));
+				Entitydata
+						.setAccount_name(String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : ""));
 				Entitydata.setGl_code(String.valueOf(loopingExposuredata[2] != null ? loopingExposuredata[2] : ""));
 				Entitydata.setConst_id(String.valueOf(loopingExposuredata[3] != null ? loopingExposuredata[3] : ""));
 				Entitydata.setPurpose(String.valueOf(loopingExposuredata[4] != null ? loopingExposuredata[4] : ""));
 				Entitydata.setScheme(String.valueOf(loopingExposuredata[5] != null ? loopingExposuredata[5] : ""));
 				Entitydata.setRwa_class(String.valueOf(loopingExposuredata[6] != null ? loopingExposuredata[6] : ""));
-				Entitydata.setInt_suspense(new BigDecimal(String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
-				Entitydata.setTot_provision(new BigDecimal(String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
-				Entitydata.setLimit(new BigDecimal(String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
-				Entitydata.setBalance(new BigDecimal(String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
-				Entitydata.setExposure(new BigDecimal(String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
-				Entitydata.setRw(new BigDecimal(String.valueOf(loopingExposuredata[12] != null ? loopingExposuredata[12] : "0.00")));
-				Entitydata.setRwa(new BigDecimal(String.valueOf(loopingExposuredata[13] != null ? loopingExposuredata[13] : "0.00")));
-				Entitydata.setTotal_drawn_rwa(new BigDecimal(String.valueOf(loopingExposuredata[14] != null ? loopingExposuredata[14] : "0.00")));
-				Entitydata.setTotal_rwa(new BigDecimal(String.valueOf(loopingExposuredata[15] != null ? loopingExposuredata[15] : "0.00")));
+				Entitydata.setInt_suspense(new BigDecimal(
+						String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
+				Entitydata.setTot_provision(new BigDecimal(
+						String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
+				Entitydata.setLimit(new BigDecimal(
+						String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
+				Entitydata.setBalance(new BigDecimal(
+						String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
+				Entitydata.setExposure(new BigDecimal(
+						String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
+				Entitydata.setRw(new BigDecimal(
+						String.valueOf(loopingExposuredata[12] != null ? loopingExposuredata[12] : "0.00")));
+				Entitydata.setRwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[13] != null ? loopingExposuredata[13] : "0.00")));
+				Entitydata.setTotal_drawn_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[14] != null ? loopingExposuredata[14] : "0.00")));
+				Entitydata.setTotal_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[15] != null ? loopingExposuredata[15] : "0.00")));
 				RT_RWA_Fund_base.add(Entitydata);
 			}
-			
+		} else if (Data_table_type.equals("Branchsnapshot")) {
+
+			TopExposuredata = RT_RWA_Fund_base_data_rep.Getbranchportfoliosnap(Selecteddate, Branch_name);
+
+			System.out.println(TopExposuredata.size() + " Selected Data Size");
+
+			for (Object[] loopingExposuredata : TopExposuredata) {
+				RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
+
+				Entitydata.setBranch_name(String.valueOf(loopingExposuredata[0] != null ? loopingExposuredata[0] : ""));
+				Entitydata.setBalance(new BigDecimal(
+						String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : "0.00"))); 
+				Entitydata.setTotal_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[2] != null ? loopingExposuredata[2] : "0.00"))); 
+				Entitydata.setLimit(new BigDecimal(
+						String.valueOf(loopingExposuredata[3] != null ? loopingExposuredata[3] : "0.00"))); 
+				Entitydata.setAdjusted_fdr(new BigDecimal(
+						String.valueOf(loopingExposuredata[4] != null ? loopingExposuredata[4] : "0.00")));
+				Entitydata.setCrm(new BigDecimal(
+						String.valueOf(loopingExposuredata[5] != null ? loopingExposuredata[5] : "0.00")));
+				Entitydata.setCrm_adj_bal(new BigDecimal(
+						String.valueOf(loopingExposuredata[6] != null ? loopingExposuredata[6] : "0.00")));
+				Entitydata.setCrm_gnt_adj_bal(new BigDecimal(
+						String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
+				Entitydata.setRw(new BigDecimal(
+						String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
+				Entitydata.setRwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
+				Entitydata.setBill_amount(new BigDecimal(
+						String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
+				Entitydata.setBill_disc_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
+				RT_RWA_Fund_base.add(Entitydata);
+			}
+
+		} else if (Data_table_type.equals("Branchsnapshotdetail")) {
+
+			if (classification.equals("BranchTotExp")) {
+				// Take the value as per the classification
+				System.out.println("Selected Report Date : " + Selecteddate + " and Branch name : " + Branch_name);
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Gettotalexpobranch(Selecteddate, Branch_name);
+			} else if (classification.equals("BranchTotRWA")) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Gettotalexpobranch(Selecteddate, Branch_name);
+			} else if (classification.equals("BranchActvExp")) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Getactiveexpobranch(Selecteddate, Branch_name);
+			} else if (classification.equals("BranchNPAExp")) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.GetNPAexpobranch(Selecteddate, Branch_name);
+			} else if (classification.equals("BranchWatchExp")) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.GetWatchlistexpobranch(Selecteddate, Branch_name);
+			} else if (classification.equals("BranchOverdueExp")) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.GetOverdueexpobranch(Selecteddate, Branch_name);
+			}
+
+			// Then loop the data to show in front end
+			for (Object[] loopingExposuredata : TopExposuredata) {
+
+				RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
+				System.out.println(String.valueOf(loopingExposuredata[0]));
+				Entitydata.setBranch_name(String.valueOf(loopingExposuredata[0] != null ? loopingExposuredata[0] : ""));
+				Entitydata
+						.setAccount_name(String.valueOf(loopingExposuredata[1] != null ? loopingExposuredata[1] : ""));
+				Entitydata.setGl_code(String.valueOf(loopingExposuredata[2] != null ? loopingExposuredata[2] : ""));
+				Entitydata.setConst_id(String.valueOf(loopingExposuredata[3] != null ? loopingExposuredata[3] : ""));
+				Entitydata.setPurpose(String.valueOf(loopingExposuredata[4] != null ? loopingExposuredata[4] : ""));
+				Entitydata.setScheme(String.valueOf(loopingExposuredata[5] != null ? loopingExposuredata[5] : ""));
+				Entitydata.setRwa_class(String.valueOf(loopingExposuredata[6] != null ? loopingExposuredata[6] : ""));
+				Entitydata.setInt_suspense(new BigDecimal(
+						String.valueOf(loopingExposuredata[7] != null ? loopingExposuredata[7] : "0.00")));
+				Entitydata.setTot_provision(new BigDecimal(
+						String.valueOf(loopingExposuredata[8] != null ? loopingExposuredata[8] : "0.00")));
+				Entitydata.setLimit(new BigDecimal(
+						String.valueOf(loopingExposuredata[9] != null ? loopingExposuredata[9] : "0.00")));
+				Entitydata.setBalance(new BigDecimal(
+						String.valueOf(loopingExposuredata[10] != null ? loopingExposuredata[10] : "0.00")));
+				Entitydata.setExposure(new BigDecimal(
+						String.valueOf(loopingExposuredata[11] != null ? loopingExposuredata[11] : "0.00")));
+				Entitydata.setRw(new BigDecimal(
+						String.valueOf(loopingExposuredata[12] != null ? loopingExposuredata[12] : "0.00")));
+				Entitydata.setRwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[13] != null ? loopingExposuredata[13] : "0.00")));
+				Entitydata.setTotal_drawn_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[14] != null ? loopingExposuredata[14] : "0.00")));
+				Entitydata.setTotal_rwa(new BigDecimal(
+						String.valueOf(loopingExposuredata[15] != null ? loopingExposuredata[15] : "0.00")));
+				RT_RWA_Fund_base.add(Entitydata);
+			}
+
 		}
 		return RT_RWA_Fund_base;
 
 	}
-	
+
+	//// This is downloadfuntion need to be used for all detail download as per the
+	//// limit serial no
+	@RequestMapping(value = "/Limitdetaildownload", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> Limitdetaildownload(
+			@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
+			@RequestParam(value = "Report_date", required = false) String Report_date, HttpServletRequest request) {
+		String filename = "No";
+		try {
+
+			// -------- Date Handling --------
+			if (Report_date != null && Report_date.contains("T")) {
+				Report_date = Report_date.split("T")[0];
+				System.out.println(Report_date + " Splitted date");
+			}
+
+			Date Selecteddate = null;
+			if (Report_date != null && !Report_date.isEmpty()) {
+				Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date));
+			}
+
+			// -------- Workbook --------
+			Workbook workbook = new XSSFWorkbook();
+			Sheet sheet = workbook.createSheet("Sheet1");
+
+			// -------- Header Style --------
+			CellStyle headerStyle = workbook.createCellStyle();
+			Font font = workbook.createFont();
+			font.setBold(true);
+			headerStyle.setFont(font);
+			headerStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			Row headerRow = sheet.createRow(0);
+
+			int rowNum = 1;
+
+			// -------- Condition Based Data --------
+			if ("24".equals(Matrix_Srl_no)) {
+				filename = "Noop position detail";
+				String[] headers = { "REPORT_DATE", "CURRENCY", "READY_EXCHAGE_POSITION_IN_AC", "CBS_FX_POSITION_AC",
+						"MTM_AC", "TOTAL_NOOP_IN_AC", "TOTAL_NOOP_IN_LC" };
+
+				// Create headers
+				for (int i = 0; i < headers.length; i++) {
+					Cell headerCell = headerRow.createCell(i);
+					headerCell.setCellValue(headers[i]);
+					headerCell.setCellStyle(headerStyle);
+				}
+
+				// Fetch data
+				List<Object[]> Noopdetail = RT_Noop_net_position_rep.Getnoopdetail(Selecteddate);
+
+				// Populate data
+				if (Noopdetail != null && !Noopdetail.isEmpty()) {
+					for (Object[] obj : Noopdetail) {
+						Row row = sheet.createRow(rowNum++);
+
+						for (int i = 0; i < headers.length; i++) {
+							Cell cell = row.createCell(i);
+
+							if (i < obj.length && obj[i] != null) {
+
+								if (i == 0) {
+									cell.setCellValue(Selecteddate);
+								} else if (i == 1) {
+									cell.setCellValue(obj[i].toString());
+								} else {
+									cell.setCellValue(new BigDecimal(obj[i].toString()).doubleValue());
+								}
+
+							} else {
+								cell.setCellValue("");
+							}
+						}
+					}
+				}
+			}
+
+			// -------- Auto-size Columns --------
+			if (sheet.getRow(0) != null) {
+				int colCount = sheet.getRow(0).getLastCellNum();
+				for (int i = 0; i < colCount; i++) {
+					sheet.autoSizeColumn(i);
+				}
+			}
+
+			// -------- Write to Output --------
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			workbook.write(outputStream);
+			workbook.close();
+
+			// -------- Response --------
+			HttpHeaders headers1 = new HttpHeaders();
+			headers1.add(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment; filename=" + filename + " " + Selecteddate + ".xlsx");
+
+			ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
+
+			return ResponseEntity.ok().headers(headers1).contentLength(outputStream.size())
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(resource);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Collections.singletonMap("message", "Error generating the file."));
+		}
+	}
+
 	public static String normalizeDate(String input) {
 		DateTimeFormatter targetFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -1014,5 +1162,3 @@ public class MIS_Rest_Controller {
 	}
 
 }
-
-

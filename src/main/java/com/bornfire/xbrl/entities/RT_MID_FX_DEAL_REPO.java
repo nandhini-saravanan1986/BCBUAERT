@@ -22,7 +22,7 @@ public interface RT_MID_FX_DEAL_REPO extends JpaRepository<RT_MID_FX_DEAL_DC, St
 	@Query(value = "Select TO_CHAR(REPORT_DATE,'DD-MM-YYYY'),nvl(AED_FOREX,0), nvl(AED_INT_RATE,0), nvl(AED_INVEST_BONDS,0),"
 			+ " nvl(AED_MONEY_MARKET_CP_CD,0), nvl(AED_TOTAL_PV01,0)"
 			+ " from RT_MID_FX_DEAL Where report_date between Trunc(?1,'MM') "
-			+ "and Last_day(Trunc(?1,'MM'))",nativeQuery = true)
+			+ "and Last_day(Trunc(?1,'MM')) Order by report_date Asc",nativeQuery = true)
 	List<Object[]> GetselectedmonthBPVdata(Date Selecteddate);
 	
     boolean existsByReportDate(Date reportDate);

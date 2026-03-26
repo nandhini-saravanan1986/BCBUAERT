@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface RT_SLS_Detail_Repository extends JpaRepository<RT_SLS_Detail_Enitity,String>  {
+public interface RT_SLS_Detail_Repository extends JpaRepository<RT_SLS_Detail_Enitity,RT_SLS_Detail_Id_Class>  {
 
 	/*
 	 * @Query(value =
