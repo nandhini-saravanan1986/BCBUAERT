@@ -3597,35 +3597,62 @@ public class XBRLNavigationController {
 			// --- Detail Mode ---
 			int pageSize = size;
 			int offset = page * pageSize;
+			int totalRows=0;
+			int totalPages=0;
+			
 
 			if (Rowid != null && !Rowid.isEmpty()) {
-				// List<RT_SLS_Detail_Enitity> slsdetaillist =
-				// rt_sls_detail_repository.slsdetaillistrowid(reportdatefor, Rowid);
+				
+				
+				String[] arrcurr=currency.split("_");
+				List<RT_SLS_Detail_Enitity> slsdetaillist=null;
+				String currency1=null;
+				if(arrcurr[0].equals("All")) {
+					currency1=arrcurr[4];
+					totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid);
+					totalPages = (int) Math.ceil((double) totalRows / pageSize);
+					slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,Rowid, offset, pageSize);
+				}else if(arrcurr[0].equals("ONLY")) {
+					currency1=arrcurr[1];
+					totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, Rowid,currency1);
+					totalPages = (int) Math.ceil((double) totalRows / pageSize);
+					slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,Rowid, currency1,offset, pageSize);
+				}
+				
+				System.out.println(currency1);
+				
 
-				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillistrowid(reportdatefor,
-						Rowid, currency);
-
-				int totalRows = rt_sls_detail_repository.slsdetaillistcountROWID(reportdatefor, currency, Rowid);
-				int totalPages = (int) Math.ceil((double) totalRows / pageSize);
-
+				
 				md.addAttribute("slsdetaillist", slsdetaillist);
 				md.addAttribute("reportdate", reportdate);
 				md.addAttribute("formmode", "Detail");
+				md.addAttribute("pagination", "YES");
 				md.addAttribute("currency", currency);
 				md.addAttribute("currentPage", page);
 				md.addAttribute("totalPages", totalPages);
 
 			} else {
 				// int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+				
+				String[] arrcurr=currency.split("_");
+				List<RT_SLS_Detail_Enitity> slsdetaillist=null;
+				String currency1=null;
+				if(arrcurr[0].equals("All")) {
+					currency1=arrcurr[4];
+					totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor);
+					totalPages = (int) Math.ceil((double) totalRows / pageSize);
+					slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
+				}else if(arrcurr[0].equals("ONLY")) {
+					currency1=arrcurr[1];
+					totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor, currency1);
+					totalPages = (int) Math.ceil((double) totalRows / pageSize);
+					slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor,currency1, offset, pageSize);
+					 
+				}
+				System.out.println(currency);
 
-				int totalRows = rt_sls_detail_repository.slsdetaillistcount(reportdatefor, currency);
-				int totalPages = (int) Math.ceil((double) totalRows / pageSize);
-
-				// List<RT_SLS_Detail_Enitity> slsdetaillist =
-				// rt_sls_detail_repository.slsdetaillist(reportdatefor, offset, pageSize);
 				System.out.println("offset==" + offset);
-				List<RT_SLS_Detail_Enitity> slsdetaillist = rt_sls_detail_repository.slsdetaillist(reportdatefor,
-						currency, offset, pageSize);
+				
 				md.addAttribute("slsdetaillist", slsdetaillist);
 				md.addAttribute("reportdate", reportdate);
 				md.addAttribute("formmode", "Detail");
@@ -3634,6 +3661,7 @@ public class XBRLNavigationController {
 				md.addAttribute("currentPage", page);
 				md.addAttribute("totalPages", totalPages);
 			}
+			
 		}
 
 		return "RT/RT_SLSREPORT";

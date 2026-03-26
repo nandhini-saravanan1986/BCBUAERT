@@ -874,7 +874,7 @@
 	        $('#usertable').DataTable({
 	            paging: true,
 	            searching: true,
-	            pagingType: "simple", 
+	            pagingType: false, 
 	            ordering: false,
 	            lengthChange: false,
 	            pageLength: 100,
@@ -2714,32 +2714,30 @@
 							<tr>
 								
 								<th class="text-left">CUST ID</th>
-																<th class="text-left">ACCT NO</th>
-																<th class="text-left">ACCT NAME</th>
-																<th class="text-right">ACCT BALANCE</th>
-																<th class="text-left">ROWID</th>
-																<th class="text-left">REPORT_DATE</th>
+								<th class="text-left">ACCT NO</th>
+								<th class="text-left">ACCT NAME</th>
+								<th class="text-right">ACCT BALANCE</th>
+								<th class="text-left">ROWID</th>
+								<th class="text-left">REPORT_DATE</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="detaillist : ${slsdetaillist}">
 								<td class="text-left" th:text="${detaillist.custId}"></td>
-																	<td class="text-left" th:text="${detaillist.foracid}"></td>
-																	<td class="text-left" th:text="${detaillist.acctName}"></td>
-																	<td class="text-right" th:text="${detaillist.acctBalanceLc}"></td>
-																	<td class="text-left" th:text="${detaillist.reportLabel}"></td>
-																	<td class="text-left"
-																	    th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
+								<td class="text-left" th:text="${detaillist.foracid}"></td>
+								<td class="text-left" th:text="${detaillist.acctName}"></td>
+								<td class="text-right" th:text="${detaillist.acctBalanceLc}"></td>
+								<td class="text-left" th:text="${detaillist.reportLabel}"></td>
+								<td class="text-left" th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
 
 							</tr>
 
 						</tbody>
 					</table>
 
-					<!--<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
-
+					<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
 						<a th:if="${currentPage > 0}"
-							th:href="@{/SLSREPORT(page=${currentPage - 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
+							th:href="@{/SLSREPORT(page=${currentPage - 100}, size=100,currency=${currency}, reportdate=${reportdate}, formmode='Detail')}">
 							Previous
 						</a>
 
@@ -2748,10 +2746,10 @@
 
 
 						<a th:if="${currentPage < (totalPages - 1) * 100}"
-							th:href="@{/SLSREPORT(page=${currentPage + 100}, size=100, reportdate=${reportdate}, formmode='Detail')}">
+							th:href="@{/SLSREPORT(page=${currentPage + 100}, size=100,currency=${currency}, reportdate=${reportdate}, formmode='Detail')}">
 							Next
 						</a>
-					</div>-->
+					</div>
 
 				</div>
 			</div>
