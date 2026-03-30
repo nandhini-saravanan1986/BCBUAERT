@@ -279,7 +279,18 @@ public class RT_SLSServices {
 		     while (true) {
 		    	 
 		    	 System.out.println("offsettest");
-		    	  reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,currency,offset,batchSize);
+		    	 String[] arrcurr=currency.split("_");
+					String currency1=null;
+					if(arrcurr[0].equals("All")) {
+						currency1=arrcurr[4];
+						reportData =  rt_sls_detail_repository.slsdetaillist(parsedToDate,currency1,offset,batchSize);
+					}else if(arrcurr[0].equals("ONLY")) {
+						currency1=arrcurr[1];
+						reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,currency1,offset,batchSize);
+						 
+					}
+		    	 
+		    	  //reportData = rt_sls_detail_repository.slsdetaillist(parsedToDate,currency,offset,batchSize);
 		    	    if (reportData.isEmpty()) break;  // <-- STOP when there is no more data
 
 		    	    
