@@ -4006,23 +4006,41 @@ public class XBRLNavigationController {
 	@ResponseBody
 	public List<String> getUploadedDates(@RequestParam String reportType) {
 
+	    if (reportType == null || reportType.trim().isEmpty()) {
+	        return new ArrayList<>();
+	    }
+
 	    if ("MFD".equals(reportType)) {
 	        return rtmidFxDealservice.getUploadedDates();
 	    } else if ("SLS".equals(reportType)) {
 	        return rtSlsService.getUploadedDates();
 	    } else if ("ACPR".equals(reportType)) {
 	        return acprService.getUploadedDates();
-	    }else if ("ACPRNF".equals(reportType)) {
+	    } else if ("ACPRNF".equals(reportType)) {
 	        return acprService.getUploadedDate();
-	    }else if ("RWAFUND".equals(reportType)) {
+	    } else if ("RWAFUND".equals(reportType)) {
 	        return rwaService.getUploadedFundDates();
 	    } else if ("RWANONFUND".equals(reportType)) {
 	        return rwaService.getUploadedNonFundDates();
 	    } else if ("RWABILLDETAIL".equals(reportType)) {
 	        return rwaService.getUploadedBillDates();
-	    }
-	    else if ("FXP".equals(reportType)) {
+	    } else if ("FXP".equals(reportType)) {
 	        return rtFxPositionService.getUploadedDates();
+	    } else if ("TR_PLC".equals(reportType)) {
+	        return rtmidFxDealservice.getTreasuryPlacementUploadedDates();
+	    } else if ("TR_TB".equals(reportType)) {
+	        return rtmidFxDealservice.getTreasuryTbUploadedDates();
+	    } else if ("TR_SWD".equals(reportType)) {
+	        return rtmidFxDealservice.getTreasurySwdUploadedDates();
+	    } else if ("FWD_RVL".equals(reportType)) {
+	        return rtmidFxDealservice.getForwardRevealUploadedDates();
+	    } else if ("TR_INV_DEAL_DUMP".equals(reportType)) {
+	        return rtinvestmentdealdatadump_service.getInvestmentDealDumpUploadedDates();
+	    } else if ("plcdealdump".equals(reportType)) {
+	        return rtinvestmentdealdatadump_service.getPlacementDealDumpUploadedDates();
+	    } else if ("GAMDATADUMP".equals(reportType) || "ONLY_EAB_TABLE_DATA".equals(reportType)
+	            || "TR_INV".equals(reportType)) {
+	        return uploadMonitorService.getSuccessfulUploadDatesForReportType(reportType);
 	    }
 
 	    return new ArrayList<>();
@@ -4110,7 +4128,8 @@ public class XBRLNavigationController {
 
 	            resultMsg = rwaService.UploadEabdata(file, reportType, toDate);
 
-	        } else if ("TR_PLC".equals(reportType) || "TR_TB".equals(reportType) || "TR_SWD".equals(reportType) ) {
+	        } else if ("TR_PLC".equals(reportType) || "TR_TB".equals(reportType) || "TR_SWD".equals(reportType)
+	        		|| "FWD_RVL".equals(reportType)) {
 
 	            resultMsg = rtmidFxDealservice.UploadTrplorTb(file, toDate, username,reportType); //Mid Service used as upload Service treasury details
 

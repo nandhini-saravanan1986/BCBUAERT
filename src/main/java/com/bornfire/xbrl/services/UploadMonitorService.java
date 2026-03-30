@@ -1,12 +1,16 @@
 package com.bornfire.xbrl.services;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -186,5 +190,23 @@ public class UploadMonitorService {
             return masked;
         }
         return masked.substring(0, maxLength);
+    }
+
+    /**
+     * Report dates with a successful upload in {@link UploadMonitorEntity} (e.g. GAM / EAB flows
+     * without a dedicated staging table list).
+     */
+    @Transactional(readOnly = true)
+    public List<String> getSuccessfulUploadDatesForReportType(String reportType) {
+        if (reportType == null || reportType.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Date> dates = uploadMonitorRepository
+                .findDistinctSuccessfulReportDatesByReportType(reportType.trim());
+        if (dates == null || dates.isEmpty()) {
+            return new ArrayList<>();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        return dates.stream().filter(Objects::nonNull).map(sdf::format).collect(Collectors.toList());
     }
 }

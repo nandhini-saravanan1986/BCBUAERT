@@ -36,5 +36,8 @@ public interface Mis_treasury_placement_repo extends JpaRepository<MIS_TREASURY_
     
     @Query(value = "SELECT * FROM MIS_TREASURY_PLACEMENT WHERE REPORT_DATE = ?1 AND BRANCH_CODE = ?2 ORDER BY NUM_OPERATION", nativeQuery = true)
     List<MIS_TREASURY_PLACEMENT_ENTITY> getByReportDateAndBR(Date report_date, String branch_code);
-	
+
+	@Query(value = "SELECT DISTINCT TRUNC(REPORT_DATE) FROM MIS_TREASURY_PLACEMENT", nativeQuery = true)
+	List<Date> findDistinctReportDates();
+
 }

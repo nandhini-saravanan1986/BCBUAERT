@@ -5,12 +5,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bornfire.xbrl.entities.Forward_reveal_manual_rep;
+import com.bornfire.xbrl.entities.Forward_reveal_manual_table;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
 import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_DC;
@@ -58,6 +62,9 @@ public class RT_MID_FX_DEAL_SERVICE {
 	    
 	    @Autowired
 	    RT_Treasury_swd_data_repo Tr_Swd_Repo;
+	    
+	    @Autowired
+	    Forward_reveal_manual_rep Forward_repo;
 
 	    // Get already uploaded dates
 	    public List<String> getUploadedDates() {
@@ -66,6 +73,34 @@ public class RT_MID_FX_DEAL_SERVICE {
 	        return dates.stream()
 	                .map(sdf::format)
 	                .collect(Collectors.toList());
+	    }
+
+	    /** Distinct report dates for Treasury Placement upload (TR_PLC). */
+	    public List<String> getTreasuryPlacementUploadedDates() {
+	    	return formatReportDates(Placement_Repo.findDistinctReportDates());
+	    }
+
+	    /** Distinct report dates for Treasury TB upload (TR_TB). */
+	    public List<String> getTreasuryTbUploadedDates() {
+	    	return formatReportDates(Tb_Master_repo.findDistinctReportDates());
+	    }
+
+	    /** Distinct report dates for Treasury SWD upload (TR_SWD). */
+	    public List<String> getTreasurySwdUploadedDates() {
+	    	return formatReportDates(Tr_Swd_Repo.findDistinctReportDates());
+	    }
+
+	    /** Distinct report dates for Forward Reveal upload (FWD_RVL). */
+	    public List<String> getForwardRevealUploadedDates() {
+	    	return formatReportDates(Forward_repo.findUploadedDates());
+	    }
+
+	    private List<String> formatReportDates(List<Date> dates) {
+	    	if (dates == null || dates.isEmpty()) {
+	    		return new ArrayList<>();
+	    	}
+	    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	    	return dates.stream().filter(Objects::nonNull).map(sdf::format).collect(Collectors.toList());
 	    }
 
 
@@ -503,7 +538,85 @@ public class RT_MID_FX_DEAL_SERVICE {
 			    Tr_Swd_Repo.saveAll(Swdlistdata);
 
 			    Response = "SWD details processed successfully for Report Date: " + toDate;
+			} else if (Report_type.equals("FWD_RVL")) {
+
+				logger.info("Forward reval data upload started for report date: {}", toDate);
+
+				Forward_repo.Deletebyreportdate(toDate);
+
+				List<Forward_reveal_manual_table> forwardRows = new ArrayList<>();
+
+				for (Sheet sheet : workbook) {
+					for (Row row : sheet) {
+						if (row.getRowNum() == 0) {
+							continue;
+						}
+
+						Forward_reveal_manual_table fwddata = new Forward_reveal_manual_table();
+
+						fwddata.setNum_operation(new BigDecimal(
+								formatter.formatCellValue(row.getCell(0)).replace(",", "").trim()));
+						fwddata.setGl_values(new BigDecimal(
+								formatter.formatCellValue(row.getCell(1)).replace(",", "").trim()));
+						fwddata.setOp_reference(formatter.formatCellValue(row.getCell(2)));
+						fwddata.setPoste(formatter.formatCellValue(row.getCell(3)));
+
+						LocalDate dealDate = getDateFromCell(row.getCell(4));
+						LocalDate valueDate = getDateFromCell(row.getCell(5));
+						LocalDate maturityDate = getDateFromCell(row.getCell(6));
+						if (dealDate == null || valueDate == null || maturityDate == null) {
+							throw new RuntimeException("Invalid or empty date in columns 5–7 at Excel row "
+									+ (row.getRowNum() + 1));
+						}
+						fwddata.setDealdate(java.sql.Date.valueOf(dealDate));
+						fwddata.setValuedate(java.sql.Date.valueOf(valueDate));
+						fwddata.setMaturitydate(java.sql.Date.valueOf(maturityDate));
+
+						fwddata.setCurrency1(formatter.formatCellValue(row.getCell(7)));
+						fwddata.setCurrency2(formatter.formatCellValue(row.getCell(8)));
+						fwddata.setNominal_1(new BigDecimal(
+								formatter.formatCellValue(row.getCell(9)).replace(",", "").trim()));
+						fwddata.setRamount(new BigDecimal(
+								formatter.formatCellValue(row.getCell(10)).replace(",", "").trim()));
+						fwddata.setNo_of_days(new BigDecimal(
+								formatter.formatCellValue(row.getCell(11)).replace(",", "").trim()));
+						fwddata.setAmount1(new BigDecimal(
+								formatter.formatCellValue(row.getCell(12)).replace(",", "").trim()));
+						fwddata.setDealrate(new BigDecimal(
+								formatter.formatCellValue(row.getCell(13)).replace(",", "").trim()));
+						fwddata.setAmount2(new BigDecimal(
+								formatter.formatCellValue(row.getCell(14)).replace(",", "").trim()));
+						fwddata.setReval_rate(new BigDecimal(
+								formatter.formatCellValue(row.getCell(15)).replace(",", "").trim()));
+						fwddata.setReval_amount(new BigDecimal(
+								formatter.formatCellValue(row.getCell(16)).replace(",", "").trim()));
+						fwddata.setProfitloss(new BigDecimal(
+								formatter.formatCellValue(row.getCell(17)).replace(",", "").trim()));
+						fwddata.setContrepartie(formatter.formatCellValue(row.getCell(18)));
+						fwddata.setBranch_code(formatter.formatCellValue(row.getCell(19)));
+						fwddata.setLcyrate(new BigDecimal(
+								formatter.formatCellValue(row.getCell(20)).replace(",", "").trim()));
+						fwddata.setLcyprofitloss(new BigDecimal(
+								formatter.formatCellValue(row.getCell(21)).replace(",", "").trim()));
+
+						fwddata.setReport_date(toDate);
+						fwddata.setEntry_user(username);
+						fwddata.setEntry_time(new Date());
+						fwddata.setDel_flg("N");
+						fwddata.setEntity_flg("N");
+						fwddata.setModify_flg("N");
+
+						forwardRows.add(fwddata);
+						No_of_Records++;
+					}
+				}
+				Forward_repo.saveAll(forwardRows);
+				Response = "Forward reval details processed successfully for Report Date: " + toDate + " Record Count: "
+						+ No_of_Records;
 			}
+		}catch (Exception e) {
+			e.getLocalizedMessage();
+			return e.getLocalizedMessage();
 		}
 
 		return Response;
@@ -525,30 +638,40 @@ public class RT_MID_FX_DEAL_SERVICE {
 	
 	
 	private LocalDate getDateFromCell(Cell cell) {
-	    if (cell == null) return null;
+		if (cell == null) {
+			return null;
+		}
 
-	    try {
-	        if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-	            return cell.getDateCellValue()
-	                    .toInstant()
-	                    .atZone(ZoneId.systemDefault())
-	                    .toLocalDate();
-	        }
+		try {
+			if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			}
 
-	        String dateStr = cell.toString().trim();
+			// Same text Excel shows (handles strings like "09/03/2026 00:00:00", formulas, etc.)
+			DataFormatter dataFormatter = new DataFormatter();
+			String dateStr = dataFormatter.formatCellValue(cell).trim();
+			if (dateStr.isEmpty()) {
+				return null;
+			}
 
-	        DateTimeFormatter f1 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	        DateTimeFormatter f2 = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
+			DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+					DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"),
+					DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+					DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+					DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH),
+			};
 
-	        try {
-	            return LocalDate.parse(dateStr, f1);
-	        } catch (Exception e) {
-	            return LocalDate.parse(dateStr, f2);
-	        }
-
-	    } catch (Exception e) {
-	        return null;
-	    }
+			for (DateTimeFormatter f : formatters) {
+				try {
+					return LocalDate.parse(dateStr, f);
+				} catch (DateTimeParseException ignored) {
+					// try next pattern
+				}
+			}
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 }

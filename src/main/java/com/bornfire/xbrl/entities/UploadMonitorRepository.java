@@ -44,4 +44,8 @@ public interface UploadMonitorRepository extends JpaRepository<UploadMonitorEnti
             @Param("reportDate") Date reportDate,
             @Param("currentUploadId") String currentUploadId,
             Pageable pageable);
+
+    @Query("SELECT DISTINCT u.reportDate FROM UploadMonitorEntity u WHERE u.reportType = :reportType "
+            + "AND u.uploadStatus IN ('SUCCESS', 'REPLACED')")
+    List<Date> findDistinctSuccessfulReportDatesByReportType(@Param("reportType") String reportType);
 }

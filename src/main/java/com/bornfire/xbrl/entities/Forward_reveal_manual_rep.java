@@ -11,14 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_Treasury_swd_data_repo extends JpaRepository<RT_Treasury_swd_data_entity, RT_Treasury_swd_id_class> {
+public interface Forward_reveal_manual_rep extends JpaRepository<Forward_reveal_manual_table, Forward_reveal_manual_id> {
 
 	@Transactional
 	@Modifying
-	@Query(value="Delete from BRF_TREASURY_SWD_TB where report_date =?1",nativeQuery=true)
+	@Query(value="Delete from BRF_FORWARD_REVEAL_MANUAL_TABLE where report_date =?1",nativeQuery=true)
 	void Deletebyreportdate(Date Report_date);
-
-	@Query(value = "SELECT DISTINCT TRUNC(REPORT_DATE) FROM BRF_TREASURY_SWD_TB", nativeQuery = true)
-	List<Date> findDistinctReportDates();
-
+	
+	@Query(value = "SELECT DISTINCT TRUNC(REPORT_DATE) FROM BRF_FORWARD_REVEAL_MANUAL_TABLE", nativeQuery = true)
+	List<Date> findUploadedDates();
 }

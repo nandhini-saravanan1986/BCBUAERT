@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RtInvestmentDealDataDump_Rep extends JpaRepository<RtInvestmentDealDataDump, String> {
+public interface RtInvestmentDealDataDump_Rep extends JpaRepository<RtInvestmentDealDataDump, mc_invdealreportid> {
 	
 	@Transactional
 	@Modifying
@@ -19,5 +20,7 @@ public interface RtInvestmentDealDataDump_Rep extends JpaRepository<RtInvestment
 	
 	boolean existsByReportDate(Date reportDate);
 
+	@Query("SELECT DISTINCT r.reportDate FROM RtInvestmentDealDataDump r")
+	List<Date> findDistinctReportDates();
 
 }

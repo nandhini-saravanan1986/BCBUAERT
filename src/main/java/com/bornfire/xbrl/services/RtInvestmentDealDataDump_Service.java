@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -262,6 +264,23 @@ public class RtInvestmentDealDataDump_Service {
 		    String val = formatter.formatCellValue(cell).trim();
 		    return val.isEmpty() ? null : val;
 		}
+
 		
+		public List<String> getInvestmentDealDumpUploadedDates() {
+			return formatReportDates(rtinvestmentdealdatadump_rep.findDistinctReportDates());
+		}
+
+		
+		public List<String> getPlacementDealDumpUploadedDates() {
+			return formatReportDates(rtplacementdealdatadump_rep.findDistinctReportDates());
+		}
+
+		private List<String> formatReportDates(List<Date> dates) {
+			if (dates == null || dates.isEmpty()) {
+				return new ArrayList<>();
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			return dates.stream().filter(Objects::nonNull).map(sdf::format).collect(Collectors.toList());
+		}
 
 }
