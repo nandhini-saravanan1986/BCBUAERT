@@ -268,9 +268,10 @@ public class RT_TradeLevelDerivativesService {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
-        String templateFileName = "CBUAE_Trade_Level_Data_Derivative_Template.xls";
+       // String templateFileName = "CBUAE_Trade_Level_Data_Derivative_Template.xls";
+        String templateFileName = "CBUAE_Trade_Level_Data_Derivatives_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
-
+        System.out.println("Template Dir = [" + templateDir + "]");
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
 
         if (!Files.exists(templatePath)) {
@@ -285,7 +286,7 @@ public class RT_TradeLevelDerivativesService {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(2);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles

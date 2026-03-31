@@ -2462,7 +2462,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "TradeLevelDataDerivative.xls";
+			String filename = "CBUAE_Trade_Level_Data_Derivatives_Template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
@@ -2509,7 +2509,7 @@ public class XBRLNavigationController {
 			String secondLastDateString =(secondlastdatetimestamp == null) ? null
 					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Trade_Level_Data_Derivative_Template");
-			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Level_Data_Derivative_Template");
+			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Level_Data_Derivatives_Template");
 			if (data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
@@ -2666,7 +2666,7 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "CBUAE_CCR_Data_Template.xls";
+			String filename = "CBUAE_CCR_Data_Template.xlsx";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);

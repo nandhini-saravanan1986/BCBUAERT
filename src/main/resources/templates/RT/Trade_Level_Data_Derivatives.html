@@ -352,7 +352,7 @@ left
 
 <style>
 	#usertable {
-		min-width: 2800px;
+		/*min-width: 2800px;*/
 		/* adjust based on columns */
 	}
 
@@ -410,7 +410,7 @@ left
 		background-color: #ffffff !important;
 	}
 	#usertable thead tr:nth-child(2) th {
-	    top: 32px; /* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+	   /* top: 32px;  Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
 	    z-index: 9;
 }
 	/* SEARCH BOX FIX */
@@ -845,7 +845,7 @@ if (tabId === 'data') {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'TradelevelDataDerivative.xls';
+                    a.download = 'CBUAE_Trade_Level_Data_Derivatives_Template.xlsx';
                     document.body.appendChild(a);
 
                     a.click();
@@ -853,7 +853,7 @@ if (tabId === 'data') {
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    message = 'TradelevelDataDerivative.xls has been downloaded successfully.';
+                    message = 'CBUAE_Trade_Level_Data_Derivatives_Template.xlsx has been downloaded successfully.';
                 } else {
                     message = 'No data available to download.';
                 }
@@ -867,7 +867,7 @@ if (tabId === 'data') {
 
                 console.error("Download failed:", error);
 
-                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alertmsg').text('An error occurred while downloading CBUAE_Trade Level Data_Derivatives_Template.xlsx.');
                 $('#alert').modal('show');
             }
         });
@@ -1288,7 +1288,7 @@ if (tabId === 'data') {
 					style="max-height: 400px; overflow: auto; border: none;">
 					<table id="usertable"
 						class="table table-bordered table-striped table-hover"
-						style="min-width: 2000px; ">
+					>
 
 						<thead class="thead-light">
 
@@ -1322,7 +1322,7 @@ if (tabId === 'data') {
 							<tr>
 								<th style="text-align: center;width: 100px;">Action</th>
 
-								<th  class="th-left">Date</th>
+								<th  class="th-left" style="width: 10px;">Date</th>
 								<th  class="th-left">Bank Name</th>
 								<th  class="th-left">Head Office Subsidiary</th>
 								<th  class="th-left">Subsidiary</th>
@@ -1651,7 +1651,7 @@ if (tabId === 'data') {
 				</div>
 
 
-				<div class="card-footer text-center"
+				<div class="card-footer text-center"  th:if="${formmode == 'null' or formmode == 'add'}"
 					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 					<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 						<i class="fa fa-home"></i> Home
@@ -3610,6 +3610,26 @@ body {
 	font-size: 12px !important;
 	font-family: Arial, sans-serif !important;
 }
+</style>
+<style>
+	.table-responsive {
+	    max-height: none !important;
+	    overflow: visible !important;
+	}
+
+	#usertable {
+	    display: block !important;
+	    max-height: calc(100vh - 280px) ;
+	    overflow-y: auto !important;
+	    overflow-x: auto !important;
+	}
+
+	#usertable thead th {
+	    position: sticky;
+	    top: 0;
+	    z-index: 2; 
+	    background-color: #7b6458; 
+	}
 </style>
 	<script>
 if ('scrollRestoration' in history) {
