@@ -1025,8 +1025,7 @@ public class XBRLNavigationController {
 
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
-			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo)
-					.orElse(new RT_Investment_Securities_Data_Template()));
+			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo));
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist();
 
@@ -1204,7 +1203,7 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "CBUAE_Investment_Securities_Data_Template_Pillar2.xls";
+			String filename = "CBUAE_Investment_Securities_Data_Template_Pillar2.xlsx";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -1218,7 +1217,7 @@ public class XBRLNavigationController {
 
 		} catch (FileNotFoundException e) {
 			logger.error(
-					"Controller ERROR: The CBUAE_Investment_Securities_Data_Template_Pillar2.xls template file was not found.",
+					"Controller ERROR: The CBUAE_Investment_Securities_Data_Template_Pillar2.xlsx template file was not found.",
 					e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} catch (Exception e) {
@@ -1665,11 +1664,11 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "Mm_Data", method = RequestMethod.GET)
-	public String Mmdata(@RequestParam(required = false) String formmode, @RequestParam(required = false) String SI_NO,
+	public String Mmdata(@RequestParam(required = false) String formmode, @RequestParam(required = false) String deal_no,
 			Model md, HttpServletRequest req) {
 
-		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
-			RT_MmData data = mmdataRepo.getParticularDataBySI_NO(SI_NO);
+		if ("edit".equalsIgnoreCase(formmode) && deal_no != null && !deal_no.isEmpty()) {
+			RT_MmData data = mmdataRepo.getParticularDataBySI_NO(deal_no);
 			md.addAttribute("mmData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");

@@ -554,9 +554,17 @@ TESTED BY   : RAJALAKSHMI R
 		}
 
 		.table-responsive {
-			border: 1px solid #dee2e6;
 			border-radius: 4px;
-		}
+			    width: 100%;
+			    position: relative;
+			}
+
+			/* scroll only table */
+			#usertable {
+			    display: block;
+			    max-height: calc(100vh - 240px);
+			    overflow-y: auto;
+			}
 
 		.table-hover tbody tr:hover {
 			background-color: #f3f6f9;
@@ -1300,9 +1308,9 @@ TESTED BY   : RAJALAKSHMI R
 
 		<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 		<div class="tab-pane fade" id="data" role="tabpanel">
-			<div class="table-responsive" style="max-height: 400px; overflow: auto; border:none;">
+			<div class="table-responsive" style=" border:none;">
 				<table id="usertable" class="table table-bordered table-striped table-hover"
-					style="min-width: 2000px; ">
+					>
 
 					<thead class="thead-light">
 						<tr>
@@ -1420,160 +1428,160 @@ TESTED BY   : RAJALAKSHMI R
 					<tbody th:each="data : ${ISList}">
 						<tr>
 							<td style="text-align: center;min-width: 100px;"><a
-									th:href="@{'/Investment_Securities_Data?formmode=edit&siNo=' + ${data.siNo}}">
+									th:href="@{'/Investment_Securities_Data?formmode=edit&siNo=' + ${data?.siNo}}">
 									<i class="fa fa-edit" style="color: #ff7f27;"></i></a>
 							</td>
-							<td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
-							<td th:text="${data.bankName}"></td>
-							<td th:text="${data.headOfficeSubsidiary}"></td>
-							<td th:text="${data.subsidiary}"></td>
-							<td th:text="${data.bankSymbol}"></td>
-							<td th:text="${data.conventionalIslamic}"></td>
+							<td th:text="${#dates.format(data?.dataDate, 'dd-MM-yyyy')}"></td>
+							<td th:text="${data?.bankName}"></td>
+							<td th:text="${data?.headOfficeSubsidiary}"></td>
+							<td th:text="${data?.subsidiary}"></td>
+							<td th:text="${data?.bankSymbol}"></td>
+							<td th:text="${data?.conventionalIslamic}"></td>
 
-							<td th:text="${data.localForeign}"></td>
-							<td th:text="${data.cbuAeTiering}"></td>
-							<td th:text="${data.accountingClassification}"></td>
-							<td th:text="${data.instrumentType}"></td>
-							<td th:text="${data.instrumentSubcategoryType}"></td>
-							<td th:text="${data.isinCode}"></td>
-							<td th:text="${data.bankInternalPortfolioCode}"></td>
-							<td th:text="${data.cbuAeSecurityId}"></td>
-							<td th:text="${data.cbuAeAccessPrimaryKey}"></td>
+							<td th:text="${data?.localForeign}"></td>
+							<td th:text="${data?.cbuAeTiering}"></td>
+							<td th:text="${data?.accountingClassification}"></td>
+							<td th:text="${data?.instrumentType}"></td>
+							<td th:text="${data?.instrumentSubcategoryType}"></td>
+							<td th:text="${data?.isinCode}"></td>
+							<td th:text="${data?.bankInternalPortfolioCode}"></td>
+							<td th:text="${data?.cbuAeSecurityId}"></td>
+							<td th:text="${data?.cbuAeAccessPrimaryKey}"></td>
 
-							<td th:text="${data.securityDescription}"></td>
-							<td th:text="${data.assetCurrency}"></td>
-							<td th:text="${data.obligor}"></td>
-							<td th:text="${data.countryOfRisk}"></td>
-							<td th:text="${data.cbuAeGeographicalZone}"></td>
-							<td th:text="${data.industry}"></td>
-							<td th:text="${data.sector}"></td>
+							<td th:text="${data?.securityDescription}"></td>
+							<td th:text="${data?.assetCurrency}"></td>
+							<td th:text="${data?.obligor}"></td>
+							<td th:text="${data?.countryOfRisk}"></td>
+							<td th:text="${data?.cbuAeGeographicalZone}"></td>
+							<td th:text="${data?.industry}"></td>
+							<td th:text="${data?.sector}"></td>
 
-							<td th:text="${data.issuerType}"></td>
+							<td th:text="${data?.issuerType}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.issueSize, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.issueSize, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.percentIssueSize, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.percentIssueSize, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.nominalTradeCurrency, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.nominalTradeCurrency, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.nominalAedEquivalent, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.nominalAedEquivalent, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.premDiscAedEquivalent, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.premDiscAedEquivalent, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.specificProvisionAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.specificProvisionAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.fixedIncomeInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.fixedIncomeInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.netBookValueAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.netBookValueAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.purchaseYieldToMaturity, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.purchaseYieldToMaturity, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.cleanPrice, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.cleanPrice, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.cleanMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.cleanMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.currentYieldToMaturity, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.currentYieldToMaturity, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.unrealizedGainLossAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.unrealizedGainLossAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 
 							<!-- subDebtSukuk is String -->
-							<td th:text="${data.subordinatedDebtSukuk}"></td>
+							<td th:text="${data?.subordinatedDebtSukuk}"></td>
 
-							<td th:text="${data.finalRatingBanks}"></td>
-							<td th:text="${data.finalRatingCbuae}"></td>
-							<td th:text="${data.creditQuality}"></td>
-							<td th:text="${#dates.format(data.maturityDate, 'dd-MM-yyyy')}"></td>
-							<td th:text="${data.residualMaturity}"></td>
-							<td th:text="${data.maturityPeriod}"></td>
+							<td th:text="${data?.finalRatingBanks}"></td>
+							<td th:text="${data?.finalRatingCbuae}"></td>
+							<td th:text="${data?.creditQuality}"></td>
+							<td th:text="${#dates.format(data?.maturityDate, 'dd-MM-yyyy')}"></td>
+							<td th:text="${data?.residualMaturity}"></td>
+							<td th:text="${data?.maturityPeriod}"></td>
 
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.percentHoldingsFi, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.percentHoldingsFi, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.qtyEquityFunds, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.qtyEquityFunds, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.equityFloatingFundAssets, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.equityFloatingFundAssets, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.totalFloatingShareFundAum, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.totalFloatingShareFundAum, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.specificProvision, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.specificProvision, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.netBookValue, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.netBookValue, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.otherSecInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.otherSecInfoNetBookPrice, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.marketPrice, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.marketPrice, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.fairValueAmountAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.fairValueAmountAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.unrealizedGainLossAgain, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.unrealizedGainLossAgain, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.percentHoldingsOther, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.percentHoldingsOther, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.totalNetBookValueAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.totalNetBookValueAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.totalMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.totalMarketValueAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.totalUnrealizedGainLoss, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.totalUnrealizedGainLoss, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.unrealizedGainLossContrib, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.unrealizedGainLossContrib, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.percentHoldings, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.percentHoldings, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 
 							<!-- existingPledgeStatus and others -->
-							<td th:text="${data.existingPledgeStatus}"></td>
+							<td th:text="${data?.existingPledgeStatus}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.pledgedAmountAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.pledgedAmountAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.unencumberedAmountAed, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.unencumberedAmountAed, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.proportionUnencumbered, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.proportionUnencumbered, 1, 'COMMA', 2, 'POINT')}">
 							</td>
-							<td th:text="${data.hqlaElarEligibility}"></td>
-							<td th:text="${data.liquidityType}"></td>
-							<td th:text="${data.sukukType}"></td>
+							<td th:text="${data?.hqlaElarEligibility}"></td>
+							<td th:text="${data?.liquidityType}"></td>
+							<td th:text="${data?.sukukType}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.ttcPd, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data?.ttcPd, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.pitPd, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data?.pitPd, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.ecl1y, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data?.ecl1y, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.eclLifetime, 1, 'COMMA', 2, 'POINT')}">
+								th:text="${#numbers.formatDecimal(data?.eclLifetime, 1, 'COMMA', 2, 'POINT')}">
 							</td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.eclFinal, 1, 'COMMA', 2, 'POINT')}"></td>
-							<td th:text="${data.ifrs9Staging}"></td>
+								th:text="${#numbers.formatDecimal(data?.eclFinal, 1, 'COMMA', 2, 'POINT')}"></td>
+							<td th:text="${data?.ifrs9Staging}"></td>
 
 						</tr>
 					</tbody>

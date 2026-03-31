@@ -218,7 +218,7 @@ public class RT_InvestmentSecurity_Service {
 		}
 
 		String templateDir = env.getProperty("output.exportpathtemp");
-		String templateFileName = "CBUAE_Investment_Securities_Data_Template_Pillar2.xls";
+		String templateFileName = "CBUAE_Investment_Securities_Data_Template_Pillar2.xlsx";
 		Path templatePath = Paths.get(templateDir, templateFileName);
 
 		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -567,7 +567,7 @@ public class RT_InvestmentSecurity_Service {
 			workbook.write(out);
 
 			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-            File outputFile = new File(finalPath + "CBUAE_Investment_Securities_Data_Template_Pillar2.xls");
+            File outputFile = new File(finalPath + "CBUAE_Investment_Securities_Data_Template_Pillar2.xlsx");
             try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 fos.write(out.toByteArray());
                 logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());

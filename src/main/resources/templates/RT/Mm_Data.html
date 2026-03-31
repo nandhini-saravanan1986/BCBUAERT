@@ -746,7 +746,7 @@ function mmdata() {
     // Show loader
    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    // Check if SI_NO is present before sending
+    // Check if deal_no is present before sending
     var formData = $('#Mmdata').serialize(); // Make sure this ID is correct (capital F)
 
     console.log("Serialized Data:", formData); // Debug
@@ -1395,7 +1395,7 @@ function downloadMm() {
 						<!-- Loop to render data dynamically -->
 						<tr th:each="data : ${branchList}">
 							<td style="text-align: center;min-width: 100px;"><a
-								th:href="@{'/Mm_Data?formmode=edit&SI_NO=' + ${data.SI_NO}}">
+								th:href="@{'/Mm_Data?formmode=edit&deal_no=' + ${data.deal_no}}">
 									<i class="fa fa-edit" style="color: #f7a47c;"></i>
 							</a></td>
 
@@ -1480,7 +1480,7 @@ function downloadMm() {
 						</div>
 					</div>
 					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-						<input type="hidden" th:field="*{SI_NO}" />
+						<input type="hidden" th:field="*{deal_no}" />
 
 						<!-- Row: Bank Date -->
 						<div class="form-group row">

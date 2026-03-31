@@ -51,16 +51,16 @@ public class RT_MmdataService {
 	AuditService auditservice;
     
     public boolean updateMmdata(RT_MmData updatedData) {
-	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
-
-	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+	    System.out.println("Looking for record with SI_NO: " + updatedData.getDeal_no());
+	    
+	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NO(updatedData.getDeal_no());
 	    
 	    RT_MmData dbUser = new RT_MmData();
-		org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
+
 
 	    if (existing != null) {
 	        // Update fields
-	       
+			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
 	    	existing.setBank_name(updatedData.getBank_name());
 	    	existing.setHead_office_subsidiary(updatedData.getHead_office_subsidiary());
 	    	existing.setSubsidiary(updatedData.getSubsidiary());
@@ -68,7 +68,7 @@ public class RT_MmdataService {
 	    	existing.setConventional_islamic(updatedData.getConventional_islamic());
 	    	existing.setLocal_foreign(updatedData.getLocal_foreign());
 	    	existing.setCbuae_tiering(updatedData.getCbuae_tiering());
-	    	existing.setDeal_no(updatedData.getDeal_no());
+	    	
 	    	existing.setCustomer_id(updatedData.getCustomer_id());
 	    	existing.setCounterparty_name(updatedData.getCounterparty_name());
 	    	existing.setFinal_rating_banks(updatedData.getFinal_rating_banks());
@@ -146,7 +146,7 @@ public class RT_MmdataService {
 	        // Audit only if any field was changed
 	        if (!changes.isEmpty()) {
 	            auditservice.createBusinessAudit(
-	                updatedData.getSI_NO(),           // Unique ID
+	                updatedData.getDeal_no(),           // Unique ID
 	                "MODIFY",                             // Action
 	                "MM_DATA_EDIT_SCREEN",                  // Screen name
 	                changes,                              // Changed fields map
@@ -157,7 +157,7 @@ public class RT_MmdataService {
 	        
 	        return true;
 	    } else {
-	        System.out.println("No record found for SI_NO: " + updatedData.getSI_NO());
+	        System.out.println("No record found for SI_NO: " + updatedData.getDeal_no());
 	        return false;
 	    }
 	}
