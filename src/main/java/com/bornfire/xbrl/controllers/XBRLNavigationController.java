@@ -207,6 +207,7 @@ import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.UploadMonitorService;
+import com.bornfire.xbrl.services.Bloomberg_services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -222,9 +223,13 @@ public class XBRLNavigationController {
 	 * @PersistenceContext private EntityManager entityManager;
 	 * 
 	 */
-	
+	@Autowired
+	Bloomberg_services bloombergService;
 	@Autowired
 	RtInvestmentDealDataDump_Service rtinvestmentdealdatadump_service;
+	
+	@Autowired
+	RtBloombergData_Rep rtBloombergdata_rep;
 
 	@Autowired
 	RT_IRRBB_Data_EVE_Template_Detail_Rep rt_irrbb_data_eve_template_detail_rep;
@@ -541,6 +546,63 @@ public class XBRLNavigationController {
 
 		return "AccessandRoles";
 	}
+	
+	
+	@RequestMapping(value = "BloombergData", method = { RequestMethod.GET, RequestMethod.POST })
+	public String BloombergData(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String userid, @RequestParam(required = false) String isin,
+			 Model md, HttpServletRequest req) {
+
+		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		// System.out.println("role id is : " + roleId);
+		md.addAttribute("roleId", roleId);
+
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("menu", "Bloomberg Data");
+			md.addAttribute("menuname", "Bloomberg Data");
+			md.addAttribute("formmode", "list");
+			md.addAttribute("BloombergDatalist", rtBloombergdata_rep.getrtbloombergdatalist());
+			
+
+		} else if (formmode.equals("add")) {
+			md.addAttribute("menu", "Bloomberg Data");
+			md.addAttribute("menuname", "Bloomberg Data");
+			md.addAttribute("formmode", "add");
+			md.addAttribute("BloombergData", new RtBloombergData());
+		}
+		
+		else if (formmode.equals("edit")) {
+			md.addAttribute("menu", "Bloomberg Data");
+			md.addAttribute("menuname", "Bloomberg Data");
+			md.addAttribute("formmode", "edit");
+			md.addAttribute("BloombergData",rtBloombergdata_rep.getrtbloombergdatabyisin(isin));
+		}
+		
+
+		return "BloombergData";
+	}
+	
+	@PostMapping("/saveBloomberg")
+	@ResponseBody
+	public String saveBloomberg(
+	        @ModelAttribute RtBloombergData data,
+	        @RequestParam("formmode") String formmode,
+	        HttpServletRequest rq) {
+
+	    String userid = (String) rq.getSession().getAttribute("USERID");
+
+	    if (userid == null) {
+	        return "Session Expired. Please login again.";
+	    }
+
+	    String msg = bloombergService.addData(data, formmode, userid);
+
+	    System.out.println("msg=" + msg);
+
+	    return msg;
+	}
+	
+	
 
 	@RequestMapping(value = "createAccessRole", method = RequestMethod.POST)
 	@ResponseBody
