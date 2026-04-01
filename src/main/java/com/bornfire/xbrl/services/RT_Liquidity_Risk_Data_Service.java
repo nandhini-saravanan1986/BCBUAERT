@@ -21,7 +21,9 @@ import java.util.Optional;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -212,6 +214,8 @@ public class RT_Liquidity_Risk_Data_Service {
             numberStyle.setBorderLeft(BorderStyle.THIN);
             numberStyle.setBorderRight(BorderStyle.THIN);
 
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            
             int startRow = 1;
 
             for (int i = 0; i < dataList.size(); i++) {
@@ -388,9 +392,18 @@ public class RT_Liquidity_Risk_Data_Service {
                         
                     }
                 }
-            }
+                
+                if (row == null) continue;
 
-            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+                for (Cell cell : row) {
+                	if (cell.getCellTypeEnum() == CellType.FORMULA) {
+                        evaluator.evaluateFormulaCell(cell);
+                    }
+                }
+                
+            }
+            //workbook.setForceFormulaRecalculation(true);
+            //workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             workbook.write(out);
 
             String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
