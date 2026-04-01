@@ -527,6 +527,7 @@
 					font-size: 0.70rem;
 
 				}
+				
 		#usertable tbody td {
     		font-size: 0.65rem;
     		text-align: justify;
@@ -559,6 +560,8 @@
 										.static-back-btn:active {
 										    transform: scale(0.95);
 										}
+										
+										
 	</style>
 
 	
@@ -577,6 +580,10 @@
 			padding-left: 0px !important;
 			margin-right: auto;
 			margin-left: auto;
+		}
+		body {
+		    -webkit-print-color-adjust: exact;
+		    print-color-adjust: exact;
 		}
 	</style>
 	<script>
@@ -765,87 +772,145 @@
 
 	    var table = document.getElementById("usertable");
 
-	    // ✅ Clone table to remove input boxes
-	    var clonedTable = table.cloneNode(true);
+	    if (!table) {
+	        alert("Table not found!");
+	        return;
+	    }
 
-	    // Convert input fields to text
+	    // ✅ Clone ONLY tbody (since DataTables breaks thead)
+	    var tbody = table.querySelector("tbody").cloneNode(true);
+
+	    // ✅ MANUAL HEADER (same columns — alignment safe)
+	    var theadHTML = `
+	        <thead>
+	            <tr>
+	                <th>SN</th>
+	                <th>KRI Name</th>
+	                <th>KRI Definition [Numerator/ Denominator]</th>
+	                <th>SAS-GCM KRI ID</th>
+	                <th>Approval</th>
+	                <th>KRI Owner Dept Name</th>
+	                <th>Data Source</th>
+	                <th>Frequency of Monitoring</th>
+	                <th>Lower Threshold</th>
+	                <th>Upper Threshold</th>
+	                <th>Yearly Value</th>
+	                <th>Dept Sign</th>
+	            </tr>
+	        </thead>
+	    `;
+
+	    // ✅ Create new table
+	    var clonedTable = document.createElement("table");
+	    clonedTable.style.width = "100%";
+	    clonedTable.style.borderCollapse = "collapse";
+
+	    clonedTable.innerHTML = theadHTML;
+	    clonedTable.appendChild(tbody);
+
+	    // ✅ Convert inputs → text
 	    var inputs = clonedTable.querySelectorAll("input");
 	    inputs.forEach(function (input) {
-	        var text = document.createTextNode(input.value);
+	        var text = document.createTextNode(input.value || '');
 	        input.parentNode.replaceChild(text, input);
 	    });
 
-	    var printContents = clonedTable.outerHTML;
+	    var reportDate = document.getElementById("reportDate").value || '';
 
-	    var newWindow = window.open('', '', 'height=700,width=1000');
+	    var newWindow = window.open('', '_blank', 'width=1000,height=700');
 
-	    newWindow.document.write('<html><head><title>Print</title>');
+	    if (!newWindow) {
+	        alert("Popup blocked! Please allow popups.");
+	        return;
+	    }
 
-	    // ✅ FULL CSS
+	    newWindow.document.open();
 	    newWindow.document.write(`
-	        <style>
-	            body {
-	                font-family: sans-serif;
-	                padding: 20px;
-	            }
+	        <html>
+	        <head>
+	            <title>Print</title>
+	            <style>
+					body {
+					    font-family: sans-serif;
+					}
 
-	            h3 {
-	                text-align: center;
-	                margin-bottom: 10px;
-	            }
+					/* ✅ PRINT SETTINGS */
+					@page {
+					    size: A4 landscape;
+					    margin: 10mm 10mm 10mm 5mm;
+					}
 
-	            p {
-	                margin-bottom: 15px;
-	                font-size: 14px;
-	            }
+					@media print {
 
-	            table {
-	                width: 100%;
-	                border-collapse: collapse;
-	            }
+					    /* 🔻 Reduce row height */
+					    th, td {
+					        padding: 2px 4px !important;   /* 👈 reduce vertical padding */
+					        line-height: 1.1 !important;   /* 👈 compact text */
+					        font-size: 9px;                /* 👈 slightly smaller */
+					    }
 
-	            table, th, td {
-	                border: 1px solid black;
-	            }
+					    /* 🔻 Reduce heading space */
+					    h3 {
+					        margin: 0 0 5px 0 !important;
+					    }
 
-	            th, td {
-	                padding: 6px;
-	                text-align: left;
-	                font-size: 12px;
-	            }
+					    p {
+					        margin: 0 0 5px 0 !important;
+					        font-size: 12px;
+					    }
 
-	            /* ✅ HEADER STYLE (FIXED) */
-	            thead th {
-	                background-color: brown !important;
-	                color: white !important;
-	                font-size: 12px;
-	            }
+					    /* 🔻 Remove extra spacing between rows */
+					    table {
+					        border-collapse: collapse !important;
+					    }
 
-	            /* ✅ Repeat header in multiple pages */
-	            @media print {
-	                thead {
-	                    display: table-header-group;
-	                }
-	            }
-	        </style>
+					    /* 🔻 Avoid row breaking into next page (saves space) */
+					    tr {
+					        page-break-inside: avoid;
+					    }
+						/* ✅ FORCE ALL BORDERS IN PRINT */
+						@media print {
+						    table, th, td {
+						        border: 1px solid black !important;
+						    }
+
+						    table {
+						        border-collapse: collapse !important; /* 🔥 important */
+						    }
+						}
+					}
+
+					/* Header color */
+					thead th {
+					    background-color: brown !important;
+					    color: white !important;
+					    -webkit-print-color-adjust: exact;
+					    print-color-adjust: exact;
+					}
+	            </style>
+	        </head>
+
+	        <body>
+
+	            <h3>Key Risk Indicator Report</h3>
+	            <p><b>Report Date:</b> ${reportDate}</p>
+
+	            ${clonedTable.outerHTML}
+
+	        </body>
+	        </html>
 	    `);
 
-	    newWindow.document.write('</head><body>');
-
-	    // ✅ Title + Date
-	    newWindow.document.write('<h3>Key Risk Indicator Report</h3>');
-	    newWindow.document.write('<p><b>Report Date:</b> ' + document.getElementById("reportDate").value + '</p>');
-
-	    // ✅ Table
-	    newWindow.document.write(printContents);
-
-	    newWindow.document.write('</body></html>');
-
 	    newWindow.document.close();
-	    newWindow.focus();
 
-	    newWindow.print();
-	    newWindow.close();
+	    // ✅ Ensure proper rendering before print
+	    newWindow.onload = function () {
+	        setTimeout(function () {
+	            newWindow.focus();
+	            newWindow.print();
+	            newWindow.close();
+	        }, 500);
+	    };
 	}
 	
 	</script>
