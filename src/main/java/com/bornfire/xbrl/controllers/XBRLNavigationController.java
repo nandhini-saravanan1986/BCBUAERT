@@ -1037,7 +1037,7 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls";
+			String filename = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xlsx";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -1220,7 +1220,7 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "CBUAE_Liquidity Risk_Data_Template.xls";
+			String filename = "CBUAE_Liquidity Risk_Data_Template.xlsx";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -1492,7 +1492,7 @@ public class XBRLNavigationController {
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			String filename = "FxriskData.xls";
+			String filename = "CBUAE_FX_Risk_Data_Template.xlsx";
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
 			logger.info("Controller: Sending file '{}' to client ({} bytes).", filename, excelData.length);
@@ -3116,7 +3116,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "TradeLevelDataDerivativeSimplified.xls";
+			String filename = "CBUAE_Trade_Level_Data_Derivative_Simplified_Template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
@@ -3153,7 +3153,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "InvestmentRiskDataDashboard.xls";
+			String filename = "CBUAE_Investment Risk Data_Dashboard_Template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 

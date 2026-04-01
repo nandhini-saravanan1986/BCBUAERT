@@ -833,7 +833,7 @@ $(document).ready(function () {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'CBUAE_Investment Risk Data_Dashboard_Template.xls';
+                    a.download = 'CCBUAE_Investment Risk Data_Dashboard_Template.xlsx';
                     document.body.appendChild(a);
 
                     a.click();
@@ -841,7 +841,7 @@ $(document).ready(function () {
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
 
-                    message = 'CBUAE_Investment Risk Data_Dashboard_Template.xls has been downloaded successfully.';
+                    message = 'CBUAE_Investment Risk Data_Dashboard_Template.xlsx has been downloaded successfully.';
                 } else {
                     message = 'No data available to download.';
                 }
@@ -1257,8 +1257,7 @@ $(document).ready(function () {
 			<div class="table-responsive"
 				style="max-height: 400px; overflow: auto; border: none;">
 				<table id="usertable" 
-					class="table table-bordered table-striped table-hover"
-					style="min-width: 2000px;" >
+					class="table table-bordered table-striped table-hover">
 					<thead class="thead-light">
 						<tr>
 							<th style="text-align: center;width: 100px;">Action</th>
@@ -1552,7 +1551,7 @@ $(document).ready(function () {
 			</div>
 
 
-			<div class="card-footer text-center"
+			<div class="card-footer text-center"  th:if="${formmode == 'null' or formmode == 'add'}"
 				style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 				<!-- <button type="button" class="custom-tab-btn" onclick="home();">
 					<i class="fa fa-home"></i> Home
@@ -2889,7 +2888,7 @@ function handleBankChange(select) {
 	</style>
 	<style>
 		#usertable {
-			min-width: 2800px;
+			/*min-width: 2800px;*/
 			/* adjust based on columns */
 		}
 
@@ -3156,9 +3155,30 @@ body {
 	font-family: Arial, sans-serif !important;
 }
 </style>
+<style>
+	.table-responsive {
+	    max-height: none !important;
+	    overflow: visible !important;
+	}
+
+	#usertable {
+	    display: block !important;
+	    max-height: calc(100vh - 280px) ;
+	    overflow-y: auto !important;
+	    overflow-x: auto !important;
+	}
+
+	#usertable thead th {
+	    position: sticky;
+	    top: 0;
+	    z-index: 2; 
+	    background-color: #7b6458; 
+	}
+</style>
 <script>
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
 </script>
+
 </html>

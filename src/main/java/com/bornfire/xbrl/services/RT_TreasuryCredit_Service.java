@@ -222,7 +222,7 @@ public class RT_TreasuryCredit_Service {
             }
 
             String templateDir = env.getProperty("output.exportpathtemp");
-            String templateFileName = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls";
+            String templateFileName = "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xlsx";
             Path templatePath = Paths.get(templateDir, templateFileName);
 
             logger.info("Service: Template path - {}", templatePath.toAbsolutePath());
@@ -238,7 +238,7 @@ public class RT_TreasuryCredit_Service {
     				Workbook workbook = WorkbookFactory.create(templateInputStream);
     				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-    			Sheet sheet = workbook.getSheetAt(0);
+    			Sheet sheet = workbook.getSheetAt(2);
 
     			CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -509,7 +509,7 @@ public class RT_TreasuryCredit_Service {
 				 */
 
                 String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-                File outputFile = new File(finalPath + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xls");
+                File outputFile = new File(finalPath + "CBUAE_Treasury_Credit_Limit_Management_Data_Template.xlsx");
                 try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                     fos.write(out.toByteArray());
                     logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());

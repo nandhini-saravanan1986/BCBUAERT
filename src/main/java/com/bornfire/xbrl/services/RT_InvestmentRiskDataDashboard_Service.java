@@ -273,7 +273,7 @@ public class RT_InvestmentRiskDataDashboard_Service {
         }
 
         String templateDir = env.getProperty("output.exportpathtemp");
-        String templateFileName = "CBUAE_Investment Risk Data_Dashboard_Template.xls";
+        String templateFileName = "CBUAE_Investment Risk Data_Dashboard_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -290,7 +290,7 @@ public class RT_InvestmentRiskDataDashboard_Service {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(2);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -827,7 +827,7 @@ public class RT_InvestmentRiskDataDashboard_Service {
             workbook.write(out);
 
             String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-            File outputFile = new File(finalPath + "CBUAE_Investment Risk Data_Dashboard_Template.xls");
+            File outputFile = new File(finalPath + "CBUAE_Investment Risk Data_Dashboard_Template.xlsx");
             try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 fos.write(out.toByteArray());
                 logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
