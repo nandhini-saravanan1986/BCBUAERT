@@ -4376,9 +4376,18 @@
 			const label = dateInput.dataset.label;
 			button.disabled = true;
 			button.textContent = "Running...";
+			
+			if(sNo==="25"){
+				//alert("hi");
+				button.disabled = false;
+				button.textContent = "Run";
+				window.location.href = "./RT_Key_Risk_Indicator?Report_date="+reportDate;
+				return;
+			}
 			runMatrixForDateDirect(reportDate, sNo, label, function () {
 				onDateChange(dateInput);
 			}, button);
+			
 		}
 
 		function runMatrixForDateDirect(reportDate, sNo, label, onSuccess, button) {

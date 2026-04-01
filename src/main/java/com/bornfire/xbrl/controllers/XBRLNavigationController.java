@@ -66,6 +66,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -75,103 +76,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bornfire.xbrl.entities.ASL_BANKMASTER_ENTITY;
-import com.bornfire.xbrl.entities.ASL_BANKMASTER_REPO;
-import com.bornfire.xbrl.entities.ASL_Report_Entity;
-import com.bornfire.xbrl.entities.ASL_Report_Rep;
-import com.bornfire.xbrl.entities.AccessAndRoles;
-import com.bornfire.xbrl.entities.AccessandRolesRepository;
-import com.bornfire.xbrl.entities.BRF095AServiceRepo;
-import com.bornfire.xbrl.entities.BRF39_ENTITYREP;
-import com.bornfire.xbrl.entities.BRF40_Entity1;
-import com.bornfire.xbrl.entities.BRF40_Entity2;
-import com.bornfire.xbrl.entities.BRF40_Rep1;
-import com.bornfire.xbrl.entities.BRF40_Rep2;
-import com.bornfire.xbrl.entities.BRF_095_A_REPORT_ENTITY;
-import com.bornfire.xbrl.entities.BankLimit_Entity;
-import com.bornfire.xbrl.entities.BankLimit_Rep;
-import com.bornfire.xbrl.entities.Capitaladequacyratio_rep;
-import com.bornfire.xbrl.entities.Counterparty_Entity;
-import com.bornfire.xbrl.entities.Counterparty_Rep;
-import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
-import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
-import com.bornfire.xbrl.entities.Limit_Request_Entity;
-import com.bornfire.xbrl.entities.Limit_Request_Rep;
-import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY;
-import com.bornfire.xbrl.entities.MIS_COUNTER_PARTY_LIMIT_DETAILS_REPO;
-import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Entity;
-import com.bornfire.xbrl.entities.MIS_SBLC_Maintenance_Repo;
-import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY;
-import com.bornfire.xbrl.entities.MIS_SETTLEMENT_ENTITY_REP;
-import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
-import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY_REP;
-import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
-import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
-import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_rep;
-import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
-import com.bornfire.xbrl.entities.RT_BankNameMaster;
-import com.bornfire.xbrl.entities.RT_BankNameMasterRepository;
-import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE;
-import com.bornfire.xbrl.entities.RT_CCR_DATA_TEMPLATE_REPOSITORY;
-import com.bornfire.xbrl.entities.RT_Chart_pojo;
-import com.bornfire.xbrl.entities.RT_CountryRiskDropdown;
-import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
-import com.bornfire.xbrl.entities.RT_DataControl;
-import com.bornfire.xbrl.entities.RT_DatacontrolRepository;
-import com.bornfire.xbrl.entities.RT_ForeignCurrencyDeposit;
-import com.bornfire.xbrl.entities.RT_ForeignCurrencyDepositRepository;
-import com.bornfire.xbrl.entities.RT_FxRiskDataRepository;
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_Discount_Rates_Repository;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Detail_Rep;
-import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
-import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
-import com.bornfire.xbrl.entities.RT_IRS_DETAIL_ENTITY;
-import com.bornfire.xbrl.entities.RT_IRS_DETAIL_REPO;
-import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
-import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
-import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
-import com.bornfire.xbrl.entities.RT_ImpactAnalysis;
-import com.bornfire.xbrl.entities.RT_ImpactAnalysisRepository;
-import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_Template;
-import com.bornfire.xbrl.entities.RT_Investment_Risk_Data_Dashboard_TemplateRepository;
-import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template;
-import com.bornfire.xbrl.entities.RT_Investment_Securities_Data_Template_Repo;
-import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template;
-import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Dashboard_Template_repository;
-import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template;
-import com.bornfire.xbrl.entities.RT_Liquidity_Risk_Data_Template_Repository;
-import com.bornfire.xbrl.entities.RT_MC_TABLE1_ENTITY;
-import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
-import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
-import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
-import com.bornfire.xbrl.entities.RT_MmData;
-import com.bornfire.xbrl.entities.RT_MmDataRepository;
-import com.bornfire.xbrl.entities.RT_NostroAccBalData;
-import com.bornfire.xbrl.entities.RT_NostroAccBalDataRepository;
-import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
-import com.bornfire.xbrl.entities.RT_RWA_RATING_GUIDELINES_Rep;
-import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
-import com.bornfire.xbrl.entities.RT_RepoDataTemplateRepository;
-import com.bornfire.xbrl.entities.RT_SLS_Detail_Enitity;
-import com.bornfire.xbrl.entities.RT_SLS_Detail_Repository;
-import com.bornfire.xbrl.entities.RT_SLS_ENTITIES;
-import com.bornfire.xbrl.entities.RT_SLS_Repository;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivatives;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesRepository;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplified;
-import com.bornfire.xbrl.entities.RT_TradeLevelDataDerivativesSimplifiedRepository;
-import com.bornfire.xbrl.entities.RT_TradeMarketRiskData;
-import com.bornfire.xbrl.entities.RT_TradeMarketriskDataRepository;
-import com.bornfire.xbrl.entities.RT_TreasuryCreditEntity;
-import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
-import com.bornfire.xbrl.entities.UserProfile;
-import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
@@ -211,7 +115,6 @@ import com.bornfire.xbrl.services.Bloomberg_services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.bornfire.xbrl.entities.RT_MC_TABLE1_REPO;
 import com.bornfire.xbrl.entities.*;
 
 @Controller
@@ -225,6 +128,8 @@ public class XBRLNavigationController {
 	 */
 	@Autowired
 	Bloomberg_services bloombergService;
+	@Autowired
+	KriMasterTable_Rep krimastertablerep;
 	@Autowired
 	RtInvestmentDealDataDump_Service rtinvestmentdealdatadump_service;
 	
@@ -5248,5 +5153,111 @@ public class XBRLNavigationController {
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(fileData);
 	}
+	
+	@RequestMapping(value = "RT_Key_Risk_Indicator", method = RequestMethod.GET)
+	public String RT_Key_Risk_Indicator(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(required = false) String Report_date,
+	        @RequestParam(required = false) String branch,
+	        Model md, HttpServletRequest req) {
+
+	    String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+	    md.addAttribute("ROLEID", ROLEID);
+
+	    String DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
+	    md.addAttribute("DEPARTMENT", DEPARTMENT);
+
+	    if (formmode == null || "null".equalsIgnoreCase(formmode)) {
+
+	        md.addAttribute("menu", "Key Risk Indicator");
+
+	        List<KriMasterTable> krslist = new ArrayList<>();
+
+	        try {
+	            Date reportDateObj = null;
+	            
+
+	            if (Report_date != null && !Report_date.isEmpty()) {
+	                reportDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(Report_date);
+	            }
+
+	            krslist = krimastertablerep.getalllist(reportDateObj);
+	           
+	            if(krslist.size()>0) {
+	            	 md.addAttribute("formmode", "edit");
+	            }
+	            else {
+	            	md.addAttribute("formmode", "list");
+	            }
+	            
+	            md.addAttribute("Report_date",reportDateObj);
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        md.addAttribute("krsdata", krslist);
+	       
+	       
+	        
+	    }
+
+	    return "RT/keyRiskIndicator";
+	}
+	
+	@PostMapping("/saveKriData")
+	@ResponseBody
+	public String saveKriData(@RequestBody List<KriMasterTable> list, HttpServletRequest req) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		for(KriMasterTable krs:list) {
+			krs.setDelFlg("N");
+			krs.setVerifyFlg("N");
+			krs.setCreateUser(userid);
+		}
+		krimastertablerep.saveAll(list);
+		System.out.println("saveKriData");
+	    return "Key Risk Indicator Add Sucessfully";
+	}
+	
+	@PostMapping("/verifyKriData")
+	@ResponseBody
+	public String verifyKriData(
+	        @RequestParam(required = false) String Report_date,
+	        HttpServletRequest req) {
+
+	    String userid = (String) req.getSession().getAttribute("USERID");
+
+	    try {
+	        Date reportDateObj = null;
+
+	        if (Report_date != null && !Report_date.isEmpty()) {
+	            reportDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(Report_date);
+	        }
+
+	        List<KriMasterTable> krslist = krimastertablerep.getalllist(reportDateObj);
+
+	        if (krslist != null && !krslist.isEmpty()) {
+
+	            for (KriMasterTable krs : krslist) {
+	                krs.setVerifyFlg("Y"); 
+	                krs.setVerifyUser(userid);
+	                krs.setVerifyTime(new Date());
+	            }
+
+	            krimastertablerep.saveAll(krslist);
+
+	            return "Key Risk Indicator verified Sucessfully";
+	        } else {
+	            return "NO DATA FOUND";
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "ERROR";
+	    }
+	}
+	
+	
+	
 
 }
