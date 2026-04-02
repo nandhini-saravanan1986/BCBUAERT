@@ -570,7 +570,8 @@
 		.btn {
 			font-size: unset !important;
 		}
-
+		
+		
 
 		.container-fluid {
 
@@ -651,27 +652,29 @@
 
 		        let yearlyValue = yearlyInput.val().trim();
 		        let deptSign = deptInput.val().trim();
-		        
 
-		        
+		        // ✅ CLEAR previous border
 		        yearlyInput.css("border", "");
 		        deptInput.css("border", "");
 
-		        
-		        if (yearlyValue === "" || deptSign === "") {
+		        // ✅ CHECK ONLY IF FIELD IS EDITABLE
+		        if (!yearlyInput.prop("readonly")) {
 
-		            isValid = false;
+		            if (yearlyValue === "" || deptSign === "") {
 
-		            if (yearlyValue === "") {
-		                yearlyInput.css("border", "2px solid red");
-		            }
+		                isValid = false;
 
-		            if (deptSign === "") {
-		                deptInput.css("border", "2px solid red");
+		                if (yearlyValue === "") {
+		                    yearlyInput.css("border", "2px solid red");
+		                }
+
+		                if (deptSign === "") {
+		                    deptInput.css("border", "2px solid red");
+		                }
 		            }
 		        }
 
-		        
+		        // ✅ ALWAYS PUSH DATA (optional)
 		        let obj = {
 		            sn: $(cells[0]).text().trim(),
 		            kriName: $(cells[1]).text().trim(),
@@ -685,17 +688,19 @@
 		            upperThreshold: $(cells[9]).text().trim(),
 		            yearlyValue: yearlyValue,
 		            deptSign: deptSign,
-		            reportDate:reportDate
+		            reportDate: reportDate
 		        };
 
 		        dataList.push(obj);
 		    });
 
-		   
+
+		    // ✅ FINAL VALIDATION
 		    if (!isValid) {
-		        alert("Please fill all Yearly Value");
+		        alert("Please fill all editable Yearly Values");
 		        return;
 		    }
+
 
 		    console.log(dataList);
 
@@ -2057,21 +2062,24 @@
 					
 				
 
-				<div class="modal fade" id="alert">
-					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-						<div class="modal-content">
-							<div class="menu-title-header">
-								<div class="modal-title" id="exampleModalLabel"
-									style="text-align: center; color: white;">BANK OF BARODA</div>
-							</div>
-							<div class="modal-body" style="text-align: center">
-								<p id="alertmsg"></p>
-								<button type="button" class="custom-tab-btn" onclick="getkridata()"
-									data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
+				
+				
+		<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white; background-color: #f7a47c;">BANK OF BARODA</div>
 				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="role-btn" onclick="getkridata()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 				<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 					<div class="bob-loader-card">
