@@ -5162,10 +5162,11 @@ public class XBRLNavigationController {
 	        Model md, HttpServletRequest req) {
 
 	    String ROLEID = (String) req.getSession().getAttribute("ROLEID");
-	    md.addAttribute("ROLEID", ROLEID);
+	    md.addAttribute("roleId", ROLEID);
 
 	    String DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
 	    md.addAttribute("DEPARTMENT", DEPARTMENT);
+	    System.out.println("DEPARTMENT="+DEPARTMENT);
 
 	    if (formmode == null || "null".equalsIgnoreCase(formmode)) {
 
@@ -5218,6 +5219,22 @@ public class XBRLNavigationController {
 		System.out.println("saveKriData");
 	    return "Key Risk Indicator Add Sucessfully";
 	}
+	
+	@PostMapping("/modifyKriData")
+	@ResponseBody
+	public String modifyKriData(@RequestBody List<KriMasterTable> list, HttpServletRequest req) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		for(KriMasterTable krs:list) {
+			krs.setDelFlg("N");
+			krs.setVerifyFlg("N");
+			krs.setModifyUser(userid);
+			krs.setModifyFlg("Y");
+		}
+		krimastertablerep.saveAll(list);
+		System.out.println("saveKriData");
+		return "Key Risk Indicator Modified Successfully";
+	}
+
 	
 	@PostMapping("/verifyKriData")
 	@ResponseBody
