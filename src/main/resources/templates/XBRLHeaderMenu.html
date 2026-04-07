@@ -165,15 +165,16 @@
 		.menu>li:active>a {
 			transform: scale(0.97);
 		}
-			
-		li > a.active {
-   		 	background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
+
+		li>a.active {
+			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
 			color: #ffffff;
-			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);			
+			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);
 			border-radius: 20px;
 		}
-		.submenu li > a.active {
-		    background: #FFF3D1;
+
+		.submenu li>a.active {
+			background: #FFF3D1;
 			color: #E67E00;
 			padding-left: 20px;
 			border-radius: 0px;
@@ -262,39 +263,38 @@
 				max-width: 90vw;
 			}
 		}
-		
+
 		/* NESTED DROPDOWN (ASL Uploads) */
 		.dropdown-submenu {
-		    position: relative;
+			position: relative;
 		}
 
-		.dropdown-submenu > .dropdown-menu {
-		    position: absolute;
-		    top: 0;
-		    left: 100%;
-		    margin-left: 0;
-		    margin-top: -5px;
-		    min-width: 200px;
-		    background: #ffffff;
-		    border-radius: 6px;
-		    box-shadow: 0px 8px 20px rgba(0,0,0,0.18);
-		    padding: 8px 0;
-		    display: none;
-		    list-style: none;
+		.dropdown-submenu>.dropdown-menu {
+			position: absolute;
+			top: 0;
+			left: 100%;
+			margin-left: 0;
+			margin-top: -5px;
+			min-width: 200px;
+			background: #ffffff;
+			border-radius: 6px;
+			box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.18);
+			padding: 8px 0;
+			display: none;
+			list-style: none;
 		}
 
 		/* SHOW ON HOVER */
-		.dropdown-submenu:hover > .dropdown-menu {
-		    display: block;
+		.dropdown-submenu:hover>.dropdown-menu {
+			display: block;
 		}
 
 		/* Arrow indicator */
-		.dropdown-submenu > a::after {
-		    content: "▸";
-		    float: right;
-		    font-size: 12px;
+		.dropdown-submenu>a::after {
+			content: "▸";
+			float: right;
+			font-size: 12px;
 		}
-
 	</style>
 </head>
 
@@ -321,7 +321,8 @@
 		<div class="menu-scroll-wrapper">
 			<ul class="menu" id="mainMenu">
 
-				<li><a th:href="@{/Dashboard}" id="Dashboard" onclick="showLoader()"><i class="fa fa-home" aria-hidden="true"></i>
+				<li><a th:href="@{/Dashboard}" id="Dashboard" onclick="showLoader()"><i class="fa fa-home"
+							aria-hidden="true"></i>
 						Home</a></li>
 
 				<li>
@@ -330,22 +331,24 @@
 					<ul class="submenu">
 
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-Usrprf')}">
-							<a th:href="@{/UserProfile}"  id="UserProfile"onclick="showLoader()">User Profile</a>
+							<a th:href="@{/UserProfile}" id="UserProfile" onclick="showLoader()">User Profile</a>
 						</li>
 
 
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-AccessRole')}">
-							<a th:href="@{/AccessandRoles}" id="AccessandRoles" onclick="showLoader()">Access and Roles</a>
+							<a th:href="@{/AccessandRoles}" id="AccessandRoles" onclick="showLoader()">Access and
+								Roles</a>
 						</li>
-						
+
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-BloombergData')}">
 							<a th:href="@{/BloombergData}" id="BloombergData" onclick="showLoader()">Bloomberg Data</a>
 						</li>
-						
-						
-
+						<li th:if="${#strings.contains(session.DOMAINID, 'Rpt-Ctrl_Center')}">
+							<a th:href="@{/Report_control_center}" id="Report_control_center" onclick="showLoader()">Report Control Center</a>
+						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'Adm-CustgrpMain')}">
-							<a th:href="@{/CustomerGrp_Maintenance?formmode=list}" id="CustomerGrp_Maintenance?formmode=list" onclick="showLoader()">Customer Group
+							<a th:href="@{/CustomerGrp_Maintenance?formmode=list}"
+								id="CustomerGrp_Maintenance?formmode=list" onclick="showLoader()">Customer Group
 								Maintenance</a>
 						</li>
 					</ul>
@@ -355,56 +358,69 @@
 					<a href="#"> <i class="fa fa-file-excel" aria-hidden="true"></i> RT Reports</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}">
-							<a th:href="@{/Nostro_Account_Bal}" id="Nostro_Account_Bal" onclick="showLoader()">Nostro Account Balance</a>
+							<a th:href="@{/Nostro_Account_Bal}" id="Nostro_Account_Bal" onclick="showLoader()">Nostro
+								Account Balance</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT2')}">
 							<a th:href="@{/Fx_Risk_Data}" id="Fx_Risk_Data" onclick="showLoader()">FX Risk Data</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT3')}">
-							<a th:href="@{/Trade_Market_Risk}" id="Trade_Market_Risk" onclick="showLoader()">Trade Market Risk</a>
+							<a th:href="@{/Trade_Market_Risk}" id="Trade_Market_Risk" onclick="showLoader()">Trade
+								Market Risk</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT4')}">
 							<a th:href="@{/Mm_Data}" id="Mm_Data" onclick="showLoader()">MM Data</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT5')}">
-							<a th:href="@{/Repo_Data_Template}" id="Repo_Data_Template" onclick="showLoader()">Repo Data Template</a>
+							<a th:href="@{/Repo_Data_Template}" id="Repo_Data_Template" onclick="showLoader()">Repo Data
+								Template</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT6')}">
-							<a th:href="@{/Investment_Risk_Data_Dashboard_Template}" id="Investment_Risk_Data_Dashboard_Template" onclick="showLoader()">Investment
+							<a th:href="@{/Investment_Risk_Data_Dashboard_Template}"
+								id="Investment_Risk_Data_Dashboard_Template" onclick="showLoader()">Investment
 								Risk Dashboard</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT7')}">
-							<a th:href="@{/Treasury_Credit_Limit_Management}" id="Treasury_Credit_Limit_Management" onclick="showLoader()">Treasury Credit
+							<a th:href="@{/Treasury_Credit_Limit_Management}" id="Treasury_Credit_Limit_Management"
+								onclick="showLoader()">Treasury Credit
 								Limit Management</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT8')}">
-							<a th:href="@{/Trade_Level_Data_Derivatives}" id="Trade_Level_Data_Derivatives" onclick="showLoader()">Trade Level Data
+							<a th:href="@{/Trade_Level_Data_Derivatives}" id="Trade_Level_Data_Derivatives"
+								onclick="showLoader()">Trade Level Data
 								Derivatives</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT9')}">
-							<a th:href="@{/Trade_Level_Data_Derivatives_Simplified}" id="Trade_Level_Data_Derivatives_Simplified" onclick="showLoader()">Trade Level
+							<a th:href="@{/Trade_Level_Data_Derivatives_Simplified}"
+								id="Trade_Level_Data_Derivatives_Simplified" onclick="showLoader()">Trade Level
 								Data Simplified</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT10')}">
-							<a th:href="@{/CCR_Data_Templates}" id="CCR_Data_Templates" onclick="showLoader()">CCR Data Templates</a>
+							<a th:href="@{/CCR_Data_Templates}" id="CCR_Data_Templates" onclick="showLoader()">CCR Data
+								Templates</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT11')}">
-							<a th:href="@{/Foreign_Currency_Deposit}" id="Foreign_Currency_Deposit" onclick="showLoader()">Cross Currency Funding
+							<a th:href="@{/Foreign_Currency_Deposit}" id="Foreign_Currency_Deposit"
+								onclick="showLoader()">Cross Currency Funding
 								Spread</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT12')}">
-							<a th:href="@{/Liquidity_Risk_Data}" id="Liquidity_Risk_Data" onclick="showLoader()">Liquidity Risk Data</a>
+							<a th:href="@{/Liquidity_Risk_Data}" id="Liquidity_Risk_Data"
+								onclick="showLoader()">Liquidity Risk Data</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT13')}">
-							<a th:href="@{/Investment_Securities_Data}" id="Investment_Securities_Data" onclick="showLoader()">Investment Securities
+							<a th:href="@{/Investment_Securities_Data}" id="Investment_Securities_Data"
+								onclick="showLoader()">Investment Securities
 								Data</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT14')}">
-							<a th:href="@{/Liquidity_Risk_Dashboard_Template}" id="Liquidity_Risk_Dashboard_Template" onclick="showLoader()">Liquidity Risk
+							<a th:href="@{/Liquidity_Risk_Dashboard_Template}" id="Liquidity_Risk_Dashboard_Template"
+								onclick="showLoader()">Liquidity Risk
 								Dashboard</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT15')}">
-							<a th:href="@{/IRRBB_data_Template}" id="IRRBB_data_Template" onclick="showLoader()">IRRBB Data Template</a>
+							<a th:href="@{/IRRBB_data_Template}" id="IRRBB_data_Template" onclick="showLoader()">IRRBB
+								Data Template</a>
 						</li>
 					</ul>
 				</li>
@@ -413,353 +429,375 @@
 					<a href="#"> <i class="fa fa-university" aria-hidden="true"></i> ASL</a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty')}">
-							<a th:href="@{/counterparty}" id="counterparty" onclick="showLoader()">Auth Counterparties</a>
+							<a th:href="@{/counterparty}" id="counterparty" onclick="showLoader()">Auth
+								Counterparties</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Exp_data')}">
-							<a th:href="@{/counterparty_list?formmode=Billdetaillist}" id="counterparty_list?formmode=Billdetaillist" onclick="showLoader()">Exposure
+							<a th:href="@{/counterparty_list?formmode=Billdetaillist}"
+								id="counterparty_list?formmode=Billdetaillist" onclick="showLoader()">Exposure
 								Data</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Intr_setl')}">
-							<a th:href="@{/Interbank_placement}" id="Interbank_placement" onclick="showLoader()">Interbank Placements</a>
+							<a th:href="@{/Interbank_placement}" id="Interbank_placement"
+								onclick="showLoader()">Interbank Placements</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Swap_setl')}">
-							<a th:href="@{/swap_settlement}" id="swap_settlement" onclick="showLoader()">Swap Settlement</a>
+							<a th:href="@{/swap_settlement}" id="swap_settlement" onclick="showLoader()">Swap
+								Settlement</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Final_stmt')}">
 							<a th:href="@{/asl_dashboard}" id="asl_dashboard" onclick="showLoader()">Final Risk View</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Sblc_maint')}">
-							<a th:href="@{/sblc_maintenance}" id="sblc_maintenance" onclick="showLoader()">SBLC Maintenance</a>
+							<a th:href="@{/sblc_maintenance}" id="sblc_maintenance" onclick="showLoader()">SBLC
+								Maintenance</a>
 						</li>
-						
+
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Bank-Limit-Check')}">
 							<a th:href="@{/ASLCheck}" id="ASLCheck" onclick="showLoader()">Bank Limit Check</a>
 						</li>
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Limit-Request')}">
-							<a th:href="@{/ASLCheck?formmode=Branchrequestadd}" id="ASLCheck?formmode=Branchrequestadd" onclick="showLoader()">Asl Limit Request</a>
+							<a th:href="@{/ASLCheck?formmode=Branchrequestadd}" id="ASLCheck?formmode=Branchrequestadd"
+								onclick="showLoader()">Asl Limit Request</a>
 						</li>
 						<li class="dropdown-submenu">
-										            <a href="#" class="dropdown-toggle">ASL Uploads</a>
+							<a href="#" class="dropdown-toggle">ASL Uploads</a>
 
-										            <ul class="dropdown-menu">
+							<ul class="dropdown-menu">
 
-										                <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data')}">
-										                    <a th:href="@{/Interbank_placement?formmode=add}" id="Interbank_placement_add" onclick="showLoader()">Treasury Placement</a>
-										                </li>
+								<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data')}">
+									<a th:href="@{/Interbank_placement?formmode=add}" id="Interbank_placement_add"
+										onclick="showLoader()">Treasury Placement</a>
+								</li>
 
-										                <li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data')}">
-										                    <a th:href="@{/swap_settlement?formmode=add}" id="swap_settlement_add" onclick="showLoader()">Settlement</a>
-										                </li>
+								<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data')}">
+									<a th:href="@{/swap_settlement?formmode=add}" id="swap_settlement_add"
+										onclick="showLoader()">Settlement</a>
+								</li>
 
-										            </ul>
-										        </li>
+							</ul>
+						</li>
 					</ul>
 				</li>
 
 				<li>
-				<!--	<a href="#"><i class="fa fa-university" aria-hidden="true"></i> ASL Data Upload</a>-->
+					<!--	<a href="#"><i class="fa fa-university" aria-hidden="true"></i> ASL Data Upload</a>-->
 					<ul class="submenu">
 						<!--<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Exp_data')}">
 							<a th:href="@{/counterparty_list?formmode=Billdetaillist}" onclick="showLoader()">Exposure
 								Data</a>
 				</li>-->
-				<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data')}">
-					<a th:href="@{/Interbank_placement?formmode=add}" id="Interbank_placement?formmode=add" onclick="showLoader()">Treasury
-						Placement</a>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Plac_data')}">
+							<a th:href="@{/Interbank_placement?formmode=add}" id="Interbank_placement?formmode=add"
+								onclick="showLoader()">Treasury
+								Placement</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data')}">
+							<a th:href="@{/swap_settlement?formmode=add}" id="swap_settlement?formmode=add"
+								onclick="showLoader()">Settlement</a>
+						</li>
+					</ul>
 				</li>
-				<li th:if="${#strings.contains(session.DOMAINID, 'Bill-Swap_data')}">
-					<a th:href="@{/swap_settlement?formmode=add}" id="swap_settlement?formmode=add" onclick="showLoader()">Settlement</a>
+
+				<li>
+					<a href="#"> <i class="fas fa-credit-card"></i> Credit Risk</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
+							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}"
+								id="Credit_risk?formmode=Portfolio_analysis" onclick="showLoader()">Portfolio
+								Analysis Report</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_Bnk_expo')}">
+							<a th:href="@{/Credit_risk?formmode=Top_Bank_Exposure}"
+								id="Credit_risk?formmode=Top_Bank_Exposure" onclick="showLoader()">Bank Top
+								Exposure's</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_cust_expo')}">
+							<a th:href="@{/Credit_risk?formmode=Top_customer_Exposure}"
+								id="Credit_risk?formmode=Top_customer_Exposure" onclick="showLoader()">Customer
+								Top Exposure</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Deposit')}">
+							<a th:href="@{/Credit_risk?formmode=Deposits}" id="Credit_risk?formmode=Deposits"
+								onclick="showLoader()">Deposits </a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Conc_Risk')}">
+							<a th:href="@{/Credit_risk?formmode=Concentration_Risk}"
+								id="Credit_risk?formmode=Concentration_Risk" onclick="showLoader()">Concentration
+								Risk</a>
+						</li>
+					</ul>
 				</li>
-			</ul>
-			</li>
-
-			<li>
-				<a href="#"> <i class="fas fa-credit-card"></i> Credit Risk</a>
-				<ul class="submenu">
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
-						<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}" id="Credit_risk?formmode=Portfolio_analysis" onclick="showLoader()">Portfolio
-							Analysis Report</a>
-					</li>
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_Bnk_expo')}">
-						<a th:href="@{/Credit_risk?formmode=Top_Bank_Exposure}" id="Credit_risk?formmode=Top_Bank_Exposure" onclick="showLoader()">Bank Top
-							Exposure's</a>
-					</li>
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Top_cust_expo')}">
-						<a th:href="@{/Credit_risk?formmode=Top_customer_Exposure}" id="Credit_risk?formmode=Top_customer_Exposure" onclick="showLoader()">Customer
-							Top Exposure</a>
-					</li>
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Deposit')}">
-						<a th:href="@{/Credit_risk?formmode=Deposits}" id="Credit_risk?formmode=Deposits" onclick="showLoader()">Deposits </a>
-					</li>
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Conc_Risk')}">
-						<a th:href="@{/Credit_risk?formmode=Concentration_Risk}" id="Credit_risk?formmode=Concentration_Risk" onclick="showLoader()">Concentration
-							Risk</a>
-					</li>
-				</ul>
-			</li>
 
 
 
-			<li>
-				<a href="#"><i class="fa fa-exclamation-triangle"></i> Liquidity & RiskProfile</a>
-				<ul class="submenu">
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
-						<a th:href="@{/RT}" id="RT" onclick="showLoader()">SLS</a>
-					</li>
+				<li>
+					<a href="#"><i class="fa fa-exclamation-triangle"></i> Liquidity & RiskProfile</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
+							<a th:href="@{/RT}" id="RT" onclick="showLoader()">SLS</a>
+						</li>
 
-					<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
-						<a th:href="@{/IRS}" id="IRS" onclick="showLoader()">IRS</a>
+						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
+							<a th:href="@{/IRS}" id="IRS" onclick="showLoader()">IRS</a>
 
-					</li>
-				</ul>
-			</li>
-			<li>
-				<a th:href="@{/SLSUPLOAD}" id="SLSUPLOAD" onclick="showLoader()"> <i class="fa fa-upload" aria-hidden="true"></i>
-					File Upload</a>
-			</li>
-			
-			<li>
-				<a th:href="@{/RT_MC_Reports}" id="RT_MC_Reports" onclick="showLoader()"> <i class="fa fa-file-excel" aria-hidden="true"></i>
-					MC Reports</a>
-			</li>
-			
-			<li>
-				<a href="#"> <i class="fa fa-eye" aria-hidden="true"></i> Audit</a>
-				<ul class="submenu">
-					<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
-						<a th:href="@{/User_Audit}" id="User_Audit" onclick="showLoader()">User Audit</a>
-					</li>
-					<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit')}">
-						<a th:href="@{/Service_Audit}" id="Service_Audit" onclick="showLoader()">Service Audit</a>
-					</li>
-				</ul>
-			</li>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a th:href="@{/SLSUPLOAD}" id="SLSUPLOAD" onclick="showLoader()"> <i class="fa fa-upload"
+							aria-hidden="true"></i>
+						File Upload</a>
+				</li>
+
+				<li>
+					<a th:href="@{/RT_MC_Reports}" id="RT_MC_Reports" onclick="showLoader()"> <i
+							class="fa fa-file-excel" aria-hidden="true"></i>
+						MC Reports</a>
+				</li>
+
+				<li>
+					<a href="#"> <i class="fa fa-eye" aria-hidden="true"></i> Audit</a>
+					<ul class="submenu">
+						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
+							<a th:href="@{/User_Audit}" id="User_Audit" onclick="showLoader()">User Audit</a>
+						</li>
+						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Ser_audit')}">
+							<a th:href="@{/Service_Audit}" id="Service_Audit" onclick="showLoader()">Service Audit</a>
+						</li>
+					</ul>
+				</li>
 
 			</ul>
 		</div>
 	</nav>
-	<div class="alert alert-danger custom-alert shadow-sm" role="alert" id="autoHideAlert" 
-	     style="display:none; position:fixed; top:20px; right:20px; z-index:9999; background-color:white; border-left:5px solid #ff7f27; color:black; padding: 12px 20px; border-radius: 8px; border:1px solid #ddd; width: auto; min-width: 300px;">
-	    <button type="button" class="btn-close" onclick="hideAlert()" style="float:right; border:none; background:none; font-size:12px;"><i class="fa fa-times text-muted"></i></button>
-	    <p id="alertMessage" style="margin:0; font-size:14px; white-space:nowrap; font-weight:500;">
-	        <i class="fa fa-sync fa-spin text-warning"></i> <span>Download request received</span>
-	    </p>
+	<div class="alert alert-danger custom-alert shadow-sm" role="alert" id="autoHideAlert"
+		style="display:none; position:fixed; top:20px; right:20px; z-index:9999; background-color:white; border-left:5px solid #ff7f27; color:black; padding: 12px 20px; border-radius: 8px; border:1px solid #ddd; width: auto; min-width: 300px;">
+		<button type="button" class="btn-close" onclick="hideAlert()"
+			style="float:right; border:none; background:none; font-size:12px;"><i
+				class="fa fa-times text-muted"></i></button>
+		<p id="alertMessage" style="margin:0; font-size:14px; white-space:nowrap; font-weight:500;">
+			<i class="fa fa-sync fa-spin text-warning"></i> <span>Download request received</span>
+		</p>
 	</div>
-	
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname;
-    let activeId = localStorage.getItem("activeMenuId");
-    if (currentPath.includes("Dashboard")) {
-        activeId = "Dashboard"; 
-        localStorage.setItem("activeMenuId", activeId);
-    }
-    document.querySelectorAll("li a").forEach(link => {
-        link.classList.remove("active");
-    });
-    if (activeId) {
-        const activeLink = document.getElementById(activeId);
-        if (activeLink) {
-            activeLink.classList.add("active");
-            let parentSubmenu = activeLink.closest('.submenu');           
-            while (parentSubmenu) {
-                const parentToggle = parentSubmenu.previousElementSibling;
-                if (parentToggle && parentToggle.tagName === 'A') {
-                    parentToggle.classList.add("active");
-                }
-                parentSubmenu = parentSubmenu.parentElement.closest('.submenu');
-            }
-        }
-    }
-    document.querySelectorAll("li a").forEach(link => {
-        link.addEventListener("click", function () {
-            if (this.id) {
-                localStorage.setItem("activeMenuId", this.id);
-            }
-        });
-    });
 
-});
-</script>
-</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const currentPath = window.location.pathname;
+			let activeId = localStorage.getItem("activeMenuId");
+			if (currentPath.includes("Dashboard")) {
+				activeId = "Dashboard";
+				localStorage.setItem("activeMenuId", activeId);
+			}
+			document.querySelectorAll("li a").forEach(link => {
+				link.classList.remove("active");
+			});
+			if (activeId) {
+				const activeLink = document.getElementById(activeId);
+				if (activeLink) {
+					activeLink.classList.add("active");
+					let parentSubmenu = activeLink.closest('.submenu');
+					while (parentSubmenu) {
+						const parentToggle = parentSubmenu.previousElementSibling;
+						if (parentToggle && parentToggle.tagName === 'A') {
+							parentToggle.classList.add("active");
+						}
+						parentSubmenu = parentSubmenu.parentElement.closest('.submenu');
+					}
+				}
+			}
+			document.querySelectorAll("li a").forEach(link => {
+				link.addEventListener("click", function () {
+					if (this.id) {
+						localStorage.setItem("activeMenuId", this.id);
+					}
+				});
+			});
 
-
-<script>
-    let globalPollInterval;
-
-    $(document).ready(function() {
-        const savedId = localStorage.getItem("activeDownloadJob");
-        const savedTime = localStorage.getItem("downloadStartTime");
-        if (savedId && savedTime) {
-            $("#autoHideAlert").show();
-            startGlobalPolling(savedId, parseInt(savedTime));
-        }
-    });
-
-    function startGlobalPolling(jobId, startTime) {
-        clearInterval(globalPollInterval);
-        globalPollInterval = setInterval(function() {
-            // Timer Calculation using fixed Start Timestamp
-            let secondsNow = Math.floor((Date.now() - startTime) / 1000);
-
-            $.ajax({
-                url: './checkJobStatus', 
-                data: { jobId: jobId },
-                type: 'GET',
-                success: function(status) {
-                    if (status === "READY") {
-                        clearInterval(globalPollInterval);
-                        $("#alertMessage").html('<i class="fa fa-check-circle text-success"></i> <b>Download Ready!</b> (' + secondsNow + 's)');
-                        window.location.href = './getBackgroundFile?jobId=' + jobId;
-                        localStorage.removeItem("activeDownloadJob");
-                        localStorage.removeItem("downloadStartTime");
-                        setTimeout(() => { hideAlert(); }, 10000);
-                    } else if (status === "PROCESSING") {
-                        if (secondsNow > 0 && secondsNow % 30 === 0) {
-                            $("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Still Processing Large Dataset... (' + secondsNow + 's)');
-                        } else {
-                            $("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Download Is Processing... (' + secondsNow + 's)');
-                        }
-                    } else if (status === "ERROR") {
-                        clearInterval(globalPollInterval);
-                        localStorage.removeItem("activeDownloadJob");
-                        localStorage.removeItem("downloadStartTime");
-                        $("#alertMessage").html('<i class="fa fa-times text-danger"></i> No data found.');
-                        setTimeout(() => { hideAlert(); }, 5000);
-                    }
-                }
-            });
-        }, 2000);
-    }
-    function hideAlert() { $("#autoHideAlert").fadeOut(); }
-</script>
-
-<style>
-#autoHideAlert {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    
-    /* Make it flexible based on content */
-    width: auto !important; 
-    min-width: 300px; /* Base size so it looks good for short names */
-    max-width: 500px; /* Prevents it from covering the whole screen */
-    
-    height: auto !important; 
-    z-index: 999999;
-    background: #ffffff;
-    border-radius: 8px;
-    border-left: 5px solid #E67E00;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    padding: 15px 25px 15px 15px; /* Added right padding for the close button */
-    display: none;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+		});
+	</script>
+	</script>
 
 
-.success-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px 0;
-}
-#autoHideAlert a {
-    text-decoration: none !important;
-}
-.custom-progress-bg {
-	width: 100%;
-	background-color: #f1f1f1;
-	border-radius: 10px;
-	height: 12px;
-	margin: 10px 0;
-	border: 1px solid #ddd;
-	overflow: hidden;
-}
+	<script>
+		let globalPollInterval;
 
-.custom-progress-fill {
-	height: 100%;
-	background: linear-gradient(90deg, #E67E00, #ff981a, #E67E00);
-	background-size: 200% 100%;
-	animation: progress-glow 2s linear infinite;
-	border-radius: 10px;
-	transition: width 0.3s linear;
-	width: 0%;
-}
+		$(document).ready(function () {
+			const savedId = localStorage.getItem("activeDownloadJob");
+			const savedTime = localStorage.getItem("downloadStartTime");
+			if (savedId && savedTime) {
+				$("#autoHideAlert").show();
+				startGlobalPolling(savedId, parseInt(savedTime));
+			}
+		});
 
-@keyframes progress-glow { 0% {
-	background-position: 200% 0;
-}
+		function startGlobalPolling(jobId, startTime) {
+			clearInterval(globalPollInterval);
+			globalPollInterval = setInterval(function () {
+				// Timer Calculation using fixed Start Timestamp
+				let secondsNow = Math.floor((Date.now() - startTime) / 1000);
 
-100%
-{
-background-position
-:
-0%
-0;
-}
-}
+				$.ajax({
+					url: './checkJobStatus',
+					data: {jobId: jobId},
+					type: 'GET',
+					success: function (status) {
+						if (status === "READY") {
+							clearInterval(globalPollInterval);
+							$("#alertMessage").html('<i class="fa fa-check-circle text-success"></i> <b>Download Ready!</b> (' + secondsNow + 's)');
+							window.location.href = './getBackgroundFile?jobId=' + jobId;
+							localStorage.removeItem("activeDownloadJob");
+							localStorage.removeItem("downloadStartTime");
+							setTimeout(() => {hideAlert();}, 10000);
+						} else if (status === "PROCESSING") {
+							if (secondsNow > 0 && secondsNow % 30 === 0) {
+								$("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Still Processing Large Dataset... (' + secondsNow + 's)');
+							} else {
+								$("#alertMessage").html('<i class="fa fa-sync fa-spin text-warning"></i> Download Is Processing... (' + secondsNow + 's)');
+							}
+						} else if (status === "ERROR") {
+							clearInterval(globalPollInterval);
+							localStorage.removeItem("activeDownloadJob");
+							localStorage.removeItem("downloadStartTime");
+							$("#alertMessage").html('<i class="fa fa-times text-danger"></i> No data found.');
+							setTimeout(() => {hideAlert();}, 5000);
+						}
+					}
+				});
+			}, 2000);
+		}
+		function hideAlert() {$("#autoHideAlert").fadeOut();}
+	</script>
 
-/* Adjust the close button so it doesn't overlap text */
-.dl-btn-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #999;
-    line-height: 1;
-}
+	<style>
+		#autoHideAlert {
+			position: fixed !important;
+			top: 20px !important;
+			right: 20px !important;
 
-.dl-btn-close:hover {
-    color: #333;
-}
-</style>
+			/* Make it flexible based on content */
+			width: auto !important;
+			min-width: 300px;
+			/* Base size so it looks good for short names */
+			max-width: 500px;
+			/* Prevents it from covering the whole screen */
 
-<div id="autoHideAlert">
-    <span class="dl-btn-close" onclick="closeDlAlert()">&times;</span>
-    <div id="alertMessage"></div>
-</div>
-<script>
-    let newTaskInterval;
-    let isFinishing = false; 
-    let targetPct = 5; 
-    let currentDisplayPct = 5;
-    let animationFrame;
+			height: auto !important;
+			z-index: 999999;
+			background: #ffffff;
+			border-radius: 8px;
+			border-left: 5px solid #E67E00;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+			padding: 15px 25px 15px 15px;
+			/* Added right padding for the close button */
+			display: none;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
 
-    $(document).ready(function() {
-        const savedId = localStorage.getItem("activeNewTaskJob");
-        const savedName = localStorage.getItem("activeNewTaskName");
-        const savedTime = localStorage.getItem("newTaskStartTime");
-        if (savedId && savedTime) {
-            startNewTaskPolling(savedId, parseInt(savedTime), savedName);
-        }
-    });
-    function cancelCurrentTask() {
-        if(confirm("Are you sure you want to cancel this download?")) {
-            isFinishing = true;
-            clearInterval(newTaskInterval);
-            cancelAnimationFrame(animationFrame);
-            
-            // Optional: Call server to kill the thread if you have a cancel endpoint
-            // $.get('./cancelTask', { jobId: localStorage.getItem("activeNewTaskJob") });
 
-            clearNewTaskStorage();
-            $("#alertMessage").html("<div style='text-align:center; color:#dc3545; font-size:12px; padding:10px;'>Download Cancelled</div>");
-            setTimeout(() => { closeDlAlert(); }, 2000);
-        }
-    }
-    function triggerGlobalDownload(startUrl, params, fileName) {
-        if (localStorage.getItem("activeNewTaskJob")) {
-            const currentJobName = localStorage.getItem("activeNewTaskName");
-            
-            // Store current HTML to restore it if they click "Keep Waiting"
-            const previousHtml = $("#alertMessage").html();
+		.success-container {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			padding: 10px 0;
+		}
 
-            let resetHtml = `
+		#autoHideAlert a {
+			text-decoration: none !important;
+		}
+
+		.custom-progress-bg {
+			width: 100%;
+			background-color: #f1f1f1;
+			border-radius: 10px;
+			height: 12px;
+			margin: 10px 0;
+			border: 1px solid #ddd;
+			overflow: hidden;
+		}
+
+		.custom-progress-fill {
+			height: 100%;
+			background: linear-gradient(90deg, #E67E00, #ff981a, #E67E00);
+			background-size: 200% 100%;
+			animation: progress-glow 2s linear infinite;
+			border-radius: 10px;
+			transition: width 0.3s linear;
+			width: 0%;
+		}
+
+		@keyframes progress-glow {
+			0% {
+				background-position: 200% 0;
+			}
+
+			100% {
+				background-position:
+					0% 0;
+			}
+		}
+
+		/* Adjust the close button so it doesn't overlap text */
+		.dl-btn-close {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			cursor: pointer;
+			font-size: 20px;
+			color: #999;
+			line-height: 1;
+		}
+
+		.dl-btn-close:hover {
+			color: #333;
+		}
+	</style>
+
+	<div id="autoHideAlert">
+		<span class="dl-btn-close" onclick="closeDlAlert()">&times;</span>
+		<div id="alertMessage"></div>
+	</div>
+	<script>
+		let newTaskInterval;
+		let isFinishing = false;
+		let targetPct = 5;
+		let currentDisplayPct = 5;
+		let animationFrame;
+
+		$(document).ready(function () {
+			const savedId = localStorage.getItem("activeNewTaskJob");
+			const savedName = localStorage.getItem("activeNewTaskName");
+			const savedTime = localStorage.getItem("newTaskStartTime");
+			if (savedId && savedTime) {
+				startNewTaskPolling(savedId, parseInt(savedTime), savedName);
+			}
+		});
+		function cancelCurrentTask() {
+			if (confirm("Are you sure you want to cancel this download?")) {
+				isFinishing = true;
+				clearInterval(newTaskInterval);
+				cancelAnimationFrame(animationFrame);
+
+				// Optional: Call server to kill the thread if you have a cancel endpoint
+				// $.get('./cancelTask', { jobId: localStorage.getItem("activeNewTaskJob") });
+
+				clearNewTaskStorage();
+				$("#alertMessage").html("<div style='text-align:center; color:#dc3545; font-size:12px; padding:10px;'>Download Cancelled</div>");
+				setTimeout(() => {closeDlAlert();}, 2000);
+			}
+		}
+		function triggerGlobalDownload(startUrl, params, fileName) {
+			if (localStorage.getItem("activeNewTaskJob")) {
+				const currentJobName = localStorage.getItem("activeNewTaskName");
+
+				// Store current HTML to restore it if they click "Keep Waiting"
+				const previousHtml = $("#alertMessage").html();
+
+				let resetHtml = `
                 <div style="text-align:center; padding: 5px;">
                     <strong style="color:#dc3545; font-size:13px;">Task already in progress</strong>
                     <p style="font-size:11px; color:#666; margin: 5px 0; word-break: break-all;">${currentJobName}</p>
@@ -768,112 +806,112 @@ background-position
                         <button onclick="forceResetTask()" style="padding:4px 12px; font-size:11px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Force Reset</button>
                     </div>
                 </div>`;
-            
-            $("#alertMessage").html(resetHtml);
-            $("#autoHideAlert").fadeIn();
 
-            // When "Keep Waiting" is clicked, put the loader back
-            $("#btnKeepWaiting").one("click", function() {
-                if (previousHtml) {
-                    $("#alertMessage").html(previousHtml);
-                } else {
-                    closeDlAlert();
-                }
-            });
-            return;
-        }
+				$("#alertMessage").html(resetHtml);
+				$("#autoHideAlert").fadeIn();
 
-        renderTaskUI(fileName, 5, "Connecting...", "init-id");
-        $("#autoHideAlert").fadeIn();
+				// When "Keep Waiting" is clicked, put the loader back
+				$("#btnKeepWaiting").one("click", function () {
+					if (previousHtml) {
+						$("#alertMessage").html(previousHtml);
+					} else {
+						closeDlAlert();
+					}
+				});
+				return;
+			}
 
-        $.get(startUrl, params, function(jobId) {
-            const startTime = Date.now();
-            localStorage.setItem("activeNewTaskJob", jobId);
-            localStorage.setItem("activeNewTaskName", fileName);
-            localStorage.setItem("newTaskStartTime", startTime);
-            startNewTaskPolling(jobId, startTime, fileName);
-        }).fail(function() {
-            handleTaskError("Connection failed.");
-        });
-    }
-    function forceResetTask() {
-        if(confirm("This will stop tracking the current download. Continue?")) {
+			renderTaskUI(fileName, 5, "Connecting...", "init-id");
+			$("#autoHideAlert").fadeIn();
 
-            clearInterval(newTaskInterval);
-            cancelAnimationFrame(animationFrame);
-            isFinishing = true;
+			$.get(startUrl, params, function (jobId) {
+				const startTime = Date.now();
+				localStorage.setItem("activeNewTaskJob", jobId);
+				localStorage.setItem("activeNewTaskName", fileName);
+				localStorage.setItem("newTaskStartTime", startTime);
+				startNewTaskPolling(jobId, startTime, fileName);
+			}).fail(function () {
+				handleTaskError("Connection failed.");
+			});
+		}
+		function forceResetTask() {
+			if (confirm("This will stop tracking the current download. Continue?")) {
 
-            clearNewTaskStorage();
+				clearInterval(newTaskInterval);
+				cancelAnimationFrame(animationFrame);
+				isFinishing = true;
 
-            $("#autoHideAlert").fadeOut(300, function() {
-                $("#alertMessage").html("");
-                console.log("System reset complete. You can now start a new download.");
-            });
-        }
-    }
-    let pollStartTime;
-    const POLL_TIMEOUT_MS = 30000; 
+				clearNewTaskStorage();
 
-    function startNewTaskPolling(jobId, startTime, fileName) {
-        $("#autoHideAlert").show();
-        clearInterval(newTaskInterval);
-        cancelAnimationFrame(animationFrame);
-        
-        isFinishing = false; 
-        targetPct = 5;
-        currentDisplayPct = 5;
-        pollStartTime = Date.now(); 
+				$("#autoHideAlert").fadeOut(300, function () {
+					$("#alertMessage").html("");
+					console.log("System reset complete. You can now start a new download.");
+				});
+			}
+		}
+		let pollStartTime;
+		const POLL_TIMEOUT_MS = 30000;
 
-        function animateBar() {
-            if (currentDisplayPct < targetPct) {
-                currentDisplayPct += 3.0; 
-                if (currentDisplayPct > targetPct) currentDisplayPct = targetPct;
-                
-                let diff = Math.floor((Date.now() - startTime) / 1000);
-                let timeLabel = (diff >= 60) ? Math.floor(diff/60) + "m " + (diff%60) + "s" : diff + "s";
-                renderTaskUI(fileName, Math.floor(currentDisplayPct), timeLabel, jobId);
-            }
-            if (!isFinishing || currentDisplayPct < 100) {
-                animationFrame = requestAnimationFrame(animateBar);
-            }
-        }
-        animateBar();
+		function startNewTaskPolling(jobId, startTime, fileName) {
+			$("#autoHideAlert").show();
+			clearInterval(newTaskInterval);
+			cancelAnimationFrame(animationFrame);
 
-        newTaskInterval = setInterval(function() {
-            if (isFinishing) return;
+			isFinishing = false;
+			targetPct = 5;
+			currentDisplayPct = 5;
+			pollStartTime = Date.now();
 
-            if (Date.now() - pollStartTime > POLL_TIMEOUT_MS) {
-                handleTaskError("Request timed out. Please try again.");
-                return;
-            }
+			function animateBar() {
+				if (currentDisplayPct < targetPct) {
+					currentDisplayPct += 3.0;
+					if (currentDisplayPct > targetPct) currentDisplayPct = targetPct;
 
-            $.get('./checkNewTaskStatus', { jobId: jobId }, function(res) {
-                pollStartTime = Date.now(); 
+					let diff = Math.floor((Date.now() - startTime) / 1000);
+					let timeLabel = (diff >= 60) ? Math.floor(diff / 60) + "m " + (diff % 60) + "s" : diff + "s";
+					renderTaskUI(fileName, Math.floor(currentDisplayPct), timeLabel, jobId);
+				}
+				if (!isFinishing || currentDisplayPct < 100) {
+					animationFrame = requestAnimationFrame(animateBar);
+				}
+			}
+			animateBar();
 
-                let serverPct = res.percent;
-                if (serverPct > targetPct) targetPct = serverPct;
+			newTaskInterval = setInterval(function () {
+				if (isFinishing) return;
 
-                if (serverPct === 100 && !isFinishing) {
-                    isFinishing = true;
-                    targetPct = 100;
-                    let checkEnd = setInterval(() => {
-                        if (currentDisplayPct >= 99) {
-                            clearInterval(checkEnd);
-                            clearInterval(newTaskInterval);
-                            handleTaskSuccess(jobId, fileName, "Done");
-                        }
-                    }, 50);
-                } else if (serverPct === -1) {
-                    handleTaskError("Server reported an error.");
-                }
-            }).fail(function() {
-                console.log("Polling attempt failed...");
-            });
-        }, 800); 
-    }
+				if (Date.now() - pollStartTime > POLL_TIMEOUT_MS) {
+					handleTaskError("Request timed out. Please try again.");
+					return;
+				}
 
-    function renderTaskUI(name, pct, time, id) {
-        let html = `
+				$.get('./checkNewTaskStatus', {jobId: jobId}, function (res) {
+					pollStartTime = Date.now();
+
+					let serverPct = res.percent;
+					if (serverPct > targetPct) targetPct = serverPct;
+
+					if (serverPct === 100 && !isFinishing) {
+						isFinishing = true;
+						targetPct = 100;
+						let checkEnd = setInterval(() => {
+							if (currentDisplayPct >= 99) {
+								clearInterval(checkEnd);
+								clearInterval(newTaskInterval);
+								handleTaskSuccess(jobId, fileName, "Done");
+							}
+						}, 50);
+					} else if (serverPct === -1) {
+						handleTaskError("Server reported an error.");
+					}
+				}).fail(function () {
+					console.log("Polling attempt failed...");
+				});
+			}, 800);
+		}
+
+		function renderTaskUI(name, pct, time, id) {
+			let html = `
             <div style="width: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 15px; margin-bottom: 8px;">
                     <strong style="font-size:13px; color:#333; line-height: 1.4; word-break: break-word;">
@@ -893,14 +931,14 @@ background-position
                     <a href="javascript:void(0)" onclick="cancelCurrentTask()" style="color:#dc3545; font-size:11px; text-decoration:none !important; padding-left: 10px;">Cancel</a>
                 </div>
             </div>`;
-        $("#alertMessage").html(html);
-    }
+			$("#alertMessage").html(html);
+		}
 
-    function handleTaskSuccess(jobId, name, time) {
-        clearNewTaskStorage();
-        window.location.href = `./getNewTaskFile?jobId=${jobId}&fileName=${encodeURIComponent(name)}`;
-        
-        let successHtml = `
+		function handleTaskSuccess(jobId, name, time) {
+			clearNewTaskStorage();
+			window.location.href = `./getNewTaskFile?jobId=${jobId}&fileName=${encodeURIComponent(name)}`;
+
+			let successHtml = `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px 0; width: 100%;">
                 <i class="fa fa-check-circle" style="color:#E67E00; font-size:32px; margin-bottom: 10px;"></i>
                 <div style="font-weight:bold; font-size:14px; color:#333; word-break: break-word;">
@@ -908,17 +946,18 @@ background-position
                 </div>
                 <div style="font-size:11px; color:#888; margin-top: 5px;">Completed</div>
             </div>`;
-        
-        $("#alertMessage").html(successHtml);
-        setTimeout(() => { closeDlAlert(); }, 5000);
-    }
 
-    function closeDlAlert() { $("#autoHideAlert").fadeOut(); cancelAnimationFrame(animationFrame); }
-    function clearNewTaskStorage() {
-        localStorage.removeItem("activeNewTaskJob");
-        localStorage.removeItem("activeNewTaskName");
-        localStorage.removeItem("newTaskStartTime");
-    }
-</script>
+			$("#alertMessage").html(successHtml);
+			setTimeout(() => {closeDlAlert();}, 5000);
+		}
+
+		function closeDlAlert() {$("#autoHideAlert").fadeOut(); cancelAnimationFrame(animationFrame);}
+		function clearNewTaskStorage() {
+			localStorage.removeItem("activeNewTaskJob");
+			localStorage.removeItem("activeNewTaskName");
+			localStorage.removeItem("newTaskStartTime");
+		}
+	</script>
 </body>
+
 </html>
