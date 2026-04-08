@@ -4692,6 +4692,8 @@ public class XBRLNavigationController {
 				List<RT_MC_TABLE1_ENTITY> deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
 				System.out.println("size : " + deptreportlist.size());
 				md.addAttribute("deptreportlist", deptreportlist.get(0));
+				
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
 			}
 			md.addAttribute("formmode", "bankinformation");
 		}

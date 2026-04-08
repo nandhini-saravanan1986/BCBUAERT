@@ -957,7 +957,7 @@ body {
 <style>
 .role-page-header {
 	position: relative !important;
-	margin-bottom: 10px !important;
+	/* margin-bottom: 10px !important; */
 }
 
 .role-page-header .d-flex.align-items-center.gap-2 {
@@ -1376,7 +1376,7 @@ table.selection-mode td {
     cursor: crosshair; 
 }
 .tabmargin{
-    margin-bottom: 6px;
+    margin-bottom: 37.8px;
 }
 
 </style>
@@ -1437,36 +1437,34 @@ table.selection-mode td {
 
 				<div class="float-left" th:if="${DEPARTMENTVALIDATION == 'YES'}">
 					<button class="role-btn" id="bankinformation-btn"
-						onclick="navigateToTabdept('bankinformation')">Bank
+						onclick="navigateToTabdept('bankinformation')" disabled>Bank
 						Information</button>
 					<button class="role-btn" id="bankconsumers-btn"
-						onclick="navigateToTabdept('bankconsumers')">Bank
+						onclick="navigateToTabdept('bankconsumers')" disabled>Bank
 						Consumers</button>
 					<button class="role-btn" id="complaints-btn"
-						onclick="navigateToTabdept('complaints')">Complaints</button>
+						onclick="navigateToTabdept('complaints')" disabled>Complaints</button>
 					<button class="role-btn" id="retailproducts-btn"
-						onclick="navigateToTabdept('retailproducts')">Retail
+						onclick="navigateToTabdept('retailproducts')" disabled>Retail
 						Products</button>
 					<button class="role-btn" id="bankemployee-btn"
-						onclick="navigateToTabdept('bankemployee')">Bank Employee</button>
+						onclick="navigateToTabdept('bankemployee')" disabled>Bank Employee</button>
 					<button class="role-btn" id="trainings-btn"
-						onclick="navigateToTabdept('trainings')">Trainings</button>
+						onclick="navigateToTabdept('trainings')" disabled>Trainings</button>
 					<button class="role-btn" id="additionalinformation-btn"
-						onclick="navigateToTabdept('additionalinformation')">Additional
+						onclick="navigateToTabdept('additionalinformation')" disabled>Additional
 						Information</button>
 					<button class="role-btn" id="islamicbanking-btn"
-						onclick="navigateToTabdept('islamicbanking')">Islamic
+						onclick="navigateToTabdept('islamicbanking')" disabled>Islamic
 						Banking</button>
 					<button class="role-btn" id="conductcultureassessment-btn"
-						onclick="navigateToTabdept('conductcultureassessment')">Conduct
+						onclick="navigateToTabdept('conductcultureassessment')" disabled>Conduct
 						Culture Assessment</button>
 
 				</div>
-
-				<div class="form-group mb-0"
-					th:hidden="${ROLEID != 'ADM-M' and ROLEID != 'ADM-C' and ROLEID != 'MGR'  and ROLEID != 'SUP-ADM'}">
-
-					<select id="branch" name="branch" style="width: 200px"
+				<div class="form-group mb-0" th:unless="${DEPARTMENTVALIDATION=='YES'}"
+					th:hidden="${ROLEID != 'ADM-M' and ROLEID != 'ADM-C' and ROLEID != 'MGR'  and ROLEID != 'SUP-ADM' }">
+					<select id="branch" name="branch" style="width: 200px" 
 						class="form-control form-control-sm " onchange="filtertable()"
 						required>
 						<option value="" selected disabled>-- Select --</option>
@@ -1567,7 +1565,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 42px;"
+				<form id="reportForm" method="POST" style="padding-top: 52px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -1923,7 +1921,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist1[0].REPORT_DATE}"> <input
@@ -5796,7 +5794,7 @@ table.selection-mode td {
 					<strong>No records found</strong>
 				</div>
 
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -7967,7 +7965,7 @@ table.selection-mode td {
 					<strong>No records found</strong>
 				</div>
 
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -11180,7 +11178,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -11472,7 +11470,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -11685,7 +11683,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist1[0].REPORT_DATE}"> <input
@@ -14070,7 +14068,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -14978,7 +14976,7 @@ table.selection-mode td {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST" style="padding-top: 34px;"
+				<form id="reportForm" method="POST" style="padding-top: 44px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
