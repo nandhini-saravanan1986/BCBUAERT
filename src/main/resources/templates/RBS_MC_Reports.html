@@ -899,12 +899,7 @@ body {
 	overflow: hidden;
 }
 
-.table-responsive {
-	width: 100%;
-	max-height: calc(100vh - 285px);
-	overflow: auto;
-	position: relative;
-}
+
 
 .table-responsive thead {
 	/* position: sticky; */
@@ -972,10 +967,10 @@ body {
 
 .role-page-header .float-left {
 	position: absolute !important;
-	top: 100% !important;
+	top: 215% !important;
 	left: 0 !important;
 	width: 100% !important;
-	padding: 28px 20px 0 20px !important;
+	padding: 0px 20px 0 20px !important;
 	display: flex !important;
 	align-items: flex-end !important;
 	/* border-bottom: 3px solid #E67E00 !important;  */
@@ -1101,7 +1096,7 @@ body {
 
 /* Ensure the table wrapper allows scrolling */
 .table-responsive {
-	max-height: calc(100vh - 285px);
+	max-height: calc(100vh - 324px);
 	overflow-y: auto;
 	overflow-x: auto;
 	position: relative;
@@ -1219,7 +1214,172 @@ body {
 	transform: scale(0.95);
 }
 </style>
+<style>
 
+#usertable {
+	width: 100%;
+	table-layout: auto; 
+}
+
+.table-responsive {
+	overflow-x: auto;
+	overflow-y: visible !important;
+	
+}
+
+.toolbar {
+	display: none; 
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: #f4f4f9;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.toolbar-left {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.tool-btn {
+	padding: 6px 12px;
+	cursor: pointer;
+	border: 1px solid #aaa;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.tool-btn:hover {
+	background-color: #eee;
+}
+
+.selected {
+	background-color: #c6e2ff !important;
+	border: 2px solid #2a76dd !important;
+}
+
+.select-btn {
+	width: 100%;
+	height: 100%;
+	text-align: left;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	background: transparent;
+	border: none; 
+	border-radius: 0; 
+	cursor: pointer;
+	outline: none;
+}
+
+#usertable.is-editing .select-btn:hover {
+	background-color: rgba(0, 115, 230, 0.05);
+}
+
+.select-content {
+	display: none;
+	position: absolute;
+	background-color: white;
+	min-width: 100%;
+	width: max-content;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	border: 1px solid #ccc;
+	z-index: 9999;
+	padding: 8px;
+	max-height: 250px;
+	overflow-y: auto;
+	left: 0;
+	top: 100%;
+}
+
+.custom-select.open .select-content {
+	display: block;
+}
+#usertable td {
+	overflow: visible !important;
+}
+
+.custom-select {
+	position: relative;
+	width: 100%;
+	min-width: 120px;
+	text-align: left;
+	overflow: visible !important;
+	
+	background: none !important; 
+	padding: 0 !important; 
+	height: 100% !important;
+	
+}
+
+.select-content label {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 5px;
+	cursor: pointer;
+	font-weight: normal;
+}
+
+
+table.selection-mode {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#usertable td.selected, 
+#usertable td.selected .select-btn {
+    background-color: #c6e2ff !important;
+    border-color: #2a76dd !important;
+    color: #000 !important;
+}
+
+#usertable:not(.is-editing) .select-btn {
+    background-color: transparent !important;
+    border: none !important;
+    pointer-events: none; 
+    padding: 2px 6px; 
+}
+
+#usertable.is-editing .select-btn {
+    background-color: #ffffff; 
+    border: 1px solid transparent; 
+    transition: background-color 0.2s;
+    height: 25.6px;
+    font-size: 12px !important;
+    
+}
+
+#usertable.is-editing .select-btn:hover {
+    background-color: #f0f8ff; 
+}
+
+
+table.selection-mode .custom-select {
+    pointer-events: none;
+    user-select: none;
+}
+
+table.selection-mode .select-btn {
+    background-color: #e9ecef !important;
+    opacity: 0.8;
+    cursor: crosshair !important; 
+}
+
+table.selection-mode td {
+    cursor: crosshair; 
+}
+.tabmargin{
+    margin-bottom: 6px;
+}
+
+</style>
 </head>
 
 
@@ -1238,16 +1398,19 @@ body {
 
 		<div id="pageHeader"
 			class="role-page-header d-flex justify-content-between align-items-center"
+			style="padding-bottom: 0px; margin-bottom: 0px;"
 			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
 			<div class="d-flex align-items-center">
 				<button class="static-back-btn" onclick="goBack()" title="Go Back">
 					<i class="fa fa-arrow-left"></i>
 				</button>
-				<h4 title="Risk-Based Supervision Market Conduct Reports">RBS Market Conduct Reports</h4>
+				<h4 title="Risk-Based Supervision Market Conduct Reports">RBS
+					Market Conduct Reports</h4>
 			</div>
 
-			<div class="d-flex align-items-center gap-2" style="margin-top: 8px;">
-				<div class="float-left">
+			<div class="d-flex align-items-center gap-2" style="margin-top: 8px;"
+				th:classappend="${DEPARTMENTVALIDATION == 'YES' } ? ' tabmargin' ">
+				<div class="float-left" th:unless="${DEPARTMENTVALIDATION == 'YES'}">
 					<button class="role-btn" id="bankinformation-btn"
 						onclick="navigateToTab('bankinformation')">Bank
 						Information</button>
@@ -1272,8 +1435,37 @@ body {
 
 				</div>
 
+				<div class="float-left" th:if="${DEPARTMENTVALIDATION == 'YES'}">
+					<button class="role-btn" id="bankinformation-btn"
+						onclick="navigateToTabdept('bankinformation')">Bank
+						Information</button>
+					<button class="role-btn" id="bankconsumers-btn"
+						onclick="navigateToTabdept('bankconsumers')">Bank
+						Consumers</button>
+					<button class="role-btn" id="complaints-btn"
+						onclick="navigateToTabdept('complaints')">Complaints</button>
+					<button class="role-btn" id="retailproducts-btn"
+						onclick="navigateToTabdept('retailproducts')">Retail
+						Products</button>
+					<button class="role-btn" id="bankemployee-btn"
+						onclick="navigateToTabdept('bankemployee')">Bank Employee</button>
+					<button class="role-btn" id="trainings-btn"
+						onclick="navigateToTabdept('trainings')">Trainings</button>
+					<button class="role-btn" id="additionalinformation-btn"
+						onclick="navigateToTabdept('additionalinformation')">Additional
+						Information</button>
+					<button class="role-btn" id="islamicbanking-btn"
+						onclick="navigateToTabdept('islamicbanking')">Islamic
+						Banking</button>
+					<button class="role-btn" id="conductcultureassessment-btn"
+						onclick="navigateToTabdept('conductcultureassessment')">Conduct
+						Culture Assessment</button>
+
+				</div>
+
 				<div class="form-group mb-0"
 					th:hidden="${ROLEID != 'ADM-M' and ROLEID != 'ADM-C' and ROLEID != 'MGR'  and ROLEID != 'SUP-ADM'}">
+
 					<select id="branch" name="branch" style="width: 200px"
 						class="form-control form-control-sm " onchange="filtertable()"
 						required>
@@ -1297,6 +1489,12 @@ body {
 						<option value="consolidated">Consolidated</option>
 					</select> <label class="form-legend" style="margin-bottom: 0px;">Branch
 						:</label>
+					<div>
+						<button class="role-btn" onclick="navigateTodeptvalidpage()"
+							th:unless="${DEPARTMENTVALIDATION=='YES'}">Department
+							Validation</button>
+					</div>
+
 				</div>
 
 			</div>
@@ -1307,6 +1505,45 @@ body {
 
 			<div class="tab-pane fade" id="bankinformation" role="tabpanel"
 				th:if="${formmode=='bankinformation'}">
+				
+						<div class="d-flex justify-content-between align-items-center mr-3 mb-2">
+    <div class="toolbar" style="display: none; background: transparent; border: none; padding: 0; margin: 0; flex-grow: 1;">
+        <div class="toolbar-left d-flex align-items-center" style="gap: 15px;">
+            <span style="white-space: nowrap; color: #003366;"><strong>Common Select :</strong></span>
+            
+            <div class="custom-select" id="common-dropdown" style="max-width: 250px;">
+                <button type="button" class="select-btn" title="Select"> --- Select ---</button>
+                <div class="select-content">
+                    <th:block th:each="item : ${md}">
+                        <label><input type="checkbox" th:value="${item}">
+                            <span th:text="${item}"></span></label>
+                    </th:block>
+                </div>
+            </div>
+            <button type="button" class="role-btn" id="clear-btn">Clear</button>
+            <button type="button" class="role-btn" id="mode-toggle" style="min-width: 152px;" >Multiselect</button>
+        </div>
+    </div>
+
+    <div class="text-right ml-auto">
+      <button type="button" class="role-btn" id="verifyBtn"
+						th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' }"
+						onclick="verifyData()">Verify</button>
+					<button type="button" class="role-btn" id="modifyBtn"
+						th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+						onclick="enableEdit()">Modify</button>
+					<button type="button" class="role-btn" id="cancelBtn"
+						style="display: none;" onclick="cancelEdit()">Cancel</button>
+					<button type="button" class="role-btn" id="downloadBtn"
+						style="padding-right: 12px;"
+						th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+						onclick="downloadData()">
+						<i class="fa fa-download"></i>
+					</button>
+    </div>
+</div>
+
+<!-- 
 				<div class="mr-3 mb-2 mt-2 text-right"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 
@@ -1324,13 +1561,13 @@ body {
 						onclick="downloadData()">
 						<i class="fa fa-download"></i>
 					</button>
-				</div>
+				</div> -->
 
 				<div th:if="${reportlist == null or #lists.isEmpty(reportlist)}"
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 42px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -1421,7 +1658,7 @@ body {
 								</tr>
 							</thead>
 							<tbody th:each="report : ${reportlist}">
-								<tr>
+							<tr>
 									<td><input type="text" id="R6_BANK" name="R6_BANK"
 										th:value="${report.R6_BANK}" readonly class="table-input"></td>
 									<td><input type="text" id="R6_PRODUCT" name="R6_PRODUCT"
@@ -1491,8 +1728,7 @@ body {
 								<tr>
 									<td><input type="text" id="R13_BANK" name="R13_BANK"
 										th:value="${report.R13_BANK}" readonly class="table-input"></td>
-									<td ><span th:text="${report.R13_PRODUCT}" style="padding-left:10px; display:inline-block;"></span><input
-										type="hidden" id="R13_PRODUCT" name="R13_PRODUCT"
+									<td><input type="text" id="R13_PRODUCT" name="R13_PRODUCT"
 										th:value="${report.R13_PRODUCT}" readonly class="table-input"></td>
 								</tr>
 								<tr>
@@ -1550,104 +1786,103 @@ body {
 										th:value="${report.R22_PRODUCT}" readonly class="table-input "></td>
 									<td><input type="text" id="R22_NO_EMP_SPC_TP"
 										name="R22_NO_EMP_SPC_TP"
-										th:classappend="${DEPARTMENT == 'IT'} ? ' editable-input'"
 										th:value="${report.R22_NO_EMP_SPC_TP}" readonly
-										class="table-input "></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_CON_SPC_TP"
 										name="R22_NO_CON_SPC_TP"
 										th:value="${report.R22_NO_CON_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_AVG_NO_EMP_SPC_TP"
 										name="R22_AVG_NO_EMP_SPC_TP"
 										th:value="${report.R22_AVG_NO_EMP_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_BRN_SPC_TP"
 										name="R22_NO_BRN_SPC_TP"
 										th:value="${report.R22_NO_BRN_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_BRN_POD"
 										name="R22_TOT_NO_BRN_POD"
 										th:value="${report.R22_TOT_NO_BRN_POD}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_ATM_SPC_TP"
 										name="R22_NO_ATM_SPC_TP"
 										th:value="${report.R22_NO_ATM_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_ATM_DET_SPC_TP"
 										name="R22_NO_ATM_DET_SPC_TP"
 										th:value="${report.R22_NO_ATM_DET_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_AUT_SPC_TP"
 										name="R22_NO_AUT_SPC_TP"
 										th:value="${report.R22_NO_AUT_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INS_BNK_SPC_TP"
 										name="R22_NO_INS_BNK_SPC_TP"
 										th:value="${report.R22_NO_INS_BNK_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INS_DWN_SPC_TP"
 										name="R22_NO_INS_DWN_SPC_TP"
 										th:value="${report.R22_NO_INS_DWN_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_EMP_RSK_SPC_DTE"
 										name="R22_NO_EMP_RSK_SPC_DTE"
 										th:value="${report.R22_NO_EMP_RSK_SPC_DTE}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_EXT_FRD_SPC_TP"
 										name="R22_NO_EXT_FRD_SPC_TP"
 										th:value="${report.R22_NO_EXT_FRD_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INT_FRD_SPC_TP"
 										name="R22_NO_INT_FRD_SPC_TP"
 										th:value="${report.R22_NO_INT_FRD_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_FRD_SPC_TP"
 										name="R22_NO_FRD_SPC_TP"
 										th:value="${report.R22_NO_FRD_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_FRD_PP"
 										name="R22_NO_FRD_PP" th:value="${report.R22_NO_FRD_PP}"
-										readonly class="table-input editable-input"></td>
+										readonly class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_REV_SPC_TP"
 										name="R22_TOT_REV_SPC_TP"
 										th:value="${report.R22_TOT_REV_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_INS_UNP_SPC_TP"
 										name="R22_TOT_INS_UNP_SPC_TP"
 										th:value="${report.R22_TOT_INS_UNP_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_HRS_BNK"
 										name="R22_TOT_NO_HRS_BNK"
 										th:value="${report.R22_TOT_NO_HRS_BNK}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_INC_SPC_TP"
 										name="R22_TOT_NO_INC_SPC_TP"
 										th:value="${report.R22_TOT_NO_INC_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_PEN_SPC_TP"
 										name="R22_TOT_NO_PEN_SPC_TP"
 										th:value="${report.R22_TOT_NO_PEN_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_AUT_SPC_TP"
 										name="R22_TOT_NO_AUT_SPC_TP"
 										th:value="${report.R22_TOT_NO_AUT_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_SAL_SPC_TP"
 										name="R22_TOT_NO_SAL_SPC_TP"
 										th:value="${report.R22_TOT_NO_SAL_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_MER_SPC_TP"
 										name="R22_TOT_NO_MER_SPC_TP"
 										th:value="${report.R22_TOT_NO_MER_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INQ_SPC_TP"
 										name="R22_NO_INQ_SPC_TP"
 										th:value="${report.R22_NO_INQ_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_SER_SPC_TP"
 										name="R22_NO_SER_SPC_TP"
 										th:value="${report.R22_NO_SER_SPC_TP}" readonly
-										class="table-input editable-input"></td>
+										class="table-input auto-dropdown"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -1688,7 +1923,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist1[0].REPORT_DATE}"> <input
@@ -5561,7 +5796,7 @@ body {
 					<strong>No records found</strong>
 				</div>
 
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -7732,7 +7967,7 @@ body {
 					<strong>No records found</strong>
 				</div>
 
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -10945,7 +11180,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -11237,7 +11472,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -11450,7 +11685,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${(reportlist1 == null or #lists.isEmpty(reportlist1)) and (reportlist2 == null or #lists.isEmpty(reportlist2)) }">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist1[0].REPORT_DATE}"> <input
@@ -13835,7 +14070,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -14743,7 +14978,7 @@ body {
 					class="text-center mt-4">
 					<strong>No records found</strong>
 				</div>
-				<form id="reportForm" method="POST"
+				<form id="reportForm" method="POST" style="padding-top: 34px;"
 					th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 					<input type="hidden" id="REPORT_DATE" name="REPORT_DATE"
 						th:value="${reportlist[0].REPORT_DATE}"> <input
@@ -15494,7 +15729,15 @@ body {
 
 
 
+	<script th:inline="javascript">
+function navigateTodeptvalidpage() {
+	let formmode = /*[[${formmode}]]*/ null;
+	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&deptvalid=YES';
+	
+}
 
+</script>
 	<script>
 	function navigateToTab(tabId) {
 
@@ -15502,8 +15745,12 @@ body {
 		 window.location.href = 'RT_MC_Reports?formmode='+tabId; 
 		
 	}
-
-
+	function navigateToTabdept(tabId) {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&deptvalid=YES';
+		
+	}
+	
 	function handleClick(tabId) {
 		// Remove active class from all buttons
 		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
@@ -15546,8 +15793,193 @@ body {
 	}
 		
 </script>
+<script th:inline="javascript">
+// 1. Create EMPTY global variables for your button functions.
+// Because these are outside DOMContentLoaded, your HTML buttons can see them!
+let enableEdit;
+let cancelEdit;
 
+document.addEventListener("DOMContentLoaded", function() {
+
+    const dataType = /*[[${DEPARTMENTVALIDATION}]]*/ null;
+
+    if (dataType && dataType.trim().toUpperCase() === 'YES') {      
+    	console.log("Loading DEPARTMENTVALIDATION Functions");
+        enableEdit = function() {
+        	 document.getElementById('modifyBtn').style.display = 'none';
+        	    document.getElementById('cancelBtn').style.display = 'inline-block';
+        	    
+        	    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+        	    if(bottomSave) bottomSave.style.display = 'inline-block';
+
+        	    document.querySelectorAll('.editable-input:not(.auto-dropdown)').forEach(input => {
+        	        input.setAttribute('data-original-value', input.value);
+        	        input.removeAttribute('readonly');
+        	    });
+
+        	    const commonDropdown = document.getElementById('common-dropdown');
+        	    const backendOptions = [];
+        	    if (commonDropdown) {
+        	        commonDropdown.querySelectorAll('.select-content label').forEach(label => {
+        	            backendOptions.push({ value: label.querySelector('input').value, text: label.querySelector('span').innerText });
+        	        });
+        	    }
+
+        	    document.querySelectorAll('.auto-dropdown').forEach(input => {
+        	        if (input.dataset.transformed === "true") return;
+
+        	        input.setAttribute('data-original-value', input.value);
+
+        	        const wrapper = document.createElement('div');
+        	        wrapper.className = 'custom-select';
+
+        	        const btn = document.createElement('button');
+        	        btn.type = 'button';
+        	        btn.className = 'select-btn';
+
+        	        const content = document.createElement('div');
+        	        content.className = 'select-content';
+
+        	        backendOptions.forEach(opt => {
+        	            const label = document.createElement('label');
+        	            label.innerHTML = `<input type="checkbox" value="${opt.value}"> <span>${opt.text}</span>`;
+        	            content.appendChild(label);
+        	        });
+
+        	        wrapper.appendChild(btn);
+        	        wrapper.appendChild(content);
+
+        	        const savedValues = input.value.split(',').map(v => v.trim());
+        	        content.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        	            if (savedValues.includes(cb.value)) cb.checked = true;
+        	        });
+        	        
+        	        const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:checked'));
+        	        const selectedValuesArray = checkedBoxes.map(cb => cb.value);
+        	        btn.innerText = selectedValuesArray.length > 0 ? selectedValuesArray.join(', ') : "Select...";
+        	        btn.title = btn.innerText;
+
+        	        input.parentNode.replaceChild(wrapper, input);
+        	        input.type = 'hidden';
+        	        input.classList.remove('auto-dropdown');
+        	        input.classList.add('backend-input'); 
+        	        input.dataset.transformed = "true"; 
+        	        wrapper.appendChild(input);
+        	    });
+
+        	    const rows = document.getElementById('usertable').querySelectorAll('tr');
+        	    rows.forEach((row, rowIndex) => {
+        	        row.querySelectorAll('td').forEach((cell, colIndex) => {
+        	            if(cell.querySelector('.custom-select')) {
+        	                cell.dataset.row = rowIndex;
+        	                cell.dataset.col = colIndex;
+        	            }
+        	        });
+        	    });
+
+        	    document.getElementById('usertable').classList.add('is-editing');
+        	    document.querySelector('.toolbar').style.display = 'flex';
+        };
+
+        cancelEdit = function() {
+        	document.body.click();
+        	 document.getElementById('modifyBtn').style.display = 'inline-block';
+        	    document.getElementById('cancelBtn').style.display = 'none';
+        	    
+        	    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+        	    if(bottomSave) bottomSave.style.display = 'none';
+
+        	    document.querySelectorAll('.editable-input:not(.backend-input)').forEach(input => {
+        	        input.setAttribute('readonly', true);
+        	        let originalValue = input.getAttribute('data-original-value');
+        	        if (originalValue !== null) input.value = originalValue; 
+        	    });
+
+        	    document.querySelectorAll('.backend-input').forEach(input => {
+        	        let originalValue = input.getAttribute('data-original-value');
+        	        if (originalValue !== null) {
+        	            input.value = originalValue; 
+        	        }
+
+        	        input.type = 'text';
+        	        input.setAttribute('readonly', true);
+        	        
+        	        input.classList.remove('backend-input');
+        	        input.classList.add('auto-dropdown');
+        	        
+        	        delete input.dataset.transformed; 
+
+        	        const wrapper = input.closest('.custom-select');
+        	        if (wrapper) {
+        	            wrapper.parentNode.replaceChild(input, wrapper);
+        	        }
+        	    });
+
+        	    document.getElementById('usertable').classList.remove('is-editing');
+        	    document.querySelector('.toolbar').style.display = 'none';
+        	    
+        	    if (typeof isSelectionMode !== 'undefined' && isSelectionMode) {
+        	        document.getElementById('mode-toggle').click();
+        	    }
+        };
+    } else {        
+    	console.log("Loading MODIFY Functions");
+        enableEdit = function() {
+        	 let modifyBtn = document.getElementById('modifyBtn');
+        	    if (modifyBtn) modifyBtn.style.display = 'none';
+
+        	    let cancelBtn = document.getElementById('cancelBtn');
+        	    if (cancelBtn) cancelBtn.style.display = 'inline-block';
+
+        	    let downloadBtn = document.getElementById('downloadBtn');
+        	    if (downloadBtn) downloadBtn.style.display = 'none';
+
+        	    let verifyBtn = document.getElementById('verifyBtn');
+        	    if (verifyBtn) verifyBtn.style.display = 'none';
+
+        	    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+        	    if (bottomSave) bottomSave.style.display = 'inline-block';
+
+        	    document.querySelectorAll('.editable-input').forEach(input => {
+        	        input.setAttribute('data-original-value', input.value);
+        	        input.removeAttribute('readonly');
+        	    });
+        };
+
+        cancelEdit = function() {
+
+            let modifyBtn = document.getElementById('modifyBtn');
+            if (modifyBtn) modifyBtn.style.display = 'inline-block';
+
+            let cancelBtn = document.getElementById('cancelBtn');
+            if (cancelBtn) cancelBtn.style.display = 'none';
+
+            let downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) downloadBtn.style.display = 'inline-block';
+
+            let verifyBtn = document.getElementById('verifyBtn');
+            if (verifyBtn) verifyBtn.style.display = 'inline-block';
+
+            let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
+            if (bottomSave) bottomSave.style.display = 'none';
+
+            document.querySelectorAll('.editable-input').forEach(input => {
+                input.setAttribute('readonly', true);
+
+                let originalValue = input.getAttribute('data-original-value');
+                if (originalValue !== null) {
+                    input.value = originalValue;
+                }
+            });
+        };
+    }    
+});
+
+
+</script>
 	<script>
+	
+/*
 function enableEdit() {
 
     let modifyBtn = document.getElementById('modifyBtn');
@@ -15597,7 +16029,7 @@ function cancelEdit() {
         }
     });
 }
-
+	*/
     function submitForm() {
         document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
         let formData = $('#reportForm').serialize();        
@@ -15688,5 +16120,299 @@ function cancelEdit() {
     }
     
 </script>
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function() {
+	const department = /*[[${DEPARTMENTVALIDATION}]]*/ null;
+	//alert(department);
+	if (department === 'YES') {
+		const table = document.getElementById('usertable');
+		const modeToggleBtn = document.getElementById('mode-toggle');
+		const clearBtn = document.getElementById('clear-btn');
+		const commonDropdown = document.getElementById('common-dropdown');
+
+		let isSelectionMode = false;
+		let isDragging = false;
+		let startRow = -1;
+		let startCol = -1;
+		let isUnselecting = false;
+
+		function ensureId(element) {
+			if (!element.id) element.id = 'select-' + Math.random().toString(36).substr(2, 9);
+			return element.id;
+		}
+
+	document.addEventListener('click', function(e) {
+		if (e.target.classList.contains('select-btn')) {
+			const parentSelect = e.target.parentElement;
+
+			if (parentSelect.id === 'common-dropdown') {
+				const selectedCells = document.querySelectorAll('td.selected');
+				if (selectedCells.length === 0) {
+					alert("Please click 'Multiselect' and select at least one cell in the table first.");
+					return;
+				}
+			}
+
+			const wasOpen = parentSelect.classList.contains('open');
+
+			document.querySelectorAll('.custom-select').forEach(sel => {
+				sel.classList.remove('open');
+				const orphanedContent = document.querySelector(`.select-content[data-owner="${sel.id}"]`);
+				if (orphanedContent) {
+					orphanedContent.style.display = ''; 
+					orphanedContent.style.position = '';
+					orphanedContent.style.top = '';
+					orphanedContent.style.left = '';
+					orphanedContent.style.minWidth = '';
+					orphanedContent.style.zIndex = '';
+					sel.appendChild(orphanedContent); 
+				}
+			});
+
+			if (!wasOpen) {
+				parentSelect.classList.add('open');
+				const content = parentSelect.querySelector('.select-content');
+				const parentId = ensureId(parentSelect);
+				content.setAttribute('data-owner', parentId);
+
+				const btnRect = e.target.getBoundingClientRect();
+
+				document.body.appendChild(content);
+
+				content.style.display = 'block';
+				content.style.position = 'fixed';
+				content.style.zIndex = '999999';
+				content.style.left = btnRect.left + 'px';
+				content.style.minWidth = Math.max(btnRect.width, 180) + 'px';
+
+				const spaceBelow = window.innerHeight - btnRect.bottom;
+				if (spaceBelow < 250) {
+					content.style.top = 'auto';
+					content.style.bottom = (window.innerHeight - btnRect.top + 2) + 'px';
+				} else {
+					content.style.top = (btnRect.bottom + 2) + 'px';
+					content.style.bottom = 'auto';
+				}
+			}
+		} else if (!e.target.closest('.select-content')) {
+			
+			document.querySelectorAll('.custom-select').forEach(sel => {
+				sel.classList.remove('open');
+				const orphanedContent = document.querySelector(`.select-content[data-owner="${sel.id}"]`);
+				if (orphanedContent) {
+					orphanedContent.style.display = ''; 
+					orphanedContent.style.position = '';
+					orphanedContent.style.top = '';
+					orphanedContent.style.left = '';
+					orphanedContent.style.minWidth = '';
+					orphanedContent.style.zIndex = '';
+					sel.appendChild(orphanedContent);
+				}
+			});
+		}
+	});
+
+		
+		function updateDropdownUI(dropdown) {
+			let content = dropdown.querySelector('.select-content');
+			if (!content) content = document.querySelector(`.select-content[data-owner="${dropdown.id}"]`);
+
+			if (content) {
+				const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:checked'));
+				const selectedValuesArray = checkedBoxes.map(cb => cb.value);
+				const commaSeparatedString = selectedValuesArray.join(', ');
+				const btn = dropdown.querySelector('.select-btn');
+				const hiddenInput = dropdown.querySelector('.backend-input');
+				
+				if (selectedValuesArray.length === 0) {
+					btn.innerText = "Select...";
+					btn.title = "Select...";
+					if(hiddenInput) hiddenInput.value = ""; 
+				} else {
+					btn.innerText = commaSeparatedString;
+					btn.title = commaSeparatedString;
+					if(hiddenInput) hiddenInput.value = commaSeparatedString; 
+				}
+			}
+		}
+
+		document.addEventListener('change', function(e) {
+			if (e.target.type === 'checkbox') {
+				const content = e.target.closest('.select-content');
+				if (!content) return;
+
+				let dropdown = content.closest('.custom-select');
+				if (!dropdown) dropdown = document.getElementById(content.getAttribute('data-owner'));
+
+				if (!dropdown) return;
+				
+				if (dropdown.id === 'common-dropdown') {
+					const valueChanged = e.target.value;
+					const isChecked = e.target.checked;
+					const selectedCells = document.querySelectorAll('td.selected');
+
+					selectedCells.forEach(cell => {
+						const cellDropdown = cell.querySelector('.custom-select');
+						if (cellDropdown) {
+							let cellContent = cellDropdown.querySelector('.select-content');
+							if (!cellContent) cellContent = document.querySelector(`.select-content[data-owner="${cellDropdown.id}"]`);
+							
+							if (cellContent) {
+								const cellCheckbox = cellContent.querySelector(`input[value="${valueChanged}"]`);
+								if (cellCheckbox) {
+									cellCheckbox.checked = isChecked;
+									updateDropdownUI(cellDropdown);
+								}
+							}
+						}
+					});
+				}
+				updateDropdownUI(dropdown);
+			}
+		});
+		
+		if(modeToggleBtn) {
+			modeToggleBtn.addEventListener('click', () => {
+				isSelectionMode = !isSelectionMode;
+	            
+	            const topCancelBtn = document.getElementById('cancelBtn');
+	            const bottomSaveBtn = document.getElementById('bottomSaveBtn');
+
+				if (isSelectionMode) {
+					modeToggleBtn.innerText = "Exit Multiselect"; 
+					modeToggleBtn.classList.add('active');
+					table.classList.add('selection-mode');
+					document.querySelectorAll('.custom-select').forEach(sel => sel.classList.remove('open'));
+	                
+	                if (topCancelBtn) topCancelBtn.style.display = 'none';
+	                if (bottomSaveBtn) bottomSaveBtn.style.display = 'none';
+
+				} else {
+					modeToggleBtn.innerText = "Multiselect";
+					modeToggleBtn.classList.remove('active');
+					table.classList.remove('selection-mode');
+					document.querySelectorAll('td.selected').forEach(cell => cell.classList.remove('selected'));
+					syncCommonDropdownToSelection();
+
+	                if (topCancelBtn) topCancelBtn.style.display = 'inline-block';
+	                if (bottomSaveBtn) bottomSaveBtn.style.display = 'inline-block';
+				}
+			});
+		}
+
+		table.addEventListener('mousedown', function(event) {
+			if (!isSelectionMode) return; 
+			const td = event.target.closest('td');
+			if (td && td.dataset.row) {
+				isDragging = true;
+				startRow = parseInt(td.dataset.row);
+				startCol = parseInt(td.dataset.col);
+				if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
+	                document.querySelectorAll('td.selected').forEach(c => c.classList.remove('selected'));
+	            }
+
+				isUnselecting = td.classList.contains('selected');
+				
+	            const allMappedCells = table.querySelectorAll('td[data-row]');
+				allMappedCells.forEach(cell => { 
+	                cell.dataset.wasSelected = cell.classList.contains('selected') ? "true" : "false"; 
+	            });
+				updateSelection(startRow, startCol);
+			}
+		});
+
+		table.addEventListener('mouseover', function(event) {
+			if (!isSelectionMode || !isDragging) return;
+			const td = event.target.closest('td');
+			if (td && td.dataset.row) { 
+				updateSelection(parseInt(td.dataset.row), parseInt(td.dataset.col)); 
+			}
+		});
+
+		document.addEventListener('mouseup', () => { 
+			if (isDragging) {
+				isDragging = false; 
+				syncCommonDropdownToSelection();
+			}
+		});
+
+		function updateSelection(currentRow, currentCol) {
+			const minRow = Math.min(startRow, currentRow);
+			const maxRow = Math.max(startRow, currentRow);
+			const minCol = Math.min(startCol, currentCol);
+			const maxCol = Math.max(startCol, currentCol);
+
+	        const allMappedCells = table.querySelectorAll('td[data-row]');
+			allMappedCells.forEach(cell => {
+				const r = parseInt(cell.dataset.row);
+				const c = parseInt(cell.dataset.col);
+				const isInsideBox = (r >= minRow && r <= maxRow && c >= minCol && c <= maxCol);
+				if (isInsideBox) {
+					isUnselecting ? cell.classList.remove('selected') : cell.classList.add('selected');
+				} else {
+					cell.dataset.wasSelected === "true" ? cell.classList.add('selected') : cell.classList.remove('selected');
+				}
+			});
+		}
+
+		function syncCommonDropdownToSelection() {
+			const selectedCells = document.querySelectorAll('td.selected');
+			const commonCheckboxes = commonDropdown.querySelectorAll('input[type="checkbox"]');
+
+			if (selectedCells.length === 0) {
+				commonCheckboxes.forEach(cb => cb.checked = false);
+			} else {
+				const activeValues = new Set();
+				selectedCells.forEach(cell => {
+					const checkedBoxes = cell.querySelectorAll('input[type="checkbox"]:checked');
+					checkedBoxes.forEach(cb => activeValues.add(cb.value));
+				});
+
+				commonCheckboxes.forEach(cb => {
+					cb.checked = activeValues.has(cb.value);
+				});
+			}
+			updateDropdownUI(commonDropdown);
+		}
+
+		if(clearBtn) {
+			clearBtn.addEventListener('click', () => {
+				document.querySelectorAll('td.selected').forEach(cell => cell.classList.remove('selected'));
+				syncCommonDropdownToSelection(); 
+			});
+		}
+	}
+	else{		
+    const ptValue = /*[[${DEPARTMENT}]]*/ null;
+    let ptReportData = /*[[${deptreportlist}]]*/ null; 
+
+
+    if (ptValue && ptReportData) {
+        const ptLower = ptValue.toLowerCase();
+        if (Array.isArray(ptReportData) && ptReportData.length > 0) {
+            ptReportData = ptReportData[0]; 
+        }
+
+        document.querySelectorAll('#usertable .table-input').forEach(input => {
+            
+            const fieldName = input.name; 
+
+            if (ptReportData && ptReportData.hasOwnProperty(fieldName)) {
+                
+                const fieldConfig = ptReportData[fieldName]; 
+
+                if (fieldConfig) {
+                    const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
+
+                    if (allowedValues.includes(ptLower)) {                        
+                        input.classList.add('editable-input');
+                    }
+                }
+            }
+        });
+    }}
+}); 
+</script>
+
 </body>
 </html>

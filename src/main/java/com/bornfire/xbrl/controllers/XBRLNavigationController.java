@@ -4651,12 +4651,16 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
 	public String RT_MC_Reports(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String branch, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String branch,@RequestParam(required = false) String deptvalid, Model md, HttpServletRequest req) {
 
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
 		md.addAttribute("ROLEID", ROLEID);
 		System.out.println("ROLEID : " + ROLEID);
+		if (deptvalid == null) {
+		    deptvalid = "NO";
+		}
+		System.out.println("DEPARTMENT VALIDATION : " + deptvalid);
 
 		String DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
 		md.addAttribute("DEPARTMENT", DEPARTMENT);
@@ -4672,10 +4676,23 @@ public class XBRLNavigationController {
 		System.out.println("branch : " + branch);
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+				List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
+				md.addAttribute("md", dropdownOptions);
+				
+			} else {
+				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
 
-			List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
-			System.out.println("size : " + reportlist.size());
-			md.addAttribute("reportlist", reportlist);
+				List<RT_MC_TABLE1_ENTITY> deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				System.out.println("size : " + deptreportlist.size());
+				md.addAttribute("deptreportlist", deptreportlist.get(0));
+			}
 			md.addAttribute("formmode", "bankinformation");
 		}
 
@@ -5273,7 +5290,6 @@ public class XBRLNavigationController {
 	        return "ERROR";
 	    }
 	}
-	
 	
 	
 
