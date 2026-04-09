@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,6 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -271,12 +274,12 @@ public class RT_TradeLevelDerivativesSimplifiedService {
         List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticesimplifiedRepo.gettradeleveldataderivative1();
 
         if (tradeleveldataDerivative.isEmpty()) {
-            logger.warn("Service: No data found for Trade level data derivative simplified report. Returning empty result.");
+            logger.warn("Service: No data found. Returning empty result.");
             return new byte[0];
         }
 
-        String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
-        String templateFileName = "CBUAE_Trade_Level_Data_Derivative_Simplified_Template.xlsx";
+        String templateDir = env.getProperty("output.exportpathtemp");
+        String templateFileName = "CBUAE_Trade Level Data_Derivatives_Template_Simplified.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
         logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
@@ -285,42 +288,39 @@ public class RT_TradeLevelDerivativesSimplifiedService {
             throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
         }
 
-        if (!Files.isReadable(templatePath)) {
-            throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
-        }
+        Path tempWorkingPath = Files.createTempFile("working_template_", ".xlsx");
+        Files.copy(templatePath, tempWorkingPath, StandardCopyOption.REPLACE_EXISTING);
+        File workingFile = tempWorkingPath.toFile();
 
-        try (InputStream templateInputStream = Files.newInputStream(templatePath);
-             Workbook workbook = WorkbookFactory.create(templateInputStream);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try {
+            try (Workbook workbook = WorkbookFactory.create(workingFile);
+                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(2);
-            CreationHelper createHelper = workbook.getCreationHelper();
+                Sheet sheet = workbook.getSheetAt(2);
+                CreationHelper createHelper = workbook.getCreationHelper();
+                // Define cell styles
+                CellStyle dateStyle = workbook.createCellStyle();
+                dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+                dateStyle.setBorderBottom(BorderStyle.THIN);
+                dateStyle.setBorderTop(BorderStyle.THIN);
+                dateStyle.setBorderLeft(BorderStyle.THIN);
+                dateStyle.setBorderRight(BorderStyle.THIN);
+                
+                CellStyle textStyle = workbook.createCellStyle();
+                textStyle.setBorderBottom(BorderStyle.THIN);
+                textStyle.setBorderTop(BorderStyle.THIN);
+                textStyle.setBorderLeft(BorderStyle.THIN);
+                textStyle.setBorderRight(BorderStyle.THIN);
+                
+                CellStyle numberStyle = workbook.createCellStyle();
+                numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+                numberStyle.setBorderBottom(BorderStyle.THIN);
+                numberStyle.setBorderTop(BorderStyle.THIN);
+                numberStyle.setBorderLeft(BorderStyle.THIN);
+                numberStyle.setBorderRight(BorderStyle.THIN);
+                
+                int startRow = 4;
 
-            // Define cell styles
-            CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
-            dateStyle.setBorderBottom(BorderStyle.THIN);
-            dateStyle.setBorderTop(BorderStyle.THIN);
-            dateStyle.setBorderLeft(BorderStyle.THIN);
-            dateStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle textStyle = workbook.createCellStyle();
-            textStyle.setBorderBottom(BorderStyle.THIN);
-            textStyle.setBorderTop(BorderStyle.THIN);
-            textStyle.setBorderLeft(BorderStyle.THIN);
-            textStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle numberStyle = workbook.createCellStyle();
-            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-            numberStyle.setBorderBottom(BorderStyle.THIN);
-            numberStyle.setBorderTop(BorderStyle.THIN);
-            numberStyle.setBorderLeft(BorderStyle.THIN);
-            numberStyle.setBorderRight(BorderStyle.THIN);
-
-
-            int startRow = 4; // Assuming data starts from row index 3 (4rd row)
-
-            if (!tradeleveldataDerivative.isEmpty()) {
                 for (int i = 0; i < tradeleveldataDerivative.size(); i++) {
                     Object[] mm = tradeleveldataDerivative.get(i);
                     Row row = sheet.getRow(startRow + i);
@@ -822,21 +822,20 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     // 117 - individual_negative_contribution
                     Cell cell117 = row.getCell(117); if (cell117 == null) cell117 = row.createCell(117);
                     cell117.setCellValue(mm[117] == null ? "" : mm[117].toString());
-
-     
+                   
                 }
 
-                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-			} else {
-				System.out.println("No Trade level data derivatives found to generate the Excel file.");
-			}
+                workbook.setForceFormulaRecalculation(true);
+                
+                workbook.write(out);
 
-			// Write the final workbook content to the in-memory stream.
-			workbook.write(out);
+                logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
 
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
-		}
-	}
+                return out.toByteArray();
+            }
+        } finally {
+            Files.deleteIfExists(tempWorkingPath);
+            logger.info("Service: Temporary working file deleted.");
+        }
+    }
 }
