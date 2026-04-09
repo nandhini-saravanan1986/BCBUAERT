@@ -784,6 +784,8 @@ $(document).ready(function () {
 		//$("#loader").modal("hide");
 
       
+    }else if (tabId === 'limits'){
+    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=limits';
     }
   }
 
@@ -802,9 +804,14 @@ $(document).ready(function () {
     const params = new URLSearchParams(window.location.search);
     const formmode = params.get('formmode');
 
-    if (formmode === 'list') {
+    if (formmode === 'list' || formmode === 'Detail' ) {
       handleClick('data');
-    } else {
+    }
+    else if(formmode === 'limits'){
+    	handleClick('limits');
+
+    }
+    else {
       handleClick('datacontrols'); // default or formmode=add
     }
   });
@@ -865,6 +872,15 @@ $(document).ready(function () {
         	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
         }, 10000);
     }
+    
+    function detaillist(a){
+		var columnId = a.getAttribute('ColumnId');
+		var reportdate = a.getAttribute('reportdate');
+		//alert(reportdate);
+		//alert(columnId);
+		//var cellValue = a.textContent || a.innerText;
+    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=Detail&columnId='+columnId+'&reportdate='+reportdate;
+    }
 </script>
 
 
@@ -886,7 +902,7 @@ $(document).ready(function () {
 																		<i class="fa fa-arrow-left"></i>
 																	</button>
 						<div class="text-left flex-grow-1">
-										<h4>INVESTMENT RISK DATA DASHBOARD TEMPLATE</h4>
+										<h4>INVESTMENT RISK DATA DASHBOARD</h4>
 										</div>
 									</div>
 									<div
@@ -898,6 +914,9 @@ $(document).ready(function () {
 													onclick="handleClick('template')">Template Instructions</button>
 												<button class="role-btn" id="data-btn"
 													onclick="navigateToTab('data')">Data</button>
+													
+												<button class="role-btn" id="limits-btn"
+													onclick="navigateToTab('limits')">Limits</button>	
 
 											</div>
 											<div class="float-right" >
@@ -919,9 +938,15 @@ $(document).ready(function () {
 
 
 	</div>
+	
+	
+	
+	
+	
+	
 	<!-- -------------------User List Starts----------------------------------------------------- -->
 	<div style="padding-right: 10px; padding-left: 20px;"
-		th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
+		th:if="${formmode == 'list' or formmode == 'Detail' or formmode == 'add' or formmode =='null' or formmode !='edit' }">
 		<!-- Tabs -->
 		<div class="tab-content" id="myTabContent" style="margin-top: 2px;"
 			th:if="${formmode} =='null'">
@@ -1243,7 +1268,7 @@ $(document).ready(function () {
 
 
 		<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
-		<div class="tab-pane fade" id="data" role="tabpanel">
+		<div class="tab-pane fade" id="data" role="tabpanel" th:if="${ formmode == 'list'}">
 			<!-- Move your existing table content here -->
 
 			<!-- 	<div class="row">
@@ -1254,11 +1279,17 @@ $(document).ready(function () {
 
 
 
-			<div class="table-responsive"
-				style="max-height: 400px; overflow: auto; border: none;">
+			<div class="table-responsive">
 				<table id="usertable" 
 					class="table table-bordered table-striped table-hover">
 					<thead class="thead-light">
+						<tr>
+						<th style="text-align: center;width: 100px;" colspan="9">Financial Institution information</th>
+						<th style="text-align: center;width: 100px;" colspan="10">Performance</th>
+						<th style="text-align: center;width: 100px;" colspan="45">Risk Metrics</th>
+						<th style="text-align: center;width: 100px;" colspan="22">Sensitivity Metrics</th>
+						<th style="text-align: center;width: 100px;" colspan="14">Regulatory Stress testing/ICAAP Stress testing</th>
+						</tr>
 						<tr>
 							<th style="text-align: center;width: 100px;">Action</th>
 
@@ -1373,7 +1404,7 @@ $(document).ready(function () {
 								th:href="@{'/Investment_Risk_Data_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
 									<i class="fa fa-edit" style="color: #ff7f27;"></i>
 							</a></td>
-							<td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}"></td>
+							<td th:text="${#dates.format(data.dataDate, 'dd-MM-yyyy')}" ></td>
 							<td th:text="${data.bankName}"></td>
 							<td th:text="${data.groupHeadOfficeSubsidiary}"></td>
 							<td th:text="${data.subsidiary}"></td>
@@ -1382,21 +1413,28 @@ $(document).ready(function () {
 							<td th:text="${data.localForeign}"></td>
 							<td th:text="${data.cbuAeTiering}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.assetBalanceSheetSizeAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C109',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.investmentBookSizeAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.investmentBookSizeAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C110',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.bookSizeTotalAssetsPct, 1, 'COMMA', 4, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.bookSizeTotalAssetsPct, 1, 'COMMA', 4, 'POINT')}" th:attr="ColumnId='C111',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.ytdNetPnlAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.ytdNetPnlAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C112',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.ytdFvtociUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.ytdFvtociUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C113',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.cet1Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.cet1Aed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C114',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.uglCoreTier1RelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.uglCoreTier1RelativeImpactPct, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C115',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.ytdAmortizedUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.ytdAmortizedUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}" ></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.ytdHqlaAcUnrealizedLossAed, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
@@ -1405,19 +1443,23 @@ $(document).ready(function () {
 								th:text="${#numbers.formatDecimal(data.irVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td th:text="${data.irVarHoldingPeriod}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.irFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.irFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C121',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.irVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.irVarExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C122',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.irVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
-							<td th:text="${data.irStatus}"></td>
+								th:text="${#numbers.formatDecimal(data.irVarLimitAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C123',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
+							<td th:text="${data.irStatus}" ></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.irVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.csVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td th:text="${data.csVarHoldingPeriod}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.csFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.csFixedIncomeExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C128',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.csVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td style="text-align: right;"
@@ -1429,11 +1471,14 @@ $(document).ready(function () {
 								th:text="${#numbers.formatDecimal(data.fxVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td th:text="${data.fxVarHoldingPeriod}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.fxExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.fxExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C135',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.fxVarExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.fxVarExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C136',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.fxVarLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.fxVarLimitAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C137',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td th:text="${data.fxStatus}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.fxVarImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
@@ -1465,9 +1510,11 @@ $(document).ready(function () {
 								th:text="${#numbers.formatDecimal(data.overallVarConfidenceInterval, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td th:text="${data.overallVarHoldingPeriod}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.varExposureAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.varExposureAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C156',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td
-								th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.varLimitAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C157',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td th:text="${data.overallVarStatus}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.portfolioRelativeImpactPct, 1, 'COMMA', 2, 'POINT')}"></td>
@@ -1486,9 +1533,11 @@ $(document).ready(function () {
 								th:text="${#numbers.formatDecimal(data.interestRateLimit, 1, 'COMMA', 2, 'POINT')}"></td>
 							<td th:text="${data.interestRateStatus}"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.dv01Aed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.dv01Aed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C168',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td style="text-align: right;"
-								th:text="${#numbers.formatDecimal(data.dv01LimitAed, 1, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${#numbers.formatDecimal(data.dv01LimitAed, 1, 'COMMA', 2, 'POINT')}" th:attr="ColumnId='C169',reportdate=${#dates.format(data.dataDate, 'dd-MM-yyyy')}"
+												onclick="detaillist(this)"></td>
 							<td th:text="${data.dv01Status}"></td>
 							<td style="text-align: right;"
 								th:text="${#numbers.formatDecimal(data.dv01TenorGapLt3Aed, 1, 'COMMA', 2, 'POINT')}"></td>
@@ -1569,10 +1618,120 @@ $(document).ready(function () {
 			</div>
 
 		</div>
-
+		
+		<!------------------------------------------------ Detail list---------------------------------------------------->	
+			<div class="tab-pane fade" id="data" role="tabpanel" style="padding-right: 10px; padding-left: 20px;"
+		th:if="${ formmode == 'Detail'}">
+			<div class="table-responsive">
+				<table id="usertable" 
+					class="table table-bordered table-striped table-hover">
+					<thead class="thead-light">
+						<tr>
+							<th>CUST ID</th>
+							<th>ACCT NO</th>
+							<th>ACCT NAME</th>
+							<th style="text-align:right;">ACCT BALANCE</th>
+							<th>COLUMNID</th>
+							<th>REPORT_DATE</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr th:each="report: ${invriskdetaillist}">
+						<td th:text="${report.custId}"></td>
+						<td th:text="${report.foracid}"></td>
+						<td th:text="${report.acctName}"></td>
+						<td th:text="${report.actBalanceAmtLc}"></td>
+						<td th:text="${report.reportAddlCriteria2}"></td>
+						<td th:text="${#dates.format(report.reportDate, 'dd-MM-yyyy')}"></td>
+					</tr>
+					
+					
+					</tbody>
+					</table>
+			</div>
+		</div>
 
 
 	</div>
+							
+	<!---------------------- limits--------------------------->
+	<div th:if="${formmode}=='limits'"   class="investment-edit-page"  style="align-items: center;">
+		<div class="row">
+			<form th:action="@{/updateinvestmentriskdatadictionary}"
+				th:object="${investmentriskdatadashboard}" method="post"
+				id="investmentriskdatadashboard">
+				<div class="card" style="margin-left: 15px; margin-right: 15px;">
+					
+
+					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
+						                                          
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Report Date
+							</label>
+							<div class="col-sm-4">
+								<input type="date" class="form-control" 
+									 />
+							</div>
+
+							<label class="col-sm-2 col-form-label">Forex Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" />
+							</div>
+							</div>
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Investments Bonds Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" 
+									 />
+							</div>
+
+							<label class="col-sm-2 col-form-label">Investment in Equity Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" />
+							</div>
+							</div>	
+							
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Money Market Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" 
+									 />
+							</div>
+
+							<label class="col-sm-2 col-form-label">Derivative HFT Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" />
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Total VaR Limits
+							</label>
+							<div class="col-sm-4">
+								<input type="number" class="form-control" 
+									 />
+							</div>
+
+						</div>		
+							
+						</div>
+						
+						<div class="card-footer text-center">
+						<button type="submit" class="role-btn"
+							onclick="updateform(event)">Update</button>
+					</div>
+					</div>
+					
+				</form>
+				</div>
+			
+		</div>
+	</div>		
 
 	<!------------------ edit starts-------------------------------------------------------------->
 
@@ -2547,6 +2706,10 @@ $(document).ready(function () {
 			search: "Search:"
 		}
 	});
+	
+	
+	
+	
 </script>
 
 
@@ -3124,7 +3287,6 @@ body {
 
 .table-responsive {
 	width: 100%;
-	max-height: calc(100vh - 190px);
 	overflow: auto;
 	position: relative;
 }
@@ -3157,23 +3319,23 @@ body {
 </style>
 <style>
 	.table-responsive {
-	    max-height: none !important;
-	    overflow: visible !important;
-	}
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    overflow-x: auto;
+}
 
-	#usertable {
-	    display: block !important;
-	    max-height: calc(100vh - 280px) ;
-	    overflow-y: auto !important;
-	    overflow-x: auto !important;
-	}
+#usertable {
+    width: 100%;
+    table-layout: auto;
+}
 
-	#usertable thead th {
-	    position: sticky;
-	    top: 0;
-	    z-index: 2; 
-	    background-color: #7b6458; 
-	}
+#usertable thead th {
+    position: sticky;
+    top: 0; /* IMPORTANT: must be 0, not 1 */
+    z-index: 2;
+    background-color: #7b6458;
+    color: #fff;
+}
 </style>
 <script>
 if ('scrollRestoration' in history) {

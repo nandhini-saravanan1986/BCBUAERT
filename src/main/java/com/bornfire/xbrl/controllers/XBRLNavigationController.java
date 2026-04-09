@@ -130,6 +130,9 @@ public class XBRLNavigationController {
 	Bloomberg_services bloombergService;
 	@Autowired
 	KriMasterTable_Rep krimastertablerep;
+	
+	@Autowired
+	RtInvestmentRiskDataDetail_Rep rtinvestmentriskdatadetailrep;
 	@Autowired
 	RtInvestmentDealDataDump_Service rtinvestmentdealdatadump_service;
 	
@@ -1200,7 +1203,10 @@ public class XBRLNavigationController {
 	// Investment Report code
 	@RequestMapping(value = "Investment_Risk_Data_Dashboard_Template", method = RequestMethod.GET)
 	public String InvestmentRiskDataDashboardTemplate(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String SI_NO, // changed from accountNo to slNo
+			@RequestParam(required = false) String reportdate,
+			@RequestParam(required = false) String SI_NO,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
+			@RequestParam(required = false) String columnId,
 			Model md, HttpServletRequest req) {
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			Long Serialnumber = Long.parseLong(SI_NO);
@@ -1210,13 +1216,48 @@ public class XBRLNavigationController {
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-
-			System.out.println("RT" + RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist().size());
 			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist());
-
-			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-		} else {
+		}
+		
+		else if ("limits".equalsIgnoreCase(formmode)) {
+			md.addAttribute("formmode", "limits");
+		}
+		
+		else if ("Detail".equalsIgnoreCase(formmode)) {
+			
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date reportdatefor = null;
+
+			try {
+				if (reportdate != null) {
+					reportdatefor = dateFormat.parse(reportdate);
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+				return "RT/Investment_Risk_Data_Dashboard_Template";
+			}
+			
+			int pageSize = size;
+			int offset = page * pageSize;
+			int totalRows=0;
+			int totalPages=0;
+			totalRows = rtinvestmentriskdatadetailrep.RtInvestmentRiskDatacountROWID(reportdatefor, columnId);
+			System.out.println("columnId="+columnId);
+			totalPages = (int) Math.ceil((double) totalRows / pageSize);
+			List<RtInvestmentRiskDataDetail> RtInvestmentRiskdetaillist = rtinvestmentriskdatadetailrep.RtInvestmentRiskDatalistrowid(reportdatefor,columnId, offset, pageSize);
+			System.out.println("size="+RtInvestmentRiskdetaillist.size());
+			md.addAttribute("formmode", "Detail");
+			md.addAttribute("invriskdetaillist", RtInvestmentRiskdetaillist);
+			md.addAttribute("reportdate", reportdate);
+			md.addAttribute("pagination", "YES");
+			md.addAttribute("currentPage", page);
+			md.addAttribute("totalPages", totalPages);
+		}
+		
+		
+		else {
 			Timestamp lastdatetimestamp = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.findLastReportDate();
 			Timestamp secondlastdatetimestamp = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.findSecondLastReportDate();			
 			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
