@@ -1375,10 +1375,11 @@ table.selection-mode .select-btn {
 table.selection-mode td {
     cursor: crosshair; 
 }
+/* 
 .tabmargin{
     margin-bottom: 37.8px;
-}
-
+} 
+*/
 </style>
 </head>
 
@@ -1490,10 +1491,16 @@ table.selection-mode td {
 					<div>
 						<button class="role-btn" onclick="navigateTodeptvalidpage()"
 							th:unless="${DEPARTMENTVALIDATION=='YES'}">Department
-							Validation</button>
+							Validation</button>							
 					</div>
 
 				</div>
+				<div class="form-group mb-0"
+					th:if="${DEPARTMENTVALIDATION=='YES'}">
+					<button class="role-btn" onclick="navigateTodatapage()">Summary
+					</button>
+				</div>
+
 
 			</div>
 		</div>
@@ -1785,102 +1792,102 @@ table.selection-mode td {
 									<td><input type="text" id="R22_NO_EMP_SPC_TP"
 										name="R22_NO_EMP_SPC_TP"
 										th:value="${report.R22_NO_EMP_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_CON_SPC_TP"
 										name="R22_NO_CON_SPC_TP"
 										th:value="${report.R22_NO_CON_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_AVG_NO_EMP_SPC_TP"
 										name="R22_AVG_NO_EMP_SPC_TP"
 										th:value="${report.R22_AVG_NO_EMP_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_BRN_SPC_TP"
 										name="R22_NO_BRN_SPC_TP"
 										th:value="${report.R22_NO_BRN_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_BRN_POD"
 										name="R22_TOT_NO_BRN_POD"
 										th:value="${report.R22_TOT_NO_BRN_POD}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_ATM_SPC_TP"
 										name="R22_NO_ATM_SPC_TP"
 										th:value="${report.R22_NO_ATM_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_ATM_DET_SPC_TP"
 										name="R22_NO_ATM_DET_SPC_TP"
 										th:value="${report.R22_NO_ATM_DET_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_AUT_SPC_TP"
 										name="R22_NO_AUT_SPC_TP"
 										th:value="${report.R22_NO_AUT_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INS_BNK_SPC_TP"
 										name="R22_NO_INS_BNK_SPC_TP"
 										th:value="${report.R22_NO_INS_BNK_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INS_DWN_SPC_TP"
 										name="R22_NO_INS_DWN_SPC_TP"
 										th:value="${report.R22_NO_INS_DWN_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_EMP_RSK_SPC_DTE"
 										name="R22_NO_EMP_RSK_SPC_DTE"
 										th:value="${report.R22_NO_EMP_RSK_SPC_DTE}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_EXT_FRD_SPC_TP"
 										name="R22_NO_EXT_FRD_SPC_TP"
 										th:value="${report.R22_NO_EXT_FRD_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INT_FRD_SPC_TP"
 										name="R22_NO_INT_FRD_SPC_TP"
 										th:value="${report.R22_NO_INT_FRD_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_FRD_SPC_TP"
 										name="R22_NO_FRD_SPC_TP"
 										th:value="${report.R22_NO_FRD_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_FRD_PP"
 										name="R22_NO_FRD_PP" th:value="${report.R22_NO_FRD_PP}"
-										readonly class="table-input auto-dropdown"></td>
+										readonly class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_REV_SPC_TP"
 										name="R22_TOT_REV_SPC_TP"
 										th:value="${report.R22_TOT_REV_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_INS_UNP_SPC_TP"
 										name="R22_TOT_INS_UNP_SPC_TP"
 										th:value="${report.R22_TOT_INS_UNP_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_HRS_BNK"
 										name="R22_TOT_NO_HRS_BNK"
 										th:value="${report.R22_TOT_NO_HRS_BNK}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_INC_SPC_TP"
 										name="R22_TOT_NO_INC_SPC_TP"
 										th:value="${report.R22_TOT_NO_INC_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_PEN_SPC_TP"
 										name="R22_TOT_NO_PEN_SPC_TP"
 										th:value="${report.R22_TOT_NO_PEN_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_AUT_SPC_TP"
 										name="R22_TOT_NO_AUT_SPC_TP"
 										th:value="${report.R22_TOT_NO_AUT_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_SAL_SPC_TP"
 										name="R22_TOT_NO_SAL_SPC_TP"
 										th:value="${report.R22_TOT_NO_SAL_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_TOT_NO_MER_SPC_TP"
 										name="R22_TOT_NO_MER_SPC_TP"
 										th:value="${report.R22_TOT_NO_MER_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_INQ_SPC_TP"
 										name="R22_NO_INQ_SPC_TP"
 										th:value="${report.R22_NO_INQ_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 									<td><input type="text" id="R22_NO_SER_SPC_TP"
 										name="R22_NO_SER_SPC_TP"
 										th:value="${report.R22_NO_SER_SPC_TP}" readonly
-										class="table-input auto-dropdown"></td>
+										class="table-input input-and-select auto-dropdown"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -15735,6 +15742,13 @@ function navigateTodeptvalidpage() {
 	
 }
 
+function navigateTodatapage(){
+	let formmode = /*[[${formmode}]]*/ null;
+	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	 window.location.href = 'RT_MC_Reports?formmode='+formmode;
+	
+}
+
 </script>
 	<script>
 	function navigateToTab(tabId) {
@@ -15792,8 +15806,6 @@ function navigateTodeptvalidpage() {
 		
 </script>
 <script th:inline="javascript">
-// 1. Create EMPTY global variables for your button functions.
-// Because these are outside DOMContentLoaded, your HTML buttons can see them!
 let enableEdit;
 let cancelEdit;
 
@@ -15819,8 +15831,15 @@ document.addEventListener("DOMContentLoaded", function() {
         	    const backendOptions = [];
         	    if (commonDropdown) {
         	        commonDropdown.querySelectorAll('.select-content label').forEach(label => {
-        	            backendOptions.push({ value: label.querySelector('input').value, text: label.querySelector('span').innerText });
+                        const val = label.querySelector('input').value;
+                        if (val !== 'ALL') backendOptions.push({ value: val, text: label.querySelector('span').innerText });
         	        });
+                    let commonContent = commonDropdown.querySelector('.select-content');
+                    if (commonContent && !commonContent.querySelector('.select-all-cb')) {
+                        const allLabel = document.createElement('label');
+                        allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="background-color: initial;"> ALL`;
+                        commonContent.insertBefore(allLabel, commonContent.firstChild);
+                    }
         	    }
 
         	    document.querySelectorAll('.auto-dropdown').forEach(input => {
@@ -15830,6 +15849,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         	        const wrapper = document.createElement('div');
         	        wrapper.className = 'custom-select';
+        	        wrapper.id = 'select-' + Math.random().toString(36).substr(2, 9);
 
         	        const btn = document.createElement('button');
         	        btn.type = 'button';
@@ -15837,6 +15857,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         	        const content = document.createElement('div');
         	        content.className = 'select-content';
+                    content.setAttribute('data-owner', wrapper.id); 
+
+                    const allLabel = document.createElement('label');
+                    allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="accent-color: #E67E00;"> <strong>ALL</strong>`;
+                    content.appendChild(allLabel);
 
         	        backendOptions.forEach(opt => {
         	            const label = document.createElement('label');
@@ -15848,14 +15873,32 @@ document.addEventListener("DOMContentLoaded", function() {
         	        wrapper.appendChild(content);
 
         	        const savedValues = input.value.split(',').map(v => v.trim());
-        	        content.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        	            if (savedValues.includes(cb.value)) cb.checked = true;
+                    let checkCount = 0;
+
+        	        content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
+        	            if (savedValues.includes(cb.value)) {
+                            cb.checked = true;
+                            checkCount++;
+                        }
         	        });
-        	        
-        	        const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:checked'));
-        	        const selectedValuesArray = checkedBoxes.map(cb => cb.value);
-        	        btn.innerText = selectedValuesArray.length > 0 ? selectedValuesArray.join(', ') : "Select...";
-        	        btn.title = btn.innerText;
+
+                    if (checkCount === backendOptions.length && checkCount > 0) {
+                        content.querySelector('.select-all-cb').checked = true;
+                    }
+                    
+                    const dataBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):checked'));
+                    const vals = dataBoxes.map(cb => cb.value);
+                    
+                    if (vals.length === 0) {
+                        btn.innerHTML = "Select...";
+                        btn.title = "Select...";
+                    } else if (vals.length === backendOptions.length && backendOptions.length > 0) {
+                        btn.innerHTML = "ALL";
+                        btn.title = "ALL";
+                    } else {
+                        btn.innerText = vals.join(', ');
+                        btn.title = vals.join(', ');
+                    }
 
         	        input.parentNode.replaceChild(wrapper, input);
         	        input.type = 'hidden';
@@ -16211,63 +16254,89 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 
 		
-		function updateDropdownUI(dropdown) {
-			let content = dropdown.querySelector('.select-content');
-			if (!content) content = document.querySelector(`.select-content[data-owner="${dropdown.id}"]`);
+	function updateDropdownUI(dropdown) {
+		let content = dropdown.querySelector('.select-content');
+		if (!content) content = document.querySelector(`.select-content[data-owner="${dropdown.id}"]`);
 
-			if (content) {
-				const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:checked'));
-				const selectedValuesArray = checkedBoxes.map(cb => cb.value);
-				const commaSeparatedString = selectedValuesArray.join(', ');
-				const btn = dropdown.querySelector('.select-btn');
-				const hiddenInput = dropdown.querySelector('.backend-input');
-				
-				if (selectedValuesArray.length === 0) {
-					btn.innerText = "Select...";
-					btn.title = "Select...";
-					if(hiddenInput) hiddenInput.value = ""; 
-				} else {
-					btn.innerText = commaSeparatedString;
-					btn.title = commaSeparatedString;
-					if(hiddenInput) hiddenInput.value = commaSeparatedString; 
-				}
+		if (content) {
+			const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):checked'));
+            const totalBoxes = content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').length;
+			
+            const selectedValuesArray = checkedBoxes.map(cb => cb.value);
+			const commaSeparatedString = selectedValuesArray.join(', ');
+            
+			const btn = dropdown.querySelector('.select-btn');
+			const hiddenInput = dropdown.querySelector('.backend-input');
+            const allCb = content.querySelector('.select-all-cb');
+
+			if (selectedValuesArray.length === 0) {
+				btn.innerText = "Select...";
+				btn.title = "Select...";
+				if(hiddenInput) hiddenInput.value = ""; 
+                if(allCb) allCb.checked = false;
+
+			} else if (selectedValuesArray.length === totalBoxes && totalBoxes > 0) {
+                btn.innerHTML = "<strong>ALL</strong>";
+				btn.title = "ALL";
+				if(hiddenInput) hiddenInput.value = commaSeparatedString; 
+                if(allCb) allCb.checked = true;
+
+            } else {
+				btn.innerText = commaSeparatedString;
+				btn.title = commaSeparatedString;
+				if(hiddenInput) hiddenInput.value = commaSeparatedString; 
+                if(allCb) allCb.checked = false;
 			}
 		}
+	}
 
-		document.addEventListener('change', function(e) {
-			if (e.target.type === 'checkbox') {
-				const content = e.target.closest('.select-content');
-				if (!content) return;
+	document.addEventListener('change', function(e) {
+		if (e.target.type === 'checkbox') {
+			const content = e.target.closest('.select-content');
+			if (!content) return;
 
-				let dropdown = content.closest('.custom-select');
-				if (!dropdown) dropdown = document.getElementById(content.getAttribute('data-owner'));
+			let dropdown = content.closest('.custom-select');
+			if (!dropdown) dropdown = document.getElementById(content.getAttribute('data-owner'));
+			if (!dropdown) return;
 
-				if (!dropdown) return;
-				
-				if (dropdown.id === 'common-dropdown') {
-					const valueChanged = e.target.value;
-					const isChecked = e.target.checked;
-					const selectedCells = document.querySelectorAll('td.selected');
+            const isAllCb = e.target.classList.contains('select-all-cb');
+            const isChecked = e.target.checked;
 
-					selectedCells.forEach(cell => {
-						const cellDropdown = cell.querySelector('.custom-select');
-						if (cellDropdown) {
-							let cellContent = cellDropdown.querySelector('.select-content');
-							if (!cellContent) cellContent = document.querySelector(`.select-content[data-owner="${cellDropdown.id}"]`);
-							
-							if (cellContent) {
-								const cellCheckbox = cellContent.querySelector(`input[value="${valueChanged}"]`);
-								if (cellCheckbox) {
-									cellCheckbox.checked = isChecked;
-									updateDropdownUI(cellDropdown);
-								}
-							}
+            if (isAllCb) {
+                content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
+                    cb.checked = isChecked;
+                });
+            }
+			
+			if (dropdown.id === 'common-dropdown') {
+				const valueChanged = e.target.value;
+				const selectedCells = document.querySelectorAll('td.selected');
+
+				selectedCells.forEach(cell => {
+					const cellDropdown = cell.querySelector('.custom-select');
+					if (cellDropdown) {
+						let cellContent = cellDropdown.querySelector('.select-content');
+						if (!cellContent) cellContent = document.querySelector(`.select-content[data-owner="${cellDropdown.id}"]`);
+						
+						if (cellContent) {
+                            if (isAllCb) {
+                                cellContent.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                                    cb.checked = isChecked;
+                                });
+                            } else {
+                                const cellCheckbox = cellContent.querySelector(`input[value="${valueChanged}"]`);
+                                if (cellCheckbox) {
+                                    cellCheckbox.checked = isChecked;
+                                }
+                            }
+							updateDropdownUI(cellDropdown);
 						}
-					});
-				}
-				updateDropdownUI(dropdown);
+					}
+				});
 			}
-		});
+			updateDropdownUI(dropdown);
+		}
+	});
 		
 		if(modeToggleBtn) {
 			modeToggleBtn.addEventListener('click', () => {
@@ -16298,6 +16367,27 @@ document.addEventListener("DOMContentLoaded", function() {
 			});
 		}
 
+		const tableContainer = document.querySelector('.table-responsive');
+		let autoScrollFrame;
+		let scrollVelocity = { x: 0, y: 0 };
+		const scrollThreshold = 80; 
+		const maxScrollSpeed = 25;  
+
+		function autoScrollLoop() {
+			if (!isDragging) {
+				if (autoScrollFrame) cancelAnimationFrame(autoScrollFrame);
+				autoScrollFrame = null;
+				return;
+			}
+			if (scrollVelocity.x !== 0 || scrollVelocity.y !== 0) {
+				if (tableContainer) {
+					tableContainer.scrollLeft += scrollVelocity.x;
+					tableContainer.scrollTop += scrollVelocity.y;
+				}
+			}
+			autoScrollFrame = requestAnimationFrame(autoScrollLoop);
+		}
+
 		table.addEventListener('mousedown', function(event) {
 			if (!isSelectionMode) return; 
 			const td = event.target.closest('td');
@@ -16306,23 +16396,35 @@ document.addEventListener("DOMContentLoaded", function() {
 				startRow = parseInt(td.dataset.row);
 				startCol = parseInt(td.dataset.col);
 				if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
-	                document.querySelectorAll('td.selected').forEach(c => c.classList.remove('selected'));
-	            }
+					document.querySelectorAll('td.selected').forEach(c => c.classList.remove('selected'));
+				}
 
 				isUnselecting = td.classList.contains('selected');
 				
-	            const allMappedCells = table.querySelectorAll('td[data-row]');
+				const allMappedCells = table.querySelectorAll('td[data-row]');
 				allMappedCells.forEach(cell => { 
-	                cell.dataset.wasSelected = cell.classList.contains('selected') ? "true" : "false"; 
-	            });
+					cell.dataset.wasSelected = cell.classList.contains('selected') ? "true" : "false"; 
+				});
 				updateSelection(startRow, startCol);
+
+				if (!autoScrollFrame) autoScrollFrame = requestAnimationFrame(autoScrollLoop);
 			}
 		});
 
-		table.addEventListener('mouseover', function(event) {
-			if (!isSelectionMode || !isDragging) return;
+		document.addEventListener('mousemove', function(event) {
+			if (!isSelectionMode || !isDragging || !tableContainer) return;
+			
+			const rect = tableContainer.getBoundingClientRect();
+			scrollVelocity.x = 0; scrollVelocity.y = 0;
+
+			if (event.clientX < rect.left + scrollThreshold) scrollVelocity.x = -maxScrollSpeed;
+			else if (event.clientX > rect.right - scrollThreshold) scrollVelocity.x = maxScrollSpeed;
+
+			if (event.clientY < rect.top + scrollThreshold) scrollVelocity.y = -maxScrollSpeed;
+			else if (event.clientY > rect.bottom - scrollThreshold) scrollVelocity.y = maxScrollSpeed;
+
 			const td = event.target.closest('td');
-			if (td && td.dataset.row) { 
+			if (td && td.dataset.row && table.contains(td)) { 
 				updateSelection(parseInt(td.dataset.row), parseInt(td.dataset.col)); 
 			}
 		});
@@ -16330,6 +16432,12 @@ document.addEventListener("DOMContentLoaded", function() {
 		document.addEventListener('mouseup', () => { 
 			if (isDragging) {
 				isDragging = false; 
+				
+				scrollVelocity = { x: 0, y: 0 };
+				if (autoScrollFrame) {
+					cancelAnimationFrame(autoScrollFrame);
+					autoScrollFrame = null;
+				}
 				syncCommonDropdownToSelection();
 			}
 		});
@@ -16379,38 +16487,39 @@ document.addEventListener("DOMContentLoaded", function() {
 				syncCommonDropdownToSelection(); 
 			});
 		}
-	}
-	else{		
-    const ptValue = /*[[${DEPARTMENT}]]*/ null;
-    let ptReportData = /*[[${deptreportlist}]]*/ null; 
+	} else {		
+        const ptValue = /*[[${DEPARTMENT}]]*/ null;
+        
+        let ptReportData1 = /*[[${deptreportlist}]]*/ null; 
+        let ptReportData2 = /*[[${deptreportlist2}]]*/ null; 
 
-
-    if (ptValue && ptReportData) {
-        const ptLower = ptValue.toLowerCase();
-        if (Array.isArray(ptReportData) && ptReportData.length > 0) {
-            ptReportData = ptReportData[0]; 
-        }
-
-        document.querySelectorAll('#usertable .table-input').forEach(input => {
+        if (ptValue) {
+            const ptLower = ptValue.toLowerCase();
             
-            const fieldName = input.name; 
+            if (Array.isArray(ptReportData1) && ptReportData1.length > 0) ptReportData1 = ptReportData1[0]; 
+            if (Array.isArray(ptReportData2) && ptReportData2.length > 0) ptReportData2 = ptReportData2[0]; 
 
-            if (ptReportData && ptReportData.hasOwnProperty(fieldName)) {
-                
-                const fieldConfig = ptReportData[fieldName]; 
-
-                if (fieldConfig) {
-                    const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
-
-                    if (allowedValues.includes(ptLower)) {                        
-                        input.classList.add('editable-input');
+            const isAllowed = (configData, fieldName) => {
+                if (configData && configData.hasOwnProperty(fieldName)) {
+                    const fieldConfig = configData[fieldName]; 
+                    if (fieldConfig) {
+                        const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
+                        return allowedValues.includes(ptLower);
                     }
                 }
-            }
-        });
-    }}
+                return false;
+            };
+
+            document.querySelectorAll('#usertable .input-and-select').forEach(input => {
+                const fieldName = input.name; 
+
+                if (isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName)) {
+                    input.classList.add('editable-input');
+                }
+            });
+        }
+    }
 }); 
 </script>
-
 </body>
 </html>
