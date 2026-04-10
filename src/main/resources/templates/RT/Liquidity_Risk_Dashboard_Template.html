@@ -1017,8 +1017,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 								</div>
 							</form>
 
-							<div class="card-footer text-center mt-3">
-								<button th:if="${formmode == 'add'}" id="savebutton" type="button" class="role-btn px-5"
+							<div class="card-footer text-center mt-3"  th:if="${formmode == 'null' or formmode == 'add'}"> 
+								<button  id="savebutton" type="button" class="role-btn px-5"
 									onclick="submitForm()">Save</button>
 							</div>
 						</div>
@@ -1191,7 +1191,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="table-responsive" style=" border: none;" th:if="${formmode == 'list'}">
-				<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
+				<table id="usertable" class="table table-bordered table-striped table-hover" >
 					<thead class="thead-light">
 						<tr>
 							<th rowspan="2" style="text-align: center;width: 100px;">Action</th>
@@ -3153,7 +3153,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 <style>
 	#usertable {
-		min-width: 2800px;
+		/*min-width: 2800px;
 	}
 
 	#usertable {
@@ -3703,5 +3703,24 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		z-index: 19 !important;
 	}
 </style>
+<style>
+	.table-responsive {
+	    max-height: none !important;
+	    overflow: visible !important;
+	}
 
+	#usertable {
+	    display: block !important;
+	    max-height: calc(100vh - 280px) ;
+	    overflow-y: auto !important;
+	    overflow-x: auto !important;
+	}
+
+	#usertable thead th {
+	    position: sticky;
+	    top: 0;
+	    z-index: 2; 
+	    background-color: #7b6458; 
+	}
+</style>
 </html>
