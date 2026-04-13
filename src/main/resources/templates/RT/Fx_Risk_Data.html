@@ -7,758 +7,787 @@ PURPOSE		: F Risk Data Report
 TESTED BY   : RAJALAKSHMI R
 -->
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
 
-<link rel="stylesheet" type="text/css"
-	href="/webjars/font-awesome/5.9.0/css/all.min.css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
 
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
 
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
+	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
 
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 
-<!-- JavaScript -->
-<!-- jQuery core (required first) -->
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
 
 
-<!-- ✅ Your manually placed jQuery validation
+	<!-- ✅ Your manually placed jQuery validation
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	 <script th:src="/jquery/jquery.validate.min.js"></script>
 	 -->
 
-<!-- jQuery (required first) -->
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<!-- jQuery (required first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<!-- ✅ jQuery Validation -->
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- ✅ jQuery Validation -->
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<!-- Bootstrap + Others -->
-<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
 
-<style>
-.btns {
-	float: right;
-	margin: 5px;
-}
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
 
-.col-sm-5 {
-	padding-bottom: 15px;
-}
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
 
-.list-body {
-	padding: 0px;
-}
+		.list-body {
+			padding: 0px;
+		}
 
-.error {
-	color: red;
-	padding-left: 10px;
-}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-.formline {
-	padding-bottom: 15px;
-}
+		.formline {
+			padding-bottom: 15px;
+		}
 
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
 
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
-	.show>.btn-primary.dropdown-toggle {
-	color: #fff;
-	background-color: #cc0000;
-	border-color: #161617;
-}
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc0000;
+			border-color: #161617;
+		}
 
-#finusertb {
-	width: 460px;
-}
+		#finusertb {
+			width: 460px;
+		}
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 0px;
-}
-</style>
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			padding: 0px;
+		}
+	</style>
 
 
-<style>
-	#usertable {
-				font-family: Arial, sans-serif !important;
-				font-size: 12px !important;
+	<style>
+		#usertable {
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
+
+		#usertable th {
+			background-color: #7b6458 !important;
+			/* Header background */
+			color: white !important;
+			/* Header text color */
+			padding: 8px 10px !important;
+			/* Same spacing style */
+			text-align: center;
+			/* Center text */
+			font-weight: bold;
+			white-space: normal !important;
+		}
+
+		#usertable td {
+			padding: 4px 6px !important;
+			white-space: normal !important;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #ffffff !important;
+			/* thin white separators like your screenshot */
+		}
+
+
+		/* Avoid table taking too much width */
+		#usertable {
+			width: auto !important;
+			max-width: 100% !important;
+		}
+
+		/* Control column widths */
+		#usertable th {
+			max-width: 150px;
+		}
+	</style>
+
+	<style>
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
+
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
+
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+		}
+
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
+
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
+
+		/* Add Button Styling */
+		/* Base Button Style */
+		.role-add-btn {
+			background: #ffffff;
+			/* default white background */
+			color: #005fa3;
+			/* blue text */
+			border: 2px solid #005fa3;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect */
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
+
+		/* Active (clicked or selected) button */
+		.role-add-btn.active {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+			transform: translateY(-1px);
+		}
+
+		/* Optional: icon spacing */
+		.role-add-btn i {
+			margin-right: 5px;
+		}
+	</style>
+
+	<style>
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
+
+		/* Full-screen overlay */
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			/* lighter background */
+			backdrop-filter: blur(8px);
+			/* ✅ background blur */
+			-webkit-backdrop-filter: blur(8px);
+			/* Safari support */
+			z-index: 9999;
+			transition: opacity 0.25s ease, visibility 0.25s;
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Hide when not active */
+		.bob-loader[aria-hidden="true"] {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+
+		/* Loader card */
+		.bob-loader-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
+
+		/* Flowing bar below logo */
+		.flow-bar {
+			position: relative;
+			width: 200px;
+			/* ✅ increased width */
+			height: 8px;
+			/* slightly thicker for better visibility */
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+		}
+
+		.flow-line {
+			position: absolute;
+			left: -40%;
+			top: 0;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			border-radius: 4px;
+			animation: flowMove 1.2s linear infinite;
+		}
+
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
 			}
 
-			#usertable th {
-				background-color: #7b6458 !important;
-				/* Header background */
-				color: white !important;
-				/* Header text color */
-				padding: 8px 10px !important;
-				/* Same spacing style */
-				text-align: center;
-				/* Center text */
-				font-weight: bold;
-				white-space: normal !important;
+			100% {
+				left:
+					100%;
+			}
+		}
+	</style>
+
+	<script>
+		//function goBack() { 
+		//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//  window.history.back();
+		//}
+
+		//function goForward() {
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//window.history.forward();
+		// }  
+
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
+
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
 			}
 
-			#usertable td {
-				padding: 4px 6px !important;
-				white-space: normal !important;
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
 			}
+		});
+	</script>
 
-			#usertable th,
-			#usertable td {
-				border: 1px solid #ffffff !important;
-				/* thin white separators like your screenshot */
-			}
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #F8AC46FF;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 9999;
+		}
 
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-			/* Avoid table taking too much width */
-			#usertable {
-				width: auto !important;
-				max-width: 100% !important;
-			}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-			/* Control column widths */
-			#usertable th {
-				max-width: 150px;
-			}
-</style>
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-<style>
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
-
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
-	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
-}
-
-/* === ROLE PAGE CUSTOM HEADER === */
-.role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
-
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
-
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
-
-/* Add Button Styling */
-/* Base Button Style */
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
-
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
-
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
-
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
-</style>
-
-<style>
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
-
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
-
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
-
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
-
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
-
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
-
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
-:
-100%;
-}
-}
-</style>
-
-<script>
-						//function goBack() { 
-							//	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							  //  window.history.back();
-							//}
-
-							//function goForward() {
-								//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-							    //window.history.forward();
-							// }  
-
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
-
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
-
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							</script>
-
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #F8AC46FF;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 9999;
-}
-
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
-
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
-
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
-
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #E67E00;
-	transform: scale(1.1);
-}
-</style>
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #E67E00;
+			transform: scale(1.1);
+		}
+	</style>
 
 
-<style>
-.card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-}
+	<style>
+		.card {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
 
-.card-header h5 {
-	font-size: 22px;
-	color: #fff;
-	font-weight: 600;
-}
+		.card-header h5 {
+			font-size: 22px;
+			color: #fff;
+			font-weight: 600;
+		}
 
-.nav-tabs .nav-link {
-	font-weight: 500;
-	border: 1px solid #dee2e6;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	background-color: #f1f1f1;
-	margin-right: 5px;
-}
+		.nav-tabs .nav-link {
+			font-weight: 500;
+			border: 1px solid #dee2e6;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			background-color: #f1f1f1;
+			margin-right: 5px;
+		}
 
-.nav-tabs .nav-link.active {
-	background-color: #ffffff;
-	border-color: #dee2e6 #dee2e6 #ffffff;
-}
+		.nav-tabs .nav-link.active {
+			background-color: #ffffff;
+			border-color: #dee2e6 #dee2e6 #ffffff;
+		}
 
-.table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		.table-responsive {
+			border: 1px solid #dee2e6;
+			border-radius: 4px;
+		}
 
-.table-hover tbody tr:hover {
-	background-color: #f3f6f9;
-}
+		.table-hover tbody tr:hover {
+			background-color: #f3f6f9;
+		}
 
-thead th {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-} 
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+		thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
 
-.card-footer {
-	padding: 10px;
-	border-top: 1px solid #ccc;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
 
-.btn-xs {
-	padding: 4px 12px;
-	font-size: 14px;
-	border-radius: 4px;
-}
+		.card-footer {
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
 
-/* #usertable th, #usertable td {
+		.btn-xs {
+			padding: 4px 12px;
+			font-size: 14px;
+			border-radius: 4px;
+		}
+
+		/* #usertable th, #usertable td {
 	vertical-align: middle;
 	text-align: left;
 	font-size: 17px;
 	font-family: Verdana, sans-serif;
 } */
-.fa-edit:hover {
-	color: #28a745;
-	transform: scale(1.1);
-}
-
-td {
-	border: 1px solid rgb(0, 164, 166);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.modal-backdrop {
-		  position: fixed;
-		  top: 0;
-		  left: 0;
-		  width: 120vw !important;              /* 👈 a bit wider than viewport */
-		  height: 120vh  !important;         /* 👈 a bit taller than viewport */
-		  background-color: #000;    /* 👈 solid black base */
-		  opacity: 0.7 !important;   /* 👈 slightly darker overlay */
-		  z-index: 1062;             /* 👈 ensures it sits below modal but above everything else */
+		.fa-edit:hover {
+			color: #28a745;
+			transform: scale(1.1);
 		}
-</style>
+
+		td {
+			border: 1px solid rgb(0, 164, 166);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
+	</style>
 
 
-<style>
-.form-group {
-	position: relative;
-	margin-bottom: 1.5rem;
-}
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
 
-.form-control {
-	width: 100%;
-	border: 2px solid #ccc;
-	border-radius: 8px;
-	font-size: 1rem;
-	outline: none;
-	background: transparent;
-	transition: border-color 0.3s ease, padding-top 0.3s ease;
-}
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
 
-.error {
-	color: red;
-	padding-top: 15px;
-}
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
 
-.form-control:focus {
-	border-color: #007bff;
-}
+		.form-control:focus {
+			border-color: #007bff;
+		}
 
-.form-legend {
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	transform: translateY(-50%);
-	font-size: 1rem;
-	color: #aaa;
-	background: white;
-	padding: 0 5px;
-	pointer-events: none;
-	transition: 0.3s ease;
-}
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
 
-/* When input or select is focused or has a value, move the label up */
-.form-control:focus ~ .form-legend, .form-control:not(:placeholder-shown) 
-	 ~ .form-legend {
-	top: -8px;
-	font-size: 1rem;
-	color: #007bff;
-}
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
 
-/* Hover effect when the input/select is focused */
-.form-control:focus:hover ~ .form-legend {
-	color: #0056b3; /* Darker shade of blue on hover */
-}
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
 
-/* Ensure the label returns to the normal color after focus or hover is removed */
-.form-control:not(:focus) ~ .form-legend {
-	color: #aaa; /* Normal label color */
-}
-</style>
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
 
-<style>
-/* Red border for invalid inputs */
-input.error, select.error {
-	border: 2px solid red !important;
-}
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
 
-/* Error message style */
-label.error {
-	color: red;
-	font-size: 0.85em;
-	margin-top: 5px;
-	display: block;
-}
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
 
-.role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+		}
 
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
 
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
+		.role-add-btn {
+			background: #ffffff;
+			/* default white background */
+			color: #005fa3;
+			/* blue text */
+			border: 2px solid #005fa3;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+			transition: all 0.3s ease;
+		}
 
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
+		/* Hover effect */
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
 
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
+		/* Active (clicked or selected) button */
+		.role-add-btn.active {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+			transform: translateY(-1px);
+		}
 
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
+		/* Optional: icon spacing */
+		.role-add-btn i {
+			margin-right: 5px;
+		}
 
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
 
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(226, 232, 237, 0.6);
+			/* lighter background */
+			backdrop-filter: blur(8px);
+			/* ✅ background blur */
+			-webkit-backdrop-filter: blur(8px);
+			/* Safari support */
+			z-index: 9999;
+			transition: opacity 0.25s ease, visibility 0.25s;
+			opacity: 1;
+			visibility: visible;
+		}
 
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
+		/* Hide when not active */
+		.bob-loader[aria-hidden="true"] {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
 
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+		/* Loader card */
+		.bob-loader-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
 
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
+		/* Flowing bar below logo */
+		.flow-bar {
+			position: relative;
+			width: 200px;
+			/* ✅ increased width */
+			height: 8px;
+			/* slightly thicker for better visibility */
+			background: #f1f1f1;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-top: 10px;
+		}
 
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
+		.flow-line {
+			position: absolute;
+			left: -40%;
+			top: 0;
+			width: 40%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
+			border-radius: 4px;
+			animation: flowMove 1.2s linear infinite;
+		}
 
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
 
-100%
-{
-left
-:
-100%;
-}
-}
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color : #F8AC46FF;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
+			100% {
+				left:
+					100%;
+			}
+		}
 
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #F8AC46FF;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #E67E00;
-	transform: scale(1.1);
-}
-</style>
-<style>
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #E67E00;
+			transform: scale(1.1);
+		}
+	</style>
+	<style>
 		.role-btn {
 			background: #ffffff;
 			/* default white */
@@ -824,113 +853,114 @@ left
 			z-index: 9999;
 			background: white;
 		}
-		
+
 		.static-back-btn {
-						    background-color: rgb(255, 255, 255);
-						    border: none;
-						    color: rgb(255, 128, 0);
-						    font-size: 16px;
-						    border-radius: 50%;
-						    width: 36px;
-						    height: 36px;
-						    display: flex;
-						    align-items: center;
-						    justify-content: center;
-						    margin-right: 10px;
-						    transition: background-color 0.25s ease, transform 0.15s ease;
-						    cursor: pointer;
-						}
+			background-color: rgb(255, 255, 255);
+			border: none;
+			color: rgb(255, 128, 0);
+			font-size: 16px;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.25s ease, transform 0.15s ease;
+			cursor: pointer;
+		}
 
-						/* Hover effect */
-						.static-back-btn:hover {
-						    background-color: rgb(255, 128, 0);   /* darker orange */
-						    color: rgb(255, 255, 255);
-						    transform: scale(1.08);
-						}
+		/* Hover effect */
+		.static-back-btn:hover {
+			background-color: rgb(255, 128, 0);
+			/* darker orange */
+			color: rgb(255, 255, 255);
+			transform: scale(1.08);
+		}
 
-						/* Optional click effect */
-						.static-back-btn:active {
-						    transform: scale(0.95);
-						}
+		/* Optional click effect */
+		.static-back-btn:active {
+			transform: scale(0.95);
+		}
 	</style>
-<script th:inline="javascript">
-	
+	<script th:inline="javascript">
 
-	function home() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		location.href = 'Dashboard'
-	}
 
-	function back() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		function home() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'Dashboard'
+		}
 
-		window.history.back();
-	}
+		function back() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-	function list() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		location.href = 'Fx_Risk_Data?formmode=list';
-	}
+			window.history.back();
+		}
 
-	
-	$(document).ready(function () {
-	    // On modal close, redirect to your controller method path
-	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Fx_Risk_Data';
-	    });
-	});
-	
-	function fxrisk() {
-		location.href = 'Fx_Risk_Data';
-	}
-	$(document).ready(function () {
-	    // On modal close, redirect to your controller method path
-	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Fx_Risk_Data';
-	    });
-	});
-	
-	function updateform(event) {
-    event.preventDefault();
-    
-    console.log("updateform function called");
+		function list() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			location.href = 'Fx_Risk_Data?formmode=list';
+		}
 
-    // Show loader
-   document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-    // Check if SI_NO is present before sending
-    var formData = $('#Fxriskdata').serialize(); // Make sure this ID is correct (capital F)
+		$(document).ready(function () {
+			// On modal close, redirect to your controller method path
+			$('#alert').on('hidden.bs.modal', function () {
+				window.location.href = './Fx_Risk_Data';
+			});
+		});
 
-    console.log("Serialized Data:", formData); // Debug
+		function fxrisk() {
+			location.href = 'Fx_Risk_Data';
+		}
+		$(document).ready(function () {
+			// On modal close, redirect to your controller method path
+			$('#alert').on('hidden.bs.modal', function () {
+				window.location.href = './Fx_Risk_Data';
+			});
+		});
 
-    $.ajax({
-        url: './updateFxriskdata',
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-            console.log("Server response:", response);
-            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		function updateform(event) {
+			event.preventDefault();
 
-            $("#alertmsg").text(response);
-            $("#alert").modal("toggle");
+			console.log("updateform function called");
 
-            if (response.includes("successful")) {
-                setTimeout(function() {
-                    window.location.href = "./Fx_Risk_Data?formmode=list";
-                }, 1500);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error in modify:", error);
-            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
-            $("#alertmsg").text("Error: " + error);
-            $("#alert").modal("show");
-        }
-    });
-}
+			// Show loader
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
+			// Check if SI_NO is present before sending
+			var formData = $('#Fxriskdata').serialize(); // Make sure this ID is correct (capital F)
+
+			console.log("Serialized Data:", formData); // Debug
+
+			$.ajax({
+				url: './updateFxriskdata',
+				type: 'POST',
+				data: formData,
+				success: function (response) {
+					console.log("Server response:", response);
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
+					$("#alertmsg").text(response);
+					$("#alert").modal("toggle");
+
+					if (response.includes("successful")) {
+						setTimeout(function () {
+							window.location.href = "./Fx_Risk_Data?formmode=list";
+						}, 1500);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error("Error in modify:", error);
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#alertmsg").text("Error: " + error);
+					$("#alert").modal("show");
+				}
+			});
+		}
 
 	</script>
-<script>
+	<script>
 		$(document).ready(function () {
 			$("#fxriskForm").validate({
 				errorClass: "error", // use 'error' class for styling
@@ -964,191 +994,191 @@ left
 
 
 <script>
-  function navigateToTab(tabId) {
-	  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-if (tabId === 'data') {
+	function navigateToTab(tabId) {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		if (tabId === 'data') {
 			window.location.href = 'Fx_Risk_Data?formmode=list';
-			
-  } else if (tabId === 'datacontrols') {
-      window.location.href = 'Fx_Risk_Data?formmode=add';
-      
- }
-  }
 
-  function handleClick(tabId) {
-    // Remove active class from all buttons
-    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tabId + '-btn').classList.add('active');
+		} else if (tabId === 'datacontrols') {
+			window.location.href = 'Fx_Risk_Data?formmode=add';
 
-    // Hide all panes
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
-    document.getElementById(tabId).classList.add('show', 'active');
-  }
+		}
+	}
 
-  // On page load, detect formmode and show corresponding tab
-  window.addEventListener('DOMContentLoaded', function () {
-    const params = new URLSearchParams(window.location.search);
-    const formmode = params.get('formmode');
-	if (formmode === 'edit') {
-				return;
-			}
-    if (formmode === 'list') {
-      handleClick('data');
-    } else {
-      handleClick('datacontrols'); // default or formmode=add
-    }
-  });
-  
-  document.addEventListener('mousemove', function(e) {
-	    const backBtn = document.getElementById('floatingBackBtn');
-	    const forwardBtn = document.getElementById('floatingForwardBtn');
-	    const screenWidth = window.innerWidth;
+	function handleClick(tabId) {
+		// Remove active class from all buttons
+		document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+		document.getElementById(tabId + '-btn').classList.add('active');
 
-	    // Left edge (back)
-	    if (e.clientX < 50) {
-	        backBtn.classList.add('show');
-	    } else {
-	        backBtn.classList.remove('show');
-	    }
+		// Hide all panes
+		document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+		document.getElementById(tabId).classList.add('show', 'active');
+	}
 
-	    // Right edge (forward)
-	    if (screenWidth - e.clientX < 50) {
-	        forwardBtn.classList.add('show');
-	    } else {
-	        forwardBtn.classList.remove('show');
-	    }
+	// On page load, detect formmode and show corresponding tab
+	window.addEventListener('DOMContentLoaded', function () {
+		const params = new URLSearchParams(window.location.search);
+		const formmode = params.get('formmode');
+		if (formmode === 'edit') {
+			return;
+		}
+		if (formmode === 'list') {
+			handleClick('data');
+		} else {
+			handleClick('datacontrols'); // default or formmode=add
+		}
+	});
+
+	document.addEventListener('mousemove', function (e) {
+		const backBtn = document.getElementById('floatingBackBtn');
+		const forwardBtn = document.getElementById('floatingForwardBtn');
+		const screenWidth = window.innerWidth;
+
+		// Left edge (back)
+		if (e.clientX < 50) {
+			backBtn.classList.add('show');
+		} else {
+			backBtn.classList.remove('show');
+		}
+
+		// Right edge (forward)
+		if (screenWidth - e.clientX < 50) {
+			forwardBtn.classList.add('show');
+		} else {
+			forwardBtn.classList.remove('show');
+		}
 	});
 </script>
 <script>
-    function downloadFxrisk() {
-        // 1. Show loader modal
-        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	function downloadFxrisk() {
+		// 1. Show loader modal
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-        $.ajax({
-            url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
-            type: 'GET',
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data) {
-                // Always hide loader
-                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		$.ajax({
+			url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob'
+			},
+			success: function (data) {
+				// Always hide loader
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-                let message = '';
+				let message = '';
 
-                if (data && data.size > 100) {
-                    const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = 'CBUAE_FX_Risk_Data_Template.xlsx';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+				if (data && data.size > 100) {
+					const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.style.display = 'none';
+					a.href = url;
+					a.download = 'CBUAE_FX_Risk_Data_Template.xlsx';
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					document.body.removeChild(a);
 
-                    message = 'CBUAE_FX_Risk_Data_Template.xlsx has been downloaded successfully.';
-                } else {
-                    message = 'No data available to download.';
-                }
+					message = 'CBUAE_FX_Risk_Data_Template.xlsx has been downloaded successfully.';
+				} else {
+					message = 'No data available to download.';
+				}
 
-                // Show custom alert modal with the message
-                $('#alertmsg').text(message);
-                $('#alert').modal('show');
-            },
-            error: function (xhr, status, error) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+				// Show custom alert modal with the message
+				$('#alertmsg').text(message);
+				$('#alert').modal('show');
+			},
+			error: function (xhr, status, error) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-                console.error("Download failed:", error);
+				console.error("Download failed:", error);
 
-                $('#alertmsg').text('An error occurred while downloading FxRiskData.xls.');
-                $('#alert').modal('show');
-            }
-        });
+				$('#alertmsg').text('An error occurred while downloading FxRiskData.xls.');
+				$('#alert').modal('show');
+			}
+		});
 
-        // Fallback timeout
-        setTimeout(function () {
-        	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
-        }, 10000);
-    }
+		// Fallback timeout
+		setTimeout(function () {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+		}, 10000);
+	}
 </script>
 
 
 <script>
 
-    function submitForm() {
-    	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	function submitForm() {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-        const reportName = 'CBUAE_Fx_Risk_Data_Template';
-        const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
-        const formData = $("#fxriskForm").serialize();
-	
-        $.ajax({
-            url: submitUrl,
-            type: "POST",
-            data: formData,
-            success: function (response) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		const reportName = 'CBUAE_Fx_Risk_Data_Template';
+		const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
+		const formData = $("#fxriskForm").serialize();
 
-            	$("#alertmsg1").text(response);
-                $("#alert1").modal("toggle");
-                //location.href = 'Nostro_Account_Bal';
-            },
-            error: function (xhr, status, error) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
+		$.ajax({
+			url: submitUrl,
+			type: "POST",
+			data: formData,
+			success: function (response) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
 
-                console.error("Error:", error);
-                alert("Error occurred: " + error);
-            }
-        });
-    }
+				$("#alertmsg1").text(response);
+				$("#alert1").modal("toggle");
+				//location.href = 'Nostro_Account_Bal';
+			},
+			error: function (xhr, status, error) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+
+				console.error("Error:", error);
+				alert("Error occurred: " + error);
+			}
+		});
+	}
 
 
 </script>
 <title>RiskInsights</title>
-<body>
-	<div class="container-fluid"
-		style="padding-left: 0px; padding-right: 0px;">
 
-			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+<body>
+	<div class="container-fluid" style="padding-left: 0px; padding-right: 0px;">
+
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
 		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
 			th:if="${formmode != 'edit'}">
 
 			<div class="d-flex align-items-center">
 
-											<button class="static-back-btn" onclick="goBack()" title="Go Back">
-												<i class="fa fa-arrow-left"></i>
-											</button>
-					<!-- LEFT: Buttons -->
-					<div  class="text-left flex-grow-1">
-						<h4 class="m-0">FX RISK DATA</h4>
-						</div>
-					</div>
-					<div class="d-flex align-items-center gap-2">
-
-						<!-- Data Controls Button -->
-						<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
-							Data Controls</button>
-
-						<!-- Template Instructions Button -->
-						<button class="role-btn" id="template-btn" onclick="handleClick('template')">
-							Template Instructions</button>
-
-						<!-- Data Button -->
-						<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
-							Data</button>
-					
-						<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
-							onclick="downloadFxrisk();">
-							<i class="fa fa-download"></i> Download
-						</button>
-					</div>
-
+				<button class="static-back-btn" onclick="goBack()" title="Go Back">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<!-- LEFT: Buttons -->
+				<div class="text-left flex-grow-1">
+					<h4 class="m-0">FX RISK DATA</h4>
 				</div>
+			</div>
+			<div class="d-flex align-items-center gap-2">
+
+				<!-- Data Controls Button -->
+				<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
+					Data Controls</button>
+
+				<!-- Template Instructions Button -->
+				<button class="role-btn" id="template-btn" onclick="handleClick('template')">
+					Template Instructions</button>
+
+				<!-- Data Button -->
+				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
+					Data</button>
+
+				<button th:if="${formmode} == 'list'" type="button" class="role-btn" id="downloadbut"
+					onclick="downloadFxrisk();">
+					<i class="fa fa-download"></i> Download
+				</button>
+			</div>
+
+		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div  id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' }">
 
 
@@ -1177,20 +1207,16 @@ if (tabId === 'data') {
 
 
 
-			<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
-				th:if="${formmode} =='null'">
-				<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode} =='null'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="fxriskForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="fxriskForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
+											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
 												<option th:selected="${bankname == 'Bank of Baroda'}"
@@ -1199,8 +1225,8 @@ if (tabId === 'data') {
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}" class="form-control form-control-sm" required />
+											<label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1211,23 +1237,17 @@ if (tabId === 'data') {
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Name1"
+														<input type="text" name="contactEmployee1Name1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Title1"
+														<input type="text" name="contactEmployee1Title1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee1Email1"
+														<input type="email" name="contactEmployee1Email1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
 													</div>
@@ -1238,23 +1258,17 @@ if (tabId === 'data') {
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Name2"
+														<input type="text" name="contactEmployee2Name2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Title2"
+														<input type="text" name="contactEmployee2Title2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee2Email2"
+														<input type="email" name="contactEmployee2Email2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
 													</div>
@@ -1267,42 +1281,36 @@ if (tabId === 'data') {
 												<label class="section-title">SIGN OFF</label>
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+														<input type="text" name="signOffCroName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CRO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															name="signOffCroEmail"
-															class="form-control form-control-sm"  placeholder=" "required /><label
-															class="form-legend">CRO Email</label>
+														<input type="email" name="signOffCroEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CRO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+														<input type="text" name="signOffCfoName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CFO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email" 
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+														<input type="email" name="signOffCfoEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CFO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+														<input type="text" name="signOffHeadOfTreasuryName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" "required /><label
-															class="form-legend">Head of Treasury Email</label>
+														<input type="email" name="signOffHeadOfTreasuryEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Email</label>
 													</div>
 												</div>
 											</div>
@@ -1312,28 +1320,24 @@ if (tabId === 'data') {
 							</form>
 
 							<div class="card-footer text-center">
-								<button th:if="${formmode == 'null'}" id="savebutton"
-									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+								<button th:if="${formmode == 'null'}" id="savebutton" type="button"
+									class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			
-			<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
-				th:if="${formmode} =='exist'">
-				<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode} =='exist'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="fxriskForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="fxriskForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
+											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
 												<option th:selected="${bankname == 'Bank of Baroda'}"
@@ -1342,8 +1346,8 @@ if (tabId === 'data') {
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}" class="form-control form-control-sm" required />
+											<label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1354,22 +1358,19 @@ if (tabId === 'data') {
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Name1}"
+														<input type="text" th:value="${data.contactEmployee1Name1}"
 															name="contactEmployee1Name1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Title1}"
+														<input type="text" th:value="${data.contactEmployee1Title1}"
 															name="contactEmployee1Title1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee1Email1}"
+														<input type="email" th:value="${data.contactEmployee1Email1}"
 															name="contactEmployee1Email1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
@@ -1381,22 +1382,19 @@ if (tabId === 'data') {
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Name2}"
+														<input type="text" th:value="${data.contactEmployee2Name2}"
 															name="contactEmployee2Name2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Title2}"
+														<input type="text" th:value="${data.contactEmployee2Title2}"
 															name="contactEmployee2Title2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee2Email2}"
+														<input type="email" th:value="${data.contactEmployee2Email2}"
 															name="contactEmployee2Email2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
@@ -1411,41 +1409,42 @@ if (tabId === 'data') {
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
 														<input type="text" th:value="${data.signOffCroName}"
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+															name="signOffCroName" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CRO
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email" th:value="${data.signOffCroEmail}"
-															name="signOffCroEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Email</label>
+															name="signOffCroEmail" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CRO
+															Email</label>
 													</div>
 													<div class="form-group">
 														<input type="text" th:value="${data.signOffCfoName}"
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+															name="signOffCfoName" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CFO
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email" th:value="${data.signOffCfoEmail}"
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+															name="signOffCfoEmail" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CFO
+															Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.signOffHeadOfTreasuryName}"
+														<input type="text" th:value="${data.signOffHeadOfTreasuryName}"
 															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email"
 															th:value="${data.signOffHeadOfTreasuryEmail}"
 															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Email</label>
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Email</label>
 													</div>
 												</div>
 											</div>
@@ -1455,8 +1454,8 @@ if (tabId === 'data') {
 							</form>
 
 							<div class="card-footer text-center">
-								<button th:if="${formmode == 'exist'}" id="savebutton"
-									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+								<button th:if="${formmode == 'exist'}" id="savebutton" type="button"
+									class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
 					</div>
@@ -1487,12 +1486,12 @@ if (tabId === 'data') {
 				</div>
 			</div>-->
 			<div class="tab-pane fade" id="template" role="tabpanel" th:if="${formmode == 'null'}">
-							<p>Templates tabs</p>
-							<div class="card-footer text-center"
-								style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+				<p>Templates tabs</p>
+				<div class="card-footer text-center"
+					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
 
-							</div>
-						</div>
+				</div>
+			</div>
 			<!-- --------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 
 
@@ -1509,7 +1508,7 @@ if (tabId === 'data') {
 
 
 
-					<div class="table-responsive" style="border: none;">
+				<div class="table-responsive" style="border: none;">
 					<table id="usertable" class="table table-bordered table-striped table-hover">
 
 						<thead class="thead-light">
@@ -1518,8 +1517,8 @@ if (tabId === 'data') {
 							<tr>
 								<th style="text-align: center;width: 100px;">Action</th>
 
-								<th style="min-width: 130px">Date</th>
-								<th>Bank Name</th>
+								<th class="th-left" style="min-width: 130px">Date</th>
+								<th class="th-left">Bank Name</th>
 								<th>Bank Symbol</th>
 								<th>Conventional/Islamic</th>
 								<th>Local/Foreign</th>
@@ -1545,9 +1544,9 @@ if (tabId === 'data') {
 							<!-- Loop to render data dynamically -->
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;"><a
-									th:href="@{'/Fx_Risk_Data?formmode=edit&SI_NO=' + ${data.SI_NO}}">
+										th:href="@{'/Fx_Risk_Data?formmode=edit&SI_NO=' + ${data.SI_NO}}">
 										<i class="fa fa-edit" style="color: #ff7f27;"></i>
-								</a></td>
+									</a></td>
 
 								<td th:text="${#dates.format(data.report_date, 'dd-MM-yyyy')}"></td>
 								<td th:text="${data.bank_name}"></td>
@@ -1557,25 +1556,34 @@ if (tabId === 'data') {
 								<td th:text="${data.cbuae_tiering}"></td>
 								<td th:text="${data.currency}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.fx_net_openposition, 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.fx_net_openposition, 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.off_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.off_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.on_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.on_balance_sheet_position, 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.fx_net_openposition_foreign_currency, 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.fx_net_openposition_foreign_currency, 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.internal_long_limit , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.internal_long_limit , 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td th:text="${data.internal_long_limit_trigger_status}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.internal_short_limit , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.internal_short_limit , 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td th:text="${data.internal_short_limit_trigger_status}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital , 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital_lc , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.bank_core_tier1_capital_lc , 1, 'COMMA', 2, 'POINT')}">
+								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.percent_of_group_capital , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data.percent_of_group_capital , 1, 'COMMA', 2, 'POINT')}">
+								</td>
 
 
 							</tr>
@@ -1591,8 +1599,8 @@ if (tabId === 'data') {
 							</button> -->
 
 
-					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-btn" onclick="submitForm()">Save</button>
+					<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
+						onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1609,28 +1617,26 @@ if (tabId === 'data') {
 
 		<!------------------ edit starts-------------------------------------------------------------->
 
-		<div th:if="${formmode}=='edit'"  class="fx-edit-page" style="align-items: center">
+		<div th:if="${formmode}=='edit'" class="fx-edit-page" style="align-items: center">
 
 			<div class="row">
-				<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}"
-					method="post" id="Fxriskdata">
+				<form th:action="@{/updateFxriskdata}" th:object="${fxriskData}" method="post" id="Fxriskdata">
 					<div class="card" style="margin-left: 15px; margin-right: 15px;">
-						
-								<div class="role-page-header d-flex justify-content-between align-items-center">
-														<div>
+
+						<div class="role-page-header d-flex justify-content-between align-items-center">
+							<div>
 								<h4 style="background-color:000;">Fx Risk Data - Edit</h4>
-								
+
 							</div>
 						</div>
-						<div class="card-body"
-							style="max-height: 500px; overflow-y: auto;">
+						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 							<input type="hidden" th:field="*{SI_NO}" />
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bank Date</label>
 								<div class="col-sm-4">
-									<input type="date" class="form-control"
-										th:field="*{report_date}" required readonly />
+									<input type="date" class="form-control" th:field="*{report_date}" required
+										readonly />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Bank Name</label>
@@ -1638,8 +1644,8 @@ if (tabId === 'data') {
 									<select class="form-control" th:field="*{bank_name}"
 										onchange="handleBankChange(this)">
 										<option value="">-- Select Bank --</option>
-										<option th:each="bank : ${bankList}"
-											th:value="${bank.bankName}" th:text="${bank.bankName}">
+										<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+											th:text="${bank.bankName}">
 										</option>
 									</select>
 								</div>
@@ -1648,45 +1654,42 @@ if (tabId === 'data') {
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Bank Symbol</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{bank_symbol}" id="bankSymbol" readonly />
+									<input type="text" class="form-control" th:field="*{bank_symbol}" id="bankSymbol"
+										readonly />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Conventional
 									Islamic</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{conventional_islamic}" id="conventionalIslamic"
-										readonly />
+									<input type="text" class="form-control" th:field="*{conventional_islamic}"
+										id="conventionalIslamic" readonly />
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Local Foreign</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{local_foreign}" id="localForeign" readonly />
+									<input type="text" class="form-control" th:field="*{local_foreign}"
+										id="localForeign" readonly />
 								</div>
 
 								<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{cbuae_tiering}" id="cbuaeTiering" readonly />
+									<input type="text" class="form-control" th:field="*{cbuae_tiering}"
+										id="cbuaeTiering" readonly />
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Currency</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control" th:field="*{currency}"
-										id="currency" />
+									<input type="text" class="form-control" th:field="*{currency}" id="currency" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">FX Net Open
 									Position</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{fx_net_openposition}"
+									<input type="text" class="form-control" th:field="*{fx_net_openposition}"
 										th:value="${#numbers.formatDecimal(fx_net_openposition, 1, 'COMMA', 2, 'POINT')}"
 										id="fx_net_openposition" />
 								</div>
@@ -1697,16 +1700,14 @@ if (tabId === 'data') {
 								<label class="col-sm-2 col-form-label">Off Balance Sheet
 									Position</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{off_balance_sheet_position}"
+									<input type="text" class="form-control" th:field="*{off_balance_sheet_position}"
 										id="off_balance_sheet_position" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">On Balance Sheet
 									Position</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{on_balance_sheet_position}"
+									<input type="text" class="form-control" th:field="*{on_balance_sheet_position}"
 										id="on_balance_sheet_position" />
 								</div>
 							</div>
@@ -1723,8 +1724,8 @@ if (tabId === 'data') {
 								<label class="col-sm-2 col-form-label">Internal Long
 									Limit</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{internal_long_limit}" id="internal_long_limit" />
+									<input type="text" class="form-control" th:field="*{internal_long_limit}"
+										id="internal_long_limit" />
 								</div>
 							</div>
 
@@ -1740,8 +1741,8 @@ if (tabId === 'data') {
 								<label class="col-sm-2 col-form-label">Internal Short
 									Limit</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{internal_short_limit}" id="internal_short_limit" />
+									<input type="text" class="form-control" th:field="*{internal_short_limit}"
+										id="internal_short_limit" />
 								</div>
 							</div>
 
@@ -1757,8 +1758,7 @@ if (tabId === 'data') {
 								<label class="col-sm-2 col-form-label">Bank Core Tier1
 									Capital</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{bank_core_tier1_capital}"
+									<input type="text" class="form-control" th:field="*{bank_core_tier1_capital}"
 										id="bank_core_tier1_capital" />
 								</div>
 							</div>
@@ -1767,16 +1767,14 @@ if (tabId === 'data') {
 								<label class="col-sm-2 col-form-label">Bank Core Tier1
 									Capital LC</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{bank_core_tier1_capital_lc}"
+									<input type="text" class="form-control" th:field="*{bank_core_tier1_capital_lc}"
 										id="bank_core_tier1_capital_lc" />
 								</div>
 
 								<label class="col-sm-2 col-form-label">Percent Of Group
 									Capital</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control"
-										th:field="*{percent_of_group_capital}"
+									<input type="text" class="form-control" th:field="*{percent_of_group_capital}"
 										id="percent_of_group_capital" />
 								</div>
 							</div>
@@ -1785,10 +1783,9 @@ if (tabId === 'data') {
 
 							<!-- Submit -->
 							<div class="card-footer text-center">
-								<button type="submit" class="role-btn"
-									onclick="updateform(event)">Update</button>
-								<a th:href="@{/Fx_Risk_Data(formmode='list')}"
-									class="role-btn" style="text-decoration: none;">Cancel</a>
+								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+								<a th:href="@{/Fx_Risk_Data(formmode='list')}" class="role-btn"
+									style="text-decoration: none;">Cancel</a>
 							</div>
 						</div>
 					</div>
@@ -1799,46 +1796,42 @@ if (tabId === 'data') {
 	<!-- </div> -->
 	</div>
 	<!-- Floating Back Button -->
-<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
-<!--		<i class="fa fa-arrow-left"></i>-->
-<!--	</button>-->
-<!--	 Floating Forward Button -->
-<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
-<!--		title="Go Forward">-->
-<!--		<i class="fa fa-arrow-right"></i>-->
-<!--	</button>-->
+	<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+	<!--		<i class="fa fa-arrow-left"></i>-->
+	<!--	</button>-->
+	<!--	 Floating Forward Button -->
+	<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
+	<!--		title="Go Forward">-->
+	<!--		<i class="fa fa-arrow-right"></i>-->
+	<!--	</button>-->
 
 
 	<div class="modal fade" id="datadelete">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: #f15362;">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
 					<button type="button" class="close" data-dismiss="modal">×</button>
 					Are you Sure want to delete?
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="modal fade" id="formmsg">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: aliceblue;">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
 					<button type="button" class="close" data-dismiss="modal">×</button>
 					<a th:value="${msg}"></a>
 				</div>
 				<div class="modal-footer"
 					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
@@ -1846,55 +1839,46 @@ if (tabId === 'data') {
 	</div>
 	</div>
 	<div class="modal fade" id="alert">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
-					<button type="button" class="role-btn" onclick="list()"
-						data-dismiss="modal">Close</button>
+					<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="modal fade" id="alert1">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg1"></p>
-					<button type="button" class="role-btn" onclick="fxrisk()"
-						data-dismiss="modal">Close</button>
+					<button type="button" class="role-btn" onclick="fxrisk()" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
+	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
+			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
 			<div class="flow-bar">
 				<div class="flow-line"></div>
 			</div>
 		</div>
 	</div>
 
-	<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
-		role="dialog" aria-labelledby="downloadProcessingModalLabel"
-		aria-hidden="true">
-		<div
-			class="modal-dialog modal-dialog-centered d-flex align-items-center"
-			role="document">
+	<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+		aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="downloadProcessingModalLabel">Download
@@ -1904,8 +1888,7 @@ if (tabId === 'data') {
 		</div>
 	</div>
 	<!-- Download Message -->
-	<div class="modal fade" id="customAlertModal" tabindex="-1"
-		role="dialog" aria-labelledby="customAlertModalLabel"
+	<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog" aria-labelledby="customAlertModalLabel"
 		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
@@ -1914,8 +1897,7 @@ if (tabId === 'data') {
 				</div>
 				<div class="modal-body" id="customAlertBody"></div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal"
-						onclick="list()">OK</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="list()">OK</button>
 				</div>
 			</div>
 		</div>
@@ -1924,397 +1906,413 @@ if (tabId === 'data') {
 </body>
 <script>
 	$('#usertable').DataTable({
-				scrollX: false,
-				autoWidth: false,
-				paging: true,
-				searching: true,
-				lengthChange: false,
-				ordering: false,
-				pageLength: 100,
-				fixedHeader: true,
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-				// Layout: search (left) + pagination (right)
-				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-				// Optional: language tweak for better label
-				language: {
-					search: "Search:"
-				}
-			});
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-/* Remove top margin/padding from DataTables parent containers */
-#data {
-	padding-top: 0 !important;
-	margin-top: 0 !important;
-}
+	/* Remove top margin/padding from DataTables parent containers */
+	#data {
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
 
-.table-responsive {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	.table-responsive {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	/* Ensure DataTables filter (search box) doesn't have spacing above it */
+	div.dataTables_filter {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-/* FIX: Make search label and box inline */
-.dataTables_filter label {
-	display: flex !important;
-	align-items: center;
-	gap: 8px; /* space between text and input */
-	margin-bottom: 0 !important;
-}
+	/* FIX: Make search label and box inline */
+	.dataTables_filter label {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		/* space between text and input */
+		margin-bottom: 0 !important;
+	}
 
-/* DataTables pagination container */
-.dataTables_wrapper .dataTables_paginate {
-    display: flex;
-    gap: 8px;
-}
+	/* DataTables pagination container */
+	.dataTables_wrapper .dataTables_paginate {
+		display: flex;
+		gap: 8px;
+	}
 
-/* All pagination links */
-.dataTables_wrapper .dataTables_paginate .page-link {
-    color: #6c757d !important;
-    background-color: #f5f5f5 !important;
-    border: 1px solid #ddd !important;
-    border-radius: 6px !important;
-    padding: 6px 14px;
-}
+	/* All pagination links */
+	.dataTables_wrapper .dataTables_paginate .page-link {
+		color: #6c757d !important;
+		background-color: #f5f5f5 !important;
+		border: 1px solid #ddd !important;
+		border-radius: 6px !important;
+		padding: 6px 14px;
+	}
 
-/* ACTIVE page → ORANGE */
-.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-    background-color: #ff7f27 !important;
-    border-color: #ff7f27 !important;
-    color: #ffffff !important;
-}
+	/* ACTIVE page → ORANGE */
+	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+		background-color: #ff7f27 !important;
+		border-color: #ff7f27 !important;
+		color: #ffffff !important;
+	}
 
-/* Hover */
-.dataTables_wrapper .dataTables_paginate .page-link:hover {
-    background-color: #e9ecef !important;
-    color: #495057 !important;
-}
+	/* Hover */
+	.dataTables_wrapper .dataTables_paginate .page-link:hover {
+		background-color: #e9ecef !important;
+		color: #495057 !important;
+	}
 
-/* Disabled Previous / Next */
-.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
-    color: #adb5bd !important;
-    background-color: #f5f5f5 !important;
-}
+	/* Disabled Previous / Next */
+	.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+		color: #adb5bd !important;
+		background-color: #f5f5f5 !important;
+	}
 
 
-/* Optional: Style the search input */
-.dataTables_filter input {
-	margin-left: 5px;
-	flex: 1;
-}
+	/* Optional: Style the search input */
+	.dataTables_filter input {
+		margin-left: 5px;
+		flex: 1;
+	}
 </style>
 
 
 <script>
-function handleBankChange(select) {
-    const selectedBank = select.value;
+	function handleBankChange(select) {
+		const selectedBank = select.value;
 
-    if (!selectedBank) {
-        // Clear the fields
-        $('#bankSymbol').val('');
-        $('#conventionalIslamic').val('');
-        $('#localForeign').val('');
-        $('#cbuaeTiering').val('');
-        return;
-    }
+		if (!selectedBank) {
+			// Clear the fields
+			$('#bankSymbol').val('');
+			$('#conventionalIslamic').val('');
+			$('#localForeign').val('');
+			$('#cbuaeTiering').val('');
+			return;
+		}
 
-    $.ajax({
-    	url: './getBankDetails',
-        type: 'GET',
-        data: { bankName: selectedBank },
-        success: function(data) {
-            $('#bankSymbol').val(data.bankSymbol || '');
-            $('#conventionalIslamic').val(data.conventionalIslamic || '');
-            $('#localForeign').val(data.localForeign || '');
-            $('#cbuaeTiering').val(data.cbuaeTiering || '');
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', error);
-          //  alert('Failed to fetch bank details.');
-        }
-    });
-}
+		$.ajax({
+			url: './getBankDetails',
+			type: 'GET',
+			data: {bankName: selectedBank},
+			success: function (data) {
+				$('#bankSymbol').val(data.bankSymbol || '');
+				$('#conventionalIslamic').val(data.conventionalIslamic || '');
+				$('#localForeign').val(data.localForeign || '');
+				$('#cbuaeTiering').val(data.cbuaeTiering || '');
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				//  alert('Failed to fetch bank details.');
+			}
+		});
+	}
 </script>
 <script>
-  function handleCountryChange(select) {
-    const selectedCountry = select.value;
-    const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
+	function handleCountryChange(select) {
+		const selectedCountry = select.value;
+		const geoZoneInput = document.getElementById("cbuaeGeographicalZone");
 
-    if (selectedCountry === "United Arab Emirates") {
-      geoZoneInput.value = "GCC";
-      geoZoneInput.readOnly = true;
-    } else {
-      geoZoneInput.value = "";
-      geoZoneInput.readOnly = false;
-    }
-  }
+		if (selectedCountry === "United Arab Emirates") {
+			geoZoneInput.value = "GCC";
+			geoZoneInput.readOnly = true;
+		} else {
+			geoZoneInput.value = "";
+			geoZoneInput.readOnly = false;
+		}
+	}
 
-  // Run on page load (for edit mode pre-filled forms)
-  window.onload = function() {
-    const countrySelect = document.getElementById("countryOfRisk");
-    if (countrySelect) {
-      handleCountryChange(countrySelect);
-    }
-  };
+	// Run on page load (for edit mode pre-filled forms)
+	window.onload = function () {
+		const countrySelect = document.getElementById("countryOfRisk");
+		if (countrySelect) {
+			handleCountryChange(countrySelect);
+		}
+	};
 </script>
 <script>
-  const fieldRules = {
-    // VARCHAR2 fields
-    bank_name: 100,
-    bank_symbol: 50,
-    conventional_islamic: 50,
-    local_foreign: 50,
-    cbuae_tiering: 50,
-    currency: 50,
-    internal_long_limit_trigger_status: 10,
-    internal_short_limit_trigger_status: 10,
+	const fieldRules = {
+		// VARCHAR2 fields
+		bank_name: 100,
+		bank_symbol: 50,
+		conventional_islamic: 50,
+		local_foreign: 50,
+		cbuae_tiering: 50,
+		currency: 50,
+		internal_long_limit_trigger_status: 10,
+		internal_short_limit_trigger_status: 10,
 
-    // NUMBER(24,2) fields
-    fx_net_openposition: "24,2",
-    off_balance_sheet_position: "24,2",
-    on_balance_sheet_position: "24,2",
-    fx_net_openposition_foreign_currency: "24,2",
-    internal_long_limit: "24,2",
-    internal_short_limit: "24,2",
-    bank_core_tier1_capital: "24,2",
-    bank_core_tier1_capital_lc: "24,2",
-    percent_of_group_capital: "24,2",
-    bank_core_tier1_capital_aed: "24,2"
-  };
+		// NUMBER(24,2) fields
+		fx_net_openposition: "24,2",
+		off_balance_sheet_position: "24,2",
+		on_balance_sheet_position: "24,2",
+		fx_net_openposition_foreign_currency: "24,2",
+		internal_long_limit: "24,2",
+		internal_short_limit: "24,2",
+		bank_core_tier1_capital: "24,2",
+		bank_core_tier1_capital_lc: "24,2",
+		percent_of_group_capital: "24,2",
+		bank_core_tier1_capital_aed: "24,2"
+	};
 
-  function showError(input, msg) {
-    let span = document.getElementById(input.id + "-error");
-    if (!span) {
-      span = document.createElement("small");
-      span.id = input.id + "-error";
-      span.className = "text-danger";
-      span.style.display = "block";
-      input.parentNode.appendChild(span);
-    }
-    span.innerText = msg;
-  }
+	function showError(input, msg) {
+		let span = document.getElementById(input.id + "-error");
+		if (!span) {
+			span = document.createElement("small");
+			span.id = input.id + "-error";
+			span.className = "text-danger";
+			span.style.display = "block";
+			input.parentNode.appendChild(span);
+		}
+		span.innerText = msg;
+	}
 
-  function clearError(input) {
-    const span = document.getElementById(input.id + "-error");
-    if (span) span.innerText = "";
-  }
+	function clearError(input) {
+		const span = document.getElementById(input.id + "-error");
+		if (span) span.innerText = "";
+	}
 
-  function validateInput(event) {
-    const input = event.target;
-    const rule = fieldRules[input.id];
-    const value = input.value.trim();
+	function validateInput(event) {
+		const input = event.target;
+		const rule = fieldRules[input.id];
+		const value = input.value.trim();
 
-    if (!rule || value === "") {
-      clearError(input);
-      return;
-    }
+		if (!rule || value === "") {
+			clearError(input);
+			return;
+		}
 
-    if (typeof rule === "number" || !isNaN(rule)) {
-      // VARCHAR2 Validation (check character length)
-      if (value.length > rule) {
-        showError(input, `Max ${rule} characters allowed`);
-      } else {
-        clearError(input);
-      }
-    } else if (typeof rule === "string" && rule.includes(",")) {
-      // NUMBER(p,s) validation
-      const [total, decimal] = rule.split(",").map(Number);
-      const regex = /^\d+(\.\d+)?$/;
+		if (typeof rule === "number" || !isNaN(rule)) {
+			// VARCHAR2 Validation (check character length)
+			if (value.length > rule) {
+				showError(input, `Max ${rule} characters allowed`);
+			} else {
+				clearError(input);
+			}
+		} else if (typeof rule === "string" && rule.includes(",")) {
+			// NUMBER(p,s) validation
+			const [total, decimal] = rule.split(",").map(Number);
+			const regex = /^\d+(\.\d+)?$/;
 
-      if (!regex.test(value)) {
-        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
-        return;
-      }
+			if (!regex.test(value)) {
+				showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+				return;
+			}
 
-      const [intPart, decPart = ""] = value.split(".");
-      const intLen = intPart.replace(/^0+/, "").length;
-      const decLen = decPart.length;
+			const [intPart, decPart = ""] = value.split(".");
+			const intLen = intPart.replace(/^0+/, "").length;
+			const decLen = decPart.length;
 
-      if (intLen + decLen > total || decLen > decimal) {
-        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
-      } else {
-        clearError(input);
-      }
-    }
-  }
+			if (intLen + decLen > total || decLen > decimal) {
+				showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+			} else {
+				clearError(input);
+			}
+		}
+	}
 
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const id in fieldRules) {
-      const input = document.getElementById(id);
-      if (input) {
-        input.addEventListener("input", validateInput);
+	document.addEventListener("DOMContentLoaded", () => {
+		for (const id in fieldRules) {
+			const input = document.getElementById(id);
+			if (input) {
+				input.addEventListener("input", validateInput);
 
-        // Add maxlength to VARCHAR2 fields only
-        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
-          input.setAttribute("maxlength", fieldRules[id]);
-        }
-      }
-    }
-  });
-  
-  function goBack() {
-      document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-      window.history.back();
-  }
+				// Add maxlength to VARCHAR2 fields only
+				if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+					input.setAttribute("maxlength", fieldRules[id]);
+				}
+			}
+		}
+	});
 
-  function hideLoader() {
-      document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-  }
+	function goBack() {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		window.history.back();
+	}
 
-  window.addEventListener("pageshow", function () {
-      hideLoader();
-  });
+	function hideLoader() {
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+	}
+
+	window.addEventListener("pageshow", function () {
+		hideLoader();
+	});
 </script>
 <style>
-	.fx-edit-page  {
-		    overflow: hidden;
-		}
-		.fx-edit-page  .card-body {
-		    max-height: calc(100vh - 280px);
-		    overflow-y: auto;
-		    overflow-x: hidden;
-		}
+	.fx-edit-page {
+		overflow: hidden;
+	}
 
-		.fx-edit-page  .card {
-		    margin-bottom: 0;
-		}
+	.fx-edit-page .card-body {
+		max-height: calc(100vh - 280px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	.fx-edit-page .card {
+		margin-bottom: 0;
+	}
 </style>
 <style>
 	.fx-edit-page {
-	    font-family: Arial, sans-serif !important;
-	    font-size: 12px !important;
+		font-family: Arial, sans-serif !important;
+		font-size: 12px !important;
 	}
 
 	.fx-edit-page label,
 	.fx-edit-page-page input,
 	.fx-edit-page-page textarea,
 	.fx-edit-page-page button {
-	    font-size: 12px !important;
+		font-size: 12px !important;
 	}
+
 	.modal-title {
-	    background-color: #f7a47c;
+		background-color: #f7a47c;
 	}
 </style>
 
 <style>
-.scrollable-exist-viewport {
-	max-height: calc(100vh - 195px);
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding-right: 10px;
-}
+	.scrollable-exist-viewport {
+		max-height: calc(100vh - 195px);
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-right: 10px;
+	}
 
-.compact-form {
-	font-size: 12px !important;
-}
+	.compact-form {
+		font-size: 12px !important;
+	}
 
-.compact-section {
-	padding: 1px 20px 1px;
-	border-radius: 5px;
-}
+	.compact-section {
+		padding: 1px 20px 1px;
+		border-radius: 5px;
+	}
 
-.vertical-divider {
-	border-left: 4px solid #444;
-	padding-left: 20px;
-}
+	.vertical-divider {
+		border-left: 4px solid #444;
+		padding-left: 20px;
+	}
 
-.centered-content .form-group, .signoff-alignment-wrap .form-group {
-	position: relative;
-	width: 40% !important;
-	margin-bottom: 22px !important;
-}
+	.centered-content .form-group,
+	.signoff-alignment-wrap .form-group {
+		position: relative;
+		width: 40% !important;
+		margin-bottom: 22px !important;
+	}
 
-.centered-content .form-group {
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
+	.centered-content .form-group {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
 
-.signoff-alignment-wrap .form-group {
-	margin-left: 85px !important;
-	margin-right: 0 !important;
-}
+	.signoff-alignment-wrap .form-group {
+		margin-left: 85px !important;
+		margin-right: 0 !important;
+	}
 
-.section-title {
-	font-weight: 700;
-	font-size: 13px;
-	color: #000;
-	margin-bottom: 20px;
-	display: block;
-	border-bottom: 1px solid #dee2e6;
-	padding-bottom: 5px;
-	text-align: left !important;
-	width: 100%;
-}
+	.section-title {
+		font-weight: 700;
+		font-size: 13px;
+		color: #000;
+		margin-bottom: 20px;
+		display: block;
+		border-bottom: 1px solid #dee2e6;
+		padding-bottom: 5px;
+		text-align: left !important;
+		width: 100%;
+	}
 
-label.error {
-	color: red !important;
-	font-size: 11px !important;
-	position: absolute;
-	left: 105%;
-	top: 50%;
-	transform: translateY(-50%);
-	white-space: nowrap;
-	z-index: 10;
-}
+	label.error {
+		color: red !important;
+		font-size: 11px !important;
+		position: absolute;
+		left: 105%;
+		top: 50%;
+		transform: translateY(-50%);
+		white-space: nowrap;
+		z-index: 10;
+	}
 
-.error {
-	padding-top: 0 !important;
-}
+	.error {
+		padding-top: 0 !important;
+	}
 
-.compact-form .form-control-sm {
-	height: 32px !important;
-	font-size: 12px !important;
-	padding: 5px 10px !important;
-	width: 100% !important;
-	border: 1px solid #ced4da !important;
-	border-radius: 8px !important;
-	background-color: #ffffff;
-}
+	.compact-form .form-control-sm {
+		height: 32px !important;
+		font-size: 12px !important;
+		padding: 5px 10px !important;
+		width: 100% !important;
+		border: 1px solid #ced4da !important;
+		border-radius: 8px !important;
+		background-color: #ffffff;
+	}
 
-body {
-	overflow: hidden;
-}
+	body {
+		overflow: hidden;
+	}
 
-.table-responsive {
-		    border: 1px solid #dee2e6;
-		    border-radius: 4px;
-		    width: 100%;
-		    position: relative;
-		}
+	.table-responsive {
+		border: 1px solid #dee2e6;
+		border-radius: 4px;
+		width: 100%;
+		position: relative;
+	}
 
-		/* scroll only table */
-		#usertable {
-		    display: block;
-		    max-height: calc(100vh - 240px);
-		    overflow-y: auto;
-		}
+	/* scroll only table */
+	#usertable {
+		display: block;
+		max-height: calc(100vh - 240px);
+		overflow-y: auto;
+	}
 
-.table-responsive thead {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+	.table-responsive thead {
+		position: sticky;
+		top: 0;
+		background-color: #e9ecf0;
+		z-index: 1;
+	}
 
-#usertable thead th {
-	font-size: 14px !important;
-	font-family: Arial, sans-serif !important;
-}
+	#usertable thead th {
+		font-size: 14px !important;
+		font-family: Arial, sans-serif !important;
+	}
 
-#usertable tbody td {
-	font-size: 12px !important;
-	font-family: Arial, sans-serif !important;
-}
+	#usertable tbody td {
+		font-size: 12px !important;
+		font-family: Arial, sans-serif !important;
+	}
+	/* Left aligned */
+	#usertable th.th-left,
+	#usertable td.th-left {
+	    text-align: left !important;
+	}
+
+	/* Right aligned */
+	#usertable th.th-right,
+	#usertable td.th-right {
+	    text-align: right !important;
+	}
 </style>
+
 </html>
