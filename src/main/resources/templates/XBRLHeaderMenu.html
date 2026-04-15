@@ -3,6 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Riskinsights - Bank of Baroda</title>
 
 	<!-- CSS Dependencies -->
@@ -13,40 +14,390 @@
 
 	<style>
 		/* ===============================
-           GLOBAL
+           GLOBAL — fixed header only (sidebar overlays; no left gutter)
         ================================ */
 		body {
 			margin: 0;
 			padding: 0;
+			padding-top: 60px;
 			text-decoration: none;
 			font-family: Verdana, Geneva, Tahoma, sans-serif;
 			background-color: #ffffff;
 		}
 
 		/* ===============================
-           HEADER BAR
+           HEADER ICON → slow slide-in sidebar (off-canvas until click; submenus use hover on desktop)
+        ================================ */
+		.header-nav-trigger {
+			position: relative;
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			align-self: stretch;
+			gap: 10px;
+			z-index: 4100;
+		}
+
+		.header-logo-wrap {
+			display: flex;
+			align-items: center;
+			flex-shrink: 0;
+		}
+
+		.header-logo-link {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			cursor: pointer;
+			border-radius: 6px;
+			transition: opacity 0.2s ease, transform 0.15s ease;
+		}
+
+		.header-logo-link:hover {
+			opacity: 0.92;
+		}
+
+		.header-logo-link:focus {
+			outline: 2px solid #FEE685;
+			outline-offset: 2px;
+		}
+
+		.header-logo-link:active {
+			transform: scale(0.98);
+		}
+
+		.header-logo-img {
+			height: 40px;
+			width: auto;
+			max-width: 120px;
+			object-fit: contain;
+			vertical-align: middle;
+			filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+			pointer-events: none;
+		}
+
+		.header-menu-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 44px;
+			height: 44px;
+			margin: 0;
+			padding: 0;
+			border: 2px solid rgba(255, 255, 255, 0.9);
+			border-radius: 0.5rem;
+			background: rgba(255, 255, 255, 0.2);
+			color: #fff;
+			font-size: 1.2rem;
+			cursor: pointer;
+			transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+		}
+
+		.header-menu-icon:hover {
+			background: rgba(255, 255, 255, 0.35);
+			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+			transform: scale(1.04);
+		}
+
+		.header-menu-icon:focus {
+			outline: 2px solid #FEE685;
+			outline-offset: 2px;
+		}
+
+		/*
+		   Slide with `left` (not transform) so child `position:fixed` flyouts use the
+		   viewport — transform on the sidebar breaks fixed positioning and clips submenus.
+		*/
+		.app-sidebar {
+			position: fixed;
+			left: calc(-1 * min(280px, 92vw));
+			top: 0;
+			height: 100vh;
+			height: 100dvh;
+			width: min(280px, 92vw);
+			z-index: 4000;
+			/* CSS named color `brown` (#A52A2A) at 95% opacity */
+			background: rgba(165, 42, 42, 0.95);
+			transition: left 1.1s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+			overflow: visible;
+			white-space: nowrap;
+			display: flex;
+			flex-direction: column;
+			box-shadow: none;
+			border-right: 1px solid rgba(255, 255, 255, 0.2);
+			box-sizing: border-box;
+			padding-top: 60px;
+			pointer-events: none;
+			color: #ffffff;
+		}
+
+		/* Sidebar opens only via click on the menu button (.is-open), not on header hover */
+
+		/* Click / touch: .is-open */
+		.app-sidebar.is-open {
+			left: 0;
+			box-shadow: 8px 0 32px rgba(15, 23, 42, 0.12);
+			pointer-events: auto;
+		}
+
+		@media (max-width: 991px) {
+			.app-sidebar.is-open {
+				left: 0;
+			}
+		}
+
+		.sidebar-nav {
+			flex: 1;
+			min-height: 0;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.sidebar-menu-toolbar {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			padding: 6px 10px 8px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+		}
+
+		.sidebar-close-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 38px;
+			height: 38px;
+			margin: 0;
+			padding: 0;
+			border: 1px solid rgba(255, 255, 255, 0.35);
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.12);
+			color: #ffffff;
+			font-size: 1.15rem;
+			line-height: 1;
+			cursor: pointer;
+			transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+		}
+
+		.sidebar-close-btn:hover {
+			background: rgba(255, 255, 255, 0.22);
+			border-color: rgba(255, 255, 255, 0.5);
+		}
+
+		.sidebar-close-btn:focus {
+			outline: 2px solid #FEE685;
+			outline-offset: 2px;
+		}
+
+		.sidebar-close-btn:active {
+			transform: scale(0.96);
+		}
+
+		.app-sidebar .menu-scroll-wrapper {
+			flex: 1;
+			min-height: 0;
+			overflow-y: auto;
+			overflow-x: visible;
+			-webkit-overflow-scrolling: touch;
+			padding-bottom: 24px;
+		}
+
+		/* Vertical menu in sidebar */
+		.app-sidebar .menu.menu--sidebar {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0;
+			width: 100%;
+		}
+
+		.app-sidebar .menu.menu--sidebar>li {
+			position: relative;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+		}
+
+		.app-sidebar .menu.menu--sidebar>li>a i {
+			color: #ffffff;
+		}
+
+		.app-sidebar .menu.menu--sidebar>li>a {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 12px 20px 12px 16px;
+			color: #ffffff;
+			font-size: 14px;
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 0;
+			transition: background 0.2s ease, color 0.2s ease;
+		}
+
+		/* Top-level rows that open a flyout submenu (hover on desktop) */
+		.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a {
+			padding-right: 36px;
+			position: relative;
+		}
+
+		.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a .menu-submenu-indicator {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 11px;
+			line-height: 1;
+			opacity: 0.9;
+			pointer-events: none;
+			color: rgba(255, 255, 255, 0.95);
+		}
+
+		.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a .menu-submenu-indicator .fa-angle-right {
+			display: none;
+		}
+
+		.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a .menu-submenu-indicator .fa-angle-down {
+			display: inline-block;
+		}
+
+		@media (min-width: 992px) {
+			.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a .menu-submenu-indicator .fa-angle-down {
+				display: none;
+			}
+
+			.app-sidebar .menu.menu--sidebar > li:has(> .submenu) > a .menu-submenu-indicator .fa-angle-right {
+				display: inline-block;
+			}
+		}
+
+		.app-sidebar .menu.menu--sidebar>li>a:hover {
+			background: rgba(255, 255, 255, 0.12);
+			color: #ffffff;
+		}
+
+		.app-sidebar .menu.menu--sidebar>li>a.active {
+			background: rgba(255, 255, 255, 0.2);
+			color: #ffffff;
+			border-left: 4px solid #FEE685;
+			padding-left: 12px;
+		}
+
+		.app-sidebar .submenu li>a.active {
+			background: rgba(255, 255, 255, 0.18);
+			color: #ffffff;
+			padding-left: 20px;
+			border-radius: 0;
+		}
+
+		/* Flyout panels — visibility/position via JS (viewport-fixed) */
+		.app-sidebar .submenu {
+			margin: 0;
+			padding: 8px 0;
+			min-width: 220px;
+			max-width: min(320px, 50vw);
+			list-style: none !important;
+			column-count: 1 !important;
+			background: rgba(165, 42, 42, 0.95);
+			border-radius: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+			display: none;
+		}
+
+		.app-sidebar .submenu.side-flyout-visible {
+			display: block;
+			z-index: 6000;
+		}
+
+		.app-sidebar .menu.menu--sidebar li:nth-child(3) .submenu {
+			column-count: 1 !important;
+		}
+
+		.app-sidebar .submenu li a {
+			display: block;
+			padding: 8px 14px;
+			font-size: 13px;
+			color: #ffffff;
+			text-decoration: none;
+			white-space: normal;
+		}
+
+		.app-sidebar .submenu li a:hover {
+			background: rgba(255, 255, 255, 0.15);
+			color: #ffffff;
+		}
+
+		.app-sidebar .dropdown-submenu {
+			position: relative;
+		}
+
+		.app-sidebar .dropdown-submenu>.dropdown-menu {
+			margin: 0;
+			padding: 6px 0;
+			min-width: 200px;
+			max-width: min(280px, 45vw);
+			background: rgba(165, 42, 42, 0.95);
+			border-radius: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+			list-style: none;
+			display: none;
+		}
+
+		.app-sidebar .dropdown-menu.side-flyout-visible {
+			display: block;
+			z-index: 6000;
+		}
+
+		.app-sidebar .dropdown-menu li a {
+			padding: 8px 14px;
+			font-size: 13px;
+			color: #ffffff;
+		}
+
+		.app-sidebar .dropdown-menu li a:hover {
+			background: rgba(255, 255, 255, 0.15);
+			color: #ffffff;
+		}
+
+		.app-sidebar .dropdown-submenu>a::after {
+			content: "▸";
+			float: right;
+			font-size: 12px;
+		}
+
+		.sidebar-touch-backdrop {
+			display: none;
+			position: fixed;
+			inset: 0;
+			z-index: 3990;
+			background: rgba(15, 23, 42, 0.35);
+		}
+
+		body.sidebar-mobile-open .sidebar-touch-backdrop {
+			display: block;
+		}
+
+		/* ===============================
+           HEADER BAR — full width (menu icon on the left)
         ================================ */
 		.header-bar {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			gap: 12px;
+			padding: 0 16px 0 12px;
 			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
 			height: 60px;
-			position: sticky;
+			position: fixed;
 			top: 0;
-			z-index: 3000;
+			left: 0;
+			right: 0;
+			z-index: 4050;
 			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
-		}
-
-		.logo-section {
-			display: flex;
-			align-items: center;
-		}
-
-		.logo-img {
-			height: 60px;
-			width: auto;
-			margin-right: 12px;
 		}
 
 		.logo-text-highlight {
@@ -54,8 +405,10 @@
 			color: #ffffff;
 			letter-spacing: 0.5px;
 			text-align: center;
-			font-size: 2.0em;
+			font-size: clamp(1rem, 2.5vw, 2em);
 			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			flex: 1;
+			min-width: 0;
 		}
 
 		.user-info {
@@ -64,6 +417,7 @@
 			gap: 8px;
 			color: #ffffff;
 			font-size: 13px;
+			flex-shrink: 0;
 		}
 
 		.user-info .css-user-alt {
@@ -108,225 +462,40 @@
 			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 			transform: translateY(-1px);
 		}
-
-		/* ===============================
-           NAVBAR
-        ================================ */
-		.navbar {
-			position: sticky;
-			top: 5px;
-			/* below header-bar */
-			z-index: 2000;
-			background: #ffffff;
-			border-bottom: 2px solid #FEE685;
-			padding: 0 10px;
-			height: 48px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			overflow: visible;
-			/* DO NOT CLIP DROPDOWNS */
-		}
-
-		/* MAIN MENU */
-		.menu {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			display: inline-flex;
-			align-items: center;
-			gap: 10px;
-		}
-
-		.menu>li {
-			position: relative;
-		}
-
-		.menu>li>a {
-			display: inline-block;
-			padding: 10px 14px;
-			color: #333;
-			font-size: 14px;
-			font-weight: 600;
-			text-decoration: none;
-			border-radius: 20px;
-			transition: all 0.3s ease-in-out;
-		}
-
-		/* Top-level hover effect */
-		.menu>li>a:hover {
-			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
-			color: #ffffff;
-			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);
-			transform: translateY(-2px);
-			border-radius: 20px;
-		}
-
-		.menu>li:active>a {
-			transform: scale(0.97);
-		}
-
-		li>a.active {
-			background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
-			color: #ffffff;
-			box-shadow: 0px 4px 8px rgba(255, 185, 59, 0.4);
-			border-radius: 20px;
-		}
-
-		.submenu li>a.active {
-			background: #FFF3D1;
-			color: #E67E00;
-			padding-left: 20px;
-			border-radius: 0px;
-		}
-
-		/* SUBMENU */
-		.submenu {
-			position: absolute;
-			left: 0;
-			top: 100%;
-			margin-top: 6px;
-			width: max-content;
-			min-width: 200px;
-			background: #ffffff;
-			border-radius: 6px;
-			box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.18);
-			padding: 8px 0;
-			opacity: 0;
-			visibility: hidden;
-			transform: translateY(10px);
-			transition: all 0.25s ease-in-out;
-			z-index: 3000;
-			list-style: none !important;
-		}
-
-		.menu>li:hover .submenu {
-			opacity: 1;
-			visibility: visible;
-			transform: translateY(0px);
-		}
-
-		.submenu li a {
-			display: block;
-			padding: 8px 16px;
-			font-size: 13px;
-			color: #333;
-			text-decoration: none;
-			white-space: normal;
-			transition: all 0.22s ease;
-		}
-
-		.submenu li a:hover {
-			background: #FFF3D1;
-			color: #E67E00;
-			padding-left: 20px;
-		}
-
-		/* RT Reports WIDE SUBMENU (the RT Reports li) */
-		.menu li:nth-child(3) .submenu {
-			width: 600px;
-			column-count: 2;
-			column-gap: 20px;
-		}
-
-		.menu li:nth-child(3) .submenu li {
-			break-inside: avoid;
-		}
-
-		/* ===============================
-           RESPONSIVE
-        ================================ */
-		@media (max-width: 768px) {
-			.header-bar {
-				flex-wrap: wrap;
-				height: auto;
-				padding: 8px 10px;
-			}
-
-			.logo-section {
-				margin-bottom: 6px;
-			}
-
-			.navbar {
-				top: 70px;
-				height: auto;
-				padding: 4px 8px;
-			}
-
-			.menu>li>a {
-				padding: 8px 10px;
-				font-size: 13px;
-			}
-
-			.submenu {
-				min-width: 160px;
-				max-width: 90vw;
-			}
-		}
-
-		/* NESTED DROPDOWN (ASL Uploads) */
-		.dropdown-submenu {
-			position: relative;
-		}
-
-		.dropdown-submenu>.dropdown-menu {
-			position: absolute;
-			top: 0;
-			left: 100%;
-			margin-left: 0;
-			margin-top: -5px;
-			min-width: 200px;
-			background: #ffffff;
-			border-radius: 6px;
-			box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.18);
-			padding: 8px 0;
-			display: none;
-			list-style: none;
-		}
-
-		/* SHOW ON HOVER */
-		.dropdown-submenu:hover>.dropdown-menu {
-			display: block;
-		}
-
-		/* Arrow indicator */
-		.dropdown-submenu>a::after {
-			content: "▸";
-			float: right;
-			font-size: 12px;
-		}
 	</style>
 </head>
 
 <body>
+	<div class="sidebar-touch-backdrop" id="sidebarTouchBackdrop" aria-hidden="true"></div>
+
 	<header class="header-bar">
-		<div class="logo-section">
-			<img th:src="@{/images/Dubaiboblogo.png}" alt="Bank of Baroda" class="logo-img">
-		</div>
-		<div class="logo-text-highlight">UAE RISK ANALYTICAL SYSTEM</div>
-		<div class="user-info">
-			<i class="fas fa-user"></i>
-			<span class="username" th:text="${session.USERNAME}">Username</span>
-			<form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
-				<button type="submit">
-					<i class="fas fa-sign-out-alt"></i> Logout
+		<div class="header-nav-trigger" id="headerNavTrigger">
+			<button type="button" class="header-menu-icon" id="headerMenuIcon" aria-label="Navigation menu"
+				aria-expanded="false" aria-controls="appSidebar" aria-haspopup="true">
+				<i class="fa fa-th-large" aria-hidden="true"></i>
+			</button>
+			<div class="header-logo-wrap">
+				<a th:href="@{/Dashboard}" class="header-logo-link" onclick="showLoader()" aria-label="Go to Dashboard">
+					<img th:src="@{/images/Dubaiboblogo.png}" alt="Bank of Baroda" class="header-logo-img">
+				</a>
+			</div>
+			<aside class="app-sidebar" id="appSidebar" aria-label="Main navigation" aria-hidden="true">
+		<nav class="sidebar-nav">
+			<div class="sidebar-menu-toolbar">
+				<button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" title="Close menu"
+					aria-label="Close navigation menu">
+					<i class="fa fa-times" aria-hidden="true"></i>
 				</button>
-			</form>
-		</div>
-
-
-	</header>
-
-	<nav class="navbar d-flex align-items-center position-relative">
-		<div class="menu-scroll-wrapper">
-			<ul class="menu" id="mainMenu">
+			</div>
+			<div class="menu-scroll-wrapper">
+				<ul class="menu menu--sidebar" id="mainMenu">
 
 				<li><a th:href="@{/Dashboard}" id="Dashboard" onclick="showLoader()"><i class="fa fa-home"
 							aria-hidden="true"></i>
 						Home</a></li>
 
 				<li>
-					<a href="#"> <i class="fa fa-users" aria-hidden="true"></i> Admin</a>
+					<a href="#"> <i class="fa fa-users" aria-hidden="true"></i> Admin<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 
 					<ul class="submenu">
 
@@ -355,7 +524,7 @@
 				</li>
 
 				<li>
-					<a href="#"> <i class="fa fa-file-excel" aria-hidden="true"></i> RT Reports</a>
+					<a href="#"> <i class="fa fa-file-excel" aria-hidden="true"></i> RT Reports<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'RT-RPT1')}">
 							<a th:href="@{/Nostro_Account_Bal}" id="Nostro_Account_Bal" onclick="showLoader()">Nostro
@@ -426,7 +595,7 @@
 				</li>
 
 				<li>
-					<a href="#"> <i class="fa fa-university" aria-hidden="true"></i> ASL</a>
+					<a href="#"> <i class="fa fa-university" aria-hidden="true"></i> ASL<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'ASL-Authcounterparty')}">
 							<a th:href="@{/counterparty}" id="counterparty" onclick="showLoader()">Auth
@@ -500,7 +669,7 @@
 				</li>
 
 				<li>
-					<a href="#"> <i class="fas fa-credit-card"></i> Credit Risk</a>
+					<a href="#"> <i class="fas fa-credit-card"></i> Credit Risk<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
 							<a th:href="@{/Credit_risk?formmode=Portfolio_analysis}"
@@ -532,7 +701,7 @@
 
 
 				<li>
-					<a href="#"><i class="fa fa-exclamation-triangle"></i> Liquidity & RiskProfile</a>
+					<a href="#"><i class="fa fa-exclamation-triangle"></i> Liquidity & RiskProfile<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal')}">
 							<a th:href="@{/RT}" id="RT" onclick="showLoader()">SLS</a>
@@ -557,7 +726,7 @@
 				</li>
 
 				<li>
-					<a href="#"> <i class="fa fa-eye" aria-hidden="true"></i> Audit</a>
+					<a href="#"> <i class="fa fa-eye" aria-hidden="true"></i> Audit<span class="menu-submenu-indicator" aria-hidden="true"><i class="fa fa-angle-right"></i><i class="fa fa-angle-down"></i></span></a>
 					<ul class="submenu">
 						<li th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}">
 							<a th:href="@{/User_Audit}" id="User_Audit" onclick="showLoader()">User Audit</a>
@@ -568,9 +737,23 @@
 					</ul>
 				</li>
 
-			</ul>
+				</ul>
+			</div>
+		</nav>
+		</aside>
 		</div>
-	</nav>
+		<div class="logo-text-highlight">UAE RISK ANALYTICAL SYSTEM</div>
+		<div class="user-info">
+			<i class="fas fa-user"></i>
+			<span class="username" th:text="${session.USERNAME}">Username</span>
+			<form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
+				<button type="submit">
+					<i class="fas fa-sign-out-alt"></i> Logout
+				</button>
+			</form>
+		</div>
+	</header>
+
 	<div class="alert alert-danger custom-alert shadow-sm" role="alert" id="autoHideAlert"
 		style="display:none; position:fixed; top:20px; right:20px; z-index:9999; background-color:white; border-left:5px solid #ff7f27; color:black; padding: 12px 20px; border-radius: 8px; border:1px solid #ddd; width: auto; min-width: 300px;">
 		<button type="button" class="btn-close" onclick="hideAlert()"
@@ -616,8 +799,234 @@
 
 		});
 	</script>
+
+	<script>
+		(function () {
+			var sidebar = document.getElementById("appSidebar");
+			var toggleBtn = document.getElementById("headerMenuIcon");
+			var backdrop = document.getElementById("sidebarTouchBackdrop");
+			if (!sidebar) return;
+
+			function setSidebarOpen(open) {
+				sidebar.classList.toggle("is-open", open);
+				sidebar.setAttribute("aria-hidden", open ? "false" : "true");
+				document.body.classList.toggle("sidebar-mobile-open", open);
+				if (toggleBtn) {
+					toggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+				}
+				if (backdrop) backdrop.setAttribute("aria-hidden", open ? "false" : "true");
+				if (!open) {
+					sidebar.querySelectorAll(".submenu.side-flyout-visible, .dropdown-menu.side-flyout-visible").forEach(function (el) {
+						el.classList.remove("side-flyout-visible");
+						el.removeAttribute("style");
+					});
+				}
+			}
+
+			if (toggleBtn) {
+				toggleBtn.addEventListener("click", function (e) {
+					e.preventDefault();
+					setSidebarOpen(!sidebar.classList.contains("is-open"));
+				});
+				toggleBtn.addEventListener("keydown", function (e) {
+					if (e.key !== "Enter" && e.key !== " ") return;
+					e.preventDefault();
+					setSidebarOpen(!sidebar.classList.contains("is-open"));
+				});
+			}
+			var closeBtn = document.getElementById("sidebarCloseBtn");
+			if (closeBtn) {
+				closeBtn.addEventListener("click", function () {
+					setSidebarOpen(false);
+				});
+			}
+			if (backdrop) {
+				backdrop.addEventListener("click", function () {
+					setSidebarOpen(false);
+				});
+			}
+			document.addEventListener("keydown", function (e) {
+				if (e.key === "Escape") setSidebarOpen(false);
+			});
+			sidebar.querySelectorAll('a[href]').forEach(function (a) {
+				var href = a.getAttribute("href");
+				if (href && href !== "#" && !href.startsWith("javascript:")) {
+					a.addEventListener("click", function () {
+						setSidebarOpen(false);
+					});
+				}
+			});
+		})();
 	</script>
 
+	<script>
+		(function () {
+			var nav = document.querySelector(".app-sidebar .sidebar-nav");
+			if (!nav) return;
+
+			var HIDE_MS = 280;
+			var hideTimer = null;
+
+			function touchMode() {
+				return window.matchMedia("(hover: none)").matches;
+			}
+
+			function hidePanel(panel) {
+				if (!panel) return;
+				panel.classList.remove("side-flyout-visible");
+				panel.removeAttribute("style");
+			}
+
+			function hideAllFlyouts() {
+				nav.querySelectorAll(".submenu.side-flyout-visible, .dropdown-menu.side-flyout-visible").forEach(hidePanel);
+			}
+
+			function positionFlyout(li, panel) {
+				var r = li.getBoundingClientRect();
+				var gap = 4;
+				var minW = 220;
+				panel.style.boxSizing = "border-box";
+				panel.style.position = "fixed";
+				panel.style.zIndex = "6000";
+				panel.style.minWidth = minW + "px";
+				panel.style.maxWidth = Math.min(320, Math.floor(window.innerWidth * 0.45)) + "px";
+				panel.style.maxHeight = Math.min(Math.floor(window.innerHeight * 0.7), window.innerHeight - 16) + "px";
+				panel.style.overflowY = "auto";
+				panel.style.visibility = "hidden";
+				panel.classList.add("side-flyout-visible");
+				var w = Math.max(panel.offsetWidth, minW);
+				var left = r.right - gap;
+				if (left + w > window.innerWidth - 8) {
+					left = Math.max(8, r.left - w - gap);
+				} else {
+					left = Math.min(left, window.innerWidth - w - 8);
+				}
+				panel.style.left = left + "px";
+				var top = r.top;
+				panel.style.top = top + "px";
+				panel.style.visibility = "visible";
+				var ph = panel.offsetHeight;
+				if (top + ph > window.innerHeight - 8) {
+					top = Math.max(8, window.innerHeight - ph - 8);
+					panel.style.top = top + "px";
+				}
+			}
+
+			function clearHide() {
+				if (hideTimer) {
+					clearTimeout(hideTimer);
+					hideTimer = null;
+				}
+			}
+
+			function scheduleHide(panel) {
+				clearHide();
+				hideTimer = setTimeout(function () {
+					hidePanel(panel);
+				}, HIDE_MS);
+			}
+
+			function wireTopLevel(li, sub) {
+				li.addEventListener("mouseenter", function () {
+					if (touchMode()) return;
+					clearHide();
+					nav.querySelectorAll(".menu.menu--sidebar > li > .submenu.side-flyout-visible").forEach(function (p) {
+						if (p !== sub) hidePanel(p);
+					});
+					nav.querySelectorAll(".dropdown-menu.side-flyout-visible").forEach(hidePanel);
+					positionFlyout(li, sub);
+				});
+				li.addEventListener("mouseleave", function () {
+					if (touchMode()) return;
+					scheduleHide(sub);
+				});
+				sub.addEventListener("mouseenter", clearHide);
+				sub.addEventListener("mouseleave", function () {
+					if (touchMode()) return;
+					scheduleHide(sub);
+				});
+			}
+
+			function wireNested(li, panel) {
+				var parentUl = li.parentElement;
+				li.addEventListener("mouseenter", function () {
+					if (touchMode()) return;
+					clearHide();
+					if (parentUl) {
+						parentUl.querySelectorAll(":scope > .dropdown-submenu > .dropdown-menu.side-flyout-visible").forEach(function (p) {
+							if (p !== panel) hidePanel(p);
+						});
+					}
+					positionFlyout(li, panel);
+				});
+				li.addEventListener("mouseleave", function () {
+					if (touchMode()) return;
+					scheduleHide(panel);
+				});
+				panel.addEventListener("mouseenter", clearHide);
+				panel.addEventListener("mouseleave", function () {
+					if (touchMode()) return;
+					scheduleHide(panel);
+				});
+			}
+
+			nav.querySelectorAll(".menu.menu--sidebar > li").forEach(function (li) {
+				var sub = li.querySelector(":scope > .submenu");
+				if (!sub) return;
+				wireTopLevel(li, sub);
+				var toggleA = li.querySelector(':scope > a[href="#"]');
+				if (toggleA) {
+					toggleA.addEventListener("click", function (e) {
+						if (!touchMode()) return;
+						e.preventDefault();
+						var open = sub.classList.contains("side-flyout-visible");
+						hideAllFlyouts();
+						if (!open) positionFlyout(li, sub);
+					});
+				}
+			});
+
+			nav.querySelectorAll(".dropdown-submenu").forEach(function (li) {
+				var panel = li.querySelector(":scope > .dropdown-menu");
+				if (!panel) return;
+				var parentUl = li.parentElement;
+				wireNested(li, panel);
+				var toggleA = li.querySelector(':scope > a[href="#"]');
+				if (toggleA) {
+					toggleA.addEventListener("click", function (e) {
+						if (!touchMode()) return;
+						e.preventDefault();
+						var open = panel.classList.contains("side-flyout-visible");
+						if (parentUl) {
+							parentUl.querySelectorAll(":scope > .dropdown-submenu > .dropdown-menu.side-flyout-visible").forEach(function (p) {
+								if (p !== panel) hidePanel(p);
+							});
+						}
+						if (!open) positionFlyout(li, panel);
+						else hidePanel(panel);
+					});
+				}
+			});
+
+			var scrollWrap = nav.querySelector(".menu-scroll-wrapper");
+			if (scrollWrap) {
+				scrollWrap.addEventListener("scroll", hideAllFlyouts);
+			}
+			window.addEventListener("resize", hideAllFlyouts);
+
+			var appSidebarEl = document.getElementById("appSidebar");
+			if (appSidebarEl) {
+				appSidebarEl.addEventListener("mouseenter", clearHide);
+				appSidebarEl.addEventListener("mouseleave", function (e) {
+					if (touchMode()) return;
+					var to = e.relatedTarget;
+					if (to && appSidebarEl.contains(to)) return;
+					clearHide();
+					hideTimer = setTimeout(hideAllFlyouts, 320);
+				});
+			}
+		})();
+	</script>
 
 	<script>
 		let globalPollInterval;
