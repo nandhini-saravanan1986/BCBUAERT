@@ -112,7 +112,7 @@
 		}
 
 		.container-fluid {
-			margin-top: 130px;
+			margin-top: 20px;
 		}
 
 		/* Card‐like wrapper for table */
@@ -187,47 +187,107 @@
 			background: rgba(139, 92, 246, 0.1);
 		}
 
-		/* Chart placeholder styling */
+		/* KPI stat tiles — institutional banking: navy, gold accent, calm hover */
 		.stats-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-			gap: var(--space-lg);
+			grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+			gap: 1rem 1.25rem;
 			margin-bottom: var(--space-2xl);
 		}
 
 		.stat-card {
-			background: var(--color-background);
-			border: 1px solid var(--color-border);
-			border-radius: var(--radius-xl);
-			padding: var(--space-lg);
-			transition: var(--transition);
+			position: relative;
+			background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+			border: 1px solid rgba(15, 39, 68, 0.1);
+			border-radius: 12px;
+			padding: 1.1rem 1.15rem 1.15rem 1.25rem;
+			box-shadow:
+				0 1px 2px rgba(15, 23, 42, 0.04),
+				0 4px 16px rgba(15, 39, 68, 0.06);
+			transition:
+				transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+				box-shadow 0.28s ease,
+				border-color 0.28s ease,
+				background 0.28s ease;
+			overflow: hidden;
+		}
+
+		.stat-card::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 4px;
+			background: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
+			border-radius: 12px 0 0 12px;
+			transition: width 0.28s ease, box-shadow 0.28s ease;
+		}
+
+		.stat-card::after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 55%;
+			height: 45%;
+			background: radial-gradient(ellipse at bottom right, rgba(30, 58, 95, 0.07) 0%, transparent 72%);
+			pointer-events: none;
 		}
 
 		.stat-card:hover {
-			box-shadow: var(--shadow-md);
-			background-color: aliceblue;
-			transform: translateY(-2px);
-			font-size: var(--text-base);
+			transform: translateY(-5px);
+			border-color: rgba(30, 58, 95, 0.22);
+			background: linear-gradient(165deg, #ffffff 0%, #f1f5f9 100%);
+			box-shadow:
+				0 8px 24px rgba(15, 39, 68, 0.12),
+				0 2px 6px rgba(15, 23, 42, 0.06),
+				0 0 0 1px rgba(201, 162, 39, 0.12);
+		}
+
+		.stat-card:hover::before {
+			width: 5px;
+			box-shadow: 0 0 0 1px rgba(201, 162, 39, 0.45);
+			background: linear-gradient(180deg, #2d4a6f 0%, #c9a227 55%, #0f2744 100%);
 		}
 
 		.stat-card-header {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 			justify-content: space-between;
-			margin-bottom: var(--space-md);
+			margin-bottom: 0.65rem;
+			position: relative;
+			z-index: 1;
 		}
 
 		.stat-card-title {
-			font-size: var(--text-sm);
-			color: var(--color-text-secondary);
-			font-weight: var(--weight-medium);
+			font-size: 0.72rem;
+			color: #475569;
+			font-weight: 600;
+			line-height: 1.4;
+			letter-spacing: 0.02em;
+		}
+
+		.stat-card-title a {
+			color: #1e40af;
+			text-decoration: none;
+			transition: color 0.2s ease;
+		}
+
+		.stat-card-title a:hover {
+			color: #0f2744;
+			text-decoration: underline;
 		}
 
 		.stat-card-value {
-			font-size: var(--text-sm);
-			font-weight: var(--weight-bold);
-			color: var(--color-text);
-			margin-bottom: var(--space-xs);
+			font-size: 1.125rem;
+			font-weight: 700;
+			color: #0f2744;
+			margin-bottom: 0;
+			font-variant-numeric: tabular-nums;
+			letter-spacing: 0.03em;
+			position: relative;
+			z-index: 1;
 		}
 
 		.stat-card-change {
@@ -235,14 +295,16 @@
 			align-items: center;
 			gap: var(--space-xs);
 			font-size: var(--text-sm);
+			position: relative;
+			z-index: 1;
 		}
 
 		.stat-card-change.positive {
-			color: var(--color-success);
+			color: #047857;
 		}
 
 		.stat-card-change.negative {
-			color: var(--color-error);
+			color: #b91c1c;
 		}
 
 		.chart-grid {
@@ -504,6 +566,7 @@
 			document.querySelector(".ToptenSingleborrowerdiv").style.display = "none";
 			document.querySelector(".ToptenGroupborrowerdiv").style.display = "none";
 			document.querySelector(".Exposure_outside_GCC").style.display = "none";
+			document.querySelector(".Exposure_Only_GCC").style.display = "none";
 			document.querySelector(".Mortageloan_block").style.display = "none";
 			document.querySelector(".Mortageloan_table").style.display = "none";
 			document.querySelector(".Sector_Industrial").style.display = "none";
@@ -543,7 +606,7 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						
+
 						const maxValue = Math.max(...dataValues);
 						const yaxismaxsize = getRoundedMax(maxValue);
 						const CalculatedStepSize = getStepSize(yaxismaxsize);
@@ -551,9 +614,9 @@
 						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
-				
+
+
+
 
 
 				fetch("./GetElarreport?Report_date=" + encodeURIComponent(labelReport_date))
@@ -647,8 +710,8 @@
 						Initiatedailychart(labels, dataValues, 5, 50);
 					});
 
-				
-				
+
+
 
 			} else if (labelsrlno === "22") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
@@ -716,9 +779,9 @@
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
 
-				
-				
-				
+
+
+
 			} else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -734,13 +797,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-//				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-//					.then(response => response.json())
-//					.then(result => {
-//						const labels = result.map(row => row.date);
-//						const dataValues = result.map(row => parseFloat(row.value));
-//						Initiatedailychart(labels, dataValues, 5, 50);
-//					});
+				//				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				//					.then(response => response.json())
+				//					.then(result => {
+				//						const labels = result.map(row => row.date);
+				//						const dataValues = result.map(row => parseFloat(row.value));
+				//						Initiatedailychart(labels, dataValues, 5, 50);
+				//					});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Leverageratio', {
 					method: 'POST',
@@ -836,8 +899,8 @@
 					});
 
 
-				
-				
+
+
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -904,8 +967,8 @@
 					});
 
 
-				
-				
+
+
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -972,8 +1035,8 @@
 					});
 
 
-				
-				
+
+
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In AED Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -1041,8 +1104,8 @@
 					});
 
 
-				
-				
+
+
 				document.getElementById("LongTermandMediumTermreportdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 				document.getElementById("LongTermandMediumTermlabel").innerHTML = 'In USD Million';
 				document.querySelector(".LongTermandMediumTerm").style.display = "block";
@@ -1070,8 +1133,8 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
-				
-				
+
+
 				fetch("./GetAsrrreport?Report_date=" + encodeURIComponent(labelReport_date))
 					.then(response => response.json())
 					.then(result => {
@@ -1149,13 +1212,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-		//		fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-		//			.then(response => response.json())
-		//			.then(result => {
-		//				const labels = result.map(row => row.date);
-		//				const dataValues = result.map(row => parseFloat(row.value));
-		//				Initiatedailychart(labels, dataValues, 5, 50);
-		//			});
+				//		fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				//			.then(response => response.json())
+				//			.then(result => {
+				//				const labels = result.map(row => row.date);
+				//				const dataValues = result.map(row => parseFloat(row.value));
+				//				Initiatedailychart(labels, dataValues, 5, 50);
+				//			});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -1196,8 +1259,8 @@
 					});
 
 
-				
-				
+
+
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (labelsrlno === "2") {
 
@@ -1221,7 +1284,7 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 150);
 					});
-				
+
 
 				var trHTML = "";
 				document.getElementById("ToptenSingleborrowerbody").innerHTML = trHTML;
@@ -1314,7 +1377,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
+
 			} else if (labelsrlno === "9") {
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Mortageloanappetite', {
@@ -1363,18 +1426,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 1, 15);
-					});
-
-				
-				
-
-
+				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				// .then(response => response.json())
+				// .then(result => {
+				// const labels = result.map(row => row.date);
+				// const dataValues = result.map(row => parseFloat(row.value));
+				// Initiatedailychart(labels, dataValues, 1, 15);
+				// });
 				document.querySelector(".Mortageloan_block").style.display = "grid";
 
 
@@ -1429,29 +1487,34 @@
 
 			} else if (labelsrlno === "7") {
 
-				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
+			//	fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+									// .then(response => response.json())
+									// .then(result => {
+										// const labels = result.map(row => row.date);
+										// const dataValues = result.map(row => parseFloat(row.value));
 
-						const maxValue = Math.max(...dataValues);
-						const yaxismaxsize = getRoundedMax(maxValue);
-						const CalculatedStepSize = getStepSize(yaxismaxsize);
+										// const maxValue = Math.max(...dataValues);
+										// const yaxismaxsize = getRoundedMax(maxValue);
+										// const CalculatedStepSize = getStepSize(yaxismaxsize);
 
-						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-					});
+										// Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+									// });
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
-					});
+								// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+									// .then(response => response.json())
+									// .then(result => {
+									// const labels = result.map(row => row.date);
+									// const dataValues = result.map(row => parseFloat(row.value));
 
-				
-				
+									// const maxValue = Math.max(...dataValues);
+									// const yaxismaxsize = getRoundedMax(maxValue);
+									// const CalculatedStepSize = getStepSize(yaxismaxsize);
+									
+									// Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+									// });
+
+
+
 
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'FreshslippageQoQ', {
@@ -1568,16 +1631,20 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				 fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
 
 
 				document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
@@ -1672,16 +1739,21 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
+
 
 
 				document.getElementById("Sector_title_name").innerHTML = 'Trading Exposure';
@@ -1775,16 +1847,21 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
+
 
 				document.getElementById("Sector_title_name").innerHTML = 'Services Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Services Exposure (%)';
@@ -1878,16 +1955,21 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 2, 20);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
+
 
 				document.getElementById("Sector_title_name").innerHTML = 'Banks Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Banks Exposure (%)';
@@ -1980,16 +2062,21 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
+
 
 				document.getElementById("Sector_title_name").innerHTML = 'Real Estate Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Real Estate Exposure (%)';
@@ -2081,16 +2168,21 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
+
 
 				document.getElementById("Sector_title_name").innerHTML = 'Other Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Other Exposure (%)';
@@ -2183,15 +2275,15 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-					.then(response => response.json())
-					.then(result => {
-						const labels = result.map(row => row.date);
-						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 20);
-					});
-				
-				
+				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				// .then(response => response.json())
+				// .then(result => {
+				// const labels = result.map(row => row.date);
+				// const dataValues = result.map(row => parseFloat(row.value));
+				// Initiatedailychart(labels, dataValues, 5, 20);
+				// });
+
+
 
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2254,8 +2346,8 @@
 						const dataValues = result.map(row => parseFloat(row.value));
 						Initiatedailychart(labels, dataValues, 10, 100);
 					});
-				
-				
+
+
 
 				var trHTML = "";
 				document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
@@ -2325,9 +2417,9 @@
 
 						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
-				
-				
-				
+
+
+
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'NetOvernight_noop', {
 					method: 'POST',
 					headers: {
@@ -2395,8 +2487,8 @@
 					});
 
 
-				
-				
+
+
 
 				fetch("./GetSecuredUnsecureddata?Report_date=" + encodeURIComponent(labelReport_date))
 					.then(response => response.json())
@@ -2452,8 +2544,8 @@
 						InitiatemonthlychartStockratio(labels, dataValues1, dataValues2, dataValues3, dataValues4, dataValues5, dataValues6, dataValues7, 10, 200);
 					});
 
-				
-				
+
+
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Stockapproachratio', {
 					method: 'POST',
@@ -2527,8 +2619,8 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositnonretail', {
 					method: 'POST',
@@ -2581,8 +2673,8 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				
-				
+
+
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Depositretail', {
 					method: 'POST',
@@ -2714,7 +2806,7 @@
 		}
 
 		function updateLiquidAssetsTable(periodKey) {
-			document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "none");
+
 			const dateParts = periodKey.split("-");
 
 			const selectedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
@@ -2723,7 +2815,7 @@
 			document.getElementById("Sector_classifi_per").textContent = formatDecimalValue(0);
 
 			if (Selectedmatrixlabel == "5") {
-				
+
 				fetch("./GetElarreport?Report_date=" + encodeURIComponent(selectedDate))
 					.then(response => response.json())
 					.then(result => {
@@ -2855,7 +2947,7 @@
 
 				document.querySelector(".Advancestostableratio").style.display = "block";
 			} else if (Selectedmatrixlabel === "9") {
-
+				document.querySelector(".Mortageloan_table").style.display = "none";
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Mortageloanappetite', {
 					method: 'POST',
 					headers: {
@@ -2970,8 +3062,8 @@
 					});
 
 
-				
-				
+
+
 				document.querySelector(".Capitaladequacyratio").style.display = "grid"; //showing capitalratio block
 			} else if (Selectedmatrixlabel === "3") {
 				var trHTML = "";
@@ -3960,8 +4052,8 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				
-				
+
+
 				document.querySelector(".Leverageratiosummblock").style.display = "grid"
 
 			} else if (Selectedmatrixlabel === "47") {
@@ -4076,7 +4168,7 @@
 					});
 				document.querySelector(".Exposure_Only_GCC").style.display = "block";
 			} else if (Selectedmatrixlabel === "22") {
-				
+
 				var trHTML = "";
 				document.getElementById("BPVPV01_TABLEBODY").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'BPVPV01_Detail', {
@@ -4127,7 +4219,7 @@
 					});
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
-				
+
 
 			} else {
 				alert('Sorry invalid operation selected')
@@ -4215,7 +4307,38 @@
 
 
 		function onDateChange(input) {
-
+			// Hide all analytics sections first
+			document.querySelectorAll(".Dailychart-container").forEach(el => el.style.display = "none");
+			document.querySelectorAll(".chart-container").forEach(el => el.style.display = "none");
+			document.querySelectorAll(".StockChart-container").forEach(el => el.style.display = "none");
+			document.querySelector(".LiquidAssetsRatio").style.display = "none";
+			document.querySelector(".Advancestostableratio").style.display = "none";
+			document.querySelector(".Leverageratiosummblock").style.display = "none";
+			document.querySelector(".Leverageratiodtlblock").style.display = "none";
+			document.querySelector(".Capitaladequacyratio").style.display = "none"; //hide capitalratio block
+			document.querySelector(".Capitaladequacyratiodetail_2").style.display = "none";
+			document.querySelector(".Capitaladequacyratiodetail_1").style.display = "none";
+			document.querySelector(".ToptenSingleborrowerdiv").style.display = "none";
+			document.querySelector(".ToptenGroupborrowerdiv").style.display = "none";
+			document.querySelector(".Exposure_outside_GCC").style.display = "none";
+			document.querySelector(".Exposure_Only_GCC").style.display = "none";
+			document.querySelector(".Mortageloan_block").style.display = "none";
+			document.querySelector(".Mortageloan_table").style.display = "none";
+			document.querySelector(".Sector_Industrial").style.display = "none";
+			document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "none");
+			document.querySelector(".Netovernight_noop").style.display = "none";
+			document.querySelector(".UnsecuredPosition").style.display = "none";
+			document.querySelector(".CustomerChartdetails").style.display = "none";
+			document.querySelector(".MortgageLoanAppetitedetails").style.display = "none";
+			document.querySelector(".ProvisionCoverage").style.display = "none";
+			document.querySelector(".LongTermandMediumTerm").style.display = "none";
+			document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
+			document.getElementById("Sector_classifi_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Total_expo").textContent = formatDecimalValue(0);
+			document.getElementById("Sector_classifi_per").textContent = formatDecimalValue(0);
+			document.querySelector(".Depositconcentration").style.display = "none";
+			document.querySelector(".Generalprovisiongrid").style.display = "none";
+			document.querySelector(".BPVPV01_TABLE").style.display = "none";
 			const statusDiv = document.getElementById("dataStatus");
 
 			const selectedDate = input.value;
@@ -4223,9 +4346,9 @@
 			const label = input.dataset.label;
 			var trHTML = "";
 			document.getElementById("Matrixtablebody").innerHTML = trHTML;
-			
-			if(sNo==="25"){
-				window.location.href = "./RT_Key_Risk_Indicator?Report_date="+selectedDate;
+
+			if (sNo === "25") {
+				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + selectedDate;
 				return;
 			}
 
@@ -4263,7 +4386,7 @@
 					}
 
 					// Use plain JS loop; you already use jQuery only for DOM
-					list.forEach(function (data,index) {
+					list.forEach(function (data, index) {
 						const statusText = data.status === 'Y' ? 'Within limit' : 'Breach';
 						const statusColor = data.status === 'Y' ? 'green' : 'coral';
 
@@ -4381,24 +4504,24 @@
 			const label = dateInput.dataset.label;
 			button.disabled = true;
 			button.textContent = "Running...";
-			
-			if(sNo==="25"){
+
+			if (sNo === "25") {
 				//alert("hi");
 				button.disabled = false;
 				button.textContent = "Run";
-				window.location.href = "./RT_Key_Risk_Indicator?Report_date="+reportDate;
+				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + reportDate;
 				return;
 			}
 			runMatrixForDateDirect(reportDate, sNo, label, function () {
 				onDateChange(dateInput);
 			}, button);
-			
+
 		}
 
 		function runMatrixForDateDirect(reportDate, sNo, label, onSuccess, button) {
 			setSessionToggle("info", "Calculation started for " + reportDate + ". Please wait .....");
 
-			fetch("./matrix/runForDate?reportDate=" + encodeURIComponent(reportDate)+"&Serialno="+sNo, {
+			fetch("./matrix/runForDate?reportDate=" + encodeURIComponent(reportDate) + "&Serialno=" + sNo, {
 				method: "POST",
 				headers: {"Content-Type": "application/x-www-form-urlencoded"}
 			})
@@ -4872,74 +4995,74 @@
 		// Progressing chart function for current Month (Daily)
 		function Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize) {
 
-		    const ctx = document.getElementById("Linechartfordailyreport");
-		    if (!ctx) return;
+			const ctx = document.getElementById("Linechartfordailyreport");
+			if (!ctx) return;
 
-		    if (progressChartInstance) {
-		        progressChartInstance.destroy();
-		    }
+			if (progressChartInstance) {
+				progressChartInstance.destroy();
+			}
 
-		    progressChartInstance = new Chart(ctx, {
-		        type: "line",
-		        data: {
-		            labels: labels,
-		            datasets: [
-		                {
-		                    label: "Utilization %",
-		                    data: dataValues,
-		                    backgroundColor: "rgba(139, 92, 246, 0.65)",
-		                    borderColor: "#8b5cf6",
-		                    borderWidth: 2,
-		                    tension: 0.3,
-		                    pointRadius: 4,
-		                    pointHoverRadius: 6
-		                }
-		            ],
-		        },
+			progressChartInstance = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: "Utilization %",
+							data: dataValues,
+							backgroundColor: "rgba(139, 92, 246, 0.65)",
+							borderColor: "#8b5cf6",
+							borderWidth: 2,
+							tension: 0.3,
+							pointRadius: 4,
+							pointHoverRadius: 6
+						}
+					],
+				},
 
-		        options: {
-		            responsive: true,
-		            maintainAspectRatio: false,
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
 
-		            plugins: {
-		                legend: { display: false },
+					plugins: {
+						legend: {display: false},
 
-		                datalabels: {
-		                    color: "black",
-		                    font: {
-		                        weight: "bold",
-		                        size: 10
-		                    },
-		                    anchor: function (context) {
-		                        return 'end';
-		                    },
-		                    align: function (context) {
-		                        return 'top';
-		                    },
-		                    offset: function (context) {
-		                        return 0;
-		                    },
-		                    // Hide label on hover for hovered point (match monthly chart UX)
-		                    display: function (context) {
-		                        const chart = context.chart;
-		                        const activePoints = chart.getActiveElements();
-		                        if (activePoints.length) {
-		                            const {datasetIndex, index} = activePoints[0];
-		                            if (datasetIndex === context.datasetIndex && index === context.dataIndex) {
-		                                return false;
-		                            }
-		                        }
-		                        return true;
-		                    },
-		                    formatter: (value) => value + "%"
-		                },
+						datalabels: {
+							color: "black",
+							font: {
+								weight: "bold",
+								size: 10
+							},
+							anchor: function (context) {
+								return 'end';
+							},
+							align: function (context) {
+								return 'top';
+							},
+							offset: function (context) {
+								return 0;
+							},
+							// Hide label on hover for hovered point (match monthly chart UX)
+							display: function (context) {
+								const chart = context.chart;
+								const activePoints = chart.getActiveElements();
+								if (activePoints.length) {
+									const {datasetIndex, index} = activePoints[0];
+									if (datasetIndex === context.datasetIndex && index === context.dataIndex) {
+										return false;
+									}
+								}
+								return true;
+							},
+							formatter: (value) => value + "%"
+						},
 
-		                tooltip: {
-		                    callbacks: {
-		                        label: (ctx) => `${ctx.parsed.y}%`
-		                    }
-		                }
-		            },
+						tooltip: {
+							callbacks: {
+								label: (ctx) => `${ctx.parsed.y}%`
+							}
+						}
+					},
 					onClick: (evt, elements) => {
 						if (!elements.length) return;
 						const idx = elements[0].index;
@@ -4947,68 +5070,68 @@
 						updateLiquidAssetsTable(period);
 					},
 
-		            scales: {
-		                x: {
-		                    grid: { display: false },
+					scales: {
+						x: {
+							grid: {display: false},
 
-		                    border: {
-		                        color: 'rgba(15, 23, 42, 0.15)',
-		                        width: 1
-		                    },
+							border: {
+								color: 'rgba(15, 23, 42, 0.15)',
+								width: 1
+							},
 
-		                    ticks: {
-		                        color: "#0f172a",
-		                        autoSkip: false,
-		                        maxTicksLimit: labels.length,
-		                        padding: 10,
-		                        font: { size: 11, weight: '700' },
-		                        maxRotation: 55,
-		                        minRotation: 55
-		                    },
-		                    
-		                },
+							ticks: {
+								color: "#0f172a",
+								autoSkip: false,
+								maxTicksLimit: labels.length,
+								padding: 10,
+								font: {size: 11, weight: '700'},
+								maxRotation: 55,
+								minRotation: 55
+							},
 
-		                y: {
-		                    beginAtZero: false,
-		                    max: yaxismaxsize,
+						},
 
-		                    grid: {
-		                        color: "white",
-		                        drawBorder: false
-		                    },
+						y: {
+							beginAtZero: false,
+							max: yaxismaxsize,
 
-		                    border: {
-		                        color: 'rgba(15, 23, 42, 0.15)',
-		                        width: 1
-		                    },
+							grid: {
+								color: "white",
+								drawBorder: false
+							},
 
-		                    ticks: {
-		                        stepSize: CalculatedStepSize,
-		                        autoSkip: false,
-		                        color: "#0f172a",
-		                        font: { size: 10, weight: '700' },
-		                        callback: (value) => value + "%"
-		                    }
-		                }
-		            }
-		        }
-		    });
-		    showGraphUI({daily: true});
+							border: {
+								color: 'rgba(15, 23, 42, 0.15)',
+								width: 1
+							},
 
-		    var chartDownloadEl = document.getElementById("chartDownloadActions");
-		    if (chartDownloadEl) chartDownloadEl.style.display = "flex";
+							ticks: {
+								stepSize: CalculatedStepSize,
+								autoSkip: false,
+								color: "#0f172a",
+								font: {size: 10, weight: '700'},
+								callback: (value) => value + "%"
+							}
+						}
+					}
+				}
+			});
+			showGraphUI({daily: true});
+
+			var chartDownloadEl = document.getElementById("chartDownloadActions");
+			if (chartDownloadEl) chartDownloadEl.style.display = "flex";
 		}
-		
+
 		function Downloadexcelreport(btn) {
-				const reportDate = btn.dataset.reportDate;
-				const matrixSrlNo = btn.dataset.matrixSrl;
+			const reportDate = btn.dataset.reportDate;
+			const matrixSrlNo = btn.dataset.matrixSrl;
 
-				// Build URL with query params
-				const url = `/Riskinsights/Limitdetaildownload?Matrix_Srl_no=${encodeURIComponent(matrixSrlNo)}&Report_date=${encodeURIComponent(reportDate)}`;
+			// Build URL with query params
+			const url = `/Riskinsights/Limitdetaildownload?Matrix_Srl_no=${encodeURIComponent(matrixSrlNo)}&Report_date=${encodeURIComponent(reportDate)}`;
 
-				// Trigger file download
-				window.location.href = url;
-			}
+			// Trigger file download
+			window.location.href = url;
+		}
 
 	</script>
 
@@ -5077,8 +5200,9 @@
 									<div class="run-date-wrap">
 										<input class="badge-status" type="date" th:attr="data-sno=${Matrixlist.s_no},
 										data-label=${Matrixlist.matrix_label}" onchange="onDateChange(this)"
-										th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
-										<button class="btn-run-date" type="button" onclick="runMatrixForDate(this)">Run</button>
+											th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
+										<button class="btn-run-date" type="button"
+											onclick="runMatrixForDate(this)">Run</button>
 									</div>
 								</td>
 								<th:block th:switch="${Matrixlist.status}">
@@ -5677,17 +5801,17 @@
 					<div class="ProvisionCoverage" style="display: none;">
 						<table class="table refund-table align-middle mb-0">
 							<thead>
-							<tr>
-								<th id="Provlabletype" colspan="3"> Top 10 Borrower </th>
-								<th id="ToptenProvisiondate" colspan="2">Report date</th>
-							</tr>
-							<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
-								<th>Account Name</th>
-								<th>FB Balance</th>
-								<th>NFB Balance</th>
-								<th>Int Suspense</th>
-								<th>Total Provision</th>
-							</tr>
+								<tr>
+									<th id="Provlabletype" colspan="3"> Top 10 Borrower </th>
+									<th id="ToptenProvisiondate" colspan="2">Report date</th>
+								</tr>
+								<tr style="background-color: #dee2e6" id="CustomerChartdetailsheader">
+									<th>Account Name</th>
+									<th>FB Balance</th>
+									<th>NFB Balance</th>
+									<th>Int Suspense</th>
+									<th>Total Provision</th>
+								</tr>
 
 
 							</thead>
@@ -5817,9 +5941,10 @@
 									<th id="Netovernight_noop_table_name">Table
 										Name
 									</th>
-									<th><button id="NoopreportBtn" class="btn-run-date"  onclick="Downloadexcelreport(this)">
-										<i class="fa fa-file-excel" aria-hidden="true"></i> Detail
-									</button>
+									<th><button id="NoopreportBtn" class="btn-run-date"
+											onclick="Downloadexcelreport(this)">
+											<i class="fa fa-file-excel" aria-hidden="true"></i> Detail
+										</button>
 									</th>
 								</tr>
 							</thead>
