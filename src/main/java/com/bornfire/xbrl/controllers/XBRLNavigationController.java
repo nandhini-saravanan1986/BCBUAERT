@@ -112,7 +112,6 @@ import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.Bloomberg_services;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bornfire.xbrl.entities.*;
@@ -4689,7 +4688,8 @@ public class XBRLNavigationController {
 
 		return "RT/Liquidity_Risk_Dashboard_Template";
 	}
-
+	
+	
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
 	public String RT_MC_Reports(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String branch,@RequestParam(required = false) String deptvalid, Model md, HttpServletRequest req) {
@@ -4713,24 +4713,30 @@ public class XBRLNavigationController {
 		} else {
 			md.addAttribute("BRANCHCODE", branch);
 		}
-
+		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
+		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
-				List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
-				md.addAttribute("md", dropdownOptions);
-				
 			} else {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
-
+				
 				List<RT_MC_TABLE1_ENTITY> deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				
+				if(deptreportlist==null || deptreportlist.isEmpty()) {
+					System.out.println("Report Date : "+formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE1_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				}
+				
 				System.out.println("size : " + deptreportlist.size());
 				md.addAttribute("deptreportlist", deptreportlist.get(0));
 				
@@ -4740,11 +4746,37 @@ public class XBRLNavigationController {
 		}
 
 		else if ("bankconsumers".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
-			List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
 
-			md.addAttribute("reportlist1", reportlist1);
-			md.addAttribute("reportlist2", reportlist2);
+				md.addAttribute("reportlist1", reportlist1);
+				md.addAttribute("reportlist2", reportlist2);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+
+			} else {
+
+				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+				md.addAttribute("reportlist1", reportlist1);
+				md.addAttribute("reportlist2", reportlist2);
+
+				List<RT_MC_TABLE2_1_ENTITY> deptreportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE2_2_ENTITY> deptreportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+				
+				if(deptreportlist1==null || deptreportlist1.isEmpty()) {
+					//System.out.println("Report Date : "+formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE2_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
+					deptreportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+				}
+				
+				md.addAttribute("deptreportlist", deptreportlist1.get(0));
+				md.addAttribute("deptreportlist2", deptreportlist2.get(0));
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+
+			}
+
 			md.addAttribute("formmode", "bankconsumers");
 		}
 
@@ -4795,6 +4827,16 @@ public class XBRLNavigationController {
 
 		return "RBS_MC_Reports";
 	}
+	public static String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
+    }
+
+	
+	public void executeprocedure(String procString) {        
+        String sql = "{call " + procString + "}";         
+        jdbcTemplate.execute(sql);
+    }
 
 
 	@PostMapping("/saveMcReport_bankinformation")

@@ -1105,7 +1105,17 @@
 	document.addEventListener("DOMContentLoaded", function () {
 		
 		var formmode = document.getElementById("formmode").value;
-		
+		var reportDate = document.getElementById("reportDate").value;
+		//alert(reportDate)
+		let dateObj = new Date(reportDate);
+        let day = dateObj.getDate();
+        let month = dateObj.getMonth() + 1;
+        let year = dateObj.getFullYear();
+        let isYearEnd = (day === 31 && month === 12);
+        let lastDayOfMonth = new Date(year, month, 0).getDate();
+        let isMonthEnd = (day === lastDayOfMonth);
+        let isQuarterEnd =isMonthEnd && (month === 3 || month === 6 || month === 9 || month === 12);
+        
 		
 		if(formmode==='list'){
 	    var table = document.getElementById("usertable");
@@ -1122,7 +1132,10 @@
 	       
 	        var deptName = cells[5].innerText.trim();
 	        var yearlyInput = cells[10].querySelector("input");
-	        var deptSignInput = cells[11].querySelector("input");	       
+	        var deptSignInput = cells[11].querySelector("input");	
+	        var type = cells[7].innerText.trim();
+	        //alert(type)
+
 	        
 	        if (departmentValue === deptName) {
 	            yearlyInput.removeAttribute("readonly");
@@ -1132,7 +1145,91 @@
 	        } else {
 	            yearlyInput.setAttribute("readonly", true);
 	        }
+	        
+            if (type === "Yearly" ) {
+                if (isYearEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+	        
+            else if (type === "Quarterly") {
+                if (isQuarterEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+            
+            else if (type === "Monthly") {
+                if (isMonthEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+
+            else {
+                row.style.display = "none";
+            }
+	        
 	    });
+	}
+	else {
+		
+		 var table = document.getElementById("usertable");
+		    var departmentValue = document.getElementById("DEPARTMENT").value;
+
+		    if (!table) return;
+
+		    var rows = table.querySelectorAll("tbody tr");
+		var rows = table.querySelectorAll("tbody tr");
+
+	    rows.forEach(function (row) {
+
+	        var cells = row.querySelectorAll("td");
+
+	       
+	        var deptName = cells[5].innerText.trim();
+	        var yearlyInput = cells[10].querySelector("input");
+	        var deptSignInput = cells[11].querySelector("input");	
+	        var type = cells[7].innerText.trim();
+
+	       
+	        
+	        if (type === "Yearly" ) {
+                if (isYearEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+	        
+            else if (type === "Quarterly") {
+                if (isQuarterEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+            
+            else if (type === "Monthly") {
+                if (isMonthEnd) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+
+            else {
+                row.style.display = "none";
+            }
+	        
+	        
+	        
+	    });
+		
 	}
 });
 	

@@ -179,6 +179,10 @@ public class RwaDataUploadService {
 
 	        String delimiter = line.contains("|") ? "\\|" : "\t";
 	        String[] data = line.split(delimiter, -1);
+	        
+	        if (data[0].matches(".*[a-zA-Z].*") && data[1].matches(".*[a-zA-Z].*") && data[2].matches(".*[a-zA-Z].*") && data[3].matches(".*[a-zA-Z].*") && data[4].matches(".*[a-zA-Z].*")) {
+	            continue;
+	        }
 
 	        if (data.length < 58) {
 	            logger.warn("Non-Fund Row {} skipped: insufficient columns {}", rowCount, data.length);
@@ -683,6 +687,10 @@ public class RwaDataUploadService {
 
 	        String delimiter = line.contains("|") ? "\\|" : "\t";
 	        String[] data = line.split(delimiter, -1);
+	        
+	        if (data[0].matches(".*[a-zA-Z].*") && data[1].matches(".*[a-zA-Z].*") && data[2].matches(".*[a-zA-Z].*") && data[3].matches(".*[a-zA-Z].*") && data[4].matches(".*[a-zA-Z].*")) {
+	            continue;
+	        }
 
 	        if (data.length < 71) {
 	            logger.warn("Skipped row {} : insufficient columns {}", rowCount, data.length);
