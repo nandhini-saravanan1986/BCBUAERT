@@ -73,6 +73,10 @@ import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.MatrixRunService;
 import com.bornfire.xbrl.services.counter_services;
+import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
+import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
 
 @RestController
 public class MIS_Rest_Controller {
@@ -128,6 +132,12 @@ public class MIS_Rest_Controller {
 
 	@Autowired
 	MatrixRunService matrixRunService;
+	
+	@Autowired
+	RT_IRS_REPOSITORY RT_irs_repository;
+
+	@Autowired
+	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
 
 	@GetMapping("/download/excel")
 	public void downloadExcel(HttpServletResponse response, @RequestParam(required = false) String mode) {
@@ -1211,6 +1221,124 @@ public class MIS_Rest_Controller {
 		}
 
 		throw new IllegalArgumentException("Invalid date format: " + input);
+	}
+	
+	@RequestMapping(value = "/getIRSData", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Object[]> getIRSData(
+	        @RequestParam  String reportdate,
+	        @RequestParam String currency) throws ParseException {
+
+		
+
+
+		Date reportDateFor;
+		reportDateFor = new SimpleDateFormat("dd-MM-yyyy").parse(reportdate);
+
+		SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yy");
+	
+		String formattedDate = outputFormat.format(reportDateFor);
+
+		System.out.println("Final Date: " + formattedDate);
+
+	    System.out.println("DATEEEEEEE:: " + reportDateFor);
+
+	    List<RT_IRS_ENTITY> list1 =
+	            RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+
+	    List<RT_IRS_ENTITY2> list2 =
+	            RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
+
+	    List<Object[]> result = new ArrayList<>();
+
+System.out.println("esff"+list1.size());
+System.out.println(list2.size());
+	    if (list1.isEmpty() || list2.isEmpty()) {
+	        return result;
+	    }
+
+
+	    RT_IRS_ENTITY e1 = list1.get(0);   // RSL
+	    RT_IRS_ENTITY2 e2 = list2.get(0);  // RSA + GAP + %
+
+	    result.add(new Object[]{
+	        e1.getR45_day1_28(), 
+	        e2.getR84_day1_28(),
+	        e2.getR85_day1_28(),
+	        e2.getR87_day1_28()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_day29_3m(), 
+	        e2.getR84_day29_3m(),
+	        e2.getR85_day29_3m(),
+	        e2.getR87_day29_3m()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over3m_to_6m(), 
+	        e2.getR84_over3m_to_6m(),
+	        e2.getR85_over3m_to_6m(),
+	        e2.getR87_over3m_to_6m()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over6m_to_1y(), 
+	        e2.getR84_over6m_to_1y(),
+	        e2.getR85_over6m_to_1y(),
+	        e2.getR87_over6m_to_1y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over1y_to_3y(), 
+	        e2.getR84_over1y_to_3y(),
+	        e2.getR85_over1y_to_3y(),
+	        e2.getR87_over1y_to_3y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over3y_to_5y(), 
+	        e2.getR84_over3y_to_5y(),
+	        e2.getR85_over3y_to_5y(),
+	        e2.getR87_over3y_to_5y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over5y_to_7y(), 
+	        e2.getR84_over5y_to_7y(),
+	        e2.getR85_over5y_to_7y(),
+	        e2.getR87_over5y_to_7y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over7y_to_10y(), 
+	        e2.getR84_over7y_to_10y(),
+	        e2.getR85_over7y_to_10y(),
+	        e2.getR87_over7y_to_10y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over10y_to_15y(), 
+	        e2.getR84_over10y_to_15y(),
+	        e2.getR85_over10y_to_15y(),
+	        e2.getR87_over10y_to_15y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_over15y(), 
+	        e2.getR84_over15y(),
+	        e2.getR85_over15y(),
+	        e2.getR87_over15y()
+	    });
+
+	    result.add(new Object[]{
+	        e1.getR45_non_sensitive(), 
+	        e2.getR84_non_sensitive(),
+	        e2.getR85_non_sensitive(),
+	        e2.getR87_non_sensitive()
+	    });
+
+	    return result;
 	}
 
 }

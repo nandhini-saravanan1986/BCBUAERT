@@ -584,6 +584,7 @@
 			document.querySelector(".Depositconcentration").style.display = "none";
 			document.querySelector(".Generalprovisiongrid").style.display = "none";
 			document.querySelector(".BPVPV01_TABLE").style.display = "none";
+			document.querySelector(".irs").style.display = "none";
 			var chartDownloadEl = document.getElementById("chartDownloadActions");
 			if (chartDownloadEl) chartDownloadEl.style.display = "none";
 			// Show sections based on the selected S.No
@@ -2752,7 +2753,108 @@
 				document.querySelector(".Depositconcentration").style.display = "block";
 
 
-			}
+			}else if (labelsrlno === "33") {
+
+						    document.getElementById("labletype").innerHTML = "Interest Rate Sensitivity (IRS)";
+						    
+						    fetch('./getIRSData?reportdate=' + labelReport_date + '&currency=USD')
+						        .then(response => {
+						            if (!response.ok) {
+						                throw new Error("HTTP error " + response.status);
+						            }
+						            return response.json();
+						        })
+								.then(list => {
+
+								    let tbody = document.getElementById("irsbody");
+								    tbody.innerHTML = "";
+
+								    // ✅ Bucket Names
+								    let buckets = [
+								        "1 – 28 days",
+								        "29 days and upto 3 months",
+								        "Over 3 months and upto 6 months",
+								        "Over 6 months and upto 1 year",
+								        "Over 1 year and upto 3 years",
+								        "Over 3 years and upto 5 years",
+								        "Over 5 years and upto 7 years",
+								        "Over 7 years and upto 10 years",
+								        "Over 10 years and upto 15 years",
+								        "Over 15 years",
+								        "Non Rate Sensitive"
+								    ];
+
+								    // ✅ Limits
+								    let limits = [
+								        "20 % of total assets",
+								        "40 % of total assets",
+								        "40 % of total assets",
+								        "40 % of total assets",
+								        "30 % of total assets",
+								        "30 % of total assets",
+								        "30 % of total assets",
+								        "30 % of total assets",
+								        "30 % of total assets",
+								        "30 % of total assets",
+								        ""
+								    ];
+
+								    let totalRSL = 0;
+								    let totalRSA = 0;
+
+								    list.forEach((data, index) => {
+
+								        let rsl = parseFloat(data[0]) || 0;
+								        let rsa = parseFloat(data[1]) || 0;
+								        let gap = parseFloat(data[2]) || 0;
+								        let per = parseFloat(data[3]) || 0;
+
+								        totalRSL += rsl;
+								        totalRSA += rsa;
+
+								        let row = `<tr>
+								            <td>${buckets[index]}</td>
+								            <td>${limits[index]}</td>
+								            <td>${formatNumber(rsl)}</td>
+								            <td>${formatNumber(rsa)}</td>
+								            <td style="color:${gap < 0 ? 'red' : 'black'}">
+								                ${gap < 0 ? '(' + formatNumber(Math.abs(gap)) + ')' : formatNumber(gap)}
+								            </td>
+								            <td style="color:${per < 0 ? 'red' : 'black'}">
+								                ${per < 0 ? '(' + Math.abs(per) + '%)' : per + ' %'}
+								            </td>
+								        </tr>`;
+
+								        tbody.innerHTML += row;
+								    });
+
+								    // ✅ TOTAL ROW
+								    let totalRow = `<tr style="font-weight:bold; background:#f2f2f2">
+								        <td>Total</td>
+								        <td></td>
+								        <td>${formatNumber(totalRSL)}</td>
+								        <td>${formatNumber(totalRSA)}</td>
+								        <td></td>
+								        <td></td>
+								    </tr>`;
+
+								    tbody.innerHTML += totalRow;
+
+								    document.getElementById("ToptenBorrowerdate").innerHTML =
+								        'Report Date : ' + labelReport_date.split("T")[0];
+										let formattedDate = labelReport_date.split("T")[0].split("-").reverse().join(".");
+
+										document.querySelector("#irsheader th:nth-child(6)").innerText =
+										    "Net Gap as % to Total Assets-" + formattedDate;
+											
+								})
+						        .catch(error => {
+						            alert("Error fetching IRS data: " + error.message);
+						            $("#invalidfile").modal("toggle");
+						        });
+
+						    document.querySelector(".irs").style.display = "block";
+							}
 		}
 
 		function Getexposuredetail(a, el) {
@@ -5974,6 +6076,24 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="irs" style="display: none;">
+										    <table class="table refund-table align-middle mb-0">
+										        <thead>
+										            <tr style="background-color: #dee2e6" id="irsheader">
+										                <th>Buckets</th>
+										                <th>Limit</th>
+										                <th>RSL AED Mn.</th>
+										                <th>RSA AED Mn</th>
+										                <th>Gap AED Mn.</th>
+										              <th id="netGapHeader">Net Gap as % to Total Assets</th>
+										            </tr>
+										        </thead>
+
+												<tbody id="irsbody">
+												   
+												</tbody>
+										    </table>
+										</div>
 
 					<!--Net Overnight position Noop calculation-->
 
