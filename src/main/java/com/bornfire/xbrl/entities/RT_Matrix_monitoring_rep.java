@@ -26,9 +26,9 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE order by a.month_end Asc)", nativeQuery = true)
+			+ " order by a.month_end Asc)", nativeQuery = true)
 	List<Object[]> Group_Single_Exposure_Position(Date Selecteddate);
 	
 	/// Real Estate Concentration - 3
@@ -36,9 +36,9 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '3') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE order by a.month_end Asc)", nativeQuery = true)
+			+ "order by a.month_end Asc)", nativeQuery = true)
 	List<Object[]> RealEstateconcentration_Position(Date Selecteddate);
 	
 	/// Leverage ratio - 4
@@ -46,9 +46,9 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '4') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE order by a.month_end Asc)", nativeQuery = true)
+				+ "order by a.month_end Asc)", nativeQuery = true)
 		List<Object[]> Leverage_ratio_position(Date Selecteddate);
 		
 	/// Fresh slippage toTotal Advances Ratio (Q on Q) - 4

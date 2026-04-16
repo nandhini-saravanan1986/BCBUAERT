@@ -226,7 +226,7 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
 				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> Trading_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
@@ -401,19 +401,21 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
 				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD' and \r\n"
-				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )Group by Report_date),\r\n"
 				+ "NonFundbase_provision as (Select Report_date,Sum(LCBG_BALANCE) as NfbBalance from brf95_rwa_data_nonfundbased\r\n"
-				+ "Where class <> 'STD' and Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Where class <> 'STD' and Report_date in (SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 ) Group by Report_date),\r\n"
 				+ "Provision_Cover as (Select a.Report_date as Report_date,Round(TOT_PROVISION/((a.Fundbalance+NfbBalance)-FundIntSuspen),4)*100 as Prov_Coverage\r\n"
 				+ "from Fundbase_Provision_data a ,NonFundbase_provision b where a.Report_date = b.Report_date),\r\n"
 				+ "MonthWise_Prov_Cov as(Select * from Provision_Cover),\r\n"
-				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))\r\n"
+				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
 				+ "Select To_char(a.Month_end,'DD-MM-YYYY'),Nvl(Prov_Coverage,0) from Current_Year_dates a left join Provision_Cover b on a.month_end = b.Report_date\r\n"
 				+ "Order by month_end Asc",nativeQuery=true)
 		List<Object[]> GetCurrentyear_prov_cover(Date Selecteddate);
+		
+		
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
 				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD'\r\n"

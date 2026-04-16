@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface Rt_AcprSecuredUnsecuredrep extends JpaRepository<Rt_AcprSecuredUnsecuredEntity, Date> {
 	@Query(value=" WITH current_year_dates AS (\r\n" + 
-			"    SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1)) AS month_end\r\n" + 
+			"    SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) AS month_end\r\n" + 
 			"    FROM dual\r\n" + 
 			"    CONNECT BY LEVEL <= 12\r\n" + 
 			"),\r\n" + 
