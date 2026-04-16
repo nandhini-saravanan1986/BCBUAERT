@@ -112,6 +112,7 @@ import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.Bloomberg_services;
+import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bornfire.xbrl.entities.*;
@@ -127,6 +128,9 @@ public class XBRLNavigationController {
 	 */
 	@Autowired
 	Bloomberg_services bloombergService;
+	
+	@Autowired
+	ECLDataUploadService ecldatauploadservice;
 	
 	@Autowired
 	RtVarReportLimits_Rep rtvarreportlimits_rep;
@@ -4198,7 +4202,10 @@ public class XBRLNavigationController {
 	        	resultMsg =rtinvestmentdealdatadump_service.Uploadinvdump(file, toDate, username,reportType);
 	        }
 	        
-	        
+	        else if("ECL".equals(reportType)) {
+	        	resultMsg =ecldatauploadservice.UploadECLdata(file, reportType, toDate);
+	        }
+	     
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
