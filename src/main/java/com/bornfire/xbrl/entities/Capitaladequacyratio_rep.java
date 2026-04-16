@@ -21,11 +21,11 @@ public interface Capitaladequacyratio_rep extends JpaRepository<Capitaladequacyr
 	
 	@Query(value = "Select To_char(month_dates,'DD-MM-YYYY') as month_end,R1_RATIOS2 from (\r\n"
 			+ "With Eligibility_ratio as(Select (R1_RATIOS2) as R1_RATIOS2, REPORT_DATE from BRF95_SUMMARYTABLE),\r\n"
-			+ "Current_month_date as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-			+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) )\r\n"
+			+ "Current_month_date as (SELECT ?1 - (LEVEL - 1) AS month_dates FROM dual\r\n"
+			+ "CONNECT BY LEVEL <= 31 )\r\n"
 			+ "Select month_dates,NVL(R1_RATIOS2,0) AS R1_RATIOS2\r\n"
 			+ "from Current_month_date a left join Eligibility_ratio b on a.month_dates = b.report_date Order by month_dates asc) \r\n"
-			+ "Where R1_RATIOS2 <> 0", nativeQuery = true)
+			, nativeQuery = true)
 	List<Object[]> GetCapitalratio_currentmonthgraph(Date Selecteddate);
 	
 	@Query(value = "Select Round(r15_ratios1/1000,2) as r15_ratios1,Round(r22_ratios2/1000,2) as r22_ratios2,Round(r16_ratios1/1000,2) as r16_ratios1,\r\n"

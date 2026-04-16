@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface RT_MmDataRepository extends JpaRepository<RT_MmData,  mc_mmreportid> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_MM_DATA  ", nativeQuery = true)
-	List<RT_MmData> getlist();
+	@Query(value = "select * from BCBUAE_MM_DATA where REPORT_DATE=?1", nativeQuery = true)
+	List<RT_MmData> getlist(Date REPORT_DATE);
 
 	/*
 	 * @Query(value = "SELECT * FROM BCBUAE_MM_DATA ", nativeQuery = true)

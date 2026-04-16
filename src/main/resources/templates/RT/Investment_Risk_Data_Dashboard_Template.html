@@ -574,6 +574,9 @@ label.error {
 						.static-back-btn:active {
 						    transform: scale(0.95);
 						}
+						.error-border {
+						    border: 2px solid red !important;
+						}
 </style>
 <script>
 $(document).ready(function () {
@@ -845,7 +848,7 @@ $(document).ready(function () {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'CCBUAE_Investment Risk Data_Dashboard_Template.xlsx';
+                    a.download = 'CBUAE_Investment Risk Data_Dashboard_Template.xlsx';
                     document.body.appendChild(a);
 
                     a.click();
@@ -867,7 +870,7 @@ $(document).ready(function () {
 
                 console.error("Download failed:", error);
 
-                $('#alertmsg').text('An error occurred while downloading TradelevelDataDerivative.xls.');
+                $('#alertmsg').text('An error occurred while downloading CBUAE_Investment Risk Data_Dashboard_Template.xlsx');
                 $('#alert').modal('show');
             }
         });
@@ -885,6 +888,76 @@ $(document).ready(function () {
 		//alert(columnId);
 		//var cellValue = a.textContent || a.innerText;
     	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=Detail&columnId='+columnId+'&reportdate='+reportdate;
+    }
+    
+    function saveData(confirmReplace = false) {
+
+      
+        $("input").removeClass("error-border");
+
+        let isValid = true;
+
+        function validateField(id) {
+            let value = $(id).val();
+
+            if (!value || value.trim() === "") {
+                $(id).addClass("error-border");
+                isValid = false;
+            }
+        }
+        validateField("#reportDate");
+        validateField("#forexLimits");
+        validateField("#investmentsBonds");
+        validateField("#investmentEquity");
+        validateField("#moneyMarket");
+        validateField("#derivativeHft");
+        validateField("#totalVar");
+
+        if (!isValid) {
+            alert("Please fill all required fields ❗");
+            return;
+        }
+
+
+        let data = {
+            reportDate: $("#reportDate").val(),
+            forexLimits: $("#forexLimits").val(),
+            investmentsBonds: $("#investmentsBonds").val(),
+            investmentEquity: $("#investmentEquity").val(),
+            moneyMarket: $("#moneyMarket").val(),
+            derivativeHft: $("#derivativeHft").val(),
+            totalVar: $("#totalVar").val()
+        };
+        
+        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
+        $.ajax({
+            url: "./saveInvestmentLimits?confirmReplace=" + confirmReplace,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+
+            success: function (response) {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                $('#alertmsg').text(response);
+                $('#alert').modal('show');
+            },
+
+            error: function (xhr) {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                if (xhr.status === 409) {
+                    let confirmUpdate = confirm("Data already exists for this date. Do you want to replace it?");
+                    if (confirmUpdate) {
+                        saveData(true);
+                    }
+                    else{
+                    	list();
+                    }
+                } else {
+                    alert("Error ❌");
+                }
+            }
+        });
     }
 </script>
 
@@ -1654,6 +1727,31 @@ $(document).ready(function () {
 					</tbody>
 					</table>
 			</div>
+			
+			<div class="card-footer text-center" 
+				style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
+				
+					<div style="margin-top:20px; text-align:center;" th:if="${pagination=='YES'}">
+						<a th:if="${currentPage > 0}"
+						   th:href="@{/Investment_Risk_Data_Dashboard_Template(page=${currentPage - 100},columnId=${columnId}, size=100, reportdate=${reportdate}, formmode='Detail')}"
+						   style="color: orange; font-weight: bold;">
+						   Previous
+						</a>
+
+
+						<span>Page [[${currentPage / 100 + 1}]] of [[${totalPages}]]</span>
+
+
+						<a th:if="${currentPage < (totalPages - 1) * 100}"
+							th:href="@{/Investment_Risk_Data_Dashboard_Template(page=${currentPage + 100}, size=100,columnId=${columnId}, reportdate=${reportdate}, formmode='Detail')}"  style="color: orange; font-weight: bold;">
+							Next
+						</a>
+					</div>
+
+				
+
+			</div>
+			
 		</div>
 
 
@@ -1662,73 +1760,60 @@ $(document).ready(function () {
 	<!---------------------- limits--------------------------->
 	<div th:if="${formmode}=='limits'"   class="investment-edit-page"  style="align-items: center;">
 		<div class="row">
-			<form th:action="@{/updateinvestmentriskdatadictionary}"
-				th:object="${investmentriskdatadashboard}" method="post"
-				id="investmentriskdatadashboard">
+			<form id="investmentForm">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
 					
 
 					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-						                                          
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label">Report Date
-							</label>
-							<div class="col-sm-4">
-								<input type="date" class="form-control" 
-									 />
-							</div>
-
-							<label class="col-sm-2 col-form-label">Forex Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" />
-							</div>
-							</div>
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label">Investments Bonds Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" 
-									 />
-							</div>
-
-							<label class="col-sm-2 col-form-label">Investment in Equity Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" />
-							</div>
-							</div>	
-							
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label">Money Market Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" 
-									 />
-							</div>
-
-							<label class="col-sm-2 col-form-label">Derivative HFT Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" />
-							</div>
+						       <div class="form-group row">
+						    <label class="col-sm-2">Report Date</label>
+						    <div class="col-sm-4">
+						        <input type="date" class="form-control" name="reportDate" id="reportDate"/>
+						    </div>
+						
+						    <label class="col-sm-2">Forex Limits</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="forexLimits" id="forexLimits"/>
+						    </div>
 						</div>
 						
 						<div class="form-group row">
-							<label class="col-sm-2 col-form-label">Total VaR Limits
-							</label>
-							<div class="col-sm-4">
-								<input type="number" class="form-control" 
-									 />
-							</div>
-
-						</div>		
+						    <label class="col-sm-2">Investments Bonds</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="investmentsBonds" id="investmentsBonds"/>
+						    </div>
+						
+						    <label class="col-sm-2">Investment Equity</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="investmentEquity" id="investmentEquity"/>
+						    </div>
+						</div>
+						
+						<div class="form-group row">
+						    <label class="col-sm-2">Money Market</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="moneyMarket" id="moneyMarket"/>
+						    </div>
+						
+						    <label class="col-sm-2">Derivative HFT</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="derivativeHft" id="derivativeHft"/>
+						    </div>
+						</div>
+						
+						<div class="form-group row">
+						    <label class="col-sm-2">Total VaR</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="totalVar" id="totalVar"/>
+						    </div>
+						</div>                                   
+								
 							
 						</div>
 						
 						<div class="card-footer text-center">
-						<button type="submit" class="role-btn"
-							onclick="updateform(event)">Update</button>
+						<button type="button" class="role-btn"
+							onclick="saveData()">Save</button>
 					</div>
 					</div>
 					
@@ -2692,25 +2777,54 @@ $(document).ready(function () {
 	</div>
 </body>
 <script>
-	$('#usertable').DataTable({
-		scrollX: false,
-		autoWidth: false,
-		paging: true,
-		searching: true,
-		lengthChange: false,
-		ordering: false,
-		pageLength: 100,
-		fixedHeader: true,
+window.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    const formmode = params.get('formmode');
 
-		// Layout: search (left) + pagination (right)
-		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+    if (formmode === 'list') {
+    	
+    	$('#usertable').DataTable({
+    		scrollX: false,
+    		autoWidth: false,
+    		paging: true,
+    		searching: true,
+    		lengthChange: false,
+    		ordering: false,
+    		pageLength: 100,
+    		fixedHeader: true,
+
+    		// Layout: search (left) + pagination (right)
+    		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-		// Optional: language tweak for better label
-		language: {
-			search: "Search:"
-		}
-	});
+    		// Optional: language tweak for better label
+    		language: {
+    			search: "Search:"
+    		}
+    	});
+    }
+    else if (formmode === 'Detail'){
+    	$('#usertable').DataTable({
+    		scrollX: false,
+    		autoWidth: false,
+    		paging: false,
+    		searching: true,
+    		lengthChange: false,
+    		ordering: false,
+    		pageLength: 100,
+    		fixedHeader: true,
+
+    		// Layout: search (left) + pagination (right)
+    		dom: '<"d-flex justify-content-between align-items-center mt-2 mb-2"f p>t',
+
+
+    		// Optional: language tweak for better label
+    		language: {
+    			search: "Search:"
+    		}
+    	});
+    }
+})
 	
 	
 	

@@ -189,52 +189,24 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '11') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> Industry_ClassiGetCurrentyear(Date Selecteddate);
 		
 		
 		
-		@Query(value =
-			    "WITH current_month_dates AS ( " +
-			    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-			    "    FROM dual " +
-			    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-			    "), " +
-
-			    "daily_sector_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS sector_balance " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    WHERE sector_classification = 'Industry' " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "daily_total_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS total_assets " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "finalcal AS ( " +
-			    "    SELECT s.report_date, " +
-			    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-			    "    FROM daily_sector_balance s " +
-			    "    JOIN daily_total_balance t " +
-			    "      ON s.report_date = t.report_date " +
-			    ") " +
-
-			    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-			    "       NVL(f.total_ratio, 0) AS total_ratio " +
-			    "FROM current_month_dates c " +
-			    "LEFT JOIN finalcal f " +
-			    "  ON c.report_date = f.report_date " +
-			    "ORDER BY c.report_date",
-			    nativeQuery = true
-			)
-			List<Object[]> getDailyIndustryRatio(Date selectedDate);
+		
+			
+			@Query(value="Select * from(\r\n"
+					+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '11') ,\r\n"
+					+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+					+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+					+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+					+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+					+  "order by a.month_end asc)",nativeQuery=true)
+			List<Object[]> getDailyIndustryRatio(Date Selecteddate);
+			
 
 		
 		
@@ -260,46 +232,17 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		
 		
-		@Query(value =
-			    "WITH current_month_dates AS ( " +
-			    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-			    "    FROM dual " +
-			    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-			    "), " +
-
-			    "daily_sector_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS sector_balance " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    WHERE sector_classification = 'Trading' " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "daily_total_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS total_assets " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "finalcal AS ( " +
-			    "    SELECT s.report_date, " +
-			    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-			    "    FROM daily_sector_balance s " +
-			    "    JOIN daily_total_balance t " +
-			    "      ON s.report_date = t.report_date " +
-			    ") " +
-
-			    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-			    "       NVL(f.total_ratio, 0) AS total_ratio " +
-			    "FROM current_month_dates c " +
-			    "LEFT JOIN finalcal f " +
-			    "  ON c.report_date = f.report_date " +
-			    "ORDER BY c.report_date",
-			    nativeQuery = true
-			)
-			List<Object[]> getDailyTradingRatio(Date selectedDate);
-
+		
+			@Query(value="Select * from(\r\n"
+					+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '12') ,\r\n"
+					+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+					+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+					+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+					+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+					+ "order by a.month_end asc)",nativeQuery=true)
+			List<Object[]> getDailyTradingRatio(Date Selecteddate);
+			
+			
 		
 		
 		@Query(value="With Industrial_asset As (Select ABS(SUM(balance)) As Sector_balance,sector_classification \r\n"
@@ -315,202 +258,85 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '13') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> ServicesGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '14') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> BanksGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '15') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> RealEstateGetCurrentyear(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '16') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1)) \r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(POSITION_OF_MATRIX,0)\r\n"
 				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE  order by a.month_end asc)",nativeQuery=true)
+				+ "order by a.month_end asc)",nativeQuery=true)
 		List<Object[]> otherGetCurrentyear(Date Selecteddate);
 		
 		
 		
 		
-		
-		
-		@Query(value =
-			    "WITH current_month_dates AS ( " +
-			    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-			    "    FROM dual " +
-			    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-			    "), " +
-
-			    "daily_sector_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS sector_balance " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    WHERE sector_classification = 'Services' " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "daily_total_balance AS ( " +
-			    "    SELECT TRUNC(report_date) AS report_date, " +
-			    "           ABS(SUM(balance)) AS total_assets " +
-			    "    FROM brf95_rwa_data_fundbased " +
-			    "    GROUP BY TRUNC(report_date) " +
-			    "), " +
-
-			    "finalcal AS ( " +
-			    "    SELECT s.report_date, " +
-			    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-			    "    FROM daily_sector_balance s " +
-			    "    JOIN daily_total_balance t " +
-			    "      ON s.report_date = t.report_date " +
-			    ") " +
-
-			    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-			    "       NVL(f.total_ratio, 0) AS total_ratio " +
-			    "FROM current_month_dates c " +
-			    "LEFT JOIN finalcal f " +
-			    "  ON c.report_date = f.report_date " +
-			    "ORDER BY c.report_date",
-			    nativeQuery = true
-			)
-			List<Object[]> getDailyServicesRatio(Date selectedDate);
 			
-			@Query(value =
-				    "WITH current_month_dates AS ( " +
-				    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-				    "    FROM dual " +
-				    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-				    "), " +
-
-				    "daily_sector_balance AS ( " +
-				    "    SELECT TRUNC(report_date) AS report_date, " +
-				    "           ABS(SUM(balance)) AS sector_balance " +
-				    "    FROM brf95_rwa_data_fundbased " +
-				    "    WHERE sector_classification = 'Banks' " +
-				    "    GROUP BY TRUNC(report_date) " +
-				    "), " +
-
-				    "daily_total_balance AS ( " +
-				    "    SELECT TRUNC(report_date) AS report_date, " +
-				    "           ABS(SUM(balance)) AS total_assets " +
-				    "    FROM brf95_rwa_data_fundbased " +
-				    "    GROUP BY TRUNC(report_date) " +
-				    "), " +
-
-				    "finalcal AS ( " +
-				    "    SELECT s.report_date, " +
-				    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-				    "    FROM daily_sector_balance s " +
-				    "    JOIN daily_total_balance t " +
-				    "      ON s.report_date = t.report_date " +
-				    ") " +
-
-				    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-				    "       NVL(f.total_ratio, 0) AS total_ratio " +
-				    "FROM current_month_dates c " +
-				    "LEFT JOIN finalcal f " +
-				    "  ON c.report_date = f.report_date " +
-				    "ORDER BY c.report_date",
-				    nativeQuery = true
-				)
-				List<Object[]> getDailyBanks(Date selectedDate);
+			
+			@Query(value="Select * from(\r\n"
+					+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '13') ,\r\n"
+					+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+					+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+					+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+					+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+					+ "order by a.month_end asc)",nativeQuery=true)
+			List<Object[]> getDailyServicesRatio(Date Selecteddate);
+			
+			@Query(value="Select * from(\r\n"
+					+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '14') ,\r\n"
+					+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+					+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+					+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+					+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+					+ "order by a.month_end asc)",nativeQuery=true)
+			List<Object[]> getDailyBanks(Date Selecteddate);
+			
+			
 				
-				@Query(value =
-					    "WITH current_month_dates AS ( " +
-					    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-					    "    FROM dual " +
-					    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-					    "), " +
-
-					    "daily_sector_balance AS ( " +
-					    "    SELECT TRUNC(report_date) AS report_date, " +
-					    "           ABS(SUM(balance)) AS sector_balance " +
-					    "    FROM brf95_rwa_data_fundbased " +
-					    "    WHERE sector_classification = 'Real Estate' " +
-					    "    GROUP BY TRUNC(report_date) " +
-					    "), " +
-
-					    "daily_total_balance AS ( " +
-					    "    SELECT TRUNC(report_date) AS report_date, " +
-					    "           ABS(SUM(balance)) AS total_assets " +
-					    "    FROM brf95_rwa_data_fundbased " +
-					    "    GROUP BY TRUNC(report_date) " +
-					    "), " +
-
-					    "finalcal AS ( " +
-					    "    SELECT s.report_date, " +
-					    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-					    "    FROM daily_sector_balance s " +
-					    "    JOIN daily_total_balance t " +
-					    "      ON s.report_date = t.report_date " +
-					    ") " +
-
-					    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-					    "       NVL(f.total_ratio, 0) AS total_ratio " +
-					    "FROM current_month_dates c " +
-					    "LEFT JOIN finalcal f " +
-					    "  ON c.report_date = f.report_date " +
-					    "ORDER BY c.report_date",
-					    nativeQuery = true
-					)
-					List<Object[]> getDailyRealEstate(Date selectedDate);
 					
-					@Query(value =
-						    "WITH current_month_dates AS ( " +
-						    "    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date " +
-						    "    FROM dual " +
-						    "    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) " +
-						    "), " +
-
-						    "daily_sector_balance AS ( " +
-						    "    SELECT TRUNC(report_date) AS report_date, " +
-						    "           ABS(SUM(balance)) AS sector_balance " +
-						    "    FROM brf95_rwa_data_fundbased " +
-						    "    WHERE sector_classification not in ('Banks','Industry','Real Estate','Services','Trading') " +
-						    "    GROUP BY TRUNC(report_date) " +
-						    "), " +
-
-						    "daily_total_balance AS ( " +
-						    "    SELECT TRUNC(report_date) AS report_date, " +
-						    "           ABS(SUM(balance)) AS total_assets " +
-						    "    FROM brf95_rwa_data_fundbased " +
-						    "    GROUP BY TRUNC(report_date) " +
-						    "), " +
-
-						    "finalcal AS ( " +
-						    "    SELECT s.report_date, " +
-						    "           ROUND(NVL(s.sector_balance,0) / t.total_assets, 4) * 100 AS total_ratio " +
-						    "    FROM daily_sector_balance s " +
-						    "    JOIN daily_total_balance t " +
-						    "      ON s.report_date = t.report_date " +
-						    ") " +
-
-						    "SELECT TO_CHAR(c.report_date, 'DD-MM-YYYY') AS report_date, " +
-						    "       NVL(f.total_ratio, 0) AS total_ratio " +
-						    "FROM current_month_dates c " +
-						    "LEFT JOIN finalcal f " +
-						    "  ON c.report_date = f.report_date " +
-						    "ORDER BY c.report_date",
-						    nativeQuery = true
-						)
-						List<Object[]> getDailyother(Date selectedDate);
+					@Query(value="Select * from(\r\n"
+							+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '15') ,\r\n"
+							+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+							+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+							+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+							+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+							+ "order by a.month_end asc)",nativeQuery=true)
+					List<Object[]> getDailyRealEstate(Date Selecteddate);
+					
+					@Query(value="Select * from(\r\n"
+							+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '16') ,\r\n"
+							+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+							+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+							+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(POSITION_OF_MATRIX,0) \r\n"
+							+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+							+ "order by a.month_end asc)",nativeQuery=true)
+					List<Object[]> getDailyother(Date Selecteddate);
+					
+					
+					
+					
 		
 		@Query(value="With Industrial_asset As (Select ABS(SUM(balance)) As Sector_balance,sector_classification \r\n"
 				+ "from brf95_rwa_data_fundbased Where report_date = ?1 and sector_classification = 'Banks' \r\n"
@@ -591,14 +417,14 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		
 		@Query(value="With Fundbase_Provision_data as(Select Report_date,Sum(balance) as Fundbalance,Sum(Int_suspense) as FundIntSuspen,\r\n"
 				+ "Sum(TOT_PROVISION) as TOT_PROVISION from brf95_rwa_data_fundbased where rwa_class <> 'STD'\r\n"
-				+ "and Report_date Between Trunc(?1,'MM') and Last_day(Trunc(?1,'MM'))Group by Report_date),\r\n"
+				+ "and Report_date Between ?1 - 30  AND ?1 Group by Report_date),\r\n"
 				+ "NonFundbase_provision as (Select Report_date,Sum(LCBG_BALANCE) as NfbBalance from brf95_rwa_data_nonfundbased\r\n"
-				+ "Where class <> 'STD' and Report_date Between Trunc(?1,'MM') and Last_day(Trunc(?1,'MM')) Group by Report_date),\r\n"
+				+ "Where class <> 'STD' and Report_date Between ?1 - 30  AND ?1 Group by Report_date),\r\n"
 				+ "Provision_Cover as (Select a.Report_date as Report_date,Round(TOT_PROVISION/((a.Fundbalance+NfbBalance)-FundIntSuspen),4)*100 as Prov_Coverage\r\n"
 				+ "from Fundbase_Provision_data a ,NonFundbase_provision b where a.Report_date = b.Report_date),\r\n"
 				+ "MonthWise_Prov_Cov as(Select * from Provision_Cover),\r\n"
-				+ "Current_month_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
+				+ "Current_month_dates as(SELECT ?1 - (LEVEL - 1) AS month_dates FROM dual\r\n"
+				+ "CONNECT BY LEVEL <= 31)\r\n"
 				+ "Select To_char(a.month_dates,'DD-MM-YYYY'),Nvl(Prov_Coverage,0) from Current_month_dates a \r\n"
 				+ "left join Provision_Cover b on a.month_dates = b.Report_date Order by month_dates Asc",nativeQuery=true)
 		List<Object[]> GetCurrentmonth_prov_cover(Date Selecteddate);
@@ -777,11 +603,11 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 	
 		
 		@Query(value="Select * from(With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '2') ,\r\n"
-				+ "Current_Year_dates as(SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_end FROM dual\r\n"
-				+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1))\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
-				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) AS month_end FROM dual\r\n"
+				+ "CONNECT BY LEVEL <= 31)\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+				+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE Order by a.month_end Asc )\r\n"
+				,nativeQuery=true)
 		List<Object[]> GetSelectedmonSingorGroupdetails(Date Selecteddate);
 		
 		/////SLS AED Limit
@@ -789,37 +615,73 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '38') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+				+ " Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetLongTermResourcesLongTermAssetsaed(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '38') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ " Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetDailyLongTermResourcesLongTermAssetsaed(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '39') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+				+ "Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetLongTermResourcesLongTermAssetsUSD(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '39') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetDailyLongTermResourcesLongTermAssetsUSD(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '40') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetDailyLongMedTermResourcesLongMedTermAssetsaed(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '40') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+				+ "Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetLongMedTermResourcesLongMedTermAssetsaed(Date Selecteddate);
 		
 		@Query(value="Select * from(\r\n"
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '41') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+				+ "Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetLongMedTermResourcesLongMedTermAssetsUSD(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '41') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ "Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetDailyLongMedTermResourcesLongMedTermAssetsUSD(Date Selecteddate);
 		
 //		@Query(value="SELECT TO_CHAR(REPORT_DATE,'DD-MM-YYYY'), HEADROOMLIMIT FROM(WITH TOTAL_DEPOSITS_VALUE AS (SELECT REPORT_DATE, sum(NVL(ACCT_BALANCE_LC,0)) TOT_ACCT_BALANCE_LC\r\n"
 //				+ "FROM brf2_mapping_table WHERE  report_lable_1 in ('ROW113','ROW114','ROW115','ROW118','ROW119',\r\n"

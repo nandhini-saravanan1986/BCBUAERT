@@ -29,10 +29,10 @@ public interface Leverage_ratio_rep extends JpaRepository<Leverage_ratio_entity,
 	
 	@Query(value = "Select month_dates,R23_TOTAL from (\r\n"
 			+ "With Eligibility_ratio as(Select (R23_TOTAL*100) as R23_TOTAL, REPORT_DATE from BRF96_SUMMARYTABLE),\r\n"
-			+ "Current_month_date as (SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS month_dates FROM dual\r\n"
-			+ "CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1) )\r\n"
+			+ "Current_month_date as (SELECT ?1 - (LEVEL - 1) AS month_dates FROM dual\r\n"
+			+ "CONNECT BY LEVEL <= 31 )\r\n"
 			+ "Select To_char(month_dates,'DD-MM-YYYY') as month_dates,NVL(R23_TOTAL,0) AS R23_TOTAL\r\n"
 			+ "from Current_month_date a left join Eligibility_ratio b on \r\n"
-			+ "a.month_dates = b.report_date Order by month_dates asc)", nativeQuery = true)
+			+ "a.month_dates = b.report_date Order by a.month_dates asc)", nativeQuery = true)
 	List<Object[]> GetLeveragerationcurrentmonthgraph(Date Selecteddate);
 }

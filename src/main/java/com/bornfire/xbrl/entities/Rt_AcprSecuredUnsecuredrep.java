@@ -29,9 +29,9 @@ public interface Rt_AcprSecuredUnsecuredrep extends JpaRepository<Rt_AcprSecured
 	List<Object[]> GetCurrentyear_unsecured(Date Selecteddate);
 	
 	@Query(value="WITH current_month_dates AS (\r\n" + 
-			"    SELECT TRUNC(?1, 'MM') + (LEVEL - 1) AS report_date\r\n" + 
+			"    SELECT ?1 - (LEVEL - 1) AS report_date\r\n" + 
 			"    FROM dual\r\n" + 
-			"    CONNECT BY TRUNC(?1, 'MM') + (LEVEL - 1) <= LAST_DAY(?1)\r\n" + 
+			"    CONNECT BY LEVEL <= 31 \r\n" + 
 			")\r\n" + 
 			"SELECT \r\n" + 
 			"    TO_CHAR(a.report_date, 'DD-MM-YYYY') AS report_date,\r\n" + 

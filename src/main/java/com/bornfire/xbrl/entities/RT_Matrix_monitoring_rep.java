@@ -16,9 +16,9 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '1') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(POSITION_OF_MATRIX,0) \r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE order by a.month_end Asc)",nativeQuery=true)
+			+ " order by a.month_end Asc)",nativeQuery=true)
 	List<Object[]> GetCapitalAdequecy_Ratio(Date Selecteddate);
 	
 	/// Single and Group Borrower Exposure Details - 2
@@ -65,19 +65,41 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '42') ,\r\n"
 				+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 				+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-				+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+				+ " Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetDepositconcentrationnonretail(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '42') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ " Order by a.month_end Asc)",nativeQuery=true)
+		List<Object[]> GetDailyDepositconcentrationnonretail(Date Selecteddate);
+		
+		
 		/// Deposit concentration Retail - 43
 				@Query(value="Select * from(\r\n"
 						+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '43') ,\r\n"
 						+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 						+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
-						+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,TO_NUMBER(POSITION_OF_MATRIX) AS POSITION_OF_MATRIX\r\n"
+						+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
 						+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
-						+ "Where a.month_end = b.REPORT_DATE Order by a.month_end Asc)",nativeQuery=true)
+						+ " Order by a.month_end Asc)",nativeQuery=true)
 		List<Object[]> GetDepositconcentrationretail(Date Selecteddate);
+		
+		@Query(value="Select * from(\r\n"
+				+ "With long_term_res_and_asset as(Select * from rt_matrix_monitored_table Where S_NO = '43') ,\r\n"
+				+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+				+ "AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+				+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS POSITION_OF_MATRIX\r\n"
+				+ "from Current_Year_dates a left join long_term_res_and_asset b on a.month_end = b.REPORT_DATE\r\n"
+				+ " Order by a.month_end Asc)",nativeQuery=true)
+List<Object[]> GetDailyDepositconcentrationretail(Date Selecteddate);
+		
+		
 				
 	@Query(value = "Select * from rt_matrix_monitored_table where (S_NO, REPORT_DATE) in (Select S_NO, Max(REPORT_DATE) from rt_matrix_monitored_table\r\n"
 			+ "Group by S_NO) Order by S_NO Asc", nativeQuery = true)
@@ -100,8 +122,8 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 	@Query(value = "Select TO_CHAR(month_end,'DD-MM-YYYY') AS month_end,R15_ELIGI_LIQ_ASSETS from (\n"
 			+ "With Eligibility_ratio as(\n"
 			+ "Select (R15_ELIGI_LIQ_ASSETS*100) as R15_ELIGI_LIQ_ASSETS, REPORT_DATE from brf8_summarytable\n"
-			+ "Where report_date in(SELECT trunc(?1) -level AS month_end FROM dual CONNECT BY LEVEL <= 31)),\n"
-			+ "Month_end_data as (SELECT trunc(?1) -level AS month_end FROM dual CONNECT BY LEVEL <= 31)\n"
+			+ "Where report_date in(SELECT ?1 - (LEVEL - 1) AS month_end FROM dual CONNECT BY LEVEL <= 31)),\n"
+			+ "Month_end_data as (SELECT ?1 - (LEVEL - 1) AS month_end FROM dual CONNECT BY LEVEL <= 31)\n"
 			+ "Select month_end,NVL(R15_ELIGI_LIQ_ASSETS,0) AS R15_ELIGI_LIQ_ASSETS\n"
 			+ "from Month_end_data a left join Eligibility_ratio b on a.month_end = b.report_date Order by A.month_end asc)", nativeQuery = true)
 	List<Object[]> GetElarcurrentmonthgraph(Date Selecteddate);
@@ -143,34 +165,59 @@ public interface RT_Matrix_monitoring_rep extends JpaRepository<RT_Matrix_monito
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '47') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+			+ "Order by a.month_end asc)",nativeQuery=true)
 	List<Object[]> General_provision_of_CRWA(Date Selecteddate);
+	
+	@Query(value="Select * from(\r\n"
+			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '47') ,\r\n"
+			+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) \r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+			+ "Order by a.month_end asc)",nativeQuery=true)
+	List<Object[]> DailyGeneral_provision_of_CRWA(Date Selecteddate);
 	
 	
 	@Query(value="Select * from(\r\n"
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '22') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,NVL(POSITION_OF_MATRIX,0) \r\n"
 			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE Order by b.REPORT_DATE Asc)",nativeQuery=true)
+			+ "Order by a.month_end Asc)",nativeQuery=true)
 	List<Object[]> GetBPVPV01(Date Selecteddate);
 	
-	@Query(value="Select To_char(Report_date,'DD-MM-YYYY'),POSITION_OF_MATRIX from rt_matrix_monitored_table Where S_NO = '22'  and Report_date "
-			+ "between trunc(?1,'MM') and Last_day(Trunc(?1,'MM'))"
-			+ "order by Report_date Asc",nativeQuery=true)
+	
+	
+	@Query(value="Select * from(\r\n"
+			+ "With  POSITION_OF_MATRIX as(Select * from rt_matrix_monitored_table Where S_NO = '22') ,\r\n"
+			+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1)\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+			+ "from Current_Year_dates a left join POSITION_OF_MATRIX b on a.month_end = b.REPORT_DATE  Order by a.month_end asc)\r\n"
+			,nativeQuery=true)
 	List<Object[]> GetBPVPV01Monthdetail(Date Selecteddate);
 	
 	@Query(value="Select * from(\r\n"
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '10') ,\r\n"
 			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
 			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
-			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,POSITION_OF_MATRIX\r\n"
-			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
-			+ "Where a.month_end = b.REPORT_DATE)",nativeQuery=true)
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE  Order by a.month_end asc)\r\n"
+			,nativeQuery=true)
 	List<Object[]> Exposure_Outsidegccper(Date Selecteddate);
+	
+	
+	@Query(value="Select * from(\r\n"
+			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '10') ,\r\n"
+			+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1)\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,nvl(POSITION_OF_MATRIX,0)\r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE  Order by a.month_end asc)\r\n"
+			,nativeQuery=true)
+	List<Object[]> Exposure_Outsidegccpermonthly(Date Selecteddate);
 	
 	@Query(value="Select R20_RATIOS2 As General_Provision,R22_RATIOS2 As CRWA,report_date from car Where rePort_date = ?1",nativeQuery=true)
 	List<Object[]> GetSelecteddateGenepro(Date Selecteddate);

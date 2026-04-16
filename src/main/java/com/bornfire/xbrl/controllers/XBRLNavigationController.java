@@ -127,6 +127,9 @@ public class XBRLNavigationController {
 	 */
 	@Autowired
 	Bloomberg_services bloombergService;
+	
+	@Autowired
+	RtVarReportLimits_Rep rtvarreportlimits_rep;
 	@Autowired
 	KriMasterTable_Rep krimastertablerep;
 	
@@ -1239,7 +1242,7 @@ public class XBRLNavigationController {
 			}
 			
 			int pageSize = size;
-			int offset = page * pageSize;
+			int offset = page;
 			int totalRows=0;
 			int totalPages=0;
 			totalRows = rtinvestmentriskdatadetailrep.RtInvestmentRiskDatacountROWID(reportdatefor, columnId);
@@ -1253,6 +1256,7 @@ public class XBRLNavigationController {
 			md.addAttribute("pagination", "YES");
 			md.addAttribute("currentPage", page);
 			md.addAttribute("totalPages", totalPages);
+			md.addAttribute("columnId", columnId);
 		}
 		
 		
@@ -1671,55 +1675,106 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "Mm_Data", method = RequestMethod.GET)
-	public String Mmdata(@RequestParam(required = false) String formmode, @RequestParam(required = false) String deal_no,
-			Model md, HttpServletRequest req) {
+	public String Mmdata(@RequestParam(required = false) String formmode,
+	                     @RequestParam(required = false) String deal_no,
+	                     Model md,
+	                     HttpServletRequest req,
+	                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 
-		if ("edit".equalsIgnoreCase(formmode) && deal_no != null && !deal_no.isEmpty()) {
-			RT_MmData data = mmdataRepo.getParticularDataBySI_NO(deal_no);
-			md.addAttribute("mmData", data);
-			System.out.println("edit is formmode");
-			md.addAttribute("formmode", "edit");
+	    LocalDate today = LocalDate.now();
+	    String formattedDate = null;
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	    // ✅ Convert Report_date → String safely
+	    if (Report_date != null) {
+	        formattedDate = sdf.format(Report_date);
+	    }
 
-		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", mmdataRepo.getlist());
-			System.out.println("list is formmode");
-			md.addAttribute("formmode", "list");
+	    // ================= EDIT =================
+	    if ("edit".equalsIgnoreCase(formmode) && deal_no != null && !deal_no.isEmpty()) {
 
-		} else {
-			Timestamp lastdatetimestamp = mmdataRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = mmdataRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
-			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Mm_Data_Template");
-			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Mm_Data_Template");
-			if (data != null && !data.equals(null)) {
-				md.addAttribute("data", data);
-				md.addAttribute("formmode", "exist");
-			}
-			else if(secondlastdata != null && !secondlastdata.equals(null)){
-				md.addAttribute("data", secondlastdata);
-				md.addAttribute("formmode", "exist");
-			}else {
-				md.addAttribute("formmode", "add");
-				md.addAttribute("formmode", "null");
-			}
-			md.addAttribute("lastDate", lastDate);
-			md.addAttribute("bankname", "Bank of Baroda");
+	        RT_MmData data = mmdataRepo.getParticularDataBySI_NO(deal_no);
+	        md.addAttribute("mmData", data);
+	        md.addAttribute("formmode", "edit");
 
-			// You had md.addAttribute("formmode", "null"); — removed this line because it
-			// would overwrite the previous one
-		}
+	    }
 
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
-		md.addAttribute("bankList", bankList);
-		md.addAttribute("countryList", countryList);
+	    // ================= LIST =================
+	    else if ("list".equalsIgnoreCase(formmode)) {
 
-		return "RT/Mm_Data";
+	        md.addAttribute("branchList", mmdataRepo.getlist(Report_date));
+	        md.addAttribute("formmode", "list");
+	        md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+
+	    }
+
+	    // ================= DEFAULT =================
+	    else {
+
+	        Timestamp lastdatetimestamp = mmdataRepo.findLastReportDate();
+	        Timestamp secondlastdatetimestamp = mmdataRepo.findSecondLastReportDate();
+
+	        
+
+	        String lastDateString = null;
+	        String secondLastDateString = null;
+	        LocalDate lastDate = null;
+
+	        // ✅ NULL SAFE
+	        if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        RT_DataControl data = RT_DatacontrolRepository.getdata(lastDateString, "CBUAE_Mm_Data_Template");
+	        RT_DataControl secondlastdata = RT_DatacontrolRepository.getdata(secondLastDateString, "CBUAE_Mm_Data_Template");
+
+	        RT_DataControl report_datedata = null;
+
+	        if (formattedDate != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Mm_Data_Template");
+	        }
+	        
+	        System.out.println(formattedDate);
+
+	        // ✅ FIXED NULL CHECKS
+	        if (report_datedata != null) {
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
+	            md.addAttribute("data", report_datedata);
+	            md.addAttribute("formmode", "exist");
+
+	        } else if (data != null) {
+	        	
+	            md.addAttribute("data", data);
+	            md.addAttribute("formmode", "exist");
+
+	        } else if (secondlastdata != null) {
+	        	lastDate = LocalDate.parse(secondLastDateString, formatter);
+	            md.addAttribute("data", secondlastdata);
+	            md.addAttribute("formmode", "exist");
+
+	        } else {
+
+	            md.addAttribute("formmode", "add");
+	        }
+	        
+	        md.addAttribute("lastDate", lastDate);
+	        md.addAttribute("bankname", "Bank of Baroda");
+	    }
+
+	    // ================= DROPDOWNS =================
+	    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+	    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+	    md.addAttribute("bankList", bankList);
+	    md.addAttribute("countryList", countryList);
+
+	    return "RT/Mm_Data";
 	}
 
 	@RequestMapping(value = "/downloadMmExcel", method = RequestMethod.GET)
@@ -5308,6 +5363,9 @@ public class XBRLNavigationController {
 	    return "RT/keyRiskIndicator";
 	}
 	
+	
+	
+	
 	@PostMapping("/saveKriData")
 	@ResponseBody
 	public String saveKriData(@RequestBody List<KriMasterTable> list, HttpServletRequest req) {
@@ -5374,6 +5432,26 @@ public class XBRLNavigationController {
 	        e.printStackTrace();
 	        return "ERROR";
 	    }
+	}
+	
+	@PostMapping("/saveInvestmentLimits")
+	public ResponseEntity<?> saveData(
+	        @RequestBody RtVarReportLimits data,
+	        @RequestParam(defaultValue = "false") boolean confirmReplace) {
+
+	    Optional<RtVarReportLimits> existing =rtvarreportlimits_rep.findById(data.getReportDate());
+
+	    if (existing.isPresent() && !confirmReplace) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT)
+	                .body("Record already exists for this date");
+	    }
+
+	    data.setEntryDate(new Date());
+	    data.setEntryFlg("Y");
+
+	    rtvarreportlimits_rep.save(data);
+
+	    return ResponseEntity.ok("Limits Saved Successfully");
 	}
 	
 	

@@ -367,6 +367,11 @@ public class MIS_Rest_Controller {
 		}
 		return Exposuredata;
 	}
+	
+	
+	
+	
+	
 
 	@GetMapping("/Getbarchart")
 	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
@@ -565,7 +570,7 @@ public class MIS_Rest_Controller {
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		} else if (Matrix_Srl_no.equals("24")) {
-			// Noop
+			// Noop]
 			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentMonth_NoopGraph(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
@@ -634,6 +639,53 @@ public class MIS_Rest_Controller {
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
+		
+		else if (Matrix_Srl_no.equals("10")) {
+	
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Exposure_Outsidegccpermonthly(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if (Matrix_Srl_no.equals("38")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDailyLongTermResourcesLongTermAssetsaed(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		} 
+		else if (Matrix_Srl_no.equals("39")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDailyLongTermResourcesLongTermAssetsUSD(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if (Matrix_Srl_no.equals("40")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
+					.GetDailyLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if (Matrix_Srl_no.equals("41")) {
+			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
+					.GetDailyLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if (Matrix_Srl_no.equals("42")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDailyDepositconcentrationnonretail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		
+		else if (Matrix_Srl_no.equals("43")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDailyDepositconcentrationretail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		else if (Matrix_Srl_no.equals("47")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.DailyGeneral_provision_of_CRWA(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}
+		
+		
 
 		return finalList;
 	}

@@ -707,7 +707,10 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 5, 50);
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 
@@ -797,13 +800,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				//				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				//					.then(response => response.json())
-				//					.then(result => {
-				//						const labels = result.map(row => row.date);
-				//						const dataValues = result.map(row => parseFloat(row.value));
-				//						Initiatedailychart(labels, dataValues, 5, 50);
-				//					});
+								fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+								.then(response => response.json())
+								.then(result => {
+									const labels = result.map(row => row.date);
+									const dataValues = result.map(row => parseFloat(row.value));
+									Initiatedailychart(labels, dataValues, 5, 50);
+								});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Leverageratio', {
 					method: 'POST',
@@ -1212,13 +1215,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				//		fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				//			.then(response => response.json())
-				//			.then(result => {
-				//				const labels = result.map(row => row.date);
-				//				const dataValues = result.map(row => parseFloat(row.value));
-				//				Initiatedailychart(labels, dataValues, 5, 50);
-				//			});
+						fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+							.then(response => response.json())
+							.then(result => {
+								const labels = result.map(row => row.date);
+								const dataValues = result.map(row => parseFloat(row.value));
+								Initiatedailychart(labels, dataValues, 5, 50);
+							});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -1376,6 +1379,18 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
+				
+				
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					const maxValue = Math.max(...dataValues);
+					const yaxismaxsize = getRoundedMax(maxValue);
+					const CalculatedStepSize = getStepSize(yaxismaxsize);
+					Initiatedailychart(labels, dataValues,  CalculatedStepSize, yaxismaxsize);
+				});
 
 
 			} else if (labelsrlno === "9") {
@@ -1426,13 +1441,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				// .then(response => response.json())
-				// .then(result => {
-				// const labels = result.map(row => row.date);
-				// const dataValues = result.map(row => parseFloat(row.value));
-				// Initiatedailychart(labels, dataValues, 1, 15);
-				// });
+				 fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				 .then(response => response.json())
+				 .then(result => {
+				 const labels = result.map(row => row.date);
+				 const dataValues = result.map(row => parseFloat(row.value));
+				 Initiatedailychart(labels, dataValues, 1, 15);
+				 });
 				document.querySelector(".Mortageloan_block").style.display = "grid";
 
 
@@ -2483,7 +2498,10 @@
 					.then(result => {
 						const labels = result.map(row => row.date);
 						const dataValues = result.map(row => parseFloat(row.value));
-						Initiatedailychart(labels, dataValues, 10, 100);
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
 
@@ -2618,6 +2636,17 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
+				
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					const maxValue = Math.max(...dataValues);
+					const yaxismaxsize = getRoundedMax(maxValue);
+					const CalculatedStepSize = getStepSize(yaxismaxsize);
+					Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+				});
 
 
 
@@ -2672,6 +2701,17 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
+				
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				.then(response => response.json())
+				.then(result => {
+					const labels = result.map(row => row.date);
+					const dataValues = result.map(row => parseFloat(row.value));
+					const maxValue = Math.max(...dataValues);
+					const yaxismaxsize = getRoundedMax(maxValue);
+					const CalculatedStepSize = getStepSize(yaxismaxsize);
+					Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+				});
 
 
 
@@ -4345,7 +4385,7 @@
 			const sNo = input.dataset.sno;
 			const label = input.dataset.label;
 			var trHTML = "";
-			document.getElementById("Matrixtablebody").innerHTML = trHTML;
+			//document.getElementById("Matrixtablebody").innerHTML = trHTML;
 
 			if (sNo === "25") {
 				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + selectedDate;
@@ -4377,6 +4417,7 @@
 
 						const runNow = window.confirm("No data found for selected date. Do you want to run the procedure now?");
 						if (runNow) {
+							document.getElementById("Matrixtablebody").innerHTML = trHTML;
 							runMatrixForDateDirect(selectedDate, sNo, label, function () {
 								onDateChange(input);
 							});
@@ -5451,6 +5492,8 @@
 						<canvas id="StockLinechartformonthlyreport"></canvas>
 
 					</div>
+					
+					
 
 					<!--Current Month progressing chart-->
 					<div class="Dailychart-container" style="display: none;">

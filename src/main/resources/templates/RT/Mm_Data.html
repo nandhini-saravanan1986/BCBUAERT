@@ -830,16 +830,20 @@ Tested by   : Rajalakshmi R
 
 
 <script>
-	function navigateToTab(tabId) {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		if (tabId === 'data') {
-			window.location.href = 'Mm_Data?formmode=list';
-			//$("#loader").modal("hide");
-		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Mm_Data?formmode=add';
-			//$("#loader").modal("hide");
-		}
-	}
+
+  function navigateToTab(tabId) {
+	  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	  var Report_date=Report_date=document.getElementById("portfolioDate").value;
+	  
+  if (tabId === 'data') {
+			window.location.href = 'Mm_Data?formmode=list&Report_date='+Report_date;
+								//$("#loader").modal("hide");
+ } else if (tabId === 'datacontrols') {
+      window.location.href = 'Mm_Data?formmode=add'+'&Report_date='+Report_date;
+            		//$("#loader").modal("hide");
+  }
+  }
+
 
 	function handleClick(tabId) {
 		// Remove active class from all buttons
@@ -972,6 +976,8 @@ Tested by   : Rajalakshmi R
 	window.addEventListener("pageshow", function () {
 		hideLoader();
 	});
+	
+	
 </script>
 <title>RiskInsights</title>
 
@@ -1048,9 +1054,11 @@ Tested by   : Rajalakshmi R
 											</select> <label class="form-legend">Submitting Institution</label>
 										</div>
 										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm" required />
-											<label class="form-legend">Portfolio
+											
+
+											<label class="form-legend">Portfolio</label>
+												<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm"
+												required onchange="navigateToTab('datacontrols')" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1169,10 +1177,12 @@ Tested by   : Rajalakshmi R
 											</select> <label class="form-legend">Submitting Institution</label>
 										</div>
 										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm" required />
-											<label class="form-legend">Portfolio
-												date</label>
+											
+
+											
+
+												 <input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm"
+												required onchange="navigateToTab('datacontrols')" />  <label class="form-legend">Portfolio</label>
 										</div>
 									</div>
 
@@ -1328,8 +1338,9 @@ Tested by   : Rajalakshmi R
 				<div class="col-sm-12">
 					<div class="container-fluid">
    -->
-
-
+			<input type="date" id="portfolioDate" name="portfolioDate"
+			th:value="${lastDate}" class="form-control form-control-sm"
+			required Style="display:none" />
 
 
 				<div class="table-responsive" style=" border: none;">
