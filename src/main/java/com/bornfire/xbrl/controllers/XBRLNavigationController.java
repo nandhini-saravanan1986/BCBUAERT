@@ -4203,7 +4203,7 @@ public class XBRLNavigationController {
 	        }
 	        
 	        else if("ECL".equals(reportType)) {
-	        	resultMsg =ecldatauploadservice.UploadECLdata(file, reportType, toDate);
+	        	resultMsg =ecldatauploadservice.uploadECLdata(file, toDate,forceUpload);
 	        }
 	     
 	        else {

@@ -83,6 +83,8 @@ public class RT_Ecl_upload_Entity {
 	private String	provision_coverage;
 	private String	mgmtoverlay;
 	private BigDecimal	total_rwa;
+	private String wait_pd;
+	
 	public String getFacilityid() {
 		return facilityid;
 	}
@@ -473,6 +475,12 @@ public class RT_Ecl_upload_Entity {
 	public void setTotal_rwa(BigDecimal total_rwa) {
 		this.total_rwa = total_rwa;
 	}
+	public String getWait_pd() {
+		return wait_pd;
+	}
+	public void setWait_pd(String wait_pd) {
+		this.wait_pd = wait_pd;
+	}
 	public RT_Ecl_upload_Entity(String facilityid, String customerid, String cust_name, String branch_name,
 			String portfoliotype, String portfolioname, String subportfolioname, String productname, String rating,
 			BigDecimal dpdbucket, String currency, BigDecimal limit, BigDecimal drawnamount, BigDecimal undrawnamount,
@@ -489,7 +497,7 @@ public class RT_Ecl_upload_Entity {
 			BigDecimal writtenoffflag, BigDecimal writtenoffvalue, BigDecimal infoflag, String country,
 			BigDecimal isindividualflag, String asset_class, String transfer_stage, String brf_1_classification,
 			String brf_107, String brf_106, String basel_2_category, String provision_coverage, String mgmtoverlay,
-			BigDecimal total_rwa) {
+			BigDecimal total_rwa, String wait_pd) {
 		super();
 		this.facilityid = facilityid;
 		this.customerid = customerid;
@@ -556,11 +564,14 @@ public class RT_Ecl_upload_Entity {
 		this.provision_coverage = provision_coverage;
 		this.mgmtoverlay = mgmtoverlay;
 		this.total_rwa = total_rwa;
+		this.wait_pd = wait_pd;
 	}
 	public RT_Ecl_upload_Entity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 	
 	
 
