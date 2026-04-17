@@ -113,6 +113,8 @@ import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.Bloomberg_services;
 import com.bornfire.xbrl.services.ECLDataUploadService;
+import com.bornfire.xbrl.services.ProvisioningFileUploadService;
+import com.bornfire.xbrl.services.SMAFileUploadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bornfire.xbrl.entities.*;
@@ -364,7 +366,13 @@ public class XBRLNavigationController {
 	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 	@Autowired
 	RT_MC_TABLE_ALL_Service rT_MC_TABLE_Service;
+	
+	@Autowired
+	SMAFileUploadService SMAFileUploadService;
 
+	@Autowired
+	ProvisioningFileUploadService ProvisioningFileUploadService;
+	
 	@Autowired
 	private UploadMonitorService uploadMonitorService;
 	
@@ -4205,7 +4213,13 @@ public class XBRLNavigationController {
 	        else if("ECL".equals(reportType)) {
 	        	resultMsg =ecldatauploadservice.uploadECLdata(file, toDate,forceUpload);
 	        }
-	     
+	        
+	        else if("SMA".equals(reportType)) {
+	        	resultMsg =SMAFileUploadService.SMAFileUpload(file, reportType, toDate, forceUpload);
+	        }
+	        else if("Provisioning".equals(reportType)) {
+	        	resultMsg =ProvisioningFileUploadService.ProvisioningFileUpload(file, reportType, toDate, forceUpload);
+	        }
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
