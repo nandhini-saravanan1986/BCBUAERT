@@ -114,6 +114,7 @@ import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.Bloomberg_services;
 import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.bornfire.xbrl.services.ProvisioningFileUploadService;
+import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,6 +131,9 @@ public class XBRLNavigationController {
 	 */
 	@Autowired
 	Bloomberg_services bloombergService;
+	
+	@Autowired
+	VarPortfolioUploadService varportfoliouploadservice;
 	
 	@Autowired
 	ECLDataUploadService ecldatauploadservice;
@@ -4220,6 +4224,9 @@ public class XBRLNavigationController {
 	        else if("Provisioning".equals(reportType)) {
 	        	resultMsg =ProvisioningFileUploadService.ProvisioningFileUpload(file, reportType, toDate, forceUpload);
 	        }
+	        else if("VARFILE".equals(reportType)) {
+	        	resultMsg =varportfoliouploadservice.uploadVarPortfolio(file, reportType, toDate, forceUpload);
+	        }
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
 	            return ResponseEntity.badRequest().body("Unsupported Report Type: " + reportType);
@@ -4239,7 +4246,6 @@ public class XBRLNavigationController {
 	            uploadMonitorService.completeFailure(uploadId, e.getMessage());
 	        }
 	        return ResponseEntity.badRequest().body(e.getMessage());
-
 	    } catch (Exception e) {
 	        if (uploadId != null) {
 	            uploadMonitorService.completeFailure(uploadId, e.getMessage());

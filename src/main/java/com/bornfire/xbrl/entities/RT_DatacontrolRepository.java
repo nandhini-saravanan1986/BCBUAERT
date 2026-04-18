@@ -20,7 +20,7 @@ public interface RT_DatacontrolRepository extends JpaRepository<RT_DataControl, 
 	// You can define custom queries here if needed, for example:
 	// List<BcbuaeNostroAccBalDatacontrol> findByEntityFlg(String entityFlg);
 
-	@Query(value = "SELECT * FROM (  SELECT * FROM BCBUAE_DATACONTROL  WHERE TRUNC(PORTFOLIO_DATE) = TRUNC(TO_DATE(:reportDate, 'dd-MM-yyyy'))  AND REPORT_NAME = :reportName   ORDER BY SI_NO DESC ) WHERE ROWNUM = 1", nativeQuery = true)
+	@Query(value = "SELECT * FROM (  SELECT * FROM BCBUAE_DATACONTROL  WHERE TRUNC(PORTFOLIO_DATE) = TRUNC(TO_DATE(:reportDate, 'dd-MM-yyyy'))  AND REPORT_NAME = :reportName   ORDER BY SI_NO DESC ) WHERE ROWNUM = 1 and DEL_FLG='N'", nativeQuery = true)
 	RT_DataControl getdata(@Param("reportDate") String reportDate, @Param("reportName") String reportName);
 
 }

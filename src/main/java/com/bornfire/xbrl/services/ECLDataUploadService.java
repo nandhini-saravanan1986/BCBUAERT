@@ -221,17 +221,25 @@ public class ECLDataUploadService {
 	}
 
 	private BigDecimal getBigDecimal(Cell cell, DataFormatter formatter) {
-	    if (cell == null) return BigDecimal.ZERO; // or return null
+
+	    if (cell == null)
+	        return BigDecimal.ZERO;
 
 	    String value = formatter.formatCellValue(cell);
-	    if (value == null || value.trim().isEmpty()) {
-	        return BigDecimal.ZERO; // or null based on requirement
-	    }
+
+	    if (value == null || value.trim().isEmpty())
+	        return BigDecimal.ZERO;
 
 	    try {
-	        return new BigDecimal(value.trim());
+	        // Remove comma separators
+	        value = value.replace(",", "").trim();
+
+	        return new BigDecimal(value);
+
 	    } catch (Exception e) {
-	        throw new RuntimeException("Invalid numeric value: " + value);
+	        throw new RuntimeException(
+	                "Invalid numeric value: " + value
+	        );
 	    }
 	}
 

@@ -120,7 +120,7 @@ public class RT_DataControlService {
 							System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
 						}
 					}
-					auditService.createBusinessAudit(userid, "MODIFY", "DATACONTROL", changes, "BCBUAE_DATACONTROL");
+					//auditService.createBusinessAudit(userid, "MODIFY", "DATACONTROL", changes, "BCBUAE_DATACONTROL");
 
 					RT_DatacontrolRepository.save(data);
 				} else {

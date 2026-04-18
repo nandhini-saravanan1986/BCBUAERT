@@ -322,6 +322,7 @@
 										<option value="ECL">ECL</option>
 										<option value="SMA">UAE - SMA File</option>
 										<option value="Provisioning">UAE - Provisioning File</option>
+										<option value="VARFILE">VAR</option>
 										
 
 									</select>
@@ -669,6 +670,18 @@
 			}
 			else if (report === "Provisioning") {
 				formatSelect.append('<option value="TEXT">Text Delimited (.txt)</option>');
+			}
+			else if(report === "VARFILE"){
+				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
+				let today = new Date();
+			    let year = today.getFullYear();
+			    let month = String(today.getMonth() + 1).padStart(2, '0');
+			    let day = String(today.getDate()).padStart(2, '0');
+			    let currentDate =  day + "-" + month +"-" +year;
+			    let toDateField = document.getElementById("toDate");
+			    toDateField.value = currentDate;
+			   
+				
 			}
 			else {
 				formatSelect.append('<option value="" selected disabled>-- Select Format --</option>');
