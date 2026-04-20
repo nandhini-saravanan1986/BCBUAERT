@@ -723,7 +723,19 @@ public class XBRLNavigationController {
 	// Nostro Report Codes Given Below
 	@RequestMapping(value = "Nostro_Account_Bal", method = RequestMethod.GET)
 	public String NostroAccountBal(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String accountNo, Model md, HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		       
+
+		   LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 
 		if ("edit".equalsIgnoreCase(formmode) && accountNo != null && !accountNo.isEmpty()) {
 			RT_NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
@@ -731,21 +743,45 @@ public class XBRLNavigationController {
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", nostroAccBalRepo.getlist());
+			md.addAttribute("branchList", nostroAccBalRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
 			Timestamp lastdatetimestamp = nostroAccBalRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+			 String lastDateString = null;
+		     String secondLastDateString = null;
+		     LocalDate lastDate = null;
+					
+			
+			if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Nostro Account_Balance_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Nostro Account_Balance_Data_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+			
+			 if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Nostro Account_Balance_Data_Template");
+		        }
+		        
+		        System.out.println(formattedDate);
+
+		        // ✅ FIXED NULL CHECKS
+		        if (report_datedata != null) {
+		        	System.out.println(formattedDate);
+		        	lastDate = LocalDate.parse(formattedDate, formatter);
+		            md.addAttribute("data", report_datedata);
+		            md.addAttribute("formmode", "exist");
+		        }
+			
+			else if(data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}

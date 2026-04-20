@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface RT_NostroAccBalDataRepository extends JpaRepository<RT_NostroAccBalData, String> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_NOSTRO_ACC_BAL_DATA where DEL_FLG != 'Y'", nativeQuery = true)
-	List<RT_NostroAccBalData> getlist();
+	@Query(value = "select * from BCBUAE_NOSTRO_ACC_BAL_DATA where DEL_FLG != 'Y' and  REPORT_DATE=?1", nativeQuery = true)
+	List<RT_NostroAccBalData> getlist(Date REPORT_DATE);
 
 
 	@Query(value = "SELECT " + "DATA_DATE, BANK_NAME, HEAD_OFFICE_SUBSIDIARY, SUBSIDIARY, "
