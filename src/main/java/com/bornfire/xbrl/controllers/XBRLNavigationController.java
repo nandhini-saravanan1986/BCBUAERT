@@ -3304,11 +3304,11 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadImpactanalysisExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadImpactanalysisExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Impact Analysis Excel download.");
 
 		try {
-			byte[] excelData = impactanalysisService.generateImpactAnalysisExcel();
+			byte[] excelData = impactanalysisService.generateImpactAnalysisExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: No data found for Impact Analysis report. Responding with 204 No Content.");

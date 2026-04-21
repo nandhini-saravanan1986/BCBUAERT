@@ -783,17 +783,17 @@ body {
 <script>
 	function navigateToTab(tabId) {
 		$("#loader").css("display", "flex");
-
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 		let baseUrl = "";
 		switch (tabId) {
 			case 'data':
-				baseUrl = 'Foreign_Currency_Deposit?formmode=list&tab=data';
+				baseUrl = 'Foreign_Currency_Deposit?formmode=list&tab=data&Report_date='+Report_date;
 				break;
 			case 'dataimpact':
-				baseUrl = 'Impact_Analysis?formmode=list&tab=dataimpact';
+				baseUrl = 'Impact_Analysis?formmode=list&tab=dataimpact&Report_date='+Report_date;
 				break;
 			case 'datacontrols':
-				baseUrl = 'Foreign_Currency_Deposit?formmode=null&tab=datacontrols';
+				baseUrl = 'Foreign_Currency_Deposit?formmode=null&tab=datacontrols+'+'&Report_date='+Report_date;
 				break;
 			default:
 				console.warn("Unknown tabId:", tabId);
@@ -1134,7 +1134,9 @@ body {
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="tab-pane fade" id="dataimpact" role="tabpanel">
-
+				<input type="date" id="portfolioDate" name="portfolioDate"
+									 		th:value="${lastDate}" class="form-control form-control-sm"
+									 		required Style="display:none" />
 				<!-- =====================================================================
 				     FIX: dt-controls bar (search + pagination) sits OUTSIDE the
 				     scrollable div so it never scrolls away with the table content.

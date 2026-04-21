@@ -179,10 +179,10 @@ public class RT_ImpactAnalysisService {
 	    }
 	}
     
-    public byte[] generateImpactAnalysisExcel() throws Exception {
+    public byte[] generateImpactAnalysisExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Impact Analysis Excel generation process in memory.");
 
-        List<Object[]> impactanalysis = impactanalysisRepo.getimpactanalysislistdata1();
+        List<Object[]> impactanalysis = impactanalysisRepo.getimpactanalysislistdata1(Report_date);
 
         if (impactanalysis.isEmpty()) {
             logger.warn("Service: No data found for Impact Analysis report. Returning empty result.");
