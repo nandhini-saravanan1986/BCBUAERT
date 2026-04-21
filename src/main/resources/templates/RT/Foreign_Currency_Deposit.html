@@ -780,15 +780,16 @@ label.error {
 <script>
   function navigateToTab(tabId) {
 	  $("#loader").css("display", "flex");
+	  var Report_date=Report_date=document.getElementById("portfolioDate").value;
     
     if (tabId === 'data') {
-        window.location.href = 'Foreign_Currency_Deposit?formmode=list';
+        window.location.href = 'Foreign_Currency_Deposit?formmode=list&Report_date='+Report_date;
         //$("#loader").modal("hide");
     } else if (tabId === 'datacontrols') {
-        window.location.href = 'Foreign_Currency_Deposit?formmode=add';
+        window.location.href = 'Foreign_Currency_Deposit?formmode=add +'+'&Report_date='+Report_date;
         //$("#loader").modal("hide");
     } else if (tabId === 'dataimpact') {
-        window.location.href = 'Impact_Analysis?formmode=list';
+        window.location.href = 'Impact_Analysis?formmode=list&Report_date='+Report_date;
         //$("#loader").modal("hide");
     }
 }
@@ -825,9 +826,10 @@ label.error {
      function downloadForeigncurrencyExcel() {
     		// 1. Show the loader modal
     		$("#loader").css("display", "flex");
+			var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
     		$.ajax({
-    			url: './downloadForeigncurrencyExcel',
+    			url: './downloadForeigncurrencyExcel?Report_date='+Report_date,
     			type: 'GET',
     			xhrFields: {
     				responseType: 'blob'
@@ -972,8 +974,7 @@ label.error {
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}"onchange="navigateToTab('datacontrols')" class="form-control form-control-sm" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1115,8 +1116,7 @@ label.error {
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}"onchange="navigateToTab('datacontrols')" class="form-control form-control-sm" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1242,6 +1242,8 @@ label.error {
 
 				<div class="tab-pane fade" id="template" role="tabpanel"
 					th:if="${formmode == 'null'}">
+					
+					
 					<p>Templates tabs</p>
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
@@ -1272,7 +1274,9 @@ label.error {
 					<!-- 	<div class="row">
 				<div class="col-sm-12">
 					<div class="container-fluid">
-   -->
+   -->					<input type="date" id="portfolioDate" name="portfolioDate"
+					 		th:value="${lastDate}" class="form-control form-control-sm"
+					 		required Style="display:none" />
 
 
 

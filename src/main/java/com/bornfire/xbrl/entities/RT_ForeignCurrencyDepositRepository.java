@@ -12,14 +12,14 @@ import org.springframework.stereotype.Repository;
 public interface RT_ForeignCurrencyDepositRepository extends JpaRepository<RT_ForeignCurrencyDeposit, String> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS  ", nativeQuery = true)
-	List<RT_ForeignCurrencyDeposit> getlist();
+	@Query(value = "select * from BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS Where Report_date =?1 ", nativeQuery = true)
+	List<RT_ForeignCurrencyDeposit> getlist(Date Report_date);
 
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS ", nativeQuery = true)
 	List<RT_ForeignCurrencyDeposit> getfxriskdatalistdata();
 
-	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS ", nativeQuery = true)
-	List<Object[]> getforeigncurrencylistdata1();
+	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS Where Report_date =?1 ", nativeQuery = true)
+	List<Object[]> getforeigncurrencylistdata1(Date Report_date);
 	
 	
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_FOREIGN_DEPOSITS where SI_NO =?1 ", nativeQuery = true)

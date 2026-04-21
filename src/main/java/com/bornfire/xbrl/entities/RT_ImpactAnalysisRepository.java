@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface RT_ImpactAnalysisRepository extends JpaRepository<RT_ImpactAnalysis, String> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS  ", nativeQuery = true)
-	List<RT_ImpactAnalysis> getlist();
+	@Query(value = "select * from BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS Where Report_date =?1 ", nativeQuery = true)
+	List<RT_ImpactAnalysis> getlist(Date Report_date);
 
 	@Query(value = "SELECT * FROM BCBUAE_CROSS_CUR_FUNDING_IMPACT_ANALYSIS ", nativeQuery = true)
 	List<RT_ImpactAnalysis> getfxriskdatalistdata();

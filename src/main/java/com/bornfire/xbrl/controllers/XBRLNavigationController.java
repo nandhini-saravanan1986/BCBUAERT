@@ -3017,8 +3017,17 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Foreign_Currency_Deposit", method = RequestMethod.GET)
 	public String Foreigncurrencydeposit(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 
+		LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			RT_ForeignCurrencyDeposit data = foreigncurrencydepositRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("foreigncurrencydeposit", data);
@@ -3026,23 +3035,46 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", foreigncurrencydepositRepo.getlist());
+			md.addAttribute("branchList", foreigncurrencydepositRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 
 		} else {
 			Timestamp lastdatetimestamp = foreigncurrencydepositRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = foreigncurrencydepositRepo.findSecondLastReportDate();			
-			LocalDate lastDate=(lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().toLocalDate();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+			 String lastDateString = null;
+		     String secondLastDateString = null;
+		     LocalDate lastDate = null;
+					
+			
+			if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Cross_Currency_Funding_Spread_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Cross_Currency_Funding_Spread_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+			
+			 if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Cross_Currency_Funding_Spread_Template");
+		        }
+		        
+		        System.out.println(formattedDate);
+
+		        // ✅ FIXED NULL CHECKS
+		        if (report_datedata != null) {
+		        	System.out.println(formattedDate);
+		        	lastDate = LocalDate.parse(formattedDate, formatter);
+		        	md.addAttribute("data", report_datedata);
+		        	md.addAttribute("formmode", "exist");
+		        }
+			
+			else if(data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
@@ -3082,8 +3114,17 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Impact_Analysis", method = RequestMethod.GET)
 	public String ImpactAnalysis(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 
+		LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			RT_ImpactAnalysis data = impactanalysisRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("ImpactAnalysis", data);
@@ -3091,9 +3132,10 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", impactanalysisRepo.getlist());
+			md.addAttribute("branchList", impactanalysisRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 
 		} else {
 			md.addAttribute("formmode", "add");
@@ -3226,11 +3268,11 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadForeigncurrencyExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadForeigncurrencyExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Foreign Currency Deposit Excel download.");
 
 		try {
-			byte[] excelData = foreigncurrencydepositService.generateForeignCurrencyDepositExcel();
+			byte[] excelData = foreigncurrencydepositService.generateForeignCurrencyDepositExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: No data found for Foreign Currency report. Responding with 204 No Content.");

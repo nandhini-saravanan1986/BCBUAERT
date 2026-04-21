@@ -164,10 +164,10 @@ public class RT_ForeignCurrencyDepositService {
 	    }
 	}
     
-    public byte[] generateForeignCurrencyDepositExcel() throws Exception {
+    public byte[] generateForeignCurrencyDepositExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Foreign Currency Deposit Excel generation process in memory.");
 
-        List<Object[]> foreigncurrencyList = foreigncurrencydepositRepo.getforeigncurrencylistdata1();
+        List<Object[]> foreigncurrencyList = foreigncurrencydepositRepo.getforeigncurrencylistdata1(Report_date);
 
         if (foreigncurrencyList.isEmpty()) {
             logger.warn("Service: No data found for Foreign Currency report. Returning empty result.");
