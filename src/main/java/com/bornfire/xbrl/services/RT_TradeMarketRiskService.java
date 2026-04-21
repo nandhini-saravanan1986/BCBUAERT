@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,10 +167,10 @@ public class RT_TradeMarketRiskService {
 	}
 
 	
-	public byte[] generateTradeMarketRiskExcel() throws Exception {
+	public byte[] generateTradeMarketRiskExcel(Date Report_date) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_TradeMarketRiskData> dataList = trade_market_risk_repo.getlist();
+		List<RT_TradeMarketRiskData> dataList = trade_market_risk_repo.getlist(Report_date);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for Trade Market Risk report. Returning empty result.");

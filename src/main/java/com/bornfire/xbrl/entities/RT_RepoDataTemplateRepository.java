@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RT_RepoDataTemplateRepository extends JpaRepository<RT_RepoDataTemplate, Long> {
 
-	   @Query(value = "SELECT * FROM BCBUAE_REPO_DATA_TEMPLATE WHERE DEL_FLG != 'Y'", nativeQuery = true)
-	    List<RT_RepoDataTemplate> getlist();
+	   @Query(value = "SELECT * FROM BCBUAE_REPO_DATA_TEMPLATE WHERE DEL_FLG != 'Y' and REPORT_DATE=?1", nativeQuery = true)
+	    List<RT_RepoDataTemplate> getlist(Date REPORT_DATE);
 	    
 	    @Query(value = "SELECT " +
 	            "DATA_DATE, BANK_NAME, HEAD_OFFICE_SUBSIDIARY, SUBSIDIARY, " +
@@ -30,8 +31,8 @@ public interface RT_RepoDataTemplateRepository extends JpaRepository<RT_RepoData
 	            "INTEREST_PROFIT_RATE, FIXED_RATE, FLOATING_RATE_TYPE, REPO_MARGIN, " + // Note: Replaced 'Repo Interest/Profit rate Margin (Only in case of Floating Rate)' with 'REPO_MARGIN' as per entity.
 	            "INTEREST_ACCRUALS, REPO_VALUATION, DIRTY_PRICE, GMRA_COLLATERAL_MTM, " +
 	            "MIN_TRANSFER_AMOUNT, THRESHOLD, MARGIN_CALL_FREQ " +
-	            "FROM BCBUAE_REPO_DATA_TEMPLATE", nativeQuery = true)
-	    List<Object[]> getRepoDataList();
+	            "FROM BCBUAE_REPO_DATA_TEMPLATE where REPORT_DATE=?1", nativeQuery = true)
+	    List<Object[]> getRepoDataList(Date REPORT_DATE);
 	    
 		
 		@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_REPO_DATA_TEMPLATE", nativeQuery = true)

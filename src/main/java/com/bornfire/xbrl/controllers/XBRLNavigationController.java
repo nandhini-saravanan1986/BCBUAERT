@@ -829,7 +829,17 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "Repo_Data_Template", method = RequestMethod.GET)
 	public String RepoDataTemplate(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) Long slNo, // changed from accountNo to slNo
-			Model md, HttpServletRequest req) {
+			Model md, HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		
+
+			    LocalDate today = LocalDate.now();
+			    String formattedDate = null;
+			    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			   
+			    if (Report_date != null) {
+			        formattedDate = sdf.format(Report_date);
+			    }
 
 		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
 			RT_RepoDataTemplate data = repoRepo.findById(slNo).orElse(null); // make sure entity class matches
@@ -837,21 +847,47 @@ public class XBRLNavigationController {
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("repoList", repoRepo.getlist());
+			md.addAttribute("repoList", repoRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
 			Timestamp lastdatetimestamp = repoRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = repoRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = repoRepo.findSecondLastReportDate();	
+			
+			  	String lastDateString = null;
+		        String secondLastDateString = null;
+		        LocalDate lastDate = null;
+
+		        if (lastdatetimestamp != null) {
+		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
+		        if (secondlastdatetimestamp != null) {
+		            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+		        
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Repo_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Repo_Data_Template");
-			if (data != null && !data.equals(null)) {
+			
+			 RT_DataControl report_datedata = null;
+
+		        if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Repo_Data_Template");
+		        }
+		        
+		       
+
+		     
+	        if (report_datedata != null) {
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
+	            md.addAttribute("data", report_datedata);
+	            md.addAttribute("formmode", "exist");
+
+	        }
+			else if (data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
@@ -894,10 +930,10 @@ public class XBRLNavigationController {
 
 //Downloading Excel for Repo
 	@RequestMapping(value = "downloadRepoExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadRepoExcel(HttpServletRequest req) throws IOException {
+	public ResponseEntity<byte[]> downloadRepoExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) throws IOException {
 		System.out.println("Entered controller downloadRepoExcel");
 
-		File excelFile = repoService.generateRepoExcel();
+		File excelFile = repoService.generateRepoExcel(Report_date);
 		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
 
 		HttpHeaders headersResponse = new HttpHeaders();
@@ -1381,10 +1417,10 @@ public class XBRLNavigationController {
 
 	// Downloading Excel for Repo
 	@RequestMapping(value = "downloadInvestmentExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadInvenstmentExcel() throws IOException {
+	public ResponseEntity<byte[]> downloadInvenstmentExcel(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) throws IOException {
 		System.out.println("Entered controller downloadRepoExcel");
 
-		File excelFile = repoService.generateRepoExcel();
+		File excelFile = repoService.generateRepoExcel(Report_date);
 		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
 
 		HttpHeaders headersResponse = new HttpHeaders();
@@ -1518,7 +1554,8 @@ public class XBRLNavigationController {
 	// For download excel for downloadNostroExcel
 
 	@RequestMapping(value = "downloadNostroExcel", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadNostroExcel(HttpServletRequest req) throws IOException {
+	public ResponseEntity<byte[]> downloadNostroExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date
+) throws IOException {
 		System.out.println("Entered controller downloadNostroExcel");
 
 		String userid = (String) req.getSession().getAttribute("USERID");
@@ -1526,7 +1563,7 @@ public class XBRLNavigationController {
 		auditService.createBusinessAudit(userid, "DOWNLOAD", "NOSTRO_EXCEL", null, "BCBUAE_NOSTRO_BALANCE");
 
 		// ✅ Generate Excel file and prepare response
-		File excelFile = nostroService.generateNostroExcel();
+		File excelFile = nostroService.generateNostroExcel(Report_date);
 		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
 
 		HttpHeaders headersResponse = new HttpHeaders();
@@ -1542,7 +1579,17 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "/Trade_Market_Risk", method = RequestMethod.GET)
 	public String tradeMarketRisk(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate, Model model,
-			HttpServletRequest request) {
+			HttpServletRequest request,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+
+			LocalDate today = LocalDate.now();
+			String formattedDate = null;
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 
 		if ("edit".equalsIgnoreCase(formmode) && reportDate != null) {
 			RT_TradeMarketRiskData data = trade_market_risk_repo.findById(reportDate).orElse(null);
@@ -1550,22 +1597,48 @@ public class XBRLNavigationController {
 			model.addAttribute("formmode", "edit");
 			System.out.println("Edit mode activated");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.findAll();
+			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.getlist(Report_date);
 			model.addAttribute("dataList", list);
 			model.addAttribute("formmode", "list");
 			System.out.println("List mode activated");
+			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
+			
+			  
 			Timestamp lastdatetimestamp = trade_market_risk_repo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = trade_market_risk_repo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = trade_market_risk_repo.findSecondLastReportDate();	
+			 String lastDateString = null;
+		        String secondLastDateString = null;
+		        LocalDate lastDate = null;
+
+		        // ✅ NULL SAFE
+		        if (lastdatetimestamp != null) {
+		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
+		        if (secondlastdatetimestamp != null) {
+		            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Trade_Market_Risk_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Market_Risk_Data_Template");
-			if (data != null && !data.equals(null)) {
+			 RT_DataControl report_datedata = null;
+
+	        if (formattedDate != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Trade_Market_Risk_Data_Template");
+	        }
+	        
+	        
+	        // ✅ FIXED NULL CHECKS
+	        if (report_datedata != null) {
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
+	        	model.addAttribute("data", report_datedata);
+	        	model.addAttribute("formmode", "exist");
+
+	        }
+			else if (data != null && !data.equals(null)) {
 				model.addAttribute("data", data);
 				model.addAttribute("formmode", "exist");
 			}
@@ -1688,11 +1761,12 @@ public class XBRLNavigationController {
 	private RT_TradeMarketRiskService rtTradeMarketRiskService;
 
 	@RequestMapping(value = "/downloadTradeMarketRiskExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTradeMarketRiskExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadTradeMarketRiskExcel(HttpServletRequest req
+			,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Trade Market Risk Excel download.");
 
 		try {
-			byte[] excelData = rtTradeMarketRiskService.generateTradeMarketRiskExcel();
+			byte[] excelData = rtTradeMarketRiskService.generateTradeMarketRiskExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
@@ -1830,12 +1904,12 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadMmExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadMmExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadMmExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for MM Excel download.");
 
 		try {
 
-			byte[] excelData = mmdataService.generateMmExcel();
+			byte[] excelData = mmdataService.generateMmExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: MM Excel file has no data. Returning 204.");

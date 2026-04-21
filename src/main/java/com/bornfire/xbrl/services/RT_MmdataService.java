@@ -164,10 +164,10 @@ public class RT_MmdataService {
     
     
 
-    public byte[] generateMmExcel() throws Exception {
+    public byte[] generateMmExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting MM Excel generation process in memory.");
 
-        List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1();
+        List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1(Report_date);
 
         if (mmDataList.isEmpty()) {
             logger.warn("Service: No data found for MM report. Returning empty result.");

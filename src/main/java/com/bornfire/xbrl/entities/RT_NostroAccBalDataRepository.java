@@ -22,8 +22,8 @@ public interface RT_NostroAccBalDataRepository extends JpaRepository<RT_NostroAc
 			+ "COUNTRY_OF_RISK, CBUAE_GEOGRAPHICAL_ZONE, CURRENCY, "
 			+ "COUNTERPARTY_SETTLEMENT_DATE, COUNTERPARTY_BALANCE, COUNTERPARTY_BALANCE_AED, "
 			+ "BANK_INTERNAL_SETTLEMENT_DATE, BANK_BALANCE, BANK_BALANCE_AED, " + "ACCOUNT_NO, GAP "
-			+ "FROM BCBUAE_NOSTRO_ACC_BAL_DATA", nativeQuery = true)
-	List<Object[]> getnostrodatalistdata1();
+			+ "FROM BCBUAE_NOSTRO_ACC_BAL_DATA where REPORT_DATE=?1", nativeQuery = true)
+	List<Object[]> getnostrodatalistdata1(Date Report_date);
 
 	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_NOSTRO_ACC_BAL_DATA", nativeQuery = true)
 	Timestamp findLastReportDate();

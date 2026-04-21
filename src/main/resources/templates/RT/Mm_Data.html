@@ -877,9 +877,10 @@ Tested by   : Rajalakshmi R
 	function downloadMm() {
 		// 1. Show the loader modal
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		  var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		$.ajax({
-			url: './downloadMmExcel',
+			url: './downloadMmExcel?Report_date='+Report_date,
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Important for binary file response

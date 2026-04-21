@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RT_TradeMarketriskDataRepository extends JpaRepository<RT_TradeMarketRiskData, Date> {
 
-	@Query(value = "select * from BCBUAE_TRADE_MARKET_RISK_DATA where DEL_FLG != 'Y'", nativeQuery = true)
-	List<RT_TradeMarketRiskData> getlist();
+	@Query(value = "select * from BCBUAE_TRADE_MARKET_RISK_DATA where DEL_FLG != 'Y' and REPORT_DATE=?1 ", nativeQuery = true)
+	List<RT_TradeMarketRiskData> getlist(Date REPORT_DATE);
 	
 	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_TRADE_MARKET_RISK_DATA", nativeQuery = true)
 	Timestamp findLastReportDate();

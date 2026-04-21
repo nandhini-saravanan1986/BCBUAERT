@@ -239,11 +239,11 @@ public class RT_NostroAccBalDataService {
 	    }
 	}
 
-	public File generateNostroExcel() {
+	public File generateNostroExcel(Date Report_date) {
 		File outputFile = null;
 
 		try {
-			List<Object[]> nostroList = nostroAccBalRepo.getnostrodatalistdata1();
+			List<Object[]> nostroList = nostroAccBalRepo.getnostrodatalistdata1(Report_date);
 			File templateFile = new File(
 					env.getProperty("output.exportpathtemp") + "CBUAE_Nostro Account_Balance_Data_Template.xlsx");
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));

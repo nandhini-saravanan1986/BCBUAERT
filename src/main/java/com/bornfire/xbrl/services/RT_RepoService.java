@@ -183,11 +183,11 @@ public class RT_RepoService {
 	        return false;
 	    }
 	    
-	    public File generateRepoExcel() {
+	    public File generateRepoExcel(Date Report_date) {
 	        File outputFile = null;
 
 	        try {
-	            List<Object[]> repoList = repoRepo.getRepoDataList();
+	            List<Object[]> repoList = repoRepo.getRepoDataList(Report_date);
 	            File templateFile = new File(env.getProperty("output.exportpathtemp") + "CBUAE_Repo_Data_Template.xlsx");
 	            Workbook workbook = WorkbookFactory.create(new FileInputStream(templateFile));
 	            Sheet sheet = workbook.getSheetAt(3);

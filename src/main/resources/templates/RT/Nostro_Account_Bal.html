@@ -870,9 +870,10 @@ PURPOSE		: Nostra Account balance Report
 	function downloadNostro() {
 		// 1. Show the loader modal
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		 var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		$.ajax({
-			url: './downloadNostroExcel',
+			url: './downloadNostroExcel?Report_date='+Report_date,
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob'
