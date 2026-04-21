@@ -687,13 +687,13 @@ left
 <script>
 	function navigateToTab(tabId) {
 		$("#loader").css("display", "flex");
-
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 		if (tabId === 'data') {
-			window.location.href = 'Liquidity_Risk_Data?formmode=list';
+			window.location.href = 'Liquidity_Risk_Data?formmode=list&Report_date='+Report_date;
 			//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");  
 
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Liquidity_Risk_Data?formmode=add';
+			window.location.href = 'Liquidity_Risk_Data?formmode=add+'+'&Report_date='+Report_date;
 			//$("#loader").modal("hide");
 		}
 	}
@@ -728,9 +728,9 @@ left
 	function download() {
 		// 1. Show the loader modal
 		$("#loader").css("display", "flex");
-
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 		$.ajax({
-			url: './downloadLiquidityRiskData',
+			url: './downloadLiquidityRiskData?Report_date='+Report_date,
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Important: To handle binary file (Excel)
@@ -877,8 +877,7 @@ left
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}" onchange="navigateToTab('datacontrols')" class="form-control form-control-sm" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1020,8 +1019,7 @@ left
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}" onchange="navigateToTab('datacontrols')" class="form-control form-control-sm" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1167,6 +1165,9 @@ left
 				<!----------------------------------------TEMPLATE ENDS--------------------------------------------- -->
 				<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 				<div class="tab-pane fade" id="data" role="tabpanel">
+					<input type="date" id="portfolioDate" name="portfolioDate"
+					  		th:value="${lastDate}" class="form-control form-control-sm"
+					  		required Style="display:none" />
 					<div class="table-responsive" style="max-height: 400px; overflow: auto; border:none;">
 						<table id="usertable" class="table table-bordered table-striped table-hover">
 

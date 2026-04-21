@@ -12,14 +12,14 @@ import org.springframework.stereotype.Repository;
 public interface RT_TradeLevelDataDerivativesRepository extends JpaRepository<RT_TradeLevelDataDerivatives, String> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_TRADE_LEVEL_DERIVATIVES  ", nativeQuery = true)
-	List<RT_TradeLevelDataDerivatives> getlist();
+	@Query(value = "select * from BCBUAE_TRADE_LEVEL_DERIVATIVES where Report_date =?1 ", nativeQuery = true)
+	List<RT_TradeLevelDataDerivatives> getlist(Date Report_date);
 
 	@Query(value = "SELECT * FROM BCBUAE_TRADE_LEVEL_DERIVATIVES ", nativeQuery = true)
 	List<RT_TradeLevelDataDerivatives> getfxriskdatalistdata();
 
-	@Query(value = "SELECT * FROM BCBUAE_TRADE_LEVEL_DERIVATIVES ", nativeQuery = true)
-	List<Object[]> gettradeleveldataderivative1();
+	@Query(value = "SELECT * FROM BCBUAE_TRADE_LEVEL_DERIVATIVES Where Report_date =?1 ", nativeQuery = true)
+	List<Object[]> gettradeleveldataderivative1(Date Report_date);
 	
 	
 	@Query(value = "SELECT * FROM BCBUAE_TRADE_LEVEL_DERIVATIVES where SI_NO =?1 ", nativeQuery = true)

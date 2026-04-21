@@ -257,10 +257,10 @@ public class RT_TradeLevelDerivativesService {
 	}
     
     
-    public byte[] generateTradeleveldataderivativeExcel() throws Exception {
+    public byte[] generateTradeleveldataderivativeExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Trade level Data Derivative Excel generation process in memory.");
 
-        List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticeRepo.gettradeleveldataderivative1();
+        List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticeRepo.gettradeleveldataderivative1(Report_date);
 
         if (tradeleveldataDerivative.isEmpty()) {
             logger.warn("Service: No data found for Trade level data derivative report. Returning empty result.");

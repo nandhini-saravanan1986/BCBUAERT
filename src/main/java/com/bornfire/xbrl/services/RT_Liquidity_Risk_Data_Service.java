@@ -168,10 +168,10 @@ public class RT_Liquidity_Risk_Data_Service {
             return false;
         }
     }
-    public byte[] generateLiquidityDataExcel() throws Exception {
+    public byte[] generateLiquidityDataExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Liquidity Risk Excel generation process in memory.");
 
-        List<RT_Liquidity_Risk_Data_Template> dataList = LiquidityRiskDataRepository.getLiquiditylist();
+        List<RT_Liquidity_Risk_Data_Template> dataList = LiquidityRiskDataRepository.getLiquiditylist(Report_date);
         if (dataList.isEmpty()) {
             logger.warn("Service: No data found. Returning empty byte array.");
             return new byte[0];
