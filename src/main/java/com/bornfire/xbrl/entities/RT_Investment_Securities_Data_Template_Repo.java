@@ -1,6 +1,7 @@
 package com.bornfire.xbrl.entities;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,4 +53,10 @@ public interface RT_Investment_Securities_Data_Template_Repo
 		
      @Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_INVESTMENT_SECURITIES_DATA WHERE REPORT_DATE < (SELECT MAX(REPORT_DATE) FROM BCBUAE_INVESTMENT_SECURITIES_DATA)", nativeQuery = true)
     Timestamp findSecondLastReportDate();
+     
+ 	@Query(value = "SELECT * FROM BCBUAE_INVESTMENT_SECURITIES_DATA where SI_NO =?1 ", nativeQuery = true)
+ 	RT_Investment_Securities_Data_Template getParticularDataBySI_NO(String SI_NO);
+ 	
+	@Query(value = "select * from BCBUAE_INVESTMENT_SECURITIES_DATA where REPORT_DATE=?1", nativeQuery = true)
+	List<RT_Investment_Securities_Data_Template> getlist(Date REPORT_DATE);
 }

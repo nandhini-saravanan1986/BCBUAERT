@@ -1285,11 +1285,11 @@ public class XBRLNavigationController {
 	// ... other controller methods ...
 
 	@RequestMapping(value = "/downloadInvestmentSecuritiesExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadInvestmentSecuritiesExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadInvestmentSecuritiesExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Investment Securities Excel download.");
 
 		try {
-			byte[] excelData = rtInvestmentSecuritiesService.generateInvestmentSecuritiesExcel();
+			byte[] excelData = rtInvestmentSecuritiesService.generateInvestmentSecuritiesExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn(
@@ -1501,7 +1501,17 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Fx_Risk_Data", method = RequestMethod.GET)
 	public String Fxriskdata(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		   LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			RT_Fxriskdata data = friskdataRepo.getParticularDataBySI_NO(SI_NO);
@@ -1510,22 +1520,45 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", friskdataRepo.getlist());
+			md.addAttribute("branchList", friskdataRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
 			Timestamp lastdatetimestamp = friskdataRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = friskdataRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+			 String lastDateString = null;
+		     String secondLastDateString = null;
+		     LocalDate lastDate = null;
+					
+			
+			if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Fx_Risk_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Fx_Risk_Data_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+			
+			 if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Fx_Risk_Data_Template");
+		        }
+		        
+		        System.out.println(formattedDate);
+
+		        // ✅ FIXED NULL CHECKS
+		        if (report_datedata != null) {
+		        	System.out.println(formattedDate);
+		        	lastDate = LocalDate.parse(formattedDate, formatter);
+		            md.addAttribute("data", report_datedata);
+		            md.addAttribute("formmode", "exist");
+		        }
+			
+			else if(data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
@@ -1549,14 +1582,16 @@ public class XBRLNavigationController {
 		return "RT/Fx_Risk_Data";
 	}
 
+
 	// For download excel for fxriskdata
 
 	@RequestMapping(value = "/downloadFxriskExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadFxriskExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadFxriskExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Fx Risk Excel download.");
 
 		try {
-			byte[] excelData = fxriskdataService.generateFxRiskExcel();
+			byte[] excelData = fxriskdataService.generateFxRiskExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");
@@ -3196,7 +3231,17 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Trade_Level_Data_Derivatives_Simplified", method = RequestMethod.GET)
 	public String TradeleveldataderivativesSimplified(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String SI_NO, Model md, HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		  LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
 
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			RT_TradeLevelDataDerivativesSimplified data = tradeleveldataderivativessimplifiedRepo
@@ -3206,23 +3251,45 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist());
+			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist(Report_date));
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
 			Timestamp lastdatetimestamp = tradeleveldataderivativessimplifiedRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = tradeleveldataderivativessimplifiedRepo.findSecondLastReportDate();			
-			LocalDate lastDate=(lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().toLocalDate();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+			 String lastDateString = null;
+		     String secondLastDateString = null;
+		     LocalDate lastDate = null;
+					
+			
+			if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Trade_Level_Data_Derivative_Simplified_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Trade_Level_Data_Derivative_Simplified_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+			
+			 if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Trade_Level_Data_Derivative_Simplified_Template");
+		        }
+		        
+		        System.out.println(formattedDate);
+
+		        // ✅ FIXED NULL CHECKS
+		        if (report_datedata != null) {
+		        	System.out.println(formattedDate);
+		        	lastDate = LocalDate.parse(formattedDate, formatter);
+		            md.addAttribute("data", report_datedata);
+		            md.addAttribute("formmode", "exist");
+		        }
+			
+			else if(data != null && !data.equals(null)) {
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
@@ -3264,12 +3331,12 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadTradeleveldataderivativesimplifiedExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadTradeleveldataderivativesimplifiedExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Trade Level Data Derivative Simplified Excel download.");
 
 		try {
 			byte[] excelData = tradeleveldataderivativesimplifiedService
-					.generateTradeleveldataderivativesimplifiedExcel();
+					.generateTradeleveldataderivativesimplifiedExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn(

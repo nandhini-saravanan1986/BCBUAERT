@@ -207,10 +207,10 @@ public class RT_InvestmentSecurity_Service {
 		}
 	}
 
-	public byte[] generateInvestmentSecuritiesExcel() throws Exception {
+	public byte[] generateInvestmentSecuritiesExcel(Date Report_date) throws Exception {
 		logger.info("Service: Starting Investment Securities Excel generation process in memory.");
 
-		List<RT_Investment_Securities_Data_Template> dataList = investmentSecuritiesRepo.getlist();
+		List<RT_Investment_Securities_Data_Template> dataList = investmentSecuritiesRepo.getlist(Report_date);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for Investment Securities report. Returning empty result.");

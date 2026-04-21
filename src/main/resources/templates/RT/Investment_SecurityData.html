@@ -752,7 +752,7 @@ TESTED BY   : RAJALAKSHMI R
 		function submitForm() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-			const reportName = 'CBUAE_Investment_Securities_Data_Template	';
+			const reportName = 'CBUAE_Investment_Securities_Data_Template';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
 			const formData = $("#nostroForm").serialize();
 
@@ -842,15 +842,19 @@ TESTED BY   : RAJALAKSHMI R
 
 
 <script>
-	function navigateToTab(tabId) {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-		if (tabId === 'data') {
-			window.location.href = 'Investment_Securities_Data?formmode=list';
-		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Investment_Securities_Data?formmode=add';
-		}
-	}
+	function navigateToTab(tabId) {
+	  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	  var Report_date=Report_date=document.getElementById("portfolioDate").value;
+	  
+	 if (tabId === 'data') {
+			window.location.href = 'Investment_Securities_Data?formmode=list&Report_date='+Report_date;
+								//$("#loader").modal("hide");
+	} else if (tabId === 'datacontrols') {
+	     window.location.href = 'Investment_Securities_Data?formmode=add'+'&Report_date='+Report_date;
+	           		//$("#loader").modal("hide");
+	 }
+	 }
 
 
 	function handleClick(tabId) {
@@ -882,9 +886,10 @@ TESTED BY   : RAJALAKSHMI R
 <script>
 	function downloadInvestmentSecurities() {
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		$.ajax({
-			url: './downloadInvestmentSecuritiesExcel', // This URL must match your controller endpoint
+			url: './downloadInvestmentSecuritiesExcel?Report_date='+Report_date,// This URL must match your controller endpoint
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Essential for handling binary file data
@@ -953,7 +958,7 @@ TESTED BY   : RAJALAKSHMI R
 		<div th:insert="XBRLHeaderMenu :: header"></div>
 
 		<div class="role-page-header d-flex justify-content-between align-items-center"
-			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' }">
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist'}">
 			<div class="d-flex align-items-center">
 
 														<button class="static-back-btn" onclick="goBack()" title="Go Back">
@@ -988,11 +993,13 @@ TESTED BY   : RAJALAKSHMI R
 
 	</div>
 	<!-- -------------------User List Starts----------------------------------------------------- -->
+	
 	<div style="padding-right: 10px; padding-left: 20px;"
 						th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
 						<!-- Tabs -->
 						<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
-							th:if="${formmode == 'null'}">
+							th:if="${formmode == null or formmode == 'add'}">
+							
 		<!-- Tabs -->
 			<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
@@ -1013,11 +1020,13 @@ TESTED BY   : RAJALAKSHMI R
 											</select> <label class="form-legend">Submitting Institution</label>
 										</div>
 										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
-												date</label>
-										</div>
+										
+
+										
+											<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm"
+											required onchange="navigateToTab('datacontrols')" /> <label class="form-legend">Portfolio
+											date</label>
+									</div>
 									</div>
 
 									<div class="row">
@@ -1127,7 +1136,7 @@ TESTED BY   : RAJALAKSHMI R
 							</form>
 
 							<div class="card-footer text-center">
-								<button th:if="${formmode == 'null'}" id="savebutton"
+								<button th:if="${formmode == null or formmode == 'add'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
@@ -1137,11 +1146,13 @@ TESTED BY   : RAJALAKSHMI R
 		
 		<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
 				th:if="${formmode} =='exist'">
+				
+				
 				<div class="tab-pane fade show active scrollable-exist-viewport"
 					id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="mmdataForm" method="post" autocomplete="off"
+							<form id="nostroForm" method="post" autocomplete="off"
 								class="compact-form">
 								<div class="card-body">
 
@@ -1156,10 +1167,9 @@ TESTED BY   : RAJALAKSHMI R
 											</select> <label class="form-legend">Submitting Institution</label>
 										</div>
 										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
-												date</label>
+											<input type="date" id="portfolioDate" name="portfolioDate" th:value="${lastDate}" class="form-control form-control-sm"
+											required onchange="navigateToTab('datacontrols')" />
+											 <label class="form-legend">Portfolio</label>
 										</div>
 									</div>
 
@@ -1308,6 +1318,10 @@ TESTED BY   : RAJALAKSHMI R
 
 		<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 		<div class="tab-pane fade" id="data" role="tabpanel">
+			
+			<input type="date" id="portfolioDate" name="portfolioDate"
+					th:value="${lastDate}" class="form-control form-control-sm"
+					required Style="display:none" />
 			<div class="table-responsive" style=" border:none;">
 				<table id="usertable" class="table table-bordered table-striped table-hover">
 

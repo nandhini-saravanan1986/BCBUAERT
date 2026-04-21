@@ -168,10 +168,10 @@ public class RT_FxriskdataService {
 
 
 
-	public byte[] generateFxRiskExcel() throws Exception {
+	public byte[] generateFxRiskExcel(Date Report_date) throws Exception {
 		logger.info("Service: Starting Fx Risk Excel generation process in memory.");
 
-	    List<Object[]> fxDataList = friskdataRepo.getfxriskdatalistdata1();
+	    List<Object[]> fxDataList = friskdataRepo.getfxriskdatalistdata1(Report_date);
 
 	    if (fxDataList.isEmpty()) {
 	        logger.warn("Service: No data found for Fx Risk report. Returning empty result.");

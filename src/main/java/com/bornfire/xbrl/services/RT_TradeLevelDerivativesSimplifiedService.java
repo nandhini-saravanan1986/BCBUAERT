@@ -268,10 +268,10 @@ public class RT_TradeLevelDerivativesSimplifiedService {
 	}
     
     
-    public byte[] generateTradeleveldataderivativesimplifiedExcel() throws Exception {
+    public byte[] generateTradeleveldataderivativesimplifiedExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Foreign Currency Deposit Excel generation process in memory.");
 
-        List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticesimplifiedRepo.gettradeleveldataderivative1();
+        List<Object[]> tradeleveldataDerivative = tradeleveldataderivaticesimplifiedRepo.gettradeleveldataderivative1(Report_date);
 
         if (tradeleveldataDerivative.isEmpty()) {
             logger.warn("Service: No data found. Returning empty result.");

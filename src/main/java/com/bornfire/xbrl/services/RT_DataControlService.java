@@ -37,7 +37,7 @@ public class RT_DataControlService {
 	public String createOrUpdate(RT_DataControl dto, String formmode,String report_name,String userid) {
 	    try {
 	        System.out.println("Service: createOrUpdate() called");
-
+	        System.out.println(dto.getPortfolioDate());
 	        if (dto.getPortfolioDate() == null) {
 	            return "ERROR: Portfolio date is required.";
 	        }
