@@ -3485,6 +3485,7 @@ public class XBRLNavigationController {
 	        @RequestParam(required = false) String report_date,
 	        @RequestParam(required = false) String rowid, @RequestParam(required = false) String tablename,
 	        Model model) {
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");		
 
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
 		if ("detail".equalsIgnoreCase(formmode)) {
@@ -3521,8 +3522,10 @@ public class XBRLNavigationController {
 	    }
 	    // 2. LIST MODE (Main Dashboard Table)
 	    else if ("list".equalsIgnoreCase(formmode)) {
-	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails());
+	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails(report_date));
 	        model.addAttribute("formmode", "list");
+	        model.addAttribute("lastDate",LocalDate.parse(report_date, formatter) );
+	        
 	    } 
 	    // 3. EDIT MODE
 	    else if ("edit".equalsIgnoreCase(formmode) && SI_NO != null) {
@@ -3533,16 +3536,38 @@ public class XBRLNavigationController {
 	    // 4. ADD MODE (Default Data Controls)
 	    else {
 	    	Timestamp lastdatetimestamp = LiquidityRiskDashboardRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = LiquidityRiskDashboardRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = LiquidityRiskDashboardRepo.findSecondLastReportDate();	
+			String lastDateString = null;
+		    String secondLastDateString = null;
+		    LocalDate lastDate = null;
+		        
+		    if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+	        
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Liquidity_Risk_Dashboard_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Liquidity_Risk_Dashboard_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+
+	        if (report_date != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(report_date, "CBUAE_Liquidity_Risk_Dashboard_Template");
+	        }
+	        
+	        System.out.println(report_date);
+	       
+	        if (report_datedata != null) {
+	        	System.out.println(report_date);
+	        	lastDate = LocalDate.parse(report_date, formatter);
+	        	model.addAttribute("data", report_datedata);
+	        	model.addAttribute("formmode", "exist");
+	        }
+			
+			else if (data != null && !data.equals(null)) {
 				model.addAttribute("data", data);
 				model.addAttribute("formmode", "exist");
 			}
@@ -3684,11 +3709,11 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadLiquidityriskdashboardExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadLiquidityriskdashboardExcel(HttpServletRequest req ,@RequestParam(required = false) String report_date) {
 		logger.info("Controller: Received request for Liquidity Risk Dashboard Template Excel download.");
 
 		try {
-			byte[] excelData = liquidityriskdashboardService.generateLiquidityriskdashboardExcel();
+			byte[] excelData = liquidityriskdashboardService.generateLiquidityriskdashboardExcel(report_date);
 
 			if (excelData.length == 0) {
 				logger.warn(

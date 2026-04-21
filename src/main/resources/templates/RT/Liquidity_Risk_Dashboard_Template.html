@@ -701,7 +701,14 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 		function list() {
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list';
+			var Report_date = document.getElementById("portfolioDate").value;
+
+		    if (Report_date) {
+		        var parts = Report_date.split("-"); 
+		        Report_date = parts[2] + "-" + parts[1] + "-" + parts[0];
+		    }
+			location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list&report_date=' + Report_date;
+			
 		}
 
 		function nostro() {
@@ -748,19 +755,26 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 
 <script>
-	function navigateToTab(tabId) {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+function navigateToTab(tabId) {
+    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 
-		if (tabId === 'data') {
-			window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list';
-		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=add';
-		}
-		else if (tabId === 'detail') {
-			window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=detail';
-		}
+    var Report_date = document.getElementById("portfolioDate").value;
 
-	}
+    if (Report_date) {
+        var parts = Report_date.split("-"); 
+        Report_date = parts[2] + "-" + parts[1] + "-" + parts[0];
+    }
+
+    if (tabId === 'data') {
+        window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list&report_date=' + Report_date;
+    } 
+    else if (tabId === 'datacontrols') {
+        window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=add&report_date=' + Report_date;
+    } 
+    else if (tabId === 'detail') {
+        window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=detail&report_date=' + Report_date;
+    }
+}
 
 
 	function handleClick(tabId) {
@@ -804,9 +818,15 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 <script>
 	function downloadLiquidityrisk() {
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		var Report_date = document.getElementById("portfolioDate").value;
+
+	    if (Report_date) {
+	        var parts = Report_date.split("-"); 
+	        Report_date = parts[2] + "-" + parts[1] + "-" + parts[0];
+	    }
 
 		$.ajax({
-			url: './downloadLiquidityriskdashboardExcel', // This URL must match your controller endpoint
+			url: './downloadLiquidityriskdashboardExcel?report_date=' + Report_date, // This URL must match your controller endpoint
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob' // Essential for handling binary file data
@@ -923,7 +943,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm" required />
+												th:value="${lastDate}" class="form-control form-control-sm" onchange="navigateToTab('datacontrols')"  required />
 											<label class="form-legend">Portfolio
 												date</label>
 										</div>
@@ -1044,7 +1064,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm" readonly />
+												th:value="${lastDate}" class="form-control form-control-sm" onchange="navigateToTab('datacontrols')"  />
 											<label class="form-legend">Portfolio
 												date</label>
 										</div>
@@ -1191,6 +1211,9 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="table-responsive" style=" border: none;" th:if="${formmode == 'list'}">
+			<input type="date" id="portfolioDate" name="portfolioDate"
+			th:value="${lastDate}" class="form-control form-control-sm"
+			required Style="display:none" />
 				<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
 					<thead class="thead-light">
 						<tr>

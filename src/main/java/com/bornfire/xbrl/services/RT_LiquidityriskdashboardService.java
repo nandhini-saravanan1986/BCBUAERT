@@ -306,10 +306,10 @@ public class RT_LiquidityriskdashboardService {
 
 
 
-	public byte[] generateLiquidityriskdashboardExcel() throws Exception {
+	public byte[] generateLiquidityriskdashboardExcel(String report_date) throws Exception {
         logger.info("Service: Starting MM Excel generation process in memory.");
 
-        List<Object[]> liquidityriskdashboard = LiquidityRiskDashboardRepo.getliquidityriskdashboarddata1();
+        List<Object[]> liquidityriskdashboard = LiquidityRiskDashboardRepo.getliquidityriskdashboarddata1(report_date);
 
         if (liquidityriskdashboard.isEmpty()) {
             logger.warn("Service: No data found for LRD report. Returning empty result.");
