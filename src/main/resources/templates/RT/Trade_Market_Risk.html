@@ -140,63 +140,13 @@ body {
 	--overlay-bg: rgba(255, 255, 255, 0.9);
 }
 
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
 
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
-
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
 
 /* Static logo */
 .logo-imgs {
 	height: 90px;
 	object-fit: contain;
 	display: block;
-}
-
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
-
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
 }
 
 /* Animation for flowing line */
@@ -676,7 +626,88 @@ label.error {
 								    transform: scale(0.95);
 								}
 	</style>
-</style>
+	<style>
+			.loader-overlay {
+			    display: none;
+			    position: fixed;
+			    inset: 0;
+			    background: rgba(10, 22, 45, 0.65);
+			    backdrop-filter: blur(4px);
+			    z-index: 9999;
+			    align-items: center;
+			    justify-content: center;
+			}
+
+			.loader-card {
+			    width: 320px;
+			    background: #ffffff;
+			    border-radius: 16px;
+			    padding: 22px;
+			    box-shadow: 0 20px 45px rgba(0,0,0,0.22);
+			    text-align: center;
+			}
+
+			.loader-logo-wrap {
+			    position: relative;
+			    width: 86px;
+			    height: 86px;
+			    margin: 0 auto 14px;
+			}
+
+			.loader-logo {
+			    width: 68px;
+			    height: 68px;
+			    position: absolute;
+			    top: 9px;
+			    left: 9px;
+			    border-radius: 50%;
+			    background: #fff;
+			    padding: 6px;
+			    animation: loaderPulse 1.6s infinite;
+			}
+
+			.loader-ring {
+			    width: 86px;
+			    height: 86px;
+			    border-radius: 50%;
+			    border: 3px solid #d6e4ff;
+			    border-top-color: #0d6efd;
+			    animation: spin 1s linear infinite;
+			}
+
+			.loader-title {
+			    font-weight: 700;
+			    margin-top: 10px;
+			}
+
+			.loader-progress {
+			    margin-top: 14px;
+			    height: 6px;
+			    background: #e9f1ff;
+			    border-radius: 999px;
+			    overflow: hidden;
+			}
+
+			.loader-progress-bar {
+			    height: 100%;
+			    width: 40%;
+			    background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			    animation: progressMove 1.5s infinite;
+			}
+
+			@keyframes spin {
+			    100% { transform: rotate(360deg); }
+			}
+
+			@keyframes loaderPulse {
+			    50% { transform: scale(1.05); }
+			}
+
+			@keyframes progressMove {
+			    0% { transform: translateX(-100%); }
+			    100% { transform: translateX(200%); }
+			}
+		</style>
 <script type="text/javascript">
 	$(document).ready(function () {
 		$("#nostroForm").validate({
@@ -749,9 +780,7 @@ label.error {
 		if (!$("#nostroForm").valid()) {
 			return; // If not valid, stop the submission
 		}
-
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+		$("#loader").css("display", "flex");
 		const reportName = 'CBUAE_Trade_Market_Risk_Data_Template';
 		const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
 		const formData = $("#nostroForm").serialize();
@@ -761,12 +790,12 @@ label.error {
 			type: "POST",
 			data: formData,
 			success: function (response) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				$("#alertmsg1").text(response);
 				$("#alert1").modal("toggle");
 			},
 			error: function (xhr, status, error) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				console.error("Error:", error);
 				alert("Error occurred: " + error);
 			}
@@ -780,22 +809,22 @@ label.error {
 
 
 	function home() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		location.href = 'Dashboard'
 	}
 
 	function back() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+       $("#loader").css("display", "flex");
 		window.history.back();
 	}
 
 	function list() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+       $("#loader").css("display", "flex");
 		location.href = 'Trade_Market_Risk?formmode=list';
 	}
 
 	function trade() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		location.href = 'Trade_Market_Risk';
 	}
 
@@ -809,20 +838,19 @@ label.error {
 	// This function handles the submission of the edit form.
 	function updateform(event) {
 		event.preventDefault(); // Prevent the default form submission
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+		$("#loader").css("display", "flex");
 		$.ajax({
 			url: './updateTradeMarketRisk',
 			type: 'POST',
 			data: $('#tradeMarketRiskEditForm').serialize(),
 			success: function (response) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				$("#alertmsg").text(response);
 				$("#alert").modal("show");
 			},
 			error: function (xhr, status, error) {
 				console.error("Error in modify:", error);
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				alert("Failed to modify. Please try again.");
 			}
 		});
@@ -840,6 +868,14 @@ label.error {
 		} else if (tabId === 'datacontrols') {
 			window.location.href = 'Trade_Market_Risk?formmode=add&Report_date='+Report_date;
 			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+		$("#loader").css("display", "flex");
+		if (tabId === 'data') {
+			window.location.href = 'Trade_Market_Risk?formmode=list';
+		$("#loader").hide();
+		} else if (tabId === 'datacontrols') {
+			window.location.href = 'Trade_Market_Risk?formmode=add';
+			$("#loader").hide();
+
 
 		}
 	}
@@ -892,6 +928,7 @@ label.error {
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
+		$("#loader").css("display", "flex");
 		$.ajax({
 			url: './downloadTradeMarketRiskExcel?Report_date='+Report_date,
 			type: 'GET',
@@ -900,8 +937,7 @@ label.error {
 			},
 			success: function (data) {
 				// 2a. Hide loader on success
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+				$("#loader").hide();
 				// Check if the server returned any data to download
 				if (data && data.size > 100) { // A small threshold to ensure the file isn't empty
 					// Create a temporary link to trigger the download
@@ -929,7 +965,7 @@ label.error {
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				// 2b. Hide loader on error
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 
 				console.error("Download failed:", textStatus, errorThrown);
 
@@ -1009,7 +1045,7 @@ label.error {
 								class="compact-form">
 								<div class="card-body">
 
-									<div class="row mb-2 mt-5">
+									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
 											<select id="submittingInstitution"
 												name="submittingInstitution"
@@ -2388,7 +2424,7 @@ label.error {
 		</div>
 	</div>
 	<!-- Loader Modal (Using your existing loader image) -->
-	<div class="modal fade" id="loader" data-backdrop="static"
+	<!--<div class="modal fade" id="loader" data-backdrop="static"
 		data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content"
@@ -2399,8 +2435,8 @@ label.error {
 				</div>
 			</div>
 		</div>
-	</div>
-	<div id="bob-loader" class="bob-loader" aria-hidden="true"
+	</div>-->
+	<!--<div id="bob-loader" class="bob-loader" aria-hidden="true"
 		role="status" aria-label="Loading">
 		<div class="bob-loader-card">
 			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
@@ -2409,8 +2445,19 @@ label.error {
 				<div class="flow-line"></div>
 			</div>
 		</div>
-	</div>
-
+	</div>-->
+	<div id="loader" class="loader-overlay">
+			    <div class="loader-card">
+			        <div class="loader-logo-wrap">
+			            <div class="loader-ring"></div>
+						<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
+			        </div>
+			        <div class="loader-title">Request Processing</div>
+			        <div class="loader-progress">
+			            <div class="loader-progress-bar"></div>
+			        </div>
+			    </div>
+			</div>
 	<!-- Custom Alert/Result Modal (Matches your existing style) -->
 	<div class="modal fade" id="resultModal">
 		<div class="modal-dialog modal-dialog-centered">
@@ -2474,14 +2521,14 @@ label.error {
     display: flex !important;
     justify-content: flex-end;
     align-items: center;
-    margin-top: 40px;   
+    margin-top: 25px;   
     padding-top: 0 !important; 
     float: none !important;    
 }
 /* Ensure DataTables filter (search box) doesn't have spacing above it */
 div.dataTables_filter {
 	margin-top: 0 !important;
-	padding-top: 2.25em !important;
+	padding-top: 0.25em !important;
 }
 
 /* FIX: Make search label and box inline */
@@ -2746,7 +2793,7 @@ window.onload = function() {
 <style>
 	#pageHeader {
 		position: sticky;
-		top: 110px;
+		top: 62px;
 		z-index: 1050;
 		background: white;
 		padding-top: 10px;

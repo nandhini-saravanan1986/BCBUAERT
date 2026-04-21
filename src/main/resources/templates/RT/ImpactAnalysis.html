@@ -84,61 +84,11 @@ body {
 	--bob-blue: #004080;
 	--overlay-bg: rgba(255, 255, 255, 0.9);
 }
-
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
-
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
-
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
 .logo-imgs {
 	height: 90px;
 	object-fit: contain;
 	display: block;
 }
-
-.flow-bar {
-	position: relative;
-	width: 200px;
-	height: 8px;
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
-
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
-
 @keyframes flowMove {
 	0% { left: -40%; }
 	100% { left: 100%; }
@@ -163,12 +113,12 @@ body {
 	});
 	
 	function goBack() {
-	    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	  $("#loader").css("display", "flex");
 	    window.history.back();
 	}
 
 	function hideLoader() {
-	    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+	    $("#loader").hide();
 	}
 
 	window.addEventListener("pageshow", function () {
@@ -393,7 +343,7 @@ body {
 	<style>
 		#pageHeader {
 			position: sticky;
-			top: 82px;
+			top: 62px;
 			z-index: 1050;
 			background: white;
 			padding-top: 10px;
@@ -528,7 +478,7 @@ body {
 	    display: flex !important;
 	    justify-content: flex-end;
 	    align-items: center;
-	    margin-top: 80px !important;    
+	    margin-top: 0px !important;    
 	    padding-top: 0 !important; 
 	    float: none !important;    
 	}
@@ -633,7 +583,88 @@ body {
 
 	.static-back-btn:active { transform: scale(0.95); }
 </style>
+<style>
+		.loader-overlay {
+		    display: none;
+		    position: fixed;
+		    inset: 0;
+		    background: rgba(10, 22, 45, 0.65);
+		    backdrop-filter: blur(4px);
+		    z-index: 9999;
+		    align-items: center;
+		    justify-content: center;
+		}
 
+		.loader-card {
+		    width: 320px;
+		    background: #ffffff;
+		    border-radius: 16px;
+		    padding: 22px;
+		    box-shadow: 0 20px 45px rgba(0,0,0,0.22);
+		    text-align: center;
+		}
+
+		.loader-logo-wrap {
+		    position: relative;
+		    width: 86px;
+		    height: 86px;
+		    margin: 0 auto 14px;
+		}
+
+		.loader-logo {
+		    width: 68px;
+		    height: 68px;
+		    position: absolute;
+		    top: 9px;
+		    left: 9px;
+		    border-radius: 50%;
+		    background: #fff;
+		    padding: 6px;
+		    animation: loaderPulse 1.6s infinite;
+		}
+
+		.loader-ring {
+		    width: 86px;
+		    height: 86px;
+		    border-radius: 50%;
+		    border: 3px solid #d6e4ff;
+		    border-top-color: #0d6efd;
+		    animation: spin 1s linear infinite;
+		}
+
+		.loader-title {
+		    font-weight: 700;
+		    margin-top: 10px;
+		}
+
+		.loader-progress {
+		    margin-top: 14px;
+		    height: 6px;
+		    background: #e9f1ff;
+		    border-radius: 999px;
+		    overflow: hidden;
+		}
+
+		.loader-progress-bar {
+		    height: 100%;
+		    width: 40%;
+		    background: linear-gradient(90deg, #0d6efd, #5a9bff);
+		    animation: progressMove 1.5s infinite;
+		}
+
+		@keyframes spin {
+		    100% { transform: rotate(360deg); }
+		}
+
+		@keyframes loaderPulse {
+		    50% { transform: scale(1.05); }
+		}
+
+		@keyframes progressMove {
+		    0% { transform: translateX(-100%); }
+		    100% { transform: translateX(200%); }
+		}
+	</style>
 	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
@@ -655,7 +686,7 @@ body {
 
 	<script>
 		function submitForm() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 
 			const reportName = 'ImpactAnalysis';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
@@ -666,12 +697,12 @@ body {
 				type: "POST",
 				data: formData,
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					$("#alertmsg1").text(response);
 					$("#alert1").modal("toggle");
 				},
 				error: function (xhr, status, error) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					console.error("Error:", error);
 					alert("Error occurred: " + error);
 				}
@@ -681,22 +712,22 @@ body {
 
 	<script th:inline="javascript">
 		function home() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			location.href = 'Dashboard'
 		}
 
 		function back() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			window.history.back();
 		}
 
 		function list() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			location.href = './Impact_Analysis?formmode=list&tab=dataimpact';
 		}
 
 		function impact() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			location.href = './Impact_Analysis?formmode=list&tab=dataimpact';
 		}
 
@@ -708,20 +739,20 @@ body {
 
 		function updateform(event) {
 			event.preventDefault();
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 
 			$.ajax({
 				url: `./updateImpactAnalysis`,
 				type: 'POST',
 				data: $('#impactanalysis').serialize(),
 				success: function (response) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					alert("Failed to modify. Please try again.");
 				}
 			});
@@ -751,7 +782,7 @@ body {
 
 <script>
 	function navigateToTab(tabId) {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 
 		let baseUrl = "";
 		switch (tabId) {
@@ -766,7 +797,7 @@ body {
 				break;
 			default:
 				console.warn("Unknown tabId:", tabId);
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				return;
 		}
 
@@ -806,14 +837,14 @@ body {
 
 <script>
 	function downloadImpactanalysisExcel() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 
 		$.ajax({
 			url: './downloadImpactanalysisExcel',
 			type: 'GET',
 			xhrFields: { responseType: 'blob' },
 			success: function (data) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 
 				let message = '';
 
@@ -837,7 +868,7 @@ body {
 				$('#alert').modal('show');
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				console.error("Download failed:", textStatus, errorThrown);
 				$('#alertmsg').text('An error occurred while downloading CBUAE_Foreign_Currency_Deposit_Template.xlsx.');
 				$('#alert').modal('show');
@@ -846,7 +877,7 @@ body {
 	}
 
 	function hideLoader() {
-	    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+	    $("#loader").hide();
 	}
 
 	window.addEventListener("pageshow", function () {
@@ -1483,7 +1514,7 @@ body {
 		</div>
 	</div>
 
-	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
+<!--	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content" style="background: transparent;">
 				<div class="modal-body" style="text-align: center">
@@ -1493,16 +1524,20 @@ body {
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>-->
 
-	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
-		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
-			<div class="flow-bar">
-				<div class="flow-line"></div>
-			</div>
-		</div>
-	</div>
+	<div id="loader" class="loader-overlay">
+				    <div class="loader-card">
+				        <div class="loader-logo-wrap">
+				            <div class="loader-ring"></div>
+							<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
+				        </div>
+				        <div class="loader-title">Request Processing</div>
+				        <div class="loader-progress">
+				            <div class="loader-progress-bar"></div>
+				        </div>
+				    </div>
+				</div>
 
 	<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog" aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">

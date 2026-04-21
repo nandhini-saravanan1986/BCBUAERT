@@ -526,7 +526,7 @@
 	<style>
 		#pageHeader {
 			position: sticky;
-			top: 110px;
+			top: 5px;
 			z-index: 1050;
 			background: white;
 			padding-top: 10px;
@@ -574,14 +574,7 @@
 		.suggestion-item-code:hover {
 			background-color: #f1f1f1;
 		}
-		.table .thead-light th {
-					background-color: brown;
-					border-color: #dee2e6;
-					font-family: sans-serif;
-					color: white;
-					font-size: 0.80rem;
 
-				}
 				
 				.static-back-btn {
 										    background-color: rgb(255, 255, 255);
@@ -694,27 +687,179 @@
 			margin-left: auto;
 		}
 	</style>
-	<script>
+<!--	<script>
 		$(document).ready(function () {
 					let tableHeight = $(window).height() - 330; // subtract header/footer space
 					if (tableHeight < 200) tableHeight = 200;   // minimum height
 
 					$('#usertable').DataTable({
 						destroy: true,
+						scrollX: false,
 						scrollY: tableHeight + "px", // dynamic height
 						scrollCollapse: false,
 						paging: true,
 						autoWidth: false,
 						ordering: false,
+						lengthChange: false,
 						searching: true,
 						scrollX: true,
 						pageLength: 100,
 						lengthChange: false,
-						responsive: true
+						fixedHeader: true,
+						responsive: true,
+						// Layout: search (left) + pagination (right)
+								dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+
+								// Optional: language tweak for better label
+								language: {
+									search: "Search:"
+								}
 					});
 				});
+	</script>-->
+	<script>
+		$('#usertable').DataTable({
+			scrollX: false,
+			autoWidth: false,
+			paging: true,
+			searching: true,
+			lengthChange: false,
+			ordering: false,
+			pageLength: 10,
+			fixedHeader: true,
+			responsive: true,
+			// Layout: search (left) + pagination (right)
+			dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+
+
+			// Optional: language tweak for better label
+			language: {
+				search: "Search:"
+			}
+		});
 	</script>
+	<style>
 	
+			#usertable {
+				width: 100% !important;
+				border-collapse: collapse !important;
+				font-family: Arial, sans-serif !important;
+				font-size: 12px !important;
+			}
+
+			/* HEADER */
+			#usertable th {
+				background-color: #7b6458 !important;
+				/* brown header */
+				color: white !important;
+				text-align: center !important;
+				padding: 8px 10px !important;
+				font-weight: bold !important;
+				border: 1px solid #ffffff !important;
+				/* thin white separator */
+				white-space: normal !important;
+			}
+
+			/* BODY CELLS */
+			#usertable td {
+				padding: 5px 6px !important;
+				border: 1px solid #e8e8e8 !important;
+				/* light grey lines */
+				background: #fafafa;
+				white-space: normal !important;
+			}
+
+			/* ROW EVEN/ODD */
+			#usertable tbody tr:nth-child(even) {
+				background-color: #f4f2ef !important;
+			}
+
+			#usertable tbody tr:nth-child(odd) {
+				background-color: #ffffff !important;
+			}
+
+			/* SEARCH BOX FIX */
+			.dataTables_filter label {
+				display: flex !important;
+				gap: 10px;
+				align-items: center;
+			}
+
+			.dataTables_filter label {
+				display: flex !important;
+				align-items: center;
+				gap: 8px;
+				/* space between text and input */
+				margin-bottom: 0 !important;
+			}
+
+			.dataTables_filter input {
+				margin-left: 5px;
+				flex: 1;
+			}
+
+			/* === ROLE PAGE CUSTOM HEADER === */
+			.role-page-header {
+				background-color: #ffffff;
+				padding: 15px 20px;
+				display: flex;
+				/* Added for alignment */
+				justify-content: space-between;
+				/* Added for alignment */
+				align-items: center;
+				/* Added for alignment */
+			}
+		</style>
+
+		<style>
+			.dataTables_wrapper .dataTables_paginate {
+				float: right !important;
+				margin-top: 5px !important;
+			}
+
+			/* Default pagination buttons (Previous | 1 | Next) */
+			.dataTables_wrapper .dataTables_paginate .paginate_button {
+				background: #f2f2f2 !important;
+				/* light grey box */
+				border: 1px solid #dcdcdc !important;
+				/* light grey border */
+				color: #555 !important;
+				/* dark grey text */
+				padding: 6px 14px !important;
+				margin: 0 3px !important;
+				border-radius: 6px !important;
+				font-size: 14px !important;
+				text-decoration: none !important;
+				/* NO underline */
+				cursor: pointer;
+			}
+
+			/* Hover (non-active buttons) */
+			.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+				background: #e5e5e5 !important;
+				color: #555 !important;
+			}
+
+			/* Active page number (Orange + White text) */
+			.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+				background: #ff7f27 !important;
+				/* orange */
+				border-color: #ff7f27 !important;
+				color: #fff !important;
+				/* white text */
+				font-weight: bold !important;
+			}
+
+			/* Disabled buttons (Prev/Next when not available) */
+			.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+				background: #eeeeee !important;
+				color: #bbbbbb !important;
+				border-color: #e1e1e1 !important;
+				cursor: default !important;
+			}
+		
+	</style>
 	<script>
 	
 	function deletesubmit(event) {

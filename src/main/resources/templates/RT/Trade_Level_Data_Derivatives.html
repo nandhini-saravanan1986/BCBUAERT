@@ -144,66 +144,12 @@ body {
 	--bob-blue: #004080;
 	--overlay-bg: rgba(255, 255, 255, 0.9);
 }
-
-/* Full-screen overlay */
-.bob-loader {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(226, 232, 237, 0.6); /* lighter background */
-	backdrop-filter: blur(8px); /* ✅ background blur */
-	-webkit-backdrop-filter: blur(8px); /* Safari support */
-	z-index: 9999;
-	transition: opacity 0.25s ease, visibility 0.25s;
-	opacity: 1;
-	visibility: visible;
-}
-
-/* Hide when not active */
-.bob-loader[aria-hidden="true"] {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
-
-/* Loader card */
-.bob-loader-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
 /* Static logo */
 .logo-imgs {
 	height: 90px;
 	object-fit: contain;
 	display: block;
 }
-
-/* Flowing bar below logo */
-.flow-bar {
-	position: relative;
-	width: 200px; /* ✅ increased width */
-	height: 8px; /* slightly thicker for better visibility */
-	background: #f1f1f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-top: 10px;
-}
-
-.flow-line {
-	position: absolute;
-	left: -40%;
-	top: 0;
-	width: 40%;
-	height: 100%;
-	background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-	border-radius: 4px;
-	animation: flowMove 1.2s linear infinite;
-}
-
 /* Animation for flowing line */
 @keyframes flowMove { 0% {
 	left: -40%;
@@ -413,19 +359,21 @@ left
 	   /* top: 32px;  Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
 	    z-index: 9;
 }
-	/* SEARCH BOX FIX */
-	.dataTables_filter label {
-		display: flex !important;
-		gap: 10px;
-		align-items: center;
-	}
-
+.dataTables_wrapper .dataTables_paginate {
+    display: flex !important;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 5px;   
+    padding-top: 0 !important; 
+    float: none !important;    
+}
 	.dataTables_filter label {
 		display: flex !important;
 		align-items: center;
 		gap: 8px;
 		/* space between text and input */
 		margin-bottom: 0 !important;
+		padding-top: 0.25em;
 	}
 
 	.dataTables_filter input {
@@ -663,22 +611,103 @@ label.error {
 						    transform: scale(0.95);
 						}
 </style>
+<style>
+		.loader-overlay {
+		    display: none;
+		    position: fixed;
+		    inset: 0;
+		    background: rgba(10, 22, 45, 0.65);
+		    backdrop-filter: blur(4px);
+		    z-index: 9999;
+		    align-items: center;
+		    justify-content: center;
+		}
+
+		.loader-card {
+		    width: 320px;
+		    background: #ffffff;
+		    border-radius: 16px;
+		    padding: 22px;
+		    box-shadow: 0 20px 45px rgba(0,0,0,0.22);
+		    text-align: center;
+		}
+
+		.loader-logo-wrap {
+		    position: relative;
+		    width: 86px;
+		    height: 86px;
+		    margin: 0 auto 14px;
+		}
+
+		.loader-logo {
+		    width: 68px;
+		    height: 68px;
+		    position: absolute;
+		    top: 9px;
+		    left: 9px;
+		    border-radius: 50%;
+		    background: #fff;
+		    padding: 6px;
+		    animation: loaderPulse 1.6s infinite;
+		}
+
+		.loader-ring {
+		    width: 86px;
+		    height: 86px;
+		    border-radius: 50%;
+		    border: 3px solid #d6e4ff;
+		    border-top-color: #0d6efd;
+		    animation: spin 1s linear infinite;
+		}
+
+		.loader-title {
+		    font-weight: 700;
+		    margin-top: 10px;
+		}
+
+		.loader-progress {
+		    margin-top: 14px;
+		    height: 6px;
+		    background: #e9f1ff;
+		    border-radius: 999px;
+		    overflow: hidden;
+		}
+
+		.loader-progress-bar {
+		    height: 100%;
+		    width: 40%;
+		    background: linear-gradient(90deg, #0d6efd, #5a9bff);
+		    animation: progressMove 1.5s infinite;
+		}
+
+		@keyframes spin {
+		    100% { transform: rotate(360deg); }
+		}
+
+		@keyframes loaderPulse {
+		    50% { transform: scale(1.05); }
+		}
+
+		@keyframes progressMove {
+		    0% { transform: translateX(-100%); }
+		    100% { transform: translateX(200%); }
+		}
+	</style>
 <script th:inline="javascript">
 	
 
 	function home() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		location.href = 'Dashboard'
 	}
 
 	function back() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+		$("#loader").css("display", "flex");
 		window.history.back();
 	}
 
 	function list() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		location.href = 'Trade_Level_Data_Derivatives?formmode=list';
 	}
 
@@ -710,7 +739,7 @@ label.error {
     console.log("updateform function called");
 
     // Show loader
-    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+    $("#loader").css("display", "flex");
 
     // Check if SI_NO is present before sending
     var formData = $('#TradelevelDataderivative').serialize(); // Make sure this ID is correct (capital F)
@@ -723,7 +752,7 @@ label.error {
         data: formData,
         success: function(response) {
             console.log("Server response:", response);
-            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+            $("#loader").hide();
 
 
 
@@ -738,7 +767,7 @@ label.error {
         },
         error: function(xhr, status, error) {
             console.error("Error in modify:", error);
-            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+            $("#loader").hide();
 
 
             $("#alertmsg").text("Error: " + error);
@@ -754,7 +783,7 @@ label.error {
 
 <script>
   function navigateToTab(tabId) {
-	  document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	  $("#loader").css("display", "flex");
 if (tabId === 'data') {
 			window.location.href = 'Trade_Level_Data_Derivatives?formmode=list';
 				//	$("#loader").modal("hide");
@@ -825,7 +854,7 @@ if (tabId === 'data') {
 <script>
     function downloadTradeleveldataderivative() {
         // 1. Show the loader modal
-     document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+     $("#loader").css("display", "flex");
 
         $.ajax({
             url: './downloadTradeleveldataderivativeExcel',
@@ -835,7 +864,7 @@ if (tabId === 'data') {
             },
             success: function (data) {
                 // 2. Hide the loader modal
-                	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                	$("#loader").hide();
 
                 let message = '';
 
@@ -863,7 +892,7 @@ if (tabId === 'data') {
                 $('#alert').modal('show');
             },
             error: function (xhr, status, error) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+            	$("#loader").hide();
 
                 console.error("Download failed:", error);
 
@@ -874,7 +903,7 @@ if (tabId === 'data') {
 
         // Safety fallback in case AJAX hangs silently
         setTimeout(function () {
-        	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+        	$("#loader").hide();
         }, 10000);
     }
 </script>
@@ -882,7 +911,7 @@ if (tabId === 'data') {
 <script>
 
     function submitForm() {
-    	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+    	$("#loader").css("display", "flex");
 
         const reportName = 'CBUAE_Trade_Level_Data_Derivative_Template';
         const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
@@ -893,14 +922,14 @@ if (tabId === 'data') {
             type: "POST",
             data: formData,
             success: function (response) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+            	$("#loader").hide();
 
             	$("#alertmsg1").text(response);
                 $("#alert1").modal("toggle");
                 //location.href = 'Nostro_Account_Bal';
             },
             error: function (xhr, status, error) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+            	$("#loader").hide();
 
                 console.error("Error:", error);
                 alert("Error occurred: " + error);
@@ -2963,7 +2992,7 @@ if (tabId === 'data') {
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="loader" data-backdrop="static"
+<!--	<div class="modal fade" id="loader" data-backdrop="static"
 		data-keyboard="false">
 		<div
 			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -2977,17 +3006,19 @@ if (tabId === 'data') {
 				</div>
 			</div>
 		</div>
-	</div>
-	<div id="bob-loader" class="bob-loader" aria-hidden="true"
-		role="status" aria-label="Loading">
-		<div class="bob-loader-card">
-			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda"
-				class="logo-imgs">
-			<div class="flow-bar">
-				<div class="flow-line"></div>
-			</div>
-		</div>
-	</div>
+	</div>-->
+	<div id="loader" class="loader-overlay">
+				    <div class="loader-card">
+				        <div class="loader-logo-wrap">
+				            <div class="loader-ring"></div>
+							<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
+				        </div>
+				        <div class="loader-title">Request Processing</div>
+				        <div class="loader-progress">
+				            <div class="loader-progress-bar"></div>
+				        </div>
+				    </div>
+				</div>
 
 	<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
 		role="dialog" aria-labelledby="downloadProcessingModalLabel"
@@ -3057,26 +3088,6 @@ if (tabId === 'data') {
 .table-responsive {
 	margin-top: 0 !important;
 	padding-top: 0 !important;
-}
-
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
-
-/* FIX: Make search label and box inline */
-.dataTables_filter label {
-	display: flex !important;
-	align-items: center;
-	gap: 8px; /* space between text and input */
-	margin-bottom: 0 !important;
-}
-
-/* Optional: Style the search input */
-.dataTables_filter input {
-	margin-left: 5px;
-	flex: 1;
 }
 </style>
 <style>
@@ -3378,12 +3389,12 @@ function handleBankChange(select) {
   });
   
   function goBack() {
-      document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+      $("#loader").css("display", "flex");
       window.history.back();
   }
 
   function hideLoader() {
-      document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+     $("#loader").hide();
   }
 
   window.addEventListener("pageshow", function () {
@@ -3435,10 +3446,10 @@ function handleBankChange(select) {
 	<style>
 		#pageHeader {
 			position: sticky;
-			top: 110px;
+			top: 62px;
 			z-index: 1050;
 			background: white;
-			padding-top: 10px;
+			padding-top: 0px;
 		}
 
 		#tabHeader {

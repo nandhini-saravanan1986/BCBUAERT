@@ -250,68 +250,11 @@ TESTED BY   : RAJALAKSHMI R
 			--overlay-bg: rgba(255, 255, 255, 0.9);
 		}
 
-		/* Full-screen overlay */
-		.bob-loader {
-			position: fixed;
-			inset: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: rgba(226, 232, 237, 0.6);
-			/* lighter background */
-			backdrop-filter: blur(8px);
-			/* ✅ background blur */
-			-webkit-backdrop-filter: blur(8px);
-			/* Safari support */
-			z-index: 9999;
-			transition: opacity 0.25s ease, visibility 0.25s;
-			opacity: 1;
-			visibility: visible;
-		}
-
-		/* Hide when not active */
-		.bob-loader[aria-hidden="true"] {
-			opacity: 0;
-			visibility: hidden;
-			pointer-events: none;
-		}
-
-		/* Loader card */
-		.bob-loader-card {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
 		/* Static logo */
 		.logo-imgs {
 			height: 90px;
 			object-fit: contain;
 			display: block;
-		}
-
-		/* Flowing bar below logo */
-		.flow-bar {
-			position: relative;
-			width: 200px;
-			/* ✅ increased width */
-			height: 8px;
-			/* slightly thicker for better visibility */
-			background: #f1f1f1;
-			border-radius: 4px;
-			overflow: hidden;
-			margin-top: 10px;
-		}
-
-		.flow-line {
-			position: absolute;
-			left: -40%;
-			top: 0;
-			width: 40%;
-			height: 100%;
-			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-			border-radius: 4px;
-			animation: flowMove 1.2s linear infinite;
 		}
 
 		/* Animation for flowing line */
@@ -657,68 +600,11 @@ TESTED BY   : RAJALAKSHMI R
 			--bob-blue: #004080;
 			--overlay-bg: rgba(255, 255, 255, 0.9);
 		}
-
-		.bob-loader {
-			position: fixed;
-			inset: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: rgba(226, 232, 237, 0.6);
-			/* lighter background */
-			backdrop-filter: blur(8px);
-			/* ✅ background blur */
-			-webkit-backdrop-filter: blur(8px);
-			/* Safari support */
-			z-index: 9999;
-			transition: opacity 0.25s ease, visibility 0.25s;
-			opacity: 1;
-			visibility: visible;
-		}
-
-		/* Hide when not active */
-		.bob-loader[aria-hidden="true"] {
-			opacity: 0;
-			visibility: hidden;
-			pointer-events: none;
-		}
-
-		/* Loader card */
-		.bob-loader-card {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
 		/* Static logo */
 		.logo-imgs {
 			height: 90px;
 			object-fit: contain;
 			display: block;
-		}
-
-		/* Flowing bar below logo */
-		.flow-bar {
-			position: relative;
-			width: 200px;
-			/* ✅ increased width */
-			height: 8px;
-			/* slightly thicker for better visibility */
-			background: #f1f1f1;
-			border-radius: 4px;
-			overflow: hidden;
-			margin-top: 10px;
-		}
-
-		.flow-line {
-			position: absolute;
-			left: -40%;
-			top: 0;
-			width: 40%;
-			height: 100%;
-			background: linear-gradient(90deg, var(--bob-orange), var(--bob-blue));
-			border-radius: 4px;
-			animation: flowMove 1.2s linear infinite;
 		}
 
 		/* Animation for flowing line */
@@ -830,9 +716,91 @@ TESTED BY   : RAJALAKSHMI R
 		}
 	</style>
 	<style>
+			.loader-overlay {
+			    display: none;
+			    position: fixed;
+			    inset: 0;
+			    background: rgba(10, 22, 45, 0.65);
+			    backdrop-filter: blur(4px);
+			    z-index: 9999;
+			    align-items: center;
+			    justify-content: center;
+			}
+
+			.loader-card {
+			    width: 320px;
+			    background: #ffffff;
+			    border-radius: 16px;
+			    padding: 22px;
+			    box-shadow: 0 20px 45px rgba(0,0,0,0.22);
+			    text-align: center;
+			}
+
+			.loader-logo-wrap {
+			    position: relative;
+			    width: 86px;
+			    height: 86px;
+			    margin: 0 auto 14px;
+			}
+
+			.loader-logo {
+			    width: 68px;
+			    height: 68px;
+			    position: absolute;
+			    top: 9px;
+			    left: 9px;
+			    border-radius: 50%;
+			    background: #fff;
+			    padding: 6px;
+			    animation: loaderPulse 1.6s infinite;
+			}
+
+			.loader-ring {
+			    width: 86px;
+			    height: 86px;
+			    border-radius: 50%;
+			    border: 3px solid #d6e4ff;
+			    border-top-color: #0d6efd;
+			    animation: spin 1s linear infinite;
+			}
+
+			.loader-title {
+			    font-weight: 700;
+			    margin-top: 10px;
+			}
+
+			.loader-progress {
+			    margin-top: 14px;
+			    height: 6px;
+			    background: #e9f1ff;
+			    border-radius: 999px;
+			    overflow: hidden;
+			}
+
+			.loader-progress-bar {
+			    height: 100%;
+			    width: 40%;
+			    background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			    animation: progressMove 1.5s infinite;
+			}
+
+			@keyframes spin {
+			    100% { transform: rotate(360deg); }
+			}
+
+			@keyframes loaderPulse {
+			    50% { transform: scale(1.05); }
+			}
+
+			@keyframes progressMove {
+			    0% { transform: translateX(-100%); }
+			    100% { transform: translateX(200%); }
+			}
+		</style>
+	<style>
 		#pageHeader {
 			position: sticky;
-			top: 100px;
+			top: 62px;
 			z-index: 1050;
 			background: white;
 			padding-top: 10px;
@@ -887,18 +855,20 @@ TESTED BY   : RAJALAKSHMI R
 
 
 		function home() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			location.href = 'Dashboard'
 		}
 
 		function back() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			window.history.back();
 		}
 
 		function list() {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			location.href = 'Fx_Risk_Data?formmode=list';
 		}
 
@@ -926,8 +896,8 @@ TESTED BY   : RAJALAKSHMI R
 			console.log("updateform function called");
 
 			// Show loader
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$("#loader").css("display", "flex");
 			// Check if SI_NO is present before sending
 			var formData = $('#Fxriskdata').serialize(); // Make sure this ID is correct (capital F)
 
@@ -939,8 +909,8 @@ TESTED BY   : RAJALAKSHMI R
 				data: formData,
 				success: function (response) {
 					console.log("Server response:", response);
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+					//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
 
@@ -952,7 +922,8 @@ TESTED BY   : RAJALAKSHMI R
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					$("#loader").hide();
 					$("#alertmsg").text("Error: " + error);
 					$("#alert").modal("show");
 				}
@@ -995,7 +966,8 @@ TESTED BY   : RAJALAKSHMI R
 
 <script>
 	function navigateToTab(tabId) {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		if (tabId === 'data') {
 			window.location.href = 'Fx_Risk_Data?formmode=list';
 
@@ -1052,8 +1024,8 @@ TESTED BY   : RAJALAKSHMI R
 <script>
 	function downloadFxrisk() {
 		// 1. Show loader modal
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		$.ajax({
 			url: './downloadFxriskExcel', // Ensure this matches your controller endpoint
 			type: 'GET',
@@ -1062,8 +1034,8 @@ TESTED BY   : RAJALAKSHMI R
 			},
 			success: function (data) {
 				// Always hide loader
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+				//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				let message = '';
 
 				if (data && data.size > 100) {
@@ -1088,8 +1060,8 @@ TESTED BY   : RAJALAKSHMI R
 				$('#alert').modal('show');
 			},
 			error: function (xhr, status, error) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+				//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				console.error("Download failed:", error);
 
 				$('#alertmsg').text('An error occurred while downloading FxRiskData.xls.');
@@ -1099,7 +1071,8 @@ TESTED BY   : RAJALAKSHMI R
 
 		// Fallback timeout
 		setTimeout(function () {
-			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+			//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+			$("#loader").hide();
 		}, 10000);
 	}
 </script>
@@ -1108,8 +1081,8 @@ TESTED BY   : RAJALAKSHMI R
 <script>
 
 	function submitForm() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		const reportName = 'CBUAE_Fx_Risk_Data_Template';
 		const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
 		const formData = $("#fxriskForm").serialize();
@@ -1119,15 +1092,15 @@ TESTED BY   : RAJALAKSHMI R
 			type: "POST",
 			data: formData,
 			success: function (response) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+				//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				$("#alertmsg1").text(response);
 				$("#alert1").modal("toggle");
 				//location.href = 'Nostro_Account_Bal';
 			},
 			error: function (xhr, status, error) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-
+				//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				$("#loader").hide();
 				console.error("Error:", error);
 				alert("Error occurred: " + error);
 			}
@@ -1214,7 +1187,7 @@ TESTED BY   : RAJALAKSHMI R
 							<form id="fxriskForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
-									<div class="row mb-2 mt-5">
+									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
 											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
@@ -1335,7 +1308,7 @@ TESTED BY   : RAJALAKSHMI R
 							<form id="fxriskForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
-									<div class="row mb-2 mt-5">
+									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
 											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
@@ -1867,15 +1840,26 @@ TESTED BY   : RAJALAKSHMI R
 			</div>
 		</div>
 	</div>
-	<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
+	<!--<div id="bob-loader" class="bob-loader" aria-hidden="true" role="status" aria-label="Loading">
 		<div class="bob-loader-card">
 			<img th:src="@{/images/bobn.png}" alt="Bank of Baroda" class="logo-imgs">
 			<div class="flow-bar">
 				<div class="flow-line"></div>
 			</div>
 		</div>
-	</div>
-
+	</div>-->
+	<div id="loader" class="loader-overlay">
+		    <div class="loader-card">
+		        <div class="loader-logo-wrap">
+		            <div class="loader-ring"></div>
+					<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
+		        </div>
+		        <div class="loader-title">Request Processing</div>
+		        <div class="loader-progress">
+		            <div class="loader-progress-bar"></div>
+		        </div>
+		    </div>
+		</div>
 	<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
 		aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
@@ -1948,13 +1932,10 @@ TESTED BY   : RAJALAKSHMI R
 	    padding-top: 0 !important; 
 	    float: none !important;    
 	}
-	.mt-5 {
-	    margin-top: 4rem !important;
-	}
 	/* Ensure DataTables filter (search box) doesn't have spacing above it */
 	div.dataTables_filter {
 		margin-top: 0 !important;
-		padding-top:  3.25em !important;
+		padding-top:  2.25em !important;
 	}
 
 	/* FIX: Make search label and box inline */
@@ -2154,12 +2135,14 @@ TESTED BY   : RAJALAKSHMI R
 	});
 
 	function goBack() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		$("#loader").css("display", "flex");
 		window.history.back();
 	}
 
 	function hideLoader() {
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+		//document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+		$("#loader").hide();
 	}
 
 	window.addEventListener("pageshow", function () {
