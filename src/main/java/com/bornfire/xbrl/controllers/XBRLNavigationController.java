@@ -955,26 +955,63 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Treasury_Credit_Limit_Management", method = RequestMethod.GET)
 	public String TreasuryCredit(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) Integer slNo, Model model) {
+			@RequestParam(required = false) Integer slNo, Model model,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 
+		LocalDate today = LocalDate.now();
+	    String formattedDate = null;
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	    
+	    if (Report_date != null) {
+	        formattedDate = sdf.format(Report_date);
+	    }
+
+	        
 		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
 			model.addAttribute("formmode", "edit");
 			model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			model.addAttribute("formmode", "list");
-			model.addAttribute("TClist", treasuryCreditRepo.getTClist());
+			model.addAttribute("TClist", treasuryCreditRepo.getTClist(Report_date));
+			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
 		} else {
 			Timestamp lastdatetimestamp = treasuryCreditRepo.findLastReportDate();
-			Timestamp secondlastdatetimestamp = treasuryCreditRepo.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = treasuryCreditRepo.findSecondLastReportDate();	
+			String lastDateString = null;
+		    String secondLastDateString = null;
+		    LocalDate lastDate = null;
+		    
+		    if (lastdatetimestamp != null) {
+	            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+	            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+	        if (secondlastdatetimestamp != null) {
+	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+	        }
+
+		    
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Treasury_Credit_Limit_Management_Data_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Treasury_Credit_Limit_Management_Data_Template");
-			if (data != null && !data.equals(null)) {
+			
+			RT_DataControl report_datedata = null;
+
+			if (formattedDate != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Treasury_Credit_Limit_Management_Data_Template");
+	        }
+	        
+	        System.out.println(formattedDate);
+
+	  
+	        if (report_datedata != null) {
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
+	        	model.addAttribute("data", report_datedata);
+	        	model.addAttribute("formmode", "exist");
+	        }
+			
+			else if (data != null && !data.equals(null)) {
 				model.addAttribute("data", data);
 				model.addAttribute("formmode", "exist");
 			}
@@ -1021,11 +1058,11 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadTreasuryCreditExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadTreasuryCreditExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Treasury credit Excel download.");
 
 		try {
-			byte[] excelData = treasuryCreditService.generateTreasuryExcel();
+			byte[] excelData = treasuryCreditService.generateTreasuryExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: Service returned no data. Responding with 204 No Content.");

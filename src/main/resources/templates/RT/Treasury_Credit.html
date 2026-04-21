@@ -705,14 +705,16 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 <script>
 	function navigateToTab(tabId) {
+
 		$("#loader").css("display", "flex");
+		 var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		if (tabId === 'data') {
-			window.location.href = 'Treasury_Credit_Limit_Management?formmode=list';
+			window.location.href = 'Treasury_Credit_Limit_Management?formmode=list&Report_date='+Report_date;
 			//$("#loader").modal("hide");
 
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Treasury_Credit_Limit_Management?formmode=add';
+			window.location.href = 'Treasury_Credit_Limit_Management?formmode=add&Report_date='+Report_date;
 			//$("#loader").modal("hide");
 		}
 	}
@@ -754,10 +756,12 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 	function downloadTreasurycredit() {
 		// Show the loader modal
+
 		$("#loader").css("display", "flex");
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		$.ajax({
-			url: './downloadTreasuryCreditExcel',
+			url: './downloadTreasuryCreditExcel?Report_date='+Report_date,
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob'
@@ -862,7 +866,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
 												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												required onchange="navigateToTab('datacontrols')"/> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1008,7 +1012,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
 												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												required onchange="navigateToTab('datacontrols')" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1162,6 +1166,9 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 			<!-- -----------------------------------DATA LIST STARTS -------------------------------------------- -->
 			<div class="tab-pane fade" id="data" role="tabpanel">
+			<input type="date" id="portfolioDate" name="portfolioDate"
+			th:value="${lastDate}" class="form-control form-control-sm"
+			required Style="display:none" />
 				<div class="table-responsive" style="max-height: 400px; overflow: auto; border: none;">
 					<table id="usertable" class="table table-bordered table-striped table-hover">
 

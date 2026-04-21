@@ -211,10 +211,10 @@ public class RT_TreasuryCredit_Service {
 	 */
         
 
-        public byte[] generateTreasuryExcel() throws Exception {
+        public byte[] generateTreasuryExcel(Date Report_date) throws Exception {
             logger.info("Service: Starting Treasury Credit Excel generation process in memory.");
 
-            List<RT_TreasuryCreditEntity> dataList = treasuryRepo.getTClist();
+            List<RT_TreasuryCreditEntity> dataList = treasuryRepo.getTClist(Report_date);
 
             if (dataList.isEmpty()) {
                 logger.warn("Service: No data found. Returning empty byte array.");
