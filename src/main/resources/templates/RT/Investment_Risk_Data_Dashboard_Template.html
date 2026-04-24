@@ -809,18 +809,19 @@ $(document).ready(function () {
 <script>
   function navigateToTab(tabId) {
 	  $("#loader").css("display", "flex");
+	  var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
     if (tabId === 'data') {
-    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=list';
+    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=list&Report_date='+Report_date;
 		//$("#loader").modal("hide");
 
     } else if (tabId === 'datacontrols') {
-      window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=add';
+      window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=add&Report_date='+Report_date;
 		//$("#loader").modal("hide");
 
       
     }else if (tabId === 'limits'){
-    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=limits';
+    	window.location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=limits&Report_date='+Report_date;
     }
   }
 
@@ -856,9 +857,10 @@ $(document).ready(function () {
     function investmentriskdata() {
         // 1. Show the loader modal
        $("#loader").css("display", "flex");
+       var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
         $.ajax({
-            url: './downloadInvestmentriskdatadashboardExcel',
+            url: './downloadInvestmentriskdatadashboardExcel?Report_date='+Report_date,
             type: 'GET',
             xhrFields: {
                 responseType: 'blob'
@@ -1076,7 +1078,7 @@ $(document).ready(function () {
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
 												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												required onchange="navigateToTab('datacontrols')" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1220,7 +1222,7 @@ $(document).ready(function () {
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
 												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												required onchange="navigateToTab('datacontrols')" /> <label class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1380,7 +1382,9 @@ $(document).ready(function () {
 				<div class="col-sm-12">
 					<div class="container-fluid">
    -->
-
+			<input type="date" id="portfolioDate" name="portfolioDate"
+			th:value="${lastDate}" class="form-control form-control-sm"
+			required Style="display:none" />
 
 
 
@@ -1789,49 +1793,53 @@ $(document).ready(function () {
 		<div class="row">
 			<form id="investmentForm">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
+				
+				<input type="date" id="portfolioDate" name="portfolioDate"
+			th:value="${lastDate}" class="form-control form-control-sm"
+			required Style="display:none" />
 					
 
 					<div class="card-body" style="max-height: 500px; overflow-y: auto;">
 						       <div class="form-group row">
 						    <label class="col-sm-2">Report Date</label>
 						    <div class="col-sm-4">
-						        <input type="date" class="form-control" name="reportDate" id="reportDate"/>
+						        <input type="date" class="form-control" name="reportDate" th:value="${#dates.format(limitsdata.reportDate, 'yyyy-MM-dd')}" id="reportDate"/>
 						    </div>
 						
-						    <label class="col-sm-2">Forex Limits</label>
+						    <label class="col-sm-2">Forex Limits (In Crore)</label>
 						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="forexLimits" id="forexLimits"/>
-						    </div>
-						</div>
-						
-						<div class="form-group row">
-						    <label class="col-sm-2">Investments Bonds</label>
-						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="investmentsBonds" id="investmentsBonds"/>
-						    </div>
-						
-						    <label class="col-sm-2">Investment Equity</label>
-						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="investmentEquity" id="investmentEquity"/>
+						        <input type="number" class="form-control" name="forexLimits" th:value="${limitsdata.forexLimits}" id="forexLimits"/>
 						    </div>
 						</div>
 						
 						<div class="form-group row">
-						    <label class="col-sm-2">Money Market</label>
+						    <label class="col-sm-2">Investments Bonds (In Crore)</label>
 						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="moneyMarket" id="moneyMarket"/>
+						        <input type="number" class="form-control" name="investmentsBonds" th:value="${limitsdata?.investmentsBonds}" id="investmentsBonds"/>
 						    </div>
 						
-						    <label class="col-sm-2">Derivative HFT</label>
+						    <label class="col-sm-2">Investment Equity (In Crore)</label>
 						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="derivativeHft" id="derivativeHft"/>
+						        <input type="number" class="form-control" name="investmentEquity" th:value="${limitsdata?.investmentEquity}" id="investmentEquity"/>
 						    </div>
 						</div>
 						
 						<div class="form-group row">
-						    <label class="col-sm-2">Total VaR</label>
+						    <label class="col-sm-2">Money Market (In Crore)</label>
 						    <div class="col-sm-4">
-						        <input type="number" class="form-control" name="totalVar" id="totalVar"/>
+						        <input type="number" class="form-control" name="moneyMarket" th:value="${limitsdata?.moneyMarket}" id="moneyMarket"/>
+						    </div>
+						
+						    <label class="col-sm-2">Derivative HFT (In Crore)</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="derivativeHft" th:value="${limitsdata?.derivativeHft}" id="derivativeHft"/>
+						    </div>
+						</div>
+						
+						<div class="form-group row">
+						    <label class="col-sm-2">Total VaR (In Crore)</label>
+						    <div class="col-sm-4">
+						        <input type="number" class="form-control" name="totalVar" th:value="${limitsdata?.totalVar}" id="totalVar"/>
 						    </div>
 						</div>                                   
 								

@@ -262,10 +262,10 @@ public class RT_InvestmentRiskDataDashboard_Service {
     
     
     
-    public byte[] generateInvestmentriskdataExcel() throws Exception {
+    public byte[] generateInvestmentriskdataExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Investment Risk Data Dashboard Excel generation process in memory.");
 
-        List<Object[]> investmentriskdata = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getinvestmentriskdata1();
+        List<Object[]> investmentriskdata = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getinvestmentriskdata1(Report_date);
 
         if (investmentriskdata.isEmpty()) {
             logger.warn("Service: No data found for Investment Risk Data Dashboard report. Returning empty result.");

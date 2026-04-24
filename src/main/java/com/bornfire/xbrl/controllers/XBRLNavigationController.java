@@ -1368,7 +1368,17 @@ public class XBRLNavigationController {
 			@RequestParam(required = false) String SI_NO,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
 			@RequestParam(required = false) String columnId,
-			Model md, HttpServletRequest req) {
+			Model md, HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		
+		 	LocalDate today = LocalDate.now();
+		    String formattedDate = null;
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		    
+		    if (Report_date != null) {
+		        formattedDate = sdf.format(Report_date);
+		    }
+		
 		if ("edit".equalsIgnoreCase(formmode) && SI_NO != null && !SI_NO.isEmpty()) {
 			Long Serialnumber = Long.parseLong(SI_NO);
 			RT_Investment_Risk_Data_Dashboard_Template data = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS
@@ -1377,12 +1387,22 @@ public class XBRLNavigationController {
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist());
+			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist(Report_date));
 			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		}
 		
 		else if ("limits".equalsIgnoreCase(formmode)) {
 			md.addAttribute("formmode", "limits");
+			RtVarReportLimits limitobj= new RtVarReportLimits();
+			
+			RtVarReportLimits limitdata =rtvarreportlimits_rep.RtInvestmentRiskDatalistrowid(Report_date);
+			
+			if(limitdata!=null) {
+				limitobj=limitdata;
+			}
+			md.addAttribute("limitsdata",limitobj);
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		}
 		
 		else if ("Detail".equalsIgnoreCase(formmode)) {
@@ -1421,20 +1441,47 @@ public class XBRLNavigationController {
 		
 		else {
 			Timestamp lastdatetimestamp = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.findLastReportDate();
-			Timestamp secondlastdatetimestamp = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.findSecondLastReportDate();			
-			LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			Timestamp secondlastdatetimestamp = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.findSecondLastReportDate();	
+			
+			 	String lastDateString = null;
+		        String secondLastDateString = null;
+		        LocalDate lastDate = null;
+
+		        if (lastdatetimestamp != null) {
+		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
+		        if (secondlastdatetimestamp != null) {
+		            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
+		        
 			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"Investment_Risk_Data_Dashboard_Template");
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"Investment_Risk_Data_Dashboard_Template");
-			if (data != null && !data.equals(null)) {
+			RT_DataControl report_datedata = null;
+
+	        if (formattedDate != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "Investment_Risk_Data_Dashboard_Template");
+	        }
+	        
+	        System.out.println(formattedDate);
+
+	       if (report_datedata != null) {
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
+	            md.addAttribute("data", report_datedata);
+	            md.addAttribute("formmode", "exist");
+
+	        }
+			
+			else if (data != null && !data.equals(null)) {
+				
 				md.addAttribute("data", data);
 				md.addAttribute("formmode", "exist");
 			}
 			else if(secondlastdata != null && !secondlastdata.equals(null)){
+				lastDate = LocalDate.parse(secondLastDateString, formatter);
 				md.addAttribute("data", secondlastdata);
 				md.addAttribute("formmode", "exist");
 			}else {
@@ -3211,7 +3258,15 @@ public class XBRLNavigationController {
 			@RequestParam(required = false) String scenario,@RequestParam(required = false) String glLevel1,@RequestParam(required = false) String glLevel2,
 			@RequestParam(required = false) String glLevel3,@RequestParam(required = false) String optionType,@RequestParam(required = false) String rateType,
 			@RequestParam(required = false) String referenceRate,@RequestParam(required = false) String instrumentCurrency,
-			@RequestParam(required = false) String formmode, Model md) {
+			@RequestParam(required = false) String formmode, Model md,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		
+			String formattedDate = null;
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		    if (Report_date != null) {
+		        formattedDate = sdf.format(Report_date);
+		    }
+
 
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
 			//RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
@@ -3241,31 +3296,33 @@ public class XBRLNavigationController {
 		}
 
 		else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails();
+			List<RT_IRRBB_Data_EVE_Template> list = IRRB_EVE_Repo.getAlldetails(Report_date);
 
-			System.out.println("IRRBB EVE " + IRRB_EVE_Repo.getAlldetails().size());
+			//System.out.println("IRRBB EVE " + IRRB_EVE_Repo.getAlldetails(Report_date).size());
 			md.addAttribute("formmode", "list");
 			md.addAttribute("ISList", list); // Used in HTML table
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else if ("EAR".equalsIgnoreCase(formmode)) {
 			System.out.println("THE EAR REPORT START");
-			List<RT_IRRBB_Data_EAR> list = IRRBB_EAR_Repository.getAlldetails();
-			System.out.println("IRRBB EAR " + IRRBB_EAR_Repository.getAlldetails().size());
+			List<RT_IRRBB_Data_EAR> list = IRRBB_EAR_Repository.getAlldetails(Report_date);
 			md.addAttribute("formmode", "EAR");
 			md.addAttribute("ISListEar", list); // Used in HTML table
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 			System.out.println("Formmode" + formmode);
 		} else if ("DiscountRate".equalsIgnoreCase(formmode)) {
 			System.out.println("---- Discount Rate---");
-			List<RT_IRRBB_Data_Discount_Rates> list = IRRBB_Data_Template_DiscountRate_repo.getAlldetails();
-			System.out.println("IRRBB EAR " + IRRBB_Data_Template_DiscountRate_repo.getAlldetails().size());
+			List<RT_IRRBB_Data_Discount_Rates> list = IRRBB_Data_Template_DiscountRate_repo.getAlldetails(Report_date);
 			md.addAttribute("formmode", "DiscountRate");
 			md.addAttribute("ISListDiscount", list); // Used in HTML table
 			System.out.println("Formmode" + formmode);
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		}
 		else if ("Detaillist".equalsIgnoreCase(formmode)) {
 			List<RT_IRRBB_Data_EVE_Template_Detail> list =rt_irrbb_data_eve_template_detail_rep.getAlldetails(reportDate,scenario,glLevel1,glLevel2,glLevel3,optionType,rateType,referenceRate,instrumentCurrency);
 			System.out.println("IRRBB EVE " + list.size());
 			md.addAttribute("formmode", "Detaillist");
 			md.addAttribute("ISList", list); // Used in HTML table
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(reportDate), formatter) );
 		}
 
 		/*
@@ -3273,17 +3330,39 @@ public class XBRLNavigationController {
 		 * model.addAttribute("securityData", new
 		 * RT_Investment_Securities_Data_Template()); }
 		 */else {
-			 Timestamp lastdatetimestamp = IRRB_EVE_Repo.findLastReportDate();
-				Timestamp secondlastdatetimestamp = IRRB_EVE_Repo.findSecondLastReportDate();			
-				LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-				String lastDateString = (lastdatetimestamp == null) ? null
-						: lastdatetimestamp.toLocalDateTime().format(formatter);
-				String secondLastDateString =(secondlastdatetimestamp == null) ? null
-						:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			 	Timestamp lastdatetimestamp = IRRB_EVE_Repo.findLastReportDate();
+			 	Timestamp secondlastdatetimestamp = IRRB_EVE_Repo.findSecondLastReportDate();			
+				
+			 	String lastDateString = null;
+		        String secondLastDateString = null;
+		        LocalDate lastDate = null;
+		        if (lastdatetimestamp != null) {
+		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+		        if (secondlastdatetimestamp != null) {
+		            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+		        
 				RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_IRRBB_Data_Template");
 				RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_IRRBB_Data_Template");
-				if (data != null && !data.equals(null)) {
+				RT_DataControl report_datedata = null;
+				
+
+		        if (formattedDate != null) {
+		            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_IRRBB_Data_Template");
+		        }
+		        System.out.println(formattedDate);
+
+		       if (report_datedata != null) {
+		        	System.out.println(formattedDate);
+		        	lastDate = LocalDate.parse(formattedDate, formatter);
+		            md.addAttribute("data", report_datedata);
+		            md.addAttribute("formmode", "exist");
+
+		        }
+
+				else if (data != null && !data.equals(null)) {
 					md.addAttribute("data", data);
 					md.addAttribute("formmode", "exist");
 				}
@@ -3519,11 +3598,12 @@ public class XBRLNavigationController {
 	}
 
 	@RequestMapping(value = "/downloadInvestmentriskdatadashboardExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadInvestmentriskdatadashboardExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for Investment Risk Data Dashboard Excel download.");
 
 		try {
-			byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel();
+			byte[] excelData = investmentriskdatadictionaryService.generateInvestmentriskdataExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn(
