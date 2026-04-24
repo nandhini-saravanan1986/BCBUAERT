@@ -7,783 +7,804 @@ PURPOSE		: CCR DATA TEMPLATES
 Tested by   : Rajalakshmi
 -->
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
-<!-- JavaScript -->
-<!-- jQuery core (required first) -->
+	<!-- JavaScript -->
+	<!-- jQuery core (required first) -->
 
 
-<!-- ✅ Your manually placed jQuery validation
+	<!-- ✅ Your manually placed jQuery validation
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	 <script th:src="/jquery/jquery.validate.min.js"></script>
 	 -->
 
-<!-- jQuery (required first) -->
-<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<!-- jQuery (required first) -->
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 
-<!-- ✅ jQuery Validation -->
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+	<!-- ✅ jQuery Validation -->
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 
-<!-- Bootstrap + Others -->
-<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<!-- Bootstrap + Others -->
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
 
-<style>
-body {
-	font-family: 'Segoe UI', Arial, sans-serif;
-	font-size: 14px;
-}
+	<style>
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 14px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	font-family: sans-serif;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			font-family: sans-serif;
+		}
 
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 120vw !important; /* 👈 a bit wider than viewport */
-	height: 120vh !important; /* 👈 a bit taller than viewport */
-	background-color: #000; /* 👈 solid black base */
-	opacity: 0.7 !important; /* 👈 slightly darker overlay */
-	z-index: 1062;
-	/* 👈 ensures it sits below modal but above everything else */
-}
+		.modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 120vw !important;
+			/* 👈 a bit wider than viewport */
+			height: 120vh !important;
+			/* 👈 a bit taller than viewport */
+			background-color: #000;
+			/* 👈 solid black base */
+			opacity: 0.7 !important;
+			/* 👈 slightly darker overlay */
+			z-index: 1062;
+			/* 👈 ensures it sits below modal but above everything else */
+		}
 
-/* === ROLE PAGE CUSTOM HEADER === */
-.role-page-header {
-	background-color: #ffffff;
-	padding: 15px 20px;
-}
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+		}
 
-.role-page-title h4 {
-	color: #003366;
-	font-family: "Segoe UI", Arial, sans-serif;
-	font-size: 20px;
-	font-weight: 700;
-	margin: 0;
-}
+		.role-page-title h4 {
+			color: #003366;
+			font-family: "Segoe UI", Arial, sans-serif;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+		}
 
-.role-page-underline {
-	width: 158px;
-	height: 3px;
-	background-color: #0073e6;
-	border-radius: 2px;
-	margin-top: 6px;
-	box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6); /* soft glow below */
-}
+		.role-page-underline {
+			width: 158px;
+			height: 3px;
+			background-color: #0073e6;
+			border-radius: 2px;
+			margin-top: 6px;
+			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			/* soft glow below */
+		}
 
-/* Add Button Styling */
-/* Base Button Style */
-.role-add-btn {
-	background: #ffffff; /* default white background */
-	color: #005fa3; /* blue text */
-	border: 2px solid #005fa3;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
-	transition: all 0.3s ease;
-}
+		/* Add Button Styling */
+		/* Base Button Style */
+		.role-add-btn {
+			background: #ffffff;
+			/* default white background */
+			color: #005fa3;
+			/* blue text */
+			border: 2px solid #005fa3;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 2px 5px rgba(0, 64, 128, 0.1);
+			transition: all 0.3s ease;
+		}
 
-/* Hover effect */
-.role-add-btn:hover {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	transform: translateY(-2px);
-	box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
-}
+		/* Hover effect */
+		.role-add-btn:hover {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 0 10px rgba(0, 102, 204, 0.4);
+		}
 
-/* Active (clicked or selected) button */
-.role-add-btn.active {
-	background: linear-gradient(135deg, #005fa3, #007bff);
-	color: #fff;
-	border: none;
-	box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
-	transform: translateY(-1px);
-}
+		/* Active (clicked or selected) button */
+		.role-add-btn.active {
+			background: linear-gradient(135deg, #005fa3, #007bff);
+			color: #fff;
+			border: none;
+			box-shadow: 0 2px 8px rgba(0, 64, 128, 0.3);
+			transform: translateY(-1px);
+		}
 
-/* Optional: icon spacing */
-.role-add-btn i {
-	margin-right: 5px;
-}
-</style>
+		/* Optional: icon spacing */
+		.role-add-btn i {
+			margin-right: 5px;
+		}
+	</style>
 
-<style>
-:root {
-	--bob-orange: #0073e6;
-	--bob-blue: #004080;
-	--overlay-bg: rgba(255, 255, 255, 0.9);
-}
+	<style>
+		:root {
+			--bob-orange: #0073e6;
+			--bob-blue: #004080;
+			--overlay-bg: rgba(255, 255, 255, 0.9);
+		}
 
-/* Static logo */
-.logo-imgs {
-	height: 90px;
-	object-fit: contain;
-	display: block;
-}
-/* Animation for flowing line */
-@keyframes flowMove { 0% {
-	left: -40%;
-}
-100%
-{
-left
-:
-100%;
-}
-}
-</style>
+		/* Static logo */
+		.logo-imgs {
+			height: 90px;
+			object-fit: contain;
+			display: block;
+		}
 
-<script>
-//							function goBack() {
-	//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		/* Animation for flowing line */
+		@keyframes flowMove {
+			0% {
+				left: -40%;
+			}
+
+			100% {
+				left:
+					100%;
+			}
+		}
+	</style>
+
+	<script>
+		//							function goBack() {
+		//							document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		//					    window.history.back();
-			//				}
-//
-	//						function goForward() {
+		//				}
+		//
+		//						function goForward() {
 		//						document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-			//				    window.history.forward();
-				//			}
+		//				    window.history.forward();
+		//			}
 
-							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
-							    const backBtn = document.getElementById('floatingBackBtn');
-							    const forwardBtn = document.getElementById('floatingForwardBtn');
-							    const screenWidth = window.innerWidth;
+		// Detect mouse near screen edges
+		document.addEventListener('mousemove', function (e) {
+			const backBtn = document.getElementById('floatingBackBtn');
+			const forwardBtn = document.getElementById('floatingForwardBtn');
+			const screenWidth = window.innerWidth;
 
-							    // Left edge (back)
-							    if (e.clientX < 50) {
-							        backBtn.classList.add('show');
-							    } else {
-							        backBtn.classList.remove('show');
-							    }
+			// Left edge (back)
+			if (e.clientX < 50) {
+				backBtn.classList.add('show');
+			} else {
+				backBtn.classList.remove('show');
+			}
 
-							    // Right edge (forward)
-							    if (screenWidth - e.clientX < 50) {
-							        forwardBtn.classList.add('show');
-							    } else {
-							        forwardBtn.classList.remove('show');
-							    }
-							});
-							function goBack() {
-							    $("#loader").css("display", "flex");
-							    window.history.back();
-							}
+			// Right edge (forward)
+			if (screenWidth - e.clientX < 50) {
+				forwardBtn.classList.add('show');
+			} else {
+				forwardBtn.classList.remove('show');
+			}
+		});
+		function goBack() {
+			$("#loader").css("display", "flex");
+			window.history.back();
+		}
 
-							function hideLoader() {
-							    $("#loader").hide();
-							}
+		function hideLoader() {
+			$("#loader").hide();
+		}
 
-							window.addEventListener("pageshow", function () {
-							    hideLoader();
-							});
-							</script>
+		window.addEventListener("pageshow", function () {
+			hideLoader();
+		});
+	</script>
 
-<style>
-/* Shared styles for both buttons */
-#floatingBackBtn, #floatingForwardBtn {
-	position: fixed;
-	top: 50%;
-	background-color: #F8AC46FF;
-	border: none;
-	color: white;
-	font-size: 20px;
-	border-radius: 50%;
-	width: 45px;
-	height: 45px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	z-index: 999;
-}
+	<style>
+		/* Shared styles for both buttons */
+		#floatingBackBtn,
+		#floatingForwardBtn {
+			position: fixed;
+			top: 50%;
+			background-color: #F8AC46FF;
+			border: none;
+			color: white;
+			font-size: 20px;
+			border-radius: 50%;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.4s ease;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			z-index: 999;
+		}
 
-/* Back button */
-#floatingBackBtn {
-	left: -50px; /* hidden off-screen */
-}
+		/* Back button */
+		#floatingBackBtn {
+			left: -50px;
+			/* hidden off-screen */
+		}
 
-/* Forward button */
-#floatingForwardBtn {
-	right: -50px; /* hidden off-screen */
-}
+		/* Forward button */
+		#floatingForwardBtn {
+			right: -50px;
+			/* hidden off-screen */
+		}
 
-/* Show when near edge */
-#floatingBackBtn.show {
-	left: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		/* Show when near edge */
+		#floatingBackBtn.show {
+			left: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-#floatingForwardBtn.show {
-	right: 20px;
-	opacity: 1;
-	pointer-events: auto;
-}
+		#floatingForwardBtn.show {
+			right: 20px;
+			opacity: 1;
+			pointer-events: auto;
+		}
 
-/* Hover animation */
-#floatingBackBtn:hover, #floatingForwardBtn:hover {
-	background-color: #E67E00;
-	transform: scale(1.1);
-}
-</style>
-
-
-<style>
-.btns {
-	float: right;
-	margin: 5px;
-}
-
-.col-sm-5 {
-	padding-bottom: 15px;
-}
-
-.list-body {
-	padding: 0px;
-}
-
-.error {
-	color: red;
-	padding-left: 10px;
-}
-
-.formline {
-	padding-bottom: 15px;
-}
-
-.btn-primary {
-	background-color: #E77400;
-	border-color: #0c0c0c;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active,
-	.show>.btn-primary.dropdown-toggle {
-	color: #fff;
-	background-color: #cc000000;
-	border-color: #161617;
-}
-
-#finusertb {
-	width: 460px;
-}
-</style>
-<style>
-	#usertable {
-		/* min-width: 2800px; */
-		/* adjust based on columns */
-	}
-
-	#usertable {
-		border-collapse: collapse !important;
-		font-family: Arial, sans-serif !important;
-		font-size: 12px !important;
-	}
-
-	/* HEADER */
-	/* Update this section in your <style> tag */
-	#usertable thead th {
-		background-color: #7b6458;
-		color: #fff;
-		font-family: Arial, sans-serif !important;
-		font-size: 14px !important;
-		text-align: center;
-		vertical-align: middle;
-		white-space: normal;
-
-		/* ADD THESE THREE LINES */
-		padding: 2px 4px !important;
-		/* Reduces internal spacing */
-		line-height: 1.1 !important;
-		/* Reduces space between wrapped text lines */
-		font-size: 11px !important;
-		/* Optional: slightly smaller font to save space */
-		position: sticky;
-		top: 0;
-		/* Keeps the first row at the top */
-		z-index: 10;
-		background-color: #7b6458 !important;
-		/* Ensures the header isn't transparent */
-		color: white;
-		box-shadow: inset 0 -1px 0 #dee2e6;
-		/* Optional: adds a bottom border to the sticky header */
-	}
+		/* Hover animation */
+		#floatingBackBtn:hover,
+		#floatingForwardBtn:hover {
+			background-color: #E67E00;
+			transform: scale(1.1);
+		}
+	</style>
 
 
-	/* BODY CELLS */
-	#usertable td {
-		padding: 5px 6px !important;
-		border: 1px solid #e8e8e8 !important;
-		/* light grey lines */
-		background: #fafafa;
-		white-space: normal !important;
-	}
+	<style>
+		.btns {
+			float: right;
+			margin: 5px;
+		}
 
-	/* ROW EVEN/ODD */
-	#usertable tbody tr:nth-child(even) {
-		background-color: #f4f2ef !important;
-	}
+		.col-sm-5 {
+			padding-bottom: 15px;
+		}
 
-	#usertable tbody tr:nth-child(odd) {
-		background-color: #ffffff !important;
-	}
-	#usertable thead tr:nth-child(2) th {
-	   /*  top: 32px;  *//* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
-	    z-index: 9;
-}
-.dataTables_wrapper .dataTables_paginate {
-    display: flex !important;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 10px;   
-    padding-top: 0 !important; 
-    float: none !important;    
-}
-	/* SEARCH BOX FIX */
-	.dataTables_filter label {
-		display: flex !important;
-		gap: 10px;
-		align-items: center;
-		padding-top: 0.25em;
-	}
+		.list-body {
+			padding: 0px;
+		}
 
-	.dataTables_filter label {
-		display: flex !important;
-		align-items: center;
-		gap: 8px;
-		/* space between text and input */
-		margin-bottom: 0 !important;
-	}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-	.dataTables_filter input {
-		margin-left: 5px;
-		flex: 1;
-	}
+		.formline {
+			padding-bottom: 15px;
+		}
 
-	/* === ROLE PAGE CUSTOM HEADER === */
-	.role-page-header {
-		background-color: #ffffff;
-		padding: 15px 20px;
-		display: flex;
-		/* Added for alignment */
-		justify-content: space-between;
-		/* Added for alignment */
-		align-items: center;
-		/* Added for alignment */
-	}
-</style>
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
 
-<style>
-	/* DataTables pagination container */
-	.dataTables_wrapper .dataTables_paginate {
-		display: flex;
-		gap: 3px;
-		margin-left: 4px !important;
-	}
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
 
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		box-sizing: border-box;
-		display: inline-block;
-		min-width: 1.5em;
-		padding: 0.5em !important;
-		margin-left: -8px;
-		text-align: center;
-		text-decoration: none !important;
-		border: 1px solid transparent;
-		border-radius: 2px;
-	}
+		#finusertb {
+			width: 460px;
+		}
+	</style>
+	<style>
+		#usertable {
+			/* min-width: 2800px; */
+			/* adjust based on columns */
+		}
 
-	.mb-2 {
-		margin-bottom: -0.5rem !important;
-	}
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+		}
 
-	.dataTables_wrapper .dataTables_paginate .page-link {
-		outline: none !important;
-		box-shadow: none !important;
-	}
+		/* HEADER */
+		/* Update this section in your <style> tag */
+		#usertable thead th {
+			background-color: #7b6458;
+			color: #fff;
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
+			text-align: center;
+			vertical-align: middle;
+			white-space: normal;
 
-	/* Hover ONLY for Previous & Next */
-	.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
-	.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
-		background-color: #e9ecef !important;
-		color: rgb(255, 128, 64) !important;
-	}
-
-	/* Page numbers should NOT hover */
-	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
-		background-color: #f5f5f5 !important;
-		color: #6c757d !important;
-		cursor: default !important;
-	}
-
-	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-		background-color: #ff7f27 !important;
-		border-color: #ff7f27 !important;
-		color: #ffffff !important;
-		cursor: default !important;
-	}
-</style>
-<style>
-	.role-btn {
-		background: #ffffff;
-		/* default white */
-		color: #E67E00;
-		/* default orange text */
-		border: 1px solid #E67E00;
-		border-radius: 25px;
-		padding: 8px 18px;
-		font-size: 13px;
-		font-weight: 600;
-		cursor: pointer;
-		box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-		transition: all 0.3s ease;
-	}
-
-	/* Hover effect → pastel orange */
-	.role-btn:hover {
-		background: #FFF3D1;
-		/* pastel orange (same as submenu hover) */
-		color: #E67E00;
-		/* orange text */
-		transform: translateY(-2px);
-		box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-	}
-
-	/* Active (selected tab) */
-	.role-btn.active {
-		background: #E67E00;
-		/* solid orange */
-		color: #fff;
-		/* white text */
-		border-color: #E67E00;
-		transform: translateY(-1px);
-		box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
-	}
-
-	/* Optional: icon spacing */
-	.role-btn i {
-		margin-right: 5px;
-	}
-</style>
-<style>
-	#pageHeader {
-		position: sticky;
-		top: 62px;
-		z-index: 1050;
-		background: white;
-		padding-top: 0px;
-	}
-
-	#tabHeader {
-		position: sticky;
-		top: 5px;
-		/* just below page header */
-		z-index: 1040;
-		background: white;
-		padding: 5px 0;
-	}
-
-	#mainHeader {
-		position: sticky;
-		top: 0;
-		z-index: 9999;
-		background: white;
-	}
-</style>
+			/* ADD THESE THREE LINES */
+			padding: 2px 4px !important;
+			/* Reduces internal spacing */
+			line-height: 1.1 !important;
+			/* Reduces space between wrapped text lines */
+			font-size: 11px !important;
+			/* Optional: slightly smaller font to save space */
+			position: sticky;
+			top: 0;
+			/* Keeps the first row at the top */
+			z-index: 10;
+			background-color: #7b6458 !important;
+			/* Ensures the header isn't transparent */
+			color: white;
+			box-shadow: inset 0 -1px 0 #dee2e6;
+			/* Optional: adds a bottom border to the sticky header */
+		}
 
 
-<style>
-.card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-}
+		/* BODY CELLS */
+		#usertable td {
+			padding: 5px 6px !important;
+			border: 1px solid #e8e8e8 !important;
+			/* light grey lines */
+			background: #fafafa;
+			white-space: normal !important;
+		}
 
-.card-header h5 {
-	font-size: 22px;
-	color: #fff;
-	font-weight: 600;
-}
+		/* ROW EVEN/ODD */
+		#usertable tbody tr:nth-child(even) {
+			background-color: #f4f2ef !important;
+		}
 
-.nav-tabs .nav-link {
-	font-weight: 500;
-	border: 1px solid #dee2e6;
-	border-bottom: none;
-	border-radius: 4px 4px 0 0;
-	background-color: #f1f1f1;
-	margin-right: 5px;
-}
+		#usertable tbody tr:nth-child(odd) {
+			background-color: #ffffff !important;
+		}
 
-.nav-tabs .nav-link.active {
-	background-color: #ffffff;
-	border-color: #dee2e6 #dee2e6 #ffffff;
-}
+		#usertable thead tr:nth-child(2) th {
+			/*  top: 32px;  */
+			/* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
+			z-index: 9;
+		}
 
-.table-responsive {
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-}
+		.dataTables_wrapper .dataTables_paginate {
+			display: flex !important;
+			justify-content: flex-end;
+			align-items: center;
+			margin-top: 10px;
+			padding-top: 0 !important;
+			float: none !important;
+		}
 
-.table-hover tbody tr:hover {
-	background-color: #f3f6f9;
-}
+		/* SEARCH BOX FIX */
+		.dataTables_filter label {
+			display: flex !important;
+			gap: 10px;
+			align-items: center;
+			padding-top: 0.25em;
+		}
 
-thead th {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			/* space between text and input */
+			margin-bottom: 0 !important;
+		}
 
-.card-footer {
-	padding: 10px;
-	border-top: 1px solid #ccc;
-}
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
 
-.btn-xs {
-	padding: 4px 12px;
-	font-size: 14px;
-	border-radius: 4px;
-}
+		/* === ROLE PAGE CUSTOM HEADER === */
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 15px 20px;
+			display: flex;
+			/* Added for alignment */
+			justify-content: space-between;
+			/* Added for alignment */
+			align-items: center;
+			/* Added for alignment */
+		}
+	</style>
 
-/* #usertable th,
+	<style>
+		/* DataTables pagination container */
+		.dataTables_wrapper .dataTables_paginate {
+			display: flex;
+			gap: 3px;
+			margin-left: 4px !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			box-sizing: border-box;
+			display: inline-block;
+			min-width: 1.5em;
+			padding: 0.5em !important;
+			margin-left: -8px;
+			text-align: center;
+			text-decoration: none !important;
+			border: 1px solid transparent;
+			border-radius: 2px;
+		}
+
+		.mb-2 {
+			margin-bottom: -0.5rem !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-link {
+			outline: none !important;
+			box-shadow: none !important;
+		}
+
+		/* Hover ONLY for Previous & Next */
+		.dataTables_wrapper .dataTables_paginate .previous .page-link:hover,
+		.dataTables_wrapper .dataTables_paginate .next .page-link:hover {
+			background-color: #e9ecef !important;
+			color: rgb(255, 128, 64) !important;
+		}
+
+		/* Page numbers should NOT hover */
+		.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
+			background-color: #f5f5f5 !important;
+			color: #6c757d !important;
+			cursor: default !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+			background-color: #ff7f27 !important;
+			border-color: #ff7f27 !important;
+			color: #ffffff !important;
+			cursor: default !important;
+		}
+	</style>
+	<style>
+		.role-btn {
+			background: #ffffff;
+			/* default white */
+			color: #E67E00;
+			/* default orange text */
+			border: 1px solid #E67E00;
+			border-radius: 25px;
+			padding: 8px 18px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
+			transition: all 0.3s ease;
+		}
+
+		/* Hover effect → pastel orange */
+		.role-btn:hover {
+			background: #FFF3D1;
+			/* pastel orange (same as submenu hover) */
+			color: #E67E00;
+			/* orange text */
+			transform: translateY(-2px);
+			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
+		}
+
+		/* Active (selected tab) */
+		.role-btn.active {
+			background: #E67E00;
+			/* solid orange */
+			color: #fff;
+			/* white text */
+			border-color: #E67E00;
+			transform: translateY(-1px);
+			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
+		}
+
+		/* Optional: icon spacing */
+		.role-btn i {
+			margin-right: 5px;
+		}
+	</style>
+	<style>
+		#pageHeader {
+			position: sticky;
+			top: 62px;
+			z-index: 1050;
+			background: white;
+			padding-top: 0px;
+		}
+
+		#tabHeader {
+			position: sticky;
+			top: 5px;
+			/* just below page header */
+			z-index: 1040;
+			background: white;
+			padding: 5px 0;
+		}
+
+		#mainHeader {
+			position: sticky;
+			top: 0;
+			z-index: 9999;
+			background: white;
+		}
+	</style>
+
+
+	<style>
+		.card {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		.card-header h5 {
+			font-size: 22px;
+			color: #fff;
+			font-weight: 600;
+		}
+
+		.nav-tabs .nav-link {
+			font-weight: 500;
+			border: 1px solid #dee2e6;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			background-color: #f1f1f1;
+			margin-right: 5px;
+		}
+
+		.nav-tabs .nav-link.active {
+			background-color: #ffffff;
+			border-color: #dee2e6 #dee2e6 #ffffff;
+		}
+
+		.table-responsive {
+			border: 1px solid #dee2e6;
+			border-radius: 4px;
+		}
+
+		.table-hover tbody tr:hover {
+			background-color: #f3f6f9;
+		}
+
+		thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecf0;
+			z-index: 1;
+		}
+
+		.card-footer {
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
+
+		.btn-xs {
+			padding: 4px 12px;
+			font-size: 14px;
+			border-radius: 4px;
+		}
+
+		/* #usertable th,
 		#usertable td {
 			vertical-align: middle;
 			text-align: left;
 			font-size: 17px;
 			font-family: Verdana, sans-serif;
 		} */
-.fa-edit:hover {
-	color: #28a745;
-	transform: scale(1.1);
-}
+		.fa-edit:hover {
+			color: #28a745;
+			transform: scale(1.1);
+		}
 
-td {
-	border: 1px solid rgb(0, 164, 166);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-</style>
+		td {
+			border: 1px solid rgb(0, 164, 166);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</style>
 
 
-<style>
-.form-group {
-	position: relative;
-	margin-bottom: 1.5rem;
-}
+	<style>
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
 
-.form-control {
-	width: 100%;
-	border: 2px solid #ccc;
-	border-radius: 8px;
-	font-size: 1rem;
-	outline: none;
-	background: transparent;
-	transition: border-color 0.3s ease, padding-top 0.3s ease;
-}
+		.form-control {
+			width: 100%;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			font-size: 1rem;
+			outline: none;
+			background: transparent;
+			transition: border-color 0.3s ease, padding-top 0.3s ease;
+		}
 
-.error {
-	color: red;
-	padding-top: 15px;
-}
+		.error {
+			color: red;
+			padding-top: 15px;
+		}
 
-.form-control:focus {
-	border-color: #007bff;
-}
+		.form-control:focus {
+			border-color: #007bff;
+		}
 
-.form-legend {
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	transform: translateY(-50%);
-	font-size: 1rem;
-	color: #aaa;
-	background: white;
-	padding: 0 5px;
-	pointer-events: none;
-	transition: 0.3s ease;
-}
+		.form-legend {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translateY(-50%);
+			font-size: 1rem;
+			color: #aaa;
+			background: white;
+			padding: 0 5px;
+			pointer-events: none;
+			transition: 0.3s ease;
+		}
 
-/* When input or select is focused or has a value, move the label up */
-.form-control:focus ~.form-legend, .form-control:not(:placeholder-shown)
-	~.form-legend {
-	top: -8px;
-	font-size: 1rem;
-	color: #007bff;
-}
+		/* When input or select is focused or has a value, move the label up */
+		.form-control:focus~.form-legend,
+		.form-control:not(:placeholder-shown)~.form-legend {
+			top: -8px;
+			font-size: 1rem;
+			color: #007bff;
+		}
 
-/* Hover effect when the input/select is focused */
-.form-control:focus:hover ~.form-legend {
-	color: #0056b3;
-	/* Darker shade of blue on hover */
-}
+		/* Hover effect when the input/select is focused */
+		.form-control:focus:hover~.form-legend {
+			color: #0056b3;
+			/* Darker shade of blue on hover */
+		}
 
-/* Ensure the label returns to the normal color after focus or hover is removed */
-.form-control:not(:focus) ~.form-legend {
-	color: #aaa;
-	/* Normal label color */
-}
-</style>
+		/* Ensure the label returns to the normal color after focus or hover is removed */
+		.form-control:not(:focus)~.form-legend {
+			color: #aaa;
+			/* Normal label color */
+		}
+	</style>
 
-<style>
-/* Red border for invalid inputs */
-input.error, select.error {
-	border: 2px solid red !important;
-}
+	<style>
+		/* Red border for invalid inputs */
+		input.error,
+		select.error {
+			border: 2px solid red !important;
+		}
 
-/* Error message style */
-label.error {
-	color: red;
-	font-size: 0.85em;
-	margin-top: 5px;
-	display: block;
-}
+		/* Error message style */
+		label.error {
+			color: red;
+			font-size: 0.85em;
+			margin-top: 5px;
+			display: block;
+		}
 
-.static-back-btn {
-						    background-color: rgb(255, 255, 255);
-						    border: none;
-						    color: rgb(255, 128, 0);
-						    font-size: 16px;
-						    border-radius: 50%;
-						    width: 36px;
-						    height: 36px;
-						    display: flex;
-						    align-items: center;
-						    justify-content: center;
-						    margin-right: 10px;
-						    transition: background-color 0.25s ease, transform 0.15s ease;
-						    cursor: pointer;
-						}
+		.static-back-btn {
+			background-color: rgb(255, 255, 255);
+			border: none;
+			color: rgb(255, 128, 0);
+			font-size: 16px;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.25s ease, transform 0.15s ease;
+			cursor: pointer;
+		}
 
-						/* Hover effect */
-						.static-back-btn:hover {
-						    background-color: rgb(255, 128, 0);   /* darker orange */
-						    color: rgb(255, 255, 255);
-						    transform: scale(1.08);
-						}
+		/* Hover effect */
+		.static-back-btn:hover {
+			background-color: rgb(255, 128, 0);
+			/* darker orange */
+			color: rgb(255, 255, 255);
+			transform: scale(1.08);
+		}
 
-						/* Optional click effect */
-						.static-back-btn:active {
-						    transform: scale(0.95);
-						}
-</style>
-<style>
+		/* Optional click effect */
+		.static-back-btn:active {
+			transform: scale(0.95);
+		}
+	</style>
+	<style>
 		.loader-overlay {
-		    display: none;
-		    position: fixed;
-		    inset: 0;
-		    background: rgba(10, 22, 45, 0.65);
-		    backdrop-filter: blur(4px);
-		    z-index: 9999;
-		    align-items: center;
-		    justify-content: center;
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(10, 22, 45, 0.65);
+			backdrop-filter: blur(4px);
+			z-index: 9999;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.loader-card {
-		    width: 320px;
-		    background: #ffffff;
-		    border-radius: 16px;
-		    padding: 22px;
-		    box-shadow: 0 20px 45px rgba(0,0,0,0.22);
-		    text-align: center;
+			width: 320px;
+			background: #ffffff;
+			border-radius: 16px;
+			padding: 22px;
+			box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+			text-align: center;
 		}
 
 		.loader-logo-wrap {
-		    position: relative;
-		    width: 86px;
-		    height: 86px;
-		    margin: 0 auto 14px;
+			position: relative;
+			width: 86px;
+			height: 86px;
+			margin: 0 auto 14px;
 		}
 
 		.loader-logo {
-		    width: 68px;
-		    height: 68px;
-		    position: absolute;
-		    top: 9px;
-		    left: 9px;
-		    border-radius: 50%;
-		    background: #fff;
-		    padding: 6px;
-		    animation: loaderPulse 1.6s infinite;
+			width: 68px;
+			height: 68px;
+			position: absolute;
+			top: 9px;
+			left: 9px;
+			border-radius: 50%;
+			background: #fff;
+			padding: 6px;
+			animation: loaderPulse 1.6s infinite;
 		}
 
 		.loader-ring {
-		    width: 86px;
-		    height: 86px;
-		    border-radius: 50%;
-		    border: 3px solid #d6e4ff;
-		    border-top-color: #0d6efd;
-		    animation: spin 1s linear infinite;
+			width: 86px;
+			height: 86px;
+			border-radius: 50%;
+			border: 3px solid #d6e4ff;
+			border-top-color: #0d6efd;
+			animation: spin 1s linear infinite;
 		}
 
 		.loader-title {
-		    font-weight: 700;
-		    margin-top: 10px;
+			font-weight: 700;
+			margin-top: 10px;
 		}
 
 		.loader-progress {
-		    margin-top: 14px;
-		    height: 6px;
-		    background: #e9f1ff;
-		    border-radius: 999px;
-		    overflow: hidden;
+			margin-top: 14px;
+			height: 6px;
+			background: #e9f1ff;
+			border-radius: 999px;
+			overflow: hidden;
 		}
 
 		.loader-progress-bar {
-		    height: 100%;
-		    width: 40%;
-		    background: linear-gradient(90deg, #0d6efd, #5a9bff);
-		    animation: progressMove 1.5s infinite;
+			height: 100%;
+			width: 40%;
+			background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			animation: progressMove 1.5s infinite;
 		}
 
 		@keyframes spin {
-		    100% { transform: rotate(360deg); }
+			100% {
+				transform: rotate(360deg);
+			}
 		}
 
 		@keyframes loaderPulse {
-		    50% { transform: scale(1.05); }
+			50% {
+				transform: scale(1.05);
+			}
 		}
 
 		@keyframes progressMove {
-		    0% { transform: translateX(-100%); }
-		    100% { transform: translateX(200%); }
+			0% {
+				transform: translateX(-100%);
+			}
+
+			100% {
+				transform: translateX(200%);
+			}
 		}
 	</style>
-<script>
+	<script>
 		$(document).ready(function () {
 			$("#nostroForm").validate({
 				errorClass: "error", // use 'error' class for styling
@@ -814,10 +835,10 @@ label.error {
 		});
 	</script>
 
-<script>
+	<script>
 
 		function submitForm() {
-		$("#loader").css("display", "flex");
+			$("#loader").css("display", "flex");
 
 			const reportName = 'CBUAE_CCR_Data_Template';
 			const submitUrl = './createDataControl?report_name=' + encodeURIComponent(reportName);
@@ -846,7 +867,7 @@ label.error {
 
 	</script>
 
-<script th:inline="javascript">
+	<script th:inline="javascript">
 
 
 		function home() {
@@ -860,13 +881,16 @@ label.error {
 			window.history.back();
 		}
 
+		//function list() {
+			//$("#loader").css("display", "flex");
+			//location.href = 'CCR_Data_Templates?formmode=list';
+		//}
 		function list() {
-			$("#loader").css("display", "flex");
-			location.href = 'CCR_Data_Templates?formmode=list';
+		    let Report_date = document.querySelector("#portfolioDate")?.value;
+		    location.href = 'CCR_Data_Templates?formmode=list&Report_date=' + Report_date;
 		}
-
 		function nostro() {
-		$("#loader").css("display", "flex");
+			$("#loader").css("display", "flex");
 			location.href = 'CCR_Data_Templates';
 		}
 		$(document).ready(function () {
@@ -909,15 +933,24 @@ label.error {
 
 <script>
 	function navigateToTab(tabId) {
-		$("#loader").css("display", "flex");
+	    $("#loader").css("display", "flex");
 
+	    let dateField = document.getElementById("portfolioDate");
+
+	    if (!dateField || !dateField.value) {
+	        alert("Please select Portfolio Date");
+	        return;
+	    }
+
+	    let Report_date = dateField.value; 
 	    let url = '';
+
 	    if (tabId === 'data') {
-	        url = 'CCR_Data_Templates?formmode=list';
+	        url = 'CCR_Data_Templates?formmode=list&Report_date=' + Report_date;
 	    } else if (tabId === 'datacontrols') {
-	        url = 'CCR_Data_Templates?formmode=add';
+	        url = 'CCR_Data_Templates?formmode=add&Report_date=' + Report_date;
 	    } else if (tabId === 'template') {
-	        url = 'CCR_Data_Templates?formmode=add&tab=template';  // ✅ Correct
+	        url = 'CCR_Data_Templates?formmode=add&tab=template&Report_date=' + Report_date;
 	    }
 
 	    window.location.href = url;
@@ -940,17 +973,17 @@ label.error {
 
 	// On page load, detect formmode and show corresponding tab
 	window.addEventListener('DOMContentLoaded', function () {
-	    const params = new URLSearchParams(window.location.search);
-	    const formmode = params.get('formmode');
-	    const tab = params.get('tab');
+		const params = new URLSearchParams(window.location.search);
+		const formmode = params.get('formmode');
+		const tab = params.get('tab');
 
-	    if (tab === 'template') {
-	        handleClick('template');
-	    } else if (formmode === 'list') {
-	        handleClick('data');
-	    } else {
-	        handleClick('datacontrols');
-	    }
+		if (tab === 'template') {
+			handleClick('template');
+		} else if (formmode === 'list') {
+			handleClick('data');
+		} else {
+			handleClick('datacontrols');
+		}
 	});
 
 </script>
@@ -961,9 +994,9 @@ label.error {
 <script>
 	function downloadCCRData() {
 		$("#loader").css("display", "flex");
-
+		var Report_date = Report_date = document.getElementById("portfolioDate").value;
 		$.ajax({
-			url: './downloadCCRDataExcel',
+			url: './downloadCCRDataExcel?Report_date=' + Report_date,
 			type: 'GET',
 			xhrFields: {
 				responseType: 'blob'
@@ -1011,72 +1044,64 @@ label.error {
 <title>RiskInsights</title>
 
 <body>
-	<div class="container-fluid"
-		style="padding-left: 0px; padding-right: 0px;">
+	<div class="container-fluid" style="padding-left: 0px; padding-right: 0px;">
 		<!-- 	<div class="row"> -->
 
-			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 
-				<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
+		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' or formmode == 'exist' }">
-			
+
 			<div class="d-flex align-items-center">
 
-														<button class="static-back-btn" onclick="goBack()" title="Go Back">
-															<i class="fa fa-arrow-left"></i>
-														</button>
-														<div class="float-left">
-				<h4>CCR DATA TEMPLATE</h4>
+				<button class="static-back-btn" onclick="goBack()" title="Go Back">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<div class="float-left">
+					<h4>CCR DATA TEMPLATE</h4>
 				</div>
 			</div>
-			<div
-							class="role-page-header d-flex justify-content-between align-items-center">
-							<div class="float-left">
-								<button class=role-btn id="datacontrols-btn"
-									onclick="navigateToTab('datacontrols')">Data Controls</button>
-								<!--<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template
+			<div class="role-page-header d-flex justify-content-between align-items-center">
+				<div class="float-left">
+					<button class=role-btn id="datacontrols-btn" onclick="navigateToTab('datacontrols')">Data
+						Controls</button>
+					<!--<button class="custom-tab-btn" id="template-btn" onclick="navigateToTab('template')">Template
 									Instructions</button>-->
 
-								<button class="role-btn" id="template-btn"
-									onclick="navigateToTab('template')">Template Instructions</button>
+					<button class="role-btn" id="template-btn" onclick="navigateToTab('template')">Template
+						Instructions</button>
 
 
-								<button class="role-btn" id="data-btn"
-									onclick="navigateToTab('data')">Data</button>
+					<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">Data</button>
 
-							</div>
-							<div class="float-right">
-								<button th:if="${formmode} =='list'" type="button"
-									class="role-btn" onclick="downloadCCRData();">
-									<i class="fa fa-download"></i> Download
-								</button>
-							</div>
-						</div>
+				</div>
+				<div class="float-right">
+					<button th:if="${formmode} =='list'" type="button" class="role-btn" onclick="downloadCCRData();">
+						<i class="fa fa-download"></i> Download
+					</button>
+				</div>
+			</div>
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
 		<!--<div style="padding-right: 10px; padding-left: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode !='edit' or formmode == 'exist' }">-->
 
+		<!-- Tabs -->
+		<!--<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='add'">-->
+
+		<div style="padding-right: 10px; padding-left: 20px;"
+			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
 			<!-- Tabs -->
-			<!--<div class="tab-content" id="myTabContent" style="margin-top: 20px;" th:if="${formmode} =='add'">-->
-				
-				<div style="padding-right: 10px; padding-left: 20px;"
-									th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' or formmode !='edit' }">
-									<!-- Tabs -->
-									<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
-										th:if="${formmode} =='null'">
-				<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode} =='null'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="nostroForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="nostroForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
+											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
 												<option th:selected="${bankname == 'Bank of Baroda'}"
@@ -1085,8 +1110,9 @@ label.error {
 										</div>
 										<div class="form-group " style="width:20%">
 											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
+												th:value="${lastDate}" class="form-control form-control-sm" required
+												onchange="navigateToTab('datacontrols')" /> <label
+												class="form-legend">Portfolio
 												date</label>
 										</div>
 									</div>
@@ -1097,23 +1123,17 @@ label.error {
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Name1"
+														<input type="text" name="contactEmployee1Name1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee1Title1"
+														<input type="text" name="contactEmployee1Title1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee1Email1"
+														<input type="email" name="contactEmployee1Email1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
 													</div>
@@ -1124,23 +1144,17 @@ label.error {
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Name2"
+														<input type="text" name="contactEmployee2Name2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="contactEmployee2Title2"
+														<input type="text" name="contactEmployee2Title2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="contactEmployee2Email2"
+														<input type="email" name="contactEmployee2Email2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
 													</div>
@@ -1153,42 +1167,36 @@ label.error {
 												<label class="section-title">SIGN OFF</label>
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+														<input type="text" name="signOffCroName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CRO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															name="signOffCroEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Email</label>
+														<input type="email" name="signOffCroEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CRO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text" 
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+														<input type="text" name="signOffCfoName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CFO Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email" 
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+														<input type="email" name="signOffCfoEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">CFO Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															
-															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+														<input type="text" name="signOffHeadOfTreasuryName"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Name</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															
-															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Email</label>
+														<input type="email" name="signOffHeadOfTreasuryEmail"
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Email</label>
 													</div>
 												</div>
 											</div>
@@ -1201,29 +1209,25 @@ label.error {
 								<button th:if="${formmode == 'add'}" id="savebutton"
 									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>-->
-							<div class="card-footer text-center"  style="margin-top:-15px;">
-							<button th:if="${formmode == 'null'}" id="savebutton"
-							type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
-						 </div>
+							<div class="card-footer text-center" style="margin-top:-15px;">
+								<button th:if="${formmode == 'null'}" id="savebutton" type="button"
+									class="role-btn px-5" onclick="submitForm()">Save</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-						
-			<div class="tab-content" id="myTabContent" style="margin-top: 0px;"
-				th:if="${formmode} =='exist'">
-				<div class="tab-pane fade show active scrollable-exist-viewport"
-					id="datacontrols" role="tabpanel">
+
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode} =='exist'">
+				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="nostroForm" method="post" autocomplete="off"
-								class="compact-form">
+							<form id="nostroForm" method="post" autocomplete="off" class="compact-form">
 								<div class="card-body">
 
 									<div class="row mb-2 mt-3">
 										<div class="form-group" style="width:20%">
-											<select id="submittingInstitution"
-												name="submittingInstitution"
+											<select id="submittingInstitution" name="submittingInstitution"
 												class="form-control form-control-sm" required>
 												<option value="">-- Select --</option>
 												<option th:selected="${bankname == 'Bank of Baroda'}"
@@ -1231,10 +1235,11 @@ label.error {
 											</select> <label class="form-legend">Submitting Institution</label>
 										</div>
 										<div class="form-group " style="width:20%">
-											<input type="date" id="portfolioDate" name="portfolioDate"
-												th:value="${lastDate}" class="form-control form-control-sm"
-												required /> <label class="form-legend">Portfolio
-												date</label>
+										<input type="date" id="portfolioDate" name="portfolioDate"
+										th:value="${lastDate}" class="form-control form-control-sm" required
+										onchange="navigateToTab('datacontrols')" /> <label
+										class="form-legend">Portfolio
+											date</label>
 										</div>
 									</div>
 
@@ -1244,22 +1249,19 @@ label.error {
 												<label class="section-title">CONTACT (EMPLOYEE 1)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Name1}"
+														<input type="text" th:value="${data.contactEmployee1Name1}"
 															name="contactEmployee1Name1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee1Title1}"
+														<input type="text" th:value="${data.contactEmployee1Title1}"
 															name="contactEmployee1Title1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee1Email1}"
+														<input type="email" th:value="${data.contactEmployee1Email1}"
 															name="contactEmployee1Email1"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
@@ -1271,22 +1273,19 @@ label.error {
 												<label class="section-title">CONTACT (EMPLOYEE 2)</label>
 												<div class="centered-content">
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Name2}"
+														<input type="text" th:value="${data.contactEmployee2Name2}"
 															name="contactEmployee2Name2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Name</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.contactEmployee2Title2}"
+														<input type="text" th:value="${data.contactEmployee2Title2}"
 															name="contactEmployee2Title2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Title</label>
 													</div>
 													<div class="form-group">
-														<input type="email"
-															th:value="${data.contactEmployee2Email2}"
+														<input type="email" th:value="${data.contactEmployee2Email2}"
 															name="contactEmployee2Email2"
 															class="form-control form-control-sm" placeholder=" "
 															required /><label class="form-legend">Email</label>
@@ -1301,41 +1300,42 @@ label.error {
 												<div class="signoff-alignment-wrap">
 													<div class="form-group">
 														<input type="text" th:value="${data.signOffCroName}"
-															name="signOffCroName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Name</label>
+															name="signOffCroName" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CRO
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email" th:value="${data.signOffCroEmail}"
-															name="signOffCroEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CRO Email</label>
+															name="signOffCroEmail" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CRO
+															Email</label>
 													</div>
 													<div class="form-group">
 														<input type="text" th:value="${data.signOffCfoName}"
-															name="signOffCfoName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Name</label>
+															name="signOffCfoName" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CFO
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email" th:value="${data.signOffCfoEmail}"
-															name="signOffCfoEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">CFO Email</label>
+															name="signOffCfoEmail" class="form-control form-control-sm"
+															placeholder=" " required /><label class="form-legend">CFO
+															Email</label>
 													</div>
 													<div class="form-group">
-														<input type="text"
-															th:value="${data.signOffHeadOfTreasuryName}"
+														<input type="text" th:value="${data.signOffHeadOfTreasuryName}"
 															name="signOffHeadOfTreasuryName"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Name</label>
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Name</label>
 													</div>
 													<div class="form-group">
 														<input type="email"
 															th:value="${data.signOffHeadOfTreasuryEmail}"
 															name="signOffHeadOfTreasuryEmail"
-															class="form-control form-control-sm" placeholder=" " required /><label
-															class="form-legend">Head of Treasury Email</label>
+															class="form-control form-control-sm" placeholder=" "
+															required /><label class="form-legend">Head of Treasury
+															Email</label>
 													</div>
 												</div>
 											</div>
@@ -1344,9 +1344,9 @@ label.error {
 								</div>
 							</form>
 
-							<div class="card-footer text-center"  style="margin-top:-15px;">
-								<button th:if="${formmode == 'exist'}" id="savebutton"
-									type="button" class="role-btn px-5" onclick="submitForm()">Save</button>
+							<div class="card-footer text-center" style="margin-top:-15px;">
+								<button th:if="${formmode == 'exist'}" id="savebutton" type="button"
+									class="role-btn px-5" onclick="submitForm()">Save</button>
 							</div>
 						</div>
 					</div>
@@ -1393,12 +1393,13 @@ label.error {
 				<!-- 	<div class="row">
 				<div class="col-sm-12">
 					<div class="container-fluid">
-   -->
-				<div class="table-responsive"
-					style="max-height: 400px; overflow: auto; border: none;">
-					<table id="usertable"
-						class="table table-bordered table-striped table-hover"
-						>
+   -->					
+  <!-- <input type="date" id="portfolioDate" name="portfolioDate"
+								th:value="${lastDate}" class="form-control form-control-sm"
+								required Style="display:none" />-->
+								<input type="date" id="portfolioDateHidden" style="display:none" />
+				<div class="table-responsive" style="max-height: 400px; overflow: auto; border: none;">
+					<table id="usertable" class="table table-bordered table-striped table-hover">
 						<thead class="thead-light">
 							<tr>
 								<th rowspan="1" style="text-align: center;"></th>
@@ -1412,10 +1413,10 @@ label.error {
 								<th style="text-align: center;width: 100px;">Action</th>
 
 								<th class="th-left" style="min-width: 100px">Data Date</th>
-								<th class="th-left" >Bank Name</th>
-								<th class="th-left" >Head Office/Subsidiary</th>
-								<th class="th-left" >Subsidiary</th>
-								<th class="th-left" >Bank Symbol</th>
+								<th class="th-left">Bank Name</th>
+								<th class="th-left">Head Office/Subsidiary</th>
+								<th class="th-left">Subsidiary</th>
+								<th class="th-left">Bank Symbol</th>
 								<th class="th-left">Conventional/Islamic</th>
 								<th class="th-left">Local Foreign</th>
 								<th class="th-left">CBUAE Tiering</th>
@@ -1448,11 +1449,10 @@ label.error {
 						<tbody>
 							<tr th:each="data : ${repoList1}">
 								<td style="text-align: center;min-width: 100px;"><a
-									th:href="@{'/CCR_Data_Templates?formmode=edit&siNo=' + ${data.siNo}}">
+										th:href="@{'/CCR_Data_Templates?formmode=edit&siNo=' + ${data.siNo}}">
 										<i class="fa fa-edit" style="color: #ff7f27;"></i>
-								</a></td>
-								<td
-									th:text="${#dates.format(data.transactionDate, 'dd-MM-yyyy')}"></td>
+									</a></td>
+								<td th:text="${#dates.format(data.transactionDate, 'dd-MM-yyyy')}"></td>
 								<td th:text="${data.bankName}"></td>
 								<td th:text="${data.headOfficeSubsidiary}"></td>
 								<td th:text="${data.subsidiary}"></td>
@@ -1524,8 +1524,8 @@ label.error {
 						</button> -->
 
 
-					<button th:if="${formmode == 'null' or formmode == 'add'}"
-						type="button" class="role-btn" onclick="submitForm()">Save</button>
+					<button th:if="${formmode == 'null' or formmode == 'add'}" type="button" class="role-btn"
+						onclick="submitForm()">Save</button>
 
 
 					<!-- <button type="button" class="custom-tab-btn" onclick="back();">
@@ -1542,12 +1542,10 @@ label.error {
 
 		<!------------------ edit starts-------------------------------------------------------------->
 
-		<div th:if="${formmode}=='edit'"  class="ccr-edit-page"  style="align-items: center">
-			<form th:action="@{/BCDRS/updateCCRData}" th:object="${repoData}"
-				method="post" id="repoData">
+		<div th:if="${formmode}=='edit'" class="ccr-edit-page" style="align-items: center">
+			<form th:action="@{/BCDRS/updateCCRData}" th:object="${repoData}" method="post" id="repoData">
 				<div class="card" style="margin-left: 15px; margin-right: 15px;">
-					<div
-						class="role-page-header d-flex justify-content-between align-items-center">
+					<div class="role-page-header d-flex justify-content-between align-items-center">
 						<div>
 							<h4>CCR Data Templates - Edit</h4>
 
@@ -1564,17 +1562,16 @@ label.error {
 							<label class="col-sm-2 col-form-label">Data Date</label>
 							<div class="col-sm-4">
 
-								<input type="date" class="form-control"
-									th:field="*{transactionDate}" readonly required />
+								<input type="date" class="form-control" th:field="*{transactionDate}" readonly
+									required />
 
 							</div>
 							<label class="col-sm-2 col-form-label">Bank Name</label>
 							<div class="col-sm-4">
-								<select class="form-control" th:field="*{bankName}"
-									onchange="handleBankChange(this)">
+								<select class="form-control" th:field="*{bankName}" onchange="handleBankChange(this)">
 									<option value="">-- Select Bank --</option>
-									<option th:each="bank : ${bankList}"
-										th:value="${bank.bankName}" th:text="${bank.bankName}"></option>
+									<option th:each="bank : ${bankList}" th:value="${bank.bankName}"
+										th:text="${bank.bankName}"></option>
 								</select>
 							</div>
 						</div>
@@ -1592,37 +1589,36 @@ label.error {
 
 							<label class="col-sm-2 col-form-label">Subsidiary</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{subsidiary}" id="subsidiary" />
+								<input type="text" class="form-control vchar-50" th:field="*{subsidiary}"
+									id="subsidiary" />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Bank Symbol</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" th:field="*{bankSymbol}"
-									id="bankSymbol" readonly />
+								<input type="text" class="form-control" th:field="*{bankSymbol}" id="bankSymbol"
+									readonly />
 							</div>
 
 							<label class="col-sm-2 col-form-label">Conventional/Islamic</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{conventionalIslamic}" id="conventionalIslamic"
-									readonly />
+								<input type="text" class="form-control" th:field="*{conventionalIslamic}"
+									id="conventionalIslamic" readonly />
 							</div>
 						</div>
 
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label">Local Foreign</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{localForeign}" id="localForeign" readonly />
+								<input type="text" class="form-control" th:field="*{localForeign}" id="localForeign"
+									readonly />
 							</div>
 
 							<label class="col-sm-2 col-form-label">CBUAE Tiering</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{cbuaeTiering}" id="cbuaeTiering" readonly />
+								<input type="text" class="form-control" th:field="*{cbuaeTiering}" id="cbuaeTiering"
+									readonly />
 
 							</div>
 						</div>
@@ -1634,14 +1630,13 @@ label.error {
 
 							<label class="col-sm-2 col-form-label"> Counterparty Name</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{counterpartyName}" id="counterpartyName" />
+								<input type="text" class="form-control vchar-50" th:field="*{counterpartyName}"
+									id="counterpartyName" />
 							</div>
 							<label class="col-sm-2 col-form-label"> Internal
 								Counterparty Ref</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{internalCounterpartyRef}"
+								<input type="text" class="form-control vchar-50" th:field="*{internalCounterpartyRef}"
 									id="internalCounterpartyRef" />
 							</div>
 						</div>
@@ -1652,13 +1647,12 @@ label.error {
 								Counterparty Rating</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control vchar-50"
-									th:field="*{internalCounterpartyRating}"
-									id="internalCounterpartyRating" />
+									th:field="*{internalCounterpartyRating}" id="internalCounterpartyRating" />
 							</div>
 							<label class="col-sm-2 col-form-label">Final Rating CBUAE</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control vchar-50"
-									th:field="*{finalRatingCbuae}" id="finalRatingCbuae" />
+								<input type="text" class="form-control vchar-50" th:field="*{finalRatingCbuae}"
+									id="finalRatingCbuae" />
 							</div>
 
 						</div>
@@ -1669,16 +1663,15 @@ label.error {
 								<select class="form-control" th:field="*{countryOfRisk}"
 									onchange="handleCountryChange(this)">
 									<option value="">-- Select Country --</option>
-									<option th:each="c : ${countryList}"
-										th:value="${c.countryOfRisk}" th:text="${c.countryOfRisk}"></option>
+									<option th:each="c : ${countryList}" th:value="${c.countryOfRisk}"
+										th:text="${c.countryOfRisk}"></option>
 								</select>
 							</div>
 
 							<label class="col-sm-2 col-form-label">CBUAE Geo Zone</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control"
-									th:field="*{cbuaeGeographicalZone}" id="cbuaeGeographicalZone"
-									readonly />
+								<input type="text" class="form-control" th:field="*{cbuaeGeographicalZone}"
+									id="cbuaeGeographicalZone" readonly />
 							</div>
 						</div>
 
@@ -1687,8 +1680,7 @@ label.error {
 							<label class="col-sm-2 col-form-label">Counter Party Type</label>
 							<div class="col-sm-4">
 
-								<select class="form-control" th:field="*{counterpartyType}"
-									id="counterpartyType">
+								<select class="form-control" th:field="*{counterpartyType}" id="counterpartyType">
 									<option value="" disabled selected>-- Select --</option>
 									<option value="Corporate">Corporate</option>
 									<option value="FI">FI</option>
@@ -1731,8 +1723,8 @@ label.error {
 
 							<label class="col-sm-2 col-form-label">PFE 95 AED</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control  number-24-2"
-									th:field="*{pfe95Aed}" id="pfe95Aed" />
+								<input type="text" class="form-control  number-24-2" th:field="*{pfe95Aed}"
+									id="pfe95Aed" />
 							</div>
 
 
@@ -1740,8 +1732,7 @@ label.error {
 								Exposure AED</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control number-24-2"
-									th:field="*{expectedPositiveExposureAed}"
-									id="expectedPositiveExposureAed" />
+									th:field="*{expectedPositiveExposureAed}" id="expectedPositiveExposureAed" />
 							</div>
 
 						</div>
@@ -1751,8 +1742,7 @@ label.error {
 								Exposure AED</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control number-24-2"
-									th:field="*{expectedNegativeExposureAed}"
-									id="expectedNegativeExposureAed" />
+									th:field="*{expectedNegativeExposureAed}" id="expectedNegativeExposureAed" />
 							</div>
 
 
@@ -1773,8 +1763,7 @@ label.error {
 							<!-- Collateral Type -->
 							<label class="col-sm-2 col-form-label">Collateral Type</label>
 							<div class="col-sm-4">
-								<select class="form-control" th:field="*{collateralType}"
-									id="collateralType">
+								<select class="form-control" th:field="*{collateralType}" id="collateralType">
 									<option value="" disabled selected>-- Select --</option>
 									<option value="Cash">Cash</option>
 									<option value="Security">Security</option>
@@ -1785,8 +1774,8 @@ label.error {
 							<!-- Threshold -->
 							<label class="col-sm-2 col-form-label">Threshold</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{threshold}" id="threshold" />
+								<input type="text" class="form-control number-24-2" th:field="*{threshold}"
+									id="threshold" />
 							</div>
 
 						</div>
@@ -1798,16 +1787,15 @@ label.error {
 								Amount (AED)</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control number-24-2"
-									th:field="*{minimumTransferAmountAed}"
-									id="minimumTransferAmountAed" />
+									th:field="*{minimumTransferAmountAed}" id="minimumTransferAmountAed" />
 							</div>
 
 							<!-- Independent Amount AED -->
 							<label class="col-sm-2 col-form-label">Independent Amount
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{independentAmountAed}" id="independentAmountAed" />
+								<input type="text" class="form-control number-24-2" th:field="*{independentAmountAed}"
+									id="independentAmountAed" />
 							</div>
 
 						</div>
@@ -1819,8 +1807,7 @@ label.error {
 								Frequency</label>
 							<div class="col-sm-4">
 
-								<select class="form-control" th:field="*{marginCallFrequency}"
-									id="marginCallFrequency">
+								<select class="form-control" th:field="*{marginCallFrequency}" id="marginCallFrequency">
 									<option value="" disabled selected>-- Select --</option>
 									<option value="Daily">Daily</option>
 									<option value="Weekly">Weekly</option>
@@ -1836,8 +1823,7 @@ label.error {
 								Outstanding (AED)</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control number-24-2"
-									th:field="*{netCollateralOutstandingAed}"
-									id="netCollateralOutstandingAed" />
+									th:field="*{netCollateralOutstandingAed}" id="netCollateralOutstandingAed" />
 
 							</div>
 
@@ -1848,15 +1834,13 @@ label.error {
 							<!-- CVA AED -->
 							<label class="col-sm-2 col-form-label">CVA (AED)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{cvaAed}" id="cvaAed" />
+								<input type="text" class="form-control number-24-2" th:field="*{cvaAed}" id="cvaAed" />
 							</div>
 
 							<!-- DVA AED -->
 							<label class="col-sm-2 col-form-label">DVA (AED)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{dvaAed}" id="dvaAed" />
+								<input type="text" class="form-control number-24-2" th:field="*{dvaAed}" id="dvaAed" />
 							</div>
 
 						</div>
@@ -1867,28 +1851,27 @@ label.error {
 							<label class="col-sm-2 col-form-label">Bilateral CVA
 								(AED)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{bilateralCvaAed}" id="bilateralCvaAed" />
+								<input type="text" class="form-control number-24-2" th:field="*{bilateralCvaAed}"
+									id="bilateralCvaAed" />
 							</div>
 
 							<!-- FVA AED -->
 							<label class="col-sm-2 col-form-label">FVA (AED)</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{fvaAed}" id="fvaAed" />
+								<input type="text" class="form-control number-24-2" th:field="*{fvaAed}" id="fvaAed" />
 							</div>
 
 						</div>
 						<div>
-						<h4 style="padding-bottom:10px">Exposure</h4>
+							<h4 style="padding-bottom:10px">Exposure</h4>
 						</div>
 						<div class="form-group row">
 
 							<!-- Incremental PFE -->
 							<label class="col-sm-2 col-form-label">Incremental PFE</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control number-24-2"
-									th:field="*{incrementalPfe}" id="incrementalPfe" />
+								<input type="text" class="form-control number-24-2" th:field="*{incrementalPfe}"
+									id="incrementalPfe" />
 							</div>
 
 						</div>
@@ -1896,10 +1879,9 @@ label.error {
 						<!-- End card-body -->
 						<!-- ✅ Footer section -->
 						<div class="card-footer text-center">
-							<button type="submit" class="role-btn"
-								onclick="updateform(event)">Update</button>
-							<a th:href="@{/CCR_Data_Templates (formmode='list')}"
-								class="role-btn" style="text-decoration: none;">Cancel</a>
+							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
+							<a th:href="@{/CCR_Data_Templates (formmode='list')}" class="role-btn"
+								style="text-decoration: none;">Cancel</a>
 							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
 						</div>
 					</div>
@@ -1911,44 +1893,40 @@ label.error {
 
 
 	<div class="modal fade" id="datadelete">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: #f15362;">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: #f15362;">
 					<button type="button" class="close" data-dismiss="modal">×</button>
 					Are you Sure want to delete?
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Floating Back Button -->
-<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
-<!--		<i class="fa fa-arrow-left"></i>-->
-<!--	</button>-->
-<!--	 Floating Forward Button -->
-<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
-<!--		title="Go Forward">-->
-<!--		<i class="fa fa-arrow-right"></i>-->
-<!--	</button>-->
+	<!--	<button id="floatingBackBtn" onclick="goBack()" title="Go Back">-->
+	<!--		<i class="fa fa-arrow-left"></i>-->
+	<!--	</button>-->
+	<!--	 Floating Forward Button -->
+	<!--	<button id="floatingForwardBtn" onclick="goForward()"-->
+	<!--		title="Go Forward">-->
+	<!--		<i class="fa fa-arrow-right"></i>-->
+	<!--	</button>-->
 	<div class="modal fade" id="formmsg">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="modal-body"
-					style="margin-top: 8px; text-align: center; color: aliceblue;">
+				<div class="modal-body" style="margin-top: 8px; text-align: center; color: aliceblue;">
 					<button type="button" class="close" data-dismiss="modal">×</button>
 					<a th:value="${msg}"></a>
 				</div>
 				<div class="modal-footer"
 					style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding: 10px; border-top: 2px solid #ccc;">
-					<button type="button" class="btn btn-primary"
-						onclick="submitformdelete(this);" th:attr="data-formmode=delete">Submit</button>
+					<button type="button" class="btn btn-primary" onclick="submitformdelete(this);"
+						th:attr="data-formmode=delete">Submit</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
@@ -1956,20 +1934,18 @@ label.error {
 	</div>
 
 	<div class="modal fade" id="alert">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">BANK OF BARODA</div>
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">BANK OF
+						BARODA</div>
 				</div>
 				<div class="modal-body" style="text-align: center">
 					<p id="alertmsg"></p>
 					<!--<button type="button" class="custom-tab-btn" onclick="list()"
 							data-dismiss="modal">Close</button>-->
 
-					<button type="button" class="role-btn"
-						onclick="closeAlertAndRedirect()">Close</button>
+					<button type="button" class="role-btn" onclick="closeAlertAndRedirect()">Close</button>
 
 				</div>
 			</div>
@@ -1977,8 +1953,7 @@ label.error {
 	</div>
 
 	<div class="modal fade" id="alert1">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="menu-title-header">
 					<div class="modal-title" style="text-align: center; color: white;">BANK
@@ -1989,8 +1964,8 @@ label.error {
 					<!--<button type="button" class="role-btn" onclick="closeModalAndGoToDataTab()">Close</button>-->
 					<!--<a th:href="@{/CCR_Data_Templates(formmode='list')}"
 						class="role-btn" style="text-decoration: none;">Close</a>-->
-						
-						<button  type="button" class="role-btn" onclick="closeAlertAndRedirect()">Close</button>
+
+					<button type="button" class="role-btn" onclick="closeAlertAndRedirect()">Close</button>
 				</div>
 			</div>
 		</div>
@@ -2010,34 +1985,31 @@ label.error {
 		</div>
 	</div>-->
 	<div id="loader" class="loader-overlay">
-				    <div class="loader-card">
-				        <div class="loader-logo-wrap">
-				            <div class="loader-ring"></div>
-							<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
-				        </div>
-				        <div class="loader-title">Request Processing</div>
-				        <div class="loader-progress">
-				            <div class="loader-progress-bar"></div>
-				        </div>
-				    </div>
-				</div>
+		<div class="loader-card">
+			<div class="loader-logo-wrap">
+				<div class="loader-ring"></div>
+				<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Logo" />
+			</div>
+			<div class="loader-title">Request Processing</div>
+			<div class="loader-progress">
+				<div class="loader-progress-bar"></div>
+			</div>
+		</div>
+	</div>
 	<!-- Custom Alert/Result Modal (Matches your existing style) -->
 	<div class="modal fade" id="resultModal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<!-- Your custom styled header -->
 				<div class="menu-title-header">
-					<div class="modal-title" id="resultModalLabel"
-						style="text-align: center; color: white;">
+					<div class="modal-title" id="resultModalLabel" style="text-align: center; color: white;">
 						<!-- Title will be set by JavaScript -->
 					</div>
 				</div>
-				<div class="modal-body"
-					style="text-align: center; font-size: 1.1rem;">
+				<div class="modal-body" style="text-align: center; font-size: 1.1rem;">
 					<p id="resultModalBody"></p>
 					<!-- Your custom styled button -->
-					<button type="button" class="role-btn" onclick="list()"
-						data-dismiss="modal">OK</button>
+					<button type="button" class="role-btn" onclick="list()" data-dismiss="modal">OK</button>
 				</div>
 			</div>
 		</div>
@@ -2045,47 +2017,47 @@ label.error {
 
 </body>
 <script>
-$('#usertable').DataTable({
-	scrollX: false,
-	autoWidth: false,
-	paging: true,
-	searching: true,
-	lengthChange: false,
-	ordering: false,
-	pageLength: 100,
-	fixedHeader: true,
+	$('#usertable').DataTable({
+		scrollX: false,
+		autoWidth: false,
+		paging: true,
+		searching: true,
+		lengthChange: false,
+		ordering: false,
+		pageLength: 100,
+		fixedHeader: true,
 
-	// Layout: search (left) + pagination (right)
-	dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
+		// Layout: search (left) + pagination (right)
+		dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
 
 
-	// Optional: language tweak for better label
-	language: {
-		search: "Search:"
-	}
-});
+		// Optional: language tweak for better label
+		language: {
+			search: "Search:"
+		}
+	});
 </script>
 
 
 <!-- Include this after your DataTable initialization script -->
 
 <style>
-/* Remove top margin/padding from DataTables parent containers */
-#data {
-	padding-top: 0 !important;
-	margin-top: 0 !important;
-}
+	/* Remove top margin/padding from DataTables parent containers */
+	#data {
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
 
-.table-responsive {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	.table-responsive {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 
-/* Ensure DataTables filter (search box) doesn't have spacing above it */
-div.dataTables_filter {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
+	/* Ensure DataTables filter (search box) doesn't have spacing above it */
+	div.dataTables_filter {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+	}
 </style>
 
 <script>
@@ -2194,113 +2166,113 @@ div.dataTables_filter {
 </script>
 
 <script>
-  const fieldRules = {
-    // VARCHAR2 fields
-    bankName: 100,
-    headOfficeSubsidiary: 20,
-    subsidiary: 50,
-    bankSymbol: 10,
-    conventionalIslamic: 50,
-    cbuaeTiering: 10,
-    localForeign: 10,
-    counterpartyName: 50,
-    internalCounterpartyRef: 50,
-    internalCounterpartyRating: 50,
-    finalRatingCbuae: 50,
-    countryOfRisk: 50,
-    cbuaeGeographicalZone: 50,
-    counterpartyType: 50,
-    sector: 10,
-    csa: 10,
-    collateralType: 50,
-    marginCallFrequency: 50,
-    
-    
-    // NUMBER(24,2) fields
-    pfe95Aed: "24,2",
-    expectedPositiveExposureAed: "24,2",
-    expectedNegativeExposureAed: "24,2",
-    threshold: "24,2",
-    minimumTransferAmountAed: "24,2",
-    internal_short_limit: "24,2",
-    independentAmountAed: "24,2",
-    netCollateralOutstandingAed: "24,2",
-    cvaAed: "24,2",
-    dvaAed: "24,2",
-    bilateralCvaAed: "24,2",
-    fvaAed: "24,2",
-    incrementalPfe: "24,2"
-  };
+	const fieldRules = {
+		// VARCHAR2 fields
+		bankName: 100,
+		headOfficeSubsidiary: 20,
+		subsidiary: 50,
+		bankSymbol: 10,
+		conventionalIslamic: 50,
+		cbuaeTiering: 10,
+		localForeign: 10,
+		counterpartyName: 50,
+		internalCounterpartyRef: 50,
+		internalCounterpartyRating: 50,
+		finalRatingCbuae: 50,
+		countryOfRisk: 50,
+		cbuaeGeographicalZone: 50,
+		counterpartyType: 50,
+		sector: 10,
+		csa: 10,
+		collateralType: 50,
+		marginCallFrequency: 50,
 
-  function showError(input, msg) {
-    let span = document.getElementById(input.id + "-error");
-    if (!span) {
-      span = document.createElement("small");
-      span.id = input.id + "-error";
-      span.className = "text-danger";
-      span.style.display = "block";
-      input.parentNode.appendChild(span);
-    }
-    span.innerText = msg;
-  }
 
-  function clearError(input) {
-    const span = document.getElementById(input.id + "-error");
-    if (span) span.innerText = "";
-  }
+		// NUMBER(24,2) fields
+		pfe95Aed: "24,2",
+		expectedPositiveExposureAed: "24,2",
+		expectedNegativeExposureAed: "24,2",
+		threshold: "24,2",
+		minimumTransferAmountAed: "24,2",
+		internal_short_limit: "24,2",
+		independentAmountAed: "24,2",
+		netCollateralOutstandingAed: "24,2",
+		cvaAed: "24,2",
+		dvaAed: "24,2",
+		bilateralCvaAed: "24,2",
+		fvaAed: "24,2",
+		incrementalPfe: "24,2"
+	};
 
-  function validateInput(event) {
-    const input = event.target;
-    const rule = fieldRules[input.id];
-    const value = input.value.trim();
+	function showError(input, msg) {
+		let span = document.getElementById(input.id + "-error");
+		if (!span) {
+			span = document.createElement("small");
+			span.id = input.id + "-error";
+			span.className = "text-danger";
+			span.style.display = "block";
+			input.parentNode.appendChild(span);
+		}
+		span.innerText = msg;
+	}
 
-    if (!rule || value === "") {
-      clearError(input);
-      return;
-    }
+	function clearError(input) {
+		const span = document.getElementById(input.id + "-error");
+		if (span) span.innerText = "";
+	}
 
-    if (typeof rule === "number" || !isNaN(rule)) {
-      // VARCHAR2 Validation (check character length)
-      if (value.length > rule) {
-        showError(input, `Max ${rule} characters allowed`);
-      } else {
-        clearError(input);
-      }
-    } else if (typeof rule === "string" && rule.includes(",")) {
-      // NUMBER(p,s) validation
-      const [total, decimal] = rule.split(",").map(Number);
-      const regex = /^\d+(\.\d+)?$/;
+	function validateInput(event) {
+		const input = event.target;
+		const rule = fieldRules[input.id];
+		const value = input.value.trim();
 
-      if (!regex.test(value)) {
-        showError(input, `Only numeric values allowed with max ${decimal} decimals`);
-        return;
-      }
+		if (!rule || value === "") {
+			clearError(input);
+			return;
+		}
 
-      const [intPart, decPart = ""] = value.split(".");
-      const intLen = intPart.replace(/^0+/, "").length;
-      const decLen = decPart.length;
+		if (typeof rule === "number" || !isNaN(rule)) {
+			// VARCHAR2 Validation (check character length)
+			if (value.length > rule) {
+				showError(input, `Max ${rule} characters allowed`);
+			} else {
+				clearError(input);
+			}
+		} else if (typeof rule === "string" && rule.includes(",")) {
+			// NUMBER(p,s) validation
+			const [total, decimal] = rule.split(",").map(Number);
+			const regex = /^\d+(\.\d+)?$/;
 
-      if (intLen + decLen > total || decLen > decimal) {
-        showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
-      } else {
-        clearError(input);
-      }
-    }
-  }
+			if (!regex.test(value)) {
+				showError(input, `Only numeric values allowed with max ${decimal} decimals`);
+				return;
+			}
 
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const id in fieldRules) {
-      const input = document.getElementById(id);
-      if (input) {
-        input.addEventListener("input", validateInput);
+			const [intPart, decPart = ""] = value.split(".");
+			const intLen = intPart.replace(/^0+/, "").length;
+			const decLen = decPart.length;
 
-        // Add maxlength to VARCHAR2 fields only
-        if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
-          input.setAttribute("maxlength", fieldRules[id]);
-        }
-      }
-    }
-  });
+			if (intLen + decLen > total || decLen > decimal) {
+				showError(input, `Max ${total - decimal} digits before and ${decimal} after decimal`);
+			} else {
+				clearError(input);
+			}
+		}
+	}
+
+	document.addEventListener("DOMContentLoaded", () => {
+		for (const id in fieldRules) {
+			const input = document.getElementById(id);
+			if (input) {
+				input.addEventListener("input", validateInput);
+
+				// Add maxlength to VARCHAR2 fields only
+				if (typeof fieldRules[id] === "number" || !isNaN(fieldRules[id])) {
+					input.setAttribute("maxlength", fieldRules[id]);
+				}
+			}
+		}
+	});
 </script>
 <style>
 	/* Default header alignment */
@@ -2388,140 +2360,143 @@ div.dataTables_filter {
 </style>
 
 <style>
-.scrollable-exist-viewport {
-	max-height: calc(100vh - 195px);
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding-right: 10px;
-}
+	.scrollable-exist-viewport {
+		max-height: calc(100vh - 195px);
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-right: 10px;
+	}
 
-.compact-form {
-	font-size: 12px !important;
-}
+	.compact-form {
+		font-size: 12px !important;
+	}
 
-.compact-section {
-	padding: 1px 20px 1px;
-	border-radius: 5px;
-}
+	.compact-section {
+		padding: 1px 20px 1px;
+		border-radius: 5px;
+	}
 
-.vertical-divider {
-	border-left: 4px solid #444;
-	padding-left: 20px;
-}
+	.vertical-divider {
+		border-left: 4px solid #444;
+		padding-left: 20px;
+	}
 
-.centered-content .form-group, .signoff-alignment-wrap .form-group {
-	position: relative;
-	width: 40% !important;
-	margin-bottom: 22px !important;
-}
+	.centered-content .form-group,
+	.signoff-alignment-wrap .form-group {
+		position: relative;
+		width: 40% !important;
+		margin-bottom: 22px !important;
+	}
 
-.centered-content .form-group {
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
+	.centered-content .form-group {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
 
-.signoff-alignment-wrap .form-group {
-	margin-left: 85px !important;
-	margin-right: 0 !important;
-}
+	.signoff-alignment-wrap .form-group {
+		margin-left: 85px !important;
+		margin-right: 0 !important;
+	}
 
-.section-title {
-	font-weight: 700;
-	font-size: 13px;
-	color: #000;
-	margin-bottom: 20px;
-	display: block;
-	border-bottom: 1px solid #dee2e6;
-	padding-bottom: 5px;
-	text-align: left !important;
-	width: 100%;
-}
+	.section-title {
+		font-weight: 700;
+		font-size: 13px;
+		color: #000;
+		margin-bottom: 20px;
+		display: block;
+		border-bottom: 1px solid #dee2e6;
+		padding-bottom: 5px;
+		text-align: left !important;
+		width: 100%;
+	}
 
-label.error {
-	color: red !important;
-	font-size: 11px !important;
-	position: absolute;
-	left: 105%;
-	top: 50%;
-	transform: translateY(-50%);
-	white-space: nowrap;
-	z-index: 10;
-}
+	label.error {
+		color: red !important;
+		font-size: 11px !important;
+		position: absolute;
+		left: 105%;
+		top: 50%;
+		transform: translateY(-50%);
+		white-space: nowrap;
+		z-index: 10;
+	}
 
-.error {
-	padding-top: 0 !important;
-}
+	.error {
+		padding-top: 0 !important;
+	}
 
-.compact-form .form-control-sm {
-	height: 32px !important;
-	font-size: 12px !important;
-	padding: 5px 10px !important;
-	width: 100% !important;
-	border: 1px solid #ced4da !important;
-	border-radius: 8px !important;
-	background-color: #ffffff;
-}
+	.compact-form .form-control-sm {
+		height: 32px !important;
+		font-size: 12px !important;
+		padding: 5px 10px !important;
+		width: 100% !important;
+		border: 1px solid #ced4da !important;
+		border-radius: 8px !important;
+		background-color: #ffffff;
+	}
 
-body {
-	overflow: hidden;
-}
+	body {
+		overflow: hidden;
+	}
 
-.table-responsive {
-	width: 100%;
-	max-height: calc(100vh - 190px);
-	overflow: auto;
-	position: relative;
-}
+	.table-responsive {
+		width: 100%;
+		max-height: calc(100vh - 190px);
+		overflow: auto;
+		position: relative;
+	}
 
-.table-responsive thead {
-	position: sticky;
-	top: 0;
-	background-color: #e9ecf0;
-	z-index: 1;
-}
+	.table-responsive thead {
+		position: sticky;
+		top: 0;
+		background-color: #e9ecf0;
+		z-index: 1;
+	}
 
-#usertable {
-	overflow-y: auto;
-	overflow-x: auto;
-}
+	#usertable {
+		overflow-y: auto;
+		overflow-x: auto;
+	}
 
-#floatingBackBtn, #floatingForwardBtn {
-	z-index: 9999;
-}
+	#floatingBackBtn,
+	#floatingForwardBtn {
+		z-index: 9999;
+	}
 
-#usertable thead th {
-	font-size: 14px !important;
-	font-family: Arial, sans-serif !important;
-}
+	#usertable thead th {
+		font-size: 14px !important;
+		font-family: Arial, sans-serif !important;
+	}
 
-#usertable tbody td {
-	font-size: 12px !important;
-	font-family: Arial, sans-serif !important;
-}
-.table-responsive {
-    max-height: none !important;
-    overflow: visible !important;
-}
+	#usertable tbody td {
+		font-size: 12px !important;
+		font-family: Arial, sans-serif !important;
+	}
 
-#usertable {
-    display: block !important;
-    max-height: calc(100vh - 280px) ;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-}
+	.table-responsive {
+		max-height: none !important;
+		overflow: visible !important;
+	}
 
-#usertable thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2; 
-    background-color: #7b6458; 
-}
+	#usertable {
+		display: block !important;
+		max-height: calc(100vh - 280px);
+		overflow-y: auto !important;
+		overflow-x: auto !important;
+	}
+
+	#usertable thead th {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background-color: #7b6458;
+	}
 </style>
-	<script>
-if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-}
-function closeAlertAndRedirect() {
+<script>
+	if ('scrollRestoration' in history) {
+		history.scrollRestoration = 'manual';
+	}
+	function closeAlertAndRedirect() {
 		location.href = 'CCR_Data_Templates';
 	}
 </script>

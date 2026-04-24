@@ -185,10 +185,10 @@ public class RT_CCR_DATA_Service {
 	}
 
 
-	public byte[] generateCCRDataExcel() throws Exception {
+	public byte[] generateCCRDataExcel(Date Report_date) throws Exception {
 		logger.info("Service: Starting CCR_DATA Excel generation process in memory.");
 
-		List<RT_CCR_DATA_TEMPLATE> dataList = ccrDataRepo.getlist();
+		List<RT_CCR_DATA_TEMPLATE> dataList = ccrDataRepo.getlist(Report_date);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for CCR_DATA report. Returning empty result.");

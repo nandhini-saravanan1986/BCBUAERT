@@ -76,11 +76,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bornfire.xbrl.entities.*;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
+import com.bornfire.xbrl.services.Bloomberg_services;
+import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
+import com.bornfire.xbrl.services.ProvisioningFileUploadService;
 import com.bornfire.xbrl.services.RT_ACPR_SERVICE;
 import com.bornfire.xbrl.services.RT_CCR_DATA_Service;
 import com.bornfire.xbrl.services.RT_DataControlService;
@@ -107,18 +111,14 @@ import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
 import com.bornfire.xbrl.services.RT_TradeMarketRiskService;
 import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
-import com.bornfire.xbrl.services.RwaDataUploadService;
-import com.bornfire.xbrl.services.counter_services;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
+import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.UploadMonitorService;
-import com.bornfire.xbrl.services.Bloomberg_services;
-import com.bornfire.xbrl.services.ECLDataUploadService;
-import com.bornfire.xbrl.services.ProvisioningFileUploadService;
 import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
+import com.bornfire.xbrl.services.counter_services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.bornfire.xbrl.entities.*;
 
 @Controller
 @ConfigurationProperties("default")
@@ -2891,8 +2891,16 @@ public class XBRLNavigationController {
 			@RequestParam(required = false) String siNo, @RequestParam(required = false) String tab, // changed from
 																										// accountNo to
 																										// slNo
-			Model md, HttpServletRequest req) {
-
+			Model md, HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		  
+		LocalDate today = LocalDate.now();
+		    String formattedDate = null;
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		    // ✅ Convert Report_date → String safely
+		    if (Report_date != null) {
+		        formattedDate = sdf.format(Report_date);
+		    }
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			// RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.editccr(siNo);
 			RT_CCR_DATA_TEMPLATE data = ccr_data_template_repository.findById(siNo).orElse(null);
@@ -2905,12 +2913,13 @@ public class XBRLNavigationController {
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 
-			List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist();
-			System.out.println("testing count" + ccr_data_template_repository.getlist().size());
+			List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist(Report_date);
+			System.out.println("testing count" + ccr_data_template_repository.getlist(Report_date).size());
 			;
 			md.addAttribute("repoList1", repoList);
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
+		    md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} else {
 			/*
 			 * md.addAttribute("formmode", "add");
@@ -2918,37 +2927,68 @@ public class XBRLNavigationController {
 			 * if ("template".equalsIgnoreCase(tab)) { md.addAttribute("tab", "template"); }
 			 * else { md.addAttribute("tab", "datacontrols"); // fallback default }
 			 */
-			Timestamp lastdatetimestamp = ccr_data_template_repository.findLastReportDate();
-			Timestamp secondlastdatetimestamp = ccr_data_template_repository.findSecondLastReportDate();			
-			LocalDate lastDate=(lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().toLocalDate();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			String lastDateString = (lastdatetimestamp == null) ? null
-					: lastdatetimestamp.toLocalDateTime().format(formatter);
-			String secondLastDateString =(secondlastdatetimestamp == null) ? null
-					:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
-			RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_CCR_Data_Template");
-			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_CCR_Data_Template");
-			if (data != null && !data.equals(null)) {
-				md.addAttribute("data", data);
-				md.addAttribute("formmode", "exist");
-			}
-			else if(secondlastdata != null && !secondlastdata.equals(null)){
-				md.addAttribute("data", secondlastdata);
-				md.addAttribute("formmode", "exist");
-			}else {
-				md.addAttribute("formmode", "add");
-				md.addAttribute("formmode", "null");
-			}
-			md.addAttribute("lastDate", lastDate);
-			md.addAttribute("bankname", "Bank of Baroda");
-		}
+			        Timestamp lastdatetimestamp = ccr_data_template_repository.findLastReportDate();
+			        Timestamp secondlastdatetimestamp = ccr_data_template_repository.findSecondLastReportDate();
 
-		List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
-		List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+			        
 
-		md.addAttribute("bankList", bankList);
-		md.addAttribute("countryList", countryList);
+			        String lastDateString = null;
+			        String secondLastDateString = null;
+			        LocalDate lastDate = null;
+
+			        // ✅ NULL SAFE
+			        if (lastdatetimestamp != null) {
+			            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+			            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+			        }
+
+			        if (secondlastdatetimestamp != null) {
+			            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+			        }
+
+			        RT_DataControl data = RT_DatacontrolRepository.getdata(lastDateString, "CBUAE_CCR_Data_Template");
+			        RT_DataControl secondlastdata = RT_DatacontrolRepository.getdata(secondLastDateString, "CBUAE_CCR_Data_Template");
+
+			        RT_DataControl report_datedata = null;
+
+			        if (formattedDate != null) {
+			            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_CCR_Data_Template");
+			        }
+			        
+			        System.out.println(formattedDate);
+
+			        // ✅ FIXED NULL CHECKS
+			        if (report_datedata != null) {
+			        	System.out.println(formattedDate);
+			        	lastDate = LocalDate.parse(formattedDate, formatter);
+			            md.addAttribute("data", report_datedata);
+			            md.addAttribute("formmode", "exist");
+
+			        } else if (data != null) {
+			        	
+			            md.addAttribute("data", data);
+			            md.addAttribute("formmode", "exist");
+
+			        } else if (secondlastdata != null) {
+			        	lastDate = LocalDate.parse(secondLastDateString, formatter);
+			            md.addAttribute("data", secondlastdata);
+			            md.addAttribute("formmode", "exist");
+
+			        } else {
+
+			            md.addAttribute("formmode", "add");
+			        }
+			        
+			        md.addAttribute("lastDate", lastDate);
+			        md.addAttribute("bankname", "Bank of Baroda");
+			    }
+
+			    // ================= DROPDOWNS =================
+			    List<RT_BankNameMaster> bankList = bankRepo.findAllByOrderByBankNameAsc();
+			    List<RT_CountryRiskDropdown> countryList = countryRepo.findAllByOrderByCountryOfRiskAsc();
+
+			    md.addAttribute("bankList", bankList);
+			    md.addAttribute("countryList", countryList);
 
 		return "RT/CCR_Data_Templates";
 	}
@@ -2980,11 +3020,11 @@ public class XBRLNavigationController {
 	private RT_CCR_DATA_Service rtCCRDataService;
 
 	@RequestMapping(value = "/downloadCCRDataExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadCCRDataExcel(HttpServletRequest req) {
+	public ResponseEntity<ByteArrayResource> downloadCCRDataExcel(HttpServletRequest req,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 		logger.info("Controller: Received request for CCR DATA Excel download.");
 
 		try {
-			byte[] excelData = rtCCRDataService.generateCCRDataExcel();
+			byte[] excelData = rtCCRDataService.generateCCRDataExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: Service returned no data for CCR DATA. Responding with 204 No Content.");
