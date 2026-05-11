@@ -838,9 +838,10 @@ body {
 <script>
 	function downloadImpactanalysisExcel() {
 		$("#loader").css("display", "flex");
+		var Report_date=Report_date=document.getElementById("portfolioDate").value;
 
 		$.ajax({
-			url: './downloadImpactanalysisExcel',
+			url: './downloadImpactanalysisExcel?Report_date='+Report_date,
 			type: 'GET',
 			xhrFields: { responseType: 'blob' },
 			success: function (data) {

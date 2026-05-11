@@ -13,8 +13,8 @@ public interface RT_Investment_Securities_Data_Template_Repo
 		extends JpaRepository<RT_Investment_Securities_Data_Template, String> {
 	// Add custom queries if needed
 
-	@Query(value = "select * from BCBUAE_INVESTMENT_SECURITIES_DATA where DEL_FLG != 'Y'", nativeQuery = true)
-	List<RT_Investment_Securities_Data_Template> getsecDatalist();
+	@Query(value = "select * from BCBUAE_INVESTMENT_SECURITIES_DATA where DEL_FLG != 'Y' And Report_date =?1", nativeQuery = true)
+	List<RT_Investment_Securities_Data_Template> getsecDatalist(Date Report_date);
 
 	@Query(value = "SELECT \r\n" + "    DATA_DATE,\r\n" + "    BANK_NAME,\r\n" + "    HEAD_OFFICE_SUBSIDIARY,\r\n"
 			+ "    SUBSIDIARY,\r\n" + "    BANK_SYMBOL,\r\n" + "    CONVENTIONAL_ISLAMIC,\r\n"

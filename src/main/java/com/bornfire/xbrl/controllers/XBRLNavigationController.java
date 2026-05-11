@@ -1118,32 +1118,66 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Investment_Securities_Data", method = RequestMethod.GET)
 	public String treasuryCredit(@RequestParam(required = false) String siNo,
-			@RequestParam(required = false) String formmode, Model model) {
+			@RequestParam(required = false) String formmode, Model model,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
 
+		LocalDate today = LocalDate.now();
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (Report_date != null) {
+		       formattedDate = sdf.format(Report_date);
+		   }
+		   
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
 			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo));
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist();
+			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist(Report_date);
 
 			model.addAttribute("formmode", "list");
 			model.addAttribute("ISList", list); // Used in HTML table
+			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		} /*
 			 * else { model.addAttribute("formmode", "add");
 			 * model.addAttribute("securityData", new
 			 * RT_Investment_Securities_Data_Template()); }
 			 */else {
 				 Timestamp lastdatetimestamp = investmentSecuritiesDataTemplateRepo.findLastReportDate();
-					Timestamp secondlastdatetimestamp = investmentSecuritiesDataTemplateRepo.findSecondLastReportDate();			
-					LocalDate lastDate=lastdatetimestamp.toLocalDateTime().toLocalDate();		
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-					String lastDateString = (lastdatetimestamp == null) ? null
-							: lastdatetimestamp.toLocalDateTime().format(formatter);
-					String secondLastDateString =(secondlastdatetimestamp == null) ? null
-							:  secondlastdatetimestamp.toLocalDateTime().format(formatter);
+				 Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+				 String lastDateString = null;
+			     String secondLastDateString = null;
+			     LocalDate lastDate = null;
+						
+				
+				if (lastdatetimestamp != null) {
+		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
+
+		        if (secondlastdatetimestamp != null) {
+		            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
+		        }
 					RT_DataControl data= RT_DatacontrolRepository.getdata(lastDateString,"CBUAE_Investment_Securities_Data_Template");
 					RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Investment_Securities_Data_Template");
-					if (data != null && !data.equals(null)) {
+					RT_DataControl report_datedata = null;
+					
+					 if (formattedDate != null) {
+				            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Investment_Securities_Data_Template");
+				        }
+				        
+				        System.out.println(formattedDate);
+
+				        // ✅ FIXED NULL CHECKS
+				        if (report_datedata != null) {
+				        	System.out.println(formattedDate);
+				        	lastDate = LocalDate.parse(formattedDate, formatter);
+				        	model.addAttribute("data", report_datedata);
+				        	model.addAttribute("formmode", "exist");
+				        }
+					
+					else if(data != null && !data.equals(null)) {
 						model.addAttribute("data", data);
 						model.addAttribute("formmode", "exist");
 					}
@@ -1165,7 +1199,6 @@ public class XBRLNavigationController {
 
 		return "RT/Investment_SecurityData";
 	}
-
 	@PostMapping("/updateInvestmentSecurity")
 	@ResponseBody
 	public String updateInvestmentSecurity(
@@ -1717,8 +1750,12 @@ public class XBRLNavigationController {
 
 		// ✅ Generate Excel file and prepare response
 		File excelFile = nostroService.generateNostroExcel(Report_date);
+		if (excelFile == null) {
+			logger.warn("Controller: NOSTRO_EXCEL file has no data. Returning 204.");
+			return ResponseEntity.noContent().build();
+		}
 		byte[] excelData = java.nio.file.Files.readAllBytes(excelFile.toPath());
-
+		
 		HttpHeaders headersResponse = new HttpHeaders();
 		headersResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headersResponse.setContentDispositionFormData("attachment", "NostroAccBalance.xlsx");
