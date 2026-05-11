@@ -3603,7 +3603,7 @@ public class XBRLNavigationController {
 		try {
 			byte[] excelData = tradeleveldataderivativesimplifiedService
 					.generateTradeleveldataderivativesimplifiedExcel(Report_date);
-
+System.out.println("sixe==="+excelData.length);
 			if (excelData.length == 0) {
 				logger.warn(
 						"Controller: No data found for Trade Level Data Derivative Simplified report. Responding with 204 No Content.");
