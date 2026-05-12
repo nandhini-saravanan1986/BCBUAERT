@@ -5280,14 +5280,15 @@ System.out.println("sixe==="+excelData.length);
 	
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
 	public String RT_MC_Reports(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String branch,@RequestParam(required = false) String deptvalid, Model md, HttpServletRequest req) {
+			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid, Model md,
+			HttpServletRequest req) {
 
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
 		md.addAttribute("ROLEID", ROLEID);
 		System.out.println("ROLEID : " + ROLEID);
 		if (deptvalid == null) {
-		    deptvalid = "NO";
+			deptvalid = "NO";
 		}
 		System.out.println("DEPARTMENT VALIDATION : " + deptvalid);
 
@@ -5308,7 +5309,7 @@ System.out.println("sixe==="+excelData.length);
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
-				
+
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -5316,18 +5317,22 @@ System.out.println("sixe==="+excelData.length);
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
-				
+
 				List<RT_MC_TABLE1_ENTITY> deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
-				
-				if(deptreportlist==null || deptreportlist.isEmpty()) {
-					System.out.println("Report Date : "+formatDate(reportlist.get(0).getREPORT_DATE()));
-					executeprocedure("RT_MC_TABLE1_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE1_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
 					deptreportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
 				}
-				
+
 				System.out.println("size : " + deptreportlist.size());
-				md.addAttribute("deptreportlist", deptreportlist.get(0));
-				
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
 				md.addAttribute("DEPARTMENTVALIDATION", "NO");
 			}
 			md.addAttribute("formmode", "bankinformation");
@@ -5351,16 +5356,20 @@ System.out.println("sixe==="+excelData.length);
 
 				List<RT_MC_TABLE2_1_ENTITY> deptreportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
 				List<RT_MC_TABLE2_2_ENTITY> deptreportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
-				
-				if(deptreportlist1==null || deptreportlist1.isEmpty()) {
-					//System.out.println("Report Date : "+formatDate(reportlist.get(0).getREPORT_DATE()));
-					executeprocedure("RT_MC_TABLE2_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE()) + "', 'DEPT')");
+
+				if ((deptreportlist1 == null || deptreportlist1.isEmpty())
+						&& (reportlist1 != null && !reportlist1.isEmpty())) {
+					 System.out.println("Report Date :"+formatDate(reportlist1.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE2_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
 					deptreportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
 					deptreportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
 				}
+				if (deptreportlist1 != null && !deptreportlist1.isEmpty() && deptreportlist2 != null && !deptreportlist2.isEmpty()) {
+					md.addAttribute("deptreportlist", deptreportlist1.get(0));
+					md.addAttribute("deptreportlist2", deptreportlist2.get(0));
+				}
 				
-				md.addAttribute("deptreportlist", deptreportlist1.get(0));
-				md.addAttribute("deptreportlist2", deptreportlist2.get(0));
 				md.addAttribute("DEPARTMENTVALIDATION", "NO");
 
 			}
@@ -5369,47 +5378,244 @@ System.out.println("sixe==="+excelData.length);
 		}
 
 		else if ("complaints".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findBybranchcode(branch);
-			System.out.println("Branch : " + branch);
-			System.out.println("TABLE3 Size : " + reportlist.size());
-			for (RT_MC_TABLE3_ENTITY r : reportlist) {
-				System.out.println(r.getR6_BANK());
+
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+			} else {
+
+				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+				 System.out.println("Branch : " + branch);
+				 System.out.println("TABLE3 Size : " + reportlist.size());
+
+				md.addAttribute("reportlist", reportlist);
+
+				List<RT_MC_TABLE3_ENTITY> deptreportlist = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE3_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+				}
+
+				System.out.println("size : " + deptreportlist.size());
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+
 			}
-			md.addAttribute("reportlist", reportlist);
 			md.addAttribute("formmode", "complaints");
 		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
-			System.out.println("Branch : " + branch);
-			System.out.println("TABLE4 Size : " + reportlist.size());
-			List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
-			md.addAttribute("reportlist", reportlist);
-			md.addAttribute("reportlist1", reportlist1);
+
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE4_1_ENTITY> reportlist1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE4_2_ENTITY> reportlist2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+
+				md.addAttribute("reportlist", reportlist1);
+				md.addAttribute("reportlist1", reportlist2);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+
+			} else {
+
+				List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
+				 System.out.println("Branch : " + branch);
+				 System.out.println("TABLE4 Size : " + reportlist.size());
+				List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("reportlist1", reportlist1);
+
+				List<RT_MC_TABLE4_1_ENTITY> deptreportlist1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE4_2_ENTITY> deptreportlist2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist1 == null || deptreportlist1.isEmpty())
+						&& (reportlist1 != null && !reportlist1.isEmpty())) {
+					 System.out.println("Report Date : "+formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE4_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
+					deptreportlist1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
+					deptreportlist2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+				}
+
+				if (deptreportlist1 != null && !deptreportlist1.isEmpty() && deptreportlist2 != null && !deptreportlist2.isEmpty()) {
+					md.addAttribute("deptreportlist", deptreportlist1.get(0));
+					md.addAttribute("deptreportlist2", deptreportlist2.get(0));
+				}
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+
+			}
 			md.addAttribute("formmode", "retailproducts");
 		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findBybranchcode(branch);
-			System.out.println("size : " + reportlist.size());
-			md.addAttribute("reportlist", reportlist);
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+			} else {
+				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+				 System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+
+				List<RT_MC_TABLE5_ENTITY> deptreportlist = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					 System.out.println("Report Date : " +
+					 formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE5_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+				}
+
+				 System.out.println("size : " + deptreportlist.size());
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+			}
+
 			md.addAttribute("formmode", "bankemployee");
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findBybranchcode(branch);
-			System.out.println("size : " + reportlist.size());
-			md.addAttribute("reportlist", reportlist);
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+			} else {
+
+				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+
+				List<RT_MC_TABLE6_ENTITY> deptreportlist = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					 System.out.println("Report Date : " +
+					 formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE6_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+				}
+
+				 System.out.println("size : " + deptreportlist.size());
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+			}
+
 			md.addAttribute("formmode", "trainings");
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
-			List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
-			md.addAttribute("reportlist1", reportlist1);
-			md.addAttribute("reportlist2", reportlist2);
+
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+
+				md.addAttribute("reportlist1", reportlist1);
+				md.addAttribute("reportlist2", reportlist2);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+
+			} else {
+
+				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+				md.addAttribute("reportlist1", reportlist1);
+				md.addAttribute("reportlist2", reportlist2);
+
+				List<RT_MC_TABLE7_1_ENTITY> deptreportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
+				List<RT_MC_TABLE7_2_ENTITY> deptreportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist1 == null || deptreportlist1.isEmpty())
+						&& (reportlist1 != null && !reportlist1.isEmpty())) {
+					 System.out.println("Report Date :	 "+formatDate(reportlist1.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE7_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
+					deptreportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
+					deptreportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+				}
+
+				if (deptreportlist1 != null && !deptreportlist1.isEmpty() && deptreportlist2 != null && !deptreportlist2.isEmpty()) {
+					md.addAttribute("deptreportlist", deptreportlist1.get(0));
+					md.addAttribute("deptreportlist2", deptreportlist2.get(0));
+				}
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+
+			}
 			md.addAttribute("formmode", "additionalinformation");
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode(branch);
-			System.out.println("size : " + reportlist.size());
-			md.addAttribute("reportlist", reportlist);
+
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+			} else {
+
+				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+				 System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+
+				List<RT_MC_TABLE8_ENTITY> deptreportlist = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					 System.out.println("Report Date : " +					 formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE8_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+				}
+
+				 System.out.println("size : " + deptreportlist.size());
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+			}
+
 			md.addAttribute("formmode", "islamicbanking");
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-			List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode(branch);
-			System.out.println("size : " + reportlist.size());
-			md.addAttribute("reportlist", reportlist);
+			if (deptvalid == "YES" || deptvalid.equals("YES")) {
+				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
+
+				System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+				md.addAttribute("DEPARTMENTVALIDATION", "YES");
+			} else {
+				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+				 System.out.println("size : " + reportlist.size());
+				md.addAttribute("reportlist", reportlist);
+
+				List<RT_MC_TABLE9_ENTITY> deptreportlist = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
+
+				if ((deptreportlist == null || deptreportlist.isEmpty())
+						&& (reportlist != null && !reportlist.isEmpty())) {
+					 System.out.println("Report Date : " +					 formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE9_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					deptreportlist = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
+				}
+
+				 System.out.println("size : " + deptreportlist.size());
+				if (deptreportlist != null && !deptreportlist.isEmpty()) {
+				    md.addAttribute("deptreportlist", deptreportlist.get(0));
+				}
+
+				md.addAttribute("DEPARTMENTVALIDATION", "NO");
+			}
+
 			md.addAttribute("formmode", "conductcultureassessment");
 		}
 
@@ -5986,7 +6192,21 @@ System.out.println("sixe==="+excelData.length);
 
 	    return ResponseEntity.ok("Limits Saved Successfully");
 	}
-	
-	
+	@Autowired
+	RT_EAR_REPO RT_EAR_REPO;
+	@GetMapping("/eardashboarddata")
+    public String getEntityData( @RequestParam  String reportdate, Model model) {
+        System.out.println("Report Date : "+reportdate);
+        LocalDate formatreportdate = LocalDate.parse(reportdate,
+                DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+		RT_EAR_ENTITY myEntity1 = RT_EAR_REPO.findbyReportTypeandReportDate(formatreportdate,"EAR"); 
+		RT_EAR_ENTITY myEntity2 = RT_EAR_REPO.findbyReportTypeandReportDate(formatreportdate,"EAR_QRTR"); 		
+				
+        model.addAttribute("entity1", myEntity1);
+		model.addAttribute("entity2", myEntity2);
+		
+        return "XBRLDashboard :: eardashboardtable"; 
+    }
 
 }
