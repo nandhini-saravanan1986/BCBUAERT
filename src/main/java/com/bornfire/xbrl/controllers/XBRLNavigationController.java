@@ -433,9 +433,9 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "list");
 			md.addAttribute("AccessandRoles", accessandrolesrepository.rulelist());
 
-		} else if (formmode.equals("add")) {
+		}/* else if (formmode.equals("add")) {
 
-		} /*
+		} *//*
 			 * else if (formmode.equals("add")) { md.addAttribute("menuname",
 			 * "ACCESS AND ROLES - ADD"); md.addAttribute("formmode", "add"); }
 			 */
