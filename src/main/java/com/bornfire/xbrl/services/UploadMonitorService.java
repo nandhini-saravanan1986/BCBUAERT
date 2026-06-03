@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +27,101 @@ import com.bornfire.xbrl.entities.UploadMonitorRepository;
 @Service
 public class UploadMonitorService {
 
+    private static final int MIN_DELETE_REMARKS_LENGTH = 10;
+
     @Autowired
     private UploadMonitorRepository uploadMonitorRepository;
+
+    @Autowired
+    private UploadDataDeleteService uploadDataDeleteService;
+
+    @Value("${upload.delete.approver.user:}")
+    private String deleteApproverUser;
+
+    public boolean canApproveDelete(String username) {
+        if (username == null || deleteApproverUser == null) {
+            return false;
+        }
+        return deleteApproverUser.trim().equalsIgnoreCase(username.trim());
+    }
+
+    public Map<String, Object> getMonitorContext(String username) {
+        Map<String, Object> context = new LinkedHashMap<String, Object>();
+        context.put("username", username != null ? username : "");
+        context.put("canApproveDelete", canApproveDelete(username));
+        context.put("deleteApproverConfigured", deleteApproverUser != null && !deleteApproverUser.trim().isEmpty());
+        return context;
+    }
+
+    @Transactional
+    public UploadMonitorEntity requestDelete(String uploadId, String username, String remarks) {
+        UploadMonitorEntity monitor = requireMonitor(uploadId);
+
+        if (!"SUCCESS".equals(monitor.getUploadStatus())) {
+            throw new RuntimeException("Delete request is allowed only for successful uploads.");
+        }
+        if (isDeletePending(monitor)) {
+            throw new RuntimeException("A delete request is already pending for this upload.");
+        }
+        if (isDeleteCompleted(monitor)) {
+            throw new RuntimeException("Uploaded data for this record has already been deleted.");
+        }
+        if (remarks == null || remarks.trim().isEmpty()) {
+            throw new RuntimeException("Delete remarks are required.");
+        }
+        if (remarks.trim().length() < MIN_DELETE_REMARKS_LENGTH) {
+            throw new RuntimeException("Delete remarks must be at least " + MIN_DELETE_REMARKS_LENGTH + " characters.");
+        }
+
+        monitor.setDeleteRequestStatus("PENDING");
+        monitor.setDeleteRemarks(sanitize(remarks.trim(), 1000));
+        monitor.setDeleteRequestedBy(username);
+        monitor.setDeleteRequestedAt(new Date());
+        return uploadMonitorRepository.save(monitor);
+    }
+
+    @Transactional
+    public UploadMonitorEntity approveDelete(String uploadId, String username) {
+        if (!canApproveDelete(username)) {
+            throw new RuntimeException("You are not authorized to approve upload deletions.");
+        }
+
+        UploadMonitorEntity monitor = requireMonitor(uploadId);
+        if (!"SUCCESS".equals(monitor.getUploadStatus())) {
+            throw new RuntimeException("Only successful uploads can be deleted.");
+        }
+        if (!isDeletePending(monitor)) {
+            throw new RuntimeException("No pending delete request found for this upload.");
+        }
+        if (monitor.getReportType() == null || monitor.getReportDate() == null) {
+            throw new RuntimeException("Upload monitor record is missing report type or report date.");
+        }
+
+        uploadDataDeleteService.deleteUploadedData(monitor.getReportType(), monitor.getReportDate());
+
+        Date now = new Date();
+        monitor.setDeleteRequestStatus("DELETED");
+        monitor.setDeleteApprovedBy(username);
+        monitor.setDeleteApprovedAt(now);
+        monitor.setErrorSummary("Upload data deleted on approval. Remarks: " + sanitize(monitor.getDeleteRemarks(), 900));
+        return uploadMonitorRepository.save(monitor);
+    }
+
+    private UploadMonitorEntity requireMonitor(String uploadId) {
+        if (uploadId == null || uploadId.trim().isEmpty()) {
+            throw new RuntimeException("Upload id is required.");
+        }
+        return uploadMonitorRepository.findById(uploadId.trim())
+                .orElseThrow(() -> new RuntimeException("Upload monitor record not found."));
+    }
+
+    private boolean isDeletePending(UploadMonitorEntity monitor) {
+        return "PENDING".equalsIgnoreCase(monitor.getDeleteRequestStatus());
+    }
+
+    private boolean isDeleteCompleted(UploadMonitorEntity monitor) {
+        return "DELETED".equalsIgnoreCase(monitor.getDeleteRequestStatus());
+    }
 
     @Transactional
     public UploadMonitorEntity startUpload(String reportType, Date reportDate, Date fromDate, MultipartFile file, String username,

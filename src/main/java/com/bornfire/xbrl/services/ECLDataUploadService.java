@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.bornfire.xbrl.util.ExcelUploadHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,6 @@ public class ECLDataUploadService {
 	        );
 	    }
 
-	
 	    List<RT_Ecl_upload_Entity> list = readExcel(file);
 
 	    if (list == null || list.isEmpty()) {
@@ -88,13 +87,22 @@ public class ECLDataUploadService {
 
 	    return "Upload Complete. Rows Inserted: " + inserted;
 	}
+
+	public void deleteByReportDate(Date reportDate) {
+	    if (reportDate == null) {
+	        throw new RuntimeException("Report date is required.");
+	    }
+	    jdbcTemplate.update(
+	            "DELETE FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
+	            new java.sql.Date(reportDate.getTime()));
+	}
 	
 	
 	private List<RT_Ecl_upload_Entity> readExcel(MultipartFile file) throws Exception {
 
 	    List<RT_Ecl_upload_Entity> list = new ArrayList<>();
 
-	    try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+	    try (Workbook workbook = ExcelUploadHelper.openExcelWorkbook(file)) {
 
 	        DataFormatter formatter = new DataFormatter();
 	        Sheet sheet = workbook.getSheetAt(0);

@@ -80,6 +80,15 @@ public class SMAFileUploadService {
         return "Upload Complete. Inserted Rows: " + inserted;
     }
 
+    public void deleteByReportDate(Date reportDate) {
+        if (reportDate == null) {
+            throw new RuntimeException("Report date is required.");
+        }
+        jdbcTemplate.update(
+                "DELETE FROM BRF_SMA_MASTER_DATA_TABLE WHERE TRUNC(AS_ON_DATE)=TRUNC(?)",
+                new java.sql.Date(reportDate.getTime()));
+    }
+
     // ==========================================================
     // ✅ FILE READING (FIXED)
     // ==========================================================

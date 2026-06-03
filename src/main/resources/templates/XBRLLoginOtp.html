@@ -5,15 +5,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Login OTP Verification</title>
 	<style>
+		html,
+		body {
+			height: 100%;
+		}
 		body {
 			font-family: Arial, sans-serif;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			height: 100vh;
+			min-height: 100vh;
 			margin: 0;
-			background: linear-gradient(135deg, #f8fbff 0%, #ffffff 45%, #eef5ff 100%);
+			background: #000;
 			color: #1f2937;
+			position: relative;
 			opacity: 0;
 			transform: translateY(10px);
 			transition: opacity 0.55s ease, transform 0.55s ease;
@@ -22,7 +27,26 @@
 			opacity: 1;
 			transform: translateY(0);
 		}
+		#particles-js {
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-position: 50% 50%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 0;
+		}
+
+		#particles-js canvas {
+			display: block;
+		}
+
 		.container {
+			position: relative;
+			z-index: 10;
 			background-color: #ffffff;
 			padding: 2rem;
 			border-radius: 14px;
@@ -136,6 +160,7 @@
 	</style>
 </head>
 <body>
+	<div id="particles-js"></div>
 	<div class="container">
 		<h1>OTP Verification</h1>
 		<p>Enter the 6-digit code sent to your device</p>
@@ -203,6 +228,56 @@
 		window.addEventListener('load', function () {
 			document.body.classList.add('page-ready');
 		});
+	</script>
+	<script th:src="@{/js/particles.min.js}"></script>
+	<script th:inline="none">
+		function initLoginParticles() {
+			if (typeof particlesJS !== 'function') {
+				return;
+			}
+			particlesJS('particles-js', {
+				particles: {
+					number: { value: 100, density: { enable: true, value_area: 500 } },
+					color: { value: '#ffc107' },
+					shape: { type: 'circle', stroke: { width: 0, color: '#000000' } },
+					opacity: { value: 0.5, random: false },
+					size: { value: 5, random: true },
+					line_linked: {
+						enable: true,
+						distance: 150,
+						color: '#ffffff',
+						opacity: 0.4,
+						width: 1
+					},
+					move: {
+						enable: true,
+						speed: 6,
+						direction: 'none',
+						random: false,
+						straight: false,
+						out_mode: 'out'
+					}
+				},
+				interactivity: {
+					detect_on: 'canvas',
+					events: {
+						onhover: { enable: true, mode: 'repulse' },
+						onclick: { enable: true, mode: 'push' },
+						resize: true
+					},
+					modes: {
+						repulse: { distance: 100 },
+						push: { particles_nb: 4 }
+					}
+				},
+				retina_detect: true
+			});
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initLoginParticles);
+		} else {
+			initLoginParticles();
+		}
 	</script>
 </body>
 </html>

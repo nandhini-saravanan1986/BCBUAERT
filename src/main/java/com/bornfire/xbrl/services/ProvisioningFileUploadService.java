@@ -79,6 +79,15 @@ public class ProvisioningFileUploadService {
         return "Upload Complete. Inserted Rows: " + inserted;
     }
 
+    public void deleteByReportDate(Date reportDate) {
+        if (reportDate == null) {
+            throw new RuntimeException("Report date is required.");
+        }
+        jdbcTemplate.update(
+                "DELETE FROM BRF_FB_NFB_PROVISIONING_TABLE WHERE TRUNC(LST_EXEDATE)=TRUNC(?)",
+                new java.sql.Date(reportDate.getTime()));
+    }
+
     // ==========================================================
     // ✅ FILE READING
     // ==========================================================

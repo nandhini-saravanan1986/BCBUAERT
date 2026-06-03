@@ -77,6 +77,27 @@ public class UploadMonitorEntity {
     @Column(name = "REPLACED_UPLOAD_ID", length = 64)
     private String replacedUploadId;
 
+    /** NONE, PENDING, DELETED */
+    @Column(name = "DELETE_REQUEST_STATUS", length = 20)
+    private String deleteRequestStatus;
+
+    @Column(name = "DELETE_REMARKS", length = 1000)
+    private String deleteRemarks;
+
+    @Column(name = "DELETE_REQUESTED_BY", length = 100)
+    private String deleteRequestedBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DELETE_REQUESTED_AT")
+    private Date deleteRequestedAt;
+
+    @Column(name = "DELETE_APPROVED_BY", length = 100)
+    private String deleteApprovedBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DELETE_APPROVED_AT")
+    private Date deleteApprovedAt;
+
     public String getUploadId() {
         return uploadId;
     }
@@ -227,5 +248,53 @@ public class UploadMonitorEntity {
 
     public void setReplacedUploadId(String replacedUploadId) {
         this.replacedUploadId = replacedUploadId;
+    }
+
+    public String getDeleteRequestStatus() {
+        return deleteRequestStatus;
+    }
+
+    public void setDeleteRequestStatus(String deleteRequestStatus) {
+        this.deleteRequestStatus = deleteRequestStatus;
+    }
+
+    public String getDeleteRemarks() {
+        return deleteRemarks;
+    }
+
+    public void setDeleteRemarks(String deleteRemarks) {
+        this.deleteRemarks = deleteRemarks;
+    }
+
+    public String getDeleteRequestedBy() {
+        return deleteRequestedBy;
+    }
+
+    public void setDeleteRequestedBy(String deleteRequestedBy) {
+        this.deleteRequestedBy = deleteRequestedBy;
+    }
+
+    public Date getDeleteRequestedAt() {
+        return deleteRequestedAt;
+    }
+
+    public void setDeleteRequestedAt(Date deleteRequestedAt) {
+        this.deleteRequestedAt = deleteRequestedAt;
+    }
+
+    public String getDeleteApprovedBy() {
+        return deleteApprovedBy;
+    }
+
+    public void setDeleteApprovedBy(String deleteApprovedBy) {
+        this.deleteApprovedBy = deleteApprovedBy;
+    }
+
+    public Date getDeleteApprovedAt() {
+        return deleteApprovedAt;
+    }
+
+    public void setDeleteApprovedAt(Date deleteApprovedAt) {
+        this.deleteApprovedAt = deleteApprovedAt;
     }
 }

@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.xbrl.entities.RT_FX_Position_Entity;
 import com.bornfire.xbrl.entities.RT_FX_Position_Rep;
+import com.bornfire.xbrl.util.ExcelUploadHelper;
 
 @Service
 public class RT_FX_Position_Service {
@@ -55,7 +55,7 @@ public class RT_FX_Position_Service {
 		        rtFxPositionRep.deleteByReportDate(toDate);
 		    }
 		
-		Workbook workbook = new XSSFWorkbook(file.getInputStream());
+		try (Workbook workbook = ExcelUploadHelper.openExcelWorkbook(file)) {
 		// As per your requirement: Sheet index 2
 		Sheet sheet = workbook.getSheetAt(2);
 		DataFormatter formatter = new DataFormatter();
@@ -123,8 +123,8 @@ public class RT_FX_Position_Service {
 		auditservice.createBusinessAudit( String.valueOf(toDate), "UPLOAD",
 		        "Regulatory_Data_Ingestion_FXP", null,  "RT_FX_POSITION_TABLE"
 		);
-		workbook.close();
 		return "FX Position data processed successfully: Records for " + toDate + " updated/appended.";
+		}
 	}
 
 	/**

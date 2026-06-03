@@ -68,11 +68,15 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 	@Autowired
 	AccessandRolesRepository accessRepository;
 	
-	private final Integer SESSION_TIMEOUT_IN_SECONDS = 900;
+	/** Idle session timeout: 2 hours */
+	private final Integer SESSION_TIMEOUT_IN_SECONDS = 2 * 60 * 60;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/webjars/**", "/images/**", "/login*", "/freezeColumn/**","favicon.ico").permitAll()
+		http.authorizeRequests()
+				.antMatchers("/webjars/**", "/images/**", "/css/**", "/js/**", "/login*", "/login-otp",
+						"/freezeColumn/**", "favicon.ico")
+				.permitAll()
 				.anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
 				.failureHandler(xbrlAuthFailHandle()).successHandler(xbrlAuthSuccessHandle())
 				.usernameParameter("userid").and().logout().permitAll().and()

@@ -111,6 +111,7 @@ import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_SLSServices;
 import com.bornfire.xbrl.services.SlsSensReportService;
 import com.bornfire.xbrl.dto.SlsSensScenarioDto;
+import com.bornfire.xbrl.util.UploadMessageHelper;
 import com.bornfire.xbrl.services.RT_SLS_BEHAVIOURAL_PER_SERVICES;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
@@ -4986,6 +4987,12 @@ System.out.println("sixe==="+excelData.length);
 	            return ResponseEntity.badRequest().body("Please select a valid file.");
 	        }
 
+	        try {
+	            com.bornfire.xbrl.util.ExcelUploadHelper.validateUploadFile(file, reportType);
+	        } catch (RuntimeException ex) {
+	            return ResponseEntity.badRequest().body(ex.getMessage());
+	        }
+
 	        UploadMonitorEntity startedMonitor = uploadMonitorService.startUpload(
 	                reportType, toDate, fromDate, file, username, forceUpload);
 	        uploadId = startedMonitor.getUploadId();
@@ -5067,14 +5074,14 @@ System.out.println("sixe==="+excelData.length);
 
 	    } catch (RuntimeException e) {
 	        if (uploadId != null) {
-	            uploadMonitorService.completeFailure(uploadId, e.getMessage());
+	            uploadMonitorService.completeFailure(uploadId, UploadMessageHelper.userFriendlyError(e));
 	        }
-	        return ResponseEntity.badRequest().body(e.getMessage());
+	        return ResponseEntity.badRequest().body(UploadMessageHelper.userFriendlyError(e));
 	    } catch (Exception e) {
 	        if (uploadId != null) {
-	            uploadMonitorService.completeFailure(uploadId, e.getMessage());
+	            uploadMonitorService.completeFailure(uploadId, UploadMessageHelper.userFriendlyError(e));
 	        }
-	        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(UploadMessageHelper.userFriendlyError(e));
 	    }
 	}
 
@@ -5120,6 +5127,52 @@ System.out.println("sixe==="+excelData.length);
 	    return ResponseEntity.ok(details);
 	}
 
+	@GetMapping("/upload-monitor/context")
+	@ResponseBody
+	public ResponseEntity<?> getUploadMonitorContext(HttpServletRequest request) {
+	    String username = (String) request.getSession().getAttribute("USERNAME");
+	    if (username == null) {
+	        username = "SYSTEM";
+	    }
+	    return ResponseEntity.ok(uploadMonitorService.getMonitorContext(username));
+	}
+
+	@PostMapping("/upload-monitor/delete-request")
+	@ResponseBody
+	public ResponseEntity<String> requestUploadDelete(
+	        @RequestParam("uploadId") String uploadId,
+	        @RequestParam("remarks") String remarks,
+	        HttpServletRequest request) {
+	    try {
+	        String username = (String) request.getSession().getAttribute("USERNAME");
+	        if (username == null) {
+	            username = "SYSTEM";
+	        }
+	        uploadMonitorService.requestDelete(uploadId, username, remarks);
+	        return ResponseEntity.ok("Delete request submitted successfully. Waiting for approver confirmation.");
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(e.getMessage());
+	    }
+	}
+
+	@PostMapping("/upload-monitor/approve-delete")
+	@ResponseBody
+	public ResponseEntity<String> approveUploadDelete(
+	        @RequestParam("uploadId") String uploadId,
+	        HttpServletRequest request) {
+	    try {
+	        String username = (String) request.getSession().getAttribute("USERNAME");
+	        if (username == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session expired. Please log in again.");
+	        }
+	        UploadMonitorEntity monitor = uploadMonitorService.approveDelete(uploadId, username);
+	        return ResponseEntity.ok("Upload data deleted successfully for report date "
+	                + new SimpleDateFormat("dd-MM-yyyy").format(monitor.getReportDate()) + ".");
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(e.getMessage());
+	    }
+	}
+
 	private Date parseDdMmYyyyDate(String value) throws ParseException {
 	    if (value == null || value.trim().isEmpty()) {
 	        return null;
@@ -5136,9 +5189,11 @@ System.out.println("sixe==="+excelData.length);
 	        return metrics;
 	    }
 
-	    Long total = extractMetricValue(message, "(?i)(total\\s*(records|rows)?|records\\s*total)\\D*(\\d+)");
-	    Long loaded = extractMetricValue(message, "(?i)(loaded|inserted|processed\\s*success|success\\s*count)\\D*(\\d+)");
-	    Long failed = extractMetricValue(message, "(?i)(failed|rejected|error\\s*count)\\D*(\\d+)");
+	    Long total = extractMetricValue(message,
+	            "(?i)(total\\s*rows\\s*processed|data\\s*rows\\s*processed|total\\s*(records|rows)?|records\\s*total)\\D*(\\d+)");
+	    Long loaded = extractMetricValue(message,
+	            "(?i)(inserted\\s*rows|loaded|inserted|processed\\s*success|success\\s*count|record\\s*count)\\D*(\\d+)");
+	    Long failed = extractMetricValue(message, "(?i)(failed\\s*rows|failed|rejected|error\\s*count)\\D*(\\d+)");
 
 	    if (total != null) {
 	        metrics.put("total", total);

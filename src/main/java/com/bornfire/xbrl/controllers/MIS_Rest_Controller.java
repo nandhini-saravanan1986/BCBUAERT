@@ -239,7 +239,7 @@ public class MIS_Rest_Controller {
 		if (session == null || session.getAttribute("USERID") == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		session.setMaxInactiveInterval(900);
+		session.setMaxInactiveInterval(2 * 60 * 60);
 		return ResponseEntity.ok(Collections.singletonMap("ok", true));
 	}
 

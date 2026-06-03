@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.xbrl.entities.RT_SLS_BEHAVIOURAL_PER_ENTITY;
 import com.bornfire.xbrl.entities.RT_SLS_BEHAVIOURAL_PER_REP;
+import com.bornfire.xbrl.util.ExcelUploadHelper;
 
 
 @Service
@@ -60,7 +61,7 @@ public class RT_SLS_BEHAVIOURAL_PER_SERVICES {
 	        rtSlsRepository.deleteByReportDate(toDate);
 	    }
 
-	    try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+	    try (Workbook workbook = ExcelUploadHelper.openSlsXlsxWorkbook(file)) {
 
 	        Sheet sheet = workbook.getSheetAt(0);
 

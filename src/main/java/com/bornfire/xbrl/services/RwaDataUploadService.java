@@ -797,6 +797,33 @@ public class RwaDataUploadService {
 	    return "Funded: Successfully uploaded " + fundList.size() + " records.";
 	}
 
+	public void deleteBillDataByReportDate(Date reportDate) {
+	    if (reportDate == null) {
+	        throw new RuntimeException("Report date is required.");
+	    }
+	    jdbcTemplate.update(
+	            "DELETE FROM brf95_rwa_data_bill WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
+	            new java.sql.Date(reportDate.getTime()));
+	}
+
+	public void deleteGamDataByReportDate(Date reportDate) {
+	    if (reportDate == null) {
+	        throw new RuntimeException("Report date is required.");
+	    }
+	    jdbcTemplate.update(
+	            "DELETE FROM GENERAL_MASTER_TB WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
+	            new java.sql.Date(reportDate.getTime()));
+	}
+
+	public void deleteEabDataByReportDate(Date reportDate) {
+	    if (reportDate == null) {
+	        throw new RuntimeException("Report date is required.");
+	    }
+	    jdbcTemplate.update(
+	            "DELETE FROM EOD_ACCT_BALANCE WHERE TRUNC(EOD_DATE)=TRUNC(?)",
+	            new java.sql.Date(reportDate.getTime()));
+	}
+
 	// ================= UTIL METHODS =================
 
 	private BigDecimal parseDecimal(String val) {
