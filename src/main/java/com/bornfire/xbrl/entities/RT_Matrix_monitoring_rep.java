@@ -189,6 +189,15 @@ List<Object[]> GetDailyDepositconcentrationretail(Date Selecteddate);
 			+ "Order by a.month_end Asc)",nativeQuery=true)
 	List<Object[]> GetBPVPV01(Date Selecteddate);
 	
+	@Query(value="Select * from(\r\n"
+			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '23') ,\r\n"
+			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,Round(nvl(POSITION_OF_MATRIX,0)/45,4)*100 \r\n"
+			+ "from Current_Year_dates a left join Freshslippage b on a.month_end = b.REPORT_DATE\r\n"
+			+ "Order by a.month_end Asc)",nativeQuery=true)
+	List<Object[]> GetDaylightlimit(Date Selecteddate);
+	
 	
 	
 	@Query(value="Select * from(\r\n"
@@ -199,6 +208,15 @@ List<Object[]> GetDailyDepositconcentrationretail(Date Selecteddate);
 			+ "from Current_Year_dates a left join POSITION_OF_MATRIX b on a.month_end = b.REPORT_DATE  Order by a.month_end asc)\r\n"
 			,nativeQuery=true)
 	List<Object[]> GetBPVPV01Monthdetail(Date Selecteddate);
+	
+	@Query(value="Select * from(\r\n"
+			+ "With  POSITION_OF_MATRIX as(Select * from rt_matrix_monitored_table Where S_NO = '23') ,\r\n"
+			+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1)\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 31 )\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as month_end,Round(nvl(POSITION_OF_MATRIX,0)/45,4)*100\r\n"
+			+ "from Current_Year_dates a left join POSITION_OF_MATRIX b on a.month_end = b.REPORT_DATE  Order by a.month_end asc)\r\n"
+			,nativeQuery=true)
+	List<Object[]> GetDaylightlimitdaily(Date Selecteddate);
 	
 	@Query(value="Select * from(\r\n"
 			+ "With Freshslippage as(Select * from rt_matrix_monitored_table Where S_NO = '10') ,\r\n"

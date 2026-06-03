@@ -22,6 +22,8 @@ PURPOSE		: Trade Level Data Derivative Report
 <link rel="stylesheet" type="text/css"
 	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 <!-- JavaScript -->
@@ -277,7 +279,7 @@ left
 }
 
 .btn-primary {
-	background-color: #E77400;
+	background-color: var(--bank-primary, #2563EB);
 	border-color: #0c0c0c;
 }
 
@@ -311,7 +313,7 @@ left
 	/* HEADER */
 	/* Update this section in your <style> tag */
 	#usertable thead th {
-		background-color: #7b6458;
+		background-color: var(--table-header-blue, #2563EB);
 		color: #fff;
 		font-family: Arial, sans-serif !important;
 		font-size: 14px !important;
@@ -330,7 +332,7 @@ left
 		top: 0;
 		/* Keeps the first row at the top */
 		z-index: 10;
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		/* Ensures the header isn't transparent */
 		color: white;
 		box-shadow: inset 0 -1px 0 #dee2e6;
@@ -586,7 +588,7 @@ label.error {
 .static-back-btn {
 						    background-color: rgb(255, 255, 255);
 						    border: none;
-						    color: rgb(255, 128, 0);
+						    color: var(--bank-primary, #2563EB);
 						    font-size: 16px;
 						    border-radius: 50%;
 						    width: 36px;
@@ -601,7 +603,7 @@ label.error {
 
 						/* Hover effect */
 						.static-back-btn:hover {
-						    background-color: rgb(255, 128, 0);   /* darker orange */
+						    background-color: var(--bank-primary, #2563EB);   /* darker orange */
 						    color: rgb(255, 255, 255);
 						    transform: scale(1.08);
 						}
@@ -778,6 +780,19 @@ label.error {
 
 	</script>
 
+<style>
+.loader-overlay { display:none; position:fixed; inset:0; background: rgba(10, 22, 45, 0.65); backdrop-filter: blur(4px); z-index:2050; align-items:center; justify-content:center; }
+.loader-card { width:320px; background:#ffffff; border-radius:16px; padding:22px 20px 18px; text-align:center; box-shadow:0 14px 34px rgba(8, 20, 40, 0.22); border:1px solid rgba(148, 163, 184, 0.35); }
+.loader-logo-wrap { position:relative; width:84px; height:84px; margin:0 auto 14px; display:grid; place-items:center; }
+.loader-logo { width:56px; height:56px; object-fit:contain; filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18)); animation: loaderPulse 1.6s ease-in-out infinite; }
+.loader-ring { position:absolute; inset:0; border-radius:50%; border:4px solid #e2e8f0; border-top-color:#f97316; animation: loaderSpin 1s linear infinite; }
+.loader-title { font-size:1.02rem; font-weight:600; color:#0f172a; margin-bottom:10px; letter-spacing:0.2px; }
+.loader-progress { width:100%; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+.loader-progress-bar { height:100%; width:38%; background: linear-gradient(90deg, #f97316, #fb923c); border-radius:999px; animation: loaderProgress 1.6s ease-in-out infinite; }
+@keyframes loaderSpin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes loaderPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(0.96);opacity:0.92;} }
+@keyframes loaderProgress { 0%{transform:translateX(-120%);} 50%{transform:translateX(90%);} 100%{transform:translateX(240%);} }
+</style>
 </head>
 
 
@@ -1317,8 +1332,7 @@ if (tabId === 'data') {
 
 				<div class="table-responsive"
 					style="max-height: 400px; overflow: auto; border: none;">
-					<table id="usertable"
-						class="table table-bordered table-striped table-hover"
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%"
 					>
 
 						<thead class="thead-light">
@@ -1487,7 +1501,7 @@ if (tabId === 'data') {
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;"><a
 									th:href="@{'/Trade_Level_Data_Derivatives?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-										<i class="fa fa-edit" style="color: #ff7f27;"></i>
+										<i class="fa fa-edit" style="color: var(--bank-primary, #2563EB);"></i>
 								</a></td>
 
 								<td  style="min-width:100px;" th:text="${#dates.format(data.bank_date, 'dd-MM-yyyy')}"></td>
@@ -3136,8 +3150,8 @@ if (tabId === 'data') {
 	}
 
 	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-		background-color: #ff7f27 !important;
-		border-color: #ff7f27 !important;
+		background-color: var(--bank-primary, #2563EB) !important;
+		border-color: var(--bank-primary-dark, #1E40AF) !important;
 		color: #ffffff !important;
 		cursor: default !important;
 	}
@@ -3404,32 +3418,7 @@ function handleBankChange(select) {
   });
 </script>
 <style>
-		.role-btn {
-			background: #ffffff;
-			/* default white */
-			color: #E67E00;
-			/* default orange text */
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		/* Hover effect → pastel orange */
-		.role-btn:hover {
-			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
+/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
 			/* solid orange */
@@ -3641,7 +3630,7 @@ body {
 	    position: sticky;
 	    top: 0;
 	    z-index: 2; 
-	    background-color: #7b6458; 
+	    background-color: var(--table-header-blue, #2563EB); 
 	}
 </style>
 	<script>

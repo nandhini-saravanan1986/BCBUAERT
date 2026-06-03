@@ -11,6 +11,8 @@
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<script th:src="@{/js/chart.js}"></script>
 	<script th:src="@{/js/datatablesnew.js}"></script>
@@ -133,13 +135,12 @@
 		.table.refund-table thead th {
 			position: sticky;
 			top: 0;
-			background: brown;
-			color: var(--textcolorheaderwhite);
+			background: var(--table-header, #8A5A35);
+			color: var(--bank-text-on-dark, #fff);
 			font-weight: 700;
 			font-size: 0.65rem;
-			border: 1px solid;
+			border: 1px solid var(--bank-border-soft, #F0E8DF);
 			text-transform: uppercase;
-			border-color: black;
 		}
 
 		.table.refund-table tbody td {
@@ -382,16 +383,20 @@
 			color: var(--color-primary-hover);
 		}
 
-		h4 {
+		h4,
+		#Analyticsheadername {
 			position: relative;
 			text-align: center;
 			margin-bottom: 30px;
 			font-size: 0.70rem;
-			padding: 10px;
-			color: white;
-			background-color: brown;
-			border-radius: 10px;
+			padding: 10px 12px;
+			color: var(--bank-text-on-dark, #fff);
+			background: var(--bank-header-gradient);
+			border-radius: 6px;
 			overflow: hidden;
+			box-shadow: var(--bank-shadow-header);
+			font-weight: 600;
+			letter-spacing: 0.02em;
 		}
 
 		/* Glassy moving layer */
@@ -524,51 +529,86 @@
 			}
 		}
 	</style>
-<style>
-.brown-tabs {
-	border-bottom: 2px solid #a52a2a;
-	margin-bottom: 20px;
-	display: flex;
-	gap: 5px;
-}
+	<style>
+		.brown-tabs {
+			border-bottom: 2px solid #a52a2a;
+			margin-bottom: 20px;
+			display: flex;
+			gap: 5px;
+		}
 
-.brown-tabs .tab-link {
-	flex: 1;
-	text-align: center;
-	background-color: #f7e9e9;
-	color: #5c1717;
-	border: none;
-	padding: 12px 24px;
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 600;
-	border-radius: 6px 6px 0 0;
-	transition: background-color 0.2s ease, color 0.2s ease;
-}
+		.brown-tabs .tab-link {
+			flex: 1;
+			text-align: center;
+			background-color: #f7e9e9;
+			color: #5c1717;
+			border: none;
+			padding: 12px 24px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 6px 6px 0 0;
+			transition: background-color 0.2s ease, color 0.2s ease;
+		}
 
-.brown-tabs .tab-link:hover {
-	background-color: #eac6c6;
-}
+		.brown-tabs .tab-link:hover {
+			background-color: #eac6c6;
+		}
 
-.brown-tabs .tab-link.active {
-	background-color: #a52a2a;
-	color: #ffffff;
-	box-shadow: 0 -2px 5px rgba(165, 42, 42, 0.2);
-}
+		.brown-tabs .tab-link.active {
+			background-color: #a52a2a;
+			color: #ffffff;
+			box-shadow: 0 -2px 5px rgba(165, 42, 42, 0.2);
+		}
 
-.outer-border-table {
-	width: 100%;
-	border-collapse: collapse;
-	border: 1px solid;
-	font-size: 10.4px;
-}
+		.outer-border-table {
+			width: 100%;
+			border-collapse: collapse;
+			border: 1px solid;
+			font-size: 10.4px;
+		}
 
-.outer-border-table th, .outer-border-table td {
-	border: none;
-	padding: 8px;
-	text-align: right;
-}
-</style>
+		.outer-border-table th,
+		.outer-border-table td {
+			border: none;
+			padding: 8px;
+			text-align: right;
+		}
+
+		.ear-free-text-row {
+			display: flex;
+			gap: 16px;
+			margin-top: 16px;
+			padding-top: 12px;
+			border-top: 1px solid #dee2e6;
+		}
+
+		.ear-free-text-col {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.ear-free-text-col label {
+			display: block;
+			font-size: 11px;
+			font-weight: bold;
+			color: #5c1717;
+			margin-bottom: 6px;
+		}
+
+		.ear-free-text-area {
+			width: 100%;
+			min-height: 120px;
+			padding: 8px 10px;
+			font-size: 11px;
+			font-weight: bold;
+			line-height: 1.45;
+			border: 0px solid #ccc;
+			border-radius: 4px;
+			resize: vertical;
+			box-sizing: border-box;
+		}
+	</style>
 </head>
 
 <body>
@@ -582,6 +622,151 @@
 
 	</script>
 	<script>
+		function showRoaToolbarViewMode() {
+			var editBtn = document.getElementById("RETURN_ON_ASSET_EDIT_BTN");
+			var saveBtn = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			document.querySelectorAll(".roa-input").forEach(function (el) {
+				el.readOnly = true;
+			});
+			if (editBtn) {
+				editBtn.style.display = "inline-block";
+			}
+			if (saveBtn) {
+				saveBtn.style.display = "none";
+			}
+		}
+
+		function enterROAEditMode() {
+			var editBtn = document.getElementById("RETURN_ON_ASSET_EDIT_BTN");
+			var saveBtn = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			document.querySelectorAll(".roa-input").forEach(function (el) {
+				el.readOnly = false;
+			});
+			if (editBtn) {
+				editBtn.style.display = "none";
+			}
+			if (saveBtn) {
+				saveBtn.style.display = "inline-block";
+			}
+		}
+
+		function loadReturnOnAssetTable(labelReport_date, opts) {
+			opts = opts || {};
+			var rd = (labelReport_date || "").split("T")[0];
+			var section = document.querySelector(".RETURN_ON_ASSET_TABLE");
+			if (section) {
+				section.setAttribute("data-report-date", labelReport_date || "");
+			}
+			var editBtnPre = document.getElementById("RETURN_ON_ASSET_EDIT_BTN");
+			var saveBtnPre = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			if (editBtnPre) {
+				editBtnPre.style.display = "none";
+			}
+			if (saveBtnPre) {
+				saveBtnPre.style.display = "none";
+			}
+			fetch("./Limitdetaildata?Report_date=" + encodeURIComponent(labelReport_date) + "&Data_Type_Used=RETURN_ON_ASSETS", {
+				method: "POST",
+				headers: {"Content-Type": "application/x-www-form-urlencoded"}
+			})
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error("HTTP error " + response.status);
+					}
+					return response.json();
+				})
+				.then(function (list) {
+					var daily = "";
+					var netp = "";
+					var roaa = "";
+					if (list && list.length > 0) {
+						var data = list[0];
+						daily = data[0] != null ? data[0] : "";
+						netp = data[1] != null ? data[1] : "";
+						roaa = data[2] != null ? data[2] : "";
+					} else if (opts.useZeroDefaultsForEmpty) {
+						daily = 0;
+						netp = 0;
+						roaa = 0;
+					}
+					var trHTML = "<tr>" +
+						"<td><input type=\"number\" step=\"any\" readonly class=\"form-control form-control-sm roa-input\" id=\"roa_input_daily\" /></td>" +
+						"<td><input type=\"number\" step=\"any\" readonly class=\"form-control form-control-sm roa-input\" id=\"roa_input_net\" /></td>" +
+						"<td><input type=\"number\" step=\"any\" readonly class=\"form-control form-control-sm roa-input\" id=\"roa_input_roaa\" /></td>" +
+						"</tr>";
+					document.getElementById("RETURN_ON_ASSET_BODY").innerHTML = trHTML;
+					document.getElementById("roa_input_daily").value = daily !== "" && daily !== null && daily !== undefined ? daily : "";
+					document.getElementById("roa_input_net").value = netp !== "" && netp !== null && netp !== undefined ? netp : "";
+					document.getElementById("roa_input_roaa").value = roaa !== "" && roaa !== null && roaa !== undefined ? roaa : "";
+					if (opts.openInEditMode) {
+						enterROAEditMode();
+					} else {
+						showRoaToolbarViewMode();
+					}
+				})
+				.catch(function (error) {
+					alert("Error loading ROA data: " + error.message);
+				});
+		}
+
+		function saveReturnOnAssetRow() {
+			var wrap = document.querySelector(".RETURN_ON_ASSET_TABLE");
+			var rd = wrap ? wrap.getAttribute("data-report-date") : "";
+			if (!rd) {
+				alert("Report date is missing.");
+				return;
+			}
+			var dEl = document.getElementById("roa_input_daily");
+			var nEl = document.getElementById("roa_input_net");
+			var rEl = document.getElementById("roa_input_roaa");
+			if (!dEl || !nEl || !rEl) {
+				return;
+			}
+			var params = new URLSearchParams();
+			params.append("reportDate", rd.split("T")[0]);
+			params.append("dailyAvgAssets", dEl.value);
+			params.append("netProfit", nEl.value);
+			params.append("returnOnAssetPercent", rEl.value);
+			var btn = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			if (btn) {
+				btn.disabled = true;
+				btn.textContent = "Saving...";
+			}
+			fetch("./api/rt-return-on-asset/save", {
+				method: "POST",
+				headers: {"Content-Type": "application/x-www-form-urlencoded"},
+				body: params.toString(),
+				credentials: "same-origin"
+			})
+				.then(function (r) {
+					if (!r.ok) {
+						return r.text().then(function (txt) {
+							var msg = txt;
+							try {
+								var j = JSON.parse(txt);
+								if (j && j.message) {
+									msg = j.message;
+								}
+							} catch (ignore) { }
+							throw new Error(msg || "Save failed");
+						});
+					}
+					return r.json();
+				})
+				.then(function () {
+					loadReturnOnAssetTable(rd);
+				})
+				.catch(function (e) {
+					alert("Save failed: " + (e.message || e));
+				})
+				.finally(function () {
+					if (btn) {
+						btn.disabled = false;
+						btn.textContent = "Save";
+					}
+				});
+		}
+
 		function Getanalyticaldata(a) {
 			var labelnameselected = a.getAttribute("setlabelname");
 			var labelsrlno = a.getAttribute("setlabelsrlno");
@@ -630,7 +815,22 @@
 			document.querySelector(".Generalprovisiongrid").style.display = "none";
 			document.querySelector(".BPVPV01_TABLE").style.display = "none";
 			document.querySelector(".irs").style.display = "none";
+
 			document.getElementById("eardatacontainer").style.display = "none";
+
+			var roaSection = document.querySelector(".RETURN_ON_ASSET_TABLE");
+			if (roaSection) {
+				roaSection.style.display = "none";
+			}
+			var roaSaveHide = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			if (roaSaveHide) {
+				roaSaveHide.style.display = "none";
+			}
+			var roaEditHide = document.getElementById("RETURN_ON_ASSET_EDIT_BTN");
+			if (roaEditHide) {
+				roaEditHide.style.display = "none";
+			}
+
 			var chartDownloadEl = document.getElementById("chartDownloadActions");
 			if (chartDownloadEl) chartDownloadEl.style.display = "none";
 			// Show sections based on the selected S.No
@@ -734,6 +934,11 @@
 				document.querySelector(".LiquidAssetsRatio").style.display = "block";
 
 
+			} else if (labelsrlno === "18") {
+
+				loadReturnOnAssetTable(labelReport_date);
+				document.querySelector(".RETURN_ON_ASSET_TABLE").style.display = "block";
+
 			} else if (labelsrlno === "47") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -832,6 +1037,35 @@
 
 
 
+			} else if (labelsrlno === "23") {
+				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
+
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
+
+
+
+
 			} else if (labelsrlno === "4") {
 				fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 
@@ -847,13 +1081,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-								fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-								.then(response => response.json())
-								.then(result => {
-									const labels = result.map(row => row.date);
-									const dataValues = result.map(row => parseFloat(row.value));
-									Initiatedailychart(labels, dataValues, 5, 50);
-								});
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5, 50);
+					});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'Leverageratio', {
 					method: 'POST',
@@ -1262,13 +1496,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-						fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-							.then(response => response.json())
-							.then(result => {
-								const labels = result.map(row => row.date);
-								const dataValues = result.map(row => parseFloat(row.value));
-								Initiatedailychart(labels, dataValues, 5, 50);
-							});
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 5, 50);
+					});
 
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'CapitalAdequacyratio', {
 					method: 'POST',
@@ -1426,18 +1660,18 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
-				
-				
+
+
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					const maxValue = Math.max(...dataValues);
-					const yaxismaxsize = getRoundedMax(maxValue);
-					const CalculatedStepSize = getStepSize(yaxismaxsize);
-					Initiatedailychart(labels, dataValues,  CalculatedStepSize, yaxismaxsize);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
 
 
 			} else if (labelsrlno === "9") {
@@ -1488,13 +1722,13 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				 fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				 .then(response => response.json())
-				 .then(result => {
-				 const labels = result.map(row => row.date);
-				 const dataValues = result.map(row => parseFloat(row.value));
-				 Initiatedailychart(labels, dataValues, 1, 15);
-				 });
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						Initiatedailychart(labels, dataValues, 1, 15);
+					});
 				document.querySelector(".Mortageloan_block").style.display = "grid";
 
 
@@ -1549,31 +1783,31 @@
 
 			} else if (labelsrlno === "7") {
 
-			//	fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-									// .then(response => response.json())
-									// .then(result => {
-										// const labels = result.map(row => row.date);
-										// const dataValues = result.map(row => parseFloat(row.value));
+				//	fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				// .then(response => response.json())
+				// .then(result => {
+				// const labels = result.map(row => row.date);
+				// const dataValues = result.map(row => parseFloat(row.value));
 
-										// const maxValue = Math.max(...dataValues);
-										// const yaxismaxsize = getRoundedMax(maxValue);
-										// const CalculatedStepSize = getStepSize(yaxismaxsize);
+				// const maxValue = Math.max(...dataValues);
+				// const yaxismaxsize = getRoundedMax(maxValue);
+				// const CalculatedStepSize = getStepSize(yaxismaxsize);
 
-										// Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-									// });
+				// Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+				// });
 
-								// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-									// .then(response => response.json())
-									// .then(result => {
-									// const labels = result.map(row => row.date);
-									// const dataValues = result.map(row => parseFloat(row.value));
+				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				// .then(response => response.json())
+				// .then(result => {
+				// const labels = result.map(row => row.date);
+				// const dataValues = result.map(row => parseFloat(row.value));
 
-									// const maxValue = Math.max(...dataValues);
-									// const yaxismaxsize = getRoundedMax(maxValue);
-									// const CalculatedStepSize = getStepSize(yaxismaxsize);
-									
-									// Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-									// });
+				// const maxValue = Math.max(...dataValues);
+				// const yaxismaxsize = getRoundedMax(maxValue);
+				// const CalculatedStepSize = getStepSize(yaxismaxsize);
+
+				// Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+				// });
 
 
 
@@ -1693,7 +1927,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-				 fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1801,7 +2035,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -1909,7 +2143,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -2017,7 +2251,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -2124,7 +2358,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -2230,7 +2464,7 @@
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
 
-					fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
+				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
 					.then(response => response.json())
 					.then(result => {
 						const labels = result.map(row => row.date);
@@ -2683,17 +2917,17 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
-				
+
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					const maxValue = Math.max(...dataValues);
-					const yaxismaxsize = getRoundedMax(maxValue);
-					const CalculatedStepSize = getStepSize(yaxismaxsize);
-					Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
 
 
 
@@ -2748,17 +2982,17 @@
 
 						Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
 					});
-				
+
 				fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				.then(response => response.json())
-				.then(result => {
-					const labels = result.map(row => row.date);
-					const dataValues = result.map(row => parseFloat(row.value));
-					const maxValue = Math.max(...dataValues);
-					const yaxismaxsize = getRoundedMax(maxValue);
-					const CalculatedStepSize = getStepSize(yaxismaxsize);
-					Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-				});
+					.then(response => response.json())
+					.then(result => {
+						const labels = result.map(row => row.date);
+						const dataValues = result.map(row => parseFloat(row.value));
+						const maxValue = Math.max(...dataValues);
+						const yaxismaxsize = getRoundedMax(maxValue);
+						const CalculatedStepSize = getStepSize(yaxismaxsize);
+						Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
+					});
 
 
 
@@ -2799,66 +3033,66 @@
 				document.querySelector(".Depositconcentration").style.display = "block";
 
 
-			}else if (labelsrlno === "33") {
+			} else if (labelsrlno === "33") {
 
-						    document.getElementById("labletype").innerHTML = "Interest Rate Sensitivity (IRS)";
-						    
-						    fetch('./getIRSData?reportdate=' + labelReport_date + '&currency=USD')
-						        .then(response => {
-						            if (!response.ok) {
-						                throw new Error("HTTP error " + response.status);
-						            }
-						            return response.json();
-						        })
-								.then(list => {
+				document.getElementById("labletype").innerHTML = "Interest Rate Sensitivity (IRS)";
 
-								    let tbody = document.getElementById("irsbody");
-								    tbody.innerHTML = "";
+				fetch('./getIRSData?reportdate=' + labelReport_date + '&currency=USD')
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(list => {
 
-								    // ✅ Bucket Names
-								    let buckets = [
-								        "1 – 28 days",
-								        "29 days and upto 3 months",
-								        "Over 3 months and upto 6 months",
-								        "Over 6 months and upto 1 year",
-								        "Over 1 year and upto 3 years",
-								        "Over 3 years and upto 5 years",
-								        "Over 5 years and upto 7 years",
-								        "Over 7 years and upto 10 years",
-								        "Over 10 years and upto 15 years",
-								        "Over 15 years",
-								        "Non Rate Sensitive"
-								    ];
+						let tbody = document.getElementById("irsbody");
+						tbody.innerHTML = "";
 
-								    // ✅ Limits
-								    let limits = [
-								        "20 % of total assets",
-								        "40 % of total assets",
-								        "40 % of total assets",
-								        "40 % of total assets",
-								        "30 % of total assets",
-								        "30 % of total assets",
-								        "30 % of total assets",
-								        "30 % of total assets",
-								        "30 % of total assets",
-								        "30 % of total assets",
-								        ""
-								    ];
+						// ✅ Bucket Names
+						let buckets = [
+							"1 – 28 days",
+							"29 days and upto 3 months",
+							"Over 3 months and upto 6 months",
+							"Over 6 months and upto 1 year",
+							"Over 1 year and upto 3 years",
+							"Over 3 years and upto 5 years",
+							"Over 5 years and upto 7 years",
+							"Over 7 years and upto 10 years",
+							"Over 10 years and upto 15 years",
+							"Over 15 years",
+							"Non Rate Sensitive"
+						];
 
-								    let totalRSL = 0;
-								    let totalRSA = 0;
+						// ✅ Limits
+						let limits = [
+							"20 % of total assets",
+							"40 % of total assets",
+							"40 % of total assets",
+							"40 % of total assets",
+							"30 % of total assets",
+							"30 % of total assets",
+							"30 % of total assets",
+							"30 % of total assets",
+							"30 % of total assets",
+							"30 % of total assets",
+							""
+						];
 
-								    list.forEach((data, index) => {
+						let totalRSL = 0;
+						let totalRSA = 0;
 
-								        let rsl = parseFloat(data[0]) || 0;
-								        let rsa = parseFloat(data[1]) || 0;
-								        let gap = parseFloat(data[2]) || 0;
-								        let per = parseFloat(data[3]) || 0;
+						list.forEach((data, index) => {
 
-								        totalRSL += rsl;
-								        totalRSA += rsa;
+							let rsl = parseFloat(data[0]) || 0;
+							let rsa = parseFloat(data[1]) || 0;
+							let gap = parseFloat(data[2]) || 0;
+							let per = parseFloat(data[3]) || 0;
 
-								        let row = `<tr>
+							totalRSL += rsl;
+							totalRSA += rsa;
+
+							let row = `<tr>
 								            <td>${buckets[index]}</td>
 								            <td>${limits[index]}</td>
 								            <td>${formatNumber(rsl)}</td>
@@ -2871,11 +3105,11 @@
 								            </td>
 								        </tr>`;
 
-								        tbody.innerHTML += row;
-								    });
+							tbody.innerHTML += row;
+						});
 
-								    // ✅ TOTAL ROW
-								    let totalRow = `<tr style="font-weight:bold; background:#f2f2f2">
+						// ✅ TOTAL ROW
+						let totalRow = `<tr style="font-weight:bold; background:#f2f2f2">
 								        <td>Total</td>
 								        <td></td>
 								        <td>${formatNumber(totalRSL)}</td>
@@ -2884,45 +3118,45 @@
 								        <td></td>
 								    </tr>`;
 
-								    tbody.innerHTML += totalRow;
+						tbody.innerHTML += totalRow;
 
-								    document.getElementById("ToptenBorrowerdate").innerHTML =
-								        'Report Date : ' + labelReport_date.split("T")[0];
-										let formattedDate = labelReport_date.split("T")[0].split("-").reverse().join(".");
+						document.getElementById("ToptenBorrowerdate").innerHTML =
+							'Report Date : ' + labelReport_date.split("T")[0];
+						let formattedDate = labelReport_date.split("T")[0].split("-").reverse().join(".");
 
-										document.querySelector("#irsheader th:nth-child(6)").innerText =
-										    "Net Gap as % to Total Assets-" + formattedDate;
-											
-								})
-						        .catch(error => {
-						            alert("Error fetching IRS data: " + error.message);
-						            $("#invalidfile").modal("toggle");
-						        });
+						document.querySelector("#irsheader th:nth-child(6)").innerText =
+							"Net Gap as % to Total Assets-" + formattedDate;
 
-						    document.querySelector(".irs").style.display = "block";
-			}else if (labelsrlno === "44") {
-				
-				
-				fetch('./eardashboarddata?reportdate=' + labelReport_date )
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    document.getElementById("eardatacontainer").style.display = "block";
-                    return response.text();
-                })
-                .then(htmlString => {
-                    document.getElementById('eardatacontainer').innerHTML = htmlString;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-				
-			
+					})
+					.catch(error => {
+						alert("Error fetching IRS data: " + error.message);
+						$("#invalidfile").modal("toggle");
+					});
+
+				document.querySelector(".irs").style.display = "block";
+			} else if (labelsrlno === "44") {
+
+
+				fetch('./eardashboarddata?reportdate=' + labelReport_date)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("Network response was not ok");
+						}
+						document.getElementById("eardatacontainer").style.display = "block";
+						return response.text();
+					})
+					.then(htmlString => {
+						document.getElementById('eardatacontainer').innerHTML = htmlString;
+					})
+					.catch(error => {
+						console.error('Error fetching data:', error);
+					});
+
+
 			}
-			
-			
-			
+
+
+
 		}
 
 		function Getexposuredetail(a, el) {
@@ -4549,6 +4783,18 @@
 			document.querySelector(".Depositconcentration").style.display = "none";
 			document.querySelector(".Generalprovisiongrid").style.display = "none";
 			document.querySelector(".BPVPV01_TABLE").style.display = "none";
+			var roaOnDateHide = document.querySelector(".RETURN_ON_ASSET_TABLE");
+			if (roaOnDateHide) {
+				roaOnDateHide.style.display = "none";
+			}
+			var roaSaveOnDateHide = document.getElementById("RETURN_ON_ASSET_SAVE_BTN");
+			if (roaSaveOnDateHide) {
+				roaSaveOnDateHide.style.display = "none";
+			}
+			var roaEditOnDateHide = document.getElementById("RETURN_ON_ASSET_EDIT_BTN");
+			if (roaEditOnDateHide) {
+				roaEditOnDateHide.style.display = "none";
+			}
 			const statusDiv = document.getElementById("dataStatus");
 
 			const selectedDate = input.value;
@@ -4580,6 +4826,24 @@
 
 					// CHECK IF RESPONSE IS EMPTY
 					if (!list || list.length === 0) {
+
+						// Return on Asset (18): no procedure prompt — open ROA with zeros (or saved figures) for manual entry
+						if (String(sNo) === "18") {
+							statusDiv.style.background = "#0c63e4";
+							statusDiv.style.color = "white";
+							statusDiv.innerText = "No limit run for this date. ROA shows zero until you enter values and save.";
+							if (String(Selectedmatrixlabel) === "18") {
+								loadReturnOnAssetTable(selectedDate, {
+									useZeroDefaultsForEmpty: true,
+									openInEditMode: true
+								});
+								var roaShowEmpty = document.querySelector(".RETURN_ON_ASSET_TABLE");
+								if (roaShowEmpty) {
+									roaShowEmpty.style.display = "block";
+								}
+							}
+							return;
+						}
 
 						statusDiv.style.background = "red";
 						statusDiv.style.color = "white";
@@ -4663,6 +4927,24 @@
 					statusDiv.style.background = "green";
 					statusDiv.style.color = "white";
 					statusDiv.innerText = "Required data available. Calculating limits...";
+
+					// Refresh ROA panel if user has S.No 18 analytics open (date from row 18 or from this row when sNo is 18)
+					if (String(Selectedmatrixlabel) === "18") {
+						var roaReportDate = selectedDate;
+						if (String(sNo) !== "18") {
+							var rowFor18 = list.find(function (d) {
+								return String(d.s_no) === "18";
+							});
+							if (rowFor18 && rowFor18.report_date) {
+								roaReportDate = formatDateForInput(rowFor18.report_date) || rowFor18.report_date;
+							}
+						}
+						loadReturnOnAssetTable(roaReportDate);
+						var roaShow = document.querySelector(".RETURN_ON_ASSET_TABLE");
+						if (roaShow) {
+							roaShow.style.display = "block";
+						}
+					}
 				})
 				.catch(error => {
 					alert("Error fetching exposure data: " + error.message);
@@ -5353,7 +5635,7 @@
 		<div class="row g-3">
 			<!-- LEFT: table uses full left half -->
 			<div class="col-lg-6 col-md-12">
-				<h4 style="color: white;">List Of All Ratios Monitored By
+				<h4>List Of All Ratios Monitored By
 					Risk Management
 				</h4>
 				<div id="dataStatus" style="display:none;padding:8px;margin-bottom:10px;
@@ -5432,7 +5714,7 @@
 
 			<!-- RIGHT: graphs use full right half -->
 			<div class="col-lg-6 col-md-12">
-				<h4 id="Analyticsheadername" style="color: white;">Analytics
+				<h4 id="Analyticsheadername">Analytics
 				</h4>
 				<div class="chart-card">
 					<div class="stats-grid Leverageratiosummblock" style="display: none;">
@@ -5662,8 +5944,8 @@
 						<canvas id="StockLinechartformonthlyreport"></canvas>
 
 					</div>
-					
-					
+
+
 
 					<!--Current Month progressing chart-->
 					<div class="Dailychart-container" style="display: none;">
@@ -5728,6 +6010,27 @@
 								</tr>
 							</thead>
 							<tbody id="BPVPV01_TABLEBODY">
+							</tbody>
+						</table>
+					</div>
+
+					<div class="RETURN_ON_ASSET_TABLE" style="display: none;" data-report-date="">
+						<div class="mb-2">
+							<button type="button" id="RETURN_ON_ASSET_EDIT_BTN"
+								class="btn btn-sm btn-outline-primary mr-2" onclick="enterROAEditMode()"
+								style="display: none;">Edit</button>
+							<button type="button" id="RETURN_ON_ASSET_SAVE_BTN" class="btn btn-sm btn-primary"
+								onclick="saveReturnOnAssetRow()" style="display: none;">Save</button>
+						</div>
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Daily Average Total Avg. Assets (3170) Net of Inter-Branch borrowing</th>
+									<th>Net Profit</th>
+									<th>ROAA</th>
+								</tr>
+							</thead>
+							<tbody id="RETURN_ON_ASSET_BODY">
 							</tbody>
 						</table>
 					</div>
@@ -6145,28 +6448,27 @@
 						</table>
 					</div>
 					<div class="irs" style="display: none;">
-										    <table class="table refund-table align-middle mb-0">
-										        <thead>
-										            <tr style="background-color: #dee2e6" id="irsheader">
-										                <th>Buckets</th>
-										                <th>Limit</th>
-										                <th>RSL AED Mn.</th>
-										                <th>RSA AED Mn</th>
-										                <th>Gap AED Mn.</th>
-										              <th id="netGapHeader">Net Gap as % to Total Assets</th>
-										            </tr>
-										        </thead>
+						<table class="table refund-table align-middle mb-0">
+							<thead>
+								<tr style="background-color: #dee2e6" id="irsheader">
+									<th>Buckets</th>
+									<th>Limit</th>
+									<th>RSL AED Mn.</th>
+									<th>RSA AED Mn</th>
+									<th>Gap AED Mn.</th>
+									<th id="netGapHeader">Net Gap as % to Total Assets</th>
+								</tr>
+							</thead>
 
-												<tbody id="irsbody">
-												   
-												</tbody>
-										    </table>
-										</div>
+							<tbody id="irsbody">
+
+							</tbody>
+						</table>
+					</div>
 
 					<div id="eardatacontainer" style="margin-top: 20px;">
 
-						<div th:fragment="eardashboardtable"
-							th:if="${entity1 != null and entity2 != null}">
+						<div th:fragment="eardashboardtable" th:if="${entity1 != null and entity2 != null}">
 
 							<div class="brown-tabs">
 								<button onclick="openTab(event, 'Tab1')" class="tab-link active">EAR</button>
@@ -6174,8 +6476,7 @@
 							</div>
 
 							<div id="Tab1" class="tab-content" style="display: block;">
-								<div
-									style="display: flex; justify-content: flex-end;">
+								<div style="display: flex; justify-content: flex-end;">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
 
@@ -6228,35 +6529,30 @@
 												<span>0%</span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity1.AED_TO_INR_CONV_RATE}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity1.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+												<span th:text="${entity1.AED_TO_INR_CONV_RATE}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
 												<span
-													th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+													th:text="${entity1.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+											</div>
+											<div style="margin-bottom: 5px;min-height: 15px;">
+												<span th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
 												<span
 													th:text="${entity1.INT_EARNED_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
+												<span th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div
-									style="min-width: 180px; text-align: left; font-size: 10.4px">
+								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
 									<b>A . Assets</b>
 								</div>
 
-								<table border="1" cellpadding="8"
-									class="table refund-table align-middle mb-0"
+								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
 									style="width: 100%; border-collapse: collapse;">
 									<thead>
 										<tr>
@@ -6290,8 +6586,8 @@
 										</tr>
 										<tr>
 											<td>C. 3 - 6 Months</td>
-											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}"
-												style="text-align: right;"></td>
+											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}" style="text-align: right;">
+											</td>
 											<td style="text-align: right;">7.5000
 											</td>
 											<td th:text="${entity1.REPRICABLE_ASSETS_3MON_TO_6MON}"
@@ -6311,14 +6607,12 @@
 											<td style="text-align: right;font-weight: bold;"
 												th:text="${entity1.TOTAL_ASST_REPRICING_AMT_IN_AED_THOUSAND}"></td>
 											<td style="text-align: right;"></td>
-											<td
-												th:text="${entity1.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
+											<td th:text="${entity1.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
 										</tr>
 									</tbody>
 								</table>
-								<div
-									style="display: flex; justify-content: flex-end; font-weight: bold;">
+								<div style="display: flex; justify-content: flex-end; font-weight: bold;">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
 
@@ -6334,19 +6628,16 @@
 													th:text="${entity1.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity1.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
+												<span th:text="${entity1.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div
-									style="min-width: 180px; text-align: left; font-size: 10.4px">
+								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
 									<b>B. Liabilities</b>
 								</div>
 
-								<table border="1" cellpadding="8"
-									class="table refund-table align-middle mb-0"
+								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
 									style="width: 100%; border-collapse: collapse;">
 									<thead>
 										<tr>
@@ -6373,7 +6664,7 @@
 											<td>B. 29 Days - 3 Months</td>
 											<td th:text="${entity1.REPRICING_LIAB_29_TO_3MON}"
 												style="text-align: right;">
-												</td>
+											</td>
 											<td style="text-align: right;">10.0000</td>
 											<td th:text="${entity1.REPRICABLE_LIAB_29_TO_3MON}"
 												style="text-align: right;"></td>
@@ -6397,17 +6688,16 @@
 												style="text-align: right;"></td>
 										</tr>
 										<tr>
-											<td style="font-weight: bold;">Total</td>											
+											<td style="font-weight: bold;">Total</td>
 											<td th:text="${entity1.TOTAL_LIAB_REPRICING_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
-												<td style="text-align: right;"></td>
+											<td style="text-align: right;"></td>
 											<td th:text="${entity1.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
 										</tr>
 									</tbody>
 								</table>
-								<div
-									style="display: flex; justify-content: flex-end;">
+								<div style="display: flex; justify-content: flex-end;">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px; font-weight: bold;">
 
@@ -6466,7 +6756,7 @@
 										<tr>
 											<td colspan=3>Earning at Risk (EaR) A - B (Amount AED
 												in Thousands) =</td>
-											<td  th:text="${entity1.EAR_AMT_IN_AED}"></td>
+											<td th:text="${entity1.EAR_AMT_IN_AED}"></td>
 											<td>Breached</td>
 										</tr>
 										<tr>
@@ -6487,11 +6777,23 @@
 										</tr>
 									</tbody>
 								</table>
+
+								<div class="ear-free-text-row">
+									<div class="ear-free-text-col">
+										<label for="earFreeTextTab1Left"></label>
+										<textarea id="earFreeTextTab1Left" class="ear-free-text-area"
+											placeholder="Enter remarks (left section)..."></textarea>
+									</div>
+									<div class="ear-free-text-col">
+										<label for="earFreeTextTab1Right"></label>
+										<textarea id="earFreeTextTab1Right" class="ear-free-text-area"
+											placeholder="Enter remarks (right section)..."></textarea>
+									</div>
+								</div>
 							</div>
 
 							<div id="Tab2" class="tab-content" style="display: none;">
-								<div
-									style="display: flex; justify-content: flex-end; ">
+								<div style="display: flex; justify-content: flex-end; ">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
 
@@ -6521,21 +6823,24 @@
 												Interest Paid for the Period from <span
 													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
 												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>(Amount AED in Thousands) :			
+													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>(Amount
+												AED in Thousands) :
 
 											</div>
 											<div style="margin-bottom: 5px;">
 												Interest Earned for the Period from <span
 													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
 												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span> (Amount INR in Thousands) :			
+													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
+												(Amount INR in Thousands) :
 
 											</div>
 											<div style="margin-bottom: 5px;">
 												Interest Paid for the Period from <span
 													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
 												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span> (Amount INR in Thousands) :			
+													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
+												(Amount INR in Thousands) :
 											</div>
 
 										</div>
@@ -6559,35 +6864,30 @@
 												<span>0%</span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity2.AED_TO_INR_CONV_RATE}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity2.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+												<span th:text="${entity2.AED_TO_INR_CONV_RATE}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
 												<span
-													th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+													th:text="${entity2.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
+											</div>
+											<div style="margin-bottom: 5px;min-height: 15px;">
+												<span th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
 												<span
 													th:text="${entity2.INT_EARNED_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-											<span
-													th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
+												<span th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div
-									style="min-width: 180px; text-align: left; font-size: 10.4px">
+								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
 									<b>A . Assets</b>
 								</div>
 
-								<table border="1" cellpadding="8"
-									class="table refund-table align-middle mb-0"
+								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
 									style="width: 100%; border-collapse: collapse;">
 									<thead>
 										<tr>
@@ -6621,8 +6921,8 @@
 										</tr>
 										<tr>
 											<td>C. 3 - 6 Months</td>
-											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}"
-												style="text-align: right;"></td>
+											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}" style="text-align: right;">
+											</td>
 											<td style="text-align: right;">7.5000
 											</td>
 											<td th:text="${entity2.REPRICABLE_ASSETS_3MON_TO_6MON}"
@@ -6642,14 +6942,12 @@
 											<td style="text-align: right;font-weight: bold;"
 												th:text="${entity2.TOTAL_ASST_REPRICING_AMT_IN_AED_THOUSAND}"></td>
 											<td style="text-align: right;"></td>
-											<td
-												th:text="${entity2.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
+											<td th:text="${entity2.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
 										</tr>
 									</tbody>
 								</table>
-								<div
-									style="display: flex; justify-content: flex-end; font-weight: bold;">
+								<div style="display: flex; justify-content: flex-end; font-weight: bold;">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
 
@@ -6665,19 +6963,16 @@
 													th:text="${entity2.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
 											</div>
 											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity2.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
+												<span th:text="${entity2.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div
-									style="min-width: 180px; text-align: left; font-size: 10.4px">
+								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
 									<b>B. Liabilities</b>
 								</div>
 
-								<table border="1" cellpadding="8"
-									class="table refund-table align-middle mb-0"
+								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
 									style="width: 100%; border-collapse: collapse;">
 									<thead>
 										<tr>
@@ -6704,7 +6999,7 @@
 											<td>B. 29 Days - 3 Months</td>
 											<td th:text="${entity2.REPRICING_LIAB_29_TO_3MON}"
 												style="text-align: right;">
-												</td>
+											</td>
 											<td style="text-align: right;">10.0000</td>
 											<td th:text="${entity2.REPRICABLE_LIAB_29_TO_3MON}"
 												style="text-align: right;"></td>
@@ -6728,17 +7023,16 @@
 												style="text-align: right;"></td>
 										</tr>
 										<tr>
-											<td style="font-weight: bold;">Total</td>											
+											<td style="font-weight: bold;">Total</td>
 											<td th:text="${entity2.TOTAL_LIAB_REPRICING_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
-												<td style="text-align: right;"></td>
+											<td style="text-align: right;"></td>
 											<td th:text="${entity2.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"
 												style="text-align: right;font-weight: bold;"></td>
 										</tr>
 									</tbody>
 								</table>
-								<div
-									style="display: flex; justify-content: flex-end;">
+								<div style="display: flex; justify-content: flex-end;">
 									<div
 										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px; font-weight: bold;">
 
@@ -6797,7 +7091,7 @@
 										<tr>
 											<td colspan=3>Earning at Risk (EaR) A - B (Amount AED
 												in Thousands) =</td>
-											<td  th:text="${entity2.EAR_AMT_IN_AED}"></td>
+											<td th:text="${entity2.EAR_AMT_IN_AED}"></td>
 											<td>Breached</td>
 										</tr>
 										<tr>
@@ -6818,6 +7112,19 @@
 										</tr>
 									</tbody>
 								</table>
+
+								<div class="ear-free-text-row">
+									<div class="ear-free-text-col">
+										<label for="earFreeTextTab2Left"></label>
+										<textarea id="earFreeTextTab2Left" class="ear-free-text-area"
+											placeholder="Enter remarks (left section)..."></textarea>
+									</div>
+									<div class="ear-free-text-col">
+										<label for="earFreeTextTab2Right"></label>
+										<textarea id="earFreeTextTab2Right" class="ear-free-text-area"
+											placeholder="Enter remarks (right section)..."></textarea>
+									</div>
+								</div>
 							</div>
 
 						</div>
@@ -7269,25 +7576,25 @@
 		</div>
 
 	</div>
-<script>
-    function openTab(evt, tabName) {
-        // 1. Hide all elements with class="tab-content"
-        const tabcontent = document.querySelectorAll(".tab-content");
-        tabcontent.forEach(content => {
-            content.style.display = "none";
-        });
+	<script>
+		function openTab(evt, tabName) {
+			// 1. Hide all elements with class="tab-content"
+			const tabcontent = document.querySelectorAll(".tab-content");
+			tabcontent.forEach(content => {
+				content.style.display = "none";
+			});
 
-        // 2. Remove the "active" class from all tab buttons
-        const tablinks = document.querySelectorAll(".tab-link");
-        tablinks.forEach(link => {
-            link.classList.remove("active");
-        });
+			// 2. Remove the "active" class from all tab buttons
+			const tablinks = document.querySelectorAll(".tab-link");
+			tablinks.forEach(link => {
+				link.classList.remove("active");
+			});
 
-        // 3. Show the current tab, and add the "active" class to the button that opened it
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.classList.add("active");
-    }
-</script>
+			// 3. Show the current tab, and add the "active" class to the button that opened it
+			document.getElementById(tabName).style.display = "block";
+			evt.currentTarget.classList.add("active");
+		}
+	</script>
 </body>
 
 </html>

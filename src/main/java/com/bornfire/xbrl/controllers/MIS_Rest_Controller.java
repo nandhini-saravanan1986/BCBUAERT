@@ -1,7 +1,6 @@
 package com.bornfire.xbrl.controllers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,7 +17,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -27,6 +28,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,22 +42,41 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bornfire.xbrl.dto.AnalyticalPivotColumnDto;
+import com.bornfire.xbrl.dto.AnalyticalPivotLayoutDto;
+import com.bornfire.xbrl.dto.AnalyticalPivotRequestDto;
+import com.bornfire.xbrl.dto.AnalyticalPivotRunResponseDto;
+import com.bornfire.xbrl.dto.AnalyticalPivotTableDto;
+import com.bornfire.xbrl.dto.DataInventoryExportResultDto;
+import com.bornfire.xbrl.dto.DataInventoryItemDto;
+import com.bornfire.xbrl.dto.ReportControlMasterRowDto;
+import com.bornfire.xbrl.dto.ReportControlRunAllResponseDto;
+import com.bornfire.xbrl.dto.ReportControlRunStepResponseDto;
+import com.bornfire.xbrl.dto.ReportControlStepsResponseDto;
 import com.bornfire.xbrl.entities.Capitaladequacyratio_rep;
 import com.bornfire.xbrl.entities.Elar_summary_report_entity;
 import com.bornfire.xbrl.entities.Elar_summary_report_rep;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_entity;
 import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Leverage_ratio_rep;
-import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.MatrixRunJobEntity;
+import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
+import com.bornfire.xbrl.entities.RT_Data_Inventory_Entity;
+import com.bornfire.xbrl.entities.RT_Data_Inventory_Repo;
 import com.bornfire.xbrl.entities.RT_Chart_pojo;
+import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
+import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
+import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
 import com.bornfire.xbrl.entities.RT_MID_FX_DEAL_REPO;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_entity;
 import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
@@ -64,19 +85,22 @@ import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.RT_Return_On_Asset_Entity;
+import com.bornfire.xbrl.entities.RT_Return_On_Asset_Repo;
 import com.bornfire.xbrl.entities.RT_SLS_Repository;
+import com.bornfire.xbrl.entities.RT_VAR_PORTFOLIO_Repo;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredEntity;
 import com.bornfire.xbrl.entities.Rt_AcprSecuredUnsecuredrep;
 import com.bornfire.xbrl.entities.Stableresourcesratio_entity;
 import com.bornfire.xbrl.entities.Stableresourcesratio_rep;
+import com.bornfire.xbrl.services.AnalyticalPivotService;
 import com.bornfire.xbrl.services.AuditService;
+import com.bornfire.xbrl.services.DataInventoryService;
+import com.bornfire.xbrl.services.DataInventoryService.NoDataForExportException;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.MatrixRunService;
+import com.bornfire.xbrl.services.ReportControlCenterStepService;
 import com.bornfire.xbrl.services.counter_services;
-import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
-import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
-import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
-import com.bornfire.xbrl.entities.RT_IRS_REPOSITORY;
 
 @RestController
 public class MIS_Rest_Controller {
@@ -138,6 +162,244 @@ public class MIS_Rest_Controller {
 
 	@Autowired
 	RT_IRS2_REPOSITORY RT_IRS2_REPOSITORY;
+
+	@Autowired
+	private ReportControlCenterStepService reportControlCenterStepService;
+
+	@Autowired
+	private AnalyticalPivotService analyticalPivotService;
+
+	@Autowired
+	private DataInventoryService dataInventoryService;
+
+	@Autowired
+	private RT_Data_Inventory_Repo dataInventoryRepo;
+	
+	@Autowired
+	RT_Return_On_Asset_Repo RT_Return_On_Asset_Repo;
+	
+	@Autowired
+	RT_VAR_PORTFOLIO_Repo RT_VAR_PORTFOLIO_Repo;
+
+	@GetMapping("/api/report-control/reports/{reportId}/steps")
+	public ResponseEntity<ReportControlStepsResponseDto> reportControlGetSteps(@PathVariable String reportId,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+			HttpServletRequest req) {
+		try {
+			BigDecimal rid = new BigDecimal(reportId.trim());
+			Date day = java.sql.Date.valueOf(reportDate);
+			String user = req.getSession() != null ? (String) req.getSession().getAttribute("USERID") : null;
+			return ResponseEntity.ok(reportControlCenterStepService.getStepsResponseForReportAndDay(rid, day, user));
+		} catch (NumberFormatException e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	@GetMapping("/api/report-control/master")
+	public ResponseEntity<List<ReportControlMasterRowDto>> reportControlMaster(
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate) {
+		Date day = java.sql.Date.valueOf(reportDate);
+		return ResponseEntity.ok(reportControlCenterStepService.getMasterRowsForDay(day));
+	}
+
+	@PostMapping("/api/report-control/reports/{reportId}/steps/{stepId}/run")
+	public ReportControlRunStepResponseDto reportControlRunStep(@PathVariable String reportId,
+			@PathVariable Long stepId,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+			HttpServletRequest req) {
+		try {
+			BigDecimal rid = new BigDecimal(reportId.trim());
+			Date day = java.sql.Date.valueOf(reportDate);
+			String execUser = req.getSession() != null ? (String) req.getSession().getAttribute("USERID") : null;
+			return reportControlCenterStepService.startStep(rid, stepId, day, execUser);
+		} catch (NumberFormatException e) {
+			return new ReportControlRunStepResponseDto(ReportControlCenterStepService.ST_FAILED, "Invalid report id");
+		}
+	}
+
+	@PostMapping("/api/report-control/reports/{reportId}/run-all")
+	public ResponseEntity<ReportControlRunAllResponseDto> reportControlRunAll(@PathVariable String reportId,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+			HttpServletRequest req) {
+		try {
+			BigDecimal rid = new BigDecimal(reportId.trim());
+			Date day = java.sql.Date.valueOf(reportDate);
+			String execUser = req.getSession() != null ? (String) req.getSession().getAttribute("USERID") : null;
+			return ResponseEntity.ok(reportControlCenterStepService.startAllSteps(rid, day, execUser));
+		} catch (NumberFormatException e) {
+			return ResponseEntity.badRequest().body(new ReportControlRunAllResponseDto(
+					ReportControlCenterStepService.ST_FAILED, "Invalid report id", 0, 0, null));
+		}
+	}
+
+	/** Keeps the HTTP session alive during long-running report steps (same interval as login). */
+	@GetMapping("/api/session/ping")
+	public ResponseEntity<Map<String, Object>> sessionPing(HttpServletRequest req) {
+		HttpSession session = req.getSession(false);
+		if (session == null || session.getAttribute("USERID") == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		session.setMaxInactiveInterval(900);
+		return ResponseEntity.ok(Collections.singletonMap("ok", true));
+	}
+
+	@GetMapping("/api/analytical/tables")
+	public List<AnalyticalPivotTableDto> analyticalTables() {
+		return analyticalPivotService.getAllowedTables();
+	}
+
+	@GetMapping("/api/analytical/tables/{tableName}/columns")
+	public ResponseEntity<?> analyticalColumns(@PathVariable String tableName) {
+		try {
+			List<AnalyticalPivotColumnDto> out = analyticalPivotService.getColumnsForTable(tableName);
+			return ResponseEntity.ok(out);
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		}
+	}
+
+	@GetMapping("/api/analytical/tables/{tableName}/columns/{columnName}/distinct-values")
+	public ResponseEntity<?> analyticalDistinctValues(@PathVariable String tableName,
+			@PathVariable String columnName, @RequestParam(defaultValue = "200") int limit) {
+		try {
+			return ResponseEntity.ok(analyticalPivotService.getDistinctColumnValues(tableName, columnName, limit));
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		}
+	}
+
+	@PostMapping("/api/analytical/pivot/run")
+	public ResponseEntity<?> analyticalRun(@RequestBody AnalyticalPivotRequestDto request) {
+		try {
+			AnalyticalPivotRunResponseDto response = analyticalPivotService.runPivot(request);
+			return ResponseEntity.ok(response);
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		}
+	}
+
+	@PostMapping("/api/analytical/layouts")
+	public ResponseEntity<?> saveAnalyticalLayout(@RequestBody AnalyticalPivotLayoutDto request, HttpServletRequest req) {
+		String userId = (String) req.getSession().getAttribute("USERID");
+		try {
+			AnalyticalPivotLayoutDto saved = analyticalPivotService.saveLayout(userId, request);
+			return ResponseEntity.ok(saved);
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		}
+	}
+
+	@GetMapping("/api/analytical/layouts")
+	public ResponseEntity<List<AnalyticalPivotLayoutDto>> loadAnalyticalLayouts(HttpServletRequest req) {
+		String userId = (String) req.getSession().getAttribute("USERID");
+		return ResponseEntity.ok(analyticalPivotService.loadLayouts(userId));
+	}
+
+	/**
+	 * Upsert {@code RT_RETURN_ON_ASSET} for the report date (insert or replace values). Used by dashboard ROA editor.
+	 */
+	@PostMapping("/api/rt-return-on-asset/save")
+	public ResponseEntity<Map<String, String>> saveReturnOnAsset(@RequestParam("reportDate") String reportDateStr,
+			@RequestParam(value = "dailyAvgAssets", required = false) String dailyAvgAssets,
+			@RequestParam(value = "netProfit", required = false) String netProfit,
+			@RequestParam(value = "returnOnAssetPercent", required = false) String returnOnAssetPercent) {
+		try {
+			String raw = reportDateStr != null && reportDateStr.contains("T") ? reportDateStr.split("T")[0]
+					: reportDateStr;
+			String norm = normalizeDate(raw.trim());
+			java.sql.Date d = java.sql.Date.valueOf(LocalDate.parse(norm));
+			RT_Return_On_Asset_Entity e = RT_Return_On_Asset_Repo.findById(d).orElse(new RT_Return_On_Asset_Entity());
+			e.setReport_date(d);
+			e.setDaily_avg_assets_net_of_inter_branch_borr(parseBigDecimalParam(dailyAvgAssets));
+			e.setNet_profit(parseBigDecimalParam(netProfit));
+			e.setReturn_on_asst_per(parseBigDecimalParam(returnOnAssetPercent));
+			RT_Return_On_Asset_Repo.save(e);
+			return ResponseEntity.ok(Collections.singletonMap("status", "OK"));
+		} catch (Exception ex) {
+			logger.warn("saveReturnOnAsset failed", ex);
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap("message", ex.getMessage() != null ? ex.getMessage() : "Save failed"));
+		}
+	}
+
+	private static BigDecimal parseBigDecimalParam(String s) {
+		if (s == null) {
+			return null;
+		}
+		String t = s.trim();
+		if (t.isEmpty()) {
+			return null;
+		}
+		try {
+			return new BigDecimal(t.replace(",", ""));
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Invalid number: " + s);
+		}
+	}
+
+	@PostMapping("/api/analytical/pivot/export")
+	public ResponseEntity<?> analyticalExport(@RequestBody AnalyticalPivotRequestDto request, HttpServletRequest req) {
+		try {
+			byte[] excel = analyticalPivotService.exportPivotExcel(request);
+			String tableName = request != null && request.getTableName() != null ? request.getTableName().trim()
+					: "TABLE";
+			String fileName = "Analytical_Pivot_" + tableName + "_"
+					+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".xlsx";
+
+			String userId = (String) req.getSession().getAttribute("USERID");
+			auditService.createBusinessAudit(userId, "DOWNLOAD", "ANALYTICAL_PIVOT_EXCEL", null, tableName);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+
+			return ResponseEntity.ok().headers(headers).contentLength(excel.length).contentType(MediaType.parseMediaType(
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(new ByteArrayResource(excel));
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Error generating analytical pivot excel", ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error generating excel");
+		}
+	}
+
+	@GetMapping("/api/data-inventory")
+	public ResponseEntity<List<DataInventoryItemDto>> dataInventoryList() {
+		return ResponseEntity.ok(dataInventoryService.listActiveInventory());
+	}
+
+	@GetMapping("/api/data-inventory/{id}/export")
+	public ResponseEntity<?> dataInventoryExport(@PathVariable Long id,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+			@RequestParam(defaultValue = "excel") String format, HttpServletRequest req) {
+		try {
+			RT_Data_Inventory_Entity config = dataInventoryRepo.findById(id).orElse(null);
+			DataInventoryExportResultDto exportResult = dataInventoryService.export(id, reportDate, format);
+
+			String userId = req.getSession() != null ? (String) req.getSession().getAttribute("USERID") : null;
+			String reportName = config != null ? config.getReportName() : String.valueOf(id);
+			String tableName = config != null ? config.getTableName() : "";
+			Map<String, String> auditDetails = new java.util.HashMap<String, String>();
+			auditDetails.put("reportName", reportName);
+			auditDetails.put("reportDate", reportDate.toString());
+			auditService.createBusinessAudit(userId, "DOWNLOAD", "DATA_INVENTORY_EXPORT", auditDetails, tableName);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.set(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment; filename=\"" + exportResult.getFileName() + "\"");
+
+			return ResponseEntity.ok().headers(headers).contentLength(exportResult.getContent().length)
+					.contentType(MediaType.parseMediaType(exportResult.getContentType()))
+					.body(new ByteArrayResource(exportResult.getContent()));
+		} catch (NoDataForExportException ex) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Error exporting data inventory", ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error generating export");
+		}
+	}
 
 	@GetMapping("/download/excel")
 	public void downloadExcel(HttpServletResponse response, @RequestParam(required = false) String mode) {
@@ -472,8 +734,16 @@ public class MIS_Rest_Controller {
 			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.otherGetCurrentyear(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("21")) { // VAR Report Month Wise
+			List<Object[]> getchartval = RT_VAR_PORTFOLIO_Repo.GetMonthlydata(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
 		} else if (Matrix_Srl_no.equals("22")) {
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("23")) {
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDaylightlimit(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		} else if (Matrix_Srl_no.equals("24")) {
@@ -551,6 +821,12 @@ public class MIS_Rest_Controller {
 					.collect(Collectors.toList());
 		} else if (Matrix_Srl_no.equals("5")) {// Eligible Liquid Assets Ratio
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElarcurrentmonthgraph(Selecteddate);
+
+			// Convert Object[] → RT_Chart_pojo
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		} else if (Matrix_Srl_no.equals("21")) {// Eligible Liquid Assets Ratio
+			List<Object[]> getchartval = RT_VAR_PORTFOLIO_Repo.GetDailydata(Selecteddate);
 
 			// Convert Object[] → RT_Chart_pojo
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
@@ -646,6 +922,11 @@ public class MIS_Rest_Controller {
 		} else if (Matrix_Srl_no.equals("22")) {
 
 			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01Monthdetail(Selecteddate);
+			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+		}else if (Matrix_Srl_no.equals("22")) {
+
+			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDaylightlimitdaily(Selecteddate);
 			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());
 		}
@@ -871,6 +1152,8 @@ public class MIS_Rest_Controller {
 			Exposuredata = RT_Matrix_monitoring_rep.GetSelecteddateGenepro(Selecteddate);
 		} else if (Data_Type_Used.equals("BPVPV01_Detail")) {
 			Exposuredata = RT_MID_FX_DEAL_REPO.GetselectedmonthBPVdata(Selecteddate);
+		}else if (Data_Type_Used.equals("RETURN_ON_ASSETS")) {
+			Exposuredata = RT_Return_On_Asset_Repo.GetByReportDate(Selecteddate);
 		}
 
 		return Exposuredata;
@@ -1115,6 +1398,10 @@ public class MIS_Rest_Controller {
 			headerStyle.setFont(font);
 			headerStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
 			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			applyThinBorders(headerStyle);
+
+			CellStyle dataCellStyle = workbook.createCellStyle();
+			applyThinBorders(dataCellStyle);
 
 			Row headerRow = sheet.createRow(0);
 
@@ -1124,7 +1411,8 @@ public class MIS_Rest_Controller {
 			if ("24".equals(Matrix_Srl_no)) {
 				filename = "Noop position detail";
 				String[] headers = { "REPORT_DATE", "CURRENCY", "READY_EXCHAGE_POSITION_IN_AC", "CBS_FX_POSITION_AC",
-						"MTM_AC", "TOTAL_NOOP_IN_AC", "TOTAL_NOOP_IN_LC" };
+						"MTM_AC", "FORWARD_REVAL_POSITION_AC", "TOTAL_NOOP_IN_AC", "TOTAL_NOOP_IN_LC",
+						"TOTAL_NOOP_IN_ USD Mn", "TOTAL_NOOP_IN_INR Crore" };
 
 				// Create headers
 				for (int i = 0; i < headers.length; i++) {
@@ -1133,15 +1421,32 @@ public class MIS_Rest_Controller {
 					headerCell.setCellStyle(headerStyle);
 				}
 
+				CellStyle rateHintStyle = workbook.createCellStyle();
+				Font rateHintFont = workbook.createFont();
+				rateHintFont.setColor(IndexedColors.RED.getIndex());
+				rateHintStyle.setFont(rateHintFont);
+				applyThinBorders(rateHintStyle);
+				CellStyle rbiLabelStyle = workbook.createCellStyle();
+				applyThinBorders(rbiLabelStyle);
+				writeNoopRbiRefRateBlock(sheet, headerStyle, rateHintStyle, rbiLabelStyle);
+
 				// Fetch data
 				List<Object[]> Noopdetail = RT_Noop_net_position_rep.Getnoopdetail(Selecteddate);
 
-				// Populate data
+				// Populate data (columns A–H from DB; I–J use Excel formulas)
+				final int dataColumnCount = 8;
+				final int dataStartExcelRow = 2;
+				int dataEndExcelRow = dataStartExcelRow - 1;
 				if (Noopdetail != null && !Noopdetail.isEmpty()) {
 					for (Object[] obj : Noopdetail) {
-						Row row = sheet.createRow(rowNum++);
+						Row row = sheet.getRow(rowNum);
+						if (row == null) {
+							row = sheet.createRow(rowNum);
+						}
+						int excelRow = row.getRowNum() + 1;
+						rowNum++;
 
-						for (int i = 0; i < headers.length; i++) {
+						for (int i = 0; i < dataColumnCount; i++) {
 							Cell cell = row.createCell(i);
 
 							if (i < obj.length && obj[i] != null) {
@@ -1157,14 +1462,29 @@ public class MIS_Rest_Controller {
 							} else {
 								cell.setCellValue("");
 							}
+							cell.setCellStyle(dataCellStyle);
 						}
+
+						Cell usdMnCell = row.createCell(8);
+						usdMnCell.setCellFormula("H" + excelRow + "/$N$4");
+						usdMnCell.setCellStyle(dataCellStyle);
+
+						Cell inrCroreCell = row.createCell(9);
+						inrCroreCell.setCellFormula("I" + excelRow + "*$N$2");
+						inrCroreCell.setCellStyle(dataCellStyle);
+
+						dataEndExcelRow = excelRow;
 					}
+				}
+
+				if (dataEndExcelRow >= dataStartExcelRow) {
+					writeNoopSummaryBlock(sheet, workbook, headerStyle, dataStartExcelRow, dataEndExcelRow);
 				}
 			}
 
 			// -------- Auto-size Columns --------
 			if (sheet.getRow(0) != null) {
-				int colCount = sheet.getRow(0).getLastCellNum();
+				int colCount = Math.max(sheet.getRow(0).getLastCellNum(), 15);
 				for (int i = 0; i < colCount; i++) {
 					sheet.autoSizeColumn(i);
 				}
@@ -1193,6 +1513,204 @@ public class MIS_Rest_Controller {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(Collections.singletonMap("message", "Error generating the file."));
 		}
+	}
+
+	/** RBI Ref Rate reference block in columns M–O (rows 1–4) for NOOP detail download. */
+	private void writeNoopRbiRefRateBlock(Sheet sheet, CellStyle headerStyle, CellStyle rateHintStyle,
+			CellStyle rbiLabelStyle) {
+		final int colM = 12;
+		final int colN = 13;
+		final int colO = 14;
+
+		Row headerRow = sheet.getRow(0);
+		if (headerRow == null) {
+			headerRow = sheet.createRow(0);
+		}
+		Cell rbiHeaderCell = headerRow.createCell(colM);
+		rbiHeaderCell.setCellValue("RBI Ref Rate");
+		rbiHeaderCell.setCellStyle(headerStyle);
+		Cell rbiHeaderPad = headerRow.createCell(colN);
+		rbiHeaderPad.setCellStyle(headerStyle);
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, colM, colN));
+
+		String[] currencyPairs = { "USD/INR", "AED/INR", "USD/AED" };
+		for (int i = 0; i < currencyPairs.length; i++) {
+			int rowIdx = i + 1;
+			Row row = sheet.getRow(rowIdx);
+			if (row == null) {
+				row = sheet.createRow(rowIdx);
+			}
+			Cell pairCell = row.createCell(colM);
+			pairCell.setCellValue(currencyPairs[i]);
+			pairCell.setCellStyle(rbiLabelStyle);
+			Cell rateCell = row.createCell(colN);
+			rateCell.setCellStyle(rbiLabelStyle);
+			Cell hintCell = row.createCell(colO);
+			hintCell.setCellValue("<<Enter Rate Here");
+			hintCell.setCellStyle(rateHintStyle);
+		}
+	}
+
+	/**
+	 * NOOP summary block below data rows — labels in column G; formulas in H/I/J
+	 * reference the data range dynamically (row numbers adjust to data count).
+	 */
+	private void writeNoopSummaryBlock(Sheet sheet, Workbook workbook, CellStyle headerStyle, int dataStartExcelRow,
+			int dataEndExcelRow) {
+		final int colLabel = 6;
+		final int colH = 7;
+		final int colI = 8;
+		final int colJ = 9;
+
+		String hRange = "H" + dataStartExcelRow + ":H" + dataEndExcelRow;
+		String iRange = "I" + dataStartExcelRow + ":I" + dataEndExcelRow;
+		String jRange = "J" + dataStartExcelRow + ":J" + dataEndExcelRow;
+
+		int summaryHeaderRow = dataEndExcelRow + 2;
+		int overboughtRow = summaryHeaderRow + 1;
+		int oversoldRow = overboughtRow + 1;
+		int noopRow = oversoldRow + 2;
+		int noopInInrRow = noopRow + 1;
+		int limitRow = noopInInrRow + 1;
+		int headroomRow = limitRow + 1;
+		int pctRow = headroomRow + 2;
+		int headroomAvailRow = pctRow + 1;
+		int riskRow = headroomAvailRow + 1;
+
+		short pctFormat = workbook.getCreationHelper().createDataFormat().getFormat("0.00%");
+
+		CellStyle labelStyle = workbook.createCellStyle();
+		Font labelFont = workbook.createFont();
+		labelFont.setBold(true);
+		labelStyle.setFont(labelFont);
+		applyThinBorders(labelStyle);
+
+		CellStyle valueStyle = workbook.createCellStyle();
+		applyThinBorders(valueStyle);
+
+		CellStyle greenStyle = workbook.createCellStyle();
+		greenStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+		greenStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		applyThinBorders(greenStyle);
+
+		CellStyle bluePctStyle = workbook.createCellStyle();
+		bluePctStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+		bluePctStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		bluePctStyle.setDataFormat(pctFormat);
+		Font blueFont = workbook.createFont();
+		blueFont.setBold(true);
+		blueFont.setColor(IndexedColors.WHITE.getIndex());
+		bluePctStyle.setFont(blueFont);
+		applyThinBorders(bluePctStyle);
+
+		CellStyle headroomPctStyle = workbook.createCellStyle();
+		headroomPctStyle.setDataFormat(pctFormat);
+		applyThinBorders(headroomPctStyle);
+
+		CellStyle summaryHeaderStyle = workbook.createCellStyle();
+		summaryHeaderStyle.cloneStyleFrom(headerStyle);
+		applyThinBorders(summaryHeaderStyle);
+
+		Row summaryHdr = getOrCreateSheetRowByExcelNum(sheet, summaryHeaderRow);
+		setCellValue(summaryHdr, colLabel, "", summaryHeaderStyle);
+		setCellValue(summaryHdr, colH, "AED Mn", summaryHeaderStyle);
+		setCellValue(summaryHdr, colI, "USD Mn", summaryHeaderStyle);
+		setCellValue(summaryHdr, colJ, "INR Cr", summaryHeaderStyle);
+
+		Row overbought = getOrCreateSheetRowByExcelNum(sheet, overboughtRow);
+		setCellValue(overbought, colLabel, "Overbought", labelStyle);
+		setCellFormula(overbought, colH, "(SUMIF(" + hRange + ",\">0\"))/10^6", valueStyle);
+		setCellFormula(overbought, colI, "(SUMIF(" + iRange + ",\">0\"))/10^6", valueStyle);
+		setCellFormula(overbought, colJ, "(SUMIF(" + jRange + ",\">0\"))/10^6", valueStyle);
+
+		Row oversold = getOrCreateSheetRowByExcelNum(sheet, oversoldRow);
+		setCellValue(oversold, colLabel, "Oversold", labelStyle);
+		setCellFormula(oversold, colH, "(SUMIF(" + hRange + ",\"<0\"))/10^6", valueStyle);
+		setCellFormula(oversold, colI, "(SUMIF(" + iRange + ",\"<0\"))/10^6", valueStyle);
+		setCellFormula(oversold, colJ, "(SUMIF(" + jRange + ",\"<0\"))/10^6", valueStyle);
+
+		Row noop = getOrCreateSheetRowByExcelNum(sheet, noopRow);
+		setCellValue(noop, colLabel, "NOOP", labelStyle);
+		setCellFormula(noop, colH, "MAX(ABS(H" + overboughtRow + "),ABS(H" + oversoldRow + "))", valueStyle);
+		setCellFormula(noop, colI, "MAX(ABS(I" + overboughtRow + "),ABS(I" + oversoldRow + "))", valueStyle);
+		setCellFormula(noop, colJ, "MAX(ABS(J" + overboughtRow + "),ABS(J" + oversoldRow + "))", valueStyle);
+
+		Row noopInInr = getOrCreateSheetRowByExcelNum(sheet, noopInInrRow);
+		setCellValue(noopInInr, colLabel, "NOOP in INR", greenStyle);
+		setCellFormula(noopInInr, colH, "(H" + noopRow + "/3.673)*$N$2/10", greenStyle);
+		setCellFormula(noopInInr, colI, "I" + noopRow + "*$N$2/10", greenStyle);
+		setCellFormula(noopInInr, colJ, "J" + noopRow + "*1/10", greenStyle);
+
+		Row limit = getOrCreateSheetRowByExcelNum(sheet, limitRow);
+		setCellValue(limit, colLabel, "Limit (INR Crs)", labelStyle);
+		setCellValue(limit, colH, 2000, valueStyle);
+		setCellValue(limit, colI, 2000, valueStyle);
+		setCellValue(limit, colJ, 2000, valueStyle);
+
+		Row headroom = getOrCreateSheetRowByExcelNum(sheet, headroomRow);
+		setCellValue(headroom, colLabel, "Headroom", labelStyle);
+		setCellFormula(headroom, colH, "IF(H" + limitRow + "-H" + noopInInrRow + ">0,H" + limitRow + "-H" + noopInInrRow + ",0)",
+				valueStyle);
+		setCellFormula(headroom, colI, "IF(I" + limitRow + "-I" + noopInInrRow + ">0,I" + limitRow + "-I" + noopInInrRow + ",0)",
+				valueStyle);
+		setCellFormula(headroom, colJ, "IF(J" + limitRow + "-J" + noopInInrRow + ">0,J" + limitRow + "-J" + noopInInrRow + ",0)",
+				valueStyle);
+
+		Row pct = getOrCreateSheetRowByExcelNum(sheet, pctRow);
+		setCellValue(pct, colLabel, "", bluePctStyle);
+		setCellFormula(pct, colH, "H" + noopInInrRow + "/H" + limitRow, bluePctStyle);
+		setCellFormula(pct, colI, "I" + noopInInrRow + "/I" + limitRow, bluePctStyle);
+		setCellFormula(pct, colJ, "J" + noopInInrRow + "/J" + limitRow, bluePctStyle);
+
+		Row headroomAvail = getOrCreateSheetRowByExcelNum(sheet, headroomAvailRow);
+		setCellValue(headroomAvail, colLabel, "Head-room Available", labelStyle);
+		setCellFormula(headroomAvail, colH, "1-H" + pctRow, headroomPctStyle);
+		setCellFormula(headroomAvail, colI, "1-I" + pctRow, headroomPctStyle);
+		setCellFormula(headroomAvail, colJ, "1-J" + pctRow, headroomPctStyle);
+
+		Row risk = getOrCreateSheetRowByExcelNum(sheet, riskRow);
+		setCellValue(risk, colLabel, "Risk Appetite Status", labelStyle);
+		setCellFormula(risk, colH, "IF(H" + pctRow + ">=0.9,\"Above Risk Appetite\",\"Below Risk Appetite\")", valueStyle);
+	}
+
+	private Row getOrCreateSheetRowByExcelNum(Sheet sheet, int excelRowNum) {
+		return getOrCreateSheetRow(sheet, excelRowNum - 1);
+	}
+
+	private Row getOrCreateSheetRow(Sheet sheet, int rowIdx) {
+		Row row = sheet.getRow(rowIdx);
+		return row != null ? row : sheet.createRow(rowIdx);
+	}
+
+	private void setCellValue(Row row, int col, String value, CellStyle style) {
+		Cell cell = row.createCell(col);
+		cell.setCellValue(value);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+	}
+
+	private void setCellValue(Row row, int col, double value, CellStyle style) {
+		Cell cell = row.createCell(col);
+		cell.setCellValue(value);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+	}
+
+	private void setCellFormula(Row row, int col, String formula, CellStyle style) {
+		Cell cell = row.createCell(col);
+		cell.setCellFormula(formula);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+	}
+
+	private void applyThinBorders(CellStyle style) {
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
 	}
 
 	public static String normalizeDate(String input) {

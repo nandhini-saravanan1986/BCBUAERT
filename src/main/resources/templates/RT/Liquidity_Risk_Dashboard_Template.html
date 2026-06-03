@@ -18,6 +18,8 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<!-- JavaScript -->
@@ -374,7 +376,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-primary, #2563EB);
 			border-color: #0c0c0c;
 		}
 
@@ -549,32 +551,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		}
 	</style>
 	<style>
-		.role-btn {
-			background: #ffffff;
-			/* default white */
-			color: #E67E00;
-			/* default orange text */
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		/* Hover effect → pastel orange */
-		.role-btn:hover {
-			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
+/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
 			/* solid orange */
@@ -618,7 +595,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 		.static-back-btn {
 								    background-color: rgb(255, 255, 255);
 								    border: none;
-								    color: rgb(255, 128, 0);
+								    color: var(--bank-primary, #2563EB);
 								    font-size: 16px;
 								    border-radius: 50%;
 								    width: 36px;
@@ -633,7 +610,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 								/* Hover effect */
 								.static-back-btn:hover {
-								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    background-color: var(--bank-primary, #2563EB);   /* darker orange */
 								    color: rgb(255, 255, 255);
 								    transform: scale(1.08);
 								}
@@ -1236,7 +1213,7 @@ function navigateToTab(tabId) {
 			<input type="date" id="portfolioDate" name="portfolioDate"
 			th:value="${lastDate}" class="form-control form-control-sm"
 			required Style="display:none" />
-				<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
+				<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%" style="min-width: 2000px;">
 					<thead class="thead-light">
 						<tr>
 							<th rowspan="2" style="text-align: center;width: 100px;">Action</th>
@@ -1461,7 +1438,7 @@ function navigateToTab(tabId) {
 
 							<td style="text-align: center;min-width: 100px;"> <a
 									th:href="@{'/Liquidity_Risk_Dashboard_Template?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-									<i class="fa fa-edit" style="color: #ff7f27;"></i>
+									<i class="fa fa-edit" style="color: var(--bank-primary, #2563EB);"></i>
 								</a></td>
 
 							<!-- Financial Institution Information 8-->
@@ -3212,7 +3189,7 @@ function navigateToTab(tabId) {
 	}
 
 	#usertable thead th {
-		background-color: #7b6458;
+		background-color: var(--table-header-blue, #2563EB);
 		color: #fff;
 		font-family: Arial, sans-serif !important;
 		font-size: 14px !important;
@@ -3225,7 +3202,7 @@ function navigateToTab(tabId) {
 		top: 0;
 		/* Keeps the first row at the top */
 		z-index: 10;
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		/* Ensures the header isn't transparent */
 		color: white;
 		box-shadow: inset 0 -1px 0 #dee2e6;
@@ -3240,7 +3217,7 @@ function navigateToTab(tabId) {
 	/* Base styles for all sticky headers */
 	#usertable thead th {
 		position: sticky !important;
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		color: white !important;
 		z-index: 10;
 		border: 1px solid #dee2e6 !important;
@@ -3316,8 +3293,8 @@ function navigateToTab(tabId) {
 	}
 
 	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-		background-color: #ff7f27 !important;
-		border-color: #ff7f27 !important;
+		background-color: var(--bank-primary, #2563EB) !important;
+		border-color: var(--bank-primary-dark, #1E40AF) !important;
 		color: #ffffff !important;
 		cursor: default !important;
 	}
@@ -3694,7 +3671,7 @@ function navigateToTab(tabId) {
 	}
 
 	#reportdetails thead th {
-		background-color: #7b6458;
+		background-color: var(--table-header-blue, #2563EB);
 		color: #fff;
 		font-family: Arial, sans-serif !important;
 		font-size: 14px !important;
@@ -3707,7 +3684,7 @@ function navigateToTab(tabId) {
 		top: 0;
 		/* Keeps the first row at the top */
 		z-index: 10;
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		/* Ensures the header isn't transparent */
 		color: white;
 		box-shadow: inset 0 -1px 0 #dee2e6;
@@ -3722,7 +3699,7 @@ function navigateToTab(tabId) {
 	/* Base styles for all sticky headers */
 	#reportdetails thead th {
 		position: sticky !important;
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		color: white !important;
 		z-index: 10;
 		border: 1px solid #dee2e6 !important;
@@ -3757,7 +3734,7 @@ function navigateToTab(tabId) {
 	    position: sticky;
 	    top: 0;
 	    z-index: 2; 
-	    background-color: #7b6458; 
+	    background-color: var(--table-header-blue, #2563EB); 
 	}
 </style>
 </html>

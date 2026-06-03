@@ -24,6 +24,8 @@ Tested by   : Rajalakshmi
 <link rel="stylesheet"
 	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
 <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 <!-- ✅ JavaScript Libraries (in correct order) -->
@@ -270,7 +272,7 @@ left
 }
 
 .btn-primary {
-	background-color: #E77400;
+	background-color: var(--bank-primary, #2563EB);
 	border-color: #0c0c0c;
 }
 
@@ -448,32 +450,7 @@ label.error {
 }
 </style>
 <style>
-		.role-btn {
-			background: #ffffff;
-			/* default white */
-			color: #E67E00;
-			/* default orange text */
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		/* Hover effect → pastel orange */
-		.role-btn:hover {
-			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
+/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
 			/* solid orange */
@@ -498,7 +475,7 @@ label.error {
 		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header-blue, #2563EB) !important;
 			/* Header background */
 			color: white !important;
 			/* Header text color */
@@ -592,8 +569,8 @@ label.error {
 		}
 
 		.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-			background-color: #ff7f27 !important;
-			border-color: #ff7f27 !important;
+			background-color: var(--bank-primary, #2563EB) !important;
+			border-color: var(--bank-primary-dark, #1E40AF) !important;
 			color: #ffffff !important;
 			cursor: default !important;
 		}
@@ -601,7 +578,7 @@ label.error {
 		.static-back-btn {
 								    background-color: rgb(255, 255, 255);
 								    border: none;
-								    color: rgb(255, 128, 0);
+								    color: var(--bank-primary, #2563EB);
 								    font-size: 16px;
 								    border-radius: 50%;
 								    width: 36px;
@@ -616,7 +593,7 @@ label.error {
 
 								/* Hover effect */
 								.static-back-btn:hover {
-								    background-color: rgb(255, 128, 0);   /* darker orange */
+								    background-color: var(--bank-primary, #2563EB);   /* darker orange */
 								    color: rgb(255, 255, 255);
 								    transform: scale(1.08);
 								}
@@ -1356,8 +1333,7 @@ label.error {
 			
 				<div class="table-responsive"
 					style=" border: none;">
-					<table  id="usertable" 
-						class="table table-bordered table-striped table-hover"
+					<table  id="usertable" class="table refund-table align-middle mb-0" style="width:100%"
 						>
 
 						<thead class="thead-light">
@@ -1474,7 +1450,7 @@ label.error {
 							<tr th:each="data : ${dataList}">
 								<td style="text-align: center;min-width: 100px;"><a
 									th:href="@{/Trade_Market_Risk(formmode='edit', reportDate=${#dates.format(data.reportDate, 'yyyy-MM-dd')})}">
-										<i class="fa fa-edit" style="color: #ff7f27; font-size: 16px;"></i>
+										<i class="fa fa-edit" style="color: var(--bank-primary, #2563EB); font-size: 16px;"></i>
 								</a></td>
 								<td th:text="${#dates.format(data.reportDate, 'dd-MM-yyyy')}"></td>
 								<td th:text="${data.bankName}"></td>

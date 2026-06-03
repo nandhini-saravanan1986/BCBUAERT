@@ -3,11 +3,13 @@ package com.bornfire.xbrl.services;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +21,6 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil; // Added missing import
 import org.apache.poi.ss.usermodel.Row;
@@ -48,6 +49,22 @@ public class RT_MID_FX_DEAL_SERVICE {
 
 	// Fixed syntax error here: added .class and closing parentheses
 	private static final Logger logger = LoggerFactory.getLogger(RT_MID_FX_DEAL_SERVICE.class);
+
+	/**
+	 * UK locale → dd/MM display. Default US DataFormatter turns 2-Jun-2026 into
+	 * "06/02/2026", which dd/MM parsing then misreads as 6-Feb-2026 on Tomcat.
+	 */
+	private static final DataFormatter EXCEL_DATE_FORMATTER = new DataFormatter(Locale.UK);
+
+	private static final DateTimeFormatter[] DAY_FIRST_DATE_FORMATTERS = new DateTimeFormatter[] {
+			DateTimeFormatter.ofPattern("dd-MM-yyyy").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd/MM/yyyy").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd-MM-yy").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd/MM/yy").withResolverStyle(ResolverStyle.STRICT),
+	};
 
 	    @Autowired
 	    RT_MID_FX_DEAL_REPO repo;
@@ -133,34 +150,34 @@ public class RT_MID_FX_DEAL_SERVICE {
 
 	            if (sheetName.contains("Bonds")) {
 
-	                String value = processSheet(sheet);
-
-	                entity.setActualBonds(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
-	                entity.setAbsBonds(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+	                BpvModExtract extracted = processSheet(sheet);
+	                entity.setActualBonds(toSignedDecimal(extracted.bpvText));
+	                entity.setAbsBonds(toAbsDecimal(extracted.bpvText));
+	                entity.setActualBondsmod(toAbsDecimal(extracted.modDurText));
 
 	            } 
 	            else if (sheetName.contains("FxSwaps")) {
 
-	                String value = processSheet(sheet);
-
-	                entity.setActualFxSwaps(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
-	                entity.setAbsFxSwaps(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+	                BpvModExtract extracted = processSheet(sheet);
+	                entity.setActualFxSwaps(toSignedDecimal(extracted.bpvText));
+	                entity.setAbsFxSwaps(toAbsDecimal(extracted.bpvText));
+	                entity.setActualFxSwapsmod(toAbsDecimal(extracted.modDurText));
 
 	            } 
 	            else if (sheetName.contains("Outright Forwards")) {
 
-	                String value = processSheet(sheet);
-
-	                entity.setActualOutrightForwards(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
-	                entity.setAbsOutrightForwards(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+	                BpvModExtract extracted = processSheet(sheet);
+	                entity.setActualOutrightForwards(toSignedDecimal(extracted.bpvText));
+	                entity.setAbsOutrightForwards(toAbsDecimal(extracted.bpvText));
+	                entity.setActualOutrightForwardsmod(toAbsDecimal(extracted.modDurText));
 
 	            } 
 	            else if (sheetName.contains("IRS CIRS")) {
 
-	                String value = processSheet(sheet);
-
-	                entity.setActualIrsCirs(new BigDecimal(value.replaceAll("[^0-9.-]", "")));
-	                entity.setAbsIrsCirs(new BigDecimal(value.replaceAll("[^0-9.]", "")));
+	                BpvModExtract extracted = processSheet(sheet);
+	                entity.setActualIrsCirs(toSignedDecimal(extracted.bpvText));
+	                entity.setAbsIrsCirs(toAbsDecimal(extracted.bpvText));
+	                entity.setActualIrsCirsmod(toAbsDecimal(extracted.modDurText));
 
 	            }
 	        }
@@ -191,43 +208,87 @@ public class RT_MID_FX_DEAL_SERVICE {
 	
 
 
-	private String processSheet(Sheet sheet) {
+	/** Cell text under the "BPV (K)" and "Mod Dur" headers (row below each), after a "Total" row was seen. */
+	private static final class BpvModExtract {
+		final String bpvText;
+		final String modDurText;
 
-	    DataFormatter formatter = new DataFormatter();
-	    boolean totalFound = false;
-	    String result = "";
-	    for (Row row : sheet) {
-	        for (Cell cell : row) {
+		BpvModExtract(String bpvText, String modDurText) {
+			this.bpvText = bpvText;
+			this.modDurText = modDurText;
+		}
+	}
 
-	            String value = formatter.formatCellValue(cell).trim();
+	/**
+	 * After "Total" is found, reads the value in the cell below "BPV (K)" and the value below "Mod Dur" (same
+	 * column as each label). The two are stored separately.
+	 */
+	private BpvModExtract processSheet(Sheet sheet) {
 
-	            // Step 1: Find Total
-	            if ("Total".equalsIgnoreCase(value)) {
-	                totalFound = true;
-	                continue;
-	            }
+		DataFormatter formatter = new DataFormatter();
+		boolean totalFound = false;
+		String bpv = null;
+		String modDur = null;
+		for (Row row : sheet) {
+			if (row == null) {
+				continue;
+			}
+			for (Cell cell : row) {
+				if (cell == null) {
+					continue;
+				}
+				String value = formatter.formatCellValue(cell).trim();
 
-	            // Step 2: After Total, find BPV (K)
-	            if (totalFound && "BPV (K)".equalsIgnoreCase(value)) {
+				if ("Total".equalsIgnoreCase(value)) {
+					totalFound = true;
+					continue;
+				}
 
-	                int rowIndex = row.getRowNum();
-	                int colIndex = cell.getColumnIndex();
+				if (totalFound && "BPV (K)".equalsIgnoreCase(value)) {
+					Row nextRow = sheet.getRow(row.getRowNum() + 1);
+					if (nextRow != null) {
+						Cell nextCell = nextRow.getCell(cell.getColumnIndex());
+						if (nextCell != null) {
+							bpv = formatter.formatCellValue(nextCell);
+						}
+					}
+				} else if (totalFound && "Mod Dur".equalsIgnoreCase(value)) {
+					Row nextRow = sheet.getRow(row.getRowNum() + 1);
+					if (nextRow != null) {
+						Cell nextCell = nextRow.getCell(cell.getColumnIndex());
+						if (nextCell != null) {
+							modDur = formatter.formatCellValue(nextCell);
+						}
+					}
+				}
+			}
+		}
 
-	                Row nextRow = sheet.getRow(rowIndex + 1);
+		return new BpvModExtract(bpv, modDur);
+	}
 
-	                if (nextRow != null) {
-	                    Cell nextCell = nextRow.getCell(colIndex);
+	/** Same rules as before: keep sign and decimal for "actual" amount. */
+	private static BigDecimal toSignedDecimal(String raw) {
+		if (raw == null) {
+			return null;
+		}
+		String t = raw.replaceAll("[^0-9.-]", "");
+		if (t.isEmpty()) {
+			return null;
+		}
+		return new BigDecimal(t);
+	}
 
-	                    if (nextCell != null) {
-	                        result = formatter.formatCellValue(nextCell);
-	                       
-	                    }
-	                }
-	            }
-	        }
-	    }
-	    
-		return result;
+	/** Digits and dot only (absolute), as used for ABS_* and *_MOD columns. */
+	private static BigDecimal toAbsDecimal(String raw) {
+		if (raw == null) {
+			return null;
+		}
+		String t = raw.replaceAll("[^0-9.]", "");
+		if (t.isEmpty()) {
+			return null;
+		}
+		return new BigDecimal(t);
 	}
 
 	
@@ -624,52 +685,81 @@ public class RT_MID_FX_DEAL_SERVICE {
 
 	
 	
+	/** All treasury Excel uploads: day-month-year (dd-MM-yyyy), independent of server locale. */
 	private LocalDate getLocalDateFromCell(Cell cell) {
-	    if (cell == null) return null;
-
-	    if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-	        if (DateUtil.isCellDateFormatted(cell)) {
-	            Date date = cell.getDateCellValue();
-	            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	        }
-	    }
-	    return null;
+		return getDateFromCell(cell);
 	}
-	
-	
+
+	private LocalDate localDateFromJavaDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+	}
+
+	private LocalDate localDateFromExcelSerial(double serial) {
+		if (!DateUtil.isValidExcelDate(serial)) {
+			return null;
+		}
+		return localDateFromJavaDate(DateUtil.getJavaDate(serial, false));
+	}
+
+	private LocalDate parseDayFirstDateString(String raw) {
+		if (raw == null) {
+			return null;
+		}
+		String dateStr = raw.trim();
+		if (dateStr.isEmpty()) {
+			return null;
+		}
+		int spaceIdx = dateStr.indexOf(' ');
+		if (spaceIdx > 0) {
+			dateStr = dateStr.substring(0, spaceIdx).trim();
+		}
+		for (DateTimeFormatter f : DAY_FIRST_DATE_FORMATTERS) {
+			try {
+				return LocalDate.parse(dateStr, f);
+			} catch (DateTimeParseException ignored) {
+				// try next pattern
+			}
+		}
+		return null;
+	}
+
 	private LocalDate getDateFromCell(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
 
 		try {
-			if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-				return cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			int cellType = cell.getCellType();
+			if (cellType == Cell.CELL_TYPE_FORMULA) {
+				cellType = cell.getCachedFormulaResultType();
 			}
 
-			// Same text Excel shows (handles strings like "09/03/2026 00:00:00", formulas, etc.)
-			DataFormatter dataFormatter = new DataFormatter();
-			String dateStr = dataFormatter.formatCellValue(cell).trim();
-			if (dateStr.isEmpty()) {
-				return null;
+			// Literal text in Excel (e.g. "02-06-2026") — parse directly, never via US locale
+			if (cellType == Cell.CELL_TYPE_STRING) {
+				return parseDayFirstDateString(cell.getStringCellValue());
 			}
 
-			DateTimeFormatter[] formatters = new DateTimeFormatter[] {
-					DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"),
-					DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-					DateTimeFormatter.ofPattern("dd-MM-yyyy"),
-					DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH),
-			};
-
-			for (DateTimeFormatter f : formatters) {
-				try {
-					return LocalDate.parse(dateStr, f);
-				} catch (DateTimeParseException ignored) {
-					// try next pattern
+			// Excel date serial — use POI calendar math (locale-independent)
+			if (cellType == Cell.CELL_TYPE_NUMERIC) {
+				if (DateUtil.isCellDateFormatted(cell)) {
+					return localDateFromExcelSerial(cell.getNumericCellValue());
+				}
+				LocalDate fromSerial = localDateFromExcelSerial(cell.getNumericCellValue());
+				if (fromSerial != null) {
+					return fromSerial;
 				}
 			}
-			return null;
+
+			// Fallback: UK formatter + day-first patterns only (no MM/dd)
+			String dateStr = EXCEL_DATE_FORMATTER.formatCellValue(cell).trim();
+			return parseDayFirstDateString(dateStr);
 		} catch (Exception e) {
+			logger.debug("Could not parse date from cell: {}", e.getMessage());
 			return null;
 		}
 	}

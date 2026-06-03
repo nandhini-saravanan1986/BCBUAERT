@@ -11,6 +11,7 @@
 	<link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
 	<link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 
 	<!-- JS DEPENDENCIES -->
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
@@ -323,6 +324,7 @@
 										<option value="SMA">UAE - SMA File</option>
 										<option value="Provisioning">UAE - Provisioning File</option>
 										<option value="VARFILE">VAR</option>
+										<option value="DAY_LIGHT">Day light data</option>
 										
 
 									</select>
@@ -368,15 +370,13 @@
 										<!-- File name display -->
 										<input type="text" class="form-control" id="fileName"
 											placeholder="Choose file..." readonly>
-										<!-- Browse button -->
+										<!-- Browse opens native picker via label (works when display:none fails) -->
 										<div class="input-group-append">
-											<button type="button" class="btn btn-secondary"
-												onclick="$('#fileInput').click()">
-												Browse
-											</button>
+											<label for="fileInput" class="btn btn-secondary mb-0"
+												style="cursor:pointer;margin:0;">Browse</label>
 										</div>
-										<!-- Hidden file input -->
-										<input type="file" id="fileInput" name="file" style="display:none;" required>
+										<input type="file" id="fileInput" name="file" class="sr-only" required
+											aria-label="Source file">
 									</div>
 									<small class="form-text text-muted" id="fileConstraints">
 										Supported formats: Select Format first
@@ -450,7 +450,7 @@
 								</div>
 							</div>
 
-							<div class="table-responsive">
+							<div class="table-wrap">
 								<table class="table table-sm table-striped table-bordered">
 									<thead class="thead-light">
 										<tr>
@@ -585,6 +585,18 @@
 	</div>-->
 
 	<script>
+		function showLoader() {
+			$("#loader").css("display", "flex");
+		}
+
+		function hideLoader() {
+			$("#loader").hide();
+		}
+
+		window.addEventListener("pageshow", function () {
+			hideLoader();
+		});
+
 		var uploadedDates = [];
 		var monitorPollTimer = null;
 
@@ -654,7 +666,7 @@
 				|| report === "TR_SWD" || report === "FWD_RVL") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
-			else if (report === "TR_INV_DEAL_DUMP" || report === "plcdealdump") {
+			else if (report === "TR_INV_DEAL_DUMP" || report === "plcdealdump" || report === "DAY_LIGHT") {
 				formatSelect.append('<option value="EXCEL">Excel Worksheet (.xlsx)</option>');
 			}
 

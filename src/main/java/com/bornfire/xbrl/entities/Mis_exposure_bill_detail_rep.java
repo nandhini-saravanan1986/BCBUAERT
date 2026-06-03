@@ -18,6 +18,14 @@ public interface Mis_exposure_bill_detail_rep extends JpaRepository<Mis_exposure
 			+ "and counterparty_status != 'Y'",
 			nativeQuery = true)
 	List<Mis_exposure_bill_detail_entity> getbilldetailsbranchwise(String Branchcode,Date Report_date);
+
+	@Query(value = "Select * from MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE where del_flg = 'N' and Report_date = ?1",
+			nativeQuery = true)
+	List<Mis_exposure_bill_detail_entity> getallbilldetails(Date Report_date);
+
+	@Query(value = "Select * from MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE where del_flg = 'N' and branch_name = ?1 and Report_date = ?2",
+			nativeQuery = true)
+	List<Mis_exposure_bill_detail_entity> getallbilldetailsbranchwise(String Branchcode, Date Report_date);
 	
 	@Query(value="Select * from MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE where del_flg = 'N' and srl_no = ?1 and report_date = ?2",nativeQuery = true)
 	Mis_exposure_bill_detail_entity getbilldetail(String Srl_no,Date Report_date);

@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -113,10 +112,6 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 						if (!usr.isAccountNonExpired()) {
 
 							throw new AccountExpiredException("Account Expired");
-
-						} else if (!usr.isCredentialsNonExpired()) {
-
-							throw new CredentialsExpiredException("Credentials Expired");
 
 						} else if (!usr.isAccountNonLocked()) {
 
@@ -225,6 +220,8 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				
 				Optional<UserProfile> up = userProfileRep.findById(authentication.getName());
 				UserProfile user = up.get();
+				boolean firstLogin = "0".equals(user.getLog_in_count());
+				boolean passwordExpired = !user.isCredentialsNonExpired();
 				user.setNo_of_attmp(0);
 				user.setUser_locked_flg("N");
 				userProfileRep.save(user);
@@ -252,10 +249,22 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("BRANCHNAME", user.getBranch_name());
 				request.getSession().setAttribute("MENULIST", menus); 
 				request.getSession().setAttribute("DEPARTMENT",  user.getDepartment());
+				request.getSession().setAttribute("FORCE_PASSWORD_CHANGE", firstLogin);
+				request.getSession().setAttribute("PASSWORD_EXPIRED", passwordExpired);
 
 				auditService.createLoginAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE",user);				
-				
-				response.sendRedirect("Dashboard");
+				if (firstLogin || passwordExpired) {
+					response.sendRedirect("change-password");
+				} else {
+					String loginOtp = String.format("%06d", new java.util.Random().nextInt(1000000));
+					request.getSession().setAttribute("LOGIN_OTP", loginOtp);
+					request.getSession().setAttribute("LOGIN_OTP_ATTEMPTS", 0);
+					request.getSession().setAttribute("LOGIN_OTP_PENDING", true);
+					request.getSession().setAttribute("LOGIN_OTP_VERIFIED", false);
+					loginServices.sendclientotp(loginOtp, user.getRole_id(), user);
+					System.out.println(loginOtp);
+					response.sendRedirect("login-otp");
+				}
 				
 			}
 

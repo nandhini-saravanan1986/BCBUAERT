@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -77,10 +78,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bornfire.xbrl.entities.*;
+import com.bornfire.xbrl.dto.EodAcctBalExcepUpdateDto;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
 import com.bornfire.xbrl.services.Bloomberg_services;
+import com.bornfire.xbrl.services.BankingBookBillDataService;
 import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
@@ -106,6 +109,8 @@ import com.bornfire.xbrl.services.RT_MmdataService;
 import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_SLSServices;
+import com.bornfire.xbrl.services.SlsSensReportService;
+import com.bornfire.xbrl.dto.SlsSensScenarioDto;
 import com.bornfire.xbrl.services.RT_SLS_BEHAVIOURAL_PER_SERVICES;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesService;
 import com.bornfire.xbrl.services.RT_TradeLevelDerivativesSimplifiedService;
@@ -114,6 +119,7 @@ import com.bornfire.xbrl.services.RT_TreasuryCredit_Service;
 import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.UploadMonitorService;
+import com.bornfire.xbrl.services.DaylightDataUploadService;
 import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
 import com.bornfire.xbrl.services.counter_services;
@@ -134,6 +140,9 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	VarPortfolioUploadService varportfoliouploadservice;
+
+	@Autowired
+	DaylightDataUploadService daylightDataUploadService;
 	
 	@Autowired
 	ECLDataUploadService ecldatauploadservice;
@@ -170,6 +179,13 @@ public class XBRLNavigationController {
 
 	@Autowired
 	RT_SLS_Repository rt_sls_repository;
+
+	@Autowired
+	RT_SLS_SENS_Repository rt_sls_sens_repository;
+
+	@Autowired
+	SlsSensReportService slsSensReportService;
+
 	@Autowired
 	AuditService auditService;
 	@Autowired
@@ -245,6 +261,12 @@ public class XBRLNavigationController {
 
 	@Autowired
 	private RT_MmdataService mmdataService;
+
+	@Autowired
+	private BankingBookBillDataService bankingBookBillDataService;
+
+	@Autowired
+	private BankingBookBillDataRepo bankingBookBillDataRepo;
 
 	@Autowired
 	RT_RepoDataTemplateRepository repoRepo;
@@ -379,6 +401,13 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	private UploadMonitorService uploadMonitorService;
+
+	
+	@Autowired
+	RT_Report_Master_Repo Rpt_Master_Repo;
+
+	@Autowired
+	Eod_Acct_Bal_Excep_Table_Repo eodAcctBalExcepTableRepo;
 	
 	private String pagesize;
 
@@ -392,6 +421,11 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Dashboard", method = { RequestMethod.GET, RequestMethod.POST })
 	public String dashboard(Model md, HttpServletRequest req) {
+		Boolean otpPending = (Boolean) req.getSession().getAttribute("LOGIN_OTP_PENDING");
+		Boolean otpVerified = (Boolean) req.getSession().getAttribute("LOGIN_OTP_VERIFIED");
+		if (Boolean.TRUE.equals(otpPending) || !Boolean.TRUE.equals(otpVerified)) {
+			return "redirect:/login-otp";
+		}
 
 		String domainid = (String) req.getSession().getAttribute("DOMAINID");
 		String userid = (String) req.getSession().getAttribute("USERID");
@@ -2127,6 +2161,55 @@ public class XBRLNavigationController {
 		}
 	}
 
+	@RequestMapping(value = "Bill_Details", method = RequestMethod.GET)
+	public String billDetails(@RequestParam(required = false) String formmode, Model md,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		if ("list".equalsIgnoreCase(formmode) && Report_date != null) {
+			md.addAttribute("branchList", bankingBookBillDataService.getBillDetailsByReportDate(Report_date));
+			md.addAttribute("formmode", "list");
+			md.addAttribute("lastDate", LocalDate.parse(new SimpleDateFormat("dd-MM-yyyy").format(Report_date), formatter));
+		} else {
+			Timestamp lastdatetimestamp = bankingBookBillDataRepo.findLastReportDate();
+			LocalDate lastDate = null;
+			if (lastdatetimestamp != null) {
+				lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
+			}
+			md.addAttribute("lastDate", lastDate);
+			md.addAttribute("formmode", "list");
+			if (lastDate != null) {
+				md.addAttribute("branchList",
+						bankingBookBillDataService.getBillDetailsByReportDate(java.sql.Date.valueOf(lastDate)));
+			}
+		}
+		return "RT/Bill_Details";
+	}
+
+	@RequestMapping(value = "/downloadBillDetailsExcel", method = RequestMethod.GET)
+	public ResponseEntity<ByteArrayResource> downloadBillDetailsExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		logger.info("Controller: Received request for Bill Details Excel download.");
+		try {
+			byte[] excelData = bankingBookBillDataService.generateBillDetailsExcel(Report_date);
+			if (excelData.length == 0) {
+				return ResponseEntity.noContent().build();
+			}
+			ByteArrayResource resource = new ByteArrayResource(excelData);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Bill_Details.xlsx");
+
+			String userid = (String) req.getSession().getAttribute("USERID");
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "BILL_DETAILS_EXCEL", null, "BANKING_BOOK_BILL_DATA");
+
+			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+		} catch (Exception e) {
+			logger.error("Controller ERROR: Error generating Bill Details Excel file.", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@RequestMapping(value = "counterparty", method = { RequestMethod.GET, RequestMethod.POST })
 	public String counterparty(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String id, @RequestParam(required = false) String userid, Model md,
@@ -2244,7 +2327,7 @@ public class XBRLNavigationController {
 			logger.info("Fetched {} exposure records for branch '{}' date '{}'", list.size(), BRANCHNAME, sqlDate);
 			md.addAttribute("listall", list);
 
-		} else if ("Billdetaillist".equalsIgnoreCase(formmode)) {
+		} else if ("Billdetaillist".equalsIgnoreCase(formmode) || "Billdetaillistall".equalsIgnoreCase(formmode)) {
 
 			if (Report_date != null) {
 				Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
@@ -2253,16 +2336,29 @@ public class XBRLNavigationController {
 			}
 			md.addAttribute("Todateselected", Report_date);
 			md.addAttribute("formmode", formmode);
-			md.addAttribute("menuname", "Bill detail operation - list");
+			boolean viewAllBills = "Billdetaillistall".equalsIgnoreCase(formmode);
+			md.addAttribute("viewAllBills", viewAllBills);
+			md.addAttribute("menuname",
+					viewAllBills ? "Bill detail operation - all bills" : "Bill detail operation - list");
 
 			if ("USR-M".equalsIgnoreCase(ROLEID) || "USR-C".equalsIgnoreCase(ROLEID)) {
 				System.out.println("Selected Report : " + Report_date + ": and user id is : " + ROLEID);
-				md.addAttribute("Activebilldetails",
-						Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME, Report_date));
+				if (viewAllBills) {
+					md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep
+							.getallbilldetailsbranchwise(BRANCHNAME, Report_date));
+				} else {
+					md.addAttribute("Activebilldetails",
+							Mis_exposure_bill_detail_rep.getbilldetailsbranchwise(BRANCHNAME, Report_date));
+				}
 			} else {
 				System.out.println("Selected Report : " + Report_date + ": and user id is : " + ROLEID
 						+ " and Branch Name is : " + BRANCHNAME);
-				md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails(Report_date));
+				if (viewAllBills) {
+					md.addAttribute("Activebilldetails",
+							Mis_exposure_bill_detail_rep.getallbilldetails(Report_date));
+				} else {
+					md.addAttribute("Activebilldetails", Mis_exposure_bill_detail_rep.getbilldetails(Report_date));
+				}
 			}
 
 		} else if ("Addbilldetail".equalsIgnoreCase(formmode)) {
@@ -4250,6 +4346,226 @@ System.out.println("sixe==="+excelData.length);
 		return "RT/RT_SLSREPORT";
 	}
 
+	@RequestMapping(value = "/slsAnalyticalLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> slsAnalyticalLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_sls_repository.getSlsAnalyticalLongTermRatioS2(reportDateFor, currency);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching SLS analytical long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/slsAnalyticalMedLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> slsAnalyticalMedLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_sls_repository.getSlsAnalyticalMedLongTermRatioS2(reportDateFor, currency);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching SLS analytical medium-to-long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	private Date parseSlsAnalyticalReportDate(String reportdate) throws ParseException {
+		if (reportdate == null || reportdate.trim().isEmpty()) {
+			throw new ParseException("Report date is required", 0);
+		}
+		String trimmed = reportdate.trim();
+		if (trimmed.contains("-")) {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(trimmed);
+		}
+		return new SimpleDateFormat("dd/MM/yyyy").parse(trimmed);
+	}
+
+	@RequestMapping(value = "RT_SLS_SENS", method = { RequestMethod.GET, RequestMethod.POST })
+	public String RT_SLS_SENS(Model md, HttpServletRequest req) {
+		md.addAttribute("positionDateGroups", slsSensReportService.buildPositionDateGroups());
+		return "RT/RT_SLS_SENS";
+	}
+
+	@RequestMapping(value = "SLS_SENSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
+	public String SLS_SENSREPORT(@RequestParam(required = false) String currency,
+			@RequestParam(required = false) String reportdate,
+			@RequestParam(required = false) String asOfDate,
+			@RequestParam(required = false) Integer dayOffset,
+			@RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
+			@RequestParam(required = false) String Rowid, Model md, HttpServletRequest req) {
+
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date positionDate = null;
+		Date asOfDateParsed = null;
+
+		try {
+			if (reportdate != null && !reportdate.trim().isEmpty()) {
+				positionDate = dateFormat.parse(reportdate.trim());
+			}
+			if (asOfDate != null && !asOfDate.trim().isEmpty()) {
+				asOfDateParsed = dateFormat.parse(asOfDate.trim());
+			}
+		} catch (ParseException e) {
+			logger.warn("SLS_SENSREPORT: invalid date", e);
+			md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+			return "RT/RT_SLS_SENSREPORT";
+		}
+
+		if (positionDate == null) {
+			md.addAttribute("error", "Position date is required.");
+			return "RT/RT_SLS_SENSREPORT";
+		}
+
+		if (dayOffset == null && asOfDateParsed != null) {
+			long diffMs = asOfDateParsed.getTime() - positionDate.getTime();
+			dayOffset = (int) (diffMs / (24L * 60 * 60 * 1000));
+			if (dayOffset < 0) {
+				dayOffset = 0;
+			}
+		}
+		if (dayOffset == null) {
+			dayOffset = 0;
+		}
+		if (asOfDateParsed == null) {
+			asOfDateParsed = SlsSensReportService.addCalendarDays(positionDate, dayOffset);
+		}
+
+		if (formmode == null || formmode.equals("summary")) {
+			Optional<RT_SLS_SENS_ENTITIES> scenarioOpt = slsSensReportService.findScenarioRow(positionDate, dayOffset,
+					currency);
+			if (!scenarioOpt.isPresent() && asOfDateParsed != null) {
+				scenarioOpt = slsSensReportService.findScenarioRowByAsOf(positionDate, asOfDateParsed, currency);
+			}
+			if (!scenarioOpt.isPresent()) {
+				md.addAttribute("error",
+						"No sensitivity scenario found for position date, currency, and day offset.");
+				md.addAttribute("reportdate", reportdate);
+				md.addAttribute("currency", currency);
+				md.addAttribute("formmode", "summary");
+				return "RT/RT_SLS_SENSREPORT";
+			}
+
+			RT_SLS_SENS_ENTITIES row = scenarioOpt.get();
+			List<RT_SLS_SENS_ENTITIES> slslist = Collections.singletonList(row);
+			md.addAttribute("slslist", slslist);
+
+			List<RT_SLS_SENS_ENTITIES> currencylist = rt_sls_sens_repository.findCurrenciesByPositionDate(positionDate);
+			md.addAttribute("currencylist", currencylist);
+
+			List<SlsSensScenarioDto> scenarioSwitcher = slsSensReportService
+					.findScenariosForPositionDate(positionDate, currency);
+
+			SlsSensScenarioDto activeScenario = slsSensReportService.toScenarioDto(row);
+			md.addAttribute("currency", currency);
+			md.addAttribute("reportdate", reportdate);
+			md.addAttribute("asOfDate", SlsSensReportService.formatDate(asOfDateParsed));
+			md.addAttribute("dayOffset", dayOffset);
+			md.addAttribute("scenarioLabel", activeScenario.getScenarioLabel());
+			md.addAttribute("baseScenario", activeScenario.isBaseScenario());
+			md.addAttribute("scenarioSwitcher", scenarioSwitcher);
+			md.addAttribute("positionDateFormatted", SlsSensReportService.formatDate(positionDate));
+			md.addAttribute("formmode", "summary");
+		} else if (formmode.equals("Detail")) {
+			md.addAttribute("error", "Detail view is not configured for SLS Sensitivity Report.");
+			md.addAttribute("reportdate", reportdate);
+			md.addAttribute("asOfDate", asOfDate);
+			md.addAttribute("dayOffset", dayOffset);
+			md.addAttribute("currency", currency);
+			md.addAttribute("formmode", "summary");
+		}
+
+		return "RT/RT_SLS_SENSREPORT";
+	}
+
+	@RequestMapping(value = "/slsSensAnalyticalLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> slsSensAnalyticalLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency,
+			@RequestParam(defaultValue = "0") Integer dayOffset) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_sls_sens_repository.getSlsAnalyticalLongTermRatioS2(reportDateFor, currency,
+					dayOffset);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching SLS sensitivity analytical long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/slsSensAnalyticalMedLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> slsSensAnalyticalMedLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency,
+			@RequestParam(defaultValue = "0") Integer dayOffset) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_sls_sens_repository.getSlsAnalyticalMedLongTermRatioS2(reportDateFor, currency,
+					dayOffset);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching SLS sensitivity analytical medium-to-long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/slsSensSevenDaySummary", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> slsSensSevenDaySummary(@RequestParam String reportdate, @RequestParam String currency) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date positionDate = parseSlsAnalyticalReportDate(reportdate);
+			result.putAll(slsSensReportService.buildSevenDayTotalsSummary(positionDate, currency));
+		} catch (Exception e) {
+			logger.error("Error building SLS sensitivity seven-day summary", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+		}
+		return result;
+	}
+
 	@RequestMapping(value = "IRSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
 	public String IRSREPORT(@RequestParam String reportdate, @RequestParam String currency,
 			@RequestParam(defaultValue = "summary") String formmode, @RequestParam(defaultValue = "0") int page,
@@ -4573,16 +4889,17 @@ System.out.println("sixe==="+excelData.length);
 	@Autowired
 	RT_MID_FX_DEAL_SERVICE rtmidFxDealservice;
 
-	// Page for SLS
-	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
-	public String getSlsPage(Model model) {
-		return "RT_SLS_Upload";
-	}
+	
 
 	// Page for FX
 	@RequestMapping(value = "FXUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
 	public String getFxPage(Model model) {
 		return "RT_FX_Upload";
+	}
+
+	@RequestMapping(value = "SLSUPLOAD", method = { RequestMethod.GET, RequestMethod.POST })
+	public String getSlsUploadPage(Model model) {
+		return "RT_SLS_Upload";
 	}
 
 	@GetMapping("/getUploadedDates")
@@ -4698,7 +5015,6 @@ System.out.println("sixe==="+excelData.length);
 	        } else if ("MFD".equals(reportType)) {
 
 	            resultMsg = rtmidFxDealservice.uploadMidFxDealData(file, toDate, username);
-
 	        } else if ("RWABILLDETAIL".equals(reportType)) {
 
 	            resultMsg = rwaService.Uploadrwadata(file, reportType, toDate, forceUpload);
@@ -4732,6 +5048,8 @@ System.out.println("sixe==="+excelData.length);
 	        }
 	        else if("VARFILE".equals(reportType)) {
 	        	resultMsg =varportfoliouploadservice.uploadVarPortfolio(file, reportType, toDate, forceUpload);
+	        } else if("DAY_LIGHT".equals(reportType)) {
+	        	resultMsg = daylightDataUploadService.UploadDaylight(file, reportType, toDate, forceUpload);
 	        }
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
@@ -6192,6 +6510,7 @@ System.out.println("sixe==="+excelData.length);
 
 	    return ResponseEntity.ok("Limits Saved Successfully");
 	}
+
 	@Autowired
 	RT_EAR_REPO RT_EAR_REPO;
 	@GetMapping("/eardashboarddata")
@@ -6209,4 +6528,157 @@ System.out.println("sixe==="+excelData.length);
         return "XBRLDashboard :: eardashboardtable"; 
     }
 
+
+	@RequestMapping(value = "Analytical_Pivot", method = { RequestMethod.GET, RequestMethod.POST })
+	public String analyticalPivot(Model md, HttpServletRequest req) {
+		String domainid = (String) req.getSession().getAttribute("DOMAINID");
+		String userid = (String) req.getSession().getAttribute("USERID");
+		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		String branchName = (String) req.getSession().getAttribute("BRANCHNAME");
+		md.addAttribute("menu", "Analytical_Pivot");
+		md.addAttribute("domainid", domainid);
+		md.addAttribute("userid", userid);
+		md.addAttribute("roleId", roleId);
+		md.addAttribute("branchName", branchName);
+		md.addAttribute("menuname", "Analytical Pivot");
+		return "RT/Analytical_Pivot";
+	}
+	
+	private static Date defaultReportDateTMinusOne() {
+		return java.sql.Date.valueOf(LocalDate.now().minusDays(1));
+	}
+
+	@RequestMapping(value = "Data_inventory_dashboard", method = { RequestMethod.GET, RequestMethod.POST })
+	public String dataInventoryDashboard(Model md, HttpServletRequest req) {
+		md.addAttribute("menu", "Data_inventory_dashboard");
+		md.addAttribute("menuname", "Data Control Center — Data Inventory");
+		return "Data_inventory_dashboard";
+	}
+
+	@RequestMapping(value = "Report_control_center", method = { RequestMethod.GET, RequestMethod.POST })
+	public String Report_control_center(
+			@RequestParam(value = "reportDate", required = false) String reportDateStr,
+			Model md,
+			HttpServletRequest req) {
+
+		String domainid = (String) req.getSession().getAttribute("DOMAINID");
+		String userid = (String) req.getSession().getAttribute("USERID");
+		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		String BRANCH_NAME = (String) req.getSession().getAttribute("BRANCHNAME");
+
+		SimpleDateFormat dayFmt = new SimpleDateFormat("yyyy-MM-dd");
+		Date reportDay;
+		try {
+			if (reportDateStr != null && !reportDateStr.trim().isEmpty()) {
+				reportDay = dayFmt.parse(reportDateStr.trim());
+			} else {
+				reportDay = defaultReportDateTMinusOne();
+			}
+		} catch (ParseException e) {
+			logger.warn("Report_control_center: invalid reportDate '{}', using T-1", reportDateStr);
+			reportDay = defaultReportDateTMinusOne();
+		}
+
+		// Full list: TOTAL_STEPS from RT_REPORT_STEP; COMPLETED/FAILED from RT_REPORT_STEP_EXEC for reportDay; REPORT_STATUS derived.
+		List<RT_Report_Master_Entity> Rpt_master_data = Rpt_Master_Repo.Get_Report_master(reportDay);
+
+		md.addAttribute("Report_master_data", Rpt_master_data);
+		md.addAttribute("selected_report_date", dayFmt.format(reportDay));
+		md.addAttribute("menuname", "Report control Center");
+
+		return "Report_control_center";
+	}
+
+	@RequestMapping(value = "Eab_acct_Excep_mnmt", method = { RequestMethod.GET, RequestMethod.POST })
+	public String eabAcctExcepMnmt(@RequestParam(value = "reportDate", required = false) String reportDateStr, Model md,
+			HttpServletRequest req) {
+		String domainid = (String) req.getSession().getAttribute("DOMAINID");
+		String userid = (String) req.getSession().getAttribute("USERID");
+		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		String branchName = (String) req.getSession().getAttribute("BRANCHNAME");
+		SimpleDateFormat dayFmt = new SimpleDateFormat("yyyy-MM-dd");
+		Date reportDate;
+
+		try {
+			if (reportDateStr != null && !reportDateStr.trim().isEmpty()) {
+				reportDate = dayFmt.parse(reportDateStr.trim());
+			} else {
+				reportDate = defaultReportDateTMinusOne();
+			}
+		} catch (Exception e) {
+			logger.warn("Eab_acct_Excep_mnmt: invalid reportDate '{}', using T-1", reportDateStr);
+			reportDate = defaultReportDateTMinusOne();
+		}
+
+		List<Eod_Acct_Bal_Excep_Table_Entity> list = eodAcctBalExcepTableRepo.findByReportDate(reportDate);
+		md.addAttribute("menu", "Eab_acct_Excep_mnmt");
+		md.addAttribute("domainid", domainid);
+		md.addAttribute("userid", userid);
+		md.addAttribute("roleId", roleId);
+		md.addAttribute("branchName", branchName);
+		md.addAttribute("selected_report_date", dayFmt.format(reportDate));
+		md.addAttribute("records", list);
+		md.addAttribute("menuname", "Eab Account Exception Mnmt");
+		return "RT/Eab_acct_Excep_mnmt";
+	}
+
+	private static String trimToNull(String s) {
+		if (s == null) {
+			return null;
+		}
+		String t = s.trim();
+		return t.isEmpty() ? null : t;
+	}
+
+	@PostMapping("Eab_acct_Excep_mnmt/save")
+	@ResponseBody
+	public ResponseEntity<String> saveEabAcctExcepMnmt(
+			@RequestParam(value = "reportDate", required = false) String reportDateQueryParam,
+			@RequestBody List<EodAcctBalExcepUpdateDto> updates) {
+		try {
+			if (updates == null || updates.isEmpty()) {
+				return ResponseEntity.badRequest().body("No rows provided");
+			}
+
+			int updated = 0;
+			for (EodAcctBalExcepUpdateDto row : updates) {
+				String dateStr = trimToNull(row.getRowReportDate());
+				if (dateStr == null) {
+					dateStr = trimToNull(reportDateQueryParam);
+				}
+				if (dateStr == null) {
+					logger.warn("EAB exception save: missing report date for acid={}", row.getAcid());
+					continue;
+				}
+				String acid = trimToNull(row.getAcid());
+				String tranId = trimToNull(row.getTranId());
+				String partTranSrl = trimToNull(row.getPartTranSrlNum());
+				if (acid == null || tranId == null || partTranSrl == null) {
+					logger.warn("EAB exception save: missing key acid/tranId/partTranSrlNum");
+					continue;
+				}
+				List<Eod_Acct_Bal_Excep_Table_Entity> matches = eodAcctBalExcepTableRepo.findByReportDateStrAndKeys(dateStr,
+						acid, tranId, partTranSrl);
+				if (matches.isEmpty()) {
+					logger.warn(
+							"EAB exception save: no row for reportDateStr={}, acid=[{}], tranId=[{}], partTranSrlNum=[{}]",
+							dateStr, acid, tranId, partTranSrl);
+					continue;
+				}
+				Eod_Acct_Bal_Excep_Table_Entity entity = matches.get(0);
+				entity.setSchm_type(row.getSchmType() == null ? null : row.getSchmType().toUpperCase(Locale.ROOT));
+				entity.setSchm_code(row.getSchmCode() == null ? null : row.getSchmCode().toUpperCase(Locale.ROOT));
+				entity.setAcct_number(row.getAcctNumber());
+				eodAcctBalExcepTableRepo.save(entity);
+				updated++;
+			}
+			if (updated == 0) {
+				return ResponseEntity.badRequest().body("No matching rows found for the given keys and report date");
+			}
+			return ResponseEntity.ok("Saved successfully (" + updated + " row(s))");
+		} catch (Exception e) {
+			logger.error("Failed to save EAB Account Exception updates", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save data");
+		}
+	}
 }

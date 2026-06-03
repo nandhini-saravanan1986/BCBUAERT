@@ -1,5 +1,6 @@
 package com.bornfire.xbrl.entities;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -110,5 +111,15 @@ public interface RT_SLS_Repository extends JpaRepository<RT_SLS_ENTITIES, String
 	 		+ "from RT_SLS_USD Where REPORT_CURRENCY = 'All_currency_converted_into_AED' AND REPORT_DATE IN (\r\n"
 	 		+ "SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'YEAR'), LEVEL - 1))AS month_end FROM dual CONNECT BY LEVEL <= 12 ))))Order by REPORT_DATE Asc)",nativeQuery=true)
 		List<Object[]> GetStockapproachratioGraph(Date Selecteddate);
+
+	 @Query(value = "SELECT ROUND((NVL(R39_OVER3Y_TO_5Y, 0) + NVL(R39_OVER5Y, 0)) / "
+	 		+ "NULLIF(NVL(R70_OVER3Y_TO_5Y, 0) + NVL(R70_OVER5Y, 0), 0), 4) * 100 "
+	 		+ "FROM RT_SLS_USD WHERE REPORT_DATE = ?1 AND REPORT_CURRENCY = ?2", nativeQuery = true)
+	 List<BigDecimal> getSlsAnalyticalLongTermRatioS2(Date reportDate, String reportCurrency);
+
+	 @Query(value = "SELECT ROUND((NVL(R39_OVER6M_TO_1Y, 0) + NVL(R39_OVER1Y_TO_3Y, 0) + NVL(R39_OVER3Y_TO_5Y, 0) + NVL(R39_OVER5Y, 0)) / "
+	 		+ "NULLIF(NVL(R70_OVER6M_TO_1Y, 0) + NVL(R70_OVER1Y_TO_3Y, 0) + NVL(R70_OVER3Y_TO_5Y, 0) + NVL(R70_OVER5Y, 0), 0), 4) * 100 "
+	 		+ "FROM RT_SLS_USD WHERE REPORT_DATE = ?1 AND REPORT_CURRENCY = ?2", nativeQuery = true)
+	 List<BigDecimal> getSlsAnalyticalMedLongTermRatioS2(Date reportDate, String reportCurrency);
 	 
 }

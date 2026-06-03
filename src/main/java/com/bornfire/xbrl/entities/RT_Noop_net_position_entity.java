@@ -25,6 +25,7 @@ public class RT_Noop_net_position_entity implements Serializable {
 	private BigDecimal	mtm_ac;
 	private BigDecimal	total_noop_in_ac;
 	private BigDecimal	total_noop_in_lc;
+	private BigDecimal	forward_reval_position_ac;
 	public Date getReport_date() {
 		return report_date;
 	}
@@ -79,16 +80,23 @@ public class RT_Noop_net_position_entity implements Serializable {
 	public void setTotal_noop_in_lc(BigDecimal total_noop_in_lc) {
 		this.total_noop_in_lc = total_noop_in_lc;
 	}
+	public BigDecimal getForward_reval_position_ac() {
+		return forward_reval_position_ac;
+	}
+	public void setForward_reval_position_ac(BigDecimal forward_reval_position_ac) {
+		this.forward_reval_position_ac = forward_reval_position_ac;
+	}
 	@Override
 	public String toString() {
 		return "RT_Noop_net_position_entity [report_date=" + report_date + ", fedai_conv_date=" + fedai_conv_date
 				+ ", fedai_rate=" + fedai_rate + ", currency=" + currency + ", ready_exchage_position_in_ac="
 				+ ready_exchage_position_in_ac + ", cbs_fx_position_ac=" + cbs_fx_position_ac + ", mtm_ac=" + mtm_ac
-				+ ", total_noop_in_ac=" + total_noop_in_ac + ", total_noop_in_lc=" + total_noop_in_lc + "]";
+				+ ", total_noop_in_ac=" + total_noop_in_ac + ", total_noop_in_lc=" + total_noop_in_lc
+				+ ", forward_reval_position_ac=" + forward_reval_position_ac + "]";
 	}
 	public RT_Noop_net_position_entity(Date report_date, Date fedai_conv_date, BigDecimal fedai_rate, String currency,
 			BigDecimal ready_exchage_position_in_ac, BigDecimal cbs_fx_position_ac, BigDecimal mtm_ac,
-			BigDecimal total_noop_in_ac, BigDecimal total_noop_in_lc) {
+			BigDecimal total_noop_in_ac, BigDecimal total_noop_in_lc, BigDecimal forward_reval_position_ac) {
 		super();
 		this.report_date = report_date;
 		this.fedai_conv_date = fedai_conv_date;
@@ -99,11 +107,13 @@ public class RT_Noop_net_position_entity implements Serializable {
 		this.mtm_ac = mtm_ac;
 		this.total_noop_in_ac = total_noop_in_ac;
 		this.total_noop_in_lc = total_noop_in_lc;
+		this.forward_reval_position_ac = forward_reval_position_ac;
 	}
 	public RT_Noop_net_position_entity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 	
 

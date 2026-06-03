@@ -15,7 +15,9 @@
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<!-- jQuery (required first) -->
@@ -58,12 +60,12 @@
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-btn-bg);
 			border-color: #0c0c0c;
 		}
 
-		.btn-primary:not (:disabled):not (.disabled).active,
-		.btn-primary:not (:disabled):not (.disabled):active,
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
 		.show>.btn-primary.dropdown-toggle {
 			color: #fff;
 			background-color: #cc000000;
@@ -146,7 +148,7 @@
 			vertical-align: middle;
 			text-align: left;
 			font-size: 16px;
-			font-family: Arial;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
 		}
 
 		.fa-edit:hover {
@@ -291,11 +293,13 @@
 			height: 100%;
 			/* full screen height */
 			margin: 0;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
 		}
 
 		.card {
-			height: 100vh;
-			/* card fills screen */
+			min-height: calc(100vh - 60px);
+			height: auto;
+			margin-top: 0;
 			display: flex;
 			flex-direction: column;
 		}
@@ -329,7 +333,7 @@
 		.scrollable-table-container thead tr:nth-child(1) {
 			position: sticky;
 			top: 0;
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 5;
 		}
 
@@ -337,7 +341,7 @@
 			position: sticky;
 			top: 36px;
 			/* adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 4;
 		}
 
@@ -345,7 +349,7 @@
 			position: sticky;
 			top: 72px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 3;
 		}
 
@@ -353,7 +357,7 @@
 			position: sticky;
 			top: 100px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 2;
 		}
 
@@ -361,7 +365,7 @@
 			position: sticky;
 			top: 135px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 1;
 		}
 	</style>
@@ -401,12 +405,12 @@
 		}
 
 		.page-item.active .page-link {
-			background-color: #ff7f27;
-			border-color: #ff7f27;
+			background-color: var(--bank-btn-bg);
+			border-color: var(--bank-primary-dark);
 		}
 
 		.page-link {
-			color: #ff7f27;
+			color: var(--bank-primary);
 		}
 
 		.page-link:hover {
@@ -423,12 +427,12 @@
 		/* Reduce font size */
 		/* Apply font family and smaller font */
 		#usertable {
-			font-family: Arial, sans-serif !important;
+			font-family: Verdana, Geneva, Tahoma, sans-serif !important;
 			font-size: 12px !important;
 		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header) !important;
 			color: white !important;
 			padding: 8px 10px !important;
 			text-align: center;
@@ -467,29 +471,24 @@
 			border-spacing: 0;
 		}
 
-		/* Row 1 – Table Title */
+		/* Sticky header rows inside the table scroll area */
 		#usertable thead tr:nth-child(1) th {
 			position: sticky;
-			top: 170px;
-			/* page-header + section-header */
+			top: 0;
 			z-index: 800;
-			background: #b3b6b9;
+			background: var(--table-header);
 		}
 
-		/* Row 2 – Column Names */
 		#usertable thead tr:nth-child(2) th {
 			position: sticky;
-			top: 205px;
-			/* previous + row1 height */
+			top: 36px;
 			z-index: 700;
-			background: #d0d0d0;
+			background: var(--bank-header-mid);
 		}
 
-		/* Row 3 – Column Numbers */
 		#usertable thead tr:nth-child(3) th {
 			position: sticky;
-			top: 276px;
-			/* previous + row2 height */
+			top: 72px;
 			z-index: 600;
 			background: #eaeaea;
 		}
@@ -505,13 +504,14 @@
 		}
 	</style>
 	<style>
-		
 		#pageHeader {
 			position: sticky;
-			top: 110px;
+			top: 60px;
 			z-index: 1050;
 			background: white;
-			padding-top: 10px;
+			padding: 10px 20px;
+			margin: 0;
+			border-bottom: 1px solid #e5e7eb;
 		}
 
 		#tabHeader {
@@ -532,52 +532,43 @@
 
 		.role-page-header {
 			background-color: #ffffff;
-			padding: 15px 20px;
+			padding: 10px 20px;
 			display: flex;
-			/* Added for alignment */
 			justify-content: space-between;
-			/* Added for alignment */
 			align-items: center;
-			/* Added for alignment */
+			gap: 16px;
+			flex-wrap: wrap;
+		}
+
+		.text-left.flex-grow-1 {
+			min-width: 280px;
+		}
+
+		.text-left.flex-grow-1 .d-flex.align-items-center {
+			gap: 10px;
+			flex-wrap: wrap;
+			margin: 0;
+		}
+
+		.text-left.flex-grow-1 h4 {
+			margin: 0;
+			padding-right: 0 !important;
+		}
+
+		.custom-tab-btn-group.nav-buttons {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+
+		.card-body.p-0 {
+			padding-top: 0 !important;
 		}
 	</style>
 	<style>
-		.role-btn {
-			background: #ffffff;
-			color: #E67E00;
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		.role-btn:hover {
-			background: #FFF3D1;
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
-		.role-btn.active {
-			background: #E67E00;
-			/* solid orange */
-			color: #fff;
-			/* white text */
-			border-color: #E67E00;
-			transform: translateY(-1px);
-			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
-		}
-
-		/* Optional: icon spacing */
-		.role-btn i {
-			margin-right: 5px;
-		}
+		/* Header toolbar buttons — see bank-theme.css */
 
 		/* Right align numeric columns (thead + tbody) */
 		#usertable th.amt-right,
@@ -605,116 +596,138 @@
 
 		/* Force orange background for the entire row */
 		#usertable tbody tr.orange-row>td {
-			background-color: #f7a47c !important;
+			background-color: var(--total-bg) !important;
 		}
 
 		/* Force orange background for the entire row */
 		#usertable tbody tr.orange-rows>td {
-			background-color: #c2ffff !important;
+			background-color: var(--section-row-bg) !important;
 		}
 	</style>
 	<style>
-	.calc-row td {
-	    background-color: #f7a47c !important;
-	    font-weight: 600;
-	}
-	.calc-col {
-	    background-color: #f7a47c !important;
-	    font-weight: 600;
-	}
+		.calc-row td {
+			background-color: var(--total-bg) !important;
+			font-weight: 600;
+		}
 
-	/* Keep borders visible */
-	table td, table th {
-	    border: 1px solid #666;
-	}
+		.calc-col {
+			background-color: var(--total-bg) !important;
+			font-weight: 600;
+		}
+
+		/* Keep borders visible */
+		table td,
+		table th {
+			border: 1px solid #666;
+		}
+
+		.negative-warning-blink {
+			animation: negativeCellBlink 1.1s ease-in-out infinite;
+			color: #7f1d1d !important;
+			font-weight: 600;
+		}
+
+		@keyframes negativeCellBlink {
+
+			0%,
+			100% {
+				background-color: #fff1f2;
+			}
+
+			50% {
+				background-color: #fca5a5;
+			}
+		}
 	</style>
 
 	<style>
-	.dt-search {
-	    float: left;
-	}
+		.dt-search {
+			float: left;
+		}
 
-	.dt-pagination {
-	    float: right;
-	}
+		.dt-pagination {
+			float: right;
+		}
 
-	.dataTables_filter input {
-	    width: 220px;
-	    height: 32px;
-	}
-	/* Pagination wrapper */
-	.dataTables_paginate {
-	    margin: 0;
-	}
+		.dataTables_filter input {
+			width: 220px;
+			height: 32px;
+		}
 
-	/* ALL buttons base */
-	.dataTables_paginate .paginate_button {
-	    background: #eeeeee !important;
-	    color: #444 !important;          /* light black */
-	    border: 1px solid #e0e0e0 !important;
-	    border-radius: 8px;
-	    padding: 6px 14px;
-	    margin-left: 6px;
-	    box-shadow: none !important;
-	    font-weight: 500;
-	}
+		/* Pagination wrapper */
+		.dataTables_paginate {
+			margin: 0;
+		}
 
-	/* Hover – SAME look (no dark border, no blue) */
-	.dataTables_paginate .paginate_button:hover {
-	    background: #eeeeee !important;
-	    color: #444 !important;
-	    border: 1px solid #e0e0e0 !important;
-	}
+		/* ALL buttons base */
+		.dataTables_paginate .paginate_button {
+			background: #eeeeee !important;
+			color: #444 !important;
+			/* light black */
+			border: 1px solid #e0e0e0 !important;
+			border-radius: 8px;
+			padding: 6px 14px;
+			margin-left: 6px;
+			box-shadow: none !important;
+			font-weight: 500;
+		}
 
-	/* Active page number (ORANGE) */
-	.dataTables_paginate .paginate_button.current {
-	    background: #ff7f27 !important;
-	    color: #ffffff !important;
-	    border: 1px solid #ff7f27 !important;
-	    font-weight: 600;
-	}
+		/* Hover – SAME look (no dark border, no blue) */
+		.dataTables_paginate .paginate_button:hover {
+			background: #eeeeee !important;
+			color: #444 !important;
+			border: 1px solid #e0e0e0 !important;
+		}
 
-	.dataTables_paginate .paginate_button.disabled {
-	    background: #f2f2f2 !important;
-	    color: #bdbdbd !important;
-	    border: 1px solid #e5e5e5 !important;
-	    cursor: not-allowed;
-	}
+		/* Active page number (ORANGE) */
+		.dataTables_paginate .paginate_button.current {
+			background: var(--bank-btn-bg) !important;
+			color: var(--bank-text-on-dark) !important;
+			border: 1px solid var(--bank-primary-dark) !important;
+			font-weight: 600;
+		}
 
-	.dataTables_paginate .paginate_button:focus,
-	.dataTables_paginate .paginate_button:active {
-	    outline: none !important;
-	    box-shadow: none !important;
-	}
-	
-	.static-back-btn {
-									    background-color: rgb(255, 255, 255);
-									    border: none;
-									    color: rgb(255, 128, 0);
-									    font-size: 16px;
-									    border-radius: 50%;
-									    width: 36px;
-									    height: 36px;
-									    display: flex;
-									    align-items: center;
-									    justify-content: center;
-									    margin-right: 10px;
-									    transition: background-color 0.25s ease, transform 0.15s ease;
-									    cursor: pointer;
-									}
+		.dataTables_paginate .paginate_button.disabled {
+			background: #f2f2f2 !important;
+			color: #bdbdbd !important;
+			border: 1px solid #e5e5e5 !important;
+			cursor: not-allowed;
+		}
 
-									/* Hover effect */
-									.static-back-btn:hover {
-									    background-color: rgb(255, 128, 0);   /* darker orange */
-									    color: rgb(255, 255, 255);
-									    transform: scale(1.08);
-									}
+		.dataTables_paginate .paginate_button:focus,
+		.dataTables_paginate .paginate_button:active {
+			outline: none !important;
+			box-shadow: none !important;
+		}
 
-									/* Optional click effect */
-									.static-back-btn:active {
-									    transform: scale(0.95);
-									}
+		.static-back-btn {
+			background-color: rgb(255, 255, 255);
+			border: none;
+			color: rgb(255, 128, 0);
+			font-size: 16px;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.25s ease, transform 0.15s ease;
+			cursor: pointer;
+		}
 
+		/* Hover effect */
+		.static-back-btn:hover {
+			background-color: rgb(255, 128, 0);
+			/* darker orange */
+			color: rgb(255, 255, 255);
+			transform: scale(1.08);
+		}
+
+		/* Optional click effect */
+		.static-back-btn:active {
+			transform: scale(0.95);
+		}
 	</style>
 
 	<!--<script>
@@ -743,54 +756,54 @@
 		});
 	</script>-->
 	<script th:inline="javascript">
-	    var formmode = /*[[${formmode}]]*/ '';
+		var formmode = /*[[${formmode}]]*/ '';
 	</script>
 
 	<script>
-	$(document).ready(function () {
+		$(document).ready(function () {
 
-	    if (formmode === 'Detail') {
+			if (formmode === 'Detail') {
 
-	        // ✅ Detail page → WITH search & pagination
-	        $('#usertable').DataTable({
-	            paging: true,
-	            searching: true,
-	            pagingType: "simple", 
-	            ordering: false,
-	            lengthChange: false,
-	            pageLength: 100,
-	            autoWidth: false,
-	            scrollX: false,
+				// ✅ Detail page → WITH search & pagination
+				$('#usertable').DataTable({
+					paging: true,
+					searching: true,
+					pagingType: "simple",
+					ordering: false,
+					lengthChange: false,
+					pageLength: 100,
+					autoWidth: false,
+					scrollX: false,
 
-	            dom:
-	                '<"d-flex justify-content-between align-items-center mb-2"' +
-	                    '<"dt-search"f>' +
-	                    '<"dt-pagination"p>' +
-	                '>' +
-	                't'
+					dom:
+						'<"d-flex justify-content-between align-items-center mb-2"' +
+						'<"dt-search"f>' +
+						'<"dt-pagination"p>' +
+						'>' +
+						't'
 
-	            
-	        });
 
-	    } else {
-	        $('#usertable').DataTable({
-	            paging: false,
-	            searching: false,
-	            ordering: false,
-	            autoWidth: false,
-	            scrollX: false,
+				});
 
-	            columnDefs: [
-	                {
-	                    targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-	                    className: 'amt-right'
-	                }
-	            ]
-	        });
+			} else {
+				$('#usertable').DataTable({
+					paging: false,
+					searching: false,
+					ordering: false,
+					autoWidth: false,
+					scrollX: false,
 
-	    }
+					columnDefs: [
+						{
+							targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+							className: 'amt-right'
+						}
+					]
+				});
 
-	});
+			}
+
+		});
 	</script>
 
 
@@ -799,12 +812,12 @@
 	<script th:inline="javascript">
 
 		function home() {
-			$("#loader").modal("toggle");
+			$("#loader").css("display", "flex");
 			location.href = 'Dashboard'
 		}
 
-//		function back() {
-	//		$("#loader").modal("toggle");
+		//		function back() {
+		//		$("#loader").css("display", "flex");
 
 		//	window.history.back();
 		// }
@@ -822,127 +835,136 @@
 			location.href = 'IRSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
 
 		}
-	
+		
+		function getreportBY() {
+
+				var reportdate = document.getElementById("reportDate").innerText;
+				var currency = document.getElementById("currency").value;
+				$("#loader").css("display", "flex");
+				location.href = 'IRSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
+
+			}
+
 
 		function getdetails() {
-		    var reportdate = document.getElementById("reportDate").innerText.trim();
-		    var currency = document.getElementById("currencyin").value;
+			var reportdate = document.getElementById("reportDate").innerText.trim();
+			var currency = document.getElementById("currencyin").value;
 
-		    location.href = 'IRSREPORT?reportdate=' 
-		        + encodeURIComponent(reportdate)
-		        + '&currency=' + encodeURIComponent(currency)
-		        + '&formmode=Detail';
+			location.href = 'IRSREPORT?reportdate='
+				+ encodeURIComponent(reportdate)
+				+ '&currency=' + encodeURIComponent(currency)
+				+ '&formmode=Detail';
 		}
 
 
 		function downloadfile(button) {
 
-		    var reportdate = button.getAttribute('data-reportdate');
-		    var currency   = button.getAttribute('data-currency');
-		    var filename   = button.getAttribute('data-filename');
-		    var report     = button.getAttribute('data-report'); 
+			var reportdate = button.getAttribute('data-reportdate');
+			var currency = button.getAttribute('data-currency');
+			var filename = button.getAttribute('data-filename');
+			var report = button.getAttribute('data-report');
 
-		    $('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 
-		    $.ajax({
-		        url: './downloadExcel',
-		        type: 'GET',
-		        data: {
-		            reportdate: reportdate,
-		            currency: currency,
-		            filename: filename,
-		            type: 'summary',
-		            report: report          
-		        },
-		        xhrFields: {
-		            responseType: 'blob'
-		        },
+			$.ajax({
+				url: './downloadExcel',
+				type: 'GET',
+				data: {
+					reportdate: reportdate,
+					currency: currency,
+					filename: filename,
+					type: 'summary',
+					report: report
+				},
+				xhrFields: {
+					responseType: 'blob'
+				},
 
-		        success: function (data, status, xhr) {
+				success: function (data, status, xhr) {
 
-		            $('#loader').modal('hide');
+					$('#loader').hide();
 
-		            // ✅ HANDLE 204 NO CONTENT
-		            if (xhr.status === 204 || !data || data.size === 0) {
-		                showResultModal(
-		                    'Information',
-		                    'No data was available to create a download.'
-		                );
-		                return;
-		            }
+					// ✅ HANDLE 204 NO CONTENT
+					if (xhr.status === 204 || !data || data.size === 0) {
+						showResultModal(
+							'Information',
+							'No data was available to create a download.'
+						);
+						return;
+					}
 
-		            // ✅ FILE DOWNLOAD
-		            const blob = new Blob([data], {
-		                type: 'application/vnd.ms-excel'
-		            });
+					// ✅ FILE DOWNLOAD
+					const blob = new Blob([data], {
+						type: 'application/vnd.ms-excel'
+					});
 
-		            const url = window.URL.createObjectURL(blob);
-		            const a = document.createElement('a');
-		            a.style.display = 'none';
-		            a.href = url;
-		            a.download = filename + '.xls';
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.style.display = 'none';
+					a.href = url;
+					a.download = filename + '.xls';
 
-		            document.body.appendChild(a);
-		            a.click();
+					document.body.appendChild(a);
+					a.click();
 
-		            window.URL.revokeObjectURL(url);
-		            document.body.removeChild(a);
+					window.URL.revokeObjectURL(url);
+					document.body.removeChild(a);
 
-		            showResultModal(
-		                'BANK OF BARODA',
-		                filename + ' downloaded successfully.'
-		            );
-		        },
+					showResultModal(
+						'BANK OF BARODA',
+						filename + ' downloaded successfully.'
+					);
+				},
 
-		        error: function (xhr, textStatus, errorThrown) {
+				error: function (xhr, textStatus, errorThrown) {
 
-		            $('#loader').modal('hide');
+					$('#loader').hide();
 
-		            console.error('Download failed:', textStatus, errorThrown);
+					console.error('Download failed:', textStatus, errorThrown);
 
-		            if (xhr.status === 204) {
-		                showResultModal(
-		                    'Information',
-		                    'No data was available to create a download.'
-		                );
-		            } else {
-		                showResultModal(
-		                    'Error',
-		                    'An error occurred while downloading the file. Please try again.'
-		                );
-		            }
-		        }
-		    });
+					if (xhr.status === 204) {
+						showResultModal(
+							'Information',
+							'No data was available to create a download.'
+						);
+					} else {
+						showResultModal(
+							'Error',
+							'An error occurred while downloading the file. Please try again.'
+						);
+					}
+				}
+			});
 		}
 
 		function startReport(filename, reportdate, currency, version) {
 
-		    fetch(
-		        'startreport?filename=' + encodeURIComponent(filename) +
-		        '&reportdate=' + encodeURIComponent(reportdate) +
-		        '&currency=' + encodeURIComponent(currency) +
-		        '&version=' + encodeURIComponent(version)
-		    )
-		    .then(response => response.text())
-		    .then(jobId => {
+			fetch(
+				'startreport?filename=' + encodeURIComponent(filename) +
+				'&reportdate=' + encodeURIComponent(reportdate) +
+				'&currency=' + encodeURIComponent(currency) +
+				'&version=' + encodeURIComponent(version)
+			)
+				.then(response => response.text())
+				.then(jobId => {
 
-		        // OPTIONAL status update (safe)
-		        const statusEl = document.getElementById("jobStatus");
-		        if (statusEl) {
-		            statusEl.innerHTML = "Report ready. Downloading...";
-		        }
+					// OPTIONAL status update (safe)
+					const statusEl = document.getElementById("jobStatus");
+					if (statusEl) {
+						statusEl.innerHTML = "Report ready. Downloading...";
+					}
 
-		        // ✅ TRIGGER FILE DOWNLOAD
-		        window.location.href =
-		            'downloaddetailExcel?jobId=' + jobId +
-		            '&filename=' + encodeURIComponent(filename);
-		    })
-		    .catch(err => {
-		        console.error("Error starting report", err);
-		        alert("Failed to generate report");
-		    });
+					// ✅ TRIGGER FILE DOWNLOAD
+					window.location.href =
+						'downloaddetailExcel?jobId=' + jobId +
+						'&filename=' + encodeURIComponent(filename);
+				})
+				.catch(err => {
+					console.error("Error starting report", err);
+					alert("Failed to generate report");
+				});
 		}
-		
+
 
 
 		function checkReport(jobId) {
@@ -967,30 +989,30 @@
 		}
 
 		function goBack() {
-								
-									    window.history.back();
-									}
 
-									function hideLoader() {
-									    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-									}
+			window.history.back();
+		}
 
-									window.addEventListener("pageshow", function () {
-									    hideLoader();
-									});
-		function downloadDetailfile(jobId,filename) {
-			
+		function hideLoader() {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+		}
+
+		window.addEventListener("pageshow", function () {
+			hideLoader();
+		});
+		function downloadDetailfile(jobId, filename) {
+
 			//$('#loader').modal('show');
-			
+
 			$.ajax({
-				url: './downloaddetailExcel?jobId='+ jobId +
+				url: './downloaddetailExcel?jobId=' + jobId +
 					'&filename=' + filename,
 				type: 'GET',
 				xhrFields: {
 					responseType: 'blob'
 				},
 				success: function (data) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 
 					if (data && data.size > 100) {
 						const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
@@ -1010,64 +1032,64 @@
 					}
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
-					$('#loader').modal('hide');
+					$('#loader').hide();
 					console.error("Download failed:", textStatus, errorThrown);
 					showResultModal('Error', 'An error occurred while downloading the file. Please try again.');
 				}
 			});
 		}
 
-		function getdetails(){
+		function getdetails() {
 			var reportdate = document.getElementById("reportDate").innerText;
-			var currency= document.getElementById("currencyin").value;
-			location.href = 'IRSREPORT?reportdate='+reportdate+'&formmode=Detail&currency='+currency
-			
+			var currency = document.getElementById("currencyin").value;
+			location.href = 'IRSREPORT?reportdate=' + reportdate + '&formmode=Detail&currency=' + currency
+
 		}
 
 	</script>
 	<script>
 		function downloadDetailExcel() {
-		    var reportdate = document.getElementById("reportDate").innerText.trim();
-		    var currency = document.getElementById("currencyin").value;
-		    var filename = "IRS_DETAIL_REPORT_" + reportdate;
+			var reportdate = document.getElementById("reportDate").innerText.trim();
+			var currency = document.getElementById("currencyin").value;
+			var filename = "IRS_DETAIL_REPORT_" + reportdate;
 
-		    $('#loader').modal('show');
+			$('#loader').css('display', 'flex');
 
-		    // Step 1: Start report generation
-		    $.ajax({
-		        url: 'startIRSDetailReport',
-		        type: 'GET',
-		        data: {
-		            filename: filename,
-		            reportdate: reportdate,
-		            currency: currency
-		        },
-		        success: function (jobId) {
-		            checkIRSDetailReport(jobId, filename);
-		        },
-		        error: function () {
-		            $('#loader').modal('hide');
-		            alert("Failed to start report generation");
-		        }
-		    });
+			// Step 1: Start report generation
+			$.ajax({
+				url: 'startIRSDetailReport',
+				type: 'GET',
+				data: {
+					filename: filename,
+					reportdate: reportdate,
+					currency: currency
+				},
+				success: function (jobId) {
+					checkIRSDetailReport(jobId, filename);
+				},
+				error: function () {
+					$('#loader').hide();
+					alert("Failed to start report generation");
+				}
+			});
 		}
 
 		function checkIRSDetailReport(jobId, filename) {
-		    var interval = setInterval(function () {
-		        $.ajax({
-		            url: 'checkirsreport',
-		            type: 'GET',
-		            data: { jobId: jobId },
-		            success: function (status) {
-		                if (status === 'READY') {
-		                    clearInterval(interval);
-		                    $('#loader').modal('hide');
-		                    // Step 2: Call download with type=IRS
-		                    window.location.href = 'downloaddetailExcel?jobId=' + jobId + '&filename=' + filename + '&type=IRS';
-		                }
-		            }
-		        });
-		    }, 3000);
+			var interval = setInterval(function () {
+				$.ajax({
+					url: 'checkirsreport',
+					type: 'GET',
+					data: {jobId: jobId},
+					success: function (status) {
+						if (status === 'READY') {
+							clearInterval(interval);
+							$('#loader').hide();
+							// Step 2: Call download with type=IRS
+							window.location.href = 'downloaddetailExcel?jobId=' + jobId + '&filename=' + filename + '&type=IRS';
+						}
+					}
+				});
+			}, 3000);
 		}
 	</script>
 
@@ -1097,8 +1119,249 @@
     });
   });
 </script> -->
+	<style>
+		.loader-overlay {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(10, 22, 45, 0.65);
+			backdrop-filter: blur(4px);
+			z-index: 2050;
+			align-items: center;
+			justify-content: center;
+		}
 
+		.loader-card {
+			width: 320px;
+			background: #ffffff;
+			border-radius: 16px;
+			padding: 22px 20px 18px;
+			text-align: center;
+			box-shadow: 0 14px 34px rgba(8, 20, 40, 0.22);
+			border: 1px solid rgba(148, 163, 184, 0.35);
+		}
 
+		.loader-logo-wrap {
+			position: relative;
+			width: 84px;
+			height: 84px;
+			margin: 0 auto 14px;
+			display: grid;
+			place-items: center;
+		}
+
+		.loader-logo {
+			width: 56px;
+			height: 56px;
+			object-fit: contain;
+			filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18));
+			animation: loaderPulse 1.6s ease-in-out infinite;
+		}
+
+		.loader-ring {
+			position: absolute;
+			inset: 0;
+			border-radius: 50%;
+			border: 4px solid #e2e8f0;
+			border-top-color: #f97316;
+			animation: loaderSpin 1s linear infinite;
+		}
+
+		.loader-title {
+			font-size: 1.02rem;
+			font-weight: 600;
+			color: #0f172a;
+			margin-bottom: 10px;
+			letter-spacing: 0.2px;
+		}
+
+		.loader-progress {
+			width: 100%;
+			height: 8px;
+			background: #e2e8f0;
+			border-radius: 999px;
+			overflow: hidden;
+		}
+
+		.loader-progress-bar {
+			height: 100%;
+			width: 38%;
+			background: linear-gradient(90deg, #f97316, #fb923c);
+			border-radius: 999px;
+			animation: loaderProgress 1.6s ease-in-out infinite;
+		}
+
+		@keyframes loaderSpin {
+			from {
+				transform: rotate(0deg);
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@keyframes loaderPulse {
+
+			0%,
+			100% {
+				transform: scale(1);
+				opacity: 1;
+			}
+
+			50% {
+				transform: scale(0.96);
+				opacity: 0.92;
+			}
+		}
+
+		@keyframes loaderProgress {
+			0% {
+				transform: translateX(-120%);
+			}
+
+			50% {
+				transform: translateX(90%);
+			}
+
+			100% {
+				transform: translateX(240%);
+			}
+		}
+	</style>
+
+	<style>
+		.loader-overlay {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(10, 22, 45, 0.65);
+			backdrop-filter: blur(4px);
+			z-index: 2050;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.loader-card {
+			width: 320px;
+			background: #ffffff;
+			border-radius: 16px;
+			padding: 22px 20px 18px;
+			text-align: center;
+			box-shadow: 0 14px 34px rgba(8, 20, 40, 0.22);
+			border: 1px solid rgba(148, 163, 184, 0.35);
+		}
+
+		.loader-logo-wrap {
+			position: relative;
+			width: 84px;
+			height: 84px;
+			margin: 0 auto 14px;
+			display: grid;
+			place-items: center;
+		}
+
+		.loader-logo {
+			width: 56px;
+			height: 56px;
+			object-fit: contain;
+			filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18));
+			animation: loaderPulse 1.6s ease-in-out infinite;
+		}
+
+		.loader-ring {
+			position: absolute;
+			inset: 0;
+			border-radius: 50%;
+			border: 4px solid #e2e8f0;
+			border-top-color: #f97316;
+			animation: loaderSpin 1s linear infinite;
+		}
+
+		.loader-title {
+			font-size: 1.02rem;
+			font-weight: 600;
+			color: #0f172a;
+			margin-bottom: 10px;
+			letter-spacing: 0.2px;
+		}
+
+		.loader-progress {
+			width: 100%;
+			height: 8px;
+			background: #e2e8f0;
+			border-radius: 999px;
+			overflow: hidden;
+		}
+
+		.loader-progress-bar {
+			height: 100%;
+			width: 38%;
+			background: linear-gradient(90deg, #f97316, #fb923c);
+			border-radius: 999px;
+			animation: loaderProgress 1.6s ease-in-out infinite;
+		}
+
+		@keyframes loaderSpin {
+			from {
+				transform: rotate(0deg);
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@keyframes loaderPulse {
+
+			0%,
+			100% {
+				transform: scale(1);
+				opacity: 1;
+			}
+
+			50% {
+				transform: scale(0.96);
+				opacity: 0.92;
+			}
+		}
+
+		@keyframes loaderProgress {
+			0% {
+				transform: translateX(-120%);
+			}
+
+			50% {
+				transform: translateX(90%);
+			}
+
+			100% {
+				transform: translateX(240%);
+			}
+		}
+
+		#pageHeader.role-page-header {
+			background: var(--bank-header-gradient) !important;
+			color: var(--bank-text-on-dark) !important;
+			box-shadow: var(--bank-shadow-header);
+		}
+
+		#usertable thead th,
+		#reports thead th {
+			background: var(--table-header) !important;
+			color: var(--bank-text-on-dark) !important;
+		}
+
+		#pageHeader.role-page-header {
+			border-bottom: 0;
+		}
+
+		#pageHeader.role-page-header h4,
+		#pageHeader.role-page-header span,
+		#pageHeader.role-page-header .black-text {
+			color: #fff !important;
+		}
+	</style>
 </head>
 
 <body>
@@ -1117,77 +1380,47 @@
 				<div class="text-left flex-grow-1">
 					<div class="d-flex align-items-center">
 
-													<button class="static-back-btn" onclick="goBack()" title="Go Back">
-														<i class="fa fa-arrow-left"></i>
-													</button>	
-					<h4 style="padding-right:12px;">Statement Of Interest Rate Sensitivity (USD)</h4>
+						<button class="static-back-btn" onclick="goBack()" title="Go Back">
+							<i class="fa fa-arrow-left"></i>
+						</button>
+						<h4 style="padding-right:12px;">Statement Of Interest Rate Sensitivity (USD)</h4>
 
-				</div>
+					</div>
 				</div>
 
-				<div class="custom-tab-btn-group nav-buttons"
-					style="display: flex; color: rgb(0, 0, 0); align-items: center;">
-					<span class="black-text" style="font-size: 16px;color: rgb(0, 0, 0); margin-right: 20px;">
+				<div class="custom-tab-btn-group nav-buttons">
+					<span class="black-text" style="font-size: 14px; font-weight: 600; margin-right: 6px; white-space: nowrap;">
 						Report Date:
 						<span id="reportDate" th:text="${reportdate}">2025-07-04</span>
 						<input type="hidden" id="currencyin" th:value="${currency}">
 					</span>
 
-					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()"
-						style="margin-right: 10px; padding: 5px 10px; font-weight: 600; border-radius: 5px;">
+					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()">
 						<option th:each="clist : ${currencylist}" th:value="${clist.report_currency}"
 							th:selected="${clist.report_currency == currency}" th:text="${clist.report_currency}">
 						</option>
 					</select>
 
-					<button type="button" class="role-btn" th:if="${formmode == 'summary'}"
-						style="margin-right: 10px; padding: 5px 10px;" onclick="getdetails();">Details</button>
-					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
-						style="margin-right: 10px; padding: 5px 10px;"  onclick="getreport();">Summary</button>
-
-					<!--<button  class="role-btn" type="button"
-						th:if="${formmode == 'summary'}"
-						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=IRS.xls"
-						 onclick="downloadfile(this);">
-						<i class="fa fa-download"></i>
-					</button>-->
-					<button type="button"
-					        th:if="${formmode == 'summary'}"
-					        th:attr="
-					            data-reportdate=${reportdate},
-					            data-currency=${currency},
-					            data-filename='IRS.xls',
-					            data-report='IRS'
-					        "
-					        class="role-btn"
-					        onclick="downloadfile(this);">
-					    <i class="fa fa-download"></i>
+					<button type="button" class="role-btn" th:if="${formmode == 'summary'}" onclick="getdetails();" title="Details">
+						<i class="fa fa-table"></i> Details
+					</button>
+					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}" onclick="getreport();" title="Summary">
+						<i class="fa fa-list-alt"></i> Summary
 					</button>
 
-					<!--<button type="button" th:if="${formmode == 'Detail'}" style="margin-right: 20px; padding: 5px 10px;"
-						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=IRsDetail.xls"
-						 class="role-btn" onclick="startReport(this);">
-						<i class="fa fa-download"></i>
-					</button>-->
+					<button type="button" th:if="${formmode == 'summary'}"
+						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename='IRS.xls', data-report='IRS'"
+						class="role-btn" onclick="downloadfile(this);" title="Download">
+						<i class="fa fa-download"></i> Download
+					</button>
+
 					<input type="hidden" id="report_date" th:value="${report_date}">
 					<input type="hidden" id="currency" th:value="${currency}">
 
-					<button type="button" th:if="${formmode == 'Detail'}"
-					        class="role-btn"
-					        onclick="downloadDetailExcel()">
-					    	<i class="fa fa-download"></i>
+					<button type="button" th:if="${formmode == 'Detail'}" class="role-btn"
+						onclick="downloadDetailExcel()" title="Download">
+						<i class="fa fa-download"></i> Download
 					</button>
-
-				<!--	<button type="button" th:if="${formmode == 'Detail'}" 
-					        onclick="startReport(
-					            'IRS_DETAIL',
-					            document.getElementById('reportDate').value,
-					            document.getElementById('currency').value,
-					            ''
-					        )">
-					  <i class="fa fa-download"></i>
-					</button>-->
-
 				</div>
 			</div>
 			<!-- End Card Header -->
@@ -1196,7 +1429,7 @@
 			<div class="card-body" th:if="${formmode == 'summary'}" style=" min-height:0; padding:0;">
 
 				<div class="scrollable-table-container" id="tabHeader">
-					<table class="table table-bordered table-hover table-sm" id="usertable">
+					<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 
 						<thead class="thead-light">
 							<!-- Main Title -->
@@ -1243,7 +1476,7 @@
 								<th class="text-end">14</th>
 								<th class="text-end">15</th>
 							</tr>
-						 </thead>
+						</thead>
 
 						<tbody>
 							<!-- Capital – Equity Shares -->
@@ -1337,10 +1570,10 @@
 								<td class="amt-right"
 									th:text="${row.r8_non_sensitive != null ? #numbers.formatDecimal(row.r8_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r8_total_rsl != null ? #numbers.formatDecimal(row.r8_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r8_total != null ? #numbers.formatDecimal(row.r8_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1384,10 +1617,10 @@
 								<td class="amt-right"
 									th:text="${row.r9_non_sensitive != null ? #numbers.formatDecimal(row.r9_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r9_total_rsl != null ? #numbers.formatDecimal(row.r9_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r9_total != null ? #numbers.formatDecimal(row.r9_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1430,10 +1663,10 @@
 								<td class="amt-right"
 									th:text="${row.r10_non_sensitive != null ? #numbers.formatDecimal(row.r10_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r10_total_rsl != null ? #numbers.formatDecimal(row.r10_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r10_total != null ? #numbers.formatDecimal(row.r10_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1474,10 +1707,10 @@
 								<td class="amt-right"
 									th:text="${row.r11_non_sensitive != null ? #numbers.formatDecimal(row.r11_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r11_total_rsl != null ? #numbers.formatDecimal(row.r11_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r11_total != null ? #numbers.formatDecimal(row.r11_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1564,10 +1797,10 @@
 								<td class="amt-right"
 									th:text="${row.r13_non_sensitive != null ? #numbers.formatDecimal(row.r13_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r13_total_rsl != null ? #numbers.formatDecimal(row.r13_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r13_total != null ? #numbers.formatDecimal(row.r13_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1609,10 +1842,10 @@
 								<td class="amt-right"
 									th:text="${row.r14_non_sensitive != null ? #numbers.formatDecimal(row.r14_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r14_total_rsl != null ? #numbers.formatDecimal(row.r14_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r14_total != null ? #numbers.formatDecimal(row.r14_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1654,10 +1887,10 @@
 								<td class="amt-right"
 									th:text="${row.r15_non_sensitive != null ? #numbers.formatDecimal(row.r15_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r15_total_rsl != null ? #numbers.formatDecimal(row.r15_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r15_total != null ? #numbers.formatDecimal(row.r15_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1699,10 +1932,10 @@
 								<td class="amt-right"
 									th:text="${row.r16_non_sensitive != null ? #numbers.formatDecimal(row.r16_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r16_total_rsl != null ? #numbers.formatDecimal(row.r16_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r16_total != null ? #numbers.formatDecimal(row.r16_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1744,10 +1977,10 @@
 								<td class="amt-right"
 									th:text="${row.r17_non_sensitive != null ? #numbers.formatDecimal(row.r17_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r17_total_rsl != null ? #numbers.formatDecimal(row.r17_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r17_total != null ? #numbers.formatDecimal(row.r17_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1789,10 +2022,10 @@
 								<td class="amt-right"
 									th:text="${row.r18_non_sensitive != null ? #numbers.formatDecimal(row.r18_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r18_total_rsl != null ? #numbers.formatDecimal(row.r18_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r18_total != null ? #numbers.formatDecimal(row.r18_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1834,10 +2067,10 @@
 								<td class="amt-right"
 									th:text="${row.r19_non_sensitive != null ? #numbers.formatDecimal(row.r19_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r19_total_rsl != null ? #numbers.formatDecimal(row.r19_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r19_total != null ? #numbers.formatDecimal(row.r19_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1880,10 +2113,10 @@
 								<td class="amt-right"
 									th:text="${row.r20_non_sensitive != null ? #numbers.formatDecimal(row.r20_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r20_total_rsl != null ? #numbers.formatDecimal(row.r20_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r20_total != null ? #numbers.formatDecimal(row.r20_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1925,10 +2158,10 @@
 								<td class="amt-right"
 									th:text="${row.r21_non_sensitive != null ? #numbers.formatDecimal(row.r21_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r21_total_rsl != null ? #numbers.formatDecimal(row.r21_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r21_total != null ? #numbers.formatDecimal(row.r21_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -1970,10 +2203,10 @@
 								<td class="amt-right"
 									th:text="${row.r22_non_sensitive != null ? #numbers.formatDecimal(row.r22_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r22_total_rsl != null ? #numbers.formatDecimal(row.r22_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r22_total != null ? #numbers.formatDecimal(row.r22_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2015,10 +2248,10 @@
 								<td class="amt-right"
 									th:text="${row.r23_non_sensitive != null ? #numbers.formatDecimal(row.r23_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r23_total_rsl != null ? #numbers.formatDecimal(row.r23_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r23_total != null ? #numbers.formatDecimal(row.r23_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2104,10 +2337,10 @@
 								<td class="amt-right"
 									th:text="${row.r25_non_sensitive != null ? #numbers.formatDecimal(row.r25_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r25_total_rsl != null ? #numbers.formatDecimal(row.r25_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r25_total != null ? #numbers.formatDecimal(row.r25_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2149,10 +2382,10 @@
 								<td class="amt-right"
 									th:text="${row.r26_non_sensitive != null ? #numbers.formatDecimal(row.r26_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r26_total_rsl != null ? #numbers.formatDecimal(row.r26_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r26_total != null ? #numbers.formatDecimal(row.r26_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2194,10 +2427,10 @@
 								<td class="amt-right"
 									th:text="${row.r27_non_sensitive != null ? #numbers.formatDecimal(row.r27_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r27_total_rsl != null ? #numbers.formatDecimal(row.r27_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r27_total != null ? #numbers.formatDecimal(row.r27_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2239,10 +2472,10 @@
 								<td class="amt-right"
 									th:text="${row.r28_non_sensitive != null ? #numbers.formatDecimal(row.r28_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r28_total_rsl != null ? #numbers.formatDecimal(row.r28_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r28_total != null ? #numbers.formatDecimal(row.r28_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2329,10 +2562,10 @@
 								<td class="amt-right"
 									th:text="${row.r30_non_sensitive != null ? #numbers.formatDecimal(row.r30_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r30_total_rsl != null ? #numbers.formatDecimal(row.r30_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r30_total != null ? #numbers.formatDecimal(row.r30_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2373,10 +2606,10 @@
 								<td class="amt-right"
 									th:text="${row.r31_non_sensitive != null ? #numbers.formatDecimal(row.r31_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r31_total_rsl != null ? #numbers.formatDecimal(row.r31_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r31_total != null ? #numbers.formatDecimal(row.r31_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2418,10 +2651,10 @@
 								<td class="amt-right"
 									th:text="${row.r32_non_sensitive != null ? #numbers.formatDecimal(row.r32_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r32_total_rsl != null ? #numbers.formatDecimal(row.r32_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r32_total != null ? #numbers.formatDecimal(row.r32_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2463,10 +2696,10 @@
 								<td class="amt-right"
 									th:text="${row.r33_non_sensitive != null ? #numbers.formatDecimal(row.r33_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r33_total_rsl != null ? #numbers.formatDecimal(row.r33_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r33_total != null ? #numbers.formatDecimal(row.r33_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2507,10 +2740,10 @@
 								<td class="amt-right"
 									th:text="${row.r34_non_sensitive != null ? #numbers.formatDecimal(row.r34_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r34_total_rsl != null ? #numbers.formatDecimal(row.r34_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r34_total != null ? #numbers.formatDecimal(row.r34_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2552,10 +2785,10 @@
 								<td class="amt-right"
 									th:text="${row.r35_non_sensitive != null ? #numbers.formatDecimal(row.r35_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r35_total_rsl != null ? #numbers.formatDecimal(row.r35_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r35_total != null ? #numbers.formatDecimal(row.r35_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2597,10 +2830,10 @@
 								<td class="amt-right"
 									th:text="${row.r36_non_sensitive != null ? #numbers.formatDecimal(row.r36_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r36_total_rsl != null ? #numbers.formatDecimal(row.r36_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r36_total != null ? #numbers.formatDecimal(row.r36_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2609,43 +2842,43 @@
 							<tr th:each="row, stat : ${irslist}">
 								<td>11</td>
 								<td th:text="${row.r37_product}">R37 Product</td>
-								<td class="amt-right"  style="background-color:#c2ffff" 
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_day1_28 != null ? #numbers.formatDecimal(row.r37_day1_28,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_day29_3m != null ? #numbers.formatDecimal(row.r37_day29_3m,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over3m_to_6m != null ? #numbers.formatDecimal(row.r37_over3m_to_6m,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over6m_to_1y != null ? #numbers.formatDecimal(row.r37_over6m_to_1y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over1y_to_3y != null ? #numbers.formatDecimal(row.r37_over1y_to_3y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over3y_to_5y != null ? #numbers.formatDecimal(row.r37_over3y_to_5y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over5y_to_7y != null ? #numbers.formatDecimal(row.r37_over5y_to_7y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over7y_to_10y != null ? #numbers.formatDecimal(row.r37_over7y_to_10y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over10y_to_15y != null ? #numbers.formatDecimal(row.r37_over10y_to_15y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_over15y != null ? #numbers.formatDecimal(row.r37_over15y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r37_non_sensitive != null ? #numbers.formatDecimal(row.r37_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right" style="background-color:#f7a47c"
+								<td class="amt-right" style="background-color:#f7a47c"
 									th:text="${row.r37_total_rsl != null ? #numbers.formatDecimal(row.r37_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right" style="background-color:#f7a47c"
+								<td class="amt-right" style="background-color:#f7a47c"
 									th:text="${row.r37_total != null ? #numbers.formatDecimal(row.r37_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2777,10 +3010,10 @@
 								<td class="amt-right"
 									th:text="${row.r40_non_sensitive != null ? #numbers.formatDecimal(row.r40_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r40_total_rsl != null ? #numbers.formatDecimal(row.r40_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r40_total != null ? #numbers.formatDecimal(row.r40_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -2923,37 +3156,37 @@
 							<tr th:each="row, stat : ${irslist}">
 								<td>(v)</td>
 								<td th:text="${row.r44_product}">R44 Product</td>
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_day1_28 != null ? #numbers.formatDecimal(row.r44_day1_28,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_day29_3m != null ? #numbers.formatDecimal(row.r44_day29_3m,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over3m_to_6m != null ? #numbers.formatDecimal(row.r44_over3m_to_6m,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over6m_to_1y != null ? #numbers.formatDecimal(row.r44_over6m_to_1y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over1y_to_3y != null ? #numbers.formatDecimal(row.r44_over1y_to_3y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over3y_to_5y != null ? #numbers.formatDecimal(row.r44_over3y_to_5y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over5y_to_7y != null ? #numbers.formatDecimal(row.r44_over5y_to_7y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over7y_to_10y != null ? #numbers.formatDecimal(row.r44_over7y_to_10y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over10y_to_15y != null ? #numbers.formatDecimal(row.r44_over10y_to_15y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_over15y != null ? #numbers.formatDecimal(row.r44_over15y,1,2) : '0.00'}">
 								</td>
-								<td class="amt-right"   style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r44_non_sensitive != null ? #numbers.formatDecimal(row.r44_non_sensitive,1,2) : '0.00'}">
 								</td>
 								<td class="amt-right" style="background-color:#f7a47c"
@@ -3012,7 +3245,7 @@
 						</tbody>
 					</table>
 
-					<table class="table table-bordered table-hover table-sm" id="usertable">
+					<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 
 						<thead class="thead-light">
 							<!-- Main Title -->
@@ -3686,10 +3919,10 @@
 								<td class="amt-right"
 									th:text="${row.r64_non_sensitive != null ? #numbers.formatDecimal(row.r64_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r64_total_rsl != null ? #numbers.formatDecimal(row.r64_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r64_total != null ? #numbers.formatDecimal(row.r64_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3730,10 +3963,10 @@
 								<td class="amt-right"
 									th:text="${row.r65_non_sensitive != null ? #numbers.formatDecimal(row.r65_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r65_total_rsl != null ? #numbers.formatDecimal(row.r65_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r65_total != null ? #numbers.formatDecimal(row.r65_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3774,10 +4007,10 @@
 								<td class="amt-right"
 									th:text="${row.r66_non_sensitive != null ? #numbers.formatDecimal(row.r66_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r66_total_rsl != null ? #numbers.formatDecimal(row.r66_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r66_total != null ? #numbers.formatDecimal(row.r66_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3818,10 +4051,10 @@
 								<td class="amt-right"
 									th:text="${row.r67_non_sensitive != null ? #numbers.formatDecimal(row.r67_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r67_total_rsl != null ? #numbers.formatDecimal(row.r67_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r67_total != null ? #numbers.formatDecimal(row.r67_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3862,10 +4095,10 @@
 								<td class="amt-right"
 									th:text="${row.r68_non_sensitive != null ? #numbers.formatDecimal(row.r68_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r68_total_rsl != null ? #numbers.formatDecimal(row.r68_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r68_total != null ? #numbers.formatDecimal(row.r68_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3906,10 +4139,10 @@
 								<td class="amt-right"
 									th:text="${row.r69_non_sensitive != null ? #numbers.formatDecimal(row.r69_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r69_total_rsl != null ? #numbers.formatDecimal(row.r69_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r69_total != null ? #numbers.formatDecimal(row.r69_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3950,10 +4183,10 @@
 								<td class="amt-right"
 									th:text="${row.r70_non_sensitive != null ? #numbers.formatDecimal(row.r70_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r70_total_rsl != null ? #numbers.formatDecimal(row.r70_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r70_total != null ? #numbers.formatDecimal(row.r70_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -3994,10 +4227,10 @@
 								<td class="amt-right"
 									th:text="${row.r71_non_sensitive != null ? #numbers.formatDecimal(row.r71_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r71_total_rsl != null ? #numbers.formatDecimal(row.r71_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r71_total != null ? #numbers.formatDecimal(row.r71_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4038,10 +4271,10 @@
 								<td class="amt-right"
 									th:text="${row.r72_non_sensitive != null ? #numbers.formatDecimal(row.r72_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r72_total_rsl != null ? #numbers.formatDecimal(row.r72_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r72_total != null ? #numbers.formatDecimal(row.r72_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4082,10 +4315,10 @@
 								<td class="amt-right"
 									th:text="${row.r73_non_sensitive != null ? #numbers.formatDecimal(row.r73_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r73_total_rsl != null ? #numbers.formatDecimal(row.r73_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r73_total != null ? #numbers.formatDecimal(row.r73_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4127,10 +4360,10 @@
 								<td class="amt-right"
 									th:text="${row.r74_non_sensitive != null ? #numbers.formatDecimal(row.r74_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r74_total_rsl != null ? #numbers.formatDecimal(row.r74_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r74_total != null ? #numbers.formatDecimal(row.r74_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4172,10 +4405,10 @@
 								<td class="amt-right"
 									th:text="${row.r75_non_sensitive != null ? #numbers.formatDecimal(row.r75_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r75_total_rsl != null ? #numbers.formatDecimal(row.r75_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r75_total != null ? #numbers.formatDecimal(row.r75_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4216,10 +4449,10 @@
 								<td class="amt-right"
 									th:text="${row.r76_non_sensitive != null ? #numbers.formatDecimal(row.r76_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r76_total_rsl != null ? #numbers.formatDecimal(row.r76_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r76_total != null ? #numbers.formatDecimal(row.r76_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4348,10 +4581,10 @@
 								<td class="amt-right"
 									th:text="${row.r79_non_sensitive != null ? #numbers.formatDecimal(row.r79_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r79_total_rsl != null ? #numbers.formatDecimal(row.r79_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r79_total != null ? #numbers.formatDecimal(row.r79_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4392,10 +4625,10 @@
 								<td class="amt-right"
 									th:text="${row.r80_non_sensitive != null ? #numbers.formatDecimal(row.r80_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r80_total_rsl != null ? #numbers.formatDecimal(row.r80_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r80_total != null ? #numbers.formatDecimal(row.r80_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4436,10 +4669,10 @@
 								<td class="amt-right"
 									th:text="${row.r81_non_sensitive != null ? #numbers.formatDecimal(row.r81_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r81_total_rsl != null ? #numbers.formatDecimal(row.r81_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r81_total != null ? #numbers.formatDecimal(row.r81_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4480,10 +4713,10 @@
 								<td class="amt-right"
 									th:text="${row.r82_non_sensitive != null ? #numbers.formatDecimal(row.r82_non_sensitive,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r82_total_rsl != null ? #numbers.formatDecimal(row.r82_total_rsl,1,2) : '0.00'}">
 								</td>
-								<td  class="amt-right calc-col"
+								<td class="amt-right calc-col"
 									th:text="${row.r82_total != null ? #numbers.formatDecimal(row.r82_total,1,2) : '0.00'}">
 								</td>
 							</tr>
@@ -4491,7 +4724,7 @@
 								<td>(v)</td>
 								<td th:text="${row.r83_product}">R83 Product</td>
 
-								<td class="amt-right"  style="background-color:#c2ffff"
+								<td class="amt-right" style="background-color:#c2ffff"
 									th:text="${row.r83_day1_28 != null ? #numbers.formatDecimal(row.r83_day1_28,1,2) : '0.00'}">
 								</td>
 								<td class="amt-right" style="background-color:#c2ffff"
@@ -4708,90 +4941,116 @@
 								</td>
 							</tr>
 							<tr th:each="row, stat : ${irsList2}" class="orange-row">
-							    <td></td>
-							    <td th:text="${row.r88_product}">R88 Product</td>
+								<td></td>
+								<td th:text="${row.r88_product}">R88 Product</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_day1_28 != null ? #numbers.formatDecimal(row.r88_day1_28,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_day1_28 != null ? #numbers.formatDecimal(row.r88_day1_28,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_day29_3m != null ? #numbers.formatDecimal(row.r88_day29_3m,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_day29_3m != null ? #numbers.formatDecimal(row.r88_day29_3m,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over3m_to_6m != null ? #numbers.formatDecimal(row.r88_over3m_to_6m,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over3m_to_6m != null ? #numbers.formatDecimal(row.r88_over3m_to_6m,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over6m_to_1y != null ? #numbers.formatDecimal(row.r88_over6m_to_1y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over6m_to_1y != null ? #numbers.formatDecimal(row.r88_over6m_to_1y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over1y_to_3y != null ? #numbers.formatDecimal(row.r88_over1y_to_3y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over1y_to_3y != null ? #numbers.formatDecimal(row.r88_over1y_to_3y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over3y_to_5y != null ? #numbers.formatDecimal(row.r88_over3y_to_5y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over3y_to_5y != null ? #numbers.formatDecimal(row.r88_over3y_to_5y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over5y_to_7y != null ? #numbers.formatDecimal(row.r88_over5y_to_7y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over5y_to_7y != null ? #numbers.formatDecimal(row.r88_over5y_to_7y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over7y_to_10y != null ? #numbers.formatDecimal(row.r88_over7y_to_10y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over7y_to_10y != null ? #numbers.formatDecimal(row.r88_over7y_to_10y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over10y_to_15y != null ? #numbers.formatDecimal(row.r88_over10y_to_15y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over10y_to_15y != null ? #numbers.formatDecimal(row.r88_over10y_to_15y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_over15y != null ? #numbers.formatDecimal(row.r88_over15y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_over15y != null ? #numbers.formatDecimal(row.r88_over15y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_non_sensitive != null ? #numbers.formatDecimal(row.r88_non_sensitive,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_non_sensitive != null ? #numbers.formatDecimal(row.r88_non_sensitive,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_total_rsl != null ? #numbers.formatDecimal(row.r88_total_rsl,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_total_rsl != null ? #numbers.formatDecimal(row.r88_total_rsl,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r88_total != null ? #numbers.formatDecimal(row.r88_total,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r88_total != null ? #numbers.formatDecimal(row.r88_total,1,2) : '0.00'}">
+								</td>
 							</tr>
 							<tr th:each="row, stat : ${irsList2}" class="orange-row">
-							    <td></td>
-							    <td th:text="${row.r89_product}">R89 Product</td>
+								<td></td>
+								<td th:text="${row.r89_product}">R89 Product</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_day1_28 != null ? #numbers.formatDecimal(row.r89_day1_28,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_day1_28 != null ? #numbers.formatDecimal(row.r89_day1_28,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_day29_3m != null ? #numbers.formatDecimal(row.r89_day29_3m,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_day29_3m != null ? #numbers.formatDecimal(row.r89_day29_3m,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over3m_to_6m != null ? #numbers.formatDecimal(row.r89_over3m_to_6m,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over3m_to_6m != null ? #numbers.formatDecimal(row.r89_over3m_to_6m,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over6m_to_1y != null ? #numbers.formatDecimal(row.r89_over6m_to_1y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over6m_to_1y != null ? #numbers.formatDecimal(row.r89_over6m_to_1y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over1y_to_3y != null ? #numbers.formatDecimal(row.r89_over1y_to_3y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over1y_to_3y != null ? #numbers.formatDecimal(row.r89_over1y_to_3y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over3y_to_5y != null ? #numbers.formatDecimal(row.r89_over3y_to_5y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over3y_to_5y != null ? #numbers.formatDecimal(row.r89_over3y_to_5y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over5y_to_7y != null ? #numbers.formatDecimal(row.r89_over5y_to_7y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over5y_to_7y != null ? #numbers.formatDecimal(row.r89_over5y_to_7y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over7y_to_10y != null ? #numbers.formatDecimal(row.r89_over7y_to_10y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over7y_to_10y != null ? #numbers.formatDecimal(row.r89_over7y_to_10y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over10y_to_15y != null ? #numbers.formatDecimal(row.r89_over10y_to_15y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over10y_to_15y != null ? #numbers.formatDecimal(row.r89_over10y_to_15y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_over15y != null ? #numbers.formatDecimal(row.r89_over15y,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_over15y != null ? #numbers.formatDecimal(row.r89_over15y,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_non_sensitive != null ? #numbers.formatDecimal(row.r89_non_sensitive,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_non_sensitive != null ? #numbers.formatDecimal(row.r89_non_sensitive,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_total_rsl != null ? #numbers.formatDecimal(row.r89_total_rsl,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_total_rsl != null ? #numbers.formatDecimal(row.r89_total_rsl,1,2) : '0.00'}">
+								</td>
 
-							    <td class="amt-right"
-							        th:text="${row.r89_total != null ? #numbers.formatDecimal(row.r89_total,1,2) : '0.00'}"></td>
+								<td class="amt-right"
+									th:text="${row.r89_total != null ? #numbers.formatDecimal(row.r89_total,1,2) : '0.00'}">
+								</td>
 							</tr>
 
 						</tbody>
@@ -4802,123 +5061,142 @@
 
 
 			<div class="card-body" style=" min-height:0; padding:0;" th:if="${formmode=='Detail'}">
-							<div class="scrollable-table-container">
-								
-								
-								<div class="detail-table-wrapper">
+				<div class="scrollable-table-container">
 
-								    <!-- Search + pagination -->
-								    <div class="dt-toolbar d-flex justify-content-between align-items-center mb-2">
-								        <div id="dt-search"></div>
-								        <div id="dt-pagination"></div>
-								    </div>
-								<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed"
-									id="usertable">
-						<thead class="thead-light">
-							<tr>
-								<th class="text-left">CUST ID</th>
-								<th class="text-left">ACCT NO</th>
-								<th class="text-left">ACCT NAME</th>
-								<th class="text-right">ACCT BALANCE</th>
-								<th class="text-left">ROWID</th>
-								<th class="text-left">REPORT_DATE</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="detaillist : ${detailsList}">
+
+					<div class="detail-table-wrapper">
+
+						<!-- Search + pagination -->
+						<div class="dt-toolbar d-flex justify-content-between align-items-center mb-2">
+							<div id="dt-search"></div>
+							<div id="dt-pagination"></div>
+						</div>
+						<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed"
+							id="usertable">
+							<thead class="thead-light">
+								<tr>
+									<th class="text-left">CUST ID</th>
+									<th class="text-left">ACCT NO</th>
+									<th class="text-left">ACCT NAME</th>
+									<th class="text-right">ACCT BALANCE</th>
+									<th class="text-left">ROWID</th>
+									<th class="text-left">REPORT_DATE</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="detaillist : ${detailsList}">
 									<td class="text-left" th:text="${detaillist.custId}"></td>
 									<td class="text-left" th:text="${detaillist.foracid}"></td>
 									<td class="text-left" th:text="${detaillist.acctName}"></td>
 									<td class="text-right" th:text="${detaillist.acctBalanceLc}"></td>
 									<td class="text-left" th:text="${detaillist.reportLabel}"></td>
 									<td class="text-left"
-									    th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
-							</tr>
+										th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
+								</tr>
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
 
-	</div>
-	</div>
-	</div>
-	<div class="modal fade" id="loader" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content" style="background: transparent;">
-				<div class="modal-body" style="text-align: center">
-					<div>
-						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
-										border-color: transparent;" alt="Bornfire">
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+			<div id="loader" class="loader-overlay">
+				<div class="loader-card">
+					<div class="loader-logo-wrap">
+						<div class="loader-ring"></div>
+						<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Client Logo" />
+					</div>
+					<div class="loader-title">Request Processing</div>
+					<div class="loader-progress">
+						<div class="loader-progress-bar"></div>
+					</div>
+				</div>
+			</div>
 
-	<!-- Modal -->
-	<div class="modal fade" id="resultModal" tabindex="-1">
-	    <div class="modal-dialog modal-dialog-centered">
-	        <div class="modal-content">
+			<!-- Modal -->
+			<div class="modal fade" id="resultModal" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
 
-	            <div class="modal-header" style="background:#f7a47c;color:white;">
-	                <h5 class="modal-title" id="resultModalTitle">BANK OF BARODA</h5>
-	            </div>
+						<div class="modal-header" style="background:#f7a47c;color:white;">
+							<h5 class="modal-title" id="resultModalTitle">BANK OF BARODA</h5>
+						</div>
 
-	            <div class="modal-body text-center">
-	                <p id="resultModalMessage"></p>
-	            </div>
+						<div class="modal-body text-center">
+							<p id="resultModalMessage"></p>
+						</div>
 
-	            <div class="modal-footer justify-content-center">
-					<button type="button" class="role-btn" onclick="$('#resultModal').modal('hide')">
-										    Close
-										</button>
-	            </div>
+						<div class="modal-footer justify-content-center">
+							<button type="button" class="role-btn" onclick="$('#resultModal').modal('hide')">
+								Close
+							</button>
+						</div>
 
-	        </div>
-	    </div>
-	</div>
+					</div>
+				</div>
+			</div>
 
 
 </body>
 
 <script>
-function showResultModal(title, message) {
+	function showResultModal(title, message) {
 
-    document.getElementById("resultModalTitle").innerText = title;
-    document.getElementById("resultModalMessage").innerText = message;
+		document.getElementById("resultModalTitle").innerText = title;
+		document.getElementById("resultModalMessage").innerText = message;
 
-    $('#resultModal').modal('show');
-}
+		$('#resultModal').modal('show');
+	}
+</script>
+<script>
+	function highlightNegativeTableCells() {
+		document.querySelectorAll('#usertable tbody td').forEach(function (cell) {
+			var rawText = (cell.textContent || '').replace(/,/g, '').trim();
+			var numericText = rawText.replace(/\(/g, '').replace(/\)/g, '');
+			var value = Number(numericText);
+			var isNegative = rawText.indexOf('-') !== -1 || (rawText.indexOf('(') !== -1 && rawText.indexOf(')') !== -1);
+
+			if (!Number.isNaN(value) && isNegative && value !== 0) {
+				cell.classList.add('negative-warning-blink');
+			} else {
+				cell.classList.remove('negative-warning-blink');
+			}
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', highlightNegativeTableCells);
+	window.addEventListener('pageshow', highlightNegativeTableCells);
 </script>
 <style>
 	.text-left {
-	    text-align: left !important;
+		text-align: left !important;
 	}
 
 	.text-right {
-	    text-align: right !important;
+		text-align: right !important;
 	}
+
 	/* Keep search label + input in same row */
 	.dt-search .dataTables_filter {
-	    display: flex;
-	    align-items: center;
-	    gap: 8px;
-	    margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
 	}
 
 	/* Prevent label from breaking line */
 	.dt-search label {
-	    display: flex;
-	    align-items: center;
-	    margin: 0;
-	    white-space: nowrap;
+		display: flex;
+		align-items: center;
+		margin: 0;
+		white-space: nowrap;
 	}
 
 	/* Search input size */
 	.dt-search input {
-	    width: 220px;
-	    height: 32px;
+		width: 220px;
+		height: 32px;
 	}
-
 </style>
 
 </html>

@@ -16,6 +16,8 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<!-- JavaScript -->
@@ -179,7 +181,7 @@ body {
 		.formline { padding-bottom: 15px; }
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-primary, #2563EB);
 			border-color: #0c0c0c;
 		}
 		
@@ -309,27 +311,7 @@ body {
 	</style>
 
 	<style>
-		.role-btn {
-			background: #ffffff;
-			color: #E67E00;
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		.role-btn:hover {
-			background: #FFF3D1;
-			color: #E67E00;
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		.role-btn.active {
+.role-btn.active {
 			background: #E67E00;
 			color: #fff;
 			border-color: #E67E00;
@@ -390,7 +372,7 @@ body {
 	.dataTables_wrapper .dataTables_paginate .page-link {
 		outline: none !important;
 		box-shadow: none !important;
-		color: #ff7f27 !important;
+		color: var(--bank-primary, #004481) !important;
 	}
 
 	/* Previous / Next hover */
@@ -402,7 +384,7 @@ body {
 
 	/* Inactive page numbers — orange text, no hover effect */
 	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link {
-		color: #ff7f27 !important;
+		color: var(--bank-primary, #004481) !important;
 	}
 
 	.dataTables_wrapper .dataTables_paginate .page-item:not(.previous):not(.next):not(.active) .page-link:hover {
@@ -417,21 +399,21 @@ body {
 	.dataTables_wrapper .dataTables_paginate .pagination li.page-item.active a.page-link,
 	#dt-controls-bar .page-item.active .page-link,
 	#dt-controls-bar li.active a {
-		background-color: #ff7f27 !important;
-		border-color: #ff7f27 !important;
+		background-color: var(--bank-primary, #004481) !important;
+		border-color: var(--bank-primary, #004481) !important;
 		color: #ffffff !important;
 		cursor: default !important;
 	}
 
 	/* paginate_button class used by plain DataTables (non-Bootstrap) */
 	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		color: #ff7f27 !important;
+		color: var(--bank-primary, #004481) !important;
 	}
 
 	.dataTables_wrapper .dataTables_paginate .paginate_button.current,
 	.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-		background: #ff7f27 !important;
-		border-color: #ff7f27 !important;
+		background: var(--bank-primary, #004481) !important;
+		border-color: var(--bank-primary, #004481) !important;
 		color: #fff !important;
 	}
 </style>
@@ -444,7 +426,7 @@ body {
 	}
 
 	#usertable thead th {
-		background-color: #7b6458;
+		background-color: var(--bank-primary, #004481);
 		color: #fff;
 		font-family: Arial, sans-serif !important;
 		vertical-align: middle;
@@ -455,7 +437,7 @@ body {
 		position: sticky;
 		top: 0;
 		z-index: 10;
-		background-color: #7b6458 !important;
+		background-color: var(--bank-primary, #004481) !important;
 		color: white;
 		box-shadow: inset 0 -1px 0 #dee2e6;
 	}
@@ -562,7 +544,7 @@ body {
 	.static-back-btn {
 	    background-color: rgb(255, 255, 255);
 	    border: none;
-	    color: rgb(255, 128, 0);
+	    color: var(--bank-primary, #2563EB);
 	    font-size: 16px;
 	    border-radius: 50%;
 	    width: 36px;
@@ -576,7 +558,7 @@ body {
 	}
 
 	.static-back-btn:hover {
-	    background-color: rgb(255, 128, 0);
+	    background-color: var(--bank-primary, #2563EB);
 	    color: rgb(255, 255, 255);
 	    transform: scale(1.08);
 	}
@@ -1147,7 +1129,7 @@ body {
 
 				<!-- Only the table itself is inside the scrollable container -->
 				<div class="table-responsive-fixed">
-					<table id="usertable" class="table table-bordered table-striped table-hover" style="min-width: 2000px;">
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%" style="min-width: 2000px;">
 						<thead class="thead-light">
 							<tr>
 								<th style="text-align: center;width: 100px;">Action</th>
@@ -1201,7 +1183,7 @@ body {
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;">
 									<a th:href="@{'/Impact_Analysis?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-										<i class="fa fa-edit" style="color: #ff7f27;"></i>
+										<i class="fa fa-edit" style="color: var(--bank-accent, #d4a017);"></i>
 									</a>
 								</td>
 								<td th:text="${#dates.format(data.date, 'dd-MM-yyyy')}"></td>
@@ -1593,11 +1575,11 @@ $(document).ready(function () {
 	// Step 3: Force orange on active page button — overrides Bootstrap inline styles
 	function fixPaginationColors() {
 		$('#dt-controls-bar .page-item.active .page-link').css({
-			'background-color': '#ff7f27',
-			'border-color': '#ff7f27',
+			'background-color': '#004481',
+			'border-color': '#004481',
 			'color': '#ffffff'
 		});
-		$('#dt-controls-bar .page-link').not('.active').css('color', '#ff7f27');
+		$('#dt-controls-bar .page-link').not('.active').css('color', '#004481');
 	}
 
 	fixPaginationColors();
@@ -1649,7 +1631,7 @@ $(document).ready(function () {
 	position: sticky;
 	top: 0;
 	z-index: 10;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 	color: white;
 	box-shadow: inset 0 -1px 0 #dee2e6;
 }

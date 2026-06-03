@@ -19,6 +19,8 @@
 <link rel="stylesheet" type="text/css"
 	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 <link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 <!-- JavaScript -->
@@ -329,7 +331,7 @@ left
 }
 
 .btn-primary {
-	background-color: #E77400;
+	background-color: var(--bank-primary, #2563EB);
 	border-color: #0c0c0c;
 }
 
@@ -555,31 +557,6 @@ label.error {
 }
 </style>
 <style>
-.role-btn {
-	background: #ffffff;
-	/* default white */
-	color: #E67E00;
-	/* default orange text */
-	border: 1px solid #E67E00;
-	border-radius: 25px;
-	padding: 8px 18px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-	transition: all 0.3s ease;
-}
-
-/* Hover effect → pastel orange */
-.role-btn:hover {
-	background: #FFF3D1;
-	/* pastel orange (same as submenu hover) */
-	color: #E67E00;
-	/* orange text */
-	transform: translateY(-2px);
-	box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-}
-
 /* Active (selected tab) */
 .role-btn.active {
 	background: #E67E00;
@@ -666,8 +643,8 @@ label.error {
 }
 
 .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-	background-color: #ff7f27 !important;
-	border-color: #ff7f27 !important;
+	background-color: var(--bank-primary, #2563EB) !important;
+	border-color: var(--bank-primary-dark, #1E40AF) !important;
 	color: #ffffff !important;
 	cursor: default !important;
 }
@@ -687,7 +664,7 @@ label.error {
 /* HEADER */
 /* Update this section in your <style> tag */
 #usertable thead th {
-	background-color: #7b6458;
+	background-color: var(--table-header-blue, #2563EB);
 	color: #fff;
 	font-family: Arial, sans-serif !important;
 	font-size: 14px !important;
@@ -705,7 +682,7 @@ label.error {
 	top: 0;
 	/* Keeps the first row at the top */
 	z-index: 10;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 	/* Ensures the header isn't transparent */
 	color: white;
 	box-shadow: inset 0 -1px 0 #dee2e6;
@@ -1104,7 +1081,7 @@ body {
 .tab-pane:not(#conductcultureassessment) table thead th {
 	position: sticky !important;
 	top: 0 !important;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 	z-index: 50 !important;
 	box-shadow: inset 0 -1px 0 #dee2e6;
 }
@@ -1134,13 +1111,13 @@ body {
 .tab-pane:not(#conductcultureassessment) table thead th:nth-child(1) {
 	left: 0 !important;
 	z-index: 60 !important;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 }
 
 .tab-pane:not(#conductcultureassessment) table thead th:nth-child(2) {
 	left: 150px !important;
 	z-index: 60 !important;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 }
 
 /* Same for the 2nd header row if it exists */
@@ -1148,14 +1125,14 @@ body {
 	{
 	left: 0 !important;
 	z-index: 59 !important;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 }
 
 .tab-pane:not(#conductcultureassessment) table thead tr:nth-child(2) th:nth-child(2)
 	{
 	left: 150px !important;
 	z-index: 59 !important;
-	background-color: #7b6458 !important;
+	background-color: var(--table-header-blue, #2563EB) !important;
 }
 
 /* Force Column 1 to be exactly forever */
@@ -1187,7 +1164,7 @@ body {
 .static-back-btn {
 	background-color: rgb(255, 255, 255);
 	border: none;
-	color: rgb(255, 128, 0);
+	color: var(--bank-primary, #2563EB);
 	font-size: 16px;
 	border-radius: 50%;
 	width: 36px;
@@ -1202,7 +1179,7 @@ body {
 
 /* Hover effect */
 .static-back-btn:hover {
-	background-color: rgb(255, 128, 0); /* darker orange */
+	background-color: var(--bank-primary, #2563EB); /* darker orange */
 	color: rgb(255, 255, 255);
 	transform: scale(1.08);
 }
@@ -1564,8 +1541,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 							<thead class="thead-light">
 								<tr>
@@ -1948,8 +1924,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist1[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -5848,8 +5823,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -8045,8 +8019,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -11284,8 +11257,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -11602,8 +11574,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -11842,8 +11813,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist1[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -14254,8 +14224,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 							<thead class="thead-light">
 								<tr>
@@ -15188,8 +15157,7 @@ table.selection-mode td {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable"
-							class="table table-bordered table-striped table-hover">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 							<thead class="thead-light">
 								<tr>

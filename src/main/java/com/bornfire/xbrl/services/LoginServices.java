@@ -35,11 +35,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.bornfire.xbrl.config.PasswordEncryption;
+import com.bornfire.xbrl.entities.AccessAndRoles;
+import com.bornfire.xbrl.entities.AccessandRolesRepository;
+import com.bornfire.xbrl.entities.Smsserviceotp;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
 import com.bornfire.xbrl.entities.XBRLSession;
@@ -62,6 +73,9 @@ public class LoginServices {
 
 	@Autowired
 	UserProfileRep userProfileRep;
+	
+	@Autowired
+	AccessandRolesRepository accessandRolesRepository;
 
 	@Autowired
 	private HttpSession session;
@@ -146,6 +160,22 @@ public class LoginServices {
 		try {
 			if ("add".equalsIgnoreCase(formmode)) {
 				UserProfile up = userProfile;
+				String roleSyncError = syncRoleAccessFromMaster(up);
+				if (roleSyncError != null) {
+					return roleSyncError;
+				}
+				if (up.getLogin_status() == null || up.getLogin_status().trim().isEmpty()) {
+					up.setLogin_status("Active");
+				}
+				if (up.getUser_status() == null || up.getUser_status().trim().isEmpty()) {
+					up.setUser_status("Active");
+				}
+				if (up.getPass_exp_days() == null || up.getPass_exp_days().trim().isEmpty()) {
+					up.setPass_exp_days("90");
+				}
+				if (up.getPassword() == null || up.getPassword().trim().isEmpty()) {
+					return "Password is required";
+				}
 
 				// System.out.println("password is : " + up.getPassword());
 
@@ -228,6 +258,16 @@ public class LoginServices {
 					UserProfile up = upOptional.get();
 
 					userProfile.setPassword(up.getPassword());
+					String roleSyncError = syncRoleAccessFromMaster(userProfile);
+					if (roleSyncError != null) {
+						return roleSyncError;
+					}
+					if (userProfile.getLogin_status() == null || userProfile.getLogin_status().trim().isEmpty()) {
+						userProfile.setLogin_status(up.getLogin_status());
+					}
+					if (userProfile.getUser_status() == null || userProfile.getUser_status().trim().isEmpty()) {
+						userProfile.setUser_status(up.getUser_status());
+					}
 
 					userProfile
 							.setUser_locked_flg("Active".equalsIgnoreCase(userProfile.getLogin_status()) ? "N" : "Y");
@@ -322,6 +362,32 @@ public class LoginServices {
 		}
 
 		return msg;
+	}
+	
+	private String syncRoleAccessFromMaster(UserProfile up) {
+		if (up == null || up.getRole_id() == null || up.getRole_id().trim().isEmpty()) {
+			return "Role ID is required";
+		}
+		Optional<AccessAndRoles> roleOpt = accessandRolesRepository.findById(up.getRole_id().trim());
+		if (!roleOpt.isPresent()) {
+			return "Invalid Role ID";
+		}
+		AccessAndRoles roleMaster = roleOpt.get();
+		if ("Y".equalsIgnoreCase(roleMaster.getDelFlg())) {
+			return "Selected role is deleted";
+		}
+		if (!"Y".equalsIgnoreCase(roleMaster.getEntityFlg())) {
+			return "Selected role is not verified";
+		}
+		up.setRole_desc(roleMaster.getRoleDesc());
+		up.setWork_class(roleMaster.getWorkClass());
+		up.setPermissions(roleMaster.getPermissions());
+		String menuAccess = roleMaster.getMenulist();
+		if (menuAccess == null || menuAccess.trim().isEmpty()) {
+			menuAccess = roleMaster.getDomainId();
+		}
+		up.setDomain_id(menuAccess);
+		return null;
 	}
 
 	public String verifyUser(UserProfile userProfile, String inputUser) {
@@ -468,6 +534,49 @@ public class LoginServices {
 		String loginflg = up.get().getLogin_flg();
 
 		return loginflg;
+	}
+	
+	public String sendclientotp(String otp, String roleType, UserProfile userProfile) {
+		logger.info("Start Sending OTP");
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+		Smsserviceotp smsserviceotp = new Smsserviceotp();
+		smsserviceotp.setWrapperApiKey("LA6m0");
+		smsserviceotp.setSmssenderid("BOBAlert");
+		smsserviceotp.setSmsmobilenumber(userProfile.getMob_number());
+		smsserviceotp.setSmstext("Your OTP is " + otp);
+		smsserviceotp.setToemail(userProfile.getEmail_id());
+		smsserviceotp.setEmailsubject("OTP Verification");
+		smsserviceotp.setEmailtemplateid("BOBAlert");
+		smsserviceotp.setEmailtext("Your OTP is " + otp);
+		HttpEntity<Smsserviceotp> entity = new HttpEntity<>(smsserviceotp, httpHeaders);
+
+		ResponseEntity<String> response = null;
+		try {
+			logger.info("Ready to Call URL for OTP");
+			RestTemplate restTemplate = new RestTemplate();
+			response = restTemplate.postForEntity("https://wrap.smshub.live/api/APIWrapper", entity, String.class);
+			logger.info(response.toString());
+
+			if (response.getStatusCode() == HttpStatus.OK) {
+				logger.info("Send Successfully");
+				return "Otpsendsuccessfully";
+			} else {
+				logger.info("Send Failed");
+				return "Something went wrong at server end";
+			}
+
+		} catch (HttpClientErrorException ex) {
+			logger.info("Exception -" + ex.getMessage());
+			return "Something went wrong at server end";
+		} catch (HttpServerErrorException ex) {
+			logger.info("Exception -" + ex.getMessage());
+			return "Something went wrong at server end";
+		} catch (Exception ex) {
+			logger.info("Exception -" + ex.getMessage());
+			return "Something went wrong at server end";
+		}
 	}
 
 	public int checkAcctexpirty(String userid) {

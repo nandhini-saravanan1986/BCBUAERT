@@ -15,6 +15,8 @@
 	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 
 	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
 		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
@@ -378,7 +380,7 @@
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-primary, #2563EB);
 			border-color: #0c0c0c;
 		}
 
@@ -475,7 +477,7 @@
 }
 .table .thead-light th {
 			    color: #fff;
-			    background-color: #7b6458;
+			    background-color: var(--table-header-blue, #2563EB);
 			    border-color: #dee2e6;
 				font-family: sans-serif;
 			}
@@ -483,21 +485,6 @@
 body {
 	overflow: hidden;
 }
-.role-btn {
-		    background: #ffffff;
-		    color: #E67E00;
-		    border: 1px solid #E67E00;
-		    border-radius: 25px;
-		    padding: 8px 18px;
-		    font-size: 13px;
-		    font-weight: 600;
-		    cursor: pointer;
-		}
-
-		.role-btn:hover {
-		    background: #FFF3D1;
-		    color: #E67E00;
-		}
 </style>
 </script>
 
@@ -547,8 +534,8 @@ div.dataTables_filter {
 
 /* ACTIVE page → ORANGE */
 .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-    background-color: #ff7f27 !important;
-    border-color: #ff7f27 !important;
+    background-color: var(--bank-primary, #2563EB) !important;
+    border-color: var(--bank-primary-dark, #1E40AF) !important;
     color: #ffffff !important;
 }
 
@@ -578,7 +565,7 @@ div.dataTables_filter {
 .static-back-btn {
 				    background-color: rgb(255, 255, 255);
 				    border: none;
-				    color: rgb(255, 128, 0);
+				    color: var(--bank-primary, #2563EB);
 				    font-size: 16px;
 				    border-radius: 50%;
 				    width: 36px;
@@ -593,7 +580,7 @@ div.dataTables_filter {
 
 				/* Hover effect */
 				.static-back-btn:hover {
-				    background-color: rgb(255, 128, 0);   /* darker orange */
+				    background-color: var(--bank-primary, #2563EB);   /* darker orange */
 				    color: rgb(255, 255, 255);
 				    transform: scale(1.08);
 				}
@@ -704,7 +691,7 @@ function goBack() {
 			    var html = "<table border='1'>";
 
 			    // Header style
-			    html += "<thead style='background-color:#7b6458;color:white;font-weight:bold;'>";
+			    html += "<thead style='background-color: var(--table-header-blue, #2563EB);color:white;font-weight:bold;'>";
 
 			    var tableDOM = document.getElementById("audttable");
 			    var headerCells = tableDOM.querySelectorAll("thead th");
@@ -901,8 +888,8 @@ function goBack() {
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 550px;">
         <div class="modal-content">
             
-            <div class="menu-title-header" style="padding: 5px; background-color: #ff7f27;"> 
-                <div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white; font-weight: bold; background-color: #ff7f27;">
+            <div class="menu-title-header" style="padding: 5px; background-color: var(--bank-primary, #2563EB);"> 
+                <div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white; font-weight: bold; background-color: var(--bank-primary, #2563EB);">
                     BANK OF BARODA
                 </div>
             </div>

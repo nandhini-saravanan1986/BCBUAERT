@@ -15,7 +15,9 @@
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<!-- jQuery (required first) -->
@@ -58,12 +60,12 @@
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-btn-bg);
 			border-color: #0c0c0c;
 		}
 
-		.btn-primary:not (:disabled):not (.disabled).active,
-		.btn-primary:not (:disabled):not (.disabled):active,
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
 		.show>.btn-primary.dropdown-toggle {
 			color: #fff;
 			background-color: #cc000000;
@@ -146,7 +148,7 @@
 			vertical-align: middle;
 			text-align: left;
 			font-size: 16px;
-			font-family: Arial;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
 		}
 
 		.fa-edit:hover {
@@ -294,11 +296,13 @@
 			height: 100%;
 			/* full screen height */
 			margin: 0;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
 		}
 
 		.card {
-			height: 100vh;
-			/* card fills screen */
+			min-height: calc(100vh - 60px);
+			height: auto;
+			margin-top: 0;
 			display: flex;
 			flex-direction: column;
 		}
@@ -319,7 +323,8 @@
 			padding: 0;
 		}
 
-		.scrollable-table-container {
+		.scrollable-table-container,
+		.table-scroll-container {
 			height: 100%;
 			/* take full body height */
 			overflow-y: auto;
@@ -328,43 +333,48 @@
 		}
 
 		/* Your existing sticky header CSS, targeting the tr elements within the thead */
-		.scrollable-table-container thead tr:nth-child(1) {
+		.scrollable-table-container thead tr:nth-child(1),
+		.table-scroll-container thead tr:nth-child(1) {
 			position: sticky;
 			top: 0;
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 5;
 		}
 
-		.scrollable-table-container thead tr:nth-child(2) {
+		.scrollable-table-container thead tr:nth-child(2),
+		.table-scroll-container thead tr:nth-child(2) {
 			position: sticky;
 			top: 36px;
 			/* adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 4;
 		}
 
-		.scrollable-table-container thead tr:nth-child(3) {
+		.scrollable-table-container thead tr:nth-child(3),
+		.table-scroll-container thead tr:nth-child(3) {
 			position: sticky;
 			top: 72px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 3;
 
 		}
 
-		.scrollable-table-container thead tr:nth-child(4) {
+		.scrollable-table-container thead tr:nth-child(4),
+		.table-scroll-container thead tr:nth-child(4) {
 			position: sticky;
 			top: 100px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 2;
 		}
 
-		.scrollable-table-container thead tr:nth-child(5) {
+		.scrollable-table-container thead tr:nth-child(5),
+		.table-scroll-container thead tr:nth-child(5) {
 			position: sticky;
 			top: 135px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 1;
 		}
 	</style>
@@ -372,29 +382,32 @@
 		/* Reduce font size */
 		/* Apply font family and smaller font */
 		#usertable {
-			font-family: Arial, sans-serif !important;
+			font-family: Verdana, Geneva, Tahoma, sans-serif !important;
 			font-size: 12px !important;
 
 		}
 
-		.scrollable-table-container thead tr:nth-child(4) {
+		.scrollable-table-container thead tr:nth-child(4),
+		.table-scroll-container thead tr:nth-child(4) {
 			position: sticky;
 			top: 100px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 2;
 		}
 
 
-		.scrollable-table-container thead tr:nth-child(5) {
+		.scrollable-table-container thead tr:nth-child(5),
+		.table-scroll-container thead tr:nth-child(5) {
 			position: sticky;
 			top: 135px;
 			/* Adjust based on row height */
-			background-color: #b3b6b9;
+			background-color: var(--table-header);
 			z-index: 1;
+		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header) !important;
 			color: white !important;
 			padding: 8px 10px !important;
 			text-align: center;
@@ -413,16 +426,17 @@
 			border: 1px solid #ffffff !important;
 			/* thin white separators like your screenshot */
 		}
-		#usertable {
-					border-collapse: collapse !important;
-					width: 100%;
-					border: 1px solid #b0b0b0;
-				}
 
-				#usertable th,
-				#usertable td {
-					border: 1px solid #b0b0b0 !important;
-				}
+		#usertable {
+			border-collapse: collapse !important;
+			width: 100%;
+			border: 1px solid #b0b0b0;
+		}
+
+		#usertable th,
+		#usertable td {
+			border: 1px solid #b0b0b0 !important;
+		}
 
 		/* Avoid table taking too much width */
 		#usertable {
@@ -449,7 +463,7 @@
 		#usertable thead tr:nth-child(2) th {
 			top: 38px;
 			/* height of first header row */
-			background: #d0d0d0;
+			background: var(--bank-header-mid);
 		}
 	</style>
 
@@ -510,12 +524,12 @@
 		/* Reduce font size */
 		/* Apply font family and smaller font */
 		#usertable {
-			font-family: Arial, sans-serif !important;
+			font-family: Verdana, Geneva, Tahoma, sans-serif !important;
 			font-size: 12px !important;
 		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header) !important;
 			color: white !important;
 			padding: 8px 10px !important;
 			text-align: center;
@@ -554,29 +568,24 @@
 			border-spacing: 0;
 		}
 
-		/* Row 1 – Table Title */
+		/* Sticky header rows inside the table scroll area */
 		#usertable thead tr:nth-child(1) th {
 			position: sticky;
-			top: 170px;
-			/* page-header + section-header */
+			top: 0;
 			z-index: 800;
-			background: #b3b6b9;
+			background: var(--table-header);
 		}
 
-		/* Row 2 – Column Names */
 		#usertable thead tr:nth-child(2) th {
 			position: sticky;
-			top: 205px;
-			/* previous + row1 height */
+			top: 36px;
 			z-index: 700;
-			background: #d0d0d0;
+			background: var(--bank-header-mid);
 		}
 
-		/* Row 3 – Column Numbers */
 		#usertable thead tr:nth-child(3) th {
 			position: sticky;
-			top: 276px;
-			/* previous + row2 height */
+			top: 72px;
 			z-index: 600;
 			background: #eaeaea;
 		}
@@ -594,10 +603,12 @@
 	<style>
 		#pageHeader {
 			position: sticky;
-			top: 110px;
+			top: 60px;
 			z-index: 1050;
 			background: white;
-			padding-top: 10px;
+			padding: 10px 20px;
+			margin: 0;
+			border-bottom: 1px solid #e5e7eb;
 		}
 
 		#tabHeader {
@@ -618,52 +629,43 @@
 
 		.role-page-header {
 			background-color: #ffffff;
-			padding: 15px 20px;
+			padding: 10px 20px;
 			display: flex;
-			/* Added for alignment */
 			justify-content: space-between;
-			/* Added for alignment */
 			align-items: center;
-			/* Added for alignment */
+			gap: 16px;
+			flex-wrap: wrap;
+		}
+
+		.text-left.flex-grow-1 {
+			min-width: 280px;
+		}
+
+		.text-left.flex-grow-1 .d-flex.align-items-center {
+			gap: 10px;
+			flex-wrap: wrap;
+			margin: 0;
+		}
+
+		.text-left.flex-grow-1 h4 {
+			margin: 0;
+			padding-right: 0 !important;
+		}
+
+		.custom-tab-btn-group.nav-buttons {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+
+		.card-body.p-0 {
+			padding-top: 0 !important;
 		}
 	</style>
 	<style>
-		.role-btn {
-			background: #ffffff;
-			color: #E67E00;
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		.role-btn:hover {
-			background: #FFF3D1;
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
-		.role-btn.active {
-			background: #E67E00;
-			/* solid orange */
-			color: #fff;
-			/* white text */
-			border-color: #E67E00;
-			transform: translateY(-1px);
-			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
-		}
-
-		/* Optional: icon spacing */
-		.role-btn i {
-			margin-right: 5px;
-		}
+		/* Header toolbar buttons — see bank-theme.css */
 
 		/* Right align numeric columns (thead + tbody) */
 		#usertable th.amt-right,
@@ -691,135 +693,159 @@
 
 		/* Force orange background for the entire row */
 		#usertable tbody tr.orange-row>td {
-			background-color: #f7a47c !important;
+			background-color: var(--total-bg) !important;
 		}
 
 		/* Force orange background for the entire row */
 		#usertable tbody tr.orange-rows>td {
-			background-color: #c2ffff !important;
+			background-color: var(--section-row-bg) !important;
 		}
 	</style>
 	<style>
-	.calc-row td {
-	    background-color: #f7a47c !important;
-	    font-weight: 600;
-	}
-	.calc-col {
-	    background-color: #f7a47c !important;
-	    font-weight: 600;
-	}
+		.calc-row td {
+			background-color: var(--total-bg) !important;
+			font-weight: 600;
+		}
 
-	/* Keep borders visible */
-	table td, table th {
-	    border: 1px solid #666;
-	}
+		.calc-col {
+			background-color: #f4d35e !important;
+			font-weight: 600;
+		}
+
+		/* Keep borders visible */
+		table td,
+		table th {
+			border: 1px solid #666;
+		}
+
+		.negative-warning-blink {
+			animation: negativeCellBlink 1.1s ease-in-out infinite;
+			color: #7f1d1d !important;
+			font-weight: 600;
+		}
+
+		@keyframes negativeCellBlink {
+
+			0%,
+			100% {
+				background-color: #fff1f2;
+			}
+
+			50% {
+				background-color: #fca5a5;
+			}
+		}
 	</style>
 	<style>
 		.dt-search {
-		    float: left;
+			float: left;
 		}
 
 		.dt-pagination {
-		    float: right;
+			float: right;
 		}
 
 		.dataTables_filter input {
-		    width: 220px;
-		    height: 32px;
+			width: 220px;
+			height: 32px;
 		}
+
 		/* Pagination wrapper */
 		.dataTables_paginate {
-		    margin: 0;
+			margin: 0;
 		}
 
 		/* ALL buttons base */
 		.dataTables_paginate .paginate_button {
-		    background: #eeeeee !important;
-		    color: #444 !important;          /* light black */
-		    border: 1px solid #e0e0e0 !important;
-		    border-radius: 8px;
-		    padding: 6px 14px;
-		    margin-left: 6px;
-		    box-shadow: none !important;
-		    font-weight: 500;
+			background: #eeeeee !important;
+			color: #444 !important;
+			/* light black */
+			border: 1px solid #e0e0e0 !important;
+			border-radius: 8px;
+			padding: 6px 14px;
+			margin-left: 6px;
+			box-shadow: none !important;
+			font-weight: 500;
 		}
 
 		/* Hover – SAME look (no dark border, no blue) */
 		.dataTables_paginate .paginate_button:hover {
-		    background: #eeeeee !important;
-		    color: #444 !important;
-		    border: 1px solid #e0e0e0 !important;
+			background: #eeeeee !important;
+			color: #444 !important;
+			border: 1px solid #e0e0e0 !important;
 		}
 
 		/* Active page number (ORANGE) */
 		.dataTables_paginate .paginate_button.current {
-		    background: #ff7f27 !important;
-		    color: #ffffff !important;
-		    border: 1px solid #ff7f27 !important;
-		    font-weight: 600;
+			background: var(--bank-btn-bg) !important;
+			color: var(--bank-text-on-dark) !important;
+			border: 1px solid var(--bank-primary-dark) !important;
+			font-weight: 600;
 		}
 
 		.dataTables_paginate .paginate_button.disabled {
-		    background: #f2f2f2 !important;
-		    color: #bdbdbd !important;
-		    border: 1px solid #e5e5e5 !important;
-		    cursor: not-allowed;
+			background: #f2f2f2 !important;
+			color: #bdbdbd !important;
+			border: 1px solid #e5e5e5 !important;
+			cursor: not-allowed;
 		}
 
 		.dataTables_paginate .paginate_button:focus,
 		.dataTables_paginate .paginate_button:active {
-		    outline: none !important;
-		    box-shadow: none !important;
+			outline: none !important;
+			box-shadow: none !important;
 		}
+
 		/* Keep search label + input in same row */
 		.dt-search .dataTables_filter {
-		    display: flex;
-		    align-items: center;
-		    gap: 8px;
-		    margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin: 0;
 		}
 
 		/* Prevent label from breaking line */
 		.dt-search label {
-		    display: flex;
-		    align-items: center;
-		    margin: 0;
-		    white-space: nowrap;
+			display: flex;
+			align-items: center;
+			margin: 0;
+			white-space: nowrap;
 		}
 
 		/* Search input size */
 		.dt-search input {
-		    width: 220px;
-		    height: 32px;
+			width: 220px;
+			height: 32px;
 		}
 
 		.static-back-btn {
-										    background-color: rgb(255, 255, 255);
-										    border: none;
-										    color: rgb(255, 128, 0);
-										    font-size: 16px;
-										    border-radius: 50%;
-										    width: 36px;
-										    height: 36px;
-										    display: flex;
-										    align-items: center;
-										    justify-content: center;
-										    margin-right: 10px;
-										    transition: background-color 0.25s ease, transform 0.15s ease;
-										    cursor: pointer;
-										}
+			background-color: rgb(255, 255, 255);
+			border: none;
+			color: rgb(255, 128, 0);
+			font-size: 16px;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.25s ease, transform 0.15s ease;
+			cursor: pointer;
+		}
 
-										/* Hover effect */
-										.static-back-btn:hover {
-										    background-color: rgb(255, 128, 0);   /* darker orange */
-										    color: rgb(255, 255, 255);
-										    transform: scale(1.08);
-										}
+		/* Hover effect */
+		.static-back-btn:hover {
+			background-color: rgb(255, 128, 0);
+			/* darker orange */
+			color: rgb(255, 255, 255);
+			transform: scale(1.08);
+		}
 
-										/* Optional click effect */
-										.static-back-btn:active {
-										    transform: scale(0.95);
-										}
+		/* Optional click effect */
+		.static-back-btn:active {
+			transform: scale(0.95);
+		}
 
 		/* Loader (same pattern as RT_SLS_Upload.html) */
 		.loader-overlay {
@@ -838,80 +864,97 @@
 			background: #ffffff;
 			border-radius: 16px;
 			padding: 22px 20px 18px;
-			box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+			box-shadow: 0 14px 34px rgba(8, 20, 40, 0.22);
 			text-align: center;
-			border: 1px solid #e7eef8;
+			border: 1px solid rgba(148, 163, 184, 0.35);
 		}
 
 		.loader-logo-wrap {
 			position: relative;
-			width: 86px;
-			height: 86px;
-			margin: 0 auto 14px auto;
+			width: 84px;
+			height: 84px;
+			margin: 0 auto 14px;
+			display: grid;
+			place-items: center;
 		}
 
 		.loader-logo {
-			width: 68px;
-			height: 68px;
+			width: 56px;
+			height: 56px;
 			object-fit: contain;
-			position: absolute;
-			top: 9px;
-			left: 9px;
-			border-radius: 50%;
-			background: #fff;
-			padding: 6px;
-			box-shadow: 0 4px 12px rgba(11, 94, 215, 0.2);
+			filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18));
 			animation: loaderPulse 1.6s ease-in-out infinite;
 		}
 
 		.loader-ring {
-			width: 86px;
-			height: 86px;
+			position: absolute;
+			inset: 0;
 			border-radius: 50%;
-			border: 3px solid #d6e4ff;
-			border-top-color: #0d6efd;
+			border: 4px solid #e2e8f0;
+			border-top-color: #f97316;
 			animation: loaderSpin 1s linear infinite;
 		}
 
 		.loader-title {
-			color: #173a6b;
-			font-size: 16px;
-			font-weight: 700;
-			letter-spacing: .2px;
+			font-size: 1.02rem;
+			font-weight: 600;
+			color: #0f172a;
+			margin-bottom: 10px;
+			letter-spacing: 0.2px;
 		}
 
 		.loader-progress {
-			margin-top: 14px;
-			height: 6px;
+			width: 100%;
+			height: 8px;
+			background: #e2e8f0;
 			border-radius: 999px;
-			background: #e9f1ff;
 			overflow: hidden;
 		}
 
 		.loader-progress-bar {
 			height: 100%;
-			width: 42%;
-			background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			width: 38%;
+			background: linear-gradient(90deg, #f97316, #fb923c);
 			border-radius: 999px;
 			animation: loaderProgress 1.6s ease-in-out infinite;
 		}
 
 		@keyframes loaderSpin {
-			0% { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
 		}
 
 		@keyframes loaderPulse {
-			0%, 100% { transform: scale(1); opacity: 1; }
-			50% { transform: scale(1.07); opacity: .92; }
+			0%, 100% {
+				transform: scale(1);
+				opacity: 1;
+			}
+
+			50% {
+				transform: scale(0.96);
+				opacity: 0.92;
+			}
 		}
 
 		@keyframes loaderProgress {
-			0% { transform: translateX(-110%); }
-			50% { transform: translateX(70%); }
-			100% { transform: translateX(210%); }
+			0% {
+				transform: translateX(-120%);
+			}
+
+			50% {
+				transform: translateX(90%);
+			}
+
+			100% {
+				transform: translateX(240%);
+			}
 		}
-		</style>
+	</style>
 	<script th:inline="javascript">
 
 		function home() {
@@ -919,15 +962,15 @@
 			location.href = 'Dashboard'
 		}
 
-//		function back() {
-	//		$("#loader").modal("toggle");
+		//		function back() {
+		//		$("#loader").modal("toggle");
 
-	//		window.history.back();
-	//	}
+		//		window.history.back();
+		//	}
 
 	</script>
 
-<!--	<script>
+	<!--	<script>
 		$('#usertable').DataTable({
 			scrollX: false,
 			autoWidth: false,
@@ -953,67 +996,66 @@
 		});
 	</script>-->
 	<script th:inline="javascript">
-	    var formmode = /*[[${formmode}]]*/ '';
+		var formmode = /*[[${formmode}]]*/ '';
 	</script>
 
 	<script>
-	$(document).ready(function () {
+		$(document).ready(function () {
 
-	    if (formmode === 'Detail') {
+			if (formmode === 'Detail') {
 
-	        // ✅ Detail page → WITH search & pagination
-	        $('#usertable').DataTable({
-	            paging: true,
-	            searching: true,
-	            pagingType: false, 
-	            ordering: false,
-	            lengthChange: false,
-	            pageLength: 100,
-	            autoWidth: false,
-	            scrollX: false,
+				// ✅ Detail page → WITH search & pagination
+				$('#usertable').DataTable({
+					paging: true,
+					searching: true,
+					pagingType: false,
+					ordering: false,
+					lengthChange: false,
+					pageLength: 100,
+					autoWidth: false,
+					scrollX: false,
 
-	            dom:
-	                '<"d-flex justify-content-between align-items-center mb-2"' +
-	                    '<"dt-search"f>' +
-	                    '<"dt-pagination"p>' +
-	                '>' +
-	                't'
+					dom:
+						'<"d-flex justify-content-between align-items-center mb-2"' +
+						'<"dt-search"f>' +
+						'<"dt-pagination"p>' +
+						'>' +
+						't'
 
-	            // ⚠️ No columnDefs here! Detail table won't get right-alignment.
-	        });
+					// ⚠️ No columnDefs here! Detail table won't get right-alignment.
+				});
 
-	    } else {
+			} else {
 
-	        // ✅ Summary page → NORMAL table (NO search, NO pagination)
-	        // Apply right-alignment for amount columns here
-	        $('#usertable').DataTable({
-	            paging: false,
-	            searching: false,
-	            ordering: false,
-	            autoWidth: false,
-	            scrollX: false,
+				// ✅ Summary page → NORMAL table (NO search, NO pagination)
+				// Apply right-alignment for amount columns here
+				$('#usertable').DataTable({
+					paging: false,
+					searching: false,
+					ordering: false,
+					autoWidth: false,
+					scrollX: false,
 
-	            columnDefs: [
-	                {
-	                    targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-	                    className: 'amt-right'
-	                }
-	            ]
-	        });
+					columnDefs: [
+						{
+							targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+							className: 'amt-right'
+						}
+					]
+				});
 
-	    }
+			}
 
-	});
+		});
 	</script>
 	<style>
 		.text-left {
-		    text-align: left !important;
+			text-align: left !important;
 		}
 
 		.text-right {
-		    text-align: right !important;
+			text-align: right !important;
 		}
-
 	</style>
 	<script>
 
@@ -1051,7 +1093,7 @@
 			var reportdate = button.getAttribute('data-reportdate');
 			var currency = button.getAttribute('data-currency');
 			var filename = button.getAttribute('data-filename');
-			var report = button.getAttribute('data-report'); 
+			var report = button.getAttribute('data-report');
 
 			$('#loader').css('display', 'flex');
 
@@ -1063,7 +1105,7 @@
 					currency: currency,
 					filename: filename,
 					type: 'summary',
-					report: report         
+					report: report
 				},
 				xhrFields: {
 					responseType: 'blob'
@@ -1122,47 +1164,47 @@
 		function startReport(button) {
 
 			$('#loader').css('display', 'flex');
-		    const params = new URLSearchParams({
-		        reportdate: button.getAttribute('data-reportdate'),
-		        currency: button.getAttribute('data-currency'),
-		        filename: button.getAttribute('data-filename')
-		    });
+			const params = new URLSearchParams({
+				reportdate: button.getAttribute('data-reportdate'),
+				currency: button.getAttribute('data-currency'),
+				filename: button.getAttribute('data-filename')
+			});
 
-		    fetch('startreport?' + params.toString())
-		        .then(res => res.text())
-		        .then(jobId => {
-		            sessionStorage.setItem("jobId", jobId);
-		            sessionStorage.setItem("filename", button.getAttribute('data-filename'));
-		            checkReport(jobId);
-		        })
-		        .catch(function () {
-		            $('#loader').hide();
-		            showResultModal('Error', 'Could not start report generation. Please try again.');
-		        });
+			fetch('startreport?' + params.toString())
+				.then(res => res.text())
+				.then(jobId => {
+					sessionStorage.setItem("jobId", jobId);
+					sessionStorage.setItem("filename", button.getAttribute('data-filename'));
+					checkReport(jobId);
+				})
+				.catch(function () {
+					$('#loader').hide();
+					showResultModal('Error', 'Could not start report generation. Please try again.');
+				});
 		}
 
 
 		function checkReport(jobId) {
 
 			$('#loader').css('display', 'flex');
-		    fetch('checkreport?jobId=' + jobId)
-		        .then(res => res.text())
-		        .then(status => {
+			fetch('checkreport?jobId=' + jobId)
+				.then(res => res.text())
+				.then(status => {
 
-		            if (status === "READY") {
-		                downloadDetailfile(jobId,
-		                    sessionStorage.getItem("filename"));
-		            } else if (status === "FAILED") {
-		                $('#loader').hide();
-		                alert("Report generation failed");
-		            } else {
-		                setTimeout(() => checkReport(jobId), 10000);
-		            }
-		        })
-		        .catch(function () {
-		            $('#loader').hide();
-		            showResultModal('Error', 'Could not check report status. Please try again.');
-		        });
+					if (status === "READY") {
+						downloadDetailfile(jobId,
+							sessionStorage.getItem("filename"));
+					} else if (status === "FAILED") {
+						$('#loader').hide();
+						alert("Report generation failed");
+					} else {
+						setTimeout(() => checkReport(jobId), 10000);
+					}
+				})
+				.catch(function () {
+					$('#loader').hide();
+					showResultModal('Error', 'Could not check report status. Please try again.');
+				});
 		}
 
 
@@ -1214,19 +1256,19 @@
 			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?reportdate=' + reportdate + '&formmode=Detail&Rowid=' + Rowid + '&currency=' + currency
 		}
-		
+
 		function goBack() {
-									   
-									    window.history.back();
-									}
 
-									function hideLoader() {
-									    $("#loader").hide();
-									}
+			window.history.back();
+		}
 
-									window.addEventListener("pageshow", function () {
-									    hideLoader();
-									});
+		function hideLoader() {
+			$("#loader").hide();
+		}
+
+		window.addEventListener("pageshow", function () {
+			hideLoader();
+		});
 
 	</script>
 
@@ -1258,66 +1300,312 @@
 </script> -->
 
 
+<style>
+	.sls-analytical-header {
+		background: var(--bank-panel-gradient) !important;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		color: #fff;
+		align-items: center;
+		border-bottom: 0;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 6px 18px rgba(90, 30, 30, .22);
+		padding: 14px 18px;
+	}
+
+	.sls-analytical-title-wrap {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.sls-analytical-title {
+		font-size: 18px;
+		font-weight: 700;
+		letter-spacing: .2px;
+		margin: 0;
+		text-transform: uppercase;
+	}
+
+	.sls-analytical-meta {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	.sls-analytical-badge {
+		background: rgba(255, 255, 255, .18);
+		border: 1px solid rgba(255, 255, 255, .45);
+		border-radius: 16px;
+		color: #fff;
+		font-size: 12px;
+		font-weight: 600;
+		padding: 4px 10px;
+	}
+
+	.sls-analytical-calc .position-as-on {
+		color: #c00000;
+		font-weight: 600;
+		font-size: 13px;
+		margin-bottom: 8px;
+	}
+
+	.sls-analytical-calc .position-as-on input[type="date"] {
+		margin-left: 8px;
+		height: 30px;
+		padding: 2px 8px;
+		font-size: 12px;
+	}
+
+	.sls-analytical-calc table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 12px;
+		font-family: Verdana, Geneva, Tahoma, sans-serif;
+		margin-bottom: 20px;
+	}
+
+	.sls-analytical-calc table th,
+	.sls-analytical-calc table td {
+		border: 1px solid #000;
+		padding: 4px 6px;
+		vertical-align: middle;
+	}
+
+	.sls-analytical-calc table thead th {
+		background: #d9d9d9;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	.sls-analytical-calc table td.sl-muted {
+		background: #d9d9d9;
+		text-align: center;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc input.calc-input {
+		width: 100%;
+		border: 1px solid #999;
+		padding: 4px 6px;
+		font-size: 12px;
+		text-align: right;
+		box-sizing: border-box;
+		min-width: 90px;
+	}
+
+	.sls-analytical-calc input.calc-input-green {
+		background: #92d050;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc input.calc-input-yellow {
+		background: #ffff00;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc .summary-row-label {
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc .section2-row td:first-child {
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.sls-analytical-calc .ac-calc-layout {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 24px;
+		align-items: flex-start;
+	}
+
+	.sls-analytical-calc .ac-calc-panel {
+		flex: 1 1 400px;
+		min-width: 0;
+	}
+
+	.sls-analytical-calc .ac-calc-panel-right table {
+		margin-bottom: 12px;
+	}
+
+	.sls-analytical-calc .ac-scenario-title {
+		background: #5b9bd5;
+		color: #fff;
+		font-weight: 700;
+		text-align: left;
+	}
+
+	.sls-analytical-calc .ac-scenario-col-h {
+		background: #fff;
+		font-weight: 700;
+		text-align: center;
+	}
+
+	.sls-analytical-calc .ac-row-label {
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.sls-analytical-calc .ac-cell-grey input.calc-input {
+		background: #d9d9d9;
+	}
+
+	.sls-analytical-calc .ac-cell-long input.calc-input {
+		background: #adb9ca;
+	}
+
+	.sls-analytical-calc .ac-cell-white input.calc-input {
+		background: #fff;
+	}
+
+	.sls-analytical-calc .ac-enter-hint {
+		color: #c00000;
+		font-weight: 600;
+		font-size: 11px;
+		white-space: nowrap;
+	}
+
+	.sls-analytical-calc .ac-variation-h {
+		background: #d9d9d9;
+		color: #c00000;
+		font-weight: 700;
+	}
+
+	.sls-analytical-calc .ac-headroom-h {
+		background: #92d050;
+		font-weight: 700;
+		text-align: center;
+	}
+
+	.sls-analytical-calc input.calc-input-orange {
+		background: #ffc000;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc input.calc-input-blue {
+		background: #bdd7ee;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc .ac-variation-base {
+		margin-bottom: 10px;
+		font-size: 12px;
+	}
+
+	.sls-analytical-calc .ac-variation-base input[type="text"] {
+		margin-left: 6px;
+		width: 140px;
+		height: 28px;
+		padding: 2px 8px;
+		font-size: 12px;
+	}
+
+.loader-overlay { display:none; position:fixed; inset:0; background: rgba(10, 22, 45, 0.65); backdrop-filter: blur(4px); z-index:2050; align-items:center; justify-content:center; }
+.loader-card { width:320px; background:#ffffff; border-radius:16px; padding:22px 20px 18px; text-align:center; box-shadow:0 14px 34px rgba(8, 20, 40, 0.22); border:1px solid rgba(148, 163, 184, 0.35); }
+.loader-logo-wrap { position:relative; width:84px; height:84px; margin:0 auto 14px; display:grid; place-items:center; }
+.loader-logo { width:56px; height:56px; object-fit:contain; filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18)); animation: loaderPulse 1.6s ease-in-out infinite; }
+.loader-ring { position:absolute; inset:0; border-radius:50%; border:4px solid #e2e8f0; border-top-color:#f97316; animation: loaderSpin 1s linear infinite; }
+.loader-title { font-size:1.02rem; font-weight:600; color:#0f172a; margin-bottom:10px; letter-spacing:0.2px; }
+.loader-progress { width:100%; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+.loader-progress-bar { height:100%; width:38%; background: linear-gradient(90deg, #f97316, #fb923c); border-radius:999px; animation: loaderProgress 1.6s ease-in-out infinite; }
+@keyframes loaderSpin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes loaderPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(0.96);opacity:0.92;} }
+@keyframes loaderProgress { 0%{transform:translateX(-120%);} 50%{transform:translateX(90%);} 100%{transform:translateX(240%);} }
+
+	#pageHeader.role-page-header {
+		background: var(--bank-header-gradient) !important;
+		color: var(--bank-text-on-dark) !important;
+		box-shadow: var(--bank-shadow-header);
+	}
+
+	#usertable thead th,
+	#reports thead th {
+		background: var(--table-header) !important;
+		color: var(--bank-text-on-dark) !important;
+	}
+
+	#pageHeader.role-page-header {
+		border-bottom: 0;
+	}
+
+	#pageHeader.role-page-header h4,
+	#pageHeader.role-page-header span,
+	#pageHeader.role-page-header .black-text {
+		color: #fff !important;
+	}
+</style>
 </head>
 
 <body>
 
-	
+	<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 	<div class="container-fluid" style="padding-left:0px; padding-right:0px;">
 		<!-- <div class="row"> -->
 
 
-		<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+
 		<div class="card" style="height:100%; display:flex; flex-direction:column;">
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100">
 
-		<!-- LEFT: Buttons -->
+				<!-- LEFT: Buttons -->
 				<div class="text-left flex-grow-1">
 					<div class="d-flex align-items-center">
 
-								<button class="static-back-btn" onclick="goBack()" title="Go Back">
-									<i class="fa fa-arrow-left"></i>
-																</button>
-					<h4 style="padding-right:12px;">Structural Liquidity Statements</h4>
+						<button class="static-back-btn" onclick="goBack()" title="Go Back">
+							<i class="fa fa-arrow-left"></i>
+						</button>
+						<h4 style="padding-right:12px;">Structural Liquidity Statements</h4>
 					</div>
 				</div>
 
-				<div class="custom-tab-btn-group nav-buttons" style="display: flex; align-items: center;">
-					<span style="font-size: 16px; margin-right: 20px;">
+				<div class="alert alert-warning mx-3 mt-2 mb-0" th:if="${error != null}" th:text="${error}"></div>
+
+				<div class="custom-tab-btn-group nav-buttons">
+					<span style="font-size: 14px; font-weight: 600; margin-right: 6px; white-space: nowrap;">
 						Report Date:
 						<span id="reportDate" th:text="${reportdate}">2025-07-04</span>
 						<input type="hidden" id="currencyin" th:value="${currency}">
 					</span>
+					<th:block th:if="${formmode == 'summary'}" th:each="report : ${slslist}">
+						<input type="hidden" id="slsR39Over6mTo1y" th:value="${report.R39_OVER6M_TO_1Y}" />
+						<input type="hidden" id="slsR39Over1yTo3y" th:value="${report.R39_OVER1Y_TO_3Y}" />
+						<input type="hidden" id="slsR39Over3yTo5y" th:value="${report.R39_OVER3Y_TO_5Y}" />
+						<input type="hidden" id="slsR39Over5y" th:value="${report.R39_OVER5Y}" />
+						<input type="hidden" id="slsR70Over6mTo1y" th:value="${report.R70_OVER6M_TO_1Y}" />
+						<input type="hidden" id="slsR70Over1yTo3y" th:value="${report.R70_OVER1Y_TO_3Y}" />
+						<input type="hidden" id="slsR70Over3yTo5y" th:value="${report.R70_OVER3Y_TO_5Y}" />
+						<input type="hidden" id="slsR70Over5y" th:value="${report.R70_OVER5Y}" />
+					</th:block>
 
-					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()"
-						style="margin-right: 10px; padding: 5px 10px;  font-weight: 600; border-radius: 5px;">
+					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()">
 						<option th:each="clist : ${currencylist}" th:value="${clist.REPORT_CURRENCY}"
 							th:selected="${clist.REPORT_CURRENCY == currency}" th:text="${clist.REPORT_CURRENCY}">
 						</option>
 					</select>
 
-					<button type="button" class="role-btn" th:if="${formmode == 'summary'}"
-						style="margin-right: 10px; padding: 5px 10px;" onclick="getdetails();">Details</button>
-					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}"
-						style="margin-right: 10px; padding: 5px 10px;" onclick="getreport();">Summary</button>
-
-					
-
-					<button type="button" th:if="${formmode == 'summary'}"
-						style="margin-right: 20px; padding: 5px 10px;" th:attr="
-					            data-reportdate=${reportdate},
-					            data-currency=${currency},
-					            data-filename='SLS.xls',
-					            data-report='SLS'
-					        " class="role-btn" onclick="downloadfile(this);">
-						<i class="fa fa-download"></i>
+					<button type="button" class="role-btn" onclick="openAnalyticalCalculator();" title="Analytical calculator">
+						<i class="fa fa-calculator"></i> Analytical calculator
 					</button>
 
+					<button type="button" class="role-btn" th:if="${formmode == 'summary'}" onclick="getdetails();" title="Details">
+						<i class="fa fa-table"></i> Details
+					</button>
+					<button type="button" class="role-btn" th:if="${formmode == 'Detail'}" onclick="getreport();" title="Summary">
+						<i class="fa fa-list-alt"></i> Summary
+					</button>
+
+					<button type="button" th:if="${formmode == 'summary'}"
+						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename='SLS.xls', data-report='SLS'"
+						class="role-btn" onclick="downloadfile(this);" title="Download">
+						<i class="fa fa-download"></i> Download
+					</button>
 
 					<button type="button" th:if="${formmode == 'Detail'}"
 						th:attr="data-reportdate=${reportdate}, data-currency=${currency}, data-filename=SlsDetail.xls"
-						class="role-btn" onclick="startReport(this);">
-						<i class="fa fa-download"></i>
+						class="role-btn" onclick="startReport(this);" title="Download">
+						<i class="fa fa-download"></i> Download
 					</button>
 				</div>
 			</div>
@@ -1330,7 +1618,7 @@
 
 			<div class="card-body p-0" th:if="${formmode == 'summary'}">
 				<div class="table-scroll-container table-bordered">
-					<table id="usertable">
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 						<thead class="thead-light">
 							<tr>
@@ -1959,7 +2247,7 @@
 
 							</tr>
 
-							<tr>
+							<tr data-sls-row="39">
 								<td Style="text-align: left;"></td>
 								<td colspan="2" Style="text-align: left; background-color:#f7a47c">A.</td>
 								<td Style=" text-align: left; background-color:#f7a47c" th:text="${report.R39_PRODUCT}">
@@ -1978,14 +2266,14 @@
 									th:text="${report.R39_MORE2M_TO_3M}"></td>
 								<td Style="text-align: right; background-color:#f7a47c;"
 									th:text="${report.R39_OVER3M_TO_6M}"></td>
-								<td Style="text-align: right; background-color:#f7a47c;"
+								<td Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER6M_TO_1Y"
 									th:text="${report.R39_OVER6M_TO_1Y}"></td>
-								<td Style="text-align: right; background-color:#f7a47c;"
+								<td Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER1Y_TO_3Y"
 									th:text="${report.R39_OVER1Y_TO_3Y}"></td>
-								<td Style="text-align: right; background-color:#f7a47c;"
+								<td Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER3Y_TO_5Y"
 									th:text="${report.R39_OVER3Y_TO_5Y}"></td>
-								<td Style="text-align: right; background-color:#f7a47c;" th:text="${report.R39_OVER5Y}">
-								</td>
+								<td Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER5Y"
+									th:text="${report.R39_OVER5Y}"></td>
 								<td Style="text-align: right;background-color:#f7a47c" th:text="${report.R39_TOTAL}">
 								</td>
 							</tr>
@@ -2535,7 +2823,7 @@
 								</td>
 							</tr>
 
-							<tr>
+							<tr data-sls-row="70">
 								<td Style="text-align: left;"></td>
 								<th colspan="2" Style="text-align: left;">C</th>
 								<th Style=" text-align: left;" th:text="${report.R70_PRODUCT}"></th>
@@ -2546,10 +2834,10 @@
 								<th Style="text-align: right;" th:text="${report.R70_DAY31_TO_2M}"></th>
 								<th Style="text-align: right;" th:text="${report.R70_MORE2M_TO_3M}"></th>
 								<th Style="text-align: right;" th:text="${report.R70_OVER3M_TO_6M}"></th>
-								<th Style="text-align: right;" th:text="${report.R70_OVER6M_TO_1Y}"></th>
-								<th Style="text-align: right;" th:text="${report.R70_OVER1Y_TO_3Y}"></th>
-								<th Style="text-align: right;" th:text="${report.R70_OVER3Y_TO_5Y}"></th>
-								<th Style="text-align: right;" th:text="${report.R70_OVER5Y}"></th>
+								<th Style="text-align: right;" data-sls-col="OVER6M_TO_1Y" th:text="${report.R70_OVER6M_TO_1Y}"></th>
+								<th Style="text-align: right;" data-sls-col="OVER1Y_TO_3Y" th:text="${report.R70_OVER1Y_TO_3Y}"></th>
+								<th Style="text-align: right;" data-sls-col="OVER3Y_TO_5Y" th:text="${report.R70_OVER3Y_TO_5Y}"></th>
+								<th Style="text-align: right;" data-sls-col="OVER5Y" th:text="${report.R70_OVER5Y}"></th>
 								<th Style="text-align: right;background-color:#f7a47c" th:text="${report.R70_TOTAL}">
 								</th>
 							</tr>
@@ -2814,7 +3102,7 @@
 						id="usertable">
 						<thead class="thead-light">
 							<tr>
-								
+
 								<th class="text-left">CUST ID</th>
 								<th class="text-left">ACCT NO</th>
 								<th class="text-left">ACCT NAME</th>
@@ -2830,7 +3118,8 @@
 								<td class="text-left" th:text="${detaillist.acctName}"></td>
 								<td class="text-right" th:text="${detaillist.acctBalanceLc}"></td>
 								<td class="text-left" th:text="${detaillist.reportLabel}"></td>
-								<td class="text-left" th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}"></td>
+								<td class="text-left" th:text="${#dates.format(detaillist.reportDate, 'dd-MM-yyyy')}">
+								</td>
 
 							</tr>
 
@@ -2884,6 +3173,207 @@
 		</div>
 	</div>
 
+	<!-- Analytical calculator modal -->
+	<div class="modal fade" id="slsAnalyticalCalcModal" tabindex="-1" role="dialog" aria-labelledby="slsAnalyticalCalcTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document"
+			style="max-width: 1280px; width: 96%;">
+			<div class="modal-content">
+				<div class="modal-header sls-analytical-header">
+					<div class="sls-analytical-title-wrap">
+						<h5 class="modal-title sls-analytical-title" id="slsAnalyticalCalcTitle">SLS Analytical Calculator</h5>
+						<div class="sls-analytical-meta">
+							<span class="sls-analytical-badge">Report Date: <span th:text="${reportdate}">2025-07-04</span></span>
+							<span class="sls-analytical-badge">Selected Report type: <span th:text="${currency}">Report Type</span></span>
+						</div>
+					</div>
+					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"
+						style="opacity:1;">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body sls-analytical-calc">
+					<div class="ac-calc-layout">
+					<div class="ac-calc-panel ac-calc-panel-left">
+					<table>
+						<thead>
+							<tr>
+								
+								<th>Resources/ outflows</th>
+								<th style="width:120px;">Amount in (Mn)</th>
+								
+								<th>Assets/ inflows</th>
+								<th style="width:120px;">Amount in (Mn)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+							
+								<td>Medium Term (6 months to 3 years)</td>
+								<td><input type="text" class="calc-input ac-amt" id="acR1Out" inputmode="decimal"
+										autocomplete="off" value="0" readonly /></td>
+								
+								<td>Medium Term</td>
+								<td><input type="text" class="calc-input ac-amt" id="acR5In" inputmode="decimal"
+										autocomplete="off" value="0" readonly /></td>
+							</tr>
+							<tr>
+								
+								<td>Long Term (above 3 years)</td>
+								<td><input type="text" class="calc-input ac-amt" id="acR2Out" inputmode="decimal"
+										autocomplete="off" value="0" readonly /></td>
+								
+								<td>Long Term</td>
+								<td><input type="text" class="calc-input ac-amt" id="acR6In" inputmode="decimal"
+										autocomplete="off" value="0" readonly /></td>
+							</tr>
+							<tr>
+								
+								<td class="summary-row-label">Long Term (3/6)</td>
+								<td><input type="text" class="calc-input calc-input-green ac-ratio" id="acLongTerm36"
+										inputmode="decimal" autocomplete="off" value="0%" readonly
+										title="Resources Long Term / Assets Long Term (%)" /></td>
+								<td class="sl-muted">70%</td>
+								<td></td>
+								
+							</tr>
+							<tr>
+								
+								<td class="summary-row-label">Medium to Long Term (2+3/5+6)</td>
+								<td><input type="text" class="calc-input calc-input-green ac-ratio" id="acMedLongTerm"
+										inputmode="decimal" autocomplete="off" value="0%" readonly
+										title="(Medium + Long Term resources) / (Medium + Long Term assets) (%)" /></td>
+								<td class="sl-muted">80%</td>
+								<td></td>
+								
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="position-as-on">
+						<span>&gt;&gt;&gt;Position As on</span>
+						<input type="date" id="acPositionDate2" title="Position date" />
+					</div>
+					<table class="section2-row">
+						<tbody>
+							<tr>
+								<td style="width:280px;">Long Term (3/6)</td>
+								<td><input type="text" class="calc-input calc-input-yellow" id="acLongTerm36S2"
+										inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+							</tr>
+							<tr>
+								<td>Medium to Long Term (2+3/5+6)</td>
+								<td><input type="text" class="calc-input calc-input-yellow" id="acMedLongTermS2"
+										inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+
+					<div class="ac-calc-panel ac-calc-panel-right">
+						<table>
+							<thead>
+								<tr>
+									<th class="ac-scenario-title" colspan="2">&gt;&gt;&gt;Scenario 1: INCREASE</th>
+									<th class="ac-scenario-col-h">Medium Term Amount in (Mn)</th>
+									<th class="ac-scenario-col-h">Long Term Amount in (Mn)</th>
+									<th style="min-width:110px;"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="ac-row-label" colspan="2">Resources &gt;&gt;&gt;&gt;</td>
+									<td class="ac-cell-grey"><input type="text" class="calc-input" id="acIncResMed"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td class="ac-cell-white"><input type="text" class="calc-input" id="acIncResLong"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td><span class="ac-enter-hint">Enter Value in Million : </span>
+										<input type="text" class="calc-input" id="acIncResEnter" inputmode="decimal"
+											autocomplete="off" style="margin-top:2px;" /></td>
+								</tr>
+								<tr>
+									<td class="ac-row-label" colspan="2">Asset &gt;&gt;&gt;&gt;</td>
+									<td class="ac-cell-grey"><input type="text" class="calc-input" id="acIncAstMed"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td class="ac-cell-long"><input type="text" class="calc-input" id="acIncAstLong"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td><span class="ac-enter-hint">Enter Value in Million : </span>
+										<input type="text" class="calc-input" id="acIncAstEnter" inputmode="decimal"
+											autocomplete="off" style="margin-top:2px;" /></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<table>
+							<thead>
+								<tr>
+									<th class="ac-scenario-title" colspan="2">&gt;&gt;&gt;Scenario 2: DECREASE</th>
+									<th class="ac-scenario-col-h">Medium Term Amount in (Mn)</th>
+									<th class="ac-scenario-col-h">Long Term Amount in (Mn)</th>
+									<th style="min-width:110px;"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="ac-row-label" colspan="2">Resources &gt;&gt;&gt;&gt;</td>
+									<td class="ac-cell-grey"><input type="text" class="calc-input" id="acDecResMed"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td class="ac-cell-long"><input type="text" class="calc-input" id="acDecResLong"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td><span class="ac-enter-hint">Enter Value in Million : </span>
+										<input type="text" class="calc-input" id="acDecResEnter" inputmode="decimal"
+											autocomplete="off" style="margin-top:2px;" /></td>
+								</tr>
+								<tr>
+									<td class="ac-row-label" colspan="2">Asset &gt;&gt;&gt;&gt;</td>
+									<td class="ac-cell-grey"><input type="text" class="calc-input" id="acDecAstMed"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td class="ac-cell-long"><input type="text" class="calc-input" id="acDecAstLong"
+											inputmode="decimal" autocomplete="off" value="0" /></td>
+									<td><span class="ac-enter-hint">Enter Value in Million : </span>
+										<input type="text" class="calc-input" id="acDecAstEnter" inputmode="decimal"
+											autocomplete="off" style="margin-top:2px;" /></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="ac-variation-base">
+							<span class="ac-variation-h" style="padding:4px 8px;display:inline-block;">&gt;&gt;&gt;Variation From</span>
+							<input type="text" id="acVariationBaseLabel" value="June 2025" placeholder="e.g. June 2025"
+								title="Base period label" readonly />
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<th style="width:220px;"></th>
+									<th class="ac-variation-h" style="text-align:center;">Variation</th>
+									<th class="ac-headroom-h">Head-Room Available</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="summary-row-label">Long Term (3/6)</td>
+									<td><input type="text" class="calc-input calc-input-orange" id="acVarLongTerm36"
+											inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+									<td><input type="text" class="calc-input calc-input-blue" id="acHrLongTerm36"
+											inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+								</tr>
+								<tr>
+									<td class="summary-row-label">Medium to Long Term (2+3/5+6)</td>
+									<td><input type="text" class="calc-input calc-input-orange" id="acVarMedLongTerm"
+											inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+									<td><input type="text" class="calc-input calc-input-blue" id="acHrMedLongTerm"
+											inputmode="decimal" autocomplete="off" value="0%" readonly /></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Result Modal -->
 	<div class="modal fade" id="resultModal" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered">
@@ -2902,7 +3392,7 @@
 						Close
 					</button>-->
 					<button type="button" class="role-btn" onclick="$('#resultModal').modal('hide')">
-					    Close
+						Close
 					</button>
 
 				</div>
@@ -2921,6 +3411,410 @@
 
 		$('#resultModal').modal('show');
 	}
+
+	function parseCalcAmount(val) {
+		if (val == null || String(val).trim() === '') {
+			return null;
+		}
+		var n = Number(String(val).replace(/,/g, '').trim());
+		return Number.isFinite(n) ? n : null;
+	}
+
+	function formatCalcAmount(n) {
+		if (n == null || !Number.isFinite(n)) {
+			return '0';
+		}
+		return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
+
+	function getSlsHiddenReportAmount(id) {
+		var el = document.getElementById(id);
+		if (!el) {
+			return null;
+		}
+		var n = parseCalcAmount(el.value);
+		return n == null ? 0 : n;
+	}
+
+	function getSlsR39MediumTermFromTable() {
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="39"]');
+		if (!row) {
+			return null;
+		}
+		var over6m = row.querySelector('td[data-sls-col="OVER6M_TO_1Y"]');
+		var over1y = row.querySelector('td[data-sls-col="OVER1Y_TO_3Y"]');
+		var a = over6m ? parseCalcAmount(over6m.textContent) : null;
+		var b = over1y ? parseCalcAmount(over1y.textContent) : null;
+		if (a == null && b == null) {
+			return null;
+		}
+		return (a == null ? 0 : a) + (b == null ? 0 : b);
+	}
+
+	function getSlsR39MediumTermBaseMn() {
+		var hidden6m = document.getElementById('slsR39Over6mTo1y');
+		var hidden1y = document.getElementById('slsR39Over1yTo3y');
+		if (hidden6m || hidden1y) {
+			return getSlsHiddenReportAmount('slsR39Over6mTo1y') + getSlsHiddenReportAmount('slsR39Over1yTo3y');
+		}
+		var fromTable = getSlsR39MediumTermFromTable();
+		return fromTable == null ? 0 : fromTable;
+	}
+
+	function calcAcR1Out() {
+		var baseMn = getSlsR39MediumTermBaseMn();
+		var incMed = parseCalcAmount(document.getElementById('acIncResMed').value);
+		var decMed = parseCalcAmount(document.getElementById('acDecResMed').value);
+		var totalMn = baseMn + (incMed == null ? 0 : incMed) - (decMed == null ? 0 : decMed);
+		setAcPercentField('acR1Out', formatCalcAmount(totalMn));
+	}
+
+	function getSlsR39LongTermFromTable() {
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="39"]');
+		if (!row) {
+			return null;
+		}
+		var over3y5y = row.querySelector('td[data-sls-col="OVER3Y_TO_5Y"]');
+		var over5y = row.querySelector('td[data-sls-col="OVER5Y"]');
+		var a = over3y5y ? parseCalcAmount(over3y5y.textContent) : null;
+		var b = over5y ? parseCalcAmount(over5y.textContent) : null;
+		if (a == null && b == null) {
+			return null;
+		}
+		return (a == null ? 0 : a) + (b == null ? 0 : b);
+	}
+
+	function getSlsR39LongTermBaseMn() {
+		var hidden3y5y = document.getElementById('slsR39Over3yTo5y');
+		var hidden5y = document.getElementById('slsR39Over5y');
+		if (hidden3y5y || hidden5y) {
+			return getSlsHiddenReportAmount('slsR39Over3yTo5y') + getSlsHiddenReportAmount('slsR39Over5y');
+		}
+		var fromTable = getSlsR39LongTermFromTable();
+		return fromTable == null ? 0 : fromTable;
+	}
+
+	function calcAcR2Out() {
+		var baseMn = getSlsR39LongTermBaseMn();
+		var incLong = parseCalcAmount(document.getElementById('acIncResLong').value);
+		var decLong = parseCalcAmount(document.getElementById('acDecResLong').value);
+		var totalMn = baseMn + (incLong == null ? 0 : incLong) - (decLong == null ? 0 : decLong);
+		setAcPercentField('acR2Out', formatCalcAmount(totalMn));
+	}
+
+	function getSlsR70MediumTermFromTable() {
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="70"]');
+		if (!row) {
+			return null;
+		}
+		var over6m = row.querySelector('[data-sls-col="OVER6M_TO_1Y"]');
+		var over1y = row.querySelector('[data-sls-col="OVER1Y_TO_3Y"]');
+		var a = over6m ? parseCalcAmount(over6m.textContent) : null;
+		var b = over1y ? parseCalcAmount(over1y.textContent) : null;
+		if (a == null && b == null) {
+			return null;
+		}
+		return (a == null ? 0 : a) + (b == null ? 0 : b);
+	}
+
+	function getSlsR70MediumTermBaseMn() {
+		var hidden6m = document.getElementById('slsR70Over6mTo1y');
+		var hidden1y = document.getElementById('slsR70Over1yTo3y');
+		if (hidden6m || hidden1y) {
+			return getSlsHiddenReportAmount('slsR70Over6mTo1y') + getSlsHiddenReportAmount('slsR70Over1yTo3y');
+		}
+		var fromTable = getSlsR70MediumTermFromTable();
+		return fromTable == null ? 0 : fromTable;
+	}
+
+	function calcAcR5In() {
+		var baseMn = getSlsR70MediumTermBaseMn();
+		var incMed = parseCalcAmount(document.getElementById('acIncAstMed').value);
+		var decMed = parseCalcAmount(document.getElementById('acDecAstMed').value);
+		var totalMn = baseMn + (incMed == null ? 0 : incMed) - (decMed == null ? 0 : decMed);
+		setAcPercentField('acR5In', formatCalcAmount(totalMn));
+	}
+
+	function getSlsR70LongTermFromTable() {
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="70"]');
+		if (!row) {
+			return null;
+		}
+		var over3y5y = row.querySelector('[data-sls-col="OVER3Y_TO_5Y"]');
+		var over5y = row.querySelector('[data-sls-col="OVER5Y"]');
+		var a = over3y5y ? parseCalcAmount(over3y5y.textContent) : null;
+		var b = over5y ? parseCalcAmount(over5y.textContent) : null;
+		if (a == null && b == null) {
+			return null;
+		}
+		return (a == null ? 0 : a) + (b == null ? 0 : b);
+	}
+
+	function getSlsR70LongTermBaseMn() {
+		var hidden3y5y = document.getElementById('slsR70Over3yTo5y');
+		var hidden5y = document.getElementById('slsR70Over5y');
+		if (hidden3y5y || hidden5y) {
+			return getSlsHiddenReportAmount('slsR70Over3yTo5y') + getSlsHiddenReportAmount('slsR70Over5y');
+		}
+		var fromTable = getSlsR70LongTermFromTable();
+		return fromTable == null ? 0 : fromTable;
+	}
+
+	function calcAcR6In() {
+		var baseMn = getSlsR70LongTermBaseMn();
+		var incLong = parseCalcAmount(document.getElementById('acIncAstLong').value);
+		var decLong = parseCalcAmount(document.getElementById('acDecAstLong').value);
+		var totalMn = baseMn + (incLong == null ? 0 : incLong) - (decLong == null ? 0 : decLong);
+		setAcPercentField('acR6In', formatCalcAmount(totalMn));
+	}
+
+	function parseCalcPercent(val) {
+		if (val == null || String(val).trim() === '') {
+			return null;
+		}
+		var n = Number(String(val).replace(/,/g, '').replace(/%/g, '').trim());
+		return Number.isFinite(n) ? n : null;
+	}
+
+	function formatCalcPercent(n) {
+		if (n == null || !Number.isFinite(n)) {
+			return '0%';
+		}
+		return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+	}
+
+	function calcAcVarLongTerm36() {
+		var current = parseCalcPercent(document.getElementById('acLongTerm36').value);
+		var prior = parseCalcPercent(document.getElementById('acLongTerm36S2').value);
+		var variation = (current == null ? 0 : current) - (prior == null ? 0 : prior);
+		setAcPercentField('acVarLongTerm36', formatCalcPercent(variation));
+	}
+
+	function calcAcVarMedLongTerm() {
+		var current = parseCalcPercent(document.getElementById('acMedLongTerm').value);
+		var prior = parseCalcPercent(document.getElementById('acMedLongTermS2').value);
+		var variation = (current == null ? 0 : current) - (prior == null ? 0 : prior);
+		setAcPercentField('acVarMedLongTerm', formatCalcPercent(variation));
+	}
+
+	function getAnalyticalCurrency() {
+		var sel = document.getElementById('currency');
+		if (sel && sel.value) {
+			return sel.value;
+		}
+		var hidden = document.getElementById('currencyin');
+		return hidden ? hidden.value : '';
+	}
+
+	function updateAcVariationBaseLabelFromDate(isoDate) {
+		var varBase = document.getElementById('acVariationBaseLabel');
+		if (!varBase || !isoDate) {
+			return;
+		}
+		var dParts = isoDate.split('-');
+		if (dParts.length === 3) {
+			var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+				'July', 'August', 'September', 'October', 'November', 'December'];
+			var mIdx = parseInt(dParts[1], 10) - 1;
+			if (mIdx >= 0 && mIdx < 12) {
+				varBase.value = monthNames[mIdx] + ' ' + dParts[0];
+			}
+		}
+	}
+
+	function fetchAcLongTerm36S2() {
+		var dateEl = document.getElementById('acPositionDate2');
+		var currency = getAnalyticalCurrency();
+		if (!dateEl || !dateEl.value || !currency) {
+			setAcPercentField('acLongTerm36S2', '0%');
+			calcAcVarLongTerm36();
+			return;
+		}
+		$.ajax({
+			url: './slsAnalyticalLongTermRatioS2',
+			type: 'GET',
+			data: {
+				reportdate: dateEl.value,
+				currency: currency
+			},
+			success: function (res) {
+				if (res && res.success && res.ratio != null && Number.isFinite(Number(res.ratio))) {
+					setAcPercentField('acLongTerm36S2', formatCalcPercent(Number(res.ratio)));
+				} else {
+					setAcPercentField('acLongTerm36S2', '0%');
+				}
+				calcAcVarLongTerm36();
+			},
+			error: function () {
+				setAcPercentField('acLongTerm36S2', '0%');
+				calcAcVarLongTerm36();
+			}
+		});
+	}
+
+	function fetchAcMedLongTermS2() {
+		var dateEl = document.getElementById('acPositionDate2');
+		var currency = getAnalyticalCurrency();
+		if (!dateEl || !dateEl.value || !currency) {
+			setAcPercentField('acMedLongTermS2', '0%');
+			calcAcVarMedLongTerm();
+			return;
+		}
+		$.ajax({
+			url: './slsAnalyticalMedLongTermRatioS2',
+			type: 'GET',
+			data: {
+				reportdate: dateEl.value,
+				currency: currency
+			},
+			success: function (res) {
+				if (res && res.success && res.ratio != null && Number.isFinite(Number(res.ratio))) {
+					setAcPercentField('acMedLongTermS2', formatCalcPercent(Number(res.ratio)));
+				} else {
+					setAcPercentField('acMedLongTermS2', '0%');
+				}
+				calcAcVarMedLongTerm();
+			},
+			error: function () {
+				setAcPercentField('acMedLongTermS2', '0%');
+				calcAcVarMedLongTerm();
+			}
+		});
+	}
+
+	function refreshAcSection2Ratios() {
+		var dateEl = document.getElementById('acPositionDate2');
+		var currency = getAnalyticalCurrency();
+		if (!dateEl || !dateEl.value || !currency) {
+			setAcPercentField('acLongTerm36S2', '0%');
+			setAcPercentField('acMedLongTermS2', '0%');
+			calcAcVarLongTerm36();
+			calcAcVarMedLongTerm();
+			return;
+		}
+		updateAcVariationBaseLabelFromDate(dateEl.value);
+		fetchAcLongTerm36S2();
+		fetchAcMedLongTermS2();
+	}
+
+	function setAcPercentField(id, value) {
+		var el = document.getElementById(id);
+		if (el) {
+			el.value = value;
+		}
+	}
+
+	function recalcSlsAnalyticalRatios() {
+		calcAcR1Out();
+		calcAcR2Out();
+		calcAcR5In();
+		calcAcR6In();
+		var r1 = parseCalcAmount(document.getElementById('acR1Out').value);
+		var r2 = parseCalcAmount(document.getElementById('acR2Out').value);
+		var r5 = parseCalcAmount(document.getElementById('acR5In').value);
+		var r6 = parseCalcAmount(document.getElementById('acR6In').value);
+
+		var longTermPct = (r2 != null && r6 != null && r6 !== 0) ? (r2 / r6) * 100 : null;
+		setAcPercentField('acLongTerm36', formatCalcPercent(longTermPct));
+
+		var resMedLong = (r1 == null ? 0 : r1) + (r2 == null ? 0 : r2);
+		var astMedLong = (r5 == null ? 0 : r5) + (r6 == null ? 0 : r6);
+		var medLongPct = astMedLong !== 0 ? (resMedLong / astMedLong) * 100 : null;
+		setAcPercentField('acMedLongTerm', formatCalcPercent(medLongPct));
+		calcAcVarLongTerm36();
+		calcAcVarMedLongTerm();
+	}
+
+	function ensureAcPercentDefaults() {
+		['acLongTerm36', 'acMedLongTerm', 'acLongTerm36S2', 'acMedLongTermS2',
+			'acVarLongTerm36', 'acHrLongTerm36', 'acVarMedLongTerm', 'acHrMedLongTerm'].forEach(function (id) {
+			var el = document.getElementById(id);
+			if (el && String(el.value).trim() === '') {
+				el.value = '0%';
+			}
+		});
+	}
+
+	function ensureAcAmountDefaults() {
+		['acIncResMed', 'acIncResLong', 'acIncAstMed', 'acIncAstLong'].forEach(function (id) {
+			var el = document.getElementById(id);
+			if (el && String(el.value).trim() === '') {
+				el.value = '0';
+			}
+		});
+	}
+
+	function onAcCalculatedOutflowsChanged() {
+		recalcSlsAnalyticalRatios();
+	}
+
+	function bindSlsAnalyticalCalcInputs() {
+		document.querySelectorAll('#slsAnalyticalCalcModal .ac-amt').forEach(function (el) {
+			if (el.id === 'acR1Out' || el.id === 'acR2Out' || el.id === 'acR5In' || el.id === 'acR6In') {
+				return;
+			}
+			el.removeEventListener('input', recalcSlsAnalyticalRatios);
+			el.addEventListener('input', recalcSlsAnalyticalRatios);
+		});
+		['acIncResMed', 'acDecResMed', 'acIncResLong', 'acDecResLong', 'acIncAstMed', 'acDecAstMed',
+			'acIncAstLong', 'acDecAstLong'].forEach(function (id) {
+			var el = document.getElementById(id);
+			if (!el) {
+				return;
+			}
+			el.removeEventListener('input', onAcCalculatedOutflowsChanged);
+			el.addEventListener('input', onAcCalculatedOutflowsChanged);
+		});
+		var d2 = document.getElementById('acPositionDate2');
+		if (d2) {
+			d2.removeEventListener('change', refreshAcSection2Ratios);
+			d2.addEventListener('change', refreshAcSection2Ratios);
+		}
+	}
+
+	function openAnalyticalCalculator() {
+		var reportDateEl = document.getElementById('reportDate');
+		var dateVal = '';
+		if (reportDateEl && reportDateEl.textContent) {
+			var parts = reportDateEl.textContent.trim().split('/');
+			if (parts.length === 3) {
+				var dd = parts[0].padStart(2, '0');
+				var mm = parts[1].padStart(2, '0');
+				var yyyy = parts[2];
+				dateVal = yyyy + '-' + mm + '-' + dd;
+			}
+		}
+		var d2 = document.getElementById('acPositionDate2');
+		if (d2 && dateVal) {
+			d2.value = dateVal;
+		}
+		bindSlsAnalyticalCalcInputs();
+		ensureAcAmountDefaults();
+		recalcSlsAnalyticalRatios();
+		ensureAcPercentDefaults();
+		refreshAcSection2Ratios();
+		$('#slsAnalyticalCalcModal').modal('show');
+	}
+</script>
+
+<script>
+	function highlightNegativeTableCells() {
+		document.querySelectorAll('#usertable tbody td').forEach(function (cell) {
+			var rawText = (cell.textContent || '').replace(/,/g, '').trim();
+			var numericText = rawText.replace(/\(/g, '').replace(/\)/g, '');
+			var value = Number(numericText);
+			var isNegative = rawText.indexOf('-') !== -1 || (rawText.indexOf('(') !== -1 && rawText.indexOf(')') !== -1);
+
+			if (!Number.isNaN(value) && isNegative && value !== 0) {
+				cell.classList.add('negative-warning-blink');
+			} else {
+				cell.classList.remove('negative-warning-blink');
+			}
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', highlightNegativeTableCells);
+	window.addEventListener('pageshow', highlightNegativeTableCells);
 </script>
 
 </html>

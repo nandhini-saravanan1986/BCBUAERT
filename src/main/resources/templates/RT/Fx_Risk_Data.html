@@ -19,6 +19,8 @@ TESTED BY   : RAJALAKSHMI R
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
 
 	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -34,6 +36,7 @@ TESTED BY   : RAJALAKSHMI R
 		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
 
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
 
 	<!-- JavaScript -->
 	<!-- jQuery core (required first) -->
@@ -85,7 +88,7 @@ TESTED BY   : RAJALAKSHMI R
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-primary, #2563EB);
 			border-color: #0c0c0c;
 		}
 
@@ -114,7 +117,7 @@ TESTED BY   : RAJALAKSHMI R
 		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header-blue, #2563EB) !important;
 			/* Header background */
 			color: white !important;
 			/* Header text color */
@@ -674,32 +677,7 @@ TESTED BY   : RAJALAKSHMI R
 		}
 	</style>
 	<style>
-		.role-btn {
-			background: #ffffff;
-			/* default white */
-			color: #E67E00;
-			/* default orange text */
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		/* Hover effect → pastel orange */
-		.role-btn:hover {
-			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
+/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
 			/* solid orange */
@@ -825,7 +803,7 @@ TESTED BY   : RAJALAKSHMI R
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: rgb(255, 128, 0);
+			color: var(--bank-primary, #2563EB);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -840,7 +818,7 @@ TESTED BY   : RAJALAKSHMI R
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: rgb(255, 128, 0);
+			background-color: var(--bank-primary, #2563EB);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -1485,8 +1463,8 @@ TESTED BY   : RAJALAKSHMI R
    			th:value="${lastDate}" class="form-control form-control-sm"
    			required Style="display:none" />
 
-				<div class="table-responsive" style="border: none;">
-					<table id="usertable" class="table table-bordered table-striped table-hover">
+				<div class="table-wrap">
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 						<thead class="thead-light">
 							<!-- style="background-color: #e9ecf0; font-size: 11px;"> -->
@@ -1522,7 +1500,7 @@ TESTED BY   : RAJALAKSHMI R
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;"><a
 										th:href="@{'/Fx_Risk_Data?formmode=edit&SI_NO=' + ${data.SI_NO}}">
-										<i class="fa fa-edit" style="color: #ff7f27;"></i>
+										<i class="fa fa-edit" style="color: var(--bank-primary, #2563EB);"></i>
 									</a></td>
 
 								<td th:text="${#dates.format(data.report_date, 'dd-MM-yyyy')}"></td>
@@ -1972,8 +1950,8 @@ TESTED BY   : RAJALAKSHMI R
 
 	/* ACTIVE page → ORANGE */
 	.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-		background-color: #ff7f27 !important;
-		border-color: #ff7f27 !important;
+		background-color: var(--bank-primary, #2563EB) !important;
+		border-color: var(--bank-primary-dark, #1E40AF) !important;
 		color: #ffffff !important;
 	}
 

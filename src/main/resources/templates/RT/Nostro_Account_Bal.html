@@ -20,6 +20,7 @@ PURPOSE		: Nostra Account balance Report
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<!--<script th:src="@{/js/chart.js}"></script>-->
 	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
@@ -101,7 +102,7 @@ PURPOSE		: Nostra Account balance Report
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: rgb(255, 128, 0);
+			color: var(--bank-primary, #2563EB);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -116,7 +117,7 @@ PURPOSE		: Nostra Account balance Report
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: rgb(255, 128, 0);
+			background-color: var(--bank-primary, #2563EB);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -129,32 +130,7 @@ PURPOSE		: Nostra Account balance Report
 	</style>
 
 	<style>
-		.role-btn {
-			background: #ffffff;
-			/* default white */
-			color: #E67E00;
-			/* default orange text */
-			border: 1px solid #E67E00;
-			border-radius: 25px;
-			padding: 8px 18px;
-			font-size: 13px;
-			font-weight: 600;
-			cursor: pointer;
-			box-shadow: 0 1px 3px rgba(230, 126, 0, 0.15);
-			transition: all 0.3s ease;
-		}
-
-		/* Hover effect → pastel orange */
-		.role-btn:hover {
-			background: #FFF3D1;
-			/* pastel orange (same as submenu hover) */
-			color: #E67E00;
-			/* orange text */
-			transform: translateY(-2px);
-			box-shadow: 0 0 8px rgba(230, 126, 0, 0.4);
-		}
-
-		/* Active (selected tab) */
+/* Active (selected tab) */
 		.role-btn.active {
 			background: #E67E00;
 			/* solid orange */
@@ -344,7 +320,7 @@ PURPOSE		: Nostra Account balance Report
 		}
 
 		.btn-primary {
-			background-color: #E77400;
+			background-color: var(--bank-primary, #2563EB);
 			border-color: #0c0c0c;
 		}
 
@@ -450,7 +426,7 @@ PURPOSE		: Nostra Account balance Report
 		}
 
 		#usertable th {
-			background-color: #7b6458 !important;
+			background-color: var(--table-header-blue, #2563EB) !important;
 			/* Header background */
 			color: white !important;
 			/* Header text color */
@@ -847,6 +823,7 @@ PURPOSE		: Nostra Account balance Report
 
 	</script>
 
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 </head>
 
 
@@ -1301,8 +1278,8 @@ PURPOSE		: Nostra Account balance Report
 			th:value="${lastDate}" class="form-control form-control-sm"
 			required Style="display:none" />
 			
-				<div class="table-responsive" style="border: none;">
-					<table id="usertable" class="table table-bordered table-striped table-hover">
+				<div class="table-wrap">
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 
 						<thead class="thead-light">
 
@@ -1809,7 +1786,7 @@ PURPOSE		: Nostra Account balance Report
 
 	/* HEADER */
 	#usertable th {
-		background-color: #7b6458 !important;
+		background-color: var(--table-header-blue, #2563EB) !important;
 		/* brown header */
 		color: white !important;
 		text-align: center !important;
@@ -1902,9 +1879,9 @@ PURPOSE		: Nostra Account balance Report
 
 	/* Active page number (Orange + White text) */
 	.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-		background: #ff7f27 !important;
+		background: var(--bank-primary, #2563EB) !important;
 		/* orange */
-		border-color: #ff7f27 !important;
+		border-color: var(--bank-primary-dark, #1E40AF) !important;
 		color: #fff !important;
 		/* white text */
 		font-weight: bold !important;

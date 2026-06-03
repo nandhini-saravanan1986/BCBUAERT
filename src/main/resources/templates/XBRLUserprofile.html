@@ -13,6 +13,8 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
+	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
+	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 
 	<!-- JavaScript Links -->
 	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
@@ -22,6 +24,7 @@
 	<script th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
 	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
 	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
 	<style>
 		:root {
 			--bob-orange: #ff7f27;
@@ -31,21 +34,52 @@
 		body {
 			font-family: 'Segoe UI', Arial, sans-serif;
 			font-size: 12px;
-			background-color: #f8f9fa;
+			background: var(--bank-page-bg, #F7F4F1);
 			margin: 0;
 			padding: 0;
+			min-height: 100vh;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+
+		.user-profile-page {
+			margin-top: 20px;
+			padding: 0 12px 24px;
+			max-width: 100%;
+		}
+
+		.formline label {
+			word-break: break-word;
+		}
+
+		@media (max-width: 767px) {
+			.user-profile-page {
+				padding: 0 8px 16px;
+			}
+
+			.formline label {
+				margin-bottom: 4px;
+			}
 		}
 
 		.role-page-header {
 			background-color: #ffffff;
-			padding: 10px 10px 10px 1px;
+			padding: 12px 16px;
+			border-radius: 8px 8px 0 0;
 		}
 
-		#usertable thead th {
-			background-color: #7b6458;
-			color: #fff;
-			text-align: center;
-			padding: 8px;
+		.user-list-card,
+		.user-form-card {
+			background: #fff;
+			border-radius: 8px;
+			border: 1px solid var(--bank-border, #E8DDD2);
+			box-shadow: 0 2px 8px rgba(61, 43, 31, 0.06);
+			overflow: hidden;
+		}
+
+		.table-wrap {
+			padding: 12px;
+			overflow-x: auto;
 		}
 
 		.formline {
@@ -111,13 +145,13 @@
 		}
 
 		.modal-header {
-			background: #7b6458;
+			background: var(--table-header-blue, #2563EB);
 			color: white;
 		}
 		.static-back-btn {
 		    background-color: rgb(255, 255, 255);
 		    border: none;
-		    color: rgb(255, 128, 0);
+		    color: var(--bank-primary, #2563EB);
 		    font-size: 16px;
 		    border-radius: 50%;
 		    width: 36px;
@@ -132,7 +166,7 @@
 
 		/* Hover effect */
 		.static-back-btn:hover {
-		    background-color: rgb(255, 128, 0);   /* darker orange */
+		    background-color: var(--bank-primary, #2563EB);   /* darker orange */
 		    color: rgb(255, 255, 255);
 		    transform: scale(1.08);
 		}
@@ -141,13 +175,123 @@
 		.static-back-btn:active {
 		    transform: scale(0.95);
 		}
-	</style>
 
-	<!-- Required Scripts -->
-	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
-	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-	<script th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+		#pageHeader {
+			position: sticky;
+			top: 110px;
+			z-index: 1050;
+			background: white;
+			padding-top: 10px;
+		}
+
+		#tabHeader {
+			margin-top: 0;
+		}
+
+		.user-form-card-body {
+			padding-bottom: 24px;
+		}
+
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+			width: 100%;
+		}
+
+		#usertable thead th {
+			background-color: var(--table-header-blue, #2563EB) !important;
+			color: #fff;
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
+			text-align: center;
+			vertical-align: middle;
+			white-space: normal;
+			padding: 10px 4px !important;
+			line-height: 1.1 !important;
+			box-shadow: inset 0 -1px 0 #dee2e6;
+		}
+
+		#usertable td {
+			padding: 5px 6px !important;
+			border: 1px solid #e8e8e8 !important;
+			background: #fafafa;
+			white-space: normal !important;
+		}
+
+		#usertable tbody tr:nth-child(even) {
+			background-color: #f4f2ef !important;
+		}
+
+		#usertable tbody tr:nth-child(odd) {
+			background-color: #ffffff !important;
+		}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+			flex: 1;
+		}
+
+		.dataTables_wrapper .page-link:focus,
+		.dataTables_wrapper .page-link:active {
+			box-shadow: none !important;
+			outline: none !important;
+		}
+
+		.dataTables_wrapper .paginate_button.previous .page-link,
+		.dataTables_wrapper .paginate_button.next .page-link {
+			color: #9e9e9e !important;
+			background-color: transparent !important;
+			border-color: #dddddd !important;
+		}
+
+		.dataTables_wrapper .paginate_button.previous .page-link:hover,
+		.dataTables_wrapper .paginate_button.next .page-link:hover {
+			color: #c5c5c5 !important;
+			background-color: #f0f0f0 !important;
+		}
+
+		.dataTables_wrapper .paginate_button.disabled .page-link {
+			color: #c5c5c5 !important;
+			background-color: #eeeeee !important;
+			cursor: not-allowed;
+		}
+
+		.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link {
+			color: var(--bank-primary, #2563EB) !important;
+			background-color: transparent !important;
+			border-color: #dddddd !important;
+		}
+
+		.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link:hover {
+			background-color: #f5f5f5 !important;
+			color: var(--bank-primary, #2563EB) !important;
+		}
+
+		.dataTables_wrapper .paginate_button.active .page-link {
+			background-color: var(--bank-primary, #2563EB) !important;
+			border-color: var(--bank-primary-dark, #1E40AF) !important;
+			color: #ffffff !important;
+			cursor: default !important;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			margin: 0 1px !important;
+			min-width: auto !important;
+		}
+
+		.dataTables_wrapper {
+			width: 100%;
+			overflow-x: auto;
+		}
+	</style>
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
@@ -219,7 +363,14 @@
 
 		function roledesc() {
 			var roleId = $("#roleId").val();
-			if (!roleId) return;
+			if (!roleId) {
+				$("#role_desc").val("");
+				$("#work_class").val("");
+				$("#permissions").val("");
+				$("#domain_id").val("");
+				syncCheckboxes("");
+				return;
+			}
 			$.ajax({
 				url: /*[[@{/getRoleDetails}]]*/ "/getRoleDetails",
 				type: "GET",
@@ -232,6 +383,14 @@
 						$("#domain_id").val(data.menulist || "");
 						syncCheckboxes(data.menulist || "");
 					}
+				},
+				error: function () {
+					$("#role_desc").val("");
+					$("#work_class").val("");
+					$("#permissions").val("");
+					$("#domain_id").val("");
+					syncCheckboxes("");
+					alert("Unable to load selected role details.");
 				}
 			});
 		}
@@ -278,6 +437,18 @@
 
 		function submitForm() {
 			if (!$("#userForm").valid()) return;
+			var roleId = ($("#roleId").val() || "").trim();
+			var workClass = ($("#work_class").val() || "").trim();
+			var permissions = ($("#permissions").val() || "").trim();
+			var moduleAccess = ($("#domain_id").val() || "").trim();
+			if (!roleId) {
+				alert("Role ID is required.");
+				return;
+			}
+			if (!workClass || !permissions || !moduleAccess) {
+				alert("Role access details are not loaded. Please reselect Role ID.");
+				return;
+			}
 			showLoader();
 			$.ajax({
 				url: "./createUser?formmode=" + $("#formmode").val(),
@@ -305,16 +476,24 @@
 			});
 		}
 		$(document).ready(function () {
-			$('#usertable').DataTable({
-				paging: true,
-				ordering: false,
-				searching: true,
-				pageLength: 10,
-				lengthChange: false,
-				responsive: true,
-				autoWidth: false,
-				dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
-			});
+			if ($('#userForm').length) {
+				$('#userForm').validate({ ignore: ':disabled' });
+				if ($('#roleId').val()) {
+					roledesc();
+				}
+			}
+			if ($('#usertable').length) {
+				$('#usertable').DataTable({
+					paging: true,
+					ordering: false,
+					searching: true,
+					pageLength: 10,
+					lengthChange: false,
+					responsive: true,
+					autoWidth: false,
+					dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
+				});
+			}
 		});
 
 			
@@ -340,13 +519,12 @@
 		</div>
 	</div>
 
-	<div class="container-fluid">
-		<!--	<div th:insert="XBRLHeaderMenu :: header" id="mainHeader"></div>-->
+	<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
 
-		<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
-
+	<div class="container-fluid user-profile-page">
 		<!-- LIST VIEW -->
-		<div th:if="${formmode == 'list'}" class="mt-3" id="tabHeader">
+		<div th:if="${formmode == 'list'}" id="tabHeader">
+			<div class="user-list-card">
 			<div class="role-page-header d-flex justify-content-between align-items-center">
 
 			    <!-- LEFT SIDE -->
@@ -362,15 +540,14 @@
 
 			    <!-- RIGHT SIDE -->
 			    <button class="role-btn"
-			        th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
+			        th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C'}"
 			        onclick="adduser()">
 			        Create User
 			    </button>
 
 			</div>
-			<div class="card-body bg-white shadow-sm">
-				<div class="table-responsive">
-					<table class="table table-hover table-bordered m-0" id="usertable">
+			<div class="table-wrap">
+					<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 						<thead>
 							<tr>
 								<th style="text-align:left;">USER ID</th>
@@ -397,10 +574,10 @@
 									<i class="fa fa-eye text-info mr-3" style="cursor:pointer" title="View"
 										th:attr="data-userid=${up.userid}" onclick="fnView(this)"></i>
 									<i class="fa fa-edit text-primary mr-3" style="cursor:pointer" title="Edit"
-										th:if="${session.ROLEID == 'ADM-M' OR session.ROLEID == 'ADM-C'}"
+										th:if="${session.ROLEID == 'ADM-M' or session.ROLEID == 'ADM-C'}"
 										th:attr="data-userid=${up.userid}" onclick="fnEdit(this)"></i>
 									<i class="fa fa-check-circle text-success" style="cursor:pointer" title="Verify"
-										th:if="${session.ROLEID == 'ADM-C' AND up.entity_flg == 'N'}"
+										th:if="${session.ROLEID == 'ADM-C' and up.entity_flg == 'N'}"
 										th:attr="data-userid=${up.userid}" onclick="fnVerify(this)"></i>
 								</td>
 							</tr>
@@ -411,10 +588,10 @@
 		</div>
 
 		<!-- FORM VIEW -->
-		<div th:if="${formmode != 'list'}" class="mt-3">
+		<div th:if="${formmode != 'list'}">
 			<form id="userForm" th:object="${userProfile}" autocomplete="off">
 				<input type="hidden" id="formmode" th:value="${formmode}">
-				<div class="card shadow-sm">
+				<div class="user-form-card shadow-sm">
 					<div class="role-page-header d-flex justify-content-between">
 						<div class="d-flex align-items-center">
 
@@ -426,7 +603,7 @@
 					<button type="button" class="role-btn" onclick="list()">List</button>
 											
 					</div>
-					<div class="card-body" style="height: 75vh; overflow-y: auto;">
+					<div class="card-body user-form-card-body">
 						<!-- Row 1 -->
 						<div class="row formline">
 							<label class="col-sm-2">User ID <span class="text-danger">*</span></label>
@@ -656,7 +833,7 @@
 							<button th:if="${formmode == 'add' || formmode == 'edit'}" type="button"
 								class="role-btn px-5" onclick="submitForm()">Submit</button>
 							<button th:if="${formmode == 'verify'}" type="button" class="btn btn-success px-5"
-								th:attr="data-entry_user=*{entry_user}" onclick="verifySubmit(this)">Verify
+								th:data-entry_user="*{entry_user}" onclick="verifySubmit(this)">Verify
 								Profile</button>
 						</div>
 					</div>
@@ -686,6 +863,8 @@
 								& Roles</div>
 							<div class="module-item"><input type="checkbox" name="domId" value="Adm-CustgrpMain">
 								Customer Group Maintenance</div>
+							<div class="module-item"><input type="checkbox" name="domId" value="Adm-BillDetails"> Bill
+								Details</div>
 						</div>
 						<div class="category-head">RT Reports</div>
 						<div class="module-grid">
@@ -764,223 +943,5 @@
 		</div>
 	</div>
 </body>
-<style>
-	#pageHeader {
-		position: sticky;
-		top: 110px;
-		z-index: 1050;
-		background: white;
-		padding-top: 10px;
-	}
-
-	#tabHeader {
-		position: sticky;
-		top: 5px;
-		/* just below page header */
-		z-index: 1020;
-		background: white;
-	}
-
-	#mainHeader {
-		position: sticky;
-		top: 0;
-		z-index: 9999;
-		background: white;
-	}
-
-	.navbar {
-		position: sticky;
-		top: 0px;
-		z-index: 2000;
-	}
-</style>
-<style>
-	#usertable {
-		border-collapse: collapse !important;
-		font-family: Arial, sans-serif !important;
-		font-size: 12px !important;
-	}
-
-	/* HEADER */
-	/* Update this section in your <style> tag */
-	#usertable thead th {
-		background-color: #7b6458;
-		color: #fff;
-		font-family: Arial, sans-serif !important;
-		font-size: 14px !important;
-		text-align: center;
-		vertical-align: middle;
-		white-space: normal;
-
-		/* ADD THESE THREE LINES */
-		padding: 10px 4px !important;
-		/* Reduces internal spacing */
-		line-height: 1.1 !important;
-		position: sticky;
-		top: 0;
-		/* Keeps the first row at the top */
-		z-index: 10;
-		background-color: #7b6458 !important;
-		/* Ensures the header isn't transparent */
-		color: white;
-		box-shadow: inset 0 -1px 0 #dee2e6;
-	}
-
-
-	/* BODY CELLS */
-	#usertable td {
-		padding: 5px 6px !important;
-		border: 1px solid #e8e8e8 !important;
-		/* light grey lines */
-		background: #fafafa;
-		white-space: normal !important;
-	}
-
-	/* ROW EVEN/ODD */
-	#usertable tbody tr:nth-child(even) {
-		background-color: #f4f2ef !important;
-	}
-
-	#usertable tbody tr:nth-child(odd) {
-		background-color: #ffffff !important;
-	}
-
-	#usertable thead tr:nth-child(2) th {
-		top: 32px;
-		/* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
-		z-index: 9;
-
-		/* SEARCH BOX FIX */
-		.dataTables_filter label {
-			display: flex !important;
-			gap: 10px;
-			align-items: center;
-		}
-
-		.dataTables_filter label {
-			display: flex !important;
-			align-items: center;
-			gap: 8px;
-			/* space between text and input */
-			margin-bottom: 0 !important;
-		}
-
-		.dataTables_filter input {
-			margin-left: 5px;
-			flex: 1;
-		}
-
-		/* === ROLE PAGE CUSTOM HEADER === */
-		.role-page-header {
-			background-color: #ffffff;
-			padding: 15px 20px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-top: -8px;
-
-		}
-</style>
-
-<style>
-	.dataTables_wrapper .page-link:focus,
-	.dataTables_wrapper .page-link:active {
-		box-shadow: none !important;
-		outline: none !important;
-	}
-
-	/* ---------- Previous & Next ---------- */
-	.dataTables_wrapper .paginate_button.previous .page-link,
-	.dataTables_wrapper .paginate_button.next .page-link {
-		color: #9e9e9e !important;
-		/* gray */
-		background-color: transparent !important;
-		border-color: #dddddd !important;
-	}
-
-	.dataTables_wrapper .paginate_button.previous .page-link:hover,
-	.dataTables_wrapper .paginate_button.next .page-link:hover {
-		color: #c5c5c5 !important;
-		background-color: #f0f0f0 !important;
-	}
-
-	/* Disabled Previous / Next */
-	.dataTables_wrapper .paginate_button.disabled .page-link {
-		color: #c5c5c5 !important;
-		background-color: #eeeeee !important;
-		cursor: not-allowed;
-	}
-
-	/* ---------- Page Numbers ---------- */
-	.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link {
-		color: #ff7f27 !important;
-		background-color: transparent !important;
-		border-color: #dddddd !important;
-	}
-
-	/* Hover on page numbers */
-	.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link:hover {
-		background-color: #f5f5f5 !important;
-		color: #ff7f27 !important;
-	}
-
-	/* ---------- ACTIVE PAGE ---------- */
-	.dataTables_wrapper .paginate_button.active .page-link {
-		background-color: #ff7f27 !important;
-		/* ORANGE */
-		border-color: #ff7f27 !important;
-		color: #ffffff !important;
-		cursor: default !important;
-	}
-
-	/* Reduce spacing between pagination numbers */
-	.dataTables_wrapper .dataTables_paginate .paginate_button {
-		margin: 0 1px !important;/ min-width: auto !important;
-	}
-</style>
-<style>
-	.fixed-top {
-		position: fixed;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 1030;
-	}
-
-	/* Keep table layout intact */
-	#usertable {
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	#usertable thead th {
-		position: sticky;
-		top: 0;
-		z-index: 2;
-	}
-
-	.table-responsive {
-		overflow-x: auto;
-	}
-
-	body {
-		padding-top: 120px;
-		/* Equal to header height */
-	}
-
-	html,
-	body {
-		height: 100%;
-		overflow: hidden;
-		/*window scroll */
-	}
-
-	.container-fluid {
-		height: 100vh;
-		margin-top: -29px;
-		/* header height */
-		overflow: hidden;
-	}
-</style>
 
 </html>

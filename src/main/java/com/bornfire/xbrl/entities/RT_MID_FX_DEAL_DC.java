@@ -34,6 +34,19 @@ public class RT_MID_FX_DEAL_DC {
 
 	@Column(name = "ACTUAL_IRS_CIRS")
 	private BigDecimal actualIrsCirs;
+	
+	// --- ACTUAL VALUES (INR) ---
+	@Column(name = "ACTUAL_BONDS_MOD")
+	private BigDecimal actualBondsmod;
+
+	@Column(name = "ACTUAL_FX_SWAPS_MOD")
+	private BigDecimal actualFxSwapsmod;
+
+	@Column(name = "ACTUAL_OUTRIGHT_FORWARDS_MOD")
+	private BigDecimal actualOutrightForwardsmod;
+
+	@Column(name = "ACTUAL_IRS_CIRS_MOD")
+	private BigDecimal actualIrsCirsmod;
 
 	// --- ABSOLUTE VALUES (INR) ---
 	@Column(name = "ABS_BONDS")
@@ -332,6 +345,40 @@ public class RT_MID_FX_DEAL_DC {
 
 	public void setRcreTime(Date rcreTime) {
 		this.rcreTime = rcreTime;
+	}
+	
+	
+
+	public BigDecimal getActualBondsmod() {
+		return actualBondsmod;
+	}
+
+	public void setActualBondsmod(BigDecimal actualBondsmod) {
+		this.actualBondsmod = actualBondsmod;
+	}
+
+	public BigDecimal getActualFxSwapsmod() {
+		return actualFxSwapsmod;
+	}
+
+	public void setActualFxSwapsmod(BigDecimal actualFxSwapsmod) {
+		this.actualFxSwapsmod = actualFxSwapsmod;
+	}
+
+	public BigDecimal getActualOutrightForwardsmod() {
+		return actualOutrightForwardsmod;
+	}
+
+	public void setActualOutrightForwardsmod(BigDecimal actualOutrightForwardsmod) {
+		this.actualOutrightForwardsmod = actualOutrightForwardsmod;
+	}
+
+	public BigDecimal getActualIrsCirsmod() {
+		return actualIrsCirsmod;
+	}
+
+	public void setActualIrsCirsmod(BigDecimal actualIrsCirsmod) {
+		this.actualIrsCirsmod = actualIrsCirsmod;
 	}
 
 	public RT_MID_FX_DEAL_DC() {
