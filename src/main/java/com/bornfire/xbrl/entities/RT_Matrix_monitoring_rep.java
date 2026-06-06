@@ -242,5 +242,24 @@ List<Object[]> GetDailyDepositconcentrationretail(Date Selecteddate);
 
 	@Query(value = "SELECT COUNT(*) FROM rt_matrix_monitored_table WHERE report_date = ?1 and s_no=?2", nativeQuery = true)
 	Long countByReportDate(Date reportDate,String Serialno);
+
+	/** Monthly (last 12 month-ends) chart series from rt_matrix_monitored_table for any S_NO. */
+	@Query(value = "Select * from(\r\n"
+			+ "With MatrixData as(Select REPORT_DATE, POSITION_OF_MATRIX from rt_matrix_monitored_table Where S_NO = ?2),\r\n"
+			+ "Current_Year_dates as(SELECT LAST_DAY(ADD_MONTHS(TRUNC(?1, 'MONTH'), (-LEVEL)+1))\r\n"
+			+ "AS month_end FROM dual CONNECT BY LEVEL <= 12)\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as chart_date, NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS position_value\r\n"
+			+ "from Current_Year_dates a left join MatrixData b on a.month_end = b.REPORT_DATE\r\n"
+			+ "order by a.month_end Asc)", nativeQuery = true)
+	List<Object[]> GetMatrixChartMonthlyBySno(Date selectedDate, String sNo);
+
+	/** Daily (last 31 days) chart series from rt_matrix_monitored_table for any S_NO. */
+	@Query(value = "Select * from(\r\n"
+			+ "With MatrixData as(Select REPORT_DATE, POSITION_OF_MATRIX from rt_matrix_monitored_table Where S_NO = ?2),\r\n"
+			+ "Current_Year_dates as(SELECT ?1 - (LEVEL - 1) AS month_end FROM dual CONNECT BY LEVEL <= 31)\r\n"
+			+ "Select To_char(a.month_end,'DD-MM-YYYY') as chart_date, NVL(TO_NUMBER(POSITION_OF_MATRIX),0) AS position_value\r\n"
+			+ "from Current_Year_dates a left join MatrixData b on a.month_end = b.REPORT_DATE\r\n"
+			+ "order by a.month_end Asc)", nativeQuery = true)
+	List<Object[]> GetMatrixChartDailyBySno(Date selectedDate, String sNo);
 	
 }

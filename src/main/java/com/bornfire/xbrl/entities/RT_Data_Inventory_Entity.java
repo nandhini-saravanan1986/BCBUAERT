@@ -39,6 +39,10 @@ public class RT_Data_Inventory_Entity {
 	@Column(name = "REPORT_TYPE_CODE", length = 50)
 	private String reportTypeCode;
 
+	/** JSON: extra filter fields and date rules — see RT_DATA_INVENTORY_EXTRA_FILTERS.sql */
+	@Column(name = "EXTRA_FILTERS", length = 4000)
+	private String extraFilters;
+
 	public Long getInventoryId() {
 		return inventoryId;
 	}
@@ -101,5 +105,13 @@ public class RT_Data_Inventory_Entity {
 
 	public void setReportTypeCode(String reportTypeCode) {
 		this.reportTypeCode = reportTypeCode;
+	}
+
+	public String getExtraFilters() {
+		return extraFilters;
+	}
+
+	public void setExtraFilters(String extraFilters) {
+		this.extraFilters = extraFilters;
 	}
 }

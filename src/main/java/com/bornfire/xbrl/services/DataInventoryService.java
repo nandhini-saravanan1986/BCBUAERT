@@ -34,9 +34,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bornfire.xbrl.dto.DataInventoryExportResultDto;
+import com.bornfire.xbrl.dto.DataInventoryFixedFilterDto;
 import com.bornfire.xbrl.dto.DataInventoryItemDto;
+import com.bornfire.xbrl.dto.DataInventoryValidationConfigDto;
 import com.bornfire.xbrl.entities.RT_Data_Inventory_Entity;
 import com.bornfire.xbrl.entities.RT_Data_Inventory_Repo;
+import com.bornfire.xbrl.util.DataInventoryExtraFiltersParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DataInventoryService {
@@ -47,6 +52,8 @@ public class DataInventoryService {
 			"TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH LOCAL TIME ZONE"));
 
 	private static final SimpleDateFormat DISPLAY_DATE = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
 	private final JdbcTemplate jdbcTemplate;
 
@@ -68,7 +75,10 @@ public class DataInventoryService {
 			DataInventoryItemDto dto = new DataInventoryItemDto();
 			dto.setInventoryId(row.getInventoryId());
 			dto.setReportName(row.getReportName());
-			dto.setTableName(row.getTableName());
+			DataInventoryValidationConfigDto validationConfig = DataInventoryExtraFiltersParser
+					.parse(row.getExtraFilters());
+			dto.setDateNotFuture(validationConfig.isDateNotFuture());
+			dto.setDateMaxDaysBack(validationConfig.getDateMaxDaysBack());
 			out.add(dto);
 		}
 		return out;
@@ -85,11 +95,17 @@ public class DataInventoryService {
 				.orElseThrow(() -> new IllegalArgumentException(
 						"Export is not configured for report type: " + reportType
 								+ ". Add a row in RT_DATA_INVENTORY with REPORT_TYPE_CODE."));
-		return export(config.getInventoryId(), reportDate, format);
+		return export(config.getInventoryId(), reportDate, format, null);
 	}
 
 	@Transactional(transactionManager = "datasrcTransactionManager", readOnly = true)
 	public DataInventoryExportResultDto export(Long inventoryId, LocalDate reportDate, String format) throws Exception {
+		return export(inventoryId, reportDate, format, null);
+	}
+
+	@Transactional(transactionManager = "datasrcTransactionManager", readOnly = true)
+	public DataInventoryExportResultDto export(Long inventoryId, LocalDate reportDate, String format,
+			Map<String, String> extraFilterValues) throws Exception {
 		if (inventoryId == null) {
 			throw new IllegalArgumentException("Inventory id is required");
 		}
@@ -107,8 +123,12 @@ public class DataInventoryService {
 			throw new IllegalArgumentException("Inventory entry is not active");
 		}
 
-		ValidatedExport validated = validateExportConfig(config);
-		List<Map<String, Object>> rows = queryRows(validated, reportDate);
+		DataInventoryValidationConfigDto validationConfig = DataInventoryExtraFiltersParser.parse(config.getExtraFilters());
+		validateReportDateRules(reportDate, validationConfig);
+		List<DataInventoryFixedFilterDto> fixedFilters = resolveFixedFiltersFromConfig(config, validationConfig);
+
+		ValidatedExport validated = validateExportConfig(config, validationConfig);
+		List<Map<String, Object>> rows = queryRows(validated, reportDate, fixedFilters);
 		if (rows.isEmpty()) {
 			throw new NoDataForExportException("No data found for the selected report date");
 		}
@@ -129,7 +149,80 @@ public class DataInventoryService {
 		return result;
 	}
 
-	private ValidatedExport validateExportConfig(RT_Data_Inventory_Entity config) {
+	public Map<String, String> parseExtraFiltersParam(String filtersJson) {
+		if (filtersJson == null || filtersJson.trim().isEmpty()) {
+			return Collections.emptyMap();
+		}
+		try {
+			Map<String, String> parsed = JSON_MAPPER.readValue(filtersJson.trim(),
+					new TypeReference<Map<String, String>>() {
+					});
+			Map<String, String> out = new LinkedHashMap<String, String>();
+			if (parsed != null) {
+				for (Map.Entry<String, String> e : parsed.entrySet()) {
+					if (e.getKey() != null && e.getValue() != null && !e.getValue().trim().isEmpty()) {
+						out.put(e.getKey().trim(), e.getValue().trim());
+					}
+				}
+			}
+			return out;
+		} catch (Exception ex) {
+			throw new IllegalArgumentException("Invalid filters JSON");
+		}
+	}
+
+	private void validateReportDateRules(LocalDate reportDate, DataInventoryValidationConfigDto validationConfig) {
+		LocalDate today = LocalDate.now();
+		if (validationConfig.isDateNotFuture() && reportDate.isAfter(today)) {
+			throw new IllegalArgumentException("Report date cannot be in the future");
+		}
+		if (validationConfig.getDateMaxDaysBack() != null && validationConfig.getDateMaxDaysBack() > 0) {
+			LocalDate earliest = today.minusDays(validationConfig.getDateMaxDaysBack());
+			if (reportDate.isBefore(earliest)) {
+				throw new IllegalArgumentException(
+						"Report date cannot be earlier than " + earliest + " (max " + validationConfig.getDateMaxDaysBack()
+								+ " days back)");
+			}
+		}
+	}
+
+	/**
+	 * Fixed filters from EXTRA_FILTERS only (dashboard does not send filter values).
+	 */
+	private List<DataInventoryFixedFilterDto> resolveFixedFiltersFromConfig(RT_Data_Inventory_Entity config,
+			DataInventoryValidationConfigDto validationConfig) {
+		List<DataInventoryFixedFilterDto> fixed = validationConfig.getFixedFilters();
+		if (fixed == null || fixed.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Map<String, String> columnTypes = loadColumnTypes(safeUpper(config.getTableName()));
+		List<DataInventoryFixedFilterDto> out = new ArrayList<DataInventoryFixedFilterDto>();
+		for (DataInventoryFixedFilterDto filter : fixed) {
+			String col = safeUpper(filter.getColumn());
+			if (!SAFE_IDENTIFIER.matcher(col).matches() || !columnTypes.containsKey(col)) {
+				throw new IllegalArgumentException("Filter column not found on table: " + col);
+			}
+			List<String> values = new ArrayList<String>();
+			if (filter.getValues() != null) {
+				for (String v : filter.getValues()) {
+					if (v != null && !v.trim().isEmpty()) {
+						values.add(v.trim());
+					}
+				}
+			}
+			if (values.isEmpty()) {
+				throw new IllegalArgumentException("Filter " + col + " has no values in configuration");
+			}
+			DataInventoryFixedFilterDto copy = new DataInventoryFixedFilterDto();
+			copy.setColumn(col);
+			copy.setValues(values);
+			out.add(copy);
+		}
+		return out;
+	}
+
+	private ValidatedExport validateExportConfig(RT_Data_Inventory_Entity config,
+			DataInventoryValidationConfigDto validationConfig) {
 		String tableName = safeUpper(config.getTableName());
 		if (!SAFE_IDENTIFIER.matcher(tableName).matches()) {
 			throw new IllegalArgumentException("Invalid table name in configuration");
@@ -164,6 +257,15 @@ public class DataInventoryService {
 			}
 		}
 
+		if (validationConfig != null && validationConfig.getFixedFilters() != null) {
+			for (DataInventoryFixedFilterDto field : validationConfig.getFixedFilters()) {
+				String col = safeUpper(field.getColumn());
+				if (!columnTypes.containsKey(col)) {
+					throw new IllegalArgumentException("Filter column not found on table: " + col);
+				}
+			}
+		}
+
 		ValidatedExport out = new ValidatedExport();
 		out.tableName = tableName;
 		out.dateColumn = dateColumn;
@@ -171,13 +273,38 @@ public class DataInventoryService {
 		return out;
 	}
 
-	private List<Map<String, Object>> queryRows(ValidatedExport validated, LocalDate reportDate) {
+	private List<Map<String, Object>> queryRows(ValidatedExport validated, LocalDate reportDate,
+			List<DataInventoryFixedFilterDto> fixedFilters) {
 		String selectList = validated.exportColumns.stream().collect(Collectors.joining(", "));
 		int rowLimit = Math.max(1, maxExportRows);
-		String sql = "SELECT " + selectList + " FROM " + validated.tableName + " WHERE TRUNC(" + validated.dateColumn
-				+ ") = TRUNC(?) FETCH FIRST " + rowLimit + " ROWS ONLY";
-		Date sqlDate = Date.valueOf(reportDate);
-		return jdbcTemplate.query(sql, new ColumnMapRowMapper(), sqlDate);
+		StringBuilder sql = new StringBuilder("SELECT ").append(selectList).append(" FROM ").append(validated.tableName)
+				.append(" WHERE TRUNC(").append(validated.dateColumn).append(") = TRUNC(?)");
+		List<Object> params = new ArrayList<Object>();
+		params.add(Date.valueOf(reportDate));
+		if (fixedFilters != null) {
+			for (DataInventoryFixedFilterDto filter : fixedFilters) {
+				List<String> values = filter.getValues();
+				if (values == null || values.isEmpty()) {
+					continue;
+				}
+				if (values.size() == 1) {
+					sql.append(" AND ").append(filter.getColumn()).append(" = ?");
+					params.add(values.get(0));
+				} else {
+					sql.append(" AND ").append(filter.getColumn()).append(" IN (");
+					for (int i = 0; i < values.size(); i++) {
+						if (i > 0) {
+							sql.append(",");
+						}
+						sql.append("?");
+						params.add(values.get(i));
+					}
+					sql.append(")");
+				}
+			}
+		}
+		sql.append(" FETCH FIRST ").append(rowLimit).append(" ROWS ONLY");
+		return jdbcTemplate.query(sql.toString(), new ColumnMapRowMapper(), params.toArray());
 	}
 
 	private Map<String, String> loadColumnTypes(String tableName) {

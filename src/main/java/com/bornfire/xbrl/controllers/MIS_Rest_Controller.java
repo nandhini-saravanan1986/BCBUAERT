@@ -2,6 +2,7 @@ package com.bornfire.xbrl.controllers;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -371,7 +372,8 @@ public class MIS_Rest_Controller {
 	@GetMapping("/api/data-inventory/{id}/export")
 	public ResponseEntity<?> dataInventoryExport(@PathVariable Long id,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
-			@RequestParam(defaultValue = "excel") String format, HttpServletRequest req) {
+			@RequestParam(defaultValue = "excel") String format,
+			HttpServletRequest req) {
 		try {
 			RT_Data_Inventory_Entity config = dataInventoryRepo.findById(id).orElse(null);
 			DataInventoryExportResultDto exportResult = dataInventoryService.export(id, reportDate, format);
@@ -648,146 +650,15 @@ public class MIS_Rest_Controller {
 	@GetMapping("/Getbarchart")
 	public List<RT_Chart_pojo> Getbarchart(@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
 			@RequestParam(value = "Report_date", required = false) String Report_date) {
-		System.out.println("Bar chart Entered");
+		System.out.println("Bar chart Entered for S_NO=" + Matrix_Srl_no);
 
-		if (Report_date.contains("T")) {
+		if (Report_date != null && Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
-			System.out.println(Report_date + " Splitted date");
 		}
 
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-		List<RT_Chart_pojo> finalList = new ArrayList<>();
-		if (Matrix_Srl_no.equals("1")) {
-			// Advances to Stable Resources Ratio
-			/// List<Object[]> getchartval =
-			/// Capitaladequacyratio_rep.GetCapitalratio_curryear_report(Selecteddate);
-
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetCapitalAdequecy_Ratio(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("2")) {
-
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Group_Single_Exposure_Position(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("3")) {
-			// Mortgage loan appetite ratio
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.RealEstateconcentration_Position(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("4")) { // Leverage Ratio
-			// List<Object[]> getchartval =
-			// Leverage_ratio_rep.GetLeverageration_curryear_report(Selecteddate);
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Leverage_ratio_position(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("5")) {// Eligible Liquid Assets Ratio
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElar_curryear_report(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("6")) {// Advances to Stable Resources Ratio
-			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrr_curryear_report(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("7")) {
-			// List<Object[]> getchartval =
-			// RT_RWA_Fund_base_data_rep.GetSelectedyearslippagedetails(Selecteddate);
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Freshslippage_position(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("8")) {
-			// Mortgage loan appetite ratio
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentyear_prov_cover(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("9")) {
-			// Mortgage loan appetite ratio
-			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_curryear_report(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("10")) {
-
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Exposure_Outsidegccper(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("11")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Industry_ClassiGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("12")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.Trading_ClassiGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("13")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.ServicesGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("14")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.BanksGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("15")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.RealEstateGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("16")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.otherGetCurrentyear(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("21")) { // VAR Report Month Wise
-			List<Object[]> getchartval = RT_VAR_PORTFOLIO_Repo.GetMonthlydata(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("22")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("23")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDaylightlimit(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("24")) {
-			// Mortgage loan appetite ratio
-			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentYear_NoopGraph(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("38")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsaed(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("39")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetLongTermResourcesLongTermAssetsUSD(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("40")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
-					.GetLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("41")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
-					.GetLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("42")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDepositconcentrationnonretail(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("43")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDepositconcentrationretail(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("47")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.General_provision_of_CRWA(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("46")) {
-			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentyear_unsecured(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-
-		return finalList;
+		List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetMatrixChartMonthlyBySno(Selecteddate, Matrix_Srl_no);
+		return mapMatrixChartRows(getchartval, Matrix_Srl_no);
 	}
 
 	@GetMapping("/groupdetail/customer-search")
@@ -803,182 +674,15 @@ public class MIS_Rest_Controller {
 	public List<RT_Chart_pojo> Getprogresschart(
 			@RequestParam(value = "Matrix_Srl_no", required = true) String Matrix_Srl_no,
 			@RequestParam(value = "Report_date", required = false) String Report_date) {
-		System.out.println("Progress Chart Entered");
+		System.out.println("Progress Chart Entered for S_NO=" + Matrix_Srl_no);
 
-		if (Report_date.contains("T")) {
+		if (Report_date != null && Report_date.contains("T")) {
 			Report_date = Report_date.split("T")[0];
-			System.out.println(Report_date + " Splitted date");
 		}
 
 		Date Selecteddate = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
-
-		List<RT_Chart_pojo> finalList = new ArrayList<>();
-		if (Matrix_Srl_no.equals("4")) {// Leverage Ratio
-			List<Object[]> getchartval = Leverage_ratio_rep.GetLeveragerationcurrentmonthgraph(Selecteddate);
-
-			// Convert Object[] → RT_Chart_pojo
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("5")) {// Eligible Liquid Assets Ratio
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetElarcurrentmonthgraph(Selecteddate);
-
-			// Convert Object[] → RT_Chart_pojo
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("21")) {// Eligible Liquid Assets Ratio
-			List<Object[]> getchartval = RT_VAR_PORTFOLIO_Repo.GetDailydata(Selecteddate);
-
-			// Convert Object[] → RT_Chart_pojo
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("6")) {// Advances to Stable Resources Ratio
-			List<Object[]> getchartval = Stableresourcesratio_rep.GetAsrrcurrentmonthgraph(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("1")) {
-			// Advances to Stable Resources Ratio
-			List<Object[]> getchartval = Capitaladequacyratio_rep.GetCapitalratio_currentmonthgraph(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("9")) {
-			// Advances to Stable Resources Ratio
-			List<Object[]> getchartval = RT_Mis_Fund_Based_Adv_Rep.GetMortgageratio_currentmonthgraph(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("3")) {
-			// Real Estate Concentration
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentMonth_realestate_concen_per(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("8")) {
-			// Real Estate Concentration
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetCurrentmonth_prov_cover(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("24")) {
-			// Noop]
-			List<Object[]> getchartval = RT_Noop_net_position_summ_rep.GetCurrentMonth_NoopGraph(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("46")) {
-
-			List<Object[]> getchartval = rt_acprsecuredunsecuredrep.GetCurrentmonth_unsecured(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("7")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedMonthslippagedetails(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("10A")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayOutsideGccexp(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("10B")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedDayGccexp(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("2")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetSelectedmonSingorGroupdetails(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("11")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyIndustryRatio(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-
-		else if (Matrix_Srl_no.equals("12")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyTradingRatio(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-
-		else if (Matrix_Srl_no.equals("13")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyServicesRatio(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("14")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyBanks(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("15")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyRealEstate(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("16")) {
-
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.getDailyother(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} else if (Matrix_Srl_no.equals("22")) {
-
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetBPVPV01Monthdetail(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}else if (Matrix_Srl_no.equals("22")) {
-
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDaylightlimitdaily(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		
-		else if (Matrix_Srl_no.equals("10")) {
-	
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.Exposure_Outsidegccpermonthly(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		else if (Matrix_Srl_no.equals("38")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDailyLongTermResourcesLongTermAssetsaed(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		} 
-		else if (Matrix_Srl_no.equals("39")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep.GetDailyLongTermResourcesLongTermAssetsUSD(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		else if (Matrix_Srl_no.equals("40")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
-					.GetDailyLongMedTermResourcesLongMedTermAssetsaed(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		else if (Matrix_Srl_no.equals("41")) {
-			List<Object[]> getchartval = RT_RWA_Fund_base_data_rep
-					.GetDailyLongMedTermResourcesLongMedTermAssetsUSD(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		else if (Matrix_Srl_no.equals("42")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDailyDepositconcentrationnonretail(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		
-		else if (Matrix_Srl_no.equals("43")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetDailyDepositconcentrationretail(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		else if (Matrix_Srl_no.equals("47")) {
-			List<Object[]> getchartval = RT_Matrix_monitoring_rep.DailyGeneral_provision_of_CRWA(Selecteddate);
-			finalList = getchartval.stream().map(row -> new RT_Chart_pojo(row[0].toString(), (BigDecimal) row[1]))
-					.collect(Collectors.toList());
-		}
-		
-		
-
-		return finalList;
+		List<Object[]> getchartval = RT_Matrix_monitoring_rep.GetMatrixChartDailyBySno(Selecteddate, Matrix_Srl_no);
+		return mapMatrixChartRows(getchartval, Matrix_Srl_no);
 	}
 
 	@GetMapping("/GetSecuredUnsecureddata")
@@ -1711,6 +1415,38 @@ public class MIS_Rest_Controller {
 		style.setBorderBottom(BorderStyle.THIN);
 		style.setBorderLeft(BorderStyle.THIN);
 		style.setBorderRight(BorderStyle.THIN);
+	}
+
+	private static final BigDecimal DAYLIGHT_LIMIT_DIVISOR = new BigDecimal("45");
+
+	/**
+	 * Maps chart rows from rt_matrix_monitored_table to API pojos.
+	 * S_NO 23 (daylight limit) applies the legacy display transform: value/45*100.
+	 */
+	private List<RT_Chart_pojo> mapMatrixChartRows(List<Object[]> rows, String matrixSrlNo) {
+		if (rows == null || rows.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return rows.stream().map(row -> {
+			BigDecimal value = toChartBigDecimal(row[1]);
+			if ("23".equals(matrixSrlNo)) {
+				value = value.divide(DAYLIGHT_LIMIT_DIVISOR, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
+			}
+			return new RT_Chart_pojo(row[0].toString(), value);
+		}).collect(Collectors.toList());
+	}
+
+	private BigDecimal toChartBigDecimal(Object raw) {
+		if (raw == null) {
+			return BigDecimal.ZERO;
+		}
+		if (raw instanceof BigDecimal) {
+			return (BigDecimal) raw;
+		}
+		if (raw instanceof Number) {
+			return BigDecimal.valueOf(((Number) raw).doubleValue());
+		}
+		return new BigDecimal(raw.toString());
 	}
 
 	public static String normalizeDate(String input) {

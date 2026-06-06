@@ -453,6 +453,35 @@ public class XBRLNavigationController {
 		return "XBRLDashboard";
 	}
 
+	@RequestMapping(value = "matrix-analytics", method = { RequestMethod.GET, RequestMethod.POST })
+	public String matrixAnalytics(@RequestParam("sno") String sno,
+			@RequestParam("reportDate") String reportDate,
+			@RequestParam("label") String label,
+			Model md, HttpServletRequest req) {
+		Boolean otpPending = (Boolean) req.getSession().getAttribute("LOGIN_OTP_PENDING");
+		Boolean otpVerified = (Boolean) req.getSession().getAttribute("LOGIN_OTP_VERIFIED");
+		if (Boolean.TRUE.equals(otpPending) || !Boolean.TRUE.equals(otpVerified)) {
+			return "redirect:/login-otp";
+		}
+
+		String userid = (String) req.getSession().getAttribute("USERID");
+		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal();
+
+		md.addAttribute("changepassword", loginServices.checkPasswordChangeReq(userid));
+		md.addAttribute("checkpassExpiry", loginServices.checkpassexpirty(userid));
+		md.addAttribute("checkAcctExpiry", loginServices.checkAcctexpirty(userid));
+		md.addAttribute("completed", 0);
+		md.addAttribute("uncompleted", 0);
+		md.addAttribute("Matrixlistdata", Matrixdata);
+		md.addAttribute("menu", "Dashboard");
+		md.addAttribute("CurrentYear_Tier_1_capital", Capitaladequacyratio_rep.GetCurrentyear_tier_1_capital());
+		md.addAttribute("analyticsOnly", true);
+		md.addAttribute("analyticsSno", sno);
+		md.addAttribute("analyticsReportDate", reportDate);
+		md.addAttribute("analyticsLabel", label);
+		return "XBRLDashboard";
+	}
+
 	@RequestMapping(value = "AccessandRoles", method = { RequestMethod.GET, RequestMethod.POST })
 	public String IPSAccessandRoles(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String userid, @RequestParam(required = false) Optional<Integer> page,
