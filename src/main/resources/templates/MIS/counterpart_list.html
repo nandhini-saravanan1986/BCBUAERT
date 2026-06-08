@@ -1341,8 +1341,31 @@
 			if (bankSelect) {
 				bankSelect.addEventListener("focus", showBankAlert);
 				document.addEventListener("click", hideBankAlert);
+				bankSelect.addEventListener("change", updateBankChangeNotice);
+				updateBankChangeNotice();
 			}
 		});
+
+		function updateBankChangeNotice() {
+			const bankSelect = document.getElementById("name_of_the_bank");
+			const originalInput = document.getElementById("original_name_of_the_bank");
+			const notice = document.getElementById("bankChangeNotice");
+			const fromLabel = document.getElementById("bankChangeFrom");
+
+			if (!bankSelect || !originalInput || !notice || !fromLabel) {
+				return;
+			}
+
+			const originalName = (originalInput.value || "").trim();
+			const selectedName = (bankSelect.value || "").trim();
+
+			if (originalName && selectedName && originalName.toLowerCase() !== selectedName.toLowerCase()) {
+				fromLabel.textContent = originalName;
+				notice.style.display = "block";
+			} else {
+				notice.style.display = "none";
+			}
+		}
 	</script>
 
 </head>
@@ -1978,6 +2001,17 @@
 											th:value="${countpartyname}" th:text="${countpartyname}">
 										</option>
 									</select>
+
+									<input type="hidden" id="original_name_of_the_bank" th:if="${formmode}=='Editbilldetail'"
+										th:value="${billdata?.name_of_the_bank}" />
+
+									<div th:if="${formmode}=='Editbilldetail'" id="bankChangeNotice"
+										class="alert alert-info small mt-1 mb-0" role="alert" style="display: none;">
+										<i class="fa fa-info-circle"></i>
+										Updating will save a bank name mapping from
+										<strong id="bankChangeFrom"></strong>
+										to the selected authorized bank for future bills.
+									</div>
 
 									<div th:if="${formmode}=='Editbilldetail'" id="bankAlert"
 										class="alert alert-warning small" role="alert" style="display: none;">

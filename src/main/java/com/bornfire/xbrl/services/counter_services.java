@@ -47,6 +47,8 @@ import com.bornfire.xbrl.entities.MIS_TREASURY_LIMITS_ENTITY;
 import com.bornfire.xbrl.entities.MIS_TREASURY_PLACEMENT_ENTITY;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_rep;
+import com.bornfire.xbrl.entities.Mis_exposure_bank_name_map_entity;
+import com.bornfire.xbrl.entities.Mis_exposure_bank_name_map_rep;
 import com.bornfire.xbrl.entities.Mis_treasury_placement_repo;
 import com.bornfire.xbrl.entities.UserProfile;
 import com.bornfire.xbrl.entities.UserProfileRep;
@@ -80,6 +82,9 @@ public class counter_services {
 
 	@Autowired
 	Mis_exposure_bill_detail_rep Mis_exposure_bill_detail_rep;
+
+	@Autowired
+	Mis_exposure_bank_name_map_rep Mis_exposure_bank_name_map_rep;
 	
 	@Autowired
 	AuditServicesRep auditServicesRep;
@@ -563,7 +568,11 @@ public class counter_services {
 				existingEntity.setTrade_loan_amt_eq_aed(incomingEntity.getTrade_loan_amt_eq_aed());
 				existingEntity.setInterest_rate(incomingEntity.getInterest_rate());
 				existingEntity.setDue_date(incomingEntity.getDue_date());
-				existingEntity.setName_of_the_bank(incomingEntity.getName_of_the_bank());
+				String previousBankName = existingEntity.getName_of_the_bank();
+				String updatedBankName = incomingEntity.getName_of_the_bank();
+				existingEntity.setName_of_the_bank(updatedBankName);
+				saveBankNameMappingIfChanged(previousBankName, updatedBankName, incomingEntity.getSrl_no(),
+						(String) request.getSession().getAttribute("USERID"));
 				existingEntity.setBill_id(incomingEntity.getBill_id());
 				existingEntity.setCustomer_name(incomingEntity.getCustomer_name());
 				existingEntity.setAccount_no(incomingEntity.getAccount_no());
@@ -585,7 +594,12 @@ public class counter_services {
 				existingEntity.setModify_time(new Date());
 				
 				Mis_exposure_bill_detail_rep.save(existingEntity);
-				responseMsg = "Bill details updated successfully.";
+				if (previousBankName != null && updatedBankName != null
+						&& !previousBankName.trim().equalsIgnoreCase(updatedBankName.trim())) {
+					responseMsg = "Bill details updated successfully. Bank name mapping saved for future use.";
+				} else {
+					responseMsg = "Bill details updated successfully.";
+				}
 
 			} else {
 				responseMsg = "Modification failed: invalid data. Contact admin for assistance.";
@@ -795,6 +809,50 @@ public class counter_services {
 		}
 
 		return msg;
+	}
+
+	private void saveBankNameMappingIfChanged(String oldBankName, String newBankName, String billSrlNo, String userId) {
+		if (oldBankName == null || newBankName == null) {
+			return;
+		}
+		String oldNorm = oldBankName.trim();
+		String newNorm = newBankName.trim();
+		if (oldNorm.isEmpty() || newNorm.isEmpty() || oldNorm.equalsIgnoreCase(newNorm)) {
+			return;
+		}
+
+		Date now = new Date();
+		Optional<Mis_exposure_bank_name_map_entity> existingMap = Mis_exposure_bank_name_map_rep
+				.findActiveByOldBankName(oldNorm);
+
+		if (existingMap.isPresent()) {
+			Mis_exposure_bank_name_map_entity map = existingMap.get();
+			map.setNewBankName(newNorm);
+			map.setBillSrlNo(billSrlNo);
+			map.setModifyUser(userId);
+			map.setModifyTime(now);
+			Mis_exposure_bank_name_map_rep.save(map);
+			logger.info("Updated bank name map: '{}' -> '{}' (bill {})", oldNorm, newNorm, billSrlNo);
+		} else {
+			Mis_exposure_bank_name_map_entity map = new Mis_exposure_bank_name_map_entity();
+			map.setOldBankName(oldNorm);
+			map.setNewBankName(newNorm);
+			map.setBillSrlNo(billSrlNo);
+			map.setCreateUser(userId);
+			map.setCreateTime(now);
+			map.setDelFlg("N");
+			Mis_exposure_bank_name_map_rep.save(map);
+			logger.info("Created bank name map: '{}' -> '{}' (bill {})", oldNorm, newNorm, billSrlNo);
+		}
+	}
+
+	public String getMappedBankName(String oldBankName) {
+		if (oldBankName == null || oldBankName.trim().isEmpty()) {
+			return null;
+		}
+		return Mis_exposure_bank_name_map_rep.findActiveByOldBankName(oldBankName.trim())
+				.map(Mis_exposure_bank_name_map_entity::getNewBankName)
+				.orElse(null);
 	}
 
 }

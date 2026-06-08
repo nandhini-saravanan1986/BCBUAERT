@@ -575,6 +575,13 @@ public class MIS_Rest_Controller {
 		}
 	}
 
+	@GetMapping("/getMappedBankName")
+	@ResponseBody
+	public String getMappedBankName(@RequestParam("oldBankName") String oldBankName) {
+		String mapped = counter_services.getMappedBankName(oldBankName);
+		return mapped != null ? mapped : "";
+	}
+
 	/// Group detail / Updated Del Flg
 	@GetMapping("/UpdatedCustgroupdetail")
 	public String Groupdetailservice(@RequestParam(value = "Group_id", required = true) String Group_id,

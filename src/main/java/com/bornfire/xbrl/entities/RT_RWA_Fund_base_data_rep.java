@@ -497,22 +497,20 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 
 		
 		@Query(value =
-			    "SELECT * FROM ( " +
-			    "  SELECT " +
-			    "    BRANCH_NAME, " +
-			    "    CUST_ID, " +
-			    "    ACCOUNT_NAME, " +
-			    "    ROUND(BALANCE/1000000,2), RW, ROUND(TOTAL_RWA/1000000,2)," +
-			    "    ROW_NUMBER() OVER (ORDER BY BALANCE DESC) AS rn " +
-			    "  FROM brf95_rwa_data_fundbased " +
-			    "  WHERE rwa_class <> 'STD' " +
-			    "    AND npa_date BETWEEN " +
-			    "      LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -13)) " +
-			    "      AND LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -1)) " +
-			    "    AND report_date BETWEEN " +
-			    "      LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -13)) " +
-			    "      AND LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -1)) " +
-			    ") WHERE rn <= 10",
+			    "SELECT ACCOUNT_NAME, BALANCE, RW, TOTAL_RWA FROM ( \r\n"
+			    + "SELECT \r\n"
+			    + "  ACCOUNT_NAME, \r\n"
+			    + "  ROUND(BALANCE/1000000,2) AS BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) AS TOTAL_RWA,\r\n"
+			    + "  ROW_NUMBER() OVER (ORDER BY BALANCE DESC) AS rn \r\n"
+			    + "FROM brf95_rwa_data_fundbased \r\n"
+			    + "WHERE rwa_class <> 'STD' \r\n"
+			    + "  AND npa_date BETWEEN \r\n"
+			    + "    LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -13)) \r\n"
+			    + "    AND LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -1)) \r\n"
+			    + "  AND report_date BETWEEN \r\n"
+			    + "    LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -13)) \r\n"
+			    + "    AND LAST_DAY(ADD_MONTHS(TRUNC(?1, 'Q'), -1)) \r\n"
+			    + "			    ) WHERE rn <= 10",
 			    nativeQuery = true
 			)
 			List<Object[]> GetToptenSlippage(Date Selecteddate);
