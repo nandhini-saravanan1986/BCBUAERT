@@ -53,7 +53,8 @@ public class RT_Liquidity_Risk_Data_Service {
 	AuditService auditService;
     // Update existing record
     public boolean updateLiquidityRisk(RT_Liquidity_Risk_Data_Template updatedEntity) {
-        Optional<RT_Liquidity_Risk_Data_Template> existingOpt = LiquidityRiskDataRepository.findById(updatedEntity.getSlno());
+        //Optional<RT_Liquidity_Risk_Data_Template> existingOpt = LiquidityRiskDataRepository.findById(updatedEntity.getSlno());
+        Optional<RT_Liquidity_Risk_Data_Template> existingOpt =null;
 
         if (existingOpt.isPresent()) {
             RT_Liquidity_Risk_Data_Template existing = existingOpt.get();

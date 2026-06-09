@@ -6,11 +6,12 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
+@IdClass(RT_Liquidity_Risk_Data_Template_class.class)
+@Entity 
 @Table(name = "BCBUAE_LIQUIDITY_RISK_DATA_TEMPLATE")
 public class RT_Liquidity_Risk_Data_Template {
 
-    @Id
+    
     @Column(name = "SL_NO")
     private BigDecimal slno;
 
@@ -36,15 +37,19 @@ public class RT_Liquidity_Risk_Data_Template {
     @Column(name = "CBUAE_TIERING")
     private String cbuaeTiering;
 
+    @Id
     @Column(name = "GL_LEVEL_1")
     private String glLevel1;
 
+    @Id
     @Column(name = "GL_LEVEL_2")
     private String glLevel2;
 
+    @Id
     @Column(name = "GL_LEVEL_3")
     private String glLevel3;
 
+    @Id
     @Column(name = "OPTION_TYPE")
     private String optionType;
 
@@ -53,7 +58,8 @@ public class RT_Liquidity_Risk_Data_Template {
 
     @Column(name = "REFERENCE_RATE")
     private String referenceRate;
-
+    
+    @Id
     @Column(name = "INSTRUMENT_CURRENCY")
     private String instrumentCurrency;
 
@@ -132,6 +138,7 @@ public class RT_Liquidity_Risk_Data_Template {
     @Column(name = "REPORT_TO_DATE")
     private Date reportToDate;
 
+    @Id
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "REPORT_DATE")
     private Date reportDate;

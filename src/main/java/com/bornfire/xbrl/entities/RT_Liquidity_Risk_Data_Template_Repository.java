@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_Liquidity_Risk_Data_Template_Repository extends JpaRepository<RT_Liquidity_Risk_Data_Template, BigDecimal> {
+public interface RT_Liquidity_Risk_Data_Template_Repository extends JpaRepository<RT_Liquidity_Risk_Data_Template, RT_Liquidity_Risk_Data_Template_class> {
 
 	@Query(value = "select * from BCBUAE_LIQUIDITY_RISK_DATA_TEMPLATE where DEL_FLG != 'Y' AND Report_date=?1", nativeQuery = true)
 	List<RT_Liquidity_Risk_Data_Template> getLiquiditylist(Date Report_date);

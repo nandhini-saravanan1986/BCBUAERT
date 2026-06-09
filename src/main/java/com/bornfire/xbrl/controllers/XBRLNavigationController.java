@@ -1295,8 +1295,8 @@ public class XBRLNavigationController {
 		   
 		if ("edit".equalsIgnoreCase(formmode) && slno != null) {
 			model.addAttribute("formmode", "edit");
-			model.addAttribute("liquidityData",
-					LiquidityRiskDataRepository.findById(slno).orElse(new RT_Liquidity_Risk_Data_Template()));
+//			model.addAttribute("liquidityData",
+//					LiquidityRiskDataRepository.findById(slno).orElse(new RT_Liquidity_Risk_Data_Template()));
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			model.addAttribute("formmode", "list");
 			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist(Report_date));
