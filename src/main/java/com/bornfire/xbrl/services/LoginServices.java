@@ -545,11 +545,11 @@ public class LoginServices {
 		smsserviceotp.setWrapperApiKey("LA6m0");
 		smsserviceotp.setSmssenderid("BOBAlert");
 		smsserviceotp.setSmsmobilenumber(userProfile.getMob_number());
-		smsserviceotp.setSmstext("Your OTP is " + otp);
+		smsserviceotp.setSmstext("RiskInsights verification code: " + otp+". Enter this code to continue.For your security never share this code to anyone.");
 		smsserviceotp.setToemail(userProfile.getEmail_id());
 		smsserviceotp.setEmailsubject("OTP Verification");
 		smsserviceotp.setEmailtemplateid("BOBAlert");
-		smsserviceotp.setEmailtext("Your OTP is " + otp);
+		smsserviceotp.setEmailtext("RiskInsights verification code: " + otp+". Enter this code to continue.For your security never share this code to anyone.");
 		HttpEntity<Smsserviceotp> entity = new HttpEntity<>(smsserviceotp, httpHeaders);
 
 		ResponseEntity<String> response = null;

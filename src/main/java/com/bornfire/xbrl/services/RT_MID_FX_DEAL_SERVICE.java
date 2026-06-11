@@ -3,13 +3,13 @@ package com.bornfire.xbrl.services;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -58,14 +58,24 @@ public class RT_MID_FX_DEAL_SERVICE {
 	 */
 	private static final DataFormatter EXCEL_DATE_FORMATTER = new DataFormatter(Locale.UK);
 
+	private static final DateTimeFormatter[] DAY_FIRST_DATE_TIME_FORMATTERS = new DateTimeFormatter[] {
+			DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd-MM-yyyy H:mm:ss").withResolverStyle(ResolverStyle.SMART),
+			DateTimeFormatter.ofPattern("dd/MM/yyyy H:mm:ss").withResolverStyle(ResolverStyle.SMART),
+			DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").withResolverStyle(ResolverStyle.SMART),
+			DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withResolverStyle(ResolverStyle.SMART),
+	};
+
 	private static final DateTimeFormatter[] DAY_FIRST_DATE_FORMATTERS = new DateTimeFormatter[] {
 			DateTimeFormatter.ofPattern("dd-MM-yyyy").withResolverStyle(ResolverStyle.STRICT),
 			DateTimeFormatter.ofPattern("dd/MM/yyyy").withResolverStyle(ResolverStyle.STRICT),
-			DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
-			DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withResolverStyle(ResolverStyle.STRICT),
 			DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("dd-MMM-yy", Locale.ENGLISH).withResolverStyle(ResolverStyle.SMART),
 			DateTimeFormatter.ofPattern("dd-MM-yy").withResolverStyle(ResolverStyle.STRICT),
 			DateTimeFormatter.ofPattern("dd/MM/yy").withResolverStyle(ResolverStyle.STRICT),
+			DateTimeFormatter.ofPattern("d/M/uuuu", Locale.UK).withResolverStyle(ResolverStyle.SMART),
+			DateTimeFormatter.ofPattern("d-M-uuuu", Locale.UK).withResolverStyle(ResolverStyle.SMART),
 	};
 
 	    @Autowired
@@ -302,7 +312,7 @@ public class RT_MID_FX_DEAL_SERVICE {
 		ExcelUploadHelper.validateUploadFile(file, Report_type);
 
 		try (Workbook workbook = ExcelUploadHelper.openExcelWorkbook(file)) {
-			DataFormatter formatter = new DataFormatter();
+			DataFormatter formatter = EXCEL_DATE_FORMATTER;
 			UploadRowStats stats = new UploadRowStats();
 			String reportName = resolveTreasuryReportName(Report_type);
 
@@ -680,12 +690,10 @@ public class RT_MID_FX_DEAL_SERVICE {
 		return getDateFromCell(cell);
 	}
 
-	private LocalDate localDateFromJavaDate(Date date) {
-		if (date == null) {
+	private LocalDate localDateFromExcelCalendar(Calendar cal) {
+		if (cal == null) {
 			return null;
 		}
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(date);
 		return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
 	}
 
@@ -693,24 +701,61 @@ public class RT_MID_FX_DEAL_SERVICE {
 		if (!DateUtil.isValidExcelDate(serial)) {
 			return null;
 		}
-		return localDateFromJavaDate(DateUtil.getJavaDate(serial, false));
+		return localDateFromExcelCalendar(DateUtil.getJavaCalendar(serial, false));
+	}
+
+	private static String normalizeDateText(String raw) {
+		if (raw == null) {
+			return "";
+		}
+		return raw.trim()
+				.replace('\u00A0', ' ')
+				.replace('\u2007', ' ')
+				.replaceAll("\\s+", " ")
+				.trim();
 	}
 
 	private LocalDate parseDayFirstDateString(String raw) {
-		if (raw == null) {
+		String normalized = normalizeDateText(raw);
+		if (normalized.isEmpty()) {
 			return null;
 		}
-		String dateStr = raw.trim();
-		if (dateStr.isEmpty()) {
-			return null;
+
+		LocalDate parsed = tryParseDayFirstDateTime(normalized);
+		if (parsed != null) {
+			return parsed;
 		}
-		int spaceIdx = dateStr.indexOf(' ');
+
+		parsed = tryParseDayFirstDateOnly(normalized);
+		if (parsed != null) {
+			return parsed;
+		}
+
+		int spaceIdx = normalized.indexOf(' ');
 		if (spaceIdx > 0) {
-			dateStr = dateStr.substring(0, spaceIdx).trim();
+			return tryParseDayFirstDateOnly(normalized.substring(0, spaceIdx).trim());
 		}
-		for (DateTimeFormatter f : DAY_FIRST_DATE_FORMATTERS) {
+		return null;
+	}
+
+	private LocalDate tryParseDayFirstDateTime(String value) {
+		for (DateTimeFormatter formatter : DAY_FIRST_DATE_TIME_FORMATTERS) {
 			try {
-				return LocalDate.parse(dateStr, f);
+				return LocalDateTime.parse(value, formatter).toLocalDate();
+			} catch (DateTimeParseException ignored) {
+				// try next pattern
+			}
+		}
+		return null;
+	}
+
+	private LocalDate tryParseDayFirstDateOnly(String value) {
+		if (value == null || value.isEmpty()) {
+			return null;
+		}
+		for (DateTimeFormatter formatter : DAY_FIRST_DATE_FORMATTERS) {
+			try {
+				return LocalDate.parse(value, formatter);
 			} catch (DateTimeParseException ignored) {
 				// try next pattern
 			}
@@ -729,25 +774,28 @@ public class RT_MID_FX_DEAL_SERVICE {
 				cellType = cell.getCachedFormulaResultType();
 			}
 
-			// Literal text in Excel (e.g. "02-06-2026") — parse directly, never via US locale
-			if (cellType == Cell.CELL_TYPE_STRING) {
-				return parseDayFirstDateString(cell.getStringCellValue());
+			// Excel date serial — always prefer calendar math (never US locale strings)
+			if (cellType == Cell.CELL_TYPE_NUMERIC) {
+				double numericValue = cell.getNumericCellValue();
+				if (DateUtil.isValidExcelDate(numericValue)) {
+					LocalDate fromSerial = localDateFromExcelSerial(numericValue);
+					if (fromSerial != null) {
+						return fromSerial;
+					}
+				}
 			}
 
-			// Excel date serial — use POI calendar math (locale-independent)
-			if (cellType == Cell.CELL_TYPE_NUMERIC) {
-				if (DateUtil.isCellDateFormatted(cell)) {
-					return localDateFromExcelSerial(cell.getNumericCellValue());
-				}
-				LocalDate fromSerial = localDateFromExcelSerial(cell.getNumericCellValue());
-				if (fromSerial != null) {
-					return fromSerial;
+			// Literal text (e.g. "08/04/2026 00:00:00" or "02-06-2026")
+			if (cellType == Cell.CELL_TYPE_STRING) {
+				LocalDate fromString = parseDayFirstDateString(cell.getStringCellValue());
+				if (fromString != null) {
+					return fromString;
 				}
 			}
 
 			// Fallback: UK formatter + day-first patterns only (no MM/dd)
-			String dateStr = EXCEL_DATE_FORMATTER.formatCellValue(cell).trim();
-			return parseDayFirstDateString(dateStr);
+			String formatted = EXCEL_DATE_FORMATTER.formatCellValue(cell);
+			return parseDayFirstDateString(formatted);
 		} catch (Exception e) {
 			logger.debug("Could not parse date from cell: {}", e.getMessage());
 			return null;

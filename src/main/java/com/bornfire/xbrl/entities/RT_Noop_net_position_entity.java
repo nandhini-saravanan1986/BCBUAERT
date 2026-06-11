@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -26,6 +27,13 @@ public class RT_Noop_net_position_entity implements Serializable {
 	private BigDecimal	total_noop_in_ac;
 	private BigDecimal	total_noop_in_lc;
 	private BigDecimal	forward_reval_position_ac;
+	@Column(name = "USD_INR_FEDAI_RATE", precision = 10, scale = 5)
+	private BigDecimal	usd_inr_fedai_rate;
+	@Column(name = "AED_INR_FEDAI_RATE", precision = 10, scale = 5)
+	private BigDecimal	aed_inr_fedai_rate;
+	@Column(name = "USD_AED_FEDAI_RATE", precision = 10, scale = 5)
+	private BigDecimal	usd_aed_fedai_rate;
+
 	public Date getReport_date() {
 		return report_date;
 	}
@@ -85,6 +93,24 @@ public class RT_Noop_net_position_entity implements Serializable {
 	}
 	public void setForward_reval_position_ac(BigDecimal forward_reval_position_ac) {
 		this.forward_reval_position_ac = forward_reval_position_ac;
+	}
+	public BigDecimal getUsd_inr_fedai_rate() {
+		return usd_inr_fedai_rate;
+	}
+	public void setUsd_inr_fedai_rate(BigDecimal usd_inr_fedai_rate) {
+		this.usd_inr_fedai_rate = usd_inr_fedai_rate;
+	}
+	public BigDecimal getAed_inr_fedai_rate() {
+		return aed_inr_fedai_rate;
+	}
+	public void setAed_inr_fedai_rate(BigDecimal aed_inr_fedai_rate) {
+		this.aed_inr_fedai_rate = aed_inr_fedai_rate;
+	}
+	public BigDecimal getUsd_aed_fedai_rate() {
+		return usd_aed_fedai_rate;
+	}
+	public void setUsd_aed_fedai_rate(BigDecimal usd_aed_fedai_rate) {
+		this.usd_aed_fedai_rate = usd_aed_fedai_rate;
 	}
 	@Override
 	public String toString() {

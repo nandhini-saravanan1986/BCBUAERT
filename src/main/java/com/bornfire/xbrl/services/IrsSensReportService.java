@@ -16,37 +16,41 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.bornfire.xbrl.dto.SlsSensAnalyticalSnapshotDto;
 import com.bornfire.xbrl.dto.SlsSensDayVariationDto;
 import com.bornfire.xbrl.dto.SlsSensPositionDateGroupDto;
 import com.bornfire.xbrl.dto.SlsSensScenarioDto;
-import com.bornfire.xbrl.entities.RT_SLS_SENS_ENTITIES;
-import com.bornfire.xbrl.entities.RT_SLS_SENS_Repository;
+import com.bornfire.xbrl.entities.RT_IRS_SENS_ENTITIES;
+import com.bornfire.xbrl.entities.RT_IRS_SENS_ENTITIES2;
+import com.bornfire.xbrl.entities.RT_IRS_SENS2_REPOSITORY;
+import com.bornfire.xbrl.entities.RT_IRS_SENS_Repository;
 
 @Service
-public class SlsSensReportService {
+public class IrsSensReportService {
 
 	private static final SimpleDateFormat DISPLAY_DATE = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
 	@Autowired
-	private RT_SLS_SENS_Repository sensRepository;
+	private RT_IRS_SENS_Repository sensRepository;
+
+	@Autowired
+	private RT_IRS_SENS2_REPOSITORY sens2Repository;
 
 	public List<SlsSensPositionDateGroupDto> buildPositionDateGroups() {
-		List<RT_SLS_SENS_ENTITIES> all = sensRepository.findAllForGroupedList();
+		List<RT_IRS_SENS_ENTITIES> all = sensRepository.findAllForGroupedList();
 		Map<String, SlsSensPositionDateGroupDto> groups = new LinkedHashMap<>();
 
-		for (RT_SLS_SENS_ENTITIES row : all) {
-			if (row.getREPORT_DATE() == null) {
+		for (RT_IRS_SENS_ENTITIES row : all) {
+			if (row.getReport_date() == null) {
 				continue;
 			}
-			String currency = row.getREPORT_CURRENCY() != null ? row.getREPORT_CURRENCY() : "";
-			String key = row.getREPORT_DATE().getTime() + "|" + currency;
+			String currency = row.getReport_currency() != null ? row.getReport_currency() : "";
+			String key = row.getReport_date().getTime() + "|" + currency;
 			SlsSensPositionDateGroupDto group = groups.get(key);
 			if (group == null) {
 				group = new SlsSensPositionDateGroupDto();
-				group.setPositionDate(row.getREPORT_DATE());
-				group.setPositionDateFormatted(formatDate(row.getREPORT_DATE()));
+				group.setPositionDate(row.getReport_date());
+				group.setPositionDateFormatted(formatDate(row.getReport_date()));
 				group.setReportCurrency(currency);
 				groups.put(key, group);
 			}
@@ -63,34 +67,34 @@ public class SlsSensReportService {
 	}
 
 	public List<SlsSensScenarioDto> findScenariosForPositionDate(Date positionDate, String currency) {
-		List<RT_SLS_SENS_ENTITIES> rows = sensRepository.findScenariosByPositionDateAndCurrency(positionDate, currency);
+		List<RT_IRS_SENS_ENTITIES> rows = sensRepository.findScenariosByPositionDateAndCurrency(positionDate, currency);
 		List<SlsSensScenarioDto> out = new ArrayList<>();
-		for (RT_SLS_SENS_ENTITIES row : rows) {
+		for (RT_IRS_SENS_ENTITIES row : rows) {
 			out.add(toScenarioDto(row));
 		}
 		out.sort(Comparator.comparing(s -> s.getSensDayOffset() != null ? s.getSensDayOffset() : 0));
 		return out;
 	}
 
-	public Optional<RT_SLS_SENS_ENTITIES> findScenarioRow(Date positionDate, Integer dayOffset, String currency) {
+	public Optional<RT_IRS_SENS_ENTITIES> findScenarioRow(Date positionDate, Integer dayOffset, String currency) {
 		if (dayOffset != null) {
 			return sensRepository.findByPositionDateAndDayOffsetAndCurrency(positionDate, dayOffset, currency);
 		}
 		return Optional.empty();
 	}
 
-	public Optional<RT_SLS_SENS_ENTITIES> findScenarioRowByAsOf(Date positionDate, Date asOfDate, String currency) {
+	public Optional<RT_IRS_SENS_ENTITIES> findScenarioRowByAsOf(Date positionDate, Date asOfDate, String currency) {
 		return sensRepository.findByPositionDateAndAsOfDateAndCurrency(positionDate, asOfDate, currency);
 	}
 
-	public SlsSensScenarioDto toScenarioDto(RT_SLS_SENS_ENTITIES row) {
+	public SlsSensScenarioDto toScenarioDto(RT_IRS_SENS_ENTITIES row) {
 		SlsSensScenarioDto dto = new SlsSensScenarioDto();
-		Date position = row.getREPORT_DATE();
-		Integer offset = row.getSENS_DAY_OFFSET();
+		Date position = row.getReport_date();
+		Integer offset = row.getSens_day_offset();
 		if (offset == null) {
 			offset = 0;
 		}
-		Date asOf = row.getAS_OF_DATE();
+		Date asOf = row.getAs_of_date();
 		if (asOf == null && position != null) {
 			asOf = addCalendarDays(position, offset);
 		}
@@ -99,7 +103,7 @@ public class SlsSensReportService {
 		dto.setAsOfDate(asOf);
 		dto.setAsOfDateFormatted(formatDate(asOf));
 		dto.setSensDayOffset(offset);
-		dto.setReportCurrency(row.getREPORT_CURRENCY());
+		dto.setReportCurrency(row.getReport_currency());
 		dto.setBaseScenario(offset == 0);
 		dto.setScenarioLabel(scenarioLabel(offset));
 		return dto;
@@ -137,7 +141,7 @@ public class SlsSensReportService {
 		SlsSensAnalyticalSnapshotDto base = null;
 
 		for (int offset = 0; offset <= 6; offset++) {
-			Optional<RT_SLS_SENS_ENTITIES> rowOpt = findScenarioRow(positionDate, offset, currency);
+			Optional<RT_IRS_SENS_ENTITIES> rowOpt = findScenarioRow(positionDate, offset, currency);
 			if (offset == 0) {
 				if (rowOpt.isPresent()) {
 					base = buildAnalyticalSnapshot(rowOpt.get(), offset);
@@ -152,7 +156,7 @@ public class SlsSensReportService {
 			variation.setScenarioLabel(scenarioLabel(offset));
 
 			if (rowOpt.isPresent()) {
-				RT_SLS_SENS_ENTITIES row = rowOpt.get();
+				RT_IRS_SENS_ENTITIES row = rowOpt.get();
 				SlsSensAnalyticalSnapshotDto daySnapshot = buildAnalyticalSnapshot(row, offset);
 				variation.setAsOfDateFormatted(daySnapshot.getAsOfDateFormatted());
 				if (base != null) {
@@ -185,17 +189,30 @@ public class SlsSensReportService {
 		return result;
 	}
 
-	private SlsSensAnalyticalSnapshotDto buildAnalyticalSnapshot(RT_SLS_SENS_ENTITIES row, int offset) {
+	private SlsSensAnalyticalSnapshotDto buildAnalyticalSnapshot(RT_IRS_SENS_ENTITIES liabilitiesRow, int offset) {
 		SlsSensAnalyticalSnapshotDto snapshot = new SlsSensAnalyticalSnapshotDto();
-		SlsSensScenarioDto scenario = toScenarioDto(row);
+		SlsSensScenarioDto scenario = toScenarioDto(liabilitiesRow);
 		snapshot.setSensDayOffset(offset);
 		snapshot.setScenarioLabel(scenarioLabel(offset));
 		snapshot.setAsOfDateFormatted(scenario.getAsOfDateFormatted());
 
-		BigDecimal outMed = sum(row.getR39_OVER6M_TO_1Y(), row.getR39_OVER1Y_TO_3Y());
-		BigDecimal outLong = sum(row.getR39_OVER3Y_TO_5Y(), row.getR39_OVER5Y());
-		BigDecimal inMed = sum(row.getR70_OVER6M_TO_1Y(), row.getR70_OVER1Y_TO_3Y());
-		BigDecimal inLong = sum(row.getR70_OVER3Y_TO_5Y(), row.getR70_OVER5Y());
+		Integer dayOffset = liabilitiesRow.getSens_day_offset() != null ? liabilitiesRow.getSens_day_offset() : offset;
+
+		BigDecimal outMed = sum(liabilitiesRow.getR39_over6m_to_1y(), liabilitiesRow.getR39_over1y_to_3y());
+		BigDecimal outLong = sum(liabilitiesRow.getR39_over3y_to_5y(), liabilitiesRow.getR39_over5y_to_7y(),
+				liabilitiesRow.getR39_over7y_to_10y(), liabilitiesRow.getR39_over10y_to_15y(),
+				liabilitiesRow.getR39_over15y());
+
+		BigDecimal inMed = BigDecimal.ZERO;
+		BigDecimal inLong = BigDecimal.ZERO;
+		Optional<RT_IRS_SENS_ENTITIES2> assetsRowOpt = findAssetsRow(liabilitiesRow.getReport_date(),
+				liabilitiesRow.getReport_currency(), dayOffset);
+		if (assetsRowOpt.isPresent()) {
+			RT_IRS_SENS_ENTITIES2 assetsRow = assetsRowOpt.get();
+			inMed = sum(assetsRow.getR70_over6m_to_1y(), assetsRow.getR70_over1y_to_3y());
+			inLong = sum(assetsRow.getR70_over3y_to_5y(), assetsRow.getR70_over5y_to_7y(),
+					assetsRow.getR70_over7y_to_10y(), assetsRow.getR70_over10y_to_15y(), assetsRow.getR70_over15y());
+		}
 
 		snapshot.setOutflowMediumTerm(outMed);
 		snapshot.setOutflowLongTerm(outLong);
@@ -206,6 +223,15 @@ public class SlsSensReportService {
 		return snapshot;
 	}
 
+	private Optional<RT_IRS_SENS_ENTITIES2> findAssetsRow(Date positionDate, String currency, Integer dayOffset) {
+		if (positionDate == null || currency == null) {
+			return Optional.empty();
+		}
+		List<RT_IRS_SENS_ENTITIES2> rows = sens2Repository.findByPositionDateAndCurrencyAndDayOffset(positionDate,
+				currency, dayOffset != null ? dayOffset : 0);
+		return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
+	}
+
 	private static SlsSensAnalyticalSnapshotDto emptyAnalyticalSnapshot(int offset, String asOfFormatted) {
 		SlsSensAnalyticalSnapshotDto snapshot = new SlsSensAnalyticalSnapshotDto();
 		snapshot.setSensDayOffset(offset);
@@ -214,8 +240,14 @@ public class SlsSensReportService {
 		return snapshot;
 	}
 
-	private static BigDecimal sum(BigDecimal a, BigDecimal b) {
-		return nz(a).add(nz(b));
+	private static BigDecimal sum(BigDecimal... values) {
+		BigDecimal total = BigDecimal.ZERO;
+		if (values != null) {
+			for (BigDecimal value : values) {
+				total = total.add(nz(value));
+			}
+		}
+		return total;
 	}
 
 	private static BigDecimal nz(BigDecimal value) {

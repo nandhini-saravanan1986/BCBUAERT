@@ -1139,7 +1139,8 @@ public class MIS_Rest_Controller {
 				applyThinBorders(rateHintStyle);
 				CellStyle rbiLabelStyle = workbook.createCellStyle();
 				applyThinBorders(rbiLabelStyle);
-				writeNoopRbiRefRateBlock(sheet, headerStyle, rateHintStyle, rbiLabelStyle);
+				BigDecimal[] noopFedaiRates = loadNoopFedaiRates(Selecteddate);
+				writeNoopRbiRefRateBlock(sheet, headerStyle, rateHintStyle, rbiLabelStyle, noopFedaiRates);
 
 				// Fetch data
 				List<Object[]> Noopdetail = RT_Noop_net_position_rep.Getnoopdetail(Selecteddate);
@@ -1228,7 +1229,7 @@ public class MIS_Rest_Controller {
 
 	/** RBI Ref Rate reference block in columns M–O (rows 1–4) for NOOP detail download. */
 	private void writeNoopRbiRefRateBlock(Sheet sheet, CellStyle headerStyle, CellStyle rateHintStyle,
-			CellStyle rbiLabelStyle) {
+			CellStyle rbiLabelStyle, BigDecimal[] fedaiRates) {
 		final int colM = 12;
 		final int colN = 13;
 		final int colO = 14;
@@ -1238,7 +1239,7 @@ public class MIS_Rest_Controller {
 			headerRow = sheet.createRow(0);
 		}
 		Cell rbiHeaderCell = headerRow.createCell(colM);
-		rbiHeaderCell.setCellValue("RBI Ref Rate");
+		rbiHeaderCell.setCellValue("Fedai Rate");
 		rbiHeaderCell.setCellStyle(headerStyle);
 		Cell rbiHeaderPad = headerRow.createCell(colN);
 		rbiHeaderPad.setCellStyle(headerStyle);
@@ -1256,10 +1257,48 @@ public class MIS_Rest_Controller {
 			pairCell.setCellStyle(rbiLabelStyle);
 			Cell rateCell = row.createCell(colN);
 			rateCell.setCellStyle(rbiLabelStyle);
+			BigDecimal rate = (fedaiRates != null && i < fedaiRates.length) ? fedaiRates[i] : null;
+			if (rate != null) {
+				rateCell.setCellValue(rate.doubleValue());
+			}
 			Cell hintCell = row.createCell(colO);
-			hintCell.setCellValue("<<Enter Rate Here");
+			if (rate != null) {
+				hintCell.setCellValue("");
+			} else {
+				hintCell.setCellValue("<<Enter Rate Here");
+			}
 			hintCell.setCellStyle(rateHintStyle);
 		}
+	}
+
+	private BigDecimal[] loadNoopFedaiRates(Date reportDate) {
+		BigDecimal[] rates = new BigDecimal[3];
+		if (reportDate == null) {
+			return rates;
+		}
+		List<Object[]> rows = RT_Noop_net_position_rep.getFedaiRatesByReportDate(reportDate);
+		if (rows == null || rows.isEmpty() || rows.get(0) == null) {
+			return rates;
+		}
+		Object[] row = rows.get(0);
+		for (int i = 0; i < rates.length && i < row.length; i++) {
+			rates[i] = toBigDecimalOrNull(row[i]);
+		}
+		return rates;
+	}
+
+	private BigDecimal toBigDecimalOrNull(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof BigDecimal) {
+			return (BigDecimal) value;
+		}
+		String text = value.toString().trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+		return new BigDecimal(text);
 	}
 
 	/**
@@ -1332,13 +1371,13 @@ public class MIS_Rest_Controller {
 		setCellValue(overbought, colLabel, "Overbought", labelStyle);
 		setCellFormula(overbought, colH, "(SUMIF(" + hRange + ",\">0\"))/10^6", valueStyle);
 		setCellFormula(overbought, colI, "(SUMIF(" + iRange + ",\">0\"))/10^6", valueStyle);
-		setCellFormula(overbought, colJ, "(SUMIF(" + jRange + ",\">0\"))/10^6", valueStyle);
+		setCellFormula(overbought, colJ, "(SUMIF(" + jRange + ",\">0\"))/10^7", valueStyle);
 
 		Row oversold = getOrCreateSheetRowByExcelNum(sheet, oversoldRow);
 		setCellValue(oversold, colLabel, "Oversold", labelStyle);
 		setCellFormula(oversold, colH, "(SUMIF(" + hRange + ",\"<0\"))/10^6", valueStyle);
 		setCellFormula(oversold, colI, "(SUMIF(" + iRange + ",\"<0\"))/10^6", valueStyle);
-		setCellFormula(oversold, colJ, "(SUMIF(" + jRange + ",\"<0\"))/10^6", valueStyle);
+		setCellFormula(oversold, colJ, "(SUMIF(" + jRange + ",\"<0\"))/10^7", valueStyle);
 
 		Row noop = getOrCreateSheetRowByExcelNum(sheet, noopRow);
 		setCellValue(noop, colLabel, "NOOP", labelStyle);
@@ -1350,7 +1389,7 @@ public class MIS_Rest_Controller {
 		setCellValue(noopInInr, colLabel, "NOOP in INR", greenStyle);
 		setCellFormula(noopInInr, colH, "(H" + noopRow + "/3.673)*$N$2/10", greenStyle);
 		setCellFormula(noopInInr, colI, "I" + noopRow + "*$N$2/10", greenStyle);
-		setCellFormula(noopInInr, colJ, "J" + noopRow + "*1/10", greenStyle);
+		setCellFormula(noopInInr, colJ, "J" + noopRow + "*1", greenStyle);
 
 		Row limit = getOrCreateSheetRowByExcelNum(sheet, limitRow);
 		setCellValue(limit, colLabel, "Limit (INR Crs)", labelStyle);

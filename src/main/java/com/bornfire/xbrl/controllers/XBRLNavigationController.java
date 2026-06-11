@@ -110,6 +110,7 @@ import com.bornfire.xbrl.services.RT_NostroAccBalDataService;
 import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_SLSServices;
 import com.bornfire.xbrl.services.SlsSensReportService;
+import com.bornfire.xbrl.services.IrsSensReportService;
 import com.bornfire.xbrl.dto.SlsSensScenarioDto;
 import com.bornfire.xbrl.util.UploadMessageHelper;
 import com.bornfire.xbrl.services.RT_SLS_BEHAVIOURAL_PER_SERVICES;
@@ -186,6 +187,15 @@ public class XBRLNavigationController {
 
 	@Autowired
 	SlsSensReportService slsSensReportService;
+
+	@Autowired
+	RT_IRS_SENS_Repository rt_irs_sens_repository;
+
+	@Autowired
+	RT_IRS_SENS2_REPOSITORY rt_irs_sens2_repository;
+
+	@Autowired
+	IrsSensReportService irsSensReportService;
 
 	@Autowired
 	AuditService auditService;
@@ -4590,6 +4600,168 @@ System.out.println("sixe==="+excelData.length);
 			result.putAll(slsSensReportService.buildSevenDayTotalsSummary(positionDate, currency));
 		} catch (Exception e) {
 			logger.error("Error building SLS sensitivity seven-day summary", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "RT_IRS_SENS", method = { RequestMethod.GET, RequestMethod.POST })
+	public String RT_IRS_SENS(Model md, HttpServletRequest req) {
+		md.addAttribute("positionDateGroups", irsSensReportService.buildPositionDateGroups());
+		return "RT/RT_IRS_SENS";
+	}
+
+	@RequestMapping(value = "IRS_SENSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
+	public String IRS_SENSREPORT(@RequestParam(required = false) String currency,
+			@RequestParam(required = false) String reportdate,
+			@RequestParam(required = false) String asOfDate,
+			@RequestParam(required = false) Integer dayOffset,
+			@RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size,
+			@RequestParam(required = false) String rowid, Model md, HttpServletRequest req) {
+
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date positionDate = null;
+		Date asOfDateParsed = null;
+
+		try {
+			if (reportdate != null && !reportdate.trim().isEmpty()) {
+				positionDate = dateFormat.parse(reportdate.trim());
+			}
+			if (asOfDate != null && !asOfDate.trim().isEmpty()) {
+				asOfDateParsed = dateFormat.parse(asOfDate.trim());
+			}
+		} catch (ParseException e) {
+			logger.warn("IRS_SENSREPORT: invalid date", e);
+			md.addAttribute("error", "Invalid date format. Expected dd/MM/yyyy");
+			return "RT/RT_IRS_SENSREPORT";
+		}
+
+		if (positionDate == null) {
+			md.addAttribute("error", "Position date is required.");
+			return "RT/RT_IRS_SENSREPORT";
+		}
+
+		if (dayOffset == null && asOfDateParsed != null) {
+			long diffMs = asOfDateParsed.getTime() - positionDate.getTime();
+			dayOffset = (int) (diffMs / (24L * 60 * 60 * 1000));
+			if (dayOffset < 0) {
+				dayOffset = 0;
+			}
+		}
+		if (dayOffset == null) {
+			dayOffset = 0;
+		}
+		if (asOfDateParsed == null) {
+			asOfDateParsed = IrsSensReportService.addCalendarDays(positionDate, dayOffset);
+		}
+
+		md.addAttribute("reportdate", reportdate);
+		md.addAttribute("currency", currency);
+		md.addAttribute("formmode", formmode != null ? formmode : "summary");
+
+		if (formmode == null || formmode.equals("summary")) {
+			Optional<RT_IRS_SENS_ENTITIES> scenarioOpt = irsSensReportService.findScenarioRow(positionDate, dayOffset,
+					currency);
+			if (!scenarioOpt.isPresent() && asOfDateParsed != null) {
+				scenarioOpt = irsSensReportService.findScenarioRowByAsOf(positionDate, asOfDateParsed, currency);
+			}
+			if (!scenarioOpt.isPresent()) {
+				md.addAttribute("error",
+						"No sensitivity scenario found for position date, currency, and day offset.");
+				md.addAttribute("formmode", "summary");
+				return "RT/RT_IRS_SENSREPORT";
+			}
+
+			RT_IRS_SENS_ENTITIES row = scenarioOpt.get();
+			List<RT_IRS_SENS_ENTITIES> irslist = Collections.singletonList(row);
+			List<RT_IRS_SENS_ENTITIES2> irsList2 = rt_irs_sens2_repository
+					.findByPositionDateAndCurrencyAndDayOffset(positionDate, currency, dayOffset);
+			List<RT_IRS_SENS_ENTITIES> currencylist = rt_irs_sens_repository.findCurrenciesByPositionDate(positionDate);
+			List<SlsSensScenarioDto> scenarioSwitcher = irsSensReportService
+					.findScenariosForPositionDate(positionDate, currency);
+			SlsSensScenarioDto activeScenario = irsSensReportService.toScenarioDto(row);
+
+			md.addAttribute("irslist", irslist);
+			md.addAttribute("irsList2", irsList2);
+			md.addAttribute("currencylist", currencylist);
+			md.addAttribute("asOfDate", IrsSensReportService.formatDate(asOfDateParsed));
+			md.addAttribute("dayOffset", dayOffset);
+			md.addAttribute("scenarioLabel", activeScenario.getScenarioLabel());
+			md.addAttribute("baseScenario", activeScenario.isBaseScenario());
+			md.addAttribute("scenarioSwitcher", scenarioSwitcher);
+			md.addAttribute("positionDateFormatted", IrsSensReportService.formatDate(positionDate));
+			md.addAttribute("formmode", "summary");
+		} else if (formmode.equals("Detail")) {
+			md.addAttribute("error", "Detail view is not configured for IRS Sensitivity Report.");
+			md.addAttribute("asOfDate", asOfDate);
+			md.addAttribute("dayOffset", dayOffset);
+			md.addAttribute("formmode", "summary");
+		}
+
+		return "RT/RT_IRS_SENSREPORT";
+	}
+
+	@RequestMapping(value = "/irsSensAnalyticalLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> irsSensAnalyticalLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency,
+			@RequestParam(defaultValue = "0") Integer dayOffset) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_irs_sens_repository.getIrsAnalyticalLongTermRatioS2(reportDateFor, currency,
+					dayOffset);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching IRS sensitivity analytical long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/irsSensAnalyticalMedLongTermRatioS2", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> irsSensAnalyticalMedLongTermRatioS2(@RequestParam String reportdate,
+			@RequestParam String currency,
+			@RequestParam(defaultValue = "0") Integer dayOffset) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date reportDateFor = parseSlsAnalyticalReportDate(reportdate);
+			List<BigDecimal> rows = rt_irs_sens_repository.getIrsAnalyticalMedLongTermRatioS2(reportDateFor, currency,
+					dayOffset);
+			BigDecimal ratio = (rows != null && !rows.isEmpty()) ? rows.get(0) : null;
+			if (ratio != null) {
+				ratio = ratio.setScale(2, RoundingMode.HALF_UP);
+			}
+			result.put("success", true);
+			result.put("ratio", ratio);
+		} catch (Exception e) {
+			logger.error("Error fetching IRS sensitivity analytical medium-to-long-term ratio for section 2", e);
+			result.put("success", false);
+			result.put("error", e.getMessage());
+			result.put("ratio", null);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/irsSensSevenDaySummary", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> irsSensSevenDaySummary(@RequestParam String reportdate, @RequestParam String currency) {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			Date positionDate = parseSlsAnalyticalReportDate(reportdate);
+			result.putAll(irsSensReportService.buildSevenDayTotalsSummary(positionDate, currency));
+		} catch (Exception e) {
+			logger.error("Error building IRS sensitivity seven-day summary", e);
 			result.put("success", false);
 			result.put("error", e.getMessage());
 		}

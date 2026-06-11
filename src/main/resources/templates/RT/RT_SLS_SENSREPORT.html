@@ -799,21 +799,53 @@
 			margin-right: 5px;
 		}
 
-		/* Right align numeric columns (thead + tbody) */
-		#slsSensSummaryModal .sls-summary-table th,
-		#slsSensSummaryModal .sls-summary-table td {
-			font-size: 13px;
-			vertical-align: middle;
+		#slsSensSummaryModal .modal-body {
+			max-height: 75vh;
+			overflow-y: auto;
 		}
 
-		#slsSensSummaryModal .sls-summary-table td.amt-right {
+		#slsSensSummaryModal .sls-summary-day-block {
+			margin-bottom: 1.5rem;
+		}
+
+		#slsSensSummaryModal .sls-summary-day-block:last-child {
+			margin-bottom: 0;
+		}
+
+		#slsSensSummaryModal .sls-summary-day-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 0.5rem;
+			padding-bottom: 0.35rem;
+			border-bottom: 2px solid #E77400;
+		}
+
+		#slsSensSummaryModal .sls-summary-day-block.active-day .sls-summary-day-title {
+			color: #c45f00;
+		}
+
+		#slsSensSummaryModal .sls-summary-analytical table {
+			width: 100%;
+			margin-bottom: 0;
+		}
+
+		#slsSensSummaryModal .sls-summary-analytical td.amt-right,
+		#slsSensSummaryModal .sls-summary-analytical th.amt-right {
 			text-align: right;
 			font-variant-numeric: tabular-nums;
 		}
 
-		#slsSensSummaryModal .sls-summary-table tbody tr.active-day {
-			background: rgba(231, 116, 0, 0.12);
+		#slsSensSummaryModal .sls-summary-ratio {
+			color: #1a7a1a;
 			font-weight: 600;
+		}
+
+		#slsSensSummaryModal .sls-summary-ratio-delta {
+			font-size: 11px;
+			color: #666;
+			font-weight: normal;
+			margin-left: 4px;
 		}
 
 		#usertable th.amt-right,
@@ -3339,33 +3371,25 @@
 		</div>
 	</div>
 
-	<!-- Seven-day outflows / inflows summary modal -->
+	<!-- Seven-day analytical summary modal (day-wise vs Base) -->
 	<div class="modal fade" id="slsSensSummaryModal" tabindex="-1" role="dialog" aria-labelledby="slsSensSummaryTitle"
 		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 820px; width: 96%;">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document"
+			style="max-width: 1280px; width: 96%;">
 			<div class="modal-content">
 				<div class="modal-header" style="background-color: #E77400; color: #fff;">
-					<h5 class="modal-title" id="slsSensSummaryTitle">SLS Sensitivity — 7-Day Summary</h5>
+					<h5 class="modal-title" id="slsSensSummaryTitle">SLS Sensitivity — 7-Day Analytical Summary</h5>
 					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity:1;">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body sls-analytical-calc">
 					<p id="slsSensSummarySubtitle" class="text-muted mb-3 small"></p>
 					<div id="slsSensSummaryLoading">Loading summary…</div>
 					<div id="slsSensSummaryError" class="text-danger" style="display:none;"></div>
 					<div id="slsSensSummaryTableWrap" style="display:none;">
-						<table class="table table-bordered table-sm sls-summary-table mb-0">
-							<thead class="thead-light">
-								<tr>
-									<th>Scenario</th>
-									<th>As-of Date</th>
-									<th id="slsSensSummaryOutflowCol" class="amt-right">Total Outflows</th>
-									<th id="slsSensSummaryInflowCol" class="amt-right">Total Inflows</th>
-								</tr>
-							</thead>
-							<tbody id="slsSensSummaryBody"></tbody>
-						</table>
+						<div id="slsSensSummaryBaseWrap" class="sls-summary-day-block"></div>
+						<div id="slsSensSummaryDaysWrap"></div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -4011,6 +4035,99 @@
 		return formatCalcAmount(Number(value));
 	}
 
+	function formatSummaryPercent(value) {
+		if (value == null || value === '' || !Number.isFinite(Number(value))) {
+			return '—';
+		}
+		return formatCalcPercent(Number(value));
+	}
+
+	function formatSummaryRatioCell(ratio, delta) {
+		if (ratio == null || ratio === '' || !Number.isFinite(Number(ratio))) {
+			return '—';
+		}
+		var html = '<span class="sls-summary-ratio">' + formatSummaryPercent(ratio) + '</span>';
+		if (delta != null && delta !== '' && Number.isFinite(Number(delta)) && Number(delta) !== 0) {
+			var sign = Number(delta) > 0 ? '+' : '';
+			html += '<span class="sls-summary-ratio-delta">(Δ ' + sign + formatSummaryPercent(delta) + ')</span>';
+		}
+		return html;
+	}
+
+	function buildSummaryAnalyticalTable(data, mode) {
+		var isDelta = mode === 'delta';
+		var outMed = isDelta ? data.deltaOutflowMediumTerm : data.outflowMediumTerm;
+		var outLong = isDelta ? data.deltaOutflowLongTerm : data.outflowLongTerm;
+		var inMed = isDelta ? data.deltaInflowMediumTerm : data.inflowMediumTerm;
+		var inLong = isDelta ? data.deltaInflowLongTerm : data.inflowLongTerm;
+		var longRatio = data.longTermRatio;
+		var medLongRatio = data.medLongTermRatio;
+		var longRatioDelta = isDelta ? data.deltaLongTermRatio : null;
+		var medLongRatioDelta = isDelta ? data.deltaMedLongTermRatio : null;
+
+		return '<table>' +
+			'<thead><tr>' +
+			'<th>Resources/ outflows</th>' +
+			'<th style="width:120px;" class="amt-right">Amount in (Mn)</th>' +
+			'<th>Assets/ inflows</th>' +
+			'<th style="width:120px;" class="amt-right">Amount in (Mn)</th>' +
+			'</tr></thead>' +
+			'<tbody>' +
+			'<tr>' +
+			'<td>Medium Term (6 months to 3 years)</td>' +
+			'<td class="amt-right">' + formatSummaryAmount(outMed) + '</td>' +
+			'<td>Medium Term</td>' +
+			'<td class="amt-right">' + formatSummaryAmount(inMed) + '</td>' +
+			'</tr>' +
+			'<tr>' +
+			'<td>Long Term (above 3 years)</td>' +
+			'<td class="amt-right">' + formatSummaryAmount(outLong) + '</td>' +
+			'<td>Long Term</td>' +
+			'<td class="amt-right">' + formatSummaryAmount(inLong) + '</td>' +
+			'</tr>' +
+			'<tr>' +
+			'<td class="summary-row-label">Long Term (3/6)</td>' +
+			'<td class="amt-right">' + formatSummaryRatioCell(longRatio, longRatioDelta) + '</td>' +
+			'<td class="sl-muted">70%</td><td></td>' +
+			'</tr>' +
+			'<tr>' +
+			'<td class="summary-row-label">Medium to Long Term (2+3/5+6)</td>' +
+			'<td class="amt-right">' + formatSummaryRatioCell(medLongRatio, medLongRatioDelta) + '</td>' +
+			'<td class="sl-muted">80%</td><td></td>' +
+			'</tr>' +
+			'</tbody></table>';
+	}
+
+	function renderSlsSensSummaryContent(res, activeOffset) {
+		var baseWrap = document.getElementById('slsSensSummaryBaseWrap');
+		var daysWrap = document.getElementById('slsSensSummaryDaysWrap');
+		var base = res.base;
+		var variations = res.variations || [];
+
+		if (base) {
+			var baseTitle = (base.scenarioLabel || 'Base (Day 0)') +
+				(base.asOfDateFormatted ? ' — ' + base.asOfDateFormatted : '');
+			baseWrap.innerHTML =
+				'<div class="sls-summary-day-title">Reference: ' + baseTitle + '</div>' +
+				'<div class="sls-summary-analytical">' + buildSummaryAnalyticalTable(base, 'absolute') + '</div>';
+		} else {
+			baseWrap.innerHTML = '';
+		}
+
+		var daysHtml = '';
+		variations.forEach(function (day) {
+			var isActive = Number(day.sensDayOffset) === activeOffset;
+			var title = (day.scenarioLabel || '') +
+				(day.asOfDateFormatted ? ' — ' + day.asOfDateFormatted : '') +
+				' <span class="text-muted font-weight-normal">(difference vs Base)</span>';
+			daysHtml += '<div class="sls-summary-day-block' + (isActive ? ' active-day' : '') + '">' +
+				'<div class="sls-summary-day-title">' + title + '</div>' +
+				'<div class="sls-summary-analytical">' + buildSummaryAnalyticalTable(day, 'delta') + '</div>' +
+				'</div>';
+		});
+		daysWrap.innerHTML = daysHtml;
+	}
+
 	function showSlsSensSevenDaySummary() {
 		var reportDateEl = document.getElementById('reportDate');
 		var currency = getAnalyticalCurrency();
@@ -4027,7 +4144,8 @@
 		document.getElementById('slsSensSummaryError').style.display = 'none';
 		document.getElementById('slsSensSummaryError').textContent = '';
 		document.getElementById('slsSensSummaryTableWrap').style.display = 'none';
-		document.getElementById('slsSensSummaryBody').innerHTML = '';
+		document.getElementById('slsSensSummaryBaseWrap').innerHTML = '';
+		document.getElementById('slsSensSummaryDaysWrap').innerHTML = '';
 		$('#slsSensSummaryModal').modal('show');
 
 		$.ajax({
@@ -4048,22 +4166,9 @@
 
 				document.getElementById('slsSensSummarySubtitle').textContent =
 					'Position date: ' + (res.positionDate || reportDateEl.textContent.trim()) +
-					' · Currency: ' + (res.currency || currency);
-				document.getElementById('slsSensSummaryOutflowCol').textContent = res.outflowLabel || 'Total Outflows';
-				document.getElementById('slsSensSummaryInflowCol').textContent = res.inflowLabel || 'Total Inflows';
-
-				var tbody = document.getElementById('slsSensSummaryBody');
-				var rowsHtml = '';
-				(res.days || []).forEach(function (day) {
-					var isActive = Number(day.sensDayOffset) === activeOffset;
-					rowsHtml += '<tr' + (isActive ? ' class="active-day"' : '') + '>' +
-						'<td>' + (day.scenarioLabel || '') + '</td>' +
-						'<td>' + (day.asOfDateFormatted || '') + '</td>' +
-						'<td class="amt-right">' + formatSummaryAmount(day.totalOutflows) + '</td>' +
-						'<td class="amt-right">' + formatSummaryAmount(day.totalInflows) + '</td>' +
-						'</tr>';
-				});
-				tbody.innerHTML = rowsHtml;
+					' · Currency: ' + (res.currency || currency) +
+					' · Amounts show change from Base (Day 0); ratios show day position with Δ vs Base';
+				renderSlsSensSummaryContent(res, activeOffset);
 				document.getElementById('slsSensSummaryTableWrap').style.display = 'block';
 			},
 			error: function () {
