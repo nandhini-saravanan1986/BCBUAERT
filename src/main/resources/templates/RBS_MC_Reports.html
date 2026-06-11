@@ -756,7 +756,7 @@ label.error {
 }
 
 .modal-title {
-	background-color: #f7a47c !important;
+	background-color: #8a5a35 !important;
 }
 
 body {
@@ -765,7 +765,7 @@ body {
 </style>
 <style>
 .menu-title-header {
-	background-color: #f7a47c !important;
+	background-color: #8a5a35 !important;
 	color: #ffffff;
 	text-align: center;
 	padding: 10px 15px;
@@ -1348,6 +1348,438 @@ table.selection-mode td {
     margin-bottom: 37.8px;
 } 
 */
+
+.dynamic-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dynamic-input-wrapper input.input-and-select {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 6px 8px;
+  background: transparent;
+  width: 100%;
+  color: #333;
+}
+
+.dynamic-edit-icon {
+  background: transparent;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.dynamic-edit-icon:hover {
+  color: #0056b3;
+  background-color: #f8f9fa;
+}
+
+/* --- Modal Overlay Styles --- */
+.custom-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  font-family: Arial, sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#modal-close-icon {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.data-row {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.data-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.data-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-input:focus {
+  border-color: #0056b3;
+  outline: none;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel, .btn-save {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-cancel {
+  background-color: #f1f3f5;
+  color: #333;
+}
+
+.btn-save {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+/* File Upload custom styling */
+.file-remove-btn {
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.file-remove-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.file-scroll-container {
+    max-height: 157px; 
+    overflow-y: auto;  
+    overflow-x: hidden;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 15px;
+    background-color: #fdfdfd;
+}
+
+.file-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+.file-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.file-scroll-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+.file-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* --- 1. Animations --- */
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* --- 2. The File Row Card --- */
+.file-input-row {
+    min-width: 0; 
+    max-width: 320px;
+    width: 100%;
+    box-sizing: border-box;
+    animation: slideFadeIn 0.3s ease-out forwards;
+    background-color: #fcfcfc;
+    border: 1px dashed #ced4da;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+/* Hover effect on the row */
+.file-input-row:hover {
+    border-color: #0056b3;
+    background-color: #f0f7ff; /* Light blue tint */
+    box-shadow: 0 2px 6px rgba(0, 86, 179, 0.08);
+}
+
+/* Triggers the removal animation via JavaScript */
+.file-input-row.removing {
+    animation: slideFadeOut 0.25s ease-in forwards;
+}
+
+/* --- 3. Customizing the actual "Choose File" button --- */
+.file-input-row input[type="file"] {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: #495057;
+    outline: none;
+}
+
+.file-input-row input[type="file"]::file-selector-button {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin-right: 12px;
+    color: #333;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.file-input-row input[type="file"]::file-selector-button:hover {
+    background-color: #d1d6db;
+}
+
+/* --- 4. The Action Buttons --- */
+.file-remove-btn {
+    background-color: #fff;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.file-remove-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: scale(1.05); /* Slight pop effect */
+}
+
+#add-file-btn {
+    transition: all 0.2s;
+}
+
+#add-file-btn:hover {
+    background-color: #e2e6ea !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+/* --- Modal Expansion Transitions --- */
+.modal-dialog-wide {
+    max-width: 800px !important; 
+    width: 100%;
+    margin: 4rem auto !important;
+    transition: max-width 0.5s ease !important;
+}
+
+.modal-dialog-wide.preview-active {
+    max-width: 95vw !important;
+}
+
+/* Flexbox layout to split the form and preview pane */
+.modal-body-split {
+    display: flex;
+    flex-wrap: nowrap; 
+    gap: 0;
+    min-height: 436px;
+    transition: gap 0.5s ease;
+}
+
+.modal-dialog-wide.preview-active .modal-body-split {
+    gap: 30px;
+}
+
+/* Form pane smoothly shrinks to make room */
+.form-pane {
+    width: 100%;
+    max-width: 800px;
+    flex: 0 0 auto;
+    transition: width 0.5s ease, flex 0.5s ease;
+}
+
+.modal-dialog-wide.preview-active .form-pane {
+    width: 750px;
+    flex: 0 0 750px; 
+}
+.preview-pane {
+    flex: 0 0 0px; 
+    opacity: 0;
+    overflow: hidden;
+    border-left: 0px solid #e9ecef;
+    padding-left: 0;
+    display: flex; 
+    flex-direction: column;
+    height: 100%; 
+    transition: all 0.5s ease;    
+    height: 407px;
+    
+}
+
+.modal-dialog-wide.preview-active .preview-pane {
+    flex: 1 1 auto; 
+    opacity: 1;
+    padding-left: 30px;
+    border-left: 2px solid #e9ecef;
+    min-width: 0;
+}
+.preview-window {
+    flex: 1;
+    min-height: 0; 
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    overflow: auto; 
+    position: relative;
+}
+.preview-window iframe {
+    flex: 1;
+    align-self: stretch;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.preview-window img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease-out; 
+}
+.preview-btn {
+    background-color: #f1f3f5;
+    border: 1px solid #ced4da;
+    color: #495057;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.preview-btn:hover {
+    background-color: #e2e6ea;
+}
+/* --- Custom File Input Styling --- */
+.custom-file-btn {
+    background-color: #fdfdfd;
+    border: 1px dashed #adb5bd;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex: 1; /* Takes up available space */
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-file-btn:hover {
+    background-color: #f0f7ff;
+    border-color: #0056b3;
+    color: #0056b3;
+}
+
+/* The clickable file name after upload */
+.file-name-display {
+    flex: 1;
+    min-width: 0;  
+    font-size: 13px;
+    color: #0056b3;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 10px;
+    background-color: #f0f7ff;
+    border-radius: 4px;
+    border: 1px solid #cce5ff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-name-display:hover {
+    background-color: #e2eafc;
+    border-color: #8bb9fe;
+}
+.preview-btn, .file-remove-btn, .custom-file-btn {
+    flex-shrink: 0; 
+}
 </style>
 </head>
 
@@ -1417,8 +1849,7 @@ table.selection-mode td {
 						onclick="navigateToTabdept('retailproducts')">Retail
 						Products</button>
 					<button class="role-btn" id="bankemployee-btn"
-						onclick="navigateToTabdept('bankemployee')">Bank
-						Employee</button>
+						onclick="navigateToTabdept('bankemployee')">Bank Employee</button>
 					<button class="role-btn" id="trainings-btn"
 						onclick="navigateToTabdept('trainings')">Trainings</button>
 					<button class="role-btn" id="additionalinformation-btn"
@@ -1435,7 +1866,8 @@ table.selection-mode td {
 				<div class="form-group mb-0"
 					th:unless="${DEPARTMENTVALIDATION=='YES'}"
 					th:hidden="${ROLEID != 'ADM-M' and ROLEID != 'ADM-C' and ROLEID != 'MGR'  and ROLEID != 'SUP-ADM' }">
-					<select id="branch" name="branch" style="width: 200px"
+					<select id="branch" name="branch"
+						style="width: 200px; display: none"
 						class="form-control form-control-sm " onchange="filtertable()"
 						required>
 						<option value="" selected disabled>-- Select --</option>
@@ -1456,8 +1888,8 @@ table.selection-mode td {
 						<option th:selected="${BRANCHCODE == '9019'}" value="9019">9019
 							- DFC</option>
 						<option value="consolidated">Consolidated</option>
-					</select> <label class="form-legend" style="margin-bottom: 0px;">Branch
-						:</label>
+					</select> <label class="form-legend"
+						style="margin-bottom: 0px; display: none">Branch :</label>
 					<div>
 						<button class="role-btn" onclick="navigateTodeptvalidpage()"
 							th:unless="${DEPARTMENTVALIDATION=='YES'}">Department
@@ -1469,8 +1901,15 @@ table.selection-mode td {
 					<button class="role-btn" onclick="navigateTodatapage()">Summary
 					</button>
 				</div>
-
-
+				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+					<select name="selecteddept" id="selecteddept" onchange="filtertabledept()" >
+						<option value="" disabled>-- Select --</option>
+						<option th:each="option : ${md}" th:value="${option}"
+							th:text="${option}" th:selected="${option == DEPARTMENT}">
+						</option>
+					</select> <label class="form-legend" style="margin-bottom: 0px;">Department
+						:</label>
+				</div>
 			</div>
 		</div>
 
@@ -1509,17 +1948,16 @@ table.selection-mode td {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn"
+							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
-								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								style="padding-right: 12px;display: none;"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -1854,7 +2292,7 @@ table.selection-mode td {
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
 						<button type="button" class="role-btn" id="bottomSaveBtn"
-							style="display: none;" onclick="submitForm()">Save</button>
+							th:if="${DEPARTMENTVALIDATION =='YES'}"  style="display: none;" onclick="submitForm()">Save</button>
 					</div>
 				</form>
 			</div>
@@ -1896,7 +2334,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'  }"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -5795,7 +6233,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -7992,7 +8430,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -11231,7 +11669,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -11548,7 +11986,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -11786,7 +12224,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -14197,7 +14635,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -15131,7 +15569,7 @@ table.selection-mode td {
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
 								onclick="verifyData()">Verify</button>
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
@@ -15894,9 +16332,182 @@ table.selection-mode td {
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="editRecordModal" tabindex="-1"
+		role="dialog" aria-hidden="true" style="overflow: hidden">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-wide"
+			id="main-modal-dialog">
+			<div class="modal-content"
+				style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
 
+				<div class="menu-title-header" style="padding: 15px 20px;">
+					<div class="modal-title"
+						style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
+						Edit Record</div>
+				</div>
 
+				<div class="modal-body modal-body-split"
+					style="text-align: left; padding: 25px 30px 0 30px;">
 
+					<div class="form-pane">
+						<div
+							style="margin-bottom: 10px; border-bottom: 1px solid #e9ecef; padding-bottom: 15px;">
+
+							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+								Field Name : <span id="modal-header-val"
+									style="font-size: 13px; font-weight: 500; text-transform: uppercase; margin-left: 5px; color: #6c757d;"></span>
+							</h6>
+
+							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+								Field Description : <span id="modal-col2-val"
+									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;"></span>
+							</h6>
+							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+								ASSIGNED TO: <span id="modal-dept-val"
+									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;">Loading...</span>
+							</h6>
+							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+								YOUR DEPARTMENT: <span id="modal-current-dept-val"
+									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;"></span>
+							</h6>
+						</div>
+
+						<div
+							style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; ">
+
+							<div>
+								<h5
+									style="font-size: 14px; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin-top: 0; margin-bottom: 15px;">Data
+									Entry</h5>
+								<div
+									style="display: grid; grid-template-columns: 100px 1fr; row-gap: 15px; align-items: center; margin-bottom: 10px;">
+									<label
+										style="margin: 0; font-size: 13px; font-weight: 600; padding-bottom: 20px;">Value</label>
+
+									<div
+										style="display: flex; flex-direction: column; width: 100%; max-width: 260px;">
+										<div style="display: flex; width: 100%;">
+											<input type="text" id="modal-input-val"
+												style="flex: 1; padding: 6px 10px; font-size: 13px; text-align: right; border: 1px solid #ced4da; border-right: none; border-radius: 4px 0 0 4px; outline: none;"
+												placeholder="0.00" />
+											<button type="button" id="modal-na-btn"
+												style="padding: 6px 14px; background-color: #e9ecef; color: #495057; border: 1px solid #ced4da; border-radius: 0 4px 4px 0; font-weight: 600; font-size: 12px; cursor: pointer; transition: background-color 0.2s;"
+												onmouseover="this.style.backgroundColor='#dde0e3'"
+												onmouseout="this.style.backgroundColor='#e9ecef'">
+												NA</button>
+										</div>
+
+										<div
+											style="margin-top: 4px; font-size: 11px; text-align: right;">
+											<span style="color: #868e96; margin-right: 4px;">Variation
+												with recent value :</span> <span id="variance-display"
+												style="font-weight: bold; color: #6c757d;">--</span>
+										</div>
+									</div>
+
+									<label style="margin: 0; font-size: 13px; font-weight: 600;">Justification</label>
+									<input type="text" id="modal-justification-val"
+										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" />
+
+									<label style="margin: 0; font-size: 13px; font-weight: 600;">Source</label>
+									<input type="text" id="modal-source-val"
+										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" />
+								</div>
+
+								<div
+									style="padding: 12px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; max-width: 360px;">
+
+									<h6
+										style="margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase; color: #495057; font-weight: 700; letter-spacing: 0.5px;">Previous
+										values</h6>
+
+									<div id="modal-history-wrapper"
+										style="display: flex; flex-direction: column; gap: 6px;">
+									</div>
+								</div>
+							</div>
+
+							<div style="display: flex; flex-direction: column;">
+								<h5
+									style="font-size: 14px; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin-top: 0; margin-bottom: 15px;">Evidence
+									Attachments</h5>
+
+								<div class="file-scroll-container">
+									<div id="dynamic-file-wrapper"
+										style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+									</div>
+								</div>
+
+								<div>
+									<button type="button" id="add-file-btn"
+										style="background-color: #f8f9fa; border: 1px dashed #0056b3; border-radius: 4px; padding: 8px 12px; cursor: pointer; color: #0056b3; font-size: 13px; font-weight: bold; width: 100%;">+
+										Add Another File</button>
+									<p id="max-file-txt"
+										style="font-size: 11px; color: #6c757d; margin-top: 8px; text-align: center;">Maximum
+										10 files allowed.</p>
+
+									<div id="remarks-container"
+										style="display: none; flex-direction: column; gap: 5px; margin-top: 0px; border-top: 2px solid #e9ecef; padding-top: 0px;">
+										<label
+											style="margin: 0; font-size: 13px; font-weight: 600; color: #dc3545;">Checker
+											Remarks <span style="color: red">*</span>
+										</label>
+										<textarea id="modal-remarks-val"
+											style="width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: none; min-height: 80px;"
+											placeholder="Enter remarks (Required for Revert)..."></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="preview-pane">
+						<div
+							style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+							<h5
+								style="font-size: 15px; color: #333; margin: 0; font-weight: bold;">Document
+								Preview</h5>
+
+							<div style="display: flex; gap: 8px; align-items: center;">
+
+								<span id="custom-zoom-tools"
+									style="display: flex; gap: 8px; align-items: center;">
+									<button type="button" id="zoom-out-btn" class="preview-btn"
+										style="padding: 2px 8px; font-size: 16px; font-weight: bold;"
+										title="Zoom Out">&minus;</button> <span id="zoom-level-txt"
+									style="font-size: 12px; color: #666; width: 35px; text-align: center;">100%</span>
+									<button type="button" id="zoom-in-btn" class="preview-btn"
+										style="padding: 2px 8px; font-size: 16px; font-weight: bold;"
+										title="Zoom In">&plus;</button> <span
+									style="border-left: 1px solid #ccc; height: 20px; margin: 0 5px;"></span>
+								</span>
+
+								<button type="button" id="close-preview-btn"
+									style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
+							</div>
+						</div>
+
+						<div class="preview-window" id="preview-window">
+							<span style="color: #6c757d; font-size: 14px;">Select a
+								file and click preview.</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer"
+					style="border-top: 1px solid #e9ecef; padding: 8px 30px; background-color: #f8f9fa;">
+					<button type="button" class="role-btn" data-dismiss="modal">Cancel</button>
+
+					<button type="button" class="role-btn" id="modal-save-btn">Save
+						Changes</button>
+
+					<button type="button" class="role-btn" id="modal-revert-btn"
+						style="display: none; background-color: #dc3545; border-color: #dc3545; color: white;">Revert</button>
+					<button type="button" class="role-btn" id="modal-verify-btn"
+						style="display: none; background-color: #28a745; border-color: #28a745; color: white;">Verify</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
@@ -15966,6 +16577,19 @@ function navigateTodatapage(){
 		
 		console.log("formmode : "+ formmode +" branch : "+branchvalue);		
 		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&branch='+branchvalue;		
+	}
+	
+	function filtertabledept(){		
+		const params = new URLSearchParams(window.location.search);
+		let formmode = params.get('formmode');		
+		if(formmode===null){
+			formmode = 'bankinformation';
+		}
+		let selecteddept = document.getElementById("selecteddept");
+		let selecteddeptvalue= selecteddept.value;
+		
+		console.log("formmode : "+ formmode +" selecteddeptvalue : "+selecteddeptvalue);		
+		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&dept='+selecteddeptvalue;		
 	}
 		
 </script>
@@ -16684,6 +17308,847 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 }); 
+
+</script>
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    
+    const deptValidation = /*[[${DEPARTMENTVALIDATION}]]*/ 'NO';
+    const formMode = /*[[${formmode}]]*/ '';
+    const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+    const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
+    const roleId = /*[[${ROLEID}]]*/ '';
+    const isChecker = (roleId && (roleId.toLowerCase() === 'adm-c' || roleId.toLowerCase() === 'usr-c'));
+    
+    const MAX_FILES = 10;
+    let currentFileCount = 0;
+    let currentlyPreviewedInput = null; 
+    let lastMonthValueForVariance = null;
+    
+    const fileWrapper = document.getElementById('dynamic-file-wrapper');
+    const addFileBtn = document.getElementById('add-file-btn');
+    const modalDialog = document.getElementById('main-modal-dialog');
+    const previewWindow = document.getElementById('preview-window');
+    const closePreviewBtn = document.getElementById('close-preview-btn');
+    
+    let currentZoom = 1.0;
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const zoomLevelTxt = document.getElementById('zoom-level-txt');
+
+    function closePreview() {
+        if(modalDialog) modalDialog.classList.remove('preview-active');
+        currentlyPreviewedInput = null;
+        if(previewWindow) previewWindow.innerHTML = '<span style="color: #6c757d; font-size: 14px;">Select a file and click preview.</span>';
+    }
+
+    if (closePreviewBtn) closePreviewBtn.addEventListener('click', closePreview);
+
+    function applyZoom() {
+        if(zoomLevelTxt) zoomLevelTxt.innerText = Math.round(currentZoom * 100) + '%';
+        const previewElement = previewWindow.firstElementChild;
+        if (!previewElement) return;
+
+        if (currentZoom > 1.0) {
+            previewWindow.style.alignItems = 'flex-start';
+            previewWindow.style.justifyContent = 'flex-start';
+        } else {
+            previewWindow.style.alignItems = 'center';
+            previewWindow.style.justifyContent = 'center';
+        }
+
+        let isGeneratedHtml = false;
+        if (previewElement.tagName === 'IFRAME') {
+            try {
+                const iframeDoc = previewElement.contentDocument || previewElement.contentWindow.document;
+                if (iframeDoc && iframeDoc.body && !iframeDoc.querySelector('embed[type="application/pdf"]')) {
+                    isGeneratedHtml = true;
+                    const excelTables = iframeDoc.querySelectorAll('.sheet-container table');
+                    if (excelTables.length > 0) {
+                        excelTables.forEach(table => {
+                            table.style.zoom = currentZoom;
+                            table.style.transform = `scale(${currentZoom})`;
+                            table.style.transformOrigin = 'top left';
+                        });
+                    } else {
+                        iframeDoc.body.style.zoom = currentZoom;
+                        iframeDoc.body.style.transform = `scale(${currentZoom})`;
+                        iframeDoc.body.style.transformOrigin = 'top left';
+                    }
+                }
+            } catch (e) {}
+        }
+
+        if (!isGeneratedHtml) {
+            if (previewElement.tagName === 'IMG') {
+                previewElement.style.maxWidth = 'none';
+                previewElement.style.maxHeight = 'none';
+                previewElement.style.transition = 'width 0.2s ease, height 0.2s ease';
+            }
+            previewElement.style.width = `${currentZoom * 100}%`;
+            previewElement.style.height = `${currentZoom * 100}%`;
+            previewElement.style.flexShrink = '0'; 
+        }
+    }
+
+    if(zoomInBtn) zoomInBtn.addEventListener('click', () => { if (currentZoom < 3.0) { currentZoom += 0.1; applyZoom(); }});
+    if(zoomOutBtn) zoomOutBtn.addEventListener('click', () => { if (currentZoom > 0.3) { currentZoom -= 0.1; applyZoom(); }});
+
+    function renderPreview(file) {
+        if (!file) return;
+        
+        modalDialog.classList.add('preview-active');
+        const fileURL = URL.createObjectURL(file);
+        const fileType = file.type;
+        const fileName = file.name.toLowerCase();
+        const zoomTools = document.getElementById('custom-zoom-tools');
+
+        // Reset zoom state
+        currentZoom = 1.0;
+        if (zoomLevelTxt) zoomLevelTxt.innerText = '100%';
+        previewWindow.style.alignItems = 'center';
+        previewWindow.style.justifyContent = 'center';
+
+        if (fileType.startsWith('image/')) {
+            if (zoomTools) zoomTools.style.display = 'flex'; 
+            previewWindow.innerHTML = `<img src="${fileURL}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: width 0.2s, height 0.2s;" />`;
+        } else if (fileType === 'application/pdf') {
+            if (zoomTools) zoomTools.style.display = 'none'; 
+            previewWindow.innerHTML = `<iframe src="${fileURL}#toolbar=1" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+        } else if (fileType.startsWith('text/') || fileName.endsWith('.txt') || fileName.endsWith('.csv')) {
+            if (zoomTools) zoomTools.style.display = 'flex'; 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const htmlString = `<html><body style="font-family: Consolas, monospace; font-size: 14px; padding: 20px; color: #333; background-color: #f8f9fa; white-space: pre-wrap; word-wrap: break-word;">${textContent}</body></html>`;
+                const blob = new Blob([htmlString], { type: 'text/html' });
+                previewWindow.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+            };
+            reader.readAsText(file);
+        } else {
+            if (zoomTools) zoomTools.style.display = 'flex'; 
+            previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; margin-bottom: 15px;"></div><h5 style="color: #333;">Generating Preview...</h5></div>`;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch('./preview', { method: 'POST', body: formData })
+            .then(response => { if (!response.ok) throw new Error("Server could not generate preview."); return response.blob(); })
+            .then(pdfBlob => { previewWindow.innerHTML = `<iframe src="${URL.createObjectURL(pdfBlob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`; })
+            .catch(error => { previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><h2 style="font-size: 40px; margin: 0 0 10px 0;">📄</h2><h4 style="color: #333; margin-bottom: 5px;">${file.name}</h4><p style="color: #dc3545; font-size: 13px; font-weight: bold;">Preview generation failed.</p></div>`; });
+        }
+    }
+
+    function evaluateSingleRowState() {
+        const rows = document.querySelectorAll('.file-input-row');
+        if (rows.length === 1) {
+            const onlyInput = rows[0].querySelector('input[type="file"]');
+            const onlyRemoveBtn = rows[0].querySelector('.file-remove-btn');
+            if (onlyInput.files.length === 0) onlyRemoveBtn.style.display = 'none';
+        }
+    }
+
+    function createFileInputRow() {
+        if (currentFileCount >= MAX_FILES) return;
+        currentFileCount++;
+
+        const newRow = document.createElement('div');
+        newRow.className = 'file-input-row';
+        newRow.style.display = 'flex';
+        newRow.style.alignItems = 'center';
+        newRow.style.gap = '8px';
+        newRow.style.width = '100%';
+        newRow.style.marginBottom = '8px';
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none'; 
+
+        const chooseFileBtn = document.createElement('button');
+        chooseFileBtn.type = 'button';
+        chooseFileBtn.className = 'custom-file-btn';
+        chooseFileBtn.innerHTML = '<span>&#8682;</span> Choose File...';
+
+        const fileNameDisplay = document.createElement('span');
+        fileNameDisplay.className = 'file-name-display';
+        fileNameDisplay.style.display = 'none';
+        
+        fileNameDisplay.style.alignItems = 'center';
+        fileNameDisplay.style.gap = '6px';
+        fileNameDisplay.style.flex = '1';          
+        fileNameDisplay.style.overflow = 'hidden';  
+        fileNameDisplay.style.whiteSpace = 'nowrap';
+        fileNameDisplay.style.textOverflow = 'ellipsis'; 
+
+        const previewBtn = document.createElement('button');
+        previewBtn.type = 'button';
+        previewBtn.className = 'preview-btn';
+        previewBtn.innerHTML = '&#128065; Preview';
+        previewBtn.style.display = 'none'; 
+        previewBtn.style.flexShrink = '0';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'file-remove-btn';
+        removeBtn.innerHTML = '&#10005;';
+        removeBtn.style.flexShrink = '0'; 
+        if (currentFileCount === 1) removeBtn.style.display = 'none';
+
+        chooseFileBtn.addEventListener('click', () => {
+            if (!isChecker) fileInput.click();
+        });
+        
+        fileNameDisplay.addEventListener('click', () => {
+            if (!isChecker) fileInput.click();
+        });
+        
+        if (isChecker) {
+            fileNameDisplay.style.cursor = 'default';
+        } else {
+            fileNameDisplay.style.cursor = 'pointer';
+        }
+
+        let backupFile = null;
+
+        fileInput.addEventListener('click', function() {
+            if (fileInput.files.length > 0) {
+                backupFile = fileInput.files[0];
+            } else {
+                backupFile = null;
+            }
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length === 0 && backupFile) {
+                const dt = new DataTransfer();
+                dt.items.add(backupFile);
+                fileInput.files = dt.files;
+                return; 
+            }
+
+            if (fileInput.files.length > 0) {
+                const selectedFile = fileInput.files[0];
+                if (selectedFile.size > 52428800) {
+                    fileInput.value = ''; 
+                    modalDialog.classList.add('preview-active');
+                    previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><h2 style="font-size: 40px; margin: 0 0 10px 0; color: #dc3545;">⚠️</h2><h4 style="color: #333; margin-bottom: 5px;">File Too Large</h4><p style="color: #dc3545; font-size: 13px; font-weight: bold;">Maximum allowed size is 50 MB.</p></div>`;
+                    return; 
+                }
+                
+                delete newRow.dataset.savedIndex;
+
+                chooseFileBtn.style.display = 'none';
+                fileNameDisplay.style.display = 'flex';
+                fileNameDisplay.innerHTML = `<span>📄</span> ${selectedFile.name}`;
+                previewBtn.style.display = 'inline-block'; 
+                removeBtn.style.display = 'inline-block';
+                
+                previewBtn.onclick = function(e) {
+                    e.preventDefault();
+                    currentlyPreviewedInput = fileInput; 
+                    renderPreview(fileInput.files[0]);
+                };
+
+                if (currentlyPreviewedInput === fileInput) renderPreview(selectedFile);
+            } else {
+                if (newRow.dataset.savedIndex) {
+                    return; 
+                }
+
+                chooseFileBtn.style.display = 'flex';
+                fileNameDisplay.style.display = 'none';
+                previewBtn.style.display = 'none'; 
+                if (currentlyPreviewedInput === fileInput) closePreview();
+                evaluateSingleRowState();
+            }
+        });
+
+        previewBtn.addEventListener('click', function(e) {
+            if (fileInput.files && fileInput.files.length > 0) {
+                currentlyPreviewedInput = fileInput; 
+                renderPreview(fileInput.files[0]);
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            const totalRows = document.querySelectorAll('.file-input-row').length;
+            if (currentlyPreviewedInput === fileInput) closePreview();
+            if (totalRows === 1) {
+                fileInput.value = ''; 
+                chooseFileBtn.style.display = 'flex';
+                fileNameDisplay.style.display = 'none';
+                previewBtn.style.display = 'none';
+                removeBtn.style.display = 'none';
+            } else {
+                newRow.classList.add('removing');
+                setTimeout(() => { newRow.remove(); currentFileCount--; addFileBtn.style.display = 'block'; evaluateSingleRowState(); }, 250); 
+            }
+        });
+
+        newRow.appendChild(fileInput);
+        newRow.appendChild(chooseFileBtn);
+        newRow.appendChild(fileNameDisplay);
+        newRow.appendChild(previewBtn);
+        newRow.appendChild(removeBtn);
+        fileWrapper.appendChild(newRow);
+
+        if (currentFileCount >= MAX_FILES) addFileBtn.style.display = 'none';
+    }
+
+    if (fileWrapper) createFileInputRow();
+    if (addFileBtn) addFileBtn.addEventListener('click', createFileInputRow);
+
+    $('#editRecordModal').on('hidden.bs.modal', function () {
+        const inputsToClear = document.querySelectorAll('#editRecordModal input[type="text"], #editRecordModal input[type="date"]');
+        inputsToClear.forEach(input => input.value = '');
+        closePreview();
+        
+        if (fileWrapper) {
+            fileWrapper.innerHTML = ''; 
+            currentFileCount = 0;
+            
+            if (!isChecker) {
+                createFileInputRow();
+                if (addFileBtn) addFileBtn.style.display = 'block';
+            } else {
+                if (addFileBtn) addFileBtn.style.display = 'none';
+            }
+        }
+    });
+
+
+    if (deptValidation !== 'YES') {
+        let currentEditingInput = null;
+        
+        let ptReportData1 = /*[[${deptreportlist}]]*/ null; 
+        let ptReportData2 = /*[[${deptreportlist2}]]*/ null; 
+
+        if (Array.isArray(ptReportData1) && ptReportData1.length > 0) ptReportData1 = ptReportData1[0]; 
+        if (Array.isArray(ptReportData2) && ptReportData2.length > 0) ptReportData2 = ptReportData2[0]; 
+
+        const ptLower = (currentDepartment || '').toLowerCase();
+
+        const isAllowed = (configData, fieldName) => {
+            if (configData && configData.hasOwnProperty(fieldName)) {
+                const fieldConfig = configData[fieldName]; 
+                if (fieldConfig) {
+                    const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
+                    return allowedValues.includes(ptLower);
+                }
+            }
+            return false;
+        };
+
+        const inputs = document.querySelectorAll('.input-and-select');
+
+        inputs.forEach(input => {
+            
+            // 1. Force the base table input to be readonly so users MUST use the modal
+            input.setAttribute('readonly', true);
+            
+            // 2. Check if the current user's department is allowed to edit this specific cell
+            const fieldName = input.name || input.id;
+            const isAuthorized = isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+
+            // 3. ONLY build and attach the edit button if they are authorized!
+            if (isAuthorized) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dynamic-input-wrapper';
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+
+                const iconBtn = document.createElement('button');
+                iconBtn.type = 'button';
+                iconBtn.className = 'dynamic-edit-icon';
+                
+                if (isChecker) {
+                    iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                    iconBtn.title = "Verify Record";
+                } else {
+                    iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                    iconBtn.title = "Edit Record";
+                }
+                wrapper.appendChild(iconBtn);
+
+                iconBtn.addEventListener('click', function() {
+                    currentEditingInput = input;
+                    const td = input.closest('td');
+                    const tr = td.closest('tr');
+                    const table = tr.closest('table');
+                    const cellIndex = td.cellIndex;
+
+                    let headerText = table && table.rows[0] ? table.rows[0].cells[cellIndex].innerText.trim() : "Unknown";
+                    let col2Text = "N/A";
+                    if (tr.cells.length >= 2) {
+                        const col2 = tr.cells[1];
+                        const col2Input = col2.querySelector('input');
+                        col2Text = col2Input ? col2Input.value : col2.innerText.trim();
+                    }
+
+                    const cellName = input.name || input.id || "UnknownCell";
+
+                    document.getElementById('modal-header-val').innerText = headerText;
+                    document.getElementById('modal-col2-val').innerText = col2Text;
+                    document.getElementById('modal-input-val').value = input.value;
+                    document.getElementById('modal-current-dept-val').innerText = currentDepartment;
+                    if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
+                    if(document.getElementById('report-date-input')) document.getElementById('report-date-input').value = '';
+
+                    const valInput = document.getElementById('modal-input-val');
+                    const justInput = document.getElementById('modal-justification-val');
+                    const srcInput = document.getElementById('modal-source-val');
+                    const naBtn = document.getElementById('modal-na-btn');
+                    const remarksInput = document.getElementById('modal-remarks-val');
+
+                    if (isChecker) {
+                        if(valInput) valInput.readOnly = true;
+                        if(justInput) justInput.readOnly = true;
+                        if(srcInput) srcInput.readOnly = true;
+                        if(naBtn) naBtn.style.display = 'none';
+                        if(remarksInput) remarksInput.value = ''; 
+
+                        const addFileBtnElem = document.getElementById('add-file-btn');
+                        if(addFileBtnElem) addFileBtnElem.style.display = 'none';
+                        
+                        const maxFileTxtElem = document.getElementById('max-file-txt');
+                        if(maxFileTxtElem) maxFileTxtElem.style.display = 'none';
+                        
+                        const remarksContainer = document.getElementById('remarks-container');
+                        if(remarksContainer) remarksContainer.style.display = 'flex';
+
+                        const saveBtn = document.getElementById('modal-save-btn');
+                        if(saveBtn) saveBtn.style.display = 'none';
+                        
+                        const verifyBtn = document.getElementById('modal-verify-btn');
+                        if(verifyBtn) verifyBtn.style.display = 'inline-block';
+                        
+                        const revertBtn = document.getElementById('modal-revert-btn');
+                        if(revertBtn) revertBtn.style.display = 'inline-block';
+                        
+                    } else {
+                        if(valInput) valInput.readOnly = false;
+                        if(justInput) justInput.readOnly = false;
+                        if(srcInput) srcInput.readOnly = false;
+                        if(naBtn) naBtn.style.display = 'inline-block';
+
+                        const addFileBtnElem = document.getElementById('add-file-btn');
+                        if(addFileBtnElem) addFileBtnElem.style.display = 'block';
+                        
+                        const maxFileTxtElem = document.getElementById('max-file-txt');
+                        if(maxFileTxtElem) maxFileTxtElem.style.display = 'block';
+                        
+                        const remarksContainer = document.getElementById('remarks-container');
+                        if(remarksContainer) remarksContainer.style.display = 'none';
+
+                        const saveBtn = document.getElementById('modal-save-btn');
+                        if(saveBtn) saveBtn.style.display = 'inline-block';
+                        
+                        const verifyBtn = document.getElementById('modal-verify-btn');
+                        if(verifyBtn) verifyBtn.style.display = 'none';
+                        
+                        const revertBtn = document.getElementById('modal-revert-btn');
+                        if(revertBtn) revertBtn.style.display = 'none';
+                    }
+                    $('#editRecordModal').modal('show');
+
+
+                    const saveBtn = document.getElementById('modal-save-btn');
+                    if (saveBtn) saveBtn.disabled = true;
+
+                    if (fileWrapper) {
+                        if (addFileBtn) addFileBtn.style.display = 'none'; 
+                        fileWrapper.innerHTML = `
+                            <div id="inline-file-loader" style="display: flex; align-items: center; gap: 10px; padding: 8px 0; color: #6c757d;">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                <span style="font-size: 13px; font-weight: 500;">Fetching saved files...</span>
+                            </div>
+                        `;
+                    }
+                    const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}`;
+                    
+                    fetch(url)
+                    .then(response => {
+                        if (response.status === 404) return null; 
+                        if (!response.ok) throw new Error("Server Error");
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data) {
+                            const cur = data.currentRecord;
+
+                            if (cur) {
+                                document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : input.value;
+                                if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = cur.justification || '';
+                                if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = cur.source || '';
+                                
+                                const remarksInput = document.getElementById('modal-remarks-val');
+                                const remarksContainer = document.getElementById('remarks-container');
+                                
+                                if (remarksInput && remarksContainer) {
+                                    if (isChecker) {
+                                        remarksContainer.style.display = 'flex';
+                                        remarksInput.readOnly = false;
+                                        remarksInput.value = cur.remarks || ''; 
+                                    } else {
+                                        if (cur.remarks && cur.remarks.trim() !== '') {
+                                            remarksContainer.style.display = 'flex';
+                                            remarksInput.value = cur.remarks;
+                                            remarksInput.readOnly = true;
+                                        } else {
+                                            remarksContainer.style.display = 'none';
+                                            remarksInput.value = '';
+                                        }
+                                    }
+                                }
+                                
+                            } else {
+                            	if (data.fallbackValue && data.fallbackValue.toString().trim() !== '') {
+                                    document.getElementById('modal-input-val').value = data.fallbackValue;
+                                } else {
+                                    document.getElementById('modal-input-val').value = input.value;
+                                }
+                                
+                                if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
+                                if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = '';
+                            
+                                
+                                const remarksContainer = document.getElementById('remarks-container');
+                                const remarksInput = document.getElementById('modal-remarks-val');
+                                if (remarksContainer && remarksInput) {
+                                    if (isChecker) {
+                                        remarksContainer.style.display = 'flex';
+                                        remarksInput.readOnly = false;
+                                        remarksInput.value = '';
+                                    } else {
+                                        remarksContainer.style.display = 'none';
+                                        remarksInput.value = '';
+                                    }
+                                }
+                            }
+                            const deptSpan = document.getElementById('modal-dept-val');
+                            if (deptSpan) {
+                                if (data.accessibleDepartments && data.accessibleDepartments.trim() !== '') {
+                                    deptSpan.innerText = data.accessibleDepartments;
+                                } else {
+                                    deptSpan.innerText = "UNRESTRICTED"; 
+                                    deptSpan.style.color = "#6c757d"; 
+                                }
+                            }
+                            
+                            const fileSource = cur ? cur : data; 
+                            const rawFiles = [
+                                { index: 1, name: fileSource.fileName1 },
+                                { index: 2, name: fileSource.fileName2 },
+                                { index: 3, name: fileSource.fileName3 },
+                                { index: 4, name: fileSource.fileName4 },
+                                { index: 5, name: fileSource.fileName5 },
+                                { index: 6, name: fileSource.fileName6 },
+                                { index: 7, name: fileSource.fileName7 },
+                                { index: 8, name: fileSource.fileName8 },
+                                { index: 9, name: fileSource.fileName9 },
+                                { index: 10, name: fileSource.fileName10 }
+                            ];
+
+                            if(fileWrapper) {
+                                fileWrapper.innerHTML = ''; 
+                                currentFileCount = 0;
+                                let hasSavedFiles = false;
+                                
+                                rawFiles.forEach(fileMeta => {
+                                    if (fileMeta.name && fileMeta.name.trim() !== '') {
+                                        hasSavedFiles = true; 
+                                        document.getElementById('add-file-btn').click();
+                                        const lastRow = fileWrapper.lastElementChild;
+                                        lastRow.dataset.savedIndex = fileMeta.index;
+                                        
+                                        const chooseBtn = lastRow.querySelector('.custom-file-btn');
+                                        const nameDisplay = lastRow.querySelector('.file-name-display');
+                                        const previewBtn = lastRow.querySelector('.preview-btn');
+                                        const removeBtn = lastRow.querySelector('.file-remove-btn');
+                                        
+                                        chooseBtn.style.display = 'none';
+                                        nameDisplay.style.display = 'flex';
+                                        nameDisplay.innerHTML = `<span style="flex-shrink: 0;">💾</span> <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">${fileMeta.name} (Saved)</span>`;
+                                        if (isChecker) {
+                                            removeBtn.style.display = 'none';
+                                        } else {
+                                            removeBtn.style.display = 'inline-block';
+                                        }
+                                        previewBtn.style.display = 'inline-block'; 
+                                        
+                                        previewBtn.onclick = function(e) {
+                                            e.preventDefault();
+                                            modalDialog.classList.add('preview-active');
+                                            previewWindow.style.alignItems = 'center';
+                                            previewWindow.style.justifyContent = 'center';
+                                            previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem; margin-bottom: 10px;"></div><h6 style="color: #333; margin: 0;">Generating Preview...</h6></div>`;
+
+                                            fetch(`./download-file?id=${fileSource.id}&fileIndex=${fileMeta.index}`)
+                                            .then(res => {
+                                                if (!res.ok) throw new Error("Could not download file");
+                                                const contentType = res.headers.get('content-type');
+                                                return res.blob().then(blob => ({ blob, contentType }));
+                                            })
+                                            .then(({ blob, contentType }) => {
+                                                const downloadedFile = new File([blob], fileMeta.name, { type: contentType });
+                                                renderPreview(downloadedFile);
+                                            })
+                                            .catch(err => {
+                                                console.error("Download error:", err);
+                                                previewWindow.innerHTML = `<span style="color: red;">Failed to load file preview.</span>`;
+                                            });
+                                        };
+                                    }
+                                });
+                                if (!hasSavedFiles) {
+                                    if (!isChecker) {
+                                        createFileInputRow();
+                                    } else {
+                                        fileWrapper.innerHTML = `
+                                            <div style="padding: 15px; text-align: center; background-color: #f8f9fa; border: 1px dashed #ced4da; border-radius: 4px;">
+                                                <span style="color: #6c757d; font-size: 13px; font-style: italic;">No files were attached to this record.</span>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            }
+
+                            const historyWrapper = document.getElementById('modal-history-wrapper');
+                            lastMonthValueForVariance = null; 
+                            
+                            if (historyWrapper) {
+                                historyWrapper.innerHTML = '';
+                                if (data.history && data.history.length > 0) {
+                                    
+                                    const mostRecentPastValue = parseFloat(data.history[0].value);
+                                    if (!isNaN(mostRecentPastValue)) {
+                                        lastMonthValueForVariance = mostRecentPastValue;
+                                    }
+
+                                    data.history.forEach(item => {
+                                        const itemRow = document.createElement('div');
+                                        itemRow.style.display = 'flex';
+                                        itemRow.style.justifyContent = 'space-between';
+                                        itemRow.style.padding = '4px 6px';
+                                        itemRow.style.borderBottom = '1px dashed #dee2e6';
+                                        itemRow.style.fontSize = '13px';
+                                        
+                                        itemRow.innerHTML = `<span style="color: #6c757d;">📅 ${item.date}</span> <span style="color: #333; font-weight: 600;">${item.value !== "" ? item.value : "Empty"}</span>`;
+                                        
+                                        historyWrapper.appendChild(itemRow);
+                                    });
+                                } else {
+                                    historyWrapper.innerHTML = `<span style="font-size: 12px; color: #868e96; font-style: italic;">No historical records found.</span>`;
+                                }
+                            }
+
+                            document.getElementById('modal-input-val').dispatchEvent(new Event('input'));
+                        }
+                    })
+                    .catch(error => console.error("Could not fetch cell data:", error))
+                    .finally(() => {
+                        if (saveBtn) saveBtn.disabled = false;
+                        
+                        if (addFileBtn && currentFileCount < MAX_FILES) {
+                            if (isChecker) {
+                                addFileBtn.style.display = 'none';
+                            } else {
+                                addFileBtn.style.display = 'block';
+                            }
+                        }
+                        
+                        if (fileWrapper && document.getElementById('inline-file-loader')) {
+                            fileWrapper.innerHTML = '';
+                            currentFileCount = 0;
+                            if (!isChecker) {
+                                createFileInputRow();
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+
+        function executeDatabaseAction(actionType, btnClicked) {
+            if (!currentEditingInput) return;
+
+            // Enforce remarks for Revert
+            const remarksVal = document.getElementById('modal-remarks-val') ? document.getElementById('modal-remarks-val').value.trim() : "";
+            if (actionType === 'N' && remarksVal === "") {
+                alert("You must enter Checker Remarks in order to Revert a record.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("formMode", formMode); 
+            formData.append("reportDate", contextReportDate);
+            formData.append("source", document.getElementById('modal-source-val') ? document.getElementById('modal-source-val').value : "");
+            formData.append("columnHeader", document.getElementById('modal-header-val').innerText);
+            formData.append("rowCol2Value", document.getElementById('modal-col2-val').innerText);
+            formData.append("cellName", currentEditingInput.name || currentEditingInput.id || "UnknownCell");
+            formData.append("cellId", currentEditingInput.id || "UnknownId");
+            formData.append("dataValue", document.getElementById('modal-input-val').value);
+            formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
+            
+            formData.append("verifyFlg", actionType); 
+            formData.append("remarks", remarksVal);
+
+            const fileRows = document.querySelectorAll('.file-input-row');
+            fileRows.forEach(row => {
+                const input = row.querySelector('input[type="file"]');
+                if (input && input.files && input.files.length > 0) formData.append("files", input.files[0]);
+                if (row.dataset.savedIndex) formData.append("retainedFiles", row.dataset.savedIndex);
+            });
+
+            const originalBtnText = btnClicked.innerText;
+            const originalBtnColor = btnClicked.style.backgroundColor;
+            
+            btnClicked.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
+            btnClicked.disabled = true;
+
+            fetch('./savedatarecord', { method: 'POST', body: formData })
+            .then(response => { 
+                if (!response.ok) throw new Error("Network response was not ok"); 
+                return response.text(); 
+            })
+			.then(data => {
+                if (actionType === 'N') {
+                    btnClicked.style.backgroundColor = '#dc3545';
+                    btnClicked.innerHTML = `&#10004; Reverted!`;
+                } else if (actionType === 'Y') {
+                    btnClicked.style.backgroundColor = '#28a745';
+                    btnClicked.innerHTML = `&#10004; Success!`;
+                } else {
+                    btnClicked.style.backgroundColor = '#28a745';
+                    btnClicked.innerHTML = `&#10004; Saved!`;
+                }
+                
+                setTimeout(() => {
+                    $('#editRecordModal').modal('hide');
+                    window.location.reload(); 
+                }, 1200);
+            })
+            .catch(error => { 
+                console.error('Error saving record:', error); 
+                alert("Failed to process request to the database."); 
+                btnClicked.innerText = originalBtnText; 
+                btnClicked.disabled = false; 
+            });
+        }
+
+        document.getElementById('modal-save-btn').addEventListener('click', function() {
+            executeDatabaseAction('', this); 
+        });
+        
+        document.getElementById('modal-verify-btn').addEventListener('click', function() {
+            executeDatabaseAction('Y', this); 
+        });
+        
+        document.getElementById('modal-revert-btn').addEventListener('click', function() {
+            executeDatabaseAction('N', this); 
+        });
+    }
+
+    const valueInput = document.getElementById('modal-input-val');
+    const naBtn = document.getElementById('modal-na-btn');
+
+    if (valueInput) {
+        let lastValidValue = valueInput.value;
+
+        valueInput.addEventListener('input', function(e) {
+            let currentVal = this.value;
+
+            if (currentVal !== "Not Applicable") {
+                const numericRegex = /^-?\d*\.?\d*$/;
+                if (numericRegex.test(currentVal)) {
+                    lastValidValue = currentVal; 
+                } else {
+                    this.value = lastValidValue; 
+                    currentVal = lastValidValue;
+                }
+            }
+
+            const varianceDisplay = document.getElementById('variance-display');
+            if (varianceDisplay) {
+                if (currentVal === "Not Applicable" || currentVal === "" || currentVal === "-" || lastMonthValueForVariance === null) {
+                    varianceDisplay.innerHTML = '<span style="color: #6c757d;">--</span>';
+                } else {
+                    let currentNum = parseFloat(currentVal);
+                    if (!isNaN(currentNum)) {
+                        let diff = currentNum - lastMonthValueForVariance;
+                        
+                        let sign = diff > 0 ? '+' : '';
+                        let color = diff > 0 ? '#28a745' : (diff < 0 ? '#dc3545' : '#6c757d');
+                        
+                        varianceDisplay.innerHTML = `<span style="color: ${color};">${sign}${diff.toFixed(2)}</span>`;
+                    }
+                }
+            }
+        });
+    }
+
+    if (naBtn && valueInput) {
+        naBtn.addEventListener('click', function() {
+            valueInput.value = "Not Applicable";
+            valueInput.dispatchEvent(new Event('input')); 
+        });
+    }
+
+    if (naBtn && valueInput) {
+        naBtn.addEventListener('click', function() {
+            valueInput.value = "Not Applicable";
+        });
+    }
+
+    if (deptValidation !== 'YES') {
+        const flagUrl = `./fetchallverifyflags?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}`;
+        
+        fetch(flagUrl)
+        .then(response => {
+            if (!response.ok) throw new Error("Could not fetch verification flags");
+            return response.json();
+        })
+        .then(flagData => {
+            const allInputs = document.querySelectorAll('.input-and-select');
+            
+            let allGreen = true; 
+            if (allInputs.length === 0) allGreen = false;
+            
+            allInputs.forEach(input => {
+                const cellName = input.name || input.id;
+                const flag = flagData[cellName];
+                
+                if (flag === 'Y') {
+                    input.style.backgroundColor = '#e6f4ea'; 
+                    input.style.border = '1px solid #ceead6';
+                    input.title = "Verified by Checker";
+                } else {                   
+                    allGreen = false; 
+                    
+                    if (flag === 'N') {
+                        input.style.backgroundColor = '#fce8e6';
+                        input.style.border = '1px solid #fad2cf';
+                        input.title = "Reverted by Checker";
+                    }
+                }
+            });
+            
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) {
+                if (allGreen) {
+                    downloadBtn.style.display = 'inline-block';
+                } else {
+                    downloadBtn.style.display = 'none';
+                }
+            }
+        })
+        .catch(err => {
+            console.log("Flag styling skipped: ", err);
+        });
+    }
+ 
+});
 </script>
 </body>
 </html>

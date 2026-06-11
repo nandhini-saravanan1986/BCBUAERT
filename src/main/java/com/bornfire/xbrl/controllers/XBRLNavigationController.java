@@ -1,10 +1,12 @@
 package com.bornfire.xbrl.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -31,21 +33,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import java.io.InputStream;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +87,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import com.bornfire.xbrl.entities.*;
+import com.bornfire.xbrl.entities.RT_MC_DATA_RECORD_REPO.RecordMetadataProjection;
 import com.bornfire.xbrl.dto.EodAcctBalExcepUpdateDto;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
@@ -412,7 +429,9 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	private UploadMonitorService uploadMonitorService;
-
+	
+	@Autowired
+	RT_MC_DATA_RECORD_REPO rT_MC_DATA_RECORD_REPO;
 	
 	@Autowired
 	RT_Report_Master_Repo Rpt_Master_Repo;
@@ -5854,7 +5873,7 @@ System.out.println("sixe==="+excelData.length);
 	
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
 	public String RT_MC_Reports(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid, Model md,
+			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid,@RequestParam(required = false) String dept, Model md,
 			HttpServletRequest req) {
 
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
@@ -5865,8 +5884,13 @@ System.out.println("sixe==="+excelData.length);
 			deptvalid = "NO";
 		}
 		System.out.println("DEPARTMENT VALIDATION : " + deptvalid);
-
-		String DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
+		String DEPARTMENT ;
+		if(dept==null || dept.isEmpty()) {
+			DEPARTMENT = (String) req.getSession().getAttribute("DEPARTMENT");
+		}
+		else {
+			DEPARTMENT=dept;
+		}
 		md.addAttribute("DEPARTMENT", DEPARTMENT);
 		System.out.println("DEPARTMENT : " + DEPARTMENT);
 
@@ -5879,6 +5903,7 @@ System.out.println("sixe==="+excelData.length);
 		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
 		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
+		md.addAttribute("REPORT_DATE", "31-03-2026");
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
@@ -6937,4 +6962,553 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save data");
 		}
 	}
+	
+	@PostMapping("/preview")
+    public ResponseEntity<byte[]> generatePreview(@RequestParam("file") MultipartFile file) {
+        try {
+            String fileName = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
+            byte[] fileBytes = file.getBytes();
+            HttpHeaders headers = new HttpHeaders();
+
+            if (fileName.endsWith(".pdf")) {
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                return ResponseEntity.ok().headers(headers).body(fileBytes);
+            }
+
+            String htmlPreview;
+            if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+                htmlPreview = convertExcelToHtml(fileBytes);
+            } else if (fileName.endsWith(".docx")) {
+                htmlPreview = convertWordToHtml(fileBytes);
+            } else if (fileName.endsWith(".csv") || fileName.endsWith(".txt")) {
+                htmlPreview = convertTextToHtml(fileBytes);
+            } else {
+                htmlPreview = getFallbackHtml("Preview not supported for this specific file type.");
+            }
+
+            headers.setContentType(MediaType.TEXT_HTML);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(htmlPreview.getBytes("UTF-8"));
+
+        } catch (OutOfMemoryError e) {
+            System.gc(); 
+            
+            String errorHtml = getFallbackHtml(
+                "<span style='color: #dc3545; font-size: 30px;'>⚠️</span><br><br>" +
+                "<span style='color: #333;'>This Excel file contains too many rows to generate a preview.</span><br>" +
+                "<span style='color: #6c757d; font-size: 13px; font-weight: normal;'>The file is too massive for the server memory to render visually.<br>However, it will still be uploaded and saved successfully.</span>"
+            );
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.TEXT_HTML);
+            try {
+                return ResponseEntity.ok().headers(headers).body(errorHtml.getBytes("UTF-8"));
+            } catch (Exception ignored) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private String convertExcelToHtml(byte[] fileBytes) throws Exception {
+        StringBuilder html = new StringBuilder();
+        
+        html.append("<html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><style>")
+            .append("body { font-family: 'Calibri', Arial, sans-serif; font-size: 14px; margin: 0; padding: 0; background-color: #f3f2f1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }")
+            .append(".sheet-container { flex: 1; overflow: auto; padding: 15px; display: none; background: #c8c6c4; }") 
+            .append(".sheet-container.active { display: block; }")
+            .append("table { border-collapse: collapse; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); table-layout: fixed; }")
+            .append("td { border: 1px solid #e0e0e0; white-space: pre-wrap; vertical-align: bottom; overflow: hidden; word-wrap: break-word; }")
+            .append(".tab-bar { background-color: #f3f2f1; border-top: 1px solid #c8c6c4; padding: 5px 10px 0 10px; display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; flex-shrink: 0; }")
+            .append(".sheet-tab { background-color: #e1dfdd; color: #666; padding: 6px 20px; cursor: pointer; border: 1px solid #c8c6c4; border-bottom: none; border-radius: 4px 4px 0 0; font-size: 13px; margin-bottom: -1px; transition: background 0.2s; }")
+            .append(".sheet-tab:hover { background-color: #fff; }")
+            .append(".sheet-tab.active { background-color: #fff; font-weight: bold; color: #217346; border-top: 3px solid #217346; position: relative; z-index: 2; }")
+            .append("</style></head><body>");
+
+        try (InputStream is = new ByteArrayInputStream(fileBytes);
+             Workbook workbook = WorkbookFactory.create(is)) {
+
+            StringBuilder sheetsHtml = new StringBuilder();
+            StringBuilder tabsHtml = new StringBuilder("<div class='tab-bar'>");
+
+            for (int s = 0; s < workbook.getNumberOfSheets(); s++) {
+                Sheet sheet = workbook.getSheetAt(s);
+                String activeClass = (s == 0) ? " active" : ""; 
+
+                tabsHtml.append("<div class='sheet-tab").append(activeClass)
+                        .append("' onclick='switchTab(").append(s).append(")'>")
+                        .append(sheet.getSheetName()).append("</div>");
+
+                sheetsHtml.append("<div id='sheet-").append(s).append("' class='sheet-container").append(activeClass).append("'><table>");
+                
+                int maxColumns = 0;
+                for (Row r : sheet) {
+                    if (r.getLastCellNum() > maxColumns) maxColumns = r.getLastCellNum();
+                }
+
+                sheetsHtml.append("<colgroup>");
+                for (int colNum = 0; colNum < maxColumns; colNum++) {
+                    int widthPx = (int) ((sheet.getColumnWidth(colNum) / 256.0) * 7.5);
+                    sheetsHtml.append("<col style='width: ").append(widthPx).append("px;'/>");
+                }
+                sheetsHtml.append("</colgroup>");
+
+                for (Row row : sheet) {
+                    short height = row.getHeight(); 
+                    if (height != sheet.getDefaultRowHeight()) {
+                        float heightPt = height / 20.0f; 
+                        sheetsHtml.append("<tr style='height: ").append(heightPt).append("pt;'>");
+                    } else {
+                        sheetsHtml.append("<tr>");
+                    }
+                    
+                    for (int colNum = 0; colNum < maxColumns; colNum++) {
+                        Cell cell = row.getCell(colNum);
+                        
+                        boolean skipCell = false;
+                        int rowSpan = 1; int colSpan = 1;
+                        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+                            org.apache.poi.ss.util.CellRangeAddress region = sheet.getMergedRegion(i);
+                            if (row.getRowNum() >= region.getFirstRow() && row.getRowNum() <= region.getLastRow() &&
+                                colNum >= region.getFirstColumn() && colNum <= region.getLastColumn()) {
+                                if (row.getRowNum() == region.getFirstRow() && colNum == region.getFirstColumn()) {
+                                    rowSpan = region.getLastRow() - region.getFirstRow() + 1;
+                                    colSpan = region.getLastColumn() - region.getFirstColumn() + 1;
+                                } else { skipCell = true; }
+                                break;
+                            }
+                        }
+                        if (skipCell) continue;
+
+                        StringBuilder inlineCss = new StringBuilder();
+                        String cellValue = "";
+                        
+                        if (cell != null) {
+                            CellStyle style = cell.getCellStyle();
+                            if (style != null) {
+                                if (style.getFillPatternEnum() == org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND) {
+                                    String bgColor = getHexColor(style.getFillForegroundColorColor());
+                                    if (bgColor != null) inlineCss.append("background-color: ").append(bgColor).append("; ");
+                                }
+
+                                switch (style.getAlignmentEnum()) {
+                                    case CENTER: inlineCss.append("text-align: center; "); break;
+                                    case RIGHT: inlineCss.append("text-align: right; "); break;
+                                    case LEFT: inlineCss.append("text-align: left; "); break;
+                                    default: break;
+                                }
+                                switch (style.getVerticalAlignmentEnum()) {
+                                    case TOP: inlineCss.append("vertical-align: top; "); break;
+                                    case CENTER: inlineCss.append("vertical-align: middle; "); break;
+                                    default: inlineCss.append("vertical-align: bottom; "); break; 
+                                }
+
+                                if (style.getBorderBottomEnum() != org.apache.poi.ss.usermodel.BorderStyle.NONE) inlineCss.append("border-bottom: 1px solid #000; ");
+                                if (style.getBorderTopEnum() != org.apache.poi.ss.usermodel.BorderStyle.NONE) inlineCss.append("border-top: 1px solid #000; ");
+                                if (style.getBorderLeftEnum() != org.apache.poi.ss.usermodel.BorderStyle.NONE) inlineCss.append("border-left: 1px solid #000; ");
+                                if (style.getBorderRightEnum() != org.apache.poi.ss.usermodel.BorderStyle.NONE) inlineCss.append("border-right: 1px solid #000; ");
+
+                                Font font = workbook.getFontAt(style.getFontIndex());
+                                inlineCss.append("font-family: '").append(font.getFontName()).append("', sans-serif; ");
+                                inlineCss.append("font-size: ").append(font.getFontHeightInPoints()).append("pt; ");
+                                if (font.getBold()) inlineCss.append("font-weight: bold; ");
+                                if (font.getItalic()) inlineCss.append("font-style: italic; ");
+                                
+                                if (font instanceof XSSFFont) {
+                                    String fColor = getHexColor(((XSSFFont)font).getXSSFColor());
+                                    if (fColor != null) inlineCss.append("color: ").append(fColor).append("; ");
+                                } else if (font instanceof HSSFFont && workbook instanceof HSSFWorkbook) {
+                                    String fColor = getHexColor(((HSSFFont)font).getHSSFColor((HSSFWorkbook)workbook));
+                                    if (fColor != null) inlineCss.append("color: ").append(fColor).append("; ");
+                                }
+                            }
+                            
+                            DataFormatter formatter = new DataFormatter();
+                            cellValue = formatter.formatCellValue(cell);
+                        }
+
+                        sheetsHtml.append("<td");
+                        if (rowSpan > 1) sheetsHtml.append(" rowspan='").append(rowSpan).append("'");
+                        if (colSpan > 1) sheetsHtml.append(" colspan='").append(colSpan).append("'");
+                        if (inlineCss.length() > 0) sheetsHtml.append(" style='").append(inlineCss).append("'");
+                        
+                        sheetsHtml.append("><div style='padding: 2px 4px;'>").append(cellValue.isEmpty() ? "&nbsp;" : cellValue).append("</div></td>");
+                    }
+                    sheetsHtml.append("</tr>");
+                }
+                sheetsHtml.append("</table></div>");
+            }
+            tabsHtml.append("</div>");
+
+            html.append(sheetsHtml);
+            html.append(tabsHtml);
+
+            html.append("<script>")
+                .append("function switchTab(index) {")
+                .append("  document.querySelectorAll('.sheet-container').forEach(function(el) { el.classList.remove('active'); });")
+                .append("  document.querySelectorAll('.sheet-tab').forEach(function(el) { el.classList.remove('active'); });")
+                .append("  document.getElementById('sheet-' + index).classList.add('active');")
+                .append("  document.querySelectorAll('.sheet-tab')[index].classList.add('active');")
+                .append("}")
+                .append("</script>");
+        }
+        html.append("</body></html>");
+        return html.toString();
+    }
+
+    private String getHexColor(org.apache.poi.ss.usermodel.Color color) {
+        if (color == null) return null;
+        
+        try {
+            if (color instanceof XSSFColor) {
+                XSSFColor xssfColor = (XSSFColor) color;
+                byte[] argb = xssfColor.getARGB();
+                if (argb != null && argb.length == 4) {
+                    return String.format("#%02X%02X%02X", argb[1] & 0xFF, argb[2] & 0xFF, argb[3] & 0xFF);
+                } else if (argb != null && argb.length == 3) {
+                    return String.format("#%02X%02X%02X", argb[0] & 0xFF, argb[1] & 0xFF, argb[2] & 0xFF);
+                }
+            } 
+            else if (color instanceof HSSFColor) {
+                HSSFColor hssfColor = (HSSFColor) color;
+                short[] rgb = hssfColor.getTriplet();
+                if (rgb != null && rgb.length == 3) {
+                    return String.format("#%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    private String convertWordToHtml(byte[] fileBytes) throws Exception {
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body style='font-family: Arial, sans-serif; font-size: 14px; padding: 20px; color: #333; line-height: 1.6;'>");
+
+        try (InputStream is = new ByteArrayInputStream(fileBytes);
+             XWPFDocument document = new XWPFDocument(is);
+             XWPFWordExtractor extractor = new XWPFWordExtractor(document)) {
+            
+            String text = extractor.getText();
+            html.append(text.replace("\n", "<br/>"));
+        }
+
+        html.append("</body></html>");
+        return html.toString();
+    }
+
+    private String convertTextToHtml(byte[] fileBytes) {
+        String content = new String(fileBytes);
+        return "<html><body style='padding: 15px; margin: 0; background: #f8f9fa;'>" +
+               "<pre style='font-family: Consolas, monospace; font-size: 13px; color: #333; white-space: pre-wrap;'>" +
+               content +
+               "</pre></body></html>";
+    }
+
+    private String getFallbackHtml(String message) {
+        return "<html><body style='display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Arial; color: #6c757d;'>" +
+               "<h4>" + message + "</h4></body></html>";
+    }
+
+    private String getMainTableName(String formMode) {
+        if (formMode == null) return null;
+        
+        switch (formMode) {
+            case "bankinformation": return "RT_MC_TABLE1";
+            default: return formMode; 
+        }
+    }
+
+	@PostMapping("/savedatarecord")
+	@Transactional
+	public ResponseEntity<String> saveRecord(@RequestParam("formMode") String formMode,
+			@RequestParam("reportDate") String reportDateStr,
+			@RequestParam(value = "source", required = false) String source,
+			@RequestParam("columnHeader") String columnHeader, @RequestParam("rowCol2Value") String rowCol2Value,
+			@RequestParam("cellName") String cellName, @RequestParam("cellId") String cellId,
+			@RequestParam("dataValue") String dataValue, @RequestParam("justification") String justification,
+			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
+			@RequestParam(value = "remarks", required = false) String remarks,
+			@RequestParam(value = "retainedFiles", required = false) List<Integer> retainedFiles,
+			@RequestParam(value = "files", required = false) MultipartFile[] files) {
+
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date contextDate = null;
+			if (reportDateStr != null && !reportDateStr.trim().isEmpty()) {
+				contextDate = dateFormat.parse(reportDateStr);
+			}
+
+			RT_MC_DATA_RECORD_ENTITY record = null;
+			if (contextDate != null) {
+				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode,
+						contextDate, cellName);
+			}
+
+			if (record == null) {
+				record = new RT_MC_DATA_RECORD_ENTITY();
+				synchronized (this) {
+					BigDecimal currentMaxId = rT_MC_DATA_RECORD_REPO.findMaxId();
+					record.setId(currentMaxId.add(BigDecimal.ONE));
+				}
+			}
+
+			record.setReportDate(contextDate);
+			record.setSource(source);
+			record.setFormMode(formMode);
+			record.setColumnHeader(columnHeader);
+			record.setRowCol2Value(rowCol2Value);
+			record.setCellName(cellName);
+			record.setCellId(cellId);
+			record.setDataValue(dataValue);
+			record.setJustification(justification);
+			if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
+                record.setVerifyFlg(verifyFlg);
+            } else {
+                record.setVerifyFlg(null);                
+                record.setRemarks(null); 
+            }
+
+            if (remarks != null && !remarks.trim().isEmpty()) {
+                record.setRemarks(remarks); 
+            }
+			
+			List<Integer> keptSlots = (retainedFiles != null) ? retainedFiles : new ArrayList<>();
+			for (int i = 1; i <= 10; i++) {
+				if (!keptSlots.contains(i)) {
+					Method setNameMethod = RT_MC_DATA_RECORD_ENTITY.class.getMethod("setFileName" + i, String.class);
+					Method setDataMethod = RT_MC_DATA_RECORD_ENTITY.class.getMethod("setFileData" + i, byte[].class);
+					setNameMethod.invoke(record, (String) null);
+					setDataMethod.invoke(record, (byte[]) null);
+				}
+			}
+
+			if (files != null && files.length > 0) {
+				int fileIndex = 1;
+				for (MultipartFile file : files) {
+					if (!file.isEmpty()) {
+						while (fileIndex <= 10) {
+							Method getNameMethod = RT_MC_DATA_RECORD_ENTITY.class.getMethod("getFileName" + fileIndex);
+							String existingName = (String) getNameMethod.invoke(record);
+							if (existingName == null || existingName.trim().isEmpty())
+								break;
+							fileIndex++;
+						}
+						if (fileIndex <= 10) {
+							Method setNameMethod = RT_MC_DATA_RECORD_ENTITY.class.getMethod("setFileName" + fileIndex,
+									String.class);
+							Method setDataMethod = RT_MC_DATA_RECORD_ENTITY.class.getMethod("setFileData" + fileIndex,
+									byte[].class);
+							setNameMethod.invoke(record, file.getOriginalFilename());
+							setDataMethod.invoke(record, file.getBytes());
+							fileIndex++;
+						}
+					}
+				}
+			}
+
+			rT_MC_DATA_RECORD_REPO.save(record);
+
+			String mainTable = getMainTableName(formMode);
+			if (mainTable != null && !mainTable.isEmpty() && cellName != null && !cellName.isEmpty()
+					&& contextDate != null) {
+
+				String updateSql = "UPDATE " + mainTable + " SET " + cellName
+						+ " = :val WHERE REPORT_DATE = :reportDate AND BRANCH_CODE <> 'DEPT'";
+
+				try {
+					int rowsAffected = entityManager.createNativeQuery(updateSql)
+							.setParameter("val", dataValue)
+							.setParameter("reportDate", new java.sql.Date(contextDate.getTime())) 
+							.executeUpdate();
+							
+					System.out.println("DEBUG: Main table update complete. Rows affected: " + rowsAffected);
+					
+					if (rowsAffected == 0) {
+						System.out.println("WARNING: 0 rows were updated. The REPORT_DATE was not found in the main table!");
+					}
+				} catch (Exception e) {
+					System.out.println("ERROR updating main table: " + e.getMessage());
+					e.printStackTrace();
+				}
+			}
+			return ResponseEntity.ok("Record Saved Successfully!");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving record");
+		}
+	}
+
+	@GetMapping("/fetchdatarecord")
+	public ResponseEntity<?> fetchRecord(@RequestParam("formMode") String formMode,
+			@RequestParam("reportDate") String reportDateStr, @RequestParam("cellName") String cellName) {
+
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date reportDate = dateFormat.parse(reportDateStr);
+
+			RecordMetadataProjection record = rT_MC_DATA_RECORD_REPO
+					.findTopProjectionByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode, reportDate, cellName);
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("currentRecord", record);
+
+			String mainTable = getMainTableName(formMode);
+			
+
+			if (record == null && mainTable != null && !mainTable.isEmpty()) {
+				String fallbackSql = "SELECT " + cellName + " FROM " + mainTable + " WHERE REPORT_DATE = :reportDate AND BRANCH_CODE <> 'DEPT'";
+				try {
+					List<?> fallbackResults = entityManager.createNativeQuery(fallbackSql)
+							.setParameter("reportDate", reportDate)
+							.setMaxResults(1) 
+							.getResultList();
+					
+					if (!fallbackResults.isEmpty()) {
+						Object fallbackValue = fallbackResults.get(0);
+						response.put("fallbackValue", fallbackValue != null ? fallbackValue.toString() : "");
+					} else {
+						response.put("fallbackValue", "");
+					}
+				} catch (Exception e) {
+					System.out.println("Fallback fetch failed: " + e.getMessage());
+					response.put("fallbackValue", "");
+				}
+			}
+
+			List<Map<String, String>> historyData = new ArrayList<>();
+			if (mainTable != null && !mainTable.isEmpty()) {
+				String histSql = "SELECT REPORT_DATE, " + cellName + " FROM " + mainTable
+						+ " WHERE REPORT_DATE < :reportDate AND BRANCH_CODE <> 'DEPT' ORDER BY REPORT_DATE DESC";
+				try {
+					@SuppressWarnings("unchecked")
+					List<Object[]> histResults = entityManager.createNativeQuery(histSql)
+							.setParameter("reportDate", reportDate).setMaxResults(4).getResultList();
+
+					for (Object[] row : histResults) {
+						Map<String, String> histMap = new HashMap<>();
+
+						if (row[0] != null) {
+							Date histDate = (Date) row[0];
+							histMap.put("date", dateFormat.format(histDate));
+						} else {
+							histMap.put("date", "N/A");
+						}
+
+						histMap.put("value", row[1] != null ? row[1].toString() : "");
+						historyData.add(histMap);
+					}
+				} catch (Exception e) {
+					System.out.println("History fetch skipped or table missing: " + e.getMessage());
+				}
+			}
+
+			response.put("history", historyData);
+
+			if (mainTable != null && !mainTable.isEmpty()) {
+				String deptSql = "SELECT " + cellName + " FROM " + mainTable 
+                        + " WHERE BRANCH_CODE = 'DEPT'";
+				try {
+					Object deptValue = entityManager.createNativeQuery(deptSql)
+                            .setMaxResults(1)
+                            .getSingleResult();
+					
+					response.put("accessibleDepartments", deptValue != null ? deptValue.toString() : "");
+				} catch (Exception e) {
+					response.put("accessibleDepartments", "");
+				}
+			}
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@GetMapping("/download-file")
+	public ResponseEntity<byte[]> downloadFile(@RequestParam("id") BigDecimal id,
+			@RequestParam("fileIndex") int fileIndex) {
+
+		try {
+			if (fileIndex < 1 || fileIndex > 10) {
+				return ResponseEntity.badRequest().build();
+			}
+
+			String hql = "SELECT r.fileName" + fileIndex + ", r.fileData" + fileIndex
+					+ " FROM RT_MC_DATA_RECORD_ENTITY r WHERE r.id = :id";
+
+			Object[] result;
+			try {
+				result = (Object[]) entityManager.createQuery(hql).setParameter("id", id).getSingleResult();
+			} catch (NoResultException e) {
+				return ResponseEntity.notFound().build();
+			}
+
+			if (result == null || result[0] == null || result[1] == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			String fileName = (String) result[0];
+			byte[] fileData = (byte[]) result[1];
+
+			String contentType = "application/octet-stream";
+			String lowerName = fileName.toLowerCase();
+			if (lowerName.endsWith(".pdf"))
+				contentType = "application/pdf";
+			else if (lowerName.endsWith(".png"))
+				contentType = "image/png";
+			else if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg"))
+				contentType = "image/jpeg";
+			else if (lowerName.endsWith(".txt") || lowerName.endsWith(".csv"))
+				contentType = "text/plain";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", contentType);
+
+			return ResponseEntity.ok().headers(headers).body(fileData);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/fetchallverifyflags")
+	public ResponseEntity<Map<String, String>> fetchAllVerifyFlags(@RequestParam("formMode") String formMode,
+			@RequestParam("reportDate") String reportDateStr) {
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date reportDate = dateFormat.parse(reportDateStr);
+
+			String jpql = "SELECT r.cellName, r.verifyFlg FROM RT_MC_DATA_RECORD_ENTITY r " + "WHERE r.id IN ("
+					+ "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 "
+					+ "   WHERE r2.formMode = :formMode AND r2.reportDate = :reportDate " + "   GROUP BY r2.cellName"
+					+ ") AND r.verifyFlg IS NOT NULL";
+
+			@SuppressWarnings("unchecked")
+			List<Object[]> results = entityManager.createQuery(jpql).setParameter("formMode", formMode)
+					.setParameter("reportDate", reportDate).getResultList();
+
+			Map<String, String> flags = new HashMap<>();
+			for (Object[] row : results) {
+				if (row[0] != null && row[1] != null) {
+					flags.put(row[0].toString(), row[1].toString());
+				}
+			}
+
+			return ResponseEntity.ok(flags);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
 }
