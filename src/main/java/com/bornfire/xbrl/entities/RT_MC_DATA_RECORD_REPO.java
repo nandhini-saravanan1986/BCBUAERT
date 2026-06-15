@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,6 +24,15 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
     
     List<RecordMetadataProjection> findTop4ByFormModeAndCellNameOrderByReportDateDesc(String formMode, String cellName);
     
+	@Modifying
+	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = :verifyFlg WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.cellName = :cellName")
+	int updateVerifyFlg(@Param("verifyFlg") String verifyFlg, @Param("formMode") String formMode,
+			@Param("reportDate") Date reportDate, @Param("cellName") String cellName);
+
+	@Modifying
+	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = 'Y' WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.verifyFlg = 'MR'")
+	int revertMrCellsToVerified(@Param("formMode") String formMode, @Param("reportDate") Date reportDate);
+
 	public interface RecordMetadataProjection {
 	    BigDecimal getId();
 	    String getDataValue();
@@ -31,7 +42,7 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 	    Date getSubmittedReportDate();
 	    String getVerifyFlg();
 	    String getRemarks();
-	    
+	    String getModifyFlg();
 	    String getFileName1();
 	    String getFileName2();
 	    String getFileName3();

@@ -1780,6 +1780,57 @@ table.selection-mode td {
 .preview-btn, .file-remove-btn, .custom-file-btn {
     flex-shrink: 0; 
 }
+
+body.mgr-selecting button, 
+body.mgr-selecting a,
+body.mgr-selecting select,
+body.mgr-selecting input,
+body.mgr-selecting textarea,
+body.mgr-selecting .role-btn,
+body.mgr-selecting .role-page-header .float-left .role-btn,
+body.mgr-selecting .nav-tabs {
+    pointer-events: none !important;
+    opacity: 0.4 !important;
+    transition: opacity 0.3s ease;
+}
+
+body.mgr-selecting #mgrSelectionBanner button {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
+
+body.mgr-selecting .input-and-select,
+body.mgr-selecting input.input-and-select,
+body.mgr-selecting select.input-and-select {
+    cursor: cell !important;
+    pointer-events: auto !important; 
+    opacity: 1 !important; 
+    transition: all 0.2s ease;
+}
+
+
+body.mgr-selecting .input-and-select.mr-selected,
+body.mgr-selecting .input-and-select.already-mr:focus,
+body.mgr-selecting .input-and-select.mr-selected:focus {
+    background-color: #f0ad4e !important;
+    color: #ffffff !important;
+    border-color: #eea236 !important;
+    box-shadow: 0 0 0 3px rgba(240,173,78,0.5) !important;
+    outline: none !important;
+}
+
+body.mgr-selecting .input-and-select.mr-selected::selection {
+    background-color: #ffffff !important;
+    color: #f0ad4e !important;
+}
+body.mgr-selecting .input-and-select.mr-deselected,
+body.mgr-selecting .input-and-select.mr-deselected:focus {
+    background-color: #5cb85c !important; 
+    color: #ffffff !important;
+    border-color: #4cae4c !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
 </style>
 </head>
 
@@ -1949,15 +2000,18 @@ table.selection-mode td {
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
 							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }"
-								onclick="verifyData()">Verify</button>
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }"
+								>Verify</button><!-- onclick="verifyData()">Verify</button> -->
 							<button type="button" class="role-btn" id="modifyBtn"
 								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'USR-M' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
+								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
+								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
-							<button type="button" class="role-btn" id="downloadBtn"
-								style="padding-right: 12px;display: none;"
+							<button type="button" class="role-btn" id="downloadBtn" th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								style="padding-right: 12px;"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -16372,7 +16426,7 @@ table.selection-mode td {
 						</div>
 
 						<div
-							style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; ">
+							style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
 
 							<div>
 								<h5
@@ -16494,12 +16548,19 @@ table.selection-mode td {
 				</div>
 
 				<div class="modal-footer"
-					style="border-top: 1px solid #e9ecef; padding: 8px 30px; background-color: #f8f9fa;">
+					style="border-top: 1px solid #e9ecef; padding: 15px 30px; background-color: #f8f9fa;">
 					<button type="button" class="role-btn" data-dismiss="modal">Cancel</button>
 
 					<button type="button" class="role-btn" id="modal-save-btn">Save
 						Changes</button>
+					<button type="button" class="role-btn" id="modal-proceed-btn"
+						style="background-color: #17a2b8; border-color: #17a2b8; color: white;">Proceed
+						to Verify</button>
 
+					<span id="checker-status-msg"
+						style="display: none; color: #6c757d; font-weight: 600; font-size: 14px; margin-left: auto;"></span>
+
+					<button type="button" class="role-btn" id="modal-revoke-btn">Revoke</button>
 					<button type="button" class="role-btn" id="modal-revert-btn"
 						style="display: none; background-color: #dc3545; border-color: #dc3545; color: white;">Revert</button>
 					<button type="button" class="role-btn" id="modal-verify-btn"
@@ -16508,7 +16569,86 @@ table.selection-mode td {
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="managerActionModal" tabindex="-1"
+		role="dialog" data-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content"
+				style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+				<div class="modal-header"
+					style="background-color: #8a5a35; color: white;">
+					<h5 class="modal-title" id="mgr-modal-title">Manager Final
+						Review</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						style="color: white;">&times;</button>
+				</div>
+				<div class="modal-body" style="padding: 20px;">
+					<label style="font-weight: 600; font-size: 14px; color: #333;">Manager
+						Remarks</label>
 
+					<textarea id="mgr-remarks-val"
+						th:text="${reportlist != null and !reportlist.isEmpty() ? reportlist[0].REMARKS : ''}"
+						style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; resize: none; min-height: 80px;"
+						placeholder="Enter remarks (will be saved to main table)..."></textarea>
+
+					<div id="mgr-selection-block"
+						style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; text-align: center;">
+						<p style="margin: 0 0 10px 0; font-size: 13px; color: #6c757d;">Select
+							specific cells to send back to the Checker for revision.</p>
+						<button type="button" id="btn-start-selection"
+							class="btn btn-sm btn-outline-warning" style="font-weight: 600;">
+							<i class="fa fa-hand-pointer-o"></i> Select Cells for Revision (<span
+								id="mgr-modal-sel-count">0</span>)
+						</button>
+					</div>
+				</div>
+
+				<div class="modal-footer" id="mgr-modal-footer"
+					style="background-color: #f8f9fa; display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 8px;">
+
+					<button type="button" class="role-btn"
+						data-dismiss="modal" style="white-space: nowrap;">Close</button>
+
+					<button type="button" id="btn-mgr-send-revisions"
+						class="btn btn-danger"
+						style="font-weight: 600; white-space: nowrap;">Send
+						Revisions</button>
+
+					<button type="button" id="btn-mgr-verify-all"
+						class="btn btn-success"
+						style="font-weight: 600; white-space: nowrap;">Verify
+						Entire Report</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="mgrSelectionBanner"
+		style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 9999; align-items: center; gap: 20px; background-color: #8a5a35; color: #ffffff;">
+
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<span class="spinner-grow spinner-grow-sm text-light" role="status"></span>
+			<span style="font-weight: 600; font-size: 14px;">Select cells
+				to flag for revision...</span>
+		</div>
+
+		<div
+			style="background-color: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px; font-size: 13px;">
+			Selected: <strong id="mgr-banner-sel-count"
+				style="color: #ffffff; font-size: 14px;">0</strong>
+		</div>
+
+		<div style="display: flex; gap: 10px;">
+			<button type="button" id="btn-cancel-selection"
+				class="btn btn-sm btn-outline-light"
+				style="border-radius: 20px; font-weight: 600;">Cancel</button>
+
+			<button type="button" id="btn-finish-selection"
+				class="btn btn-sm btn-light"
+				style="border-radius: 20px; font-weight: 600; color: #8a5a35;">Done
+				Selecting</button>
+		</div>
+	</div>
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
 	let formmode = /*[[${formmode}]]*/ null;
@@ -16808,57 +16948,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 	<script>
 	
-/*
-function enableEdit() {
 
-    let modifyBtn = document.getElementById('modifyBtn');
-    if (modifyBtn) modifyBtn.style.display = 'none';
-
-    let cancelBtn = document.getElementById('cancelBtn');
-    if (cancelBtn) cancelBtn.style.display = 'inline-block';
-
-    let downloadBtn = document.getElementById('downloadBtn');
-    if (downloadBtn) downloadBtn.style.display = 'none';
-
-    let verifyBtn = document.getElementById('verifyBtn');
-    if (verifyBtn) verifyBtn.style.display = 'none';
-
-    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
-    if (bottomSave) bottomSave.style.display = 'inline-block';
-
-    document.querySelectorAll('.editable-input').forEach(input => {
-        input.setAttribute('data-original-value', input.value);
-        input.removeAttribute('readonly');
-    });
-}
-
-function cancelEdit() {
-
-    let modifyBtn = document.getElementById('modifyBtn');
-    if (modifyBtn) modifyBtn.style.display = 'inline-block';
-
-    let cancelBtn = document.getElementById('cancelBtn');
-    if (cancelBtn) cancelBtn.style.display = 'none';
-
-    let downloadBtn = document.getElementById('downloadBtn');
-    if (downloadBtn) downloadBtn.style.display = 'inline-block';
-
-    let verifyBtn = document.getElementById('verifyBtn');
-    if (verifyBtn) verifyBtn.style.display = 'inline-block';
-
-    let bottomSave = document.querySelector('.card-footer .role-btn[onclick="submitForm()"]');
-    if (bottomSave) bottomSave.style.display = 'none';
-
-    document.querySelectorAll('.editable-input').forEach(input => {
-        input.setAttribute('readonly', true);
-
-        let originalValue = input.getAttribute('data-original-value');
-        if (originalValue !== null) {
-            input.value = originalValue;
-        }
-    });
-}
-	*/
     function submitForm() {
         document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
         let formData = $('#reportForm').serialize();        
@@ -16885,17 +16975,6 @@ function cancelEdit() {
             }
         });
     }
-    
-    /*function downloadData() {
-        let branch = document.getElementById('branch').value.trim();
-        if (!branch) return alert("Enter branch");
-
-        let url = '/Riskinsights/downloadMcReport?branch=' + encodeURIComponent(branch);
-        let filename = `MC_${branch}.xlsx`;
-
-        startGenericDownload(url, filename);
-    }*/
-    
     function downloadData() {
 
     	let branchName = document.getElementById('branch').value.trim();
@@ -17318,7 +17397,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
     const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
     const roleId = /*[[${ROLEID}]]*/ '';
-    const isChecker = (roleId && (roleId.toLowerCase() === 'adm-c' || roleId.toLowerCase() === 'usr-c'));
+    const isChecker = (roleId && (roleId.toUpperCase() === 'ADM-C' || roleId.toUpperCase() === 'USR-C'));
+    const isManager = (roleId && (roleId.toUpperCase() === 'MGR' || roleId.toUpperCase() === 'SUP-ADM'));
+    const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : ''}]]*/ '';
     
     const MAX_FILES = 10;
     let currentFileCount = 0;
@@ -17598,7 +17679,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (fileWrapper) createFileInputRow();
     if (addFileBtn) addFileBtn.addEventListener('click', createFileInputRow);
 
-    $('#editRecordModal').on('hidden.bs.modal', function () {
+   $('#editRecordModal').on('hidden.bs.modal', function () {
         const inputsToClear = document.querySelectorAll('#editRecordModal input[type="text"], #editRecordModal input[type="date"]');
         inputsToClear.forEach(input => input.value = '');
         closePreview();
@@ -17607,7 +17688,8 @@ document.addEventListener("DOMContentLoaded", function() {
             fileWrapper.innerHTML = ''; 
             currentFileCount = 0;
             
-            if (!isChecker) {
+            // FIX: Ensure Manager is included in this safety check
+            if (!isChecker && !isManager) {
                 createFileInputRow();
                 if (addFileBtn) addFileBtn.style.display = 'block';
             } else {
@@ -17642,15 +17724,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const inputs = document.querySelectorAll('.input-and-select');
 
         inputs.forEach(input => {
-            
-            // 1. Force the base table input to be readonly so users MUST use the modal
             input.setAttribute('readonly', true);
             
-            // 2. Check if the current user's department is allowed to edit this specific cell
             const fieldName = input.name || input.id;
             const isAuthorized = isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
 
-            // 3. ONLY build and attach the edit button if they are authorized!
             if (isAuthorized) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'dynamic-input-wrapper';
@@ -17661,9 +17739,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 iconBtn.type = 'button';
                 iconBtn.className = 'dynamic-edit-icon';
                 
-                if (isChecker) {
+                if (isChecker || isManager) {
                     iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-                    iconBtn.title = "Verify Record";
+                    iconBtn.title = isManager ? "View Record" : "Verify Record";
                 } else {
                     iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
                     iconBtn.title = "Edit Record";
@@ -17700,7 +17778,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const naBtn = document.getElementById('modal-na-btn');
                     const remarksInput = document.getElementById('modal-remarks-val');
 
-                    if (isChecker) {
+                    if (isChecker || isManager) {
                         if(valInput) valInput.readOnly = true;
                         if(justInput) justInput.readOnly = true;
                         if(srcInput) srcInput.readOnly = true;
@@ -17718,12 +17796,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         const saveBtn = document.getElementById('modal-save-btn');
                         if(saveBtn) saveBtn.style.display = 'none';
+                        const proceedBtn = document.getElementById('modal-proceed-btn');
+                        if(proceedBtn) proceedBtn.style.display = 'none';
                         
-                        const verifyBtn = document.getElementById('modal-verify-btn');
-                        if(verifyBtn) verifyBtn.style.display = 'inline-block';
+                        document.getElementById('modal-verify-btn').style.display = 'none';
+                        document.getElementById('modal-revert-btn').style.display = 'none';
+                        document.getElementById('checker-status-msg').style.display = 'none';
                         
-                        const revertBtn = document.getElementById('modal-revert-btn');
-                        if(revertBtn) revertBtn.style.display = 'inline-block';
+                        // FIX: Ensure revoke is hidden on open so it doesn't flash
+                        const revokeBtn = document.getElementById('modal-revoke-btn');
+                        if(revokeBtn) revokeBtn.style.display = 'none';
                         
                     } else {
                         if(valInput) valInput.readOnly = false;
@@ -17741,13 +17823,19 @@ document.addEventListener("DOMContentLoaded", function() {
                         if(remarksContainer) remarksContainer.style.display = 'none';
 
                         const saveBtn = document.getElementById('modal-save-btn');
-                        if(saveBtn) saveBtn.style.display = 'inline-block';
+                        if(saveBtn) saveBtn.style.display = 'none';
+                        const proceedBtn = document.getElementById('modal-proceed-btn');
+                        if(proceedBtn) proceedBtn.style.display = 'none';
                         
                         const verifyBtn = document.getElementById('modal-verify-btn');
-                        if(verifyBtn) verifyBtn.style.display = 'none';
-                        
                         const revertBtn = document.getElementById('modal-revert-btn');
+                        const statusMsg = document.getElementById('checker-status-msg');
+                        const revokeBtn = document.getElementById('modal-revoke-btn');
+                        
+                        if(verifyBtn) verifyBtn.style.display = 'none';
                         if(revertBtn) revertBtn.style.display = 'none';
+                        if(statusMsg) statusMsg.style.display = 'none';
+                        if(revokeBtn) revokeBtn.style.display = 'none';
                     }
                     $('#editRecordModal').modal('show');
 
@@ -17766,6 +17854,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}`;
                     
+                    let makerIsLocked = false; 
+
                     fetch(url)
                     .then(response => {
                         if (response.status === 404) return null; 
@@ -17775,6 +17865,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(data => {
                         if (data) {
                             const cur = data.currentRecord;
+                            const modFlg = cur ? (cur.modifyFlg || '') : '';
+                            const verFlg = cur ? (cur.verifyFlg || '') : '';
+                            
+                            if (!isChecker && !isManager && cur) {
+                            	if (verFlg === 'Y' || verFlg === 'MR' || (modFlg === 'C' && verFlg !== 'N')) {
+                                    makerIsLocked = true;
+                                }
+                            }
 
                             if (cur) {
                                 document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : input.value;
@@ -17785,10 +17883,87 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const remarksContainer = document.getElementById('remarks-container');
                                 
                                 if (remarksInput && remarksContainer) {
-                                    if (isChecker) {
-                                        remarksContainer.style.display = 'flex';
-                                        remarksInput.readOnly = false;
-                                        remarksInput.value = cur.remarks || ''; 
+                                    const verifyBtn = document.getElementById('modal-verify-btn');
+                                    const revertBtn = document.getElementById('modal-revert-btn');
+                                    const revokeBtn = document.getElementById('modal-revoke-btn');
+                                    const statusMsg = document.getElementById('checker-status-msg');
+
+                                    if (isManager) {
+                                        document.getElementById('modal-input-val').readOnly = true;
+                                        if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').readOnly = true;
+                                        if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').readOnly = true;
+                                        remarksInput.readOnly = true;
+                                        
+                                        const saveBtn = document.getElementById('modal-save-btn');
+                                        const proceedBtn = document.getElementById('modal-proceed-btn');
+                                        if(saveBtn) saveBtn.style.display = 'none';
+                                        if(proceedBtn) proceedBtn.style.display = 'none';
+                                        
+                                        if(verifyBtn) verifyBtn.style.display = 'none';
+                                        if(revertBtn) revertBtn.style.display = 'none';
+                                        if(revokeBtn) revokeBtn.style.display = 'none';
+
+                                        statusMsg.style.display = 'inline-block';
+                                        if (verFlg === 'Y') {
+                                            statusMsg.innerText = 'Record is Verified.';
+                                            statusMsg.style.color = '#28a745';
+                                        } else if (verFlg === 'MR') {
+                                            statusMsg.innerText = 'Marked for Revision.';
+                                            statusMsg.style.color = '#f0ad4e';
+                                        } else if (verFlg === 'N') {
+                                            statusMsg.innerText = 'Record was Reverted.';
+                                            statusMsg.style.color = '#dc3545';
+                                        } else {
+                                            statusMsg.innerText = 'Pending Manager Review.';
+                                            statusMsg.style.color = '#17a2b8';
+                                        }
+                                    }
+                                    else if (isChecker) {
+                                        if (modFlg !== 'C') {
+                                            if(verifyBtn) verifyBtn.style.display = 'none';
+                                            if(revertBtn) revertBtn.style.display = 'none';
+                                            if(revokeBtn) revokeBtn.style.display = 'none';
+                                            statusMsg.style.display = 'inline-block';
+                                            statusMsg.innerText = 'Maker needs to finalize this record.';
+                                            statusMsg.style.color = '#dc3545';
+                                            remarksInput.readOnly = true;                                             
+                                        } else if (verFlg === 'Y') {
+                                            if(verifyBtn) verifyBtn.style.display = 'none';
+                                            if(revertBtn) revertBtn.style.display = 'none';                                            
+                                            if (globalVerifyFlg === 'Y') {
+                                                if(revokeBtn) revokeBtn.style.display = 'none';
+                                                statusMsg.innerText = 'Manager Approved. Record is Locked.';
+                                            } else {
+                                                if(revokeBtn) revokeBtn.style.display = 'inline-block'; 
+                                                statusMsg.innerText = 'You have Verified this record.';
+                                            }
+                                            
+                                            statusMsg.style.display = 'inline-block';
+                                            statusMsg.style.color = '#28a745';
+                                            remarksInput.readOnly = true;                                            
+                                        } else if (verFlg === 'N') {
+                                            if(verifyBtn) verifyBtn.style.display = 'none';
+                                            if(revertBtn) revertBtn.style.display = 'none';
+                                            if(revokeBtn) revokeBtn.style.display = 'none';
+                                            statusMsg.style.display = 'inline-block';
+                                            statusMsg.innerText = 'Record has been Reverted.';
+                                            statusMsg.style.color = '#dc3545';
+                                            remarksInput.readOnly = true;                                            
+                                        } else if (verFlg === 'MR') {
+                                            if(verifyBtn) verifyBtn.style.display = 'inline-block';
+                                            if(revertBtn) revertBtn.style.display = 'inline-block';
+                                            if(revokeBtn) revokeBtn.style.display = 'none';
+                                            statusMsg.style.display = 'inline-block';
+                                            statusMsg.innerText = 'Manager requested revision. Please Verify or Revert.';
+                                            statusMsg.style.color = '#f0ad4e';
+                                            remarksInput.readOnly = false;                                           
+                                        } else {
+                                            if(verifyBtn) verifyBtn.style.display = 'inline-block';
+                                            if(revertBtn) revertBtn.style.display = 'inline-block';
+                                            if(revokeBtn) revokeBtn.style.display = 'none';
+                                            statusMsg.style.display = 'none';
+                                            remarksInput.readOnly = false;
+                                        }
                                     } else {
                                         if (cur.remarks && cur.remarks.trim() !== '') {
                                             remarksContainer.style.display = 'flex';
@@ -17797,6 +17972,39 @@ document.addEventListener("DOMContentLoaded", function() {
                                         } else {
                                             remarksContainer.style.display = 'none';
                                             remarksInput.value = '';
+                                        }
+                                        
+                                        if (makerIsLocked) {
+                                            document.getElementById('modal-input-val').readOnly = true;
+                                            if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').readOnly = true;
+                                            if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').readOnly = true;
+                                            if(document.getElementById('modal-na-btn')) document.getElementById('modal-na-btn').style.display = 'none';
+                                            
+                                            document.getElementById('modal-save-btn').style.display = 'none';
+                                            document.getElementById('modal-proceed-btn').style.display = 'none';
+                                            
+                                            if (modFlg === 'C' && verFlg === '') {
+                                                statusMsg.style.display = 'inline-block';
+                                                statusMsg.innerText = 'Sent to Checker. Pending verification.';
+                                                statusMsg.style.color = '#17a2b8';
+                                                if(revokeBtn) revokeBtn.style.display = 'inline-block';
+                                            } else if (verFlg === 'Y') {
+                                                statusMsg.style.display = 'inline-block';
+                                                statusMsg.innerText = 'Record is Verified. Editing is disabled.';
+                                                statusMsg.style.color = '#28a745';
+                                                if(revokeBtn) revokeBtn.style.display = 'none';
+                                            } else if (verFlg === 'MR') {
+                                                statusMsg.style.display = 'inline-block';
+                                                statusMsg.innerText = 'Record flagged by Manager. Pending Checker review.';
+                                                statusMsg.style.color = '#f0ad4e';
+                                                if(revokeBtn) revokeBtn.style.display = 'none';
+                                            }
+                                        } else {
+                                        	document.getElementById('modal-save-btn').style.display = 'inline-block';
+                                            document.getElementById('modal-proceed-btn').style.display = 'inline-block';
+                                            
+                                            if(statusMsg) statusMsg.style.display = 'none';
+                                            if(revokeBtn) revokeBtn.style.display = 'none';
                                         }
                                     }
                                 }
@@ -17811,20 +18019,32 @@ document.addEventListener("DOMContentLoaded", function() {
                                 if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
                                 if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = '';
                             
-                                
                                 const remarksContainer = document.getElementById('remarks-container');
                                 const remarksInput = document.getElementById('modal-remarks-val');
+                                
                                 if (remarksContainer && remarksInput) {
-                                    if (isChecker) {
+                                    if (isChecker || isManager) {
                                         remarksContainer.style.display = 'flex';
-                                        remarksInput.readOnly = false;
+                                        remarksInput.readOnly = true;
                                         remarksInput.value = '';
+                                        
+                                        const statusMsg = document.getElementById('checker-status-msg');
+                                        if (isManager && statusMsg) {
+                                            statusMsg.style.display = 'inline-block';
+                                            statusMsg.innerText = 'No record exists yet.';
+                                            statusMsg.style.color = '#6c757d';
+                                        }
                                     } else {
-                                        remarksContainer.style.display = 'none';
+                                    	remarksContainer.style.display = 'none';
                                         remarksInput.value = '';
+                                        const revokeBtn = document.getElementById('modal-revoke-btn');
+                                        if(revokeBtn) revokeBtn.style.display = 'none';                                        
+                                        document.getElementById('modal-save-btn').style.display = 'inline-block';
+                                        document.getElementById('modal-proceed-btn').style.display = 'inline-block';
                                     }
                                 }
                             }
+                            
                             const deptSpan = document.getElementById('modal-dept-val');
                             if (deptSpan) {
                                 if (data.accessibleDepartments && data.accessibleDepartments.trim() !== '') {
@@ -17837,16 +18057,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             
                             const fileSource = cur ? cur : data; 
                             const rawFiles = [
-                                { index: 1, name: fileSource.fileName1 },
-                                { index: 2, name: fileSource.fileName2 },
-                                { index: 3, name: fileSource.fileName3 },
-                                { index: 4, name: fileSource.fileName4 },
-                                { index: 5, name: fileSource.fileName5 },
-                                { index: 6, name: fileSource.fileName6 },
-                                { index: 7, name: fileSource.fileName7 },
-                                { index: 8, name: fileSource.fileName8 },
-                                { index: 9, name: fileSource.fileName9 },
-                                { index: 10, name: fileSource.fileName10 }
+                                { index: 1, name: fileSource.fileName1 }, { index: 2, name: fileSource.fileName2 },
+                                { index: 3, name: fileSource.fileName3 }, { index: 4, name: fileSource.fileName4 },
+                                { index: 5, name: fileSource.fileName5 }, { index: 6, name: fileSource.fileName6 },
+                                { index: 7, name: fileSource.fileName7 }, { index: 8, name: fileSource.fileName8 },
+                                { index: 9, name: fileSource.fileName9 }, { index: 10, name: fileSource.fileName10 }
                             ];
 
                             if(fileWrapper) {
@@ -17869,7 +18084,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                         chooseBtn.style.display = 'none';
                                         nameDisplay.style.display = 'flex';
                                         nameDisplay.innerHTML = `<span style="flex-shrink: 0;">💾</span> <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">${fileMeta.name} (Saved)</span>`;
-                                        if (isChecker) {
+                                        
+                                        if (isChecker || isManager || makerIsLocked) {
                                             removeBtn.style.display = 'none';
                                         } else {
                                             removeBtn.style.display = 'inline-block';
@@ -17900,8 +18116,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         };
                                     }
                                 });
+                                
                                 if (!hasSavedFiles) {
-                                    if (!isChecker) {
+                                    if (!isChecker && !isManager && !makerIsLocked) {
                                         createFileInputRow();
                                     } else {
                                         fileWrapper.innerHTML = `
@@ -17950,7 +18167,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         if (saveBtn) saveBtn.disabled = false;
                         
                         if (addFileBtn && currentFileCount < MAX_FILES) {
-                            if (isChecker) {
+                            if (isChecker || isManager || makerIsLocked) {
                                 addFileBtn.style.display = 'none';
                             } else {
                                 addFileBtn.style.display = 'block';
@@ -17960,17 +18177,16 @@ document.addEventListener("DOMContentLoaded", function() {
                         if (fileWrapper && document.getElementById('inline-file-loader')) {
                             fileWrapper.innerHTML = '';
                             currentFileCount = 0;
-                            if (!isChecker) {
+                            if (!isChecker && !isManager && !makerIsLocked) {
                                 createFileInputRow();
                             }
                         }
                     });
                 });
-            }
+            } 
         });
 
-
-        function executeDatabaseAction(actionType, btnClicked) {
+        function executeDatabaseAction(actionType, modifyFlagVal, btnClicked) {
             if (!currentEditingInput) return;
 
             // Enforce remarks for Revert
@@ -17993,6 +18209,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             formData.append("verifyFlg", actionType); 
             formData.append("remarks", remarksVal);
+            formData.append("modifyFlg", modifyFlagVal);
 
             const fileRows = document.querySelectorAll('.file-input-row');
             fileRows.forEach(row => {
@@ -18013,12 +18230,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.text(); 
             })
 			.then(data => {
-                if (actionType === 'N') {
+				if (actionType === 'REVOKE_CHECKER' || actionType === 'REVOKE_MAKER') {
+					btnClicked.style.backgroundColor = ''; 
+                    btnClicked.style.color = '';
+                    btnClicked.innerHTML = `&#10004; Revoked!`;
+                } else if (actionType === 'N') {
                     btnClicked.style.backgroundColor = '#dc3545';
                     btnClicked.innerHTML = `&#10004; Reverted!`;
                 } else if (actionType === 'Y') {
                     btnClicked.style.backgroundColor = '#28a745';
                     btnClicked.innerHTML = `&#10004; Success!`;
+                } else if (modifyFlagVal === 'C') {
+                    btnClicked.style.backgroundColor = '#17a2b8';
+                    btnClicked.innerHTML = `&#10004; Sent to Checker!`;
                 } else {
                     btnClicked.style.backgroundColor = '#28a745';
                     btnClicked.innerHTML = `&#10004; Saved!`;
@@ -18037,16 +18261,19 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        document.getElementById('modal-save-btn').addEventListener('click', function() {
-            executeDatabaseAction('', this); 
-        });
+		document.getElementById('modal-save-btn').addEventListener('click', function() { executeDatabaseAction('', '', this); });
         
-        document.getElementById('modal-verify-btn').addEventListener('click', function() {
-            executeDatabaseAction('Y', this); 
-        });
+        document.getElementById('modal-proceed-btn').addEventListener('click', function() { executeDatabaseAction('', 'C', this); });
         
-        document.getElementById('modal-revert-btn').addEventListener('click', function() {
-            executeDatabaseAction('N', this); 
+        document.getElementById('modal-verify-btn').addEventListener('click', function() { executeDatabaseAction('Y', 'C', this); });
+        
+        document.getElementById('modal-revert-btn').addEventListener('click', function() { executeDatabaseAction('N', 'C', this); });
+        document.getElementById('modal-revoke-btn').addEventListener('click', function() { 
+            if (isChecker) {
+                executeDatabaseAction('REVOKE_CHECKER', 'C', this); 
+            } else {
+                executeDatabaseAction('REVOKE_MAKER', '', this); 
+            }
         });
     }
 
@@ -18111,43 +18338,240 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(flagData => {
             const allInputs = document.querySelectorAll('.input-and-select');
-            
             let allGreen = true; 
             if (allInputs.length === 0) allGreen = false;
+            
+            let isReadyForManager = true; 
+            let hasMR = false;
+            if (allInputs.length === 0) isReadyForManager = false;
+            existingMrCells = [];
             
             allInputs.forEach(input => {
                 const cellName = input.name || input.id;
                 const flag = flagData[cellName];
                 
                 if (flag === 'Y') {
-                    input.style.backgroundColor = '#e6f4ea'; 
-                    input.style.border = '1px solid #ceead6';
+                    input.style.backgroundColor = '#5cb85c'; 
+                    input.style.color = '#ffffff'; 
+                    input.style.border = '1px solid #4cae4c';
                     input.title = "Verified by Checker";
+                } else if (flag === 'MR') {
+                    input.style.backgroundColor = '#f0ad4e';
+                    input.style.color = '#ffffff'; 
+                    input.style.border = '1px solid #eea236';
+                    input.title = "Marked for Revision by Manager";
+                    hasMR = true; 
+                    existingMrCells.push(cellName); 
+                    input.classList.add('already-mr');
                 } else {                   
-                    allGreen = false; 
-                    
+                    isReadyForManager = false;
                     if (flag === 'N') {
-                        input.style.backgroundColor = '#fce8e6';
-                        input.style.border = '1px solid #fad2cf';
+                        input.style.backgroundColor = '#d9534f';
+                        input.style.color = '#ffffff'; 
+                        input.style.border = '1px solid #d43f3a';
                         input.title = "Reverted by Checker";
                     }
                 }
             });
             
-            const downloadBtn = document.getElementById('downloadBtn');
-            if (downloadBtn) {
-                if (allGreen) {
-                    downloadBtn.style.display = 'inline-block';
+
+            const managerVerifyBtn = document.getElementById('verifyBtn');
+            const checkerRemarksBtn = document.getElementById('checkerRemarksBtn');
+
+            if (managerVerifyBtn) {
+                if (isReadyForManager) {
+                    managerVerifyBtn.style.display = 'inline-block';
+                    managerVerifyBtn.onclick = function() {
+                        
+                        document.getElementById('mgr-modal-title').innerText = "Manager Final Review";
+                        document.getElementById('mgr-remarks-val').readOnly = false;
+                        document.getElementById('mgr-selection-block').style.display = 'block';
+                        document.getElementById('mgr-modal-footer').style.display = 'flex';
+                        
+                        selectedMrCells = [...existingMrCells];
+                        
+                        document.querySelectorAll('.input-and-select').forEach(el => el.classList.remove('mr-selected'));
+                        document.querySelectorAll('.already-mr').forEach(el => el.classList.add('mr-selected'));
+                        
+                        const currentCount = selectedMrCells.length;
+                        document.getElementById('mgr-banner-sel-count').innerText = currentCount;
+                        document.getElementById('mgr-modal-sel-count').innerText = currentCount;
+                        
+                        $('#managerActionModal').modal('show');
+                    };
                 } else {
-                    downloadBtn.style.display = 'none';
+                    managerVerifyBtn.style.display = 'none';
                 }
+            }
+
+            if (checkerRemarksBtn) {
+                checkerRemarksBtn.addEventListener('click', function() {
+                    
+                    document.getElementById('mgr-modal-title').innerText = "Manager Remarks";
+                    document.getElementById('mgr-remarks-val').readOnly = true;
+                    document.getElementById('mgr-selection-block').style.display = 'none';
+                    document.getElementById('mgr-modal-footer').style.display = 'none';
+                    
+                    $('#managerActionModal').modal('show');
+                });
             }
         })
         .catch(err => {
             console.log("Flag styling skipped: ", err);
         });
     }
- 
+    let existingMrCells = [];
+    let selectedMrCells = [];
+    let isMgrSelecting = false;
+
+    const mainVerifyBtn = document.getElementById('verifyBtn');
+    if (mainVerifyBtn) {
+        mainVerifyBtn.addEventListener('click', function() {
+            $('#managerActionModal').modal('show');
+        });
+    }
+
+    document.getElementById('btn-start-selection').addEventListener('click', function() {
+        $('#managerActionModal').modal('hide');
+        document.getElementById('mgrSelectionBanner').style.display = 'flex';
+        document.body.classList.add('mgr-selecting');
+        isMgrSelecting = true;
+    });
+
+    document.querySelectorAll('.input-and-select').forEach(input => {
+        input.addEventListener('click', function(e) {
+            if (isMgrSelecting) {
+                e.preventDefault();
+                const cellName = this.name || this.id;
+                
+                if (selectedMrCells.includes(cellName)) {
+                    selectedMrCells = selectedMrCells.filter(c => c !== cellName);
+                    this.classList.remove('mr-selected');
+                    this.classList.add('mr-deselected');
+                } else {
+                    selectedMrCells.push(cellName);
+                    this.classList.remove('mr-deselected');
+                    this.classList.add('mr-selected');
+                }
+                
+                document.getElementById('mgr-banner-sel-count').innerText = selectedMrCells.length;
+                document.getElementById('mgr-modal-sel-count').innerText = selectedMrCells.length;
+            }
+        });
+    });
+
+
+    document.getElementById('btn-cancel-selection').addEventListener('click', function() {
+        isMgrSelecting = false;
+        document.body.classList.remove('mgr-selecting');
+        document.getElementById('mgrSelectionBanner').style.display = 'none';
+        
+        selectedMrCells = [...existingMrCells];
+        
+        document.querySelectorAll('.input-and-select').forEach(el => {
+            el.classList.remove('mr-selected');
+            el.classList.remove('mr-deselected'); 
+        });
+        
+        document.querySelectorAll('.already-mr').forEach(el => {
+            el.classList.add('mr-selected');
+        });
+        
+        const currentCount = selectedMrCells.length;
+        document.getElementById('mgr-banner-sel-count').innerText = currentCount;
+        document.getElementById('mgr-modal-sel-count').innerText = currentCount;
+        
+        $('#managerActionModal').modal('show');
+    });
+
+    document.getElementById('btn-finish-selection').addEventListener('click', function() {
+        isMgrSelecting = false;
+        document.body.classList.remove('mgr-selecting');
+        document.getElementById('mgrSelectionBanner').style.display = 'none';
+        
+        $('#managerActionModal').modal('show');
+    });
+
+    document.getElementById('btn-finish-selection').addEventListener('click', function() {
+        isMgrSelecting = false;
+        document.body.classList.remove('mgr-selecting');
+        document.getElementById('mgrSelectionBanner').style.display = 'none';
+        
+        $('#managerActionModal').modal('show');
+    });
+
+    document.getElementById('btn-finish-selection').addEventListener('click', function() {
+        isMgrSelecting = false;
+        document.body.classList.remove('mgr-selecting');
+        document.getElementById('mgrSelectionBanner').style.display = 'none';
+        
+        const saveBtn = document.getElementById('btn-mgr-save');
+        if (selectedMrCells.length > 0) {
+            saveBtn.innerText = "Save Revisions";
+            saveBtn.className = "btn btn-warning";
+        } else {
+            saveBtn.innerText = "Verify Entire Report";
+            saveBtn.className = "btn btn-success";
+        }
+        
+        $('#managerActionModal').modal('show');
+    });
+
+    function executeManagerAction(actionType, btnClicked) {
+        const remarks = document.getElementById('mgr-remarks-val').value.trim();
+        
+        if (actionType === 'REVERT_MR' && remarks === '') {
+        	alert("Please enter Manager Remarks explaining what needs to be revised.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("formMode", formMode);
+        formData.append("reportDate", contextReportDate);
+        formData.append("actionType", actionType); 
+        formData.append("remarks", remarks);
+        formData.append("mrCells", JSON.stringify(selectedMrCells));
+
+        const originalText = btnClicked.innerText;
+        btnClicked.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+        btnClicked.disabled = true;
+
+        fetch('./managerVerifyAction', { method: 'POST', body: formData })
+        .then(res => {
+            if (!res.ok) throw new Error("Network Error");
+            return res.text();
+        })
+        .then(data => {
+            btnClicked.style.backgroundColor = '#28a745';
+            btnClicked.innerHTML = '&#10004; Success!';
+            setTimeout(() => {
+                $('#managerActionModal').modal('hide');
+                window.location.reload();
+            }, 1200);
+        })
+        .catch(err => {
+            alert("Failed to save Manager Action.");
+            btnClicked.innerText = originalText;
+            btnClicked.disabled = false;
+        });
+    }
+
+    document.getElementById('btn-mgr-send-revisions').addEventListener('click', function() {
+        /*if (selectedMrCells.length === 0) {
+            alert("You have not selected any cells. Please click 'Select Cells for Revision' first.");
+            return;
+        }*/
+        executeManagerAction('REVERT_MR', this);
+    });
+
+    document.getElementById('btn-mgr-verify-all').addEventListener('click', function() {
+        const warningMessage = "Are you sure you want to verify the entire report?\n\nAny selected revisions will be removed, and once the report is verified, it cannot be revoked.";
+        
+        if (confirm(warningMessage)) {
+            executeManagerAction('VERIFY_ALL', this);
+        }
+    });
+   
 });
 </script>
 </body>

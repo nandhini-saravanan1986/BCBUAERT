@@ -1,7 +1,10 @@
 package com.bornfire.xbrl.entities;
 
 import java.util.Date;
+import org.springframework.data.jpa.repository.Modifying;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +21,11 @@ public interface RT_MC_TABLE1_REPO extends JpaRepository<RT_MC_TABLE1_ENTITY, MC
 	@Query(value = "SELECT * FROM RT_MC_TABLE1 WHERE REPORT_DATE = :reportDate AND BRANCH_CODE = :branchCode", nativeQuery = true)
 	RT_MC_TABLE1_ENTITY findByReportDateAndBranchCode(@Param("reportDate") Date reportDate,
 			@Param("branchCode") String branchCode);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE RT_MC_TABLE1_ENTITY r SET r.VERIFY_FLG = :verifyFlg ,  r.REMARKS = :remarks "
+			+ "WHERE r.REPORT_DATE = :reportDate ")
+	int updateVerifyFlgAndRemarks(@Param("verifyFlg") String verifyFlg, @Param("remarks") String remarks,
+			@Param("reportDate") Date reportDate);
 }

@@ -7233,6 +7233,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam("cellName") String cellName, @RequestParam("cellId") String cellId,
 			@RequestParam("dataValue") String dataValue, @RequestParam("justification") String justification,
 			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
+			@RequestParam(value = "modifyFlg", required = false) String modifyFlg,
 			@RequestParam(value = "remarks", required = false) String remarks,
 			@RequestParam(value = "retainedFiles", required = false) List<Integer> retainedFiles,
 			@RequestParam(value = "files", required = false) MultipartFile[] files) {
@@ -7267,17 +7268,29 @@ System.out.println("sixe==="+excelData.length);
 			record.setCellId(cellId);
 			record.setDataValue(dataValue);
 			record.setJustification(justification);
-			if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
-                record.setVerifyFlg(verifyFlg);
-            } else {
-                record.setVerifyFlg(null);                
-                record.setRemarks(null); 
-            }
+			if ("REVOKE_CHECKER".equals(verifyFlg)) {
+				record.setVerifyFlg(null);
+				record.setModifyFlg(modifyFlg);
+			} else if ("REVOKE_MAKER".equals(verifyFlg)) {
+				record.setVerifyFlg(null);
+				record.setModifyFlg(null);
+				record.setRemarks(null);
+			} else if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
+				record.setVerifyFlg(verifyFlg);
+				record.setModifyFlg(modifyFlg);
+			} else {
+				record.setVerifyFlg(null);
+				record.setRemarks(null);
+				if (modifyFlg != null && !modifyFlg.trim().isEmpty()) {
+					record.setModifyFlg(modifyFlg);
+				} else {
+					record.setModifyFlg(null);
+				}
+			}
+			if (remarks != null && !remarks.trim().isEmpty()) {
+				record.setRemarks(remarks);
+			}
 
-            if (remarks != null && !remarks.trim().isEmpty()) {
-                record.setRemarks(remarks); 
-            }
-			
 			List<Integer> keptSlots = (retainedFiles != null) ? retainedFiles : new ArrayList<>();
 			for (int i = 1; i <= 10; i++) {
 				if (!keptSlots.contains(i)) {
@@ -7510,5 +7523,66 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
+	@PostMapping("/managerVerifyAction")
+	@Transactional
+	public ResponseEntity<String> managerVerifyAction(@RequestParam("formMode") String formMode,
+			@RequestParam("reportDate") String reportDateStr, @RequestParam("actionType") String actionType,
+			@RequestParam(value = "remarks", required = false) String remarks,
+			@RequestParam(value = "mrCells", required = false) String mrCellsJson) {
+
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date reportDate = dateFormat.parse(reportDateStr);
+
+			if ("VERIFY_ALL".equals(actionType)) {
+				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks("Y", remarks, reportDate);
+				System.out.println("Main Table Rows Verified : " + rows_updated);
+
+				int mr_cleaned = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				System.out.println("MR Cells Cleaned to Y : " + mr_cleaned);
+
+				return ResponseEntity.ok("Report verified successfully.");
+
+			} else if ("REVERT_MR".equals(actionType)) {
+				ObjectMapper mapper = new ObjectMapper();
+				List<String> cellsToRevert = mapper.readValue(mrCellsJson, new TypeReference<List<String>>() {});
+
+				rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				for (String cellName : cellsToRevert) {
+					int rowsAffected = rT_MC_DATA_RECORD_REPO.updateVerifyFlg("MR", formMode, reportDate, cellName);
+
+					if (rowsAffected == 0) {
+						RT_MC_DATA_RECORD_ENTITY newRecord = new RT_MC_DATA_RECORD_ENTITY();
+						newRecord.setFormMode(formMode);
+						newRecord.setReportDate(reportDate);
+						newRecord.setCellName(cellName);
+						newRecord.setVerifyFlg("MR");
+
+						rT_MC_DATA_RECORD_REPO.save(newRecord);
+					}
+				}
+
+				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks("N", remarks, reportDate);
+				System.out.println("Main Table Rows Reverted : " + rows_updated);
+
+				return ResponseEntity.ok("Selected cells flagged for revision.");
+
+			} else if ("REVOKE_MGR".equals(actionType)) {
+				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks(null, remarks, reportDate);
+				System.out.println("Main Table Rows Revoked : " + rows_updated);
+
+				int mr_revoked = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				System.out.println("MR Cells Revoked to Y : " + mr_revoked);
+
+				return ResponseEntity.ok("Manager actions successfully revoked.");
+			}
+
+			return ResponseEntity.badRequest().body("Unknown action type.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A database error occurred.");
+		}
+	}
 }
