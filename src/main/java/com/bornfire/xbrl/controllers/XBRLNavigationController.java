@@ -439,6 +439,9 @@ public class XBRLNavigationController {
 	@Autowired
 	Eod_Acct_Bal_Excep_Table_Repo eodAcctBalExcepTableRepo;
 	
+	@Autowired
+	RT_MC_Description_Repo RT_MC_Description_Repo;
+	
 	private String pagesize;
 
 	public String getPagesize() {
@@ -5872,7 +5875,7 @@ System.out.println("sixe==="+excelData.length);
 	
 	
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
-	public String RT_MC_Reports(@RequestParam(required = false) String formmode,
+	public String RT_MC_Reports(@RequestParam(required = false) String formmode,@RequestParam(required = false) String reportDate,
 			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid,@RequestParam(required = false) String dept, Model md,
 			HttpServletRequest req) {
 
@@ -5903,7 +5906,10 @@ System.out.println("sixe==="+excelData.length);
 		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
 		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
-		md.addAttribute("REPORT_DATE", "31-03-2026");
+		if(reportDate == null || reportDate.isEmpty()) {
+			reportDate="31-03-2026";
+		}
+		md.addAttribute("REPORT_DATE", reportDate);
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
@@ -5913,7 +5919,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findByReportDate(reportDate);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -5948,8 +5954,8 @@ System.out.println("sixe==="+excelData.length);
 
 			} else {
 
-				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
-				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findByReportDate(reportDate);
+				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findByReportDate(reportDate);
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 
@@ -5986,7 +5992,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
 
-				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findByReportDate(reportDate);
 				 System.out.println("Branch : " + branch);
 				 System.out.println("TABLE3 Size : " + reportlist.size());
 
@@ -6023,10 +6029,10 @@ System.out.println("sixe==="+excelData.length);
 
 			} else {
 
-				List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findByReportDate(reportDate);
 				 System.out.println("Branch : " + branch);
 				 System.out.println("TABLE4 Size : " + reportlist.size());
-				List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findByReportDate(reportDate);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("reportlist1", reportlist1);
 
@@ -6058,7 +6064,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findByReportDate(reportDate);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6091,7 +6097,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
 
-				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findByReportDate(reportDate);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6127,8 +6133,8 @@ System.out.println("sixe==="+excelData.length);
 
 			} else {
 
-				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
-				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findByReportDate(reportDate);
+				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findByReportDate(reportDate);
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 
@@ -6162,7 +6168,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
 
-				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findByReportDate(reportDate);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6193,7 +6199,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findByReportDate(reportDate);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6607,14 +6613,14 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/startMcReportJob")
 	@ResponseBody
-	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,HttpServletRequest req) {
+	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,@RequestParam("reportDate") String reportDate,HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
 			try {				
 				String userid = (String) req.getSession().getAttribute("USERID");
-				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,userid,attr);
+				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,reportDate,userid,attr);
 				System.out.println("File : "+((fileData==null)?"fail":"pass"));
 				System.out.println("Formmode : "+formmode);
 				newTaskFileStore.put(jobId, fileData);
@@ -7215,15 +7221,6 @@ System.out.println("sixe==="+excelData.length);
                "<h4>" + message + "</h4></body></html>";
     }
 
-    private String getMainTableName(String formMode) {
-        if (formMode == null) return null;
-        
-        switch (formMode) {
-            case "bankinformation": return "RT_MC_TABLE1";
-            default: return formMode; 
-        }
-    }
-
 	@PostMapping("/savedatarecord")
 	@Transactional
 	public ResponseEntity<String> saveRecord(@RequestParam("formMode") String formMode,
@@ -7327,7 +7324,7 @@ System.out.println("sixe==="+excelData.length);
 
 			rT_MC_DATA_RECORD_REPO.save(record);
 
-			String mainTable = getMainTableName(formMode);
+			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
 			if (mainTable != null && !mainTable.isEmpty() && cellName != null && !cellName.isEmpty()
 					&& contextDate != null) {
 
@@ -7372,7 +7369,7 @@ System.out.println("sixe==="+excelData.length);
 			Map<String, Object> response = new HashMap<>();
 			response.put("currentRecord", record);
 
-			String mainTable = getMainTableName(formMode);
+			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
 			
 
 			if (record == null && mainTable != null && !mainTable.isEmpty()) {
@@ -7536,7 +7533,7 @@ System.out.println("sixe==="+excelData.length);
 			Date reportDate = dateFormat.parse(reportDateStr);
 
 			if ("VERIFY_ALL".equals(actionType)) {
-				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks("Y", remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"Y", remarks, reportDate);
 				System.out.println("Main Table Rows Verified : " + rows_updated);
 
 				int mr_cleaned = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
@@ -7563,13 +7560,13 @@ System.out.println("sixe==="+excelData.length);
 					}
 				}
 
-				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks("N", remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"N", remarks, reportDate);
 				System.out.println("Main Table Rows Reverted : " + rows_updated);
 
 				return ResponseEntity.ok("Selected cells flagged for revision.");
 
 			} else if ("REVOKE_MGR".equals(actionType)) {
-				int rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks(null, remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,null, remarks, reportDate);
 				System.out.println("Main Table Rows Revoked : " + rows_updated);
 
 				int mr_revoked = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
@@ -7585,4 +7582,25 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A database error occurred.");
 		}
 	}
+	@GetMapping("/fetchFieldDescription")
+	public ResponseEntity<String> fetchFieldDescription(@RequestParam("formMode") String formMode,
+			@RequestParam("fieldName") String fieldName) {
+
+		try {
+			System.out.println("Formmode : " + formMode+" Field Nmae : "+fieldName);
+			String description = (RT_MC_Description_Repo.findTopBySectionAndElementNative(formMode, fieldName))
+					.getDescription();
+			System.out.println("Descripion : " + description);
+			if (description != null && !description.isEmpty()) {
+				return ResponseEntity.ok(description);
+			} else {
+				return ResponseEntity.ok("");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
+		}
+	}
+	
 }

@@ -1831,6 +1831,11 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
     box-shadow: none !important;
     outline: none !important;
 }
+#editRecordModal .modal-body {
+    max-height: 74vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 </style>
 </head>
 
@@ -16408,7 +16413,7 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 
 							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
 								Field Name : <span id="modal-header-val"
-									style="font-size: 13px; font-weight: 500; text-transform: uppercase; margin-left: 5px; color: #6c757d;"></span>
+									style="font-size: 13px; font-weight: 500; margin-left: 5px; color: #6c757d;"></span>
 							</h6>
 
 							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
@@ -16416,11 +16421,11 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;"></span>
 							</h6>
 							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
-								ASSIGNED TO: <span id="modal-dept-val"
+								Validation Owner: <span id="modal-dept-val"
 									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;">Loading...</span>
 							</h6>
 							<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
-								YOUR DEPARTMENT: <span id="modal-current-dept-val"
+								User Department: <span id="modal-current-dept-val"
 									style="font-size: 13px; font-weight: 500; text-transform: none; margin-left: 5px; color: #6c757d;"></span>
 							</h6>
 						</div>
@@ -16586,7 +16591,7 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						Remarks</label>
 
 					<textarea id="mgr-remarks-val"
-						th:text="${reportlist != null and !reportlist.isEmpty() ? reportlist[0].REMARKS : ''}"
+						th:text="${reportlist != null and !reportlist.isEmpty() ? reportlist[0].REMARKS : (reportlist1 != null and !reportlist1.isEmpty() ? reportlist1[0].REMARKS : '')}"
 						style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; resize: none; min-height: 80px;"
 						placeholder="Enter remarks (will be saved to main table)..."></textarea>
 
@@ -16946,7 +16951,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 </script>
-	<script>
+	<script th:inline="javascript">
 	
 
     function submitForm() {
@@ -16976,7 +16981,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     function downloadData() {
-
+    	const ReportDate = /*[[${REPORT_DATE}]]*/ '';
+    	//alert(ReportDate)
     	let branchName = document.getElementById('branch').value.trim();
         const fileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
         const params = new URLSearchParams(window.location.search);
@@ -16988,9 +16994,10 @@ document.addEventListener("DOMContentLoaded", function() {
         //triggerGlobalDownload(startUrl, params, fileName)
         triggerGlobalDownload(
             './startMcReportJob', 
-            { branch: branchName , formmode: formmode}, 
+            { branch: branchName , formmode: formmode, reportDate: ReportDate }, 
             fileName
         );
+        
     }
 
     function verifyData() {
@@ -17399,7 +17406,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const roleId = /*[[${ROLEID}]]*/ '';
     const isChecker = (roleId && (roleId.toUpperCase() === 'ADM-C' || roleId.toUpperCase() === 'USR-C'));
     const isManager = (roleId && (roleId.toUpperCase() === 'MGR' || roleId.toUpperCase() === 'SUP-ADM'));
-    const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : ''}]]*/ '';
+    const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : (reportlist1 != null && !reportlist1.isEmpty() ? reportlist1[0].VERIFY_FLG : '')}]]*/ '';
     
     const MAX_FILES = 10;
     let currentFileCount = 0;
@@ -17756,17 +17763,31 @@ document.addEventListener("DOMContentLoaded", function() {
                     const cellIndex = td.cellIndex;
 
                     let headerText = table && table.rows[0] ? table.rows[0].cells[cellIndex].innerText.trim() : "Unknown";
-                    let col2Text = "N/A";
-                    if (tr.cells.length >= 2) {
-                        const col2 = tr.cells[1];
-                        const col2Input = col2.querySelector('input');
-                        col2Text = col2Input ? col2Input.value : col2.innerText.trim();
-                    }
 
                     const cellName = input.name || input.id || "UnknownCell";
 
+                    const descSpan = document.getElementById('modal-col2-val');
+                    descSpan.innerHTML = '<span class="spinner-border spinner-border-sm text-primary" role="status"></span> Fetching...';
+                    descSpan.style.color = '#17a2b8';
+
+                    const descUrl = `./fetchFieldDescription?formMode=${encodeURIComponent(formMode)}&fieldName=${encodeURIComponent(headerText)}`;
+                    
+                    fetch(descUrl)
+                        .then(res => {
+                            if (!res.ok) throw new Error("Network response was not ok");
+                            return res.text();
+                        })
+                        .then(desc => {
+                            descSpan.innerText = (desc && desc.trim() !== '') ? desc : "No description available.";
+                            descSpan.style.color = '#6c757d';
+                        })
+                        .catch(err => {
+                            console.error("Failed to load description:", err);
+                            descSpan.innerText = "Error loading description.";
+                            descSpan.style.color = '#dc3545';
+                        });
+                    
                     document.getElementById('modal-header-val').innerText = headerText;
-                    document.getElementById('modal-col2-val').innerText = col2Text;
                     document.getElementById('modal-input-val').value = input.value;
                     document.getElementById('modal-current-dept-val').innerText = currentDepartment;
                     if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
@@ -17802,8 +17823,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         document.getElementById('modal-verify-btn').style.display = 'none';
                         document.getElementById('modal-revert-btn').style.display = 'none';
                         document.getElementById('checker-status-msg').style.display = 'none';
-                        
-                        // FIX: Ensure revoke is hidden on open so it doesn't flash
                         const revokeBtn = document.getElementById('modal-revoke-btn');
                         if(revokeBtn) revokeBtn.style.display = 'none';
                         
@@ -18183,7 +18202,27 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     });
                 });
-            } 
+            } else {
+              
+                input.style.display = 'none'; 
+                
+                const restrictedBadge = document.createElement('div');
+                restrictedBadge.style.color = '#adb5bd'; 
+                restrictedBadge.style.fontSize = '12px';
+                restrictedBadge.style.fontWeight = '600';
+                restrictedBadge.style.display = 'flex';
+                restrictedBadge.style.alignItems = 'center';
+                restrictedBadge.style.justifyContent = 'center';
+                restrictedBadge.style.height = '100%';
+                restrictedBadge.style.minHeight = '32px';
+                restrictedBadge.style.backgroundColor = '#f8f9fa';
+                restrictedBadge.style.border = '1px dashed #dee2e6';
+                restrictedBadge.style.borderRadius = '4px';
+                //restrictedBadge.innerHTML = '&#128274; Restricted';
+                
+                input.parentNode.insertBefore(restrictedBadge, input);
+            }
+            
         });
 
         function executeDatabaseAction(actionType, modifyFlagVal, btnClicked) {
@@ -18480,22 +18519,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const currentCount = selectedMrCells.length;
         document.getElementById('mgr-banner-sel-count').innerText = currentCount;
         document.getElementById('mgr-modal-sel-count').innerText = currentCount;
-        
-        $('#managerActionModal').modal('show');
-    });
-
-    document.getElementById('btn-finish-selection').addEventListener('click', function() {
-        isMgrSelecting = false;
-        document.body.classList.remove('mgr-selecting');
-        document.getElementById('mgrSelectionBanner').style.display = 'none';
-        
-        $('#managerActionModal').modal('show');
-    });
-
-    document.getElementById('btn-finish-selection').addEventListener('click', function() {
-        isMgrSelecting = false;
-        document.body.classList.remove('mgr-selecting');
-        document.getElementById('mgrSelectionBanner').style.display = 'none';
         
         $('#managerActionModal').modal('show');
     });

@@ -71,7 +71,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
-	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate,
 			String userid, ServletRequestAttributes attr) throws Exception {
 
 		byte[] file = null;
@@ -79,45 +79,45 @@ public class RT_MC_TABLE_ALL_Service {
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
 					"RT_MC_TABLE1", attr);
-			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode,reportDate);
 		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
 					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", attr);
-			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_2_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("complaints".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null, "RT_MC_TABLE3", attr);
-			file = GenerateTable_3_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_3_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
 					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", attr);
-			file = GenerateTable_4_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_4_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null, "RT_MC_TABLE5", attr);
-			file = GenerateTable_5_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_5_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null, "RT_MC_TABLE6", attr);
-			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_6_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
 					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", attr);
-			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_7_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null, "RT_MC_TABLE8", attr);
-			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_8_Excel(branch, jobId, progressMap,formmode,reportDate);
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,
 					"RT_MC_TABLE9", attr);
-			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode);
+			file = GenerateTable_9_Excel(branch, jobId, progressMap,formmode,reportDate);
 		}
 
 		return file;
 	}
 
-	public byte[] GenerateTable_1_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_1_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -231,12 +231,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_2_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_2_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE2_1_ENTITY> dataList1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
-		List<RT_MC_TABLE2_2_ENTITY> dataList2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE2_1_ENTITY> dataList1 = RT_MC_TABLE2_1_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE2_2_ENTITY> dataList2 = RT_MC_TABLE2_2_REPO.findByReportDate(reportDate);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -1372,11 +1372,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_3_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_3_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE3_ENTITY> dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE3_ENTITY> dataList = RT_MC_TABLE3_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -2235,12 +2235,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_4_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_4_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE4_1_ENTITY> dataList1 = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
-		List<RT_MC_TABLE4_2_ENTITY> dataList2 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE4_1_ENTITY> dataList1 = RT_MC_TABLE4_1_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE4_2_ENTITY> dataList2 = RT_MC_TABLE4_2_REPO.findByReportDate(reportDate);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3481,11 +3481,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_5_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_5_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE5_ENTITY> dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE5_ENTITY> dataList = RT_MC_TABLE5_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3649,11 +3649,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_6_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_6_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE6_ENTITY> dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE6_ENTITY> dataList = RT_MC_TABLE6_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3810,12 +3810,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
-		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findByReportDate(reportDate);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -4566,11 +4566,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -4882,11 +4882,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode)
+	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
 			throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findByReportDate(reportDate);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -5821,4 +5821,88 @@ public class RT_MC_TABLE_ALL_Service {
 			);
 		}
 	}
+	
+	public int updateVerifyFlgAndRemarks(String formMode,String verifyFlg,String remarks,Date reportDate) {
+		
+		int rows_updated = 0;
+
+		switch (formMode) {
+		case "bankinformation":
+			rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "bankconsumers":
+			rows_updated = RT_MC_TABLE2_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE2_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+				return rows_updated;
+			
+		case "complaints":
+			rows_updated = RT_MC_TABLE3_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "retailproducts":
+			rows_updated = RT_MC_TABLE4_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE4_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			
+			return rows_updated;
+		case "bankemployee":
+			rows_updated = RT_MC_TABLE5_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "trainings":
+			rows_updated = RT_MC_TABLE6_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "additionalinformation":			
+			rows_updated = RT_MC_TABLE7_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE7_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "islamicbanking":
+			rows_updated = RT_MC_TABLE8_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		case "conductcultureassessment":
+			rows_updated = RT_MC_TABLE9_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			return rows_updated;
+		default:
+			return rows_updated;
+		}
+	}
+
+	public String getMainTableName(String formMode, String cellName) {
+		if (formMode == null)
+			return null;
+
+		switch (formMode) {
+		case "bankinformation":
+			return "RT_MC_TABLE1";
+		case "bankconsumers":
+			if (cellName != null && cellName.matches("^R(6|7|8|9|10|11|12|13|14)_.*")) {
+				return "RT_MC_TABLE2_1";
+			} else {
+				return "RT_MC_TABLE2_2";
+			}
+		case "complaints":
+			return "RT_MC_TABLE3";
+		case "retailproducts":
+			if (cellName != null && cellName.matches("^R(6|7|8|9|10|11|12|13|14)_.*")) {
+				return "RT_MC_TABLE4_1";
+			} else {
+				return "RT_MC_TABLE4_2";
+			}
+		case "bankemployee":
+			return "RT_MC_TABLE5";
+		case "trainings":
+			return "RT_MC_TABLE6";
+		case "additionalinformation":
+			if (cellName != null && cellName.matches("^R(7|8|9|10|11|12|13|14|15)_.*")) {
+				return "RT_MC_TABLE7_1";
+			} else {
+				return "RT_MC_TABLE7_2";
+			}
+		case "islamicbanking":
+			return "RT_MC_TABLE8";
+		case "conductcultureassessment":
+			return "RT_MC_TABLE9";
+		default:
+			return formMode;
+		}
+	}
+	
+	
 }

@@ -239,7 +239,15 @@ public class RT_MC_TABLE9_ENTITY {
 	public String MODIFY_USERID;
 	public String VERIFY_FLG;
 	public String VERIFY_USERID;
+	public String REMARKS;
 
+	public String getREMARKS() {
+		return REMARKS;
+	}
+
+	public void setREMARKS(String rEMARKS) {
+		REMARKS = rEMARKS;
+	}
 	public String getR9_SR_NO() {
 		return R9_SR_NO;
 	}

@@ -112,7 +112,15 @@ public class RT_MC_TABLE5_ENTITY {
 	public String MODIFY_USERID;
 	public String VERIFY_FLG;
 	public String VERIFY_USERID;
+	public String REMARKS;
 
+	public String getREMARKS() {
+		return REMARKS;
+	}
+
+	public void setREMARKS(String rEMARKS) {
+		REMARKS = rEMARKS;
+	}
 	public String getR8_BANK() {
 		return R8_BANK;
 	}

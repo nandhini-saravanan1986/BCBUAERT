@@ -91,7 +91,15 @@ public class RT_MC_TABLE6_ENTITY {
 	public String MODIFY_USERID;
 	public String VERIFY_FLG;
 	public String VERIFY_USERID;
+	public String REMARKS;
 
+	public String getREMARKS() {
+		return REMARKS;
+	}
+
+	public void setREMARKS(String rEMARKS) {
+		REMARKS = rEMARKS;
+	}
 	public String getR7_BANK() {
 		return R7_BANK;
 	}
