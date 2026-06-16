@@ -35,7 +35,9 @@ public class AuditController {
 		
 	
 	@RequestMapping(value = "User_Audit", method = RequestMethod.GET)
-	public String userAudit(Model md, HttpServletRequest req) {
+	public String userAudit(Model md, HttpServletRequest req,@RequestParam(required = false)
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date reportdata) {
 		String userid = (String) req.getSession().getAttribute("USERID");
 		System.out.println("The login userid is : " + userid);
 
@@ -43,9 +45,17 @@ public class AuditController {
 		System.out.println("The time is " + localDateTime);
 
 		md.addAttribute("menu", "Audit");
-
+		
+		if(reportdata==null) {
+			reportdata=new Date();
+		}
+		
+		 md.addAttribute("reportdata", reportdata);
+		 System.out.println("reportdata="+reportdata);
+		 
+		 md.addAttribute("menu", "Audit");
 		// Add both lists to the model
-		md.addAttribute("auditlogs", auditService.getUserServices());
+		md.addAttribute("auditlogs", auditService.getUserServices(reportdata));
 		//md.addAttribute("userAuditLevels", auditService.getUserAuditLevelList());
 
 		return "User_Audit";

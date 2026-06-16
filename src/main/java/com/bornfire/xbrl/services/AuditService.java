@@ -44,9 +44,9 @@ public class AuditService {
 	  @Autowired
 	Service_audit_table_Rep Service_audit_table_Reps;
 
-	public List<AuditServicesEntity> getUserServices() {
+	public List<AuditServicesEntity> getUserServices(Date reportdata) {
 //		System.out.println(auditServicesRep.getUserAudit());
-		return auditServicesRep.getUserAudit();
+		return auditServicesRep.getUserAudit(reportdata);
 	}
 
 	public List<AuditServicesEntity> getAuditServices() {
