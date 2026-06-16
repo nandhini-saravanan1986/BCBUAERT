@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface RT_MC_TABLE8_REPO extends JpaRepository<RT_MC_TABLE8_ENTITY, MCReportId> {
 
-	@Query(value = "SELECT * FROM RT_MC_TABLE8 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
+	@Query(value = "SELECT * FROM RT_MC_TABLE8 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE <> 'DEPT' ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
 	List<RT_MC_TABLE8_ENTITY> findByReportDate(@Param("reportDate") String reportDate);
 
 	@Query(value = "SELECT * FROM RT_MC_TABLE8 WHERE BRANCH_CODE = :branch", nativeQuery = true)

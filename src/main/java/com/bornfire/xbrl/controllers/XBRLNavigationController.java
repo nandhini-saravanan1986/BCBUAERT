@@ -7242,6 +7242,18 @@ System.out.println("sixe==="+excelData.length);
 				contextDate = dateFormat.parse(reportDateStr);
 			}
 
+			if ("Y".equals(verifyFlg) || "N".equals(verifyFlg) || "MR".equals(verifyFlg)
+					|| "REVOKE_CHECKER".equals(verifyFlg)) {
+
+				String flagToSave = "REVOKE_CHECKER".equals(verifyFlg) ? null : verifyFlg;
+
+				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode,
+						contextDate, cellName);
+
+				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
+				return ResponseEntity.ok("Verification status updated.");
+			}
+
 			RT_MC_DATA_RECORD_ENTITY record = null;
 			if (contextDate != null) {
 				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode,

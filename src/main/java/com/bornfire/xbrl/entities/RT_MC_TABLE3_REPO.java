@@ -17,7 +17,7 @@ public interface RT_MC_TABLE3_REPO extends JpaRepository<RT_MC_TABLE3_ENTITY, MC
 	@Query(value = "SELECT * FROM RT_MC_TABLE3 WHERE BRANCH_CODE = :branch", nativeQuery = true)
 	List<RT_MC_TABLE3_ENTITY> findBybranchcode(@Param("branch") String branch);
 	
-	@Query(value = "SELECT * FROM RT_MC_TABLE3 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
+	@Query(value = "SELECT * FROM RT_MC_TABLE3 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE <> 'DEPT' ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
 	List<RT_MC_TABLE3_ENTITY> findByReportDate(@Param("reportDate") String reportDate);
 
 	@Query(value = "SELECT * FROM RT_MC_TABLE3 WHERE REPORT_DATE = :reportDate AND BRANCH_CODE = :branchCode", nativeQuery = true)

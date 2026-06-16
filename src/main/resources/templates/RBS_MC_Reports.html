@@ -1958,12 +1958,12 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					</button>
 				</div>
 				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
-					<select name="selecteddept" id="selecteddept" onchange="filtertabledept()" >
-						<option value="" disabled>-- Select --</option>
-						<option th:each="option : ${md}" th:value="${option}"
+					<select name="selecteddept" id="selecteddept" onchange="filtertabledept()" style="background-color:#8a5a35; color:white ! important; border:1px solid #8a5a35;border-radius:5px;">
+						<!-- <option style="background-color:#8a5a35; color:white;" value="" disabled>-- Select --</option> -->
+						<option style="background-color:#8a5a35; color:white;" th:each="option : ${md}" th:value="${option}"
 							th:text="${option}" th:selected="${option == DEPARTMENT}">
 						</option>
-					</select> <label class="form-legend" style="margin-bottom: 0px;">Department
+					</select> <label class="form-legend" style="margin-bottom: 0px;background-color:#8a5a35; color:white ! important;">Department
 						:</label>
 				</div>
 			</div>
@@ -16868,12 +16868,33 @@ document.addEventListener("DOMContentLoaded", function() {
         	    });
 
         	    const rows = document.getElementById('usertable').querySelectorAll('tr');
+        	    const grid = []; 
         	    rows.forEach((row, rowIndex) => {
-        	        row.querySelectorAll('td').forEach((cell, colIndex) => {
+                    if (!grid[rowIndex]) grid[rowIndex] = [];
+                    let currentCol = 0;
+                    
+        	        row.querySelectorAll('td, th').forEach((cell) => {
+                        while (grid[rowIndex][currentCol]) {
+                            currentCol++;
+                        }
+                        
+                        const colspan = parseInt(cell.getAttribute('colspan') || 1, 10);
+                        const rowspan = parseInt(cell.getAttribute('rowspan') || 1, 10);
+                        
         	            if(cell.querySelector('.custom-select')) {
         	                cell.dataset.row = rowIndex;
-        	                cell.dataset.col = colIndex;
+        	                cell.dataset.col = currentCol;
+                            cell.dataset.endCol = currentCol + colspan - 1;
         	            }
+                        
+                        for (let r = 0; r < rowspan; r++) {
+                            if (!grid[rowIndex + r]) grid[rowIndex + r] = [];
+                            for (let c = 0; c < colspan; c++) {
+                                grid[rowIndex + r][currentCol + c] = true;
+                            }
+                        }
+                        
+                        currentCol += colspan;
         	        });
         	    });
 
@@ -17351,8 +17372,10 @@ document.addEventListener("DOMContentLoaded", function() {
 	        const allMappedCells = table.querySelectorAll('td[data-row]');
 			allMappedCells.forEach(cell => {
 				const r = parseInt(cell.dataset.row);
-				const c = parseInt(cell.dataset.col);
-				const isInsideBox = (r >= minRow && r <= maxRow && c >= minCol && c <= maxCol);
+				const cStart = parseInt(cell.dataset.col);
+                const cEnd = parseInt(cell.dataset.endCol || cStart); 
+				const isInsideBox = (r >= minRow && r <= maxRow) && (cEnd >= minCol && cStart <= maxCol);
+                
 				if (isInsideBox) {
 					isUnselecting ? cell.classList.remove('selected') : cell.classList.add('selected');
 				} else {
@@ -17744,12 +17767,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const ptLower = (currentDepartment || '').toLowerCase();
 
         const isAllowed = (configData, fieldName) => {
-            if (configData && configData.hasOwnProperty(fieldName)) {
-                const fieldConfig = configData[fieldName]; 
-                if (fieldConfig) {
-                    const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
-                    return allowedValues.includes(ptLower);
-                }
+			if (!configData || !fieldName) return false;
+            const actualKey = Object.keys(configData).find(key => key.toLowerCase() === fieldName.toLowerCase());
+            if (actualKey && configData[actualKey]) {
+                const allowedValues = String(configData[actualKey]).toLowerCase().split(',').map(v => v.trim());
+                if (allowedValues.includes('all')) return true; 
+                
+                return allowedValues.includes(ptLower);
             }
             return false;
         };
@@ -18260,6 +18284,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert("You must enter Checker Remarks in order to Revert a record.");
                 return;
             }
+            
+            let finalDataValue = document.getElementById('modal-input-val').value.trim();
+            if (finalDataValue === "") {
+                finalDataValue = "0";
+            }
 
             const formData = new FormData();
             formData.append("formMode", formMode); 
@@ -18269,7 +18298,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("rowCol2Value", document.getElementById('modal-col2-val').innerText);
             formData.append("cellName", currentEditingInput.name || currentEditingInput.id || "UnknownCell");
             formData.append("cellId", currentEditingInput.id || "UnknownId");
-            formData.append("dataValue", document.getElementById('modal-input-val').value);
+            formData.append("dataValue", finalDataValue);
             formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
             
             formData.append("verifyFlg", actionType); 
