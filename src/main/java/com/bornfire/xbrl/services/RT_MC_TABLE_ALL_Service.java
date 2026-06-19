@@ -5903,6 +5903,40 @@ public class RT_MC_TABLE_ALL_Service {
 			return formMode;
 		}
 	}
-	
+
+	public String screenName(String formMode) {
+		String screenName = null;
+		switch (formMode) {
+		case "bankinformation":
+			screenName = "Bank Informaion - Market Conduct";
+			return screenName;
+		case "bankconsumers":
+			screenName = "Bant Consumers - Market Conduct";
+			return screenName;
+		case "complaints":
+			screenName = "Complaints - Market Conduct";
+			return screenName;
+		case "retailproducts":
+			screenName = "Retail Products - Market Conduct";
+			return screenName;
+		case "bankemployee":
+			screenName = "Bank Employee - Market Conduct";
+			return screenName;
+		case "trainings":
+			screenName = "Trainings - Market Conduct";
+			return screenName;
+		case "additionalinformation":
+			screenName = "Additional Informaion - Market Conduct";
+			return screenName;
+		case "islamicbanking":
+			screenName = "Islamic Banking - Market Conduct";
+			return screenName;
+		case "conductcultureassessment":
+			screenName = "Conduct Cultureassessment - Market Conduct";
+			return screenName;
+		default:
+			return formMode;
+		}
+	}
 	
 }

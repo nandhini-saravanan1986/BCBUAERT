@@ -1,5 +1,7 @@
 package com.bornfire.xbrl.controllers;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -8,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,23 +66,68 @@ public class AuditController {
 	}
 	
 	 	
-				@RequestMapping(value = "Service_Audit", method = RequestMethod.GET)
-			public String ServiceAudit(Model md, HttpServletRequest req) {
-				String userid = (String) req.getSession().getAttribute("USERID");
-				System.out.println("The login userid is : " + userid);
-				md.addAttribute("activeMenu", "Admin");
-				md.addAttribute("activePage", "Service_Audit");
+	@RequestMapping(value = "Service_Audit", method = RequestMethod.GET)
+	public String ServiceAudit(Model md, HttpServletRequest req, @RequestParam(defaultValue = "0") int page,@RequestParam(value = "date", required = false) String filterDate) {
+		String userid = (String) req.getSession().getAttribute("USERID");
+		System.out.println("The login userid is : " + userid);
+		md.addAttribute("activeMenu", "Admin");
+		md.addAttribute("activePage", "Service_Audit");
 
-				LocalDateTime localDateTime = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-				System.out.println("The time is " + localDateTime);
+		LocalDateTime localDateTime = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		System.out.println("The time is " + localDateTime);
 
-				md.addAttribute("menu", "Audit");
+		md.addAttribute("menu", "Audit");
+		
+		if (filterDate == null || filterDate.trim().isEmpty()) {
+	        filterDate = LocalDate.now().toString();
+	    }
+		Pageable pageable = PageRequest.of(page, 10); 
+	    
+	    Page<Map<String, Object>> masterGroups = Service_audit_table_Reps.findChronologicalGroups(filterDate, pageable);
+	    
+	    List<Map<String, Object>> groupedAuditList = new ArrayList<>();
 
-				// Add both lists to the model
-				md.addAttribute("AuditList", Service_audit_table_Reps.getauditListLocalvalues());
+	    for (Map<String, Object> groupDbMap : masterGroups.getContent()) {
+	        Map<String, Object> groupNode = new HashMap<>();
+	        
+	        String table = (String) groupDbMap.get("audit_table");
+	        String func = (String) groupDbMap.get("func_code");
+	        String user = (String) groupDbMap.get("entry_user");
+	        Date minTime = parseOracleDate(groupDbMap.get("min_time"));
+	        Date maxTime = parseOracleDate(groupDbMap.get("max_time"));
 
-				return "Service_Audit.html";
-			}
+	        groupNode.put("audit_table", table);
+	        groupNode.put("func_code", func);
+	        groupNode.put("entry_user", user);
+
+	        List<Service_audit_table_entity> details = Service_audit_table_Reps
+	            .findDetailRows(table, func, user, minTime, maxTime);
+	        
+	        groupNode.put("details", details);
+	        groupedAuditList.add(groupNode);
+	    }
+
+	    md.addAttribute("GroupedAuditList", groupedAuditList);
+	    md.addAttribute("currentPage", page);
+	    md.addAttribute("totalPages", masterGroups.getTotalPages());
+	    
+	    md.addAttribute("selectedDate", filterDate);
+
+		return "Service_Audit.html";
+	}
+
+	private Date parseOracleDate(Object dateObject) {
+		if (dateObject == null) {
+			return null;
+		}
+		if (dateObject instanceof Timestamp) {
+			return new Date(((Timestamp) dateObject).getTime());
+		}
+		if (dateObject instanceof Date) {
+			return (Date) dateObject;
+		}
+		throw new IllegalArgumentException("Unknown date format returned from database: " + dateObject.getClass());
+	}
 	@RequestMapping(value = "getchanges", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public String fetchChanges(@RequestParam(required = false) String audit_ref_no) {

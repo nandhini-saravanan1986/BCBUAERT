@@ -60,6 +60,7 @@ import org.springframework.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -5910,6 +5911,8 @@ System.out.println("sixe==="+excelData.length);
 			reportDate="31-03-2026";
 		}
 		md.addAttribute("REPORT_DATE", reportDate);
+		String sessionId = req.getSession().getId();
+		//System.out.println("Session ID : "+sessionId);
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
@@ -7241,7 +7244,32 @@ System.out.println("sixe==="+excelData.length);
 			if (reportDateStr != null && !reportDateStr.trim().isEmpty()) {
 				contextDate = dateFormat.parse(reportDateStr);
 			}
-
+			String auditType;
+			String audittext;
+			
+			if ("Y".equals(verifyFlg)) {
+				auditType = "VERIFY APPROVE"; 
+				audittext = "Checker Verified Successfully";
+			} else if ("N".equals(verifyFlg)) {
+				auditType = "VERIFY REVERT";
+				audittext = "Checker Reverted Successfully";
+			} else if ("MR".equals(verifyFlg)) {
+				auditType = "MANAGER REVISION";
+				audittext = "Manager Requested Revision Successfully";
+			} else if ("REVOKE_CHECKER".equals(verifyFlg)) {
+				auditType = "CHECKER REVOKE";
+				audittext = "Checker Revoked Successfully";
+			} else if ("REVOKE_MAKER".equals(verifyFlg)) {
+				auditType = "MAKER REVOKE";
+				audittext = "Maker Revoked Successfully";
+			} else if ("C".equals(modifyFlg) && (verifyFlg == null || verifyFlg.trim().isEmpty())) {
+				auditType = "SAVE AND PROCEED TO VERIFY";
+				audittext = "Maker Saved and Submitted to Checker Successfully";
+			} else {
+				auditType = "MODIFY";
+				audittext = "Maker Modified Successfully";
+			}
+			
 			if ("Y".equals(verifyFlg) || "N".equals(verifyFlg) || "MR".equals(verifyFlg)
 					|| "REVOKE_CHECKER".equals(verifyFlg)) {
 
@@ -7251,21 +7279,30 @@ System.out.println("sixe==="+excelData.length);
 						contextDate, cellName);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
+				
+				auditService.createBusinessAudit(reportDateStr,
+						auditType , rT_MC_TABLE_Service.screenName(formMode), null, rT_MC_TABLE_Service.getMainTableName(formMode,cellName) +" & RT_MC_DATA_RECORD");
 				return ResponseEntity.ok("Verification status updated.");
 			}
 
 			RT_MC_DATA_RECORD_ENTITY record = null;
+			RT_MC_DATA_RECORD_ENTITY oldcopy = new RT_MC_DATA_RECORD_ENTITY();
 			if (contextDate != null) {
 				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode,
 						contextDate, cellName);
 			}
 
 			if (record == null) {
+				auditType = "SAVE";
+				audittext = "Maker Saved Successfully";
 				record = new RT_MC_DATA_RECORD_ENTITY();
 				synchronized (this) {
 					BigDecimal currentMaxId = rT_MC_DATA_RECORD_REPO.findMaxId();
 					record.setId(currentMaxId.add(BigDecimal.ONE));
 				}
+			}
+			else {
+				BeanUtils.copyProperties(record, oldcopy);
 			}
 
 			record.setReportDate(contextDate);
@@ -7359,6 +7396,13 @@ System.out.println("sixe==="+excelData.length);
 					e.printStackTrace();
 				}
 			}
+			if (auditType == "MODIFY" || auditType.equals("MODIFY")) {
+
+			} else {
+				auditService.createBusinessAudit(reportDateStr, auditType, rT_MC_TABLE_Service.screenName(formMode),
+						null, rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD");
+			}
+
 			return ResponseEntity.ok("Record Saved Successfully!");
 
 		} catch (Exception e) {

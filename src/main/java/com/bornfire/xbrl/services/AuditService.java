@@ -211,10 +211,22 @@ public class AuditService {
 		}
 	}
 
-	@PersistenceContext
-	EntityManager entityManager;
 
-	public <T> void compareEntities(T oldEntity, T newEntity, String Screenname) {
+	private boolean areEqual(Object obj1, Object obj2) {
+		if (obj1 == null && obj2 == null)
+			return true;
+		if (obj1 == null || obj2 == null)
+			return false;
+		return obj1.equals(obj2);
+	}
+
+	public String fetchChanges(@RequestParam(required = false) String audit_ref_no) {
+
+	return auditServicesRep.getchanges(audit_ref_no); 
+	}
+
+	public <T> void compareEntitiesmanual(T oldEntity, T newEntity, String id_values, String Screenname,
+			String tableName) {
 		System.out.println("Screen Name: " + Screenname);
 
 		if (oldEntity == null || newEntity == null) {
@@ -235,70 +247,6 @@ public class AuditService {
 				lowerCaseIgnoreFields.add(field.toLowerCase());
 			}
 		}
-
-		// Extract and print Primary Key
-		EntityType<?> entityType = entityManager.getMetamodel().entity(newEntity.getClass());
-		List<String> idNames = new ArrayList<String>();
-
-		if (entityType.hasSingleIdAttribute()) {
-			// Single @Id
-			for (SingularAttribute<?, ?> attribute : entityType.getSingularAttributes()) {
-				if (attribute.isId()) {
-					idNames.add(attribute.getName());
-					break;
-				}
-			}
-		} else {
-			// Composite @IdClass
-			for (Object attrObj : entityType.getIdClassAttributes()) {
-				SingularAttribute<?, ?> attribute = (SingularAttribute<?, ?>) attrObj;
-				idNames.add(attribute.getName());
-			}
-		}
-
-		// Get the ID value
-		Object idValue = entityManager.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(newEntity);
-
-		System.out.println("--- Extracting Composite Key Values ---");
-		String formattedIdString = "";
-
-		if (idValue != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
-			if (entityType.hasSingleIdAttribute()) {
-				// Single Primary Key
-				String singleIdName = idNames.get(0);
-				String displayName = singleIdName.replace('_', ' ');
-				displayName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1);
-				String displayValue = (idValue instanceof Date) ? sdf.format((Date) idValue) : idValue.toString();
-				formattedIdString = displayName + " : " + displayValue;
-			} else {
-				// Composite Primary Key
-				StringJoiner joiner = new StringJoiner(";");
-				Field[] fields = idValue.getClass().getDeclaredFields();
-
-				for (Field field : fields) {
-					field.setAccessible(true);
-					try {
-						String fieldName = field.getName();
-						Object fieldValue = field.get(idValue);
-
-						if (!fieldName.equals("serialVersionUID")) {
-							String displayName = fieldName.replace('_', ' ');
-							displayName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1);
-							Object displayValue = (fieldValue instanceof Date) ? sdf.format((Date) fieldValue)
-									: fieldValue;
-							joiner.add(displayName + " : " + displayValue);
-						}
-					} catch (IllegalAccessException e) {
-						System.err.println("Could not read field: " + field.getName());
-					}
-				}
-				formattedIdString = joiner.toString();
-			}
-		}
-
-		System.out.println("ID values : " + formattedIdString);
 
 		// Compare entities and build changes string
 		StringBuilder changes = new StringBuilder();
@@ -328,17 +276,6 @@ public class AuditService {
 			}
 		}
 
-		Class<?> entityClass = oldEntity.getClass();
-		String tableName = "";
-		if (entityClass.isAnnotationPresent(Table.class)) {
-			Table table = entityClass.getAnnotation(Table.class);
-			tableName = table.name();
-
-			if (tableName != null && !tableName.trim().isEmpty()) {
-				System.out.println("Table name is : " + tableName);
-			}
-		}
-
 		System.out.println("Changes in Audit : " + changes);
 
 		System.out.println("Entered Dynamic  Modify Service Audit");
@@ -365,23 +302,64 @@ public class AuditService {
 		audit.setEvent_id(userId);
 		audit.setEvent_name(username);
 		audit.setModi_details(changes.toString());
-		audit.setDomain_id(formattedIdString);
+		audit.setDomain_id(id_values);
 
 		Service_audit_table_Reps.save(audit);
 
 	}
-
-	private boolean areEqual(Object obj1, Object obj2) {
-		if (obj1 == null && obj2 == null)
-			return true;
-		if (obj1 == null || obj2 == null)
-			return false;
-		return obj1.equals(obj2);
-	}
-
-	public String fetchChanges(@RequestParam(required = false) String audit_ref_no) {
-
-	return auditServicesRep.getchanges(audit_ref_no); 
-	}
-
+//	
+//
+//	public void createMCAudit(final String customerId, final String functionCode, final String screenName,
+//			final Map<String, String> changeDetails, final String tableName,final String details) {
+//		try {
+//			System.out.println("Entered Service Audit");
+//			final UUID auditID = UUID.randomUUID();
+//			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//			//System.out.println("ServletRequestAttributes : "+attr);
+//			String userId = null;
+//			String username = null;
+//			if (attr != null) {
+//				HttpServletRequest request = attr.getRequest();
+//				userId = (String) request.getSession().getAttribute("USERID");
+//				username = (String) request.getSession().getAttribute("USERNAME");
+//			}
+//			final Date currentDate = new Date();
+//
+//			Service_audit_table_entity audit = new Service_audit_table_entity();
+//			audit.setAudit_ref_no(auditID.toString());
+//			audit.setAudit_date(currentDate);
+//			audit.setEntry_time(currentDate);
+//			audit.setEntry_user(userId);
+//			audit.setEntry_user_name(username);
+//			audit.setFunc_code(functionCode);
+//			audit.setAudit_table(tableName);
+//			audit.setAudit_screen(screenName);
+//			audit.setEvent_id(userId);
+//			audit.setEvent_name(username);
+//
+//			if (changeDetails != null && !changeDetails.isEmpty()) {
+//				StringBuilder changes = new StringBuilder();
+//				changeDetails
+//						.forEach((field, value) -> changes.append(field).append(": ").append(value).append("||| "));
+//			
+//	            audit.setModi_details(changes.toString()); 
+//			}
+//
+//			if ("VERIFY".equalsIgnoreCase(functionCode)) {
+//				audit.setAuth_user(userId);
+//				audit.setAuth_user_name(username);
+//				audit.setAuth_time(currentDate);
+//			}
+//
+//			audit.setDomain_id(customerId);
+//
+////			System.out.println(audit);
+//			Service_audit_table_Reps.save(audit);
+//
+//		} catch (Exception e) {
+//			System.err.println("Error creating business audit: " + e.getMessage());
+//			e.printStackTrace();
+//		}
+//	}
+	
 }
