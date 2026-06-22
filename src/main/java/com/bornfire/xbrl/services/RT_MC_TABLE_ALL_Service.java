@@ -8,8 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -5938,5 +5942,56 @@ public class RT_MC_TABLE_ALL_Service {
 			return formMode;
 		}
 	}
+	
+	public Map<String, Object> getManagerViewData(String Date) {
+        List<RT_MC_TABLE1_ENTITY> top5Rows = RT_MC_TABLE1_REPO.findLastFiveReports(Date); 
+
+        List<String> headerDates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+        for (RT_MC_TABLE1_ENTITY row : top5Rows) {
+            Date rawDate = row.getREPORT_DATE() ;
+            LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+            headerDates.add(displayDate.format(formatter));
+        }
+
+        List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+        pivotTable.add(new RT_MC_Manager_DTO(
+            "Number of employees as of the specified time period",
+            top5Rows.get(0).getR22_NO_EMP_SPC_TP(),top5Rows.get(1).getR22_NO_EMP_SPC_TP(),top5Rows.get(2).getR22_NO_EMP_SPC_TP(),top5Rows.get(3).getR22_NO_EMP_SPC_TP(),top5Rows.get(4).getR22_NO_EMP_SPC_TP()
+        ));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers as of the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_CON_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_CON_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_CON_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_CON_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_CON_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Average Number of employees as of the specified time period", String.valueOf(top5Rows.get(4).getR22_AVG_NO_EMP_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_AVG_NO_EMP_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_AVG_NO_EMP_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_AVG_NO_EMP_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_AVG_NO_EMP_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of branches as of the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_BRN_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_BRN_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_BRN_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_BRN_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_BRN_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total number of Bank branches designated for PoD or branches catering to the needs of PoD during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_BRN_POD()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_BRN_POD()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_BRN_POD()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_BRN_POD()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_BRN_POD())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of ATMs as of the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_ATM_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_ATM_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_ATM_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_ATM_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_ATM_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of ATMs having People of Determination specified requirements as of the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_ATM_DET_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_ATM_DET_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_ATM_DET_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_ATM_DET_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_ATM_DET_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of Authorized Agents as of the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_AUT_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of  instances, wherein service interruptions to internet and mobile Banking is either 1 hour or more than 1 hour during the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_INS_BNK_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_INS_BNK_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_INS_BNK_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_INS_BNK_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_INS_BNK_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of instances, wherein any scheduled or planned downtime for any critical systems of the Bank extended over the scheduled or planned downtime during the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_INS_DWN_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_INS_DWN_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_INS_DWN_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_INS_DWN_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_INS_DWN_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of employees within the second line of defense (Risk /Compliance or any other function which is independent from business) responsible for monitoring Conduct Risk of the Bank as of the specified date", String.valueOf(top5Rows.get(4).getR22_NO_EMP_RSK_SPC_DTE()), String.valueOf(top5Rows.get(3).getR22_NO_EMP_RSK_SPC_DTE()), String.valueOf(top5Rows.get(2).getR22_NO_EMP_RSK_SPC_DTE()), String.valueOf(top5Rows.get(1).getR22_NO_EMP_RSK_SPC_DTE()), String.valueOf(top5Rows.get(0).getR22_NO_EMP_RSK_SPC_DTE())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of external fraud incidents during specified time period", String.valueOf(top5Rows.get(4).getR22_NO_EXT_FRD_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_EXT_FRD_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_EXT_FRD_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_EXT_FRD_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_EXT_FRD_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of internal fraud incidents during specified time period", String.valueOf(top5Rows.get(4).getR22_NO_INT_FRD_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_INT_FRD_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_INT_FRD_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_INT_FRD_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_INT_FRD_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of fraud incidents during the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_FRD_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_FRD_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_FRD_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_FRD_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_FRD_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of fraud incidents during the previous period", String.valueOf(top5Rows.get(4).getR22_NO_FRD_PP()), String.valueOf(top5Rows.get(3).getR22_NO_FRD_PP()), String.valueOf(top5Rows.get(2).getR22_NO_FRD_PP()), String.valueOf(top5Rows.get(1).getR22_NO_FRD_PP()), String.valueOf(top5Rows.get(0).getR22_NO_FRD_PP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total number of reviews conducted by the Bank on authorised agents during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_REV_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_REV_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_REV_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_REV_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_REV_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total number of instances of Unplanned service interuptions including system downtime instances affecting the internet/mobile/devise based instument  which resulted in consumer's failure to access Bank's application/website/POS terminals or failure to avail the services provided by the Bank through its application/website/POS terminals during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_INS_UNP_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_INS_UNP_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_INS_UNP_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_INS_UNP_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_INS_UNP_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total number of hours of Unplanned service interuptions including system downtime (in hours) affecting the internet/mobile/devise based instument  which resulted in consumer's failure to access Bank's application/website/POS terminals or failure to avail the services provided by the Bank through its application/website/POS terminals during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_HRS_BNK()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_HRS_BNK()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_HRS_BNK()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_HRS_BNK()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_HRS_BNK())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total Number of incidents of system security breaches leading to Consumer data theft (e.g., hacker attacks, personal data leakage, unauthorized access to digital wallets for data theft, etc.) that have impacted consumers as of the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_INC_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_INC_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_INC_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_INC_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_INC_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total number of penetration and cyber-attack simulation testing conducted in the last 4 quarters", String.valueOf(top5Rows.get(4).getR22_TOT_NO_PEN_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_PEN_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_PEN_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_PEN_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_PEN_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total Number of Authorised Agents and outsourcing service providers (including services or systems outsourced to authorised agents) during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_AUT_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_AUT_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total Number of Point of Sale Terminals  during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_SAL_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_SAL_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_SAL_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_SAL_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_SAL_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Total Number of Merchant tie ups  during the specified time period", String.valueOf(top5Rows.get(4).getR22_TOT_NO_MER_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_TOT_NO_MER_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_TOT_NO_MER_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_TOT_NO_MER_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_TOT_NO_MER_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of Inquiries received raised during the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_INQ_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_INQ_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_INQ_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_INQ_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_INQ_SPC_TP())));
+        pivotTable.add(new RT_MC_Manager_DTO("Number of service interruptions caused by authorised agents that have affected consumers during the specified time period", String.valueOf(top5Rows.get(4).getR22_NO_SER_SPC_TP()), String.valueOf(top5Rows.get(3).getR22_NO_SER_SPC_TP()), String.valueOf(top5Rows.get(2).getR22_NO_SER_SPC_TP()), String.valueOf(top5Rows.get(1).getR22_NO_SER_SPC_TP()), String.valueOf(top5Rows.get(0).getR22_NO_SER_SPC_TP())));
+
+
+        Map<String, Object> modelData = new HashMap<>();
+        modelData.put("headerDates", headerDates);
+        modelData.put("reportRows", pivotTable);
+        
+        return modelData;
+    }
+	
 	
 }

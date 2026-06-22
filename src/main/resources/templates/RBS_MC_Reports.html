@@ -712,6 +712,45 @@ label.error {
 	/* Adjust this value (e.g., 30px to 40px) to match the height of your first header row */
 	z-index: 9;
 }
+#managerusertable {
+	border-collapse: collapse !important;
+	font-family: Arial, sans-serif !important;
+	font-size: 12px !important;
+}
+
+#managerusertable thead th {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background-color: var(--table-header-blue, #2563EB) !important;
+	color: #ffffff !important;
+	font-family: Arial, sans-serif !important;
+	font-size: 14px !important;
+	line-height: 1.1 !important;
+	padding: 2px 4px !important;
+	vertical-align: middle;
+	white-space: normal;
+	box-shadow: inset 0 -1px 0 #dee2e6;
+}
+
+#managerusertable thead tr:nth-child(2) th {
+	top: 32px; 
+	z-index: 9;
+}
+
+#managerusertable td {
+	padding: 5px 6px !important;
+	border: 1px solid #e8e8e8 !important;
+	white-space: normal !important;
+}
+
+#managerusertable tbody tr:nth-child(odd) {
+	background-color: #ffffff !important;
+}
+
+#managerusertable tbody tr:nth-child(even) {
+	background-color: #f4f2ef !important;
+}
 
 .dataTables_filter label {
 	display: flex !important;
@@ -1948,7 +1987,7 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						style="margin-bottom: 0px; display: none">Branch :</label>
 					<div>
 						<button class="role-btn" onclick="navigateTodeptvalidpage()"
-							th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}" >Department
+							th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">Department
 							Validation</button>
 					</div>
 
@@ -1957,20 +1996,24 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<button class="role-btn" onclick="navigateTodatapage()">Summary
 					</button>
 				</div>
-				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
-					<select name="selecteddept" id="selecteddept" onchange="filtertabledept()" style="background-color:#8a5a35; color:white ! important; border:1px solid #8a5a35;border-radius:5px;">
+				<div class="form-group mb-0"
+					th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+					<select name="selecteddept" id="selecteddept"
+						onchange="filtertabledept()"
+						style="background-color: #8a5a35; color: white ! important; border: 1px solid #8a5a35; border-radius: 5px;">
 						<!-- <option style="background-color:#8a5a35; color:white;" value="" disabled>-- Select --</option> -->
-						<option style="background-color:#8a5a35; color:white;" th:each="option : ${md}" th:value="${option}"
-							th:text="${option}" th:selected="${option == DEPARTMENT}">
-						</option>
-					</select> <label class="form-legend" style="margin-bottom: 0px;background-color:#8a5a35; color:white ! important;">Department
+						<option style="background-color: #8a5a35; color: white;"
+							th:each="option : ${md}" th:value="${option}" th:text="${option}"
+							th:selected="${option == DEPARTMENT}"></option>
+					</select> <label class="form-legend"
+						style="margin-bottom: 0px; background-color: #8a5a35; color: white ! important;">Department
 						:</label>
 				</div>
 			</div>
 		</div>
 
 		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
-			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
+			th:if="${(formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment') and mgrscreen =='NO' }">
 
 			<div class="tab-pane fade" id="bankinformation" role="tabpanel"
 				th:if="${formmode=='bankinformation'}">
@@ -2004,9 +2047,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }"
-								>Verify</button><!-- onclick="verifyData()">Verify</button> -->
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }">Verify</button>
+							<!-- onclick="verifyData()">Verify</button> -->
 							<button type="button" class="role-btn" id="modifyBtn"
 								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
@@ -2015,9 +2059,9 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
-							<button type="button" class="role-btn" id="downloadBtn" th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
-								style="padding-right: 12px;"
-								onclick="downloadData()">
+							<button type="button" class="role-btn" id="downloadBtn"
+								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								style="padding-right: 12px;" onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
 						</div>
@@ -2038,7 +2082,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 
 							<thead class="thead-light">
 								<tr>
@@ -2351,7 +2396,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
 						<button type="button" class="role-btn" id="bottomSaveBtn"
-							th:if="${DEPARTMENTVALIDATION =='YES'}"  style="display: none;" onclick="submitForm()">Save</button>
+							th:if="${DEPARTMENTVALIDATION =='YES'}" style="display: none;"
+							onclick="submitForm()">Save</button>
 					</div>
 				</form>
 			</div>
@@ -2389,14 +2435,14 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist1 == null or #lists.isEmpty(reportlist1) or reportlist2 == null or #lists.isEmpty(reportlist2)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'  }"
-								>Verify</button>
-								
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'  }">Verify</button>
+
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist1[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
-								
+
 							<button type="button" class="role-btn" id="modifyBtn"
 								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
@@ -2426,7 +2472,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist1[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -6293,10 +6340,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -6328,7 +6375,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -8493,10 +8541,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist) or reportlist1 == null or #lists.isEmpty(reportlist1)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -8527,7 +8575,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -11735,10 +11784,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -11768,15 +11817,16 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
 									<th>Bank employee type</th>
 									<th>Number of Consumer facing employees as of the
 										specified date</th>
-									<th>Number of employees who resigned or have been dismissed
-										from the LFI during the specified time period</th>
+									<th>Number of employees who resigned or have been
+										dismissed from the LFI during the specified time period</th>
 									<th>Number of employees who have been dismissed due to
 										poor conduct/behaviour from the Bank during the specified time
 										period</th>
@@ -12055,10 +12105,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -12088,7 +12138,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -12296,10 +12347,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist1 == null or #lists.isEmpty(reportlist1) or reportlist2 == null or #lists.isEmpty(reportlist2)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'MGR')  and reportlist1[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -12330,7 +12381,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist1[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 							<thead class="thead-light">
 								<tr>
 									<th>Bank</th>
@@ -14710,10 +14762,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -14744,7 +14796,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 
 							<thead class="thead-light">
 								<tr>
@@ -15557,7 +15610,7 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 										th:value="${report.R24_NO_COMP_ISLAMIC}" readonly
 										class="table-input input-and-select auto-dropdown"></td>
 								</tr>
-								
+
 							</tbody>
 						</table>
 					</div>
@@ -15601,10 +15654,10 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					<div class="text-right ml-auto" style="min-height: 38px;">
 						<div
 							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
-							<button type="button" class="role-btn" id="verifyBtn" style="display: none;"
-								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}"
-								>Verify</button>
-								<button type="button" class="role-btn" id="checkerRemarksBtn"
+							<button type="button" class="role-btn" id="verifyBtn"
+								style="display: none;"
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
+							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
@@ -15634,7 +15687,8 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
 					<div class="table-responsive" style="overflow: auto; border: none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<table id="usertable" class="table refund-table align-middle mb-0"
+							style="width: 100%">
 
 							<thead class="thead-light">
 								<tr>
@@ -16271,10 +16325,60 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 				</form>
 			</div>
 
-
-
-
 		</div>
+
+
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+			th:if="${(formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment') and mgrscreen =='YES' }">
+			<div id="bankinformation" role="tabpanel"
+				th:if="${formmode=='bankinformation'}">
+				<form id="reportForm" method="POST" style="padding-top: 96px;">
+					<div class="table-responsive" style="overflow: auto; border: none;">
+						<table id="managerusertable"
+							class="table refund-table align-middle mb-0" style="width: 100%">
+							<thead class="table-light">
+								<tr>
+									<th style="width: 600px;">Bank Information</th>
+
+									<th th:text="${headerDates[4]}">Date 1</th>
+									<th th:text="${headerDates[3]}">Date 2</th>
+									<th th:text="${headerDates[2]}">Date 3</th>
+									<th th:text="${headerDates[1]}">Date 4</th>
+									<th th:text="${headerDates[0]}">Date 5</th>
+
+									<th>Variation over Previous Qtr</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="row : ${reportRows}">
+
+									<td th:text="${row.description}">Metric Name</td>
+
+									<td th:text="${row.date5Value != null ? row.date5Value : 'NA'}">0</td>
+									<td th:text="${row.date4Value != null ? row.date4Value : 'NA'}">0</td>
+									<td th:text="${row.date3Value != null ? row.date3Value : 'NA'}">0</td>
+									<td th:text="${row.date2Value != null ? row.date2Value : 'NA'}">0</td>
+									<td th:text="${row.date1Value != null ? row.date1Value : 'NA'}">0</td>
+
+									<td>
+										<!-- th:classappend="${row.comparison != null && row.comparison > 0} ? 'text-success fw-bold' : (${row.comparison != null && row.comparison < 0} ? 'text-danger fw-bold' : '')"> -->
+
+										<span th:if="${row.comparison != null}"
+										th:text="${#numbers.formatPercent(row.comparison, 1, 2)}">
+											0.00% </span> <span th:if="${row.comparison == null}"
+										class="text-muted"> N/A </span>
+									</td>
+
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</form>
+
+			</div>
+		</div>
+
+
 	</div>
 
 

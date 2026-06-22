@@ -5913,7 +5913,21 @@ System.out.println("sixe==="+excelData.length);
 		md.addAttribute("REPORT_DATE", reportDate);
 		String sessionId = req.getSession().getId();
 		//System.out.println("Session ID : "+sessionId);
-
+		
+		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))) {
+			md.addAttribute("mgrscreen", "YES");
+			if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
+				
+				Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate);
+		        
+		        md.addAttribute("headerDates", reportData.get("headerDates"));
+		        md.addAttribute("reportRows", reportData.get("reportRows"));
+		        
+				md.addAttribute("formmode", "bankinformation");
+			}
+}
+		else {
+			md.addAttribute("mgrscreen", "NO");
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
@@ -6226,7 +6240,7 @@ System.out.println("sixe==="+excelData.length);
 
 			md.addAttribute("formmode", "conductcultureassessment");
 		}
-
+		}
 		return "RBS_MC_Reports";
 	}
 	public static String formatDate(Date date) {

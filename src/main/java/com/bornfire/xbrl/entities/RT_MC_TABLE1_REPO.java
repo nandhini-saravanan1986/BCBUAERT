@@ -28,4 +28,12 @@ public interface RT_MC_TABLE1_REPO extends JpaRepository<RT_MC_TABLE1_ENTITY, MC
 			+ "WHERE r.REPORT_DATE = :reportDate ")
 	int updateVerifyFlgAndRemarks(@Param("verifyFlg") String verifyFlg, @Param("remarks") String remarks,
 			@Param("reportDate") Date reportDate);
+
+	@Query(value = "SELECT * FROM RT_MC_TABLE1 " + "WHERE REPORT_DATE IN ("
+			+ " SELECT DISTINCT REPORT_DATE FROM RT_MC_TABLE1 "
+			+ " WHERE REPORT_DATE <= TO_DATE(:reportDate, 'DD-MM-YYYY') " + " AND BRANCH_CODE <> 'DEPT' "
+			+ " ORDER BY REPORT_DATE DESC " + " FETCH FIRST 5 ROWS ONLY" + ") " + "AND BRANCH_CODE <> 'DEPT' "
+			+ " ORDER BY REPORT_DATE DESC", nativeQuery = true)
+	List<RT_MC_TABLE1_ENTITY> findLastFiveReports(@Param("reportDate") String reportDate);
+
 }
