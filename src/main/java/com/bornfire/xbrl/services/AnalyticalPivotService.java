@@ -71,7 +71,7 @@ public class AnalyticalPivotService {
 	@Autowired
 	private RT_Analytical_Pivot_Layout_Repo layoutRepo;
 
-	@Value("${analytical.pivot.allowedTables:RT_SLS,RT_SLS_REPORT,RT_IRS,RT_IRS2,RT_MID_FX_DEAL,RT_MATRIX_MONITORING,RT_NOOP_NET_POSITION,RT_NOOP_NET_POSITION_SUMM,RT_RWA_FUND_BASE_DATA,ELAR_SUMMARY_REPORT}")
+	@Value("${analytical.pivot.allowedTables:RT_SLS,RT_SLS_REPORT,RT_IRS,RT_IRS2,RT_MID_FX_DEAL,RT_MATRIX_MONITORING,RT_NOOP_NET_POSITION,RT_NOOP_NET_POSITION_SUMM,RT_RWA_FUND_BASE_DATA,ELAR_SUMMARY_REPORT,RT_OVERNIGHT_FOREIGN_CCY_DATA}")
 	private String configuredTables;
 
 	@Autowired

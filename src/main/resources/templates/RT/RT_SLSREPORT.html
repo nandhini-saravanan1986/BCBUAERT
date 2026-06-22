@@ -718,23 +718,6 @@
 			border: 1px solid #666;
 		}
 
-		.negative-warning-blink {
-			animation: negativeCellBlink 1.1s ease-in-out infinite;
-			color: #7f1d1d !important;
-			font-weight: 600;
-		}
-
-		@keyframes negativeCellBlink {
-
-			0%,
-			100% {
-				background-color: #fff1f2;
-			}
-
-			50% {
-				background-color: #fca5a5;
-			}
-		}
 	</style>
 	<style>
 		.dt-search {
@@ -1061,9 +1044,21 @@
 
 
 
+		function getReportDateValue() {
+			var el = document.getElementById('reportDate');
+			if (!el) {
+				return '';
+			}
+			return el.tagName === 'SELECT' ? el.value : el.textContent.trim();
+		}
+
+		function onReportDateChange() {
+			getreportBY();
+		}
+
 		function getreportBY() {
 
-			var reportdate = document.getElementById("reportDate").innerText;
+			var reportdate = getReportDateValue();
 			var currency = document.getElementById("currency").value;
 			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
@@ -1072,7 +1067,7 @@
 
 		function getreport() {
 
-			var reportdate = document.getElementById("reportDate").innerText;
+			var reportdate = getReportDateValue();
 			var currency = '[[${currency}]]'
 			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?currency=' + currency + '&reportdate=' + reportdate + '&formmode=summary'
@@ -1080,7 +1075,7 @@
 		}
 
 		function getdetails() {
-			var reportdate = document.getElementById("reportDate").innerText;
+			var reportdate = getReportDateValue();
 			var currency = document.getElementById("currencyin").value;
 			$("#loader").css("display", "flex");
 			location.href = 'SLSREPORT?reportdate=' + reportdate + '&formmode=Detail&currency=' + currency
@@ -1250,7 +1245,7 @@
 		}
 
 		function getdetailbyfilter(a) {
-			var reportdate = document.getElementById("reportDate").innerText;
+			var reportdate = getReportDateValue();
 			var currency = '[[${currency}]]'
 			var Rowid = a.getAttribute('data-rowid')
 			$("#loader").css("display", "flex");
@@ -1502,6 +1497,96 @@
 		font-size: 12px;
 	}
 
+	.sls-analytical-calc [data-sls-formula],
+	.sls-analytical-calc th[title],
+	.sls-analytical-calc input[title],
+	.sls-analytical-calc td[title] {
+		cursor: help;
+	}
+
+	.sls-gap-analysis-calc {
+		padding: 12px 16px 16px;
+	}
+
+	.sls-gap-analysis-calc .gap-analysis-scroll {
+		overflow-x: auto;
+	}
+
+	.sls-gap-analysis-calc table {
+		width: 100%;
+		min-width: 1180px;
+		border-collapse: collapse;
+		font-size: 11px;
+		font-family: Verdana, Geneva, Tahoma, sans-serif;
+	}
+
+	.sls-gap-analysis-calc table th,
+	.sls-gap-analysis-calc table td {
+		border: 1px solid #000;
+		padding: 4px 6px;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+
+	.sls-gap-analysis-calc table thead th {
+		background: var(--bank-header-gradient) !important;
+		color: var(--bank-text-on-dark) !important;
+		font-weight: 600;
+		text-align: center;
+		border-color: var(--bank-primary-dark) !important;
+	}
+
+	.sls-gap-analysis-calc .gap-enter-hdr {
+		background: var(--bank-header-mid) !important;
+		color: var(--bank-text-on-dark) !important;
+	}
+
+	.sls-gap-analysis-calc .gap-bucket-label {
+		text-align: left;
+		min-width: 210px;
+		white-space: normal;
+	}
+
+	.sls-gap-analysis-calc .gap-amt-cell {
+		text-align: right;
+		background: #fff;
+	}
+
+	.sls-gap-analysis-calc .gap-total-row td,
+	.sls-gap-analysis-calc .gap-total-row th {
+		font-weight: 700;
+		background: #f2f2f2;
+	}
+
+	.sls-gap-analysis-calc .gap-limit-cell {
+		text-align: right;
+		background: #fff2cc;
+	}
+
+	.sls-gap-analysis-calc .gap-input-cell input {
+		width: 100%;
+		min-width: 88px;
+		border: 1px solid #999;
+		padding: 3px 5px;
+		font-size: 11px;
+		text-align: right;
+		background: #fff;
+	}
+
+	.sls-gap-analysis-calc .limit-adherence-breach {
+		background-color: #dc2626 !important;
+		color: #ffffff;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	.sls-gap-analysis-calc .limit-adherence-ok {
+		background-color: #16a34a !important;
+		color: #ffffff;
+		font-weight: 600;
+		text-align: center;
+	}
+
 .loader-overlay { display:none; position:fixed; inset:0; background: rgba(10, 22, 45, 0.65); backdrop-filter: blur(4px); z-index:2050; align-items:center; justify-content:center; }
 .loader-card { width:320px; background:#ffffff; border-radius:16px; padding:22px 20px 18px; text-align:center; box-shadow:0 14px 34px rgba(8, 20, 40, 0.22); border:1px solid rgba(148, 163, 184, 0.35); }
 .loader-logo-wrap { position:relative; width:84px; height:84px; margin:0 auto 14px; display:grid; place-items:center; }
@@ -1565,7 +1650,14 @@
 				<div class="custom-tab-btn-group nav-buttons">
 					<span style="font-size: 14px; font-weight: 600; margin-right: 6px; white-space: nowrap;">
 						Report Date:
-						<span id="reportDate" th:text="${reportdate}">2025-07-04</span>
+						<select id="reportDate" class="role-btn" style="font-size: 14px; font-weight: 600; max-width: 150px;"
+							th:if="${formmode == 'summary' and reportDateOptions != null}" onchange="onReportDateChange()">
+							<option th:each="d : ${reportDateOptions}"
+								th:value="${#dates.format(d, 'dd/MM/yyyy')}"
+								th:selected="${reportdate != null and #dates.format(d, 'dd/MM/yyyy') == reportdate}"
+								th:text="${#dates.format(d, 'dd/MM/yyyy')}"></option>
+						</select>
+						<span id="reportDate" th:if="${formmode != 'summary' or reportDateOptions == null}" th:text="${reportdate}">2025-07-04</span>
 						<input type="hidden" id="currencyin" th:value="${currency}">
 					</span>
 					<th:block th:if="${formmode == 'summary'}" th:each="report : ${slslist}">
@@ -1577,6 +1669,39 @@
 						<input type="hidden" id="slsR70Over1yTo3y" th:value="${report.R70_OVER1Y_TO_3Y}" />
 						<input type="hidden" id="slsR70Over3yTo5y" th:value="${report.R70_OVER3Y_TO_5Y}" />
 						<input type="hidden" id="slsR70Over5y" th:value="${report.R70_OVER5Y}" />
+						<input type="hidden" id="gapR39_DAY1" th:value="${report.R39_DAY1}" />
+						<input type="hidden" id="gapR39_DAY2_7" th:value="${report.R39_DAY2_7}" />
+						<input type="hidden" id="gapR39_DAY8_14" th:value="${report.R39_DAY8_14}" />
+						<input type="hidden" id="gapR39_DAY15_30" th:value="${report.R39_DAY15_30}" />
+						<input type="hidden" id="gapR39_DAY31_TO_2M" th:value="${report.R39_DAY31_TO_2M}" />
+						<input type="hidden" id="gapR39_MORE2M_TO_3M" th:value="${report.R39_MORE2M_TO_3M}" />
+						<input type="hidden" id="gapR39_OVER3M_TO_6M" th:value="${report.R39_OVER3M_TO_6M}" />
+						<input type="hidden" id="gapR39_OVER6M_TO_1Y" th:value="${report.R39_OVER6M_TO_1Y}" />
+						<input type="hidden" id="gapR39_OVER1Y_TO_3Y" th:value="${report.R39_OVER1Y_TO_3Y}" />
+						<input type="hidden" id="gapR39_OVER3Y_TO_5Y" th:value="${report.R39_OVER3Y_TO_5Y}" />
+						<input type="hidden" id="gapR39_OVER5Y" th:value="${report.R39_OVER5Y}" />
+						<input type="hidden" id="gapR70_DAY1" th:value="${report.R70_DAY1}" />
+						<input type="hidden" id="gapR70_DAY2_7" th:value="${report.R70_DAY2_7}" />
+						<input type="hidden" id="gapR70_DAY8_14" th:value="${report.R70_DAY8_14}" />
+						<input type="hidden" id="gapR70_DAY15_30" th:value="${report.R70_DAY15_30}" />
+						<input type="hidden" id="gapR70_DAY31_TO_2M" th:value="${report.R70_DAY31_TO_2M}" />
+						<input type="hidden" id="gapR70_MORE2M_TO_3M" th:value="${report.R70_MORE2M_TO_3M}" />
+						<input type="hidden" id="gapR70_OVER3M_TO_6M" th:value="${report.R70_OVER3M_TO_6M}" />
+						<input type="hidden" id="gapR70_OVER6M_TO_1Y" th:value="${report.R70_OVER6M_TO_1Y}" />
+						<input type="hidden" id="gapR70_OVER1Y_TO_3Y" th:value="${report.R70_OVER1Y_TO_3Y}" />
+						<input type="hidden" id="gapR70_OVER3Y_TO_5Y" th:value="${report.R70_OVER3Y_TO_5Y}" />
+						<input type="hidden" id="gapR70_OVER5Y" th:value="${report.R70_OVER5Y}" />
+						<input type="hidden" id="gapR75_DAY1" th:value="${report.R75_DAY1}" />
+						<input type="hidden" id="gapR75_DAY2_7" th:value="${report.R75_DAY2_7}" />
+						<input type="hidden" id="gapR75_DAY8_14" th:value="${report.R75_DAY8_14}" />
+						<input type="hidden" id="gapR75_DAY15_30" th:value="${report.R75_DAY15_30}" />
+						<input type="hidden" id="gapR75_DAY31_TO_2M" th:value="${report.R75_DAY31_TO_2M}" />
+						<input type="hidden" id="gapR75_MORE2M_TO_3M" th:value="${report.R75_MORE2M_TO_3M}" />
+						<input type="hidden" id="gapR75_OVER3M_TO_6M" th:value="${report.R75_OVER3M_TO_6M}" />
+						<input type="hidden" id="gapR75_OVER6M_TO_1Y" th:value="${report.R75_OVER6M_TO_1Y}" />
+						<input type="hidden" id="gapR75_OVER1Y_TO_3Y" th:value="${report.R75_OVER1Y_TO_3Y}" />
+						<input type="hidden" id="gapR75_OVER3Y_TO_5Y" th:value="${report.R75_OVER3Y_TO_5Y}" />
+						<input type="hidden" id="gapR75_OVER5Y" th:value="${report.R75_OVER5Y}" />
 					</th:block>
 
 					<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()">
@@ -1584,6 +1709,11 @@
 							th:selected="${clist.REPORT_CURRENCY == currency}" th:text="${clist.REPORT_CURRENCY}">
 						</option>
 					</select>
+
+					<button type="button" class="role-btn" th:if="${formmode == 'summary'}" onclick="openGapAnalysisCalculator();"
+						title="Gap analysis calculator">
+						<i class="fa fa-chart-bar"></i> Gap analysis calculator
+					</button>
 
 					<button type="button" class="role-btn" onclick="openAnalyticalCalculator();" title="Analytical calculator">
 						<i class="fa fa-calculator"></i> Analytical calculator
@@ -2964,30 +3094,33 @@
 								</th>
 							</tr>
 
-							<tr>
+							<tr data-sls-row="75">
 
 								<th colspan="4" Style=" text-align: center;" th:text="${report.R75_PRODUCT}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY1}">
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="DAY1"
+									th:text="${report.R75_DAY1}">
 								</th>
-								<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_DAY2_7}">
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="DAY2_7"
+									th:text="${report.R75_DAY2_7}">
 								</th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="DAY8_14"
 									th:text="${report.R75_DAY8_14}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="DAY15_30"
 									th:text="${report.R75_DAY15_30}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="DAY31_TO_2M"
 									th:text="${report.R75_DAY31_TO_2M}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="MORE2M_TO_3M"
 									th:text="${report.R75_MORE2M_TO_3M}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER3M_TO_6M"
 									th:text="${report.R75_OVER3M_TO_6M}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER6M_TO_1Y"
 									th:text="${report.R75_OVER6M_TO_1Y}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER1Y_TO_3Y"
 									th:text="${report.R75_OVER1Y_TO_3Y}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;"
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER3Y_TO_5Y"
 									th:text="${report.R75_OVER3Y_TO_5Y}"></th>
-								<th Style="text-align: right; background-color:#f7a47c;" th:text="${report.R75_OVER5Y}">
+								<th Style="text-align: right; background-color:#f7a47c;" data-sls-col="OVER5Y"
+									th:text="${report.R75_OVER5Y}">
 								</th>
 								<th Style="text-align: right;background-color:#f7a47c"></th>
 							</tr>
@@ -2995,17 +3128,39 @@
 							<tr>
 
 								<th colspan="4" Style=" text-align: center;">Limit Adherence</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
-								<th Style="text-align: left; background-color:#f7a47c;">NO BREACH</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_DAY1 != null and report.R75_DAY1 != null and report.R74_DAY1.compareTo(report.R75_DAY1) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_DAY2_7 != null and report.R75_DAY2_7 != null and report.R74_DAY2_7.compareTo(report.R75_DAY2_7) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_DAY8_14 != null and report.R75_DAY8_14 != null and report.R74_DAY8_14.compareTo(report.R75_DAY8_14) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_DAY15_30 != null and report.R75_DAY15_30 != null and report.R74_DAY15_30.compareTo(report.R75_DAY15_30) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_DAY31_TO_2M != null and report.R75_DAY31_TO_2M != null and report.R74_DAY31_TO_2M.compareTo(report.R75_DAY31_TO_2M) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_MORE2M_TO_3M != null and report.R75_MORE2M_TO_3M != null and report.R74_MORE2M_TO_3M.compareTo(report.R75_MORE2M_TO_3M) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_OVER3M_TO_6M != null and report.R75_OVER3M_TO_6M != null and report.R74_OVER3M_TO_6M.compareTo(report.R75_OVER3M_TO_6M) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_OVER6M_TO_1Y != null and report.R75_OVER6M_TO_1Y != null and report.R74_OVER6M_TO_1Y.compareTo(report.R75_OVER6M_TO_1Y) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_OVER1Y_TO_3Y != null and report.R75_OVER1Y_TO_3Y != null and report.R74_OVER1Y_TO_3Y.compareTo(report.R75_OVER1Y_TO_3Y) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_OVER3Y_TO_5Y != null and report.R75_OVER3Y_TO_5Y != null and report.R74_OVER3Y_TO_5Y.compareTo(report.R75_OVER3Y_TO_5Y) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
+								<th Style="text-align: left; background-color:#f7a47c;"
+									th:text="${report.R74_OVER5Y != null and report.R75_OVER5Y != null and report.R74_OVER5Y.compareTo(report.R75_OVER5Y) < 0 ? 'Breach' : 'No Breach'}">
+								</th>
 								<th Style="text-align: left;background-color:#f7a47c"></th>
 							</tr>
 
@@ -3374,6 +3529,55 @@
 		</div>
 	</div>
 
+	<!-- Gap analysis calculator modal -->
+	<div class="modal fade" id="slsGapAnalysisModal" tabindex="-1" role="dialog" aria-labelledby="slsGapAnalysisTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document"
+			style="max-width: 96%; width: 1400px;">
+			<div class="modal-content">
+				<div class="modal-header sls-analytical-header">
+					<div class="sls-analytical-title-wrap">
+						<h5 class="modal-title sls-analytical-title" id="slsGapAnalysisTitle">Gap Analysis Calculator</h5>
+						<div class="sls-analytical-meta">
+							<span class="sls-analytical-badge">Report Date: <span th:text="${reportdate}">2025-07-04</span></span>
+							<span class="sls-analytical-badge">Selected Report type: <span th:text="${currency}">Report Type</span></span>
+						</div>
+					</div>
+					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"
+						style="opacity:1;">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body sls-gap-analysis-calc">
+					<div class="gap-analysis-scroll">
+						<table id="gapAnalysisTable">
+							<thead>
+								<tr>
+									<th rowspan="2">Bucket</th>
+									<th rowspan="2">Total Outflows</th>
+									<th rowspan="2">Cumulative Outflows</th>
+									<th rowspan="2">Total Inflows</th>
+									<th rowspan="2">Mismatch</th>
+									<th rowspan="2">Mismatch as % to Outflows</th>
+									<th rowspan="2">Cumulative Mismatch</th>
+									<th rowspan="2">Cumulative Mismatch as a %<br>to Cumulative Outflows</th>
+									<th rowspan="2">Limit As per Group<br>ALM Policy</th>
+									<th rowspan="2">Status</th>
+									<th colspan="2" class="gap-enter-hdr">Enter amount Here</th>
+								</tr>
+								<tr>
+									<th class="gap-enter-hdr">Outflow Amount</th>
+									<th class="gap-enter-hdr">Inflow Amount</th>
+								</tr>
+							</thead>
+							<tbody id="gapAnalysisBody"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Result Modal -->
 	<div class="modal fade" id="resultModal" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered">
@@ -3425,6 +3629,143 @@
 			return '0';
 		}
 		return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
+
+	var SLS_CALC_FORMULA = {
+		r1Out: 'Medium Term Outflows (Mn) = R39 (6m–3y) + Increase − Decrease',
+		r2Out: 'Long Term Outflows (Mn) = R39 (above 3y) + Increase − Decrease',
+		r5In: 'Medium Term Inflows (Mn) = R70 (6m–3y) + Increase − Decrease',
+		r6In: 'Long Term Inflows (Mn) = R70 (above 3y) + Increase − Decrease',
+		longTerm36: 'Long Term (3/6) = (Long Term Outflows ÷ Long Term Inflows) × 100',
+		medLongTerm: 'Medium to Long Term (2+3/5+6) = ((Med + Long Outflows) ÷ (Med + Long Inflows)) × 100',
+		longTerm36S2: 'Long Term (3/6) at Position As on date = (R39 Long ÷ R70 Long) × 100 from report',
+		medLongTermS2: 'Medium to Long Term at Position As on date = ((R39 Med+Long) ÷ (R70 Med+Long)) × 100 from report',
+		varLongTerm36: 'Variation = Current Long Term (3/6) − Prior Long Term (3/6)',
+		varMedLongTerm: 'Variation = Current Med–Long Term − Prior Med–Long Term',
+		hrLongTerm36: 'Head-Room Available = 70% − Long Term (3/6)',
+		hrMedLongTerm: 'Head-Room Available = 80% − Medium to Long Term (2+3/5+6)',
+		limitLongTerm: 'ALM policy limit for Long Term (3/6) ratio',
+		limitMedLong: 'ALM policy limit for Medium to Long Term ratio',
+		incResMed: 'Scenario 1 — increase medium-term resources/outflows (Mn)',
+		incResLong: 'Scenario 1 — increase long-term resources/outflows (Mn)',
+		decResMed: 'Scenario 2 — decrease medium-term resources/outflows (Mn)',
+		decResLong: 'Scenario 2 — decrease long-term resources/outflows (Mn)',
+		incAstMed: 'Scenario 1 — increase medium-term assets/inflows (Mn)',
+		incAstLong: 'Scenario 1 — increase long-term assets/inflows (Mn)',
+		decAstMed: 'Scenario 2 — decrease medium-term assets/inflows (Mn)',
+		decAstLong: 'Scenario 2 — decrease long-term assets/inflows (Mn)',
+		positionDate2: 'Position date for prior-period comparison ratios'
+	};
+
+	function setSlsCalcFormula(el, formula) {
+		if (el && formula) {
+			el.title = formula;
+			el.setAttribute('data-sls-formula', '1');
+		}
+	}
+
+	function nzSlsCalcAmt(val) {
+		return val == null ? 0 : val;
+	}
+
+	function applySlsCalcStaticFormulas() {
+		var staticFields = {
+			acIncResMed: SLS_CALC_FORMULA.incResMed,
+			acIncResLong: SLS_CALC_FORMULA.incResLong,
+			acDecResMed: SLS_CALC_FORMULA.decResMed,
+			acDecResLong: SLS_CALC_FORMULA.decResLong,
+			acIncAstMed: SLS_CALC_FORMULA.incAstMed,
+			acIncAstLong: SLS_CALC_FORMULA.incAstLong,
+			acDecAstMed: SLS_CALC_FORMULA.decAstMed,
+			acDecAstLong: SLS_CALC_FORMULA.decAstLong,
+			acPositionDate2: SLS_CALC_FORMULA.positionDate2,
+			acLongTerm36S2: SLS_CALC_FORMULA.longTerm36S2,
+			acMedLongTermS2: SLS_CALC_FORMULA.medLongTermS2
+		};
+		Object.keys(staticFields).forEach(function (id) {
+			setSlsCalcFormula(document.getElementById(id), staticFields[id]);
+		});
+		var calcPanel = document.querySelector('.ac-calc-layout');
+		if (calcPanel) {
+			calcPanel.querySelectorAll('td.sl-muted').forEach(function (cell) {
+				var text = (cell.textContent || '').trim();
+				if (text === '70%') {
+					setSlsCalcFormula(cell, SLS_CALC_FORMULA.limitLongTerm);
+				} else if (text === '80%') {
+					setSlsCalcFormula(cell, SLS_CALC_FORMULA.limitMedLong);
+				}
+			});
+		}
+	}
+
+	function updateSlsCalcDynamicFormulas() {
+		var baseR1 = getSlsR39MediumTermBaseMn();
+		var baseR2 = getSlsR39LongTermBaseMn();
+		var baseR5 = getSlsR70MediumTermBaseMn();
+		var baseR6 = getSlsR70LongTermBaseMn();
+		var incResMed = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acIncResMed').value));
+		var decResMed = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acDecResMed').value));
+		var incResLong = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acIncResLong').value));
+		var decResLong = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acDecResLong').value));
+		var incAstMed = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acIncAstMed').value));
+		var decAstMed = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acDecAstMed').value));
+		var incAstLong = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acIncAstLong').value));
+		var decAstLong = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acDecAstLong').value));
+
+		setSlsCalcFormula(document.getElementById('acR1Out'),
+			SLS_CALC_FORMULA.r1Out + ' = ' + formatCalcAmount(baseR1) + ' + ' +
+			formatCalcAmount(incResMed) + ' − ' + formatCalcAmount(decResMed));
+		setSlsCalcFormula(document.getElementById('acR2Out'),
+			SLS_CALC_FORMULA.r2Out + ' = ' + formatCalcAmount(baseR2) + ' + ' +
+			formatCalcAmount(incResLong) + ' − ' + formatCalcAmount(decResLong));
+		setSlsCalcFormula(document.getElementById('acR5In'),
+			SLS_CALC_FORMULA.r5In + ' = ' + formatCalcAmount(baseR5) + ' + ' +
+			formatCalcAmount(incAstMed) + ' − ' + formatCalcAmount(decAstMed));
+		setSlsCalcFormula(document.getElementById('acR6In'),
+			SLS_CALC_FORMULA.r6In + ' = ' + formatCalcAmount(baseR6) + ' + ' +
+			formatCalcAmount(incAstLong) + ' − ' + formatCalcAmount(decAstLong));
+
+		var r1 = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acR1Out').value));
+		var r2 = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acR2Out').value));
+		var r5 = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acR5In').value));
+		var r6 = nzSlsCalcAmt(parseCalcAmount(document.getElementById('acR6In').value));
+
+		var longTermHint = SLS_CALC_FORMULA.longTerm36;
+		if (r6 !== 0) {
+			longTermHint += ' = (' + formatCalcAmount(r2) + ' ÷ ' + formatCalcAmount(r6) + ') × 100';
+		}
+		setSlsCalcFormula(document.getElementById('acLongTerm36'), longTermHint);
+
+		var resMedLong = r1 + r2;
+		var astMedLong = r5 + r6;
+		var medLongHint = SLS_CALC_FORMULA.medLongTerm;
+		if (astMedLong !== 0) {
+			medLongHint += ' = (' + formatCalcAmount(resMedLong) + ' ÷ ' + formatCalcAmount(astMedLong) + ') × 100';
+		}
+		setSlsCalcFormula(document.getElementById('acMedLongTerm'), medLongHint);
+
+		var currentLt = parseCalcPercent(document.getElementById('acLongTerm36').value);
+		var priorLt = parseCalcPercent(document.getElementById('acLongTerm36S2').value);
+		setSlsCalcFormula(document.getElementById('acVarLongTerm36'),
+			SLS_CALC_FORMULA.varLongTerm36 + ' = ' + formatCalcPercent(currentLt) + ' − ' + formatCalcPercent(priorLt));
+		setSlsCalcFormula(document.getElementById('acHrLongTerm36'),
+			SLS_CALC_FORMULA.hrLongTerm36 + ' = 70% − ' + formatCalcPercent(currentLt));
+
+		var currentMl = parseCalcPercent(document.getElementById('acMedLongTerm').value);
+		var priorMl = parseCalcPercent(document.getElementById('acMedLongTermS2').value);
+		setSlsCalcFormula(document.getElementById('acVarMedLongTerm'),
+			SLS_CALC_FORMULA.varMedLongTerm + ' = ' + formatCalcPercent(currentMl) + ' − ' + formatCalcPercent(priorMl));
+		setSlsCalcFormula(document.getElementById('acHrMedLongTerm'),
+			SLS_CALC_FORMULA.hrMedLongTerm + ' = 80% − ' + formatCalcPercent(currentMl));
+
+		var ltS2El = document.getElementById('acLongTerm36S2');
+		if (ltS2El) {
+			setSlsCalcFormula(ltS2El, SLS_CALC_FORMULA.longTerm36S2 + ' → ' + ltS2El.value);
+		}
+		var mlS2El = document.getElementById('acMedLongTermS2');
+		if (mlS2El) {
+			setSlsCalcFormula(mlS2El, SLS_CALC_FORMULA.medLongTermS2 + ' → ' + mlS2El.value);
+		}
 	}
 
 	function getSlsHiddenReportAmount(id) {
@@ -3723,6 +4064,7 @@
 		setAcPercentField('acMedLongTerm', formatCalcPercent(medLongPct));
 		calcAcVarLongTerm36();
 		calcAcVarMedLongTerm();
+		updateSlsCalcDynamicFormulas();
 	}
 
 	function ensureAcPercentDefaults() {
@@ -3773,10 +4115,10 @@
 	}
 
 	function openAnalyticalCalculator() {
-		var reportDateEl = document.getElementById('reportDate');
+		var dateText = getReportDateValue();
 		var dateVal = '';
-		if (reportDateEl && reportDateEl.textContent) {
-			var parts = reportDateEl.textContent.trim().split('/');
+		if (dateText) {
+			var parts = dateText.trim().split('/');
 			if (parts.length === 3) {
 				var dd = parts[0].padStart(2, '0');
 				var mm = parts[1].padStart(2, '0');
@@ -3789,32 +4131,268 @@
 			d2.value = dateVal;
 		}
 		bindSlsAnalyticalCalcInputs();
+		applySlsCalcStaticFormulas();
 		ensureAcAmountDefaults();
 		recalcSlsAnalyticalRatios();
 		ensureAcPercentDefaults();
 		refreshAcSection2Ratios();
 		$('#slsAnalyticalCalcModal').modal('show');
 	}
-</script>
 
-<script>
-	function highlightNegativeTableCells() {
-		document.querySelectorAll('#usertable tbody td').forEach(function (cell) {
-			var rawText = (cell.textContent || '').replace(/,/g, '').trim();
-			var numericText = rawText.replace(/\(/g, '').replace(/\)/g, '');
-			var value = Number(numericText);
-			var isNegative = rawText.indexOf('-') !== -1 || (rawText.indexOf('(') !== -1 && rawText.indexOf(')') !== -1);
+	var SLS_GAP_BUCKETS = [
+		{ key: 'DAY1', label: 'Day - 1' },
+		{ key: 'DAY2_7', label: '2-7 Days' },
+		{ key: 'DAY8_14', label: '8-14 Days' },
+		{ key: 'DAY15_30', label: '15-30 Days' },
+		{ key: 'DAY31_TO_2M', label: '31 Days & upto 2 months' },
+		{ key: 'MORE2M_TO_3M', label: 'More than 2 months and upto 3 months' },
+		{ key: 'OVER3M_TO_6M', label: 'Over 3 Months and upto 6 months' },
+		{ key: 'OVER6M_TO_1Y', label: 'Over 6 Months and upto 1 year' },
+		{ key: 'OVER1Y_TO_3Y', label: 'Over 1 Year and upto 3 years' },
+		{ key: 'OVER3Y_TO_5Y', label: 'Over 3 Years and upto 5 years' },
+		{ key: 'OVER5Y', label: 'Over 5 Years' }
+	];
 
-			if (!Number.isNaN(value) && isNegative && value !== 0) {
-				cell.classList.add('negative-warning-blink');
-			} else {
-				cell.classList.remove('negative-warning-blink');
-			}
-		});
+	function roundGapRatio(value) {
+		if (!Number.isFinite(value)) {
+			return 0;
+		}
+		return Math.round(value * 10000) / 10000;
 	}
 
-	document.addEventListener('DOMContentLoaded', highlightNegativeTableCells);
-	window.addEventListener('pageshow', highlightNegativeTableCells);
+	function formatGapRatio(value) {
+		return roundGapRatio(value).toFixed(4);
+	}
+
+	function formatGapPercentRatio(value) {
+		if (!Number.isFinite(value)) {
+			return '0.00%';
+		}
+		return (roundGapRatio(value) * 100).toFixed(2) + '%';
+	}
+
+	function formatGapPercentLimit(value) {
+		if (!Number.isFinite(value)) {
+			return '0.00%';
+		}
+		return roundGapRatio(value).toFixed(2) + '%';
+	}
+
+	function isGapLimitBreached(cumMismatchPct, limit) {
+		if (limit == null || !Number.isFinite(cumMismatchPct)) {
+			return false;
+		}
+		/* Cumulative % is a ratio; limits (R75) are stored in percent points like the main report. */
+		return roundGapRatio(cumMismatchPct * 100) < limit;
+	}
+
+	function getGapBaseAmount(series, key) {
+		var hiddenId = 'gap' + series + '_' + key;
+		var hiddenEl = document.getElementById(hiddenId);
+		if (hiddenEl) {
+			var hiddenVal = parseCalcAmount(hiddenEl.value);
+			return hiddenVal == null ? 0 : hiddenVal;
+		}
+		var rowMap = { R39: '39', R70: '70', R75: '75' };
+		var rowNum = rowMap[series];
+		if (!rowNum) {
+			return 0;
+		}
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="' + rowNum + '"]');
+		if (!row) {
+			return 0;
+		}
+		var cell = row.querySelector('[data-sls-col="' + key + '"]');
+		if (!cell) {
+			return 0;
+		}
+		var tableVal = parseCalcAmount(cell.textContent);
+		return tableVal == null ? 0 : tableVal;
+	}
+
+	function getGapLimitAmount(key) {
+		var hiddenEl = document.getElementById('gapR75_' + key);
+		if (hiddenEl && String(hiddenEl.value).trim() !== '') {
+			var hiddenVal = parseCalcAmount(hiddenEl.value);
+			if (hiddenVal != null) {
+				return hiddenVal;
+			}
+		}
+		var row = document.querySelector('#usertable tbody tr[data-sls-row="75"]');
+		if (!row) {
+			return null;
+		}
+		var cell = row.querySelector('[data-sls-col="' + key + '"]');
+		if (!cell) {
+			return null;
+		}
+		return parseCalcAmount(cell.textContent);
+	}
+
+	function ensureGapAnalysisTable() {
+		var tbody = document.getElementById('gapAnalysisBody');
+		if (!tbody || tbody.childElementCount > 0) {
+			return;
+		}
+
+		SLS_GAP_BUCKETS.forEach(function (bucket) {
+			var tr = document.createElement('tr');
+			tr.setAttribute('data-gap-key', bucket.key);
+			tr.innerHTML =
+				'<td class="gap-bucket-label">' + bucket.label + '</td>' +
+				'<td class="gap-amt-cell" data-gap-field="outflow"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="cumOutflow"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="inflow"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="mismatch"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="mismatchPct"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="cumMismatch"></td>' +
+				'<td class="gap-amt-cell" data-gap-field="cumMismatchPct"></td>' +
+				'<td class="gap-limit-cell" data-gap-field="limit"></td>' +
+				'<td data-gap-field="status"></td>' +
+				'<td class="gap-input-cell"><input type="text" class="gap-outflow-input" data-gap-key="' + bucket.key +
+				'" inputmode="decimal" autocomplete="off" value="0" /></td>' +
+				'<td class="gap-input-cell"><input type="text" class="gap-inflow-input" data-gap-key="' + bucket.key +
+				'" inputmode="decimal" autocomplete="off" value="0" /></td>';
+			tbody.appendChild(tr);
+		});
+
+		var totalRow = document.createElement('tr');
+		totalRow.className = 'gap-total-row';
+		totalRow.innerHTML =
+			'<th class="gap-bucket-label">Total</th>' +
+			'<td class="gap-amt-cell" data-gap-total="outflow"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="cumOutflow"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="inflow"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="mismatch"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="mismatchPct"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="cumMismatch"></td>' +
+			'<td class="gap-amt-cell" data-gap-total="cumMismatchPct"></td>' +
+			'<td class="gap-limit-cell"></td>' +
+			'<td></td>' +
+			'<td></td>' +
+			'<td></td>';
+		tbody.appendChild(totalRow);
+	}
+
+	function bindGapAnalysisInputs() {
+		document.querySelectorAll('#slsGapAnalysisModal .gap-outflow-input, #slsGapAnalysisModal .gap-inflow-input')
+			.forEach(function (input) {
+				input.removeEventListener('input', recalcGapAnalysis);
+				input.addEventListener('input', recalcGapAnalysis);
+			});
+	}
+
+	function resetGapAnalysisInputs() {
+		document.querySelectorAll('#slsGapAnalysisModal .gap-outflow-input, #slsGapAnalysisModal .gap-inflow-input')
+			.forEach(function (input) {
+				input.value = '0';
+			});
+	}
+
+	function setGapField(row, field, text) {
+		var cell = row.querySelector('[data-gap-field="' + field + '"]');
+		if (cell) {
+			cell.textContent = text;
+		}
+	}
+
+	function setGapStatus(row, isBreach) {
+		var cell = row.querySelector('[data-gap-field="status"]');
+		if (!cell) {
+			return;
+		}
+		cell.textContent = isBreach ? 'Breach' : 'No Breach';
+		cell.classList.remove('limit-adherence-breach', 'limit-adherence-ok');
+		cell.classList.add(isBreach ? 'limit-adherence-breach' : 'limit-adherence-ok');
+	}
+
+	function recalcGapAnalysis() {
+		var tbody = document.getElementById('gapAnalysisBody');
+		if (!tbody) {
+			return;
+		}
+
+		var prevCumOutflow = 0;
+		var prevCumMismatch = 0;
+		var totalOutflow = 0;
+		var totalInflow = 0;
+		var totalMismatch = 0;
+		var lastCumOutflow = 0;
+		var lastCumMismatch = 0;
+		var lastCumMismatchPct = 0;
+
+		SLS_GAP_BUCKETS.forEach(function (bucket) {
+			var row = tbody.querySelector('tr[data-gap-key="' + bucket.key + '"]');
+			if (!row) {
+				return;
+			}
+
+			var outflowInput = row.querySelector('.gap-outflow-input');
+			var inflowInput = row.querySelector('.gap-inflow-input');
+			var outflowAdj = outflowInput ? parseCalcAmount(outflowInput.value) : 0;
+			var inflowAdj = inflowInput ? parseCalcAmount(inflowInput.value) : 0;
+			outflowAdj = outflowAdj == null ? 0 : outflowAdj;
+			inflowAdj = inflowAdj == null ? 0 : inflowAdj;
+
+			var baseOutflow = getGapBaseAmount('R39', bucket.key);
+			var baseInflow = getGapBaseAmount('R70', bucket.key);
+			var totalOut = baseOutflow + outflowAdj;
+			var totalIn = baseInflow + inflowAdj;
+			var cumOut = prevCumOutflow + totalOut;
+			var mismatch = totalIn - totalOut;
+			var mismatchPct = totalOut > 0 ? roundGapRatio(mismatch / totalOut) : 0;
+			var cumMismatch = prevCumMismatch + mismatch;
+			var cumMismatchPct = cumOut > 0 ? roundGapRatio(cumMismatch / cumOut) : 0;
+			var limit = getGapLimitAmount(bucket.key);
+			var isBreach = isGapLimitBreached(cumMismatchPct, limit);
+
+			setGapField(row, 'outflow', formatCalcAmount(totalOut));
+			setGapField(row, 'cumOutflow', formatCalcAmount(cumOut));
+			setGapField(row, 'inflow', formatCalcAmount(totalIn));
+			setGapField(row, 'mismatch', formatCalcAmount(mismatch));
+			setGapField(row, 'mismatchPct', formatGapPercentRatio(mismatchPct));
+			setGapField(row, 'cumMismatch', formatCalcAmount(cumMismatch));
+			setGapField(row, 'cumMismatchPct', formatGapPercentRatio(cumMismatchPct));
+			setGapField(row, 'limit', limit != null ? formatGapPercentLimit(limit) : '');
+			setGapStatus(row, isBreach);
+
+			prevCumOutflow = cumOut;
+			prevCumMismatch = cumMismatch;
+			totalOutflow += totalOut;
+			totalInflow += totalIn;
+			totalMismatch += mismatch;
+			lastCumOutflow = cumOut;
+			lastCumMismatch = cumMismatch;
+			lastCumMismatchPct = cumMismatchPct;
+		});
+
+		var totalRow = tbody.querySelector('.gap-total-row');
+		if (totalRow) {
+			var totalMismatchPct = totalOutflow > 0 ? roundGapRatio(totalMismatch / totalOutflow) : 0;
+			var totalCell = function (field, text) {
+				var cell = totalRow.querySelector('[data-gap-total="' + field + '"]');
+				if (cell) {
+					cell.textContent = text;
+				}
+			};
+			totalCell('outflow', formatCalcAmount(totalOutflow));
+			totalCell('cumOutflow', formatCalcAmount(lastCumOutflow));
+			totalCell('inflow', formatCalcAmount(totalInflow));
+			totalCell('mismatch', formatCalcAmount(totalMismatch));
+			totalCell('mismatchPct', formatGapPercentRatio(totalMismatchPct));
+			totalCell('cumMismatch', formatCalcAmount(lastCumMismatch));
+			totalCell('cumMismatchPct', formatGapPercentRatio(lastCumMismatchPct));
+		}
+	}
+
+	function openGapAnalysisCalculator() {
+		ensureGapAnalysisTable();
+		resetGapAnalysisInputs();
+		bindGapAnalysisInputs();
+		recalcGapAnalysis();
+		$('#slsGapAnalysisModal').modal('show');
+	}
 </script>
+
 
 </html>

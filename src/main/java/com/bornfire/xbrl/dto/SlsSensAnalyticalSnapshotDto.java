@@ -1,6 +1,8 @@
 package com.bornfire.xbrl.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Medium/long-term outflows (R39) and inflows (R70) with liquidity ratios for one scenario day.
@@ -16,6 +18,9 @@ public class SlsSensAnalyticalSnapshotDto {
 	private BigDecimal inflowLongTerm;
 	private BigDecimal longTermRatio;
 	private BigDecimal medLongTermRatio;
+	private List<IrsSensBucketRowDto> buckets = new ArrayList<>();
+	private BigDecimal totalRsl;
+	private BigDecimal totalRsa;
 
 	public Integer getSensDayOffset() {
 		return sensDayOffset;
@@ -87,5 +92,29 @@ public class SlsSensAnalyticalSnapshotDto {
 
 	public void setMedLongTermRatio(BigDecimal medLongTermRatio) {
 		this.medLongTermRatio = medLongTermRatio;
+	}
+
+	public List<IrsSensBucketRowDto> getBuckets() {
+		return buckets;
+	}
+
+	public void setBuckets(List<IrsSensBucketRowDto> buckets) {
+		this.buckets = buckets != null ? buckets : new ArrayList<>();
+	}
+
+	public BigDecimal getTotalRsl() {
+		return totalRsl;
+	}
+
+	public void setTotalRsl(BigDecimal totalRsl) {
+		this.totalRsl = totalRsl;
+	}
+
+	public BigDecimal getTotalRsa() {
+		return totalRsa;
+	}
+
+	public void setTotalRsa(BigDecimal totalRsa) {
+		this.totalRsa = totalRsa;
 	}
 }

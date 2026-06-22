@@ -1,6 +1,8 @@
 package com.bornfire.xbrl.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Change from Base (Day 0) for one sensitivity scenario day, with day ratios.
@@ -18,6 +20,9 @@ public class SlsSensDayVariationDto {
 	private BigDecimal medLongTermRatio;
 	private BigDecimal deltaLongTermRatio;
 	private BigDecimal deltaMedLongTermRatio;
+	private List<IrsSensBucketRowDto> buckets = new ArrayList<>();
+	private BigDecimal deltaTotalRsl;
+	private BigDecimal deltaTotalRsa;
 
 	public Integer getSensDayOffset() {
 		return sensDayOffset;
@@ -105,5 +110,29 @@ public class SlsSensDayVariationDto {
 
 	public void setDeltaMedLongTermRatio(BigDecimal deltaMedLongTermRatio) {
 		this.deltaMedLongTermRatio = deltaMedLongTermRatio;
+	}
+
+	public List<IrsSensBucketRowDto> getBuckets() {
+		return buckets;
+	}
+
+	public void setBuckets(List<IrsSensBucketRowDto> buckets) {
+		this.buckets = buckets != null ? buckets : new ArrayList<>();
+	}
+
+	public BigDecimal getDeltaTotalRsl() {
+		return deltaTotalRsl;
+	}
+
+	public void setDeltaTotalRsl(BigDecimal deltaTotalRsl) {
+		this.deltaTotalRsl = deltaTotalRsl;
+	}
+
+	public BigDecimal getDeltaTotalRsa() {
+		return deltaTotalRsa;
+	}
+
+	public void setDeltaTotalRsa(BigDecimal deltaTotalRsa) {
+		this.deltaTotalRsa = deltaTotalRsa;
 	}
 }

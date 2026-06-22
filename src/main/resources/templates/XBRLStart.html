@@ -231,7 +231,6 @@
 	<div class="logincontainer">
 		<!-- Left Side: Login Form -->
 		<div class="form-box login">
-			<h2>Log in</h2>
 			<form th:action="@{/login}" method="post">
 				<div class="input-box">
 					<input type="text" name="userid" onkeyup="this.value = this.value.toUpperCase()" autocomplete="off"
@@ -263,7 +262,7 @@
 		<div class="right-panel">
 			<img th:src="@{/images/client_Logo_bkp.png}" alt="Bornfire">
 			<h2>Welcome to </h2>
-			<h2>UAE Risk Analytical System</h2>
+			<h2>UAE Integrated Risk Analytical System</h2>
 		</div>
 	</div>
 
@@ -316,6 +315,10 @@
 		} else {
 			initLoginParticles();
 		}
+
+		try {
+			sessionStorage.removeItem('bobUaeMenuIntroShown');
+		} catch (e) { }
 	</script>
 </body>
 

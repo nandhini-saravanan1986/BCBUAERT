@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bornfire.xbrl.dto.IrsSensBucketRowDto;
 import com.bornfire.xbrl.dto.SlsSensAnalyticalSnapshotDto;
 import com.bornfire.xbrl.dto.SlsSensDayVariationDto;
 import com.bornfire.xbrl.dto.SlsSensPositionDateGroupDto;
@@ -29,6 +30,20 @@ import com.bornfire.xbrl.entities.RT_IRS_SENS_Repository;
 public class IrsSensReportService {
 
 	private static final SimpleDateFormat DISPLAY_DATE = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+	private static final String[][] IRS_BUCKET_META = {
+			{ "1 – 28 days", "20 % of total assets" },
+			{ "29 days and upto 3 months", "40 % of total assets" },
+			{ "Over 3 months and upto 6 months", "40 % of total assets" },
+			{ "Over 6 months and upto 1 year", "40 % of total assets" },
+			{ "Over 1 year and upto 3 years", "30 % of total assets" },
+			{ "Over 3 years and upto 5 years", "30 % of total assets" },
+			{ "Over 5 years and upto 7 years", "30 % of total assets" },
+			{ "Over 7 years and upto 10 years", "30 % of total assets" },
+			{ "Over 10 years and upto 15 years", "30 % of total assets" },
+			{ "Over 15 years", "30 % of total assets" },
+			{ "Non Rate Sensitive", "" }
+	};
 
 	@Autowired
 	private RT_IRS_SENS_Repository sensRepository;
@@ -174,6 +189,9 @@ public class IrsSensReportService {
 							delta(daySnapshot.getLongTermRatio(), base.getLongTermRatio()));
 					variation.setDeltaMedLongTermRatio(
 							delta(daySnapshot.getMedLongTermRatio(), base.getMedLongTermRatio()));
+					variation.setBuckets(buildBucketDeltas(daySnapshot.getBuckets(), base.getBuckets()));
+					variation.setDeltaTotalRsl(delta(daySnapshot.getTotalRsl(), base.getTotalRsl()));
+					variation.setDeltaTotalRsa(delta(daySnapshot.getTotalRsa(), base.getTotalRsa()));
 				}
 			} else {
 				variation.setAsOfDateFormatted(formatDate(addCalendarDays(positionDate, offset)));
@@ -220,7 +238,97 @@ public class IrsSensReportService {
 		snapshot.setInflowLongTerm(inLong);
 		snapshot.setLongTermRatio(ratioPercent(outLong, inLong));
 		snapshot.setMedLongTermRatio(ratioPercent(sum(outMed, outLong), sum(inMed, inLong)));
+
+		RT_IRS_SENS_ENTITIES2 assetsRow = assetsRowOpt.orElse(null);
+		populateBucketSnapshot(snapshot, liabilitiesRow, assetsRow);
 		return snapshot;
+	}
+
+	private void populateBucketSnapshot(SlsSensAnalyticalSnapshotDto snapshot, RT_IRS_SENS_ENTITIES liabilitiesRow,
+			RT_IRS_SENS_ENTITIES2 assetsRow) {
+		BigDecimal[] rslValues = extractRslBuckets(liabilitiesRow);
+		BigDecimal[] rsaValues = extractRsaBuckets(assetsRow);
+		List<IrsSensBucketRowDto> rows = new ArrayList<>();
+		BigDecimal totalRsl = BigDecimal.ZERO;
+		BigDecimal totalRsa = BigDecimal.ZERO;
+
+		for (int i = 0; i < IRS_BUCKET_META.length; i++) {
+			IrsSensBucketRowDto row = new IrsSensBucketRowDto();
+			row.setBucket(IRS_BUCKET_META[i][0]);
+			row.setLimitPct(IRS_BUCKET_META[i][1]);
+			row.setRsl(rslValues[i]);
+			row.setRsa(rsaValues[i]);
+			rows.add(row);
+			totalRsl = totalRsl.add(nz(rslValues[i]));
+			totalRsa = totalRsa.add(nz(rsaValues[i]));
+		}
+
+		snapshot.setBuckets(rows);
+		snapshot.setTotalRsl(totalRsl);
+		snapshot.setTotalRsa(totalRsa);
+	}
+
+	private static BigDecimal[] extractRslBuckets(RT_IRS_SENS_ENTITIES row) {
+		if (row == null) {
+			return emptyBucketArray();
+		}
+		return new BigDecimal[] {
+				row.getR45_day1_28(),
+				row.getR45_day29_3m(),
+				row.getR45_over3m_to_6m(),
+				row.getR45_over6m_to_1y(),
+				row.getR45_over1y_to_3y(),
+				row.getR45_over3y_to_5y(),
+				row.getR45_over5y_to_7y(),
+				row.getR45_over7y_to_10y(),
+				row.getR45_over10y_to_15y(),
+				row.getR45_over15y(),
+				row.getR45_non_sensitive()
+		};
+	}
+
+	private static BigDecimal[] extractRsaBuckets(RT_IRS_SENS_ENTITIES2 row) {
+		if (row == null) {
+			return emptyBucketArray();
+		}
+		return new BigDecimal[] {
+				row.getR84_day1_28(),
+				row.getR84_day29_3m(),
+				row.getR84_over3m_to_6m(),
+				row.getR84_over6m_to_1y(),
+				row.getR84_over1y_to_3y(),
+				row.getR84_over3y_to_5y(),
+				row.getR84_over5y_to_7y(),
+				row.getR84_over7y_to_10y(),
+				row.getR84_over10y_to_15y(),
+				row.getR84_over15y(),
+				row.getR84_non_sensitive()
+		};
+	}
+
+	private static BigDecimal[] emptyBucketArray() {
+		BigDecimal[] values = new BigDecimal[IRS_BUCKET_META.length];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = BigDecimal.ZERO;
+		}
+		return values;
+	}
+
+	private static List<IrsSensBucketRowDto> buildBucketDeltas(List<IrsSensBucketRowDto> current,
+			List<IrsSensBucketRowDto> baseRows) {
+		List<IrsSensBucketRowDto> deltas = new ArrayList<>();
+		int size = Math.min(current != null ? current.size() : 0, baseRows != null ? baseRows.size() : 0);
+		for (int i = 0; i < size; i++) {
+			IrsSensBucketRowDto cur = current.get(i);
+			IrsSensBucketRowDto base = baseRows.get(i);
+			IrsSensBucketRowDto deltaRow = new IrsSensBucketRowDto();
+			deltaRow.setBucket(cur.getBucket());
+			deltaRow.setLimitPct(cur.getLimitPct());
+			deltaRow.setRsl(delta(cur.getRsl(), base.getRsl()));
+			deltaRow.setRsa(delta(cur.getRsa(), base.getRsa()));
+			deltas.add(deltaRow);
+		}
+		return deltas;
 	}
 
 	private Optional<RT_IRS_SENS_ENTITIES2> findAssetsRow(Date positionDate, String currency, Integer dayOffset) {

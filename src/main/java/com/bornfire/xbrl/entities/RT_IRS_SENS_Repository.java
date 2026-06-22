@@ -17,13 +17,25 @@ public interface RT_IRS_SENS_Repository extends JpaRepository<RT_IRS_SENS_ENTITI
 			nativeQuery = true)
 	List<RT_IRS_SENS_ENTITIES> findAllForGroupedList();
 
+	@Query(value = "SELECT * FROM RT_IRS_SENS_REPORT WHERE TRUNC(REPORT_DATE) = (SELECT TRUNC(MAX(REPORT_DATE)) FROM RT_IRS_SENS_REPORT) "
+			+ "AND TO_NUMBER(SRL_NO) = (SELECT MAX(TO_NUMBER(SRL_NO)) FROM RT_IRS_SENS_REPORT "
+			+ "WHERE TRUNC(REPORT_DATE) = (SELECT TRUNC(MAX(REPORT_DATE)) FROM RT_IRS_SENS_REPORT)) "
+			+ "AND NVL(SENS_DAY_OFFSET, 0) = 0 AND ROWNUM = 1", nativeQuery = true)
+	Optional<RT_IRS_SENS_ENTITIES> findLatestReport();
+
+	@Query(value = "SELECT DISTINCT TRUNC(REPORT_DATE) FROM RT_IRS_SENS_REPORT ORDER BY 1 DESC", nativeQuery = true)
+	List<Date> findDistinctPositionDates();
+
 	@Query(value = "SELECT * FROM RT_IRS_SENS_REPORT WHERE TRUNC(REPORT_DATE) = TRUNC(:positionDate) "
 			+ "AND REPORT_CURRENCY = :currency ORDER BY NVL(SENS_DAY_OFFSET, 0)", nativeQuery = true)
 	List<RT_IRS_SENS_ENTITIES> findScenariosByPositionDateAndCurrency(@Param("positionDate") Date positionDate,
 			@Param("currency") String currency);
 
 	@Query(value = "SELECT * FROM RT_IRS_SENS_REPORT WHERE TRUNC(REPORT_DATE) = TRUNC(:positionDate) "
-			+ "AND REPORT_CURRENCY = :currency AND NVL(SENS_DAY_OFFSET, 0) = :dayOffset", nativeQuery = true)
+			+ "AND REPORT_CURRENCY = :currency AND NVL(SENS_DAY_OFFSET, 0) = :dayOffset "
+			+ "AND TO_NUMBER(SRL_NO) = (SELECT MAX(TO_NUMBER(SRL_NO)) FROM RT_IRS_SENS_REPORT "
+			+ "WHERE TRUNC(REPORT_DATE) = TRUNC(:positionDate) AND REPORT_CURRENCY = :currency "
+			+ "AND NVL(SENS_DAY_OFFSET, 0) = :dayOffset) AND ROWNUM = 1", nativeQuery = true)
 	Optional<RT_IRS_SENS_ENTITIES> findByPositionDateAndDayOffsetAndCurrency(
 			@Param("positionDate") Date positionDate, @Param("dayOffset") Integer dayOffset,
 			@Param("currency") String currency);

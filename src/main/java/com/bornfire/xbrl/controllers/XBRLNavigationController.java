@@ -129,6 +129,7 @@ import com.bornfire.xbrl.services.RT_RepoService;
 import com.bornfire.xbrl.services.RT_SLSServices;
 import com.bornfire.xbrl.services.SlsSensReportService;
 import com.bornfire.xbrl.services.IrsSensReportService;
+import com.bornfire.xbrl.services.RtLiquidityReportService;
 import com.bornfire.xbrl.dto.SlsSensScenarioDto;
 import com.bornfire.xbrl.util.UploadMessageHelper;
 import com.bornfire.xbrl.services.RT_SLS_BEHAVIOURAL_PER_SERVICES;
@@ -140,6 +141,7 @@ import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.DaylightDataUploadService;
+import com.bornfire.xbrl.services.OvernightForeignCcyUploadService;
 import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
 import com.bornfire.xbrl.services.counter_services;
@@ -163,6 +165,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	DaylightDataUploadService daylightDataUploadService;
+
+	@Autowired
+	OvernightForeignCcyUploadService overnightForeignCcyUploadService;
 	
 	@Autowired
 	ECLDataUploadService ecldatauploadservice;
@@ -214,6 +219,9 @@ public class XBRLNavigationController {
 
 	@Autowired
 	IrsSensReportService irsSensReportService;
+
+	@Autowired
+	RtLiquidityReportService rtLiquidityReportService;
 
 	@Autowired
 	AuditService auditService;
@@ -451,6 +459,16 @@ public class XBRLNavigationController {
 
 	public void setPagesize(String pagesize) {
 		this.pagesize = pagesize;
+	}
+
+	@RequestMapping(value = "MenuLanding", method = { RequestMethod.GET, RequestMethod.POST })
+	public String menuLanding(HttpServletRequest req) {
+		Boolean otpPending = (Boolean) req.getSession().getAttribute("LOGIN_OTP_PENDING");
+		Boolean otpVerified = (Boolean) req.getSession().getAttribute("LOGIN_OTP_VERIFIED");
+		if (Boolean.TRUE.equals(otpPending) || !Boolean.TRUE.equals(otpVerified)) {
+			return "redirect:/login-otp";
+		}
+		return "XBRLMenuLanding";
 	}
 
 	@RequestMapping(value = "Dashboard", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4291,16 +4309,22 @@ System.out.println("sixe==="+excelData.length);
 
 	@RequestMapping(value = "RT", method = { RequestMethod.GET, RequestMethod.POST })
 	public String RT(Model md, HttpServletRequest req) {
-		List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslist();
-		md.addAttribute("slslist", slslist);
-		return "RT/RT_SLS";
+		return rtLiquidityReportService.findLatestSlsReport()
+				.map(rtLiquidityReportService::buildSlsReportRedirectUrl)
+				.orElseGet(() -> {
+					md.addAttribute("slslist", rt_sls_repository.rtslslist());
+					return "RT/RT_SLS";
+				});
 	}
 
 	@RequestMapping(value = "IRS", method = { RequestMethod.GET, RequestMethod.POST })
 	public String IRS(Model md, HttpServletRequest req) {
-		List<RT_IRS_ENTITY> irsList = RT_irs_repository.rtirslist();
-		md.addAttribute("irsList", irsList);
-		return "RT/RT_IRS";
+		return rtLiquidityReportService.findLatestIrsReport()
+				.map(rtLiquidityReportService::buildIrsReportRedirectUrl)
+				.orElseGet(() -> {
+					md.addAttribute("irsList", RT_irs_repository.rtirslist());
+					return "RT/RT_IRS";
+				});
 	}
 
 	@RequestMapping(value = "SLSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4325,11 +4349,12 @@ System.out.println("sixe==="+excelData.length);
 
 		if (formmode == null || formmode.equals("summary")) {
 			// --- Summary Mode ---
-			List<RT_SLS_ENTITIES> slslist = rt_sls_repository.rtslslistbydate(reportdatefor, currency);
+			List<RT_SLS_ENTITIES> slslist = rtLiquidityReportService.resolveSlsSummaryList(reportdatefor, currency);
 			md.addAttribute("slslist", slslist);
 
 			List<RT_SLS_ENTITIES> currencylist = rt_sls_repository.rtslslistonlydate(reportdatefor);
 			md.addAttribute("currencylist", currencylist);
+			md.addAttribute("reportDateOptions", rtLiquidityReportService.findDistinctSlsReportDates());
 
 			md.addAttribute("currency", currency);
 			md.addAttribute("reportdate", reportdate);
@@ -4468,8 +4493,12 @@ System.out.println("sixe==="+excelData.length);
 
 	@RequestMapping(value = "RT_SLS_SENS", method = { RequestMethod.GET, RequestMethod.POST })
 	public String RT_SLS_SENS(Model md, HttpServletRequest req) {
-		md.addAttribute("positionDateGroups", slsSensReportService.buildPositionDateGroups());
-		return "RT/RT_SLS_SENS";
+		return rtLiquidityReportService.findLatestSlsSensReport()
+				.map(rtLiquidityReportService::buildSlsSensReportRedirectUrl)
+				.orElseGet(() -> {
+					md.addAttribute("positionDateGroups", slsSensReportService.buildPositionDateGroups());
+					return "RT/RT_SLS_SENS";
+				});
 	}
 
 	@RequestMapping(value = "SLS_SENSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4551,6 +4580,7 @@ System.out.println("sixe==="+excelData.length);
 			md.addAttribute("baseScenario", activeScenario.isBaseScenario());
 			md.addAttribute("scenarioSwitcher", scenarioSwitcher);
 			md.addAttribute("positionDateFormatted", SlsSensReportService.formatDate(positionDate));
+			md.addAttribute("positionDateOptions", rtLiquidityReportService.findDistinctSlsSensPositionDates());
 			md.addAttribute("formmode", "summary");
 		} else if (formmode.equals("Detail")) {
 			md.addAttribute("error", "Detail view is not configured for SLS Sensitivity Report.");
@@ -4631,8 +4661,12 @@ System.out.println("sixe==="+excelData.length);
 
 	@RequestMapping(value = "RT_IRS_SENS", method = { RequestMethod.GET, RequestMethod.POST })
 	public String RT_IRS_SENS(Model md, HttpServletRequest req) {
-		md.addAttribute("positionDateGroups", irsSensReportService.buildPositionDateGroups());
-		return "RT/RT_IRS_SENS";
+		return rtLiquidityReportService.findLatestIrsSensReport()
+				.map(rtLiquidityReportService::buildIrsSensReportRedirectUrl)
+				.orElseGet(() -> {
+					md.addAttribute("positionDateGroups", irsSensReportService.buildPositionDateGroups());
+					return "RT/RT_IRS_SENS";
+				});
 	}
 
 	@RequestMapping(value = "IRS_SENSREPORT", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4715,6 +4749,7 @@ System.out.println("sixe==="+excelData.length);
 			md.addAttribute("baseScenario", activeScenario.isBaseScenario());
 			md.addAttribute("scenarioSwitcher", scenarioSwitcher);
 			md.addAttribute("positionDateFormatted", IrsSensReportService.formatDate(positionDate));
+			md.addAttribute("positionDateOptions", rtLiquidityReportService.findDistinctIrsSensPositionDates());
 			md.addAttribute("formmode", "summary");
 		} else if (formmode.equals("Detail")) {
 			md.addAttribute("error", "Detail view is not configured for IRS Sensitivity Report.");
@@ -4813,7 +4848,7 @@ System.out.println("sixe==="+excelData.length);
 		/* ===================== SUMMARY ===================== */
 		if ("summary".equalsIgnoreCase(formmode)) {
 
-			List<RT_IRS_ENTITY> irslist = RT_irs_repository.rtirslistbydate(reportDateFor, currency);
+			List<RT_IRS_ENTITY> irslist = rtLiquidityReportService.resolveIrsSummaryList(reportDateFor, currency);
 
 			List<RT_IRS_ENTITY2> irsList2 = RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
 
@@ -4822,6 +4857,7 @@ System.out.println("sixe==="+excelData.length);
 			md.addAttribute("irslist", irslist);
 			md.addAttribute("irsList2", irsList2);
 			md.addAttribute("currencylist", currencyList);
+			md.addAttribute("reportDateOptions", rtLiquidityReportService.findDistinctIrsReportDates());
 		}
 
 		/* ===================== DETAIL ===================== */
@@ -4891,7 +4927,7 @@ System.out.println("sixe==="+excelData.length);
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename + ".xls");
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename + " "+currency+ ".xls");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
@@ -5151,6 +5187,8 @@ System.out.println("sixe==="+excelData.length);
 	        return rwaService.getUploadedBillDates();
 	    } else if ("FXP".equals(reportType)) {
 	        return rtFxPositionService.getUploadedDates();
+	    } else if ("ONFC".equals(reportType)) {
+	        return overnightForeignCcyUploadService.getUploadedDates();
 	    } else if ("TR_PLC".equals(reportType)) {
 	        return rtmidFxDealservice.getTreasuryPlacementUploadedDates();
 	    } else if ("TR_TB".equals(reportType)) {
@@ -5281,6 +5319,8 @@ System.out.println("sixe==="+excelData.length);
 	        	resultMsg =varportfoliouploadservice.uploadVarPortfolio(file, reportType, toDate, forceUpload);
 	        } else if("DAY_LIGHT".equals(reportType)) {
 	        	resultMsg = daylightDataUploadService.UploadDaylight(file, reportType, toDate, forceUpload);
+	        } else if ("ONFC".equals(reportType)) {
+	        	resultMsg = overnightForeignCcyUploadService.uploadOvernightForeignCcy(file, toDate, forceUpload);
 	        }
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);
@@ -5488,6 +5528,7 @@ System.out.println("sixe==="+excelData.length);
 				userId = "SYSTEM";
 
 			ObjectMapper mapper = new ObjectMapper();
+			mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 			List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> details = mapper.readValue(json,
 					new TypeReference<List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY>>() {
 					});
@@ -5500,6 +5541,9 @@ System.out.println("sixe==="+excelData.length);
 
 			if (details != null) {
 				for (MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY detail : details) {
+					if (detail.getAdhocLimit() == null) {
+						continue;
+					}
 					detail.setSrlNo(srlNo);
 					detail.setCounterPartyBank(bankName);
 					detail.setCreateUser(userId);

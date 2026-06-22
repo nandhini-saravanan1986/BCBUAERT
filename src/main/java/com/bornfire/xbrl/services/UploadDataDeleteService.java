@@ -18,6 +18,7 @@ import com.bornfire.xbrl.entities.RT_RWA_NonFund_base_data_rep;
 import com.bornfire.xbrl.entities.RT_SLS_BEHAVIOURAL_PER_REP;
 import com.bornfire.xbrl.entities.RT_Treasury_master_tb_repo;
 import com.bornfire.xbrl.entities.RT_Treasury_swd_data_repo;
+import com.bornfire.xbrl.entities.RT_Overnight_Foreign_Ccy_Data_Repo;
 import com.bornfire.xbrl.entities.RtInvestmentDealDataDump_Rep;
 import com.bornfire.xbrl.entities.RtPlacementDealDataDump_Rep;
 import com.bornfire.xbrl.entities.Daylight_data_repo;
@@ -56,6 +57,8 @@ public class UploadDataDeleteService {
     private RtPlacementDealDataDump_Rep placementDealDumpRepo;
     @Autowired
     private Daylight_data_repo daylightDataRepo;
+    @Autowired
+    private RT_Overnight_Foreign_Ccy_Data_Repo overnightForeignCcyRepo;
     @Autowired
     private ECLDataUploadService eclDataUploadService;
     @Autowired
@@ -141,6 +144,9 @@ public class UploadDataDeleteService {
                 break;
             case "DAY_LIGHT":
                 daylightDataRepo.Deletedetail(reportDate);
+                break;
+            case "ONFC":
+                overnightForeignCcyRepo.deleteByReportDate(reportDate);
                 break;
             default:
                 throw new RuntimeException("Delete is not supported for report type: " + reportType);

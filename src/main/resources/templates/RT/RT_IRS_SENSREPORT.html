@@ -621,23 +621,6 @@
 			border: 1px solid #666;
 		}
 
-		.negative-warning-blink {
-			animation: negativeCellBlink 1.1s ease-in-out infinite;
-			color: #7f1d1d !important;
-			font-weight: 600;
-		}
-
-		@keyframes negativeCellBlink {
-
-			0%,
-			100% {
-				background-color: #fff1f2;
-			}
-
-			50% {
-				background-color: #fca5a5;
-			}
-		}
 	</style>
 
 	<style>
@@ -828,10 +811,27 @@
 
 
 
+		function getPositionDateValue() {
+			var el = document.getElementById('positionDate');
+			if (!el) {
+				var hidden = document.getElementById('reportDate');
+				return hidden ? hidden.textContent.trim() : '';
+			}
+			return el.tagName === 'SELECT' ? el.value : el.textContent.trim();
+		}
+
+		function onPositionDateChange() {
+			var currencyEl = document.getElementById('currency') || document.getElementById('currencyin');
+			var currency = currencyEl ? currencyEl.value : '';
+			$("#loader").css("display", "flex");
+			location.href = 'IRS_SENSREPORT?formmode=summary'
+				+ '&reportdate=' + encodeURIComponent(getPositionDateValue())
+				+ '&currency=' + encodeURIComponent(currency)
+				+ '&dayOffset=0';
+		}
+
 		function buildSensReportQuery(currency, formmode) {
-			var reportdate = document.getElementById("positionDate")
-				? document.getElementById("positionDate").innerText
-				: document.getElementById("reportDate").innerText;
+			var reportdate = getPositionDateValue();
 			var asOfDateEl = document.getElementById("asOfDateIn");
 			var dayOffsetEl = document.getElementById("dayOffsetIn");
 			var q = 'formmode=' + encodeURIComponent(formmode || 'summary')
@@ -1369,6 +1369,219 @@
 		#pageHeader.role-page-header .black-text {
 			color: #fff !important;
 		}
+
+		#irsAnalyticalCalcModal.modal {
+			z-index: 4110 !important;
+			padding-top: 70px;
+		}
+
+		body.modal-open .modal-backdrop.irs-analytical-backdrop {
+			z-index: 4105 !important;
+		}
+
+		#irsAnalyticalCalcModal .modal-dialog {
+			max-width: 1320px;
+			width: 96%;
+			margin-bottom: 24px;
+		}
+
+		#irsAnalyticalCalcModal .modal-content {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+
+		.irs-analytical-header {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: var(--bank-panel-gradient) !important;
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
+			color: #fff;
+			border-bottom: 0;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 6px 18px rgba(90, 30, 30, .22);
+			padding: 10px 44px 10px 18px;
+			text-align: center;
+		}
+
+		.irs-analytical-header .close {
+			position: absolute;
+			top: 50%;
+			right: 14px;
+			transform: translateY(-50%);
+			margin: 0;
+			padding: 0;
+		}
+
+		.irs-analytical-title-wrap {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			gap: 6px;
+			width: 100%;
+		}
+
+		.irs-analytical-title {
+			font-size: 16px;
+			font-weight: 700;
+			letter-spacing: .2px;
+			margin: 0;
+			text-transform: uppercase;
+			text-align: center;
+			width: 100%;
+		}
+
+		.irs-analytical-meta {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+
+		.irs-analytical-badge {
+			background: rgba(255, 255, 255, .18);
+			border: 1px solid rgba(255, 255, 255, .45);
+			border-radius: 16px;
+			color: #fff;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 4px 10px;
+		}
+
+		#irsAnalyticalCalcModal .modal-body.irs-analytical-calc {
+			padding: 12px 14px;
+		}
+
+		.irs-analytical-calc table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 11px;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+		}
+
+		.irs-analytical-calc table th,
+		.irs-analytical-calc table td {
+			border: 1px solid #ffffff;
+			padding: 4px 6px;
+			vertical-align: middle;
+		}
+
+		#irsAnalyticalCalcTable thead tr:nth-child(1) th {
+			background: var(--bank-header-mid) !important;
+			color: #fff !important;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		#irsAnalyticalCalcTable thead tr:nth-child(2) th {
+			background: var(--table-header) !important;
+			color: #fff !important;
+			font-weight: bold;
+			font-size: 12px;
+			text-align: center;
+			vertical-align: middle;
+			white-space: normal;
+		}
+
+		.irs-analytical-calc .irs-calc-data-as-on {
+			background: var(--table-header) !important;
+			color: #fff !important;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		.irs-analytical-calc .irs-calc-enter-hint {
+			background: #ffff00 !important;
+			color: #000 !important;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		#irsAnalyticalCalcTable thead .irs-calc-limit-col {
+			background: #92d050 !important;
+			color: #000 !important;
+		}
+
+		#irsAnalyticalCalcTable thead .irs-calc-input-col {
+			background: #e2efda !important;
+			color: #000 !important;
+		}
+
+		#irsAnalyticalCalcTable tbody .irs-calc-limit-col.irs-calc-limit-ok {
+			background: #92d050 !important;
+		}
+
+		#irsAnalyticalCalcTable tbody .irs-calc-limit-col.irs-calc-limit-ok .irs-calc-limit {
+			background: #92d050 !important;
+		}
+
+		#irsAnalyticalCalcTable tbody .irs-calc-limit-col.irs-calc-limit-breach {
+			background: #ff0000 !important;
+			color: #fff;
+		}
+
+		#irsAnalyticalCalcTable tbody .irs-calc-limit-col.irs-calc-limit-breach .irs-calc-limit {
+			background: #ff0000 !important;
+			color: #fff !important;
+			font-weight: 600;
+		}
+
+		#irsAnalyticalCalcTable tbody .irs-calc-input-col {
+			background: #e2efda;
+		}
+
+		#irsAnalyticalCalcTable thead .irs-calc-limit-pct-col,
+		#irsAnalyticalCalcTable tbody .irs-calc-limit-pct-col {
+			background: #ff0000 !important;
+			color: #fff !important;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		.irs-analytical-calc input.calc-input {
+			width: 100%;
+			border: 1px solid #999;
+			padding: 3px 5px;
+			font-size: 11px;
+			text-align: right;
+			box-sizing: border-box;
+			min-width: 68px;
+			background: #fff;
+		}
+
+		.irs-analytical-calc input.calc-input-green {
+			background: #92d050;
+			font-weight: 600;
+		}
+
+		.irs-analytical-calc input.calc-input-readonly {
+			background: #f2f2f2;
+		}
+
+		.irs-analytical-calc .irs-calc-total-row td {
+			font-weight: 700;
+			background: #f2f2f2;
+		}
+
+		.irs-analytical-calc .irs-calc-bucket-label {
+			text-align: left;
+			white-space: nowrap;
+		}
+
+		.irs-analytical-calc .amt-negative {
+			color: #c00000;
+		}
+
+		.irs-analytical-calc [data-irs-formula],
+		.irs-analytical-calc th[title],
+		.irs-analytical-calc input[title],
+		.irs-analytical-calc td[title] {
+			cursor: help;
+		}
 	</style>
 </head>
 
@@ -1394,7 +1607,16 @@
 					<div th:if="${formmode == 'summary' and error == null}"
 						th:class="${baseScenario} ? 'sens-context-banner' : 'sens-context-banner sens-scenario-shifted'">
 						<div class="sens-meta-line">
-							<span><strong>Position:</strong> <span id="positionDate" th:text="${positionDateFormatted}">31/01/2025</span></span>
+							<span><strong>Position:</strong>
+								<select id="positionDate" class="role-btn" style="font-size: 13px; font-weight: 600; max-width: 140px;"
+									th:if="${formmode == 'summary' and positionDateOptions != null}" onchange="onPositionDateChange()">
+									<option th:each="d : ${positionDateOptions}"
+										th:value="${#dates.format(d, 'dd/MM/yyyy')}"
+										th:selected="${positionDateFormatted != null and #dates.format(d, 'dd/MM/yyyy') == positionDateFormatted}"
+										th:text="${#dates.format(d, 'dd/MM/yyyy')}"></option>
+								</select>
+								<span id="positionDate" th:if="${formmode != 'summary' or positionDateOptions == null}" th:text="${positionDateFormatted}">31/01/2025</span>
+							</span>
 							<span><strong>As-of:</strong> <span id="asOfDateDisplay" th:text="${asOfDate}">01/02/2025</span></span>
 							<span th:classappend="${baseScenario} ? 'sens-badge sens-badge-base' : 'sens-badge sens-badge-offset'"
 								th:text="${scenarioLabel}">Day +1</span>
@@ -1415,6 +1637,32 @@
 							<span id="reportDate" th:text="${reportdate}">2025-07-04</span>
 						</span>
 
+						<th:block th:if="${formmode == 'summary' and irslist != null and !irslist.isEmpty() and irsList2 != null and !irsList2.isEmpty()}">
+							<input type="hidden" id="irsTotalAssets" th:value="${irsList2[0].r84_total}" />
+							<input type="hidden" id="irsR45Day1_28" th:value="${irslist[0].r45_day1_28}" />
+							<input type="hidden" id="irsR45Day29_3m" th:value="${irslist[0].r45_day29_3m}" />
+							<input type="hidden" id="irsR45Over3mTo6m" th:value="${irslist[0].r45_over3m_to_6m}" />
+							<input type="hidden" id="irsR45Over6mTo1y" th:value="${irslist[0].r45_over6m_to_1y}" />
+							<input type="hidden" id="irsR45Over1yTo3y" th:value="${irslist[0].r45_over1y_to_3y}" />
+							<input type="hidden" id="irsR45Over3yTo5y" th:value="${irslist[0].r45_over3y_to_5y}" />
+							<input type="hidden" id="irsR45Over5yTo7y" th:value="${irslist[0].r45_over5y_to_7y}" />
+							<input type="hidden" id="irsR45Over7yTo10y" th:value="${irslist[0].r45_over7y_to_10y}" />
+							<input type="hidden" id="irsR45Over10yTo15y" th:value="${irslist[0].r45_over10y_to_15y}" />
+							<input type="hidden" id="irsR45Over15y" th:value="${irslist[0].r45_over15y}" />
+							<input type="hidden" id="irsR45NonSensitive" th:value="${irslist[0].r45_non_sensitive}" />
+							<input type="hidden" id="irsR84Day1_28" th:value="${irsList2[0].r84_day1_28}" />
+							<input type="hidden" id="irsR84Day29_3m" th:value="${irsList2[0].r84_day29_3m}" />
+							<input type="hidden" id="irsR84Over3mTo6m" th:value="${irsList2[0].r84_over3m_to_6m}" />
+							<input type="hidden" id="irsR84Over6mTo1y" th:value="${irsList2[0].r84_over6m_to_1y}" />
+							<input type="hidden" id="irsR84Over1yTo3y" th:value="${irsList2[0].r84_over1y_to_3y}" />
+							<input type="hidden" id="irsR84Over3yTo5y" th:value="${irsList2[0].r84_over3y_to_5y}" />
+							<input type="hidden" id="irsR84Over5yTo7y" th:value="${irsList2[0].r84_over5y_to_7y}" />
+							<input type="hidden" id="irsR84Over7yTo10y" th:value="${irsList2[0].r84_over7y_to_10y}" />
+							<input type="hidden" id="irsR84Over10yTo15y" th:value="${irsList2[0].r84_over10y_to_15y}" />
+							<input type="hidden" id="irsR84Over15y" th:value="${irsList2[0].r84_over15y}" />
+							<input type="hidden" id="irsR84NonSensitive" th:value="${irsList2[0].r84_non_sensitive}" />
+						</th:block>
+
 						<select class="role-btn" th:if="${formmode == 'summary'}" id="currency" onchange="getreportBY()">
 							<option th:each="clist : ${currencylist}" th:value="${clist.report_currency}"
 								th:selected="${clist.report_currency == currency}" th:text="${clist.report_currency}">
@@ -1428,6 +1676,11 @@
 						<button type="button" th:if="${formmode == 'summary'}"
 							class="role-btn" onclick="showIrsSensSevenDaySummary();" title="Summary">
 							<i class="fa fa-list-alt"> Summary</i>
+						</button>
+
+						<button type="button" class="role-btn" th:if="${formmode == 'summary'}"
+							onclick="openIrsAnalyticalCalculator();" title="Analytical calculator">
+							<i class="fa fa-calculator"></i> Analytical calculator
 						</button>
 
 						<button type="button" th:if="${formmode == 'summary'}"
@@ -5129,6 +5382,60 @@
 				</div>
 			</div>
 
+			<!-- IRS Analytical calculator modal -->
+			<div class="modal fade" id="irsAnalyticalCalcModal" tabindex="-1" role="dialog"
+				aria-labelledby="irsAnalyticalCalcTitle" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+					<div class="modal-content">
+						<div class="modal-header irs-analytical-header">
+							<div class="irs-analytical-title-wrap">
+								<h5 class="modal-title irs-analytical-title" id="irsAnalyticalCalcTitle">
+									IRS Sensitivity Analytical Calculator
+								</h5>
+								<div class="irs-analytical-meta">
+									<span class="irs-analytical-badge">Report Date: <span
+											th:text="${reportdate}">31/12/2025</span></span>
+									<span class="irs-analytical-badge">Currency: <span
+											th:text="${currency}">USD</span></span>
+								</div>
+							</div>
+							<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"
+								style="opacity:1;">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body irs-analytical-calc">
+							<table id="irsAnalyticalCalcTable">
+								<thead>
+									<tr>
+										<th class="irs-calc-data-as-on" colspan="7">
+											Data as on <span id="irsCalcDataAsOn" th:text="${reportdate}">31/12/2025</span>
+										</th>
+										<th></th>
+										<th class="irs-calc-enter-hint" colspan="2">&gt;&gt;Enter Amt Here</th>
+										<th class="irs-calc-limit-pct-col"></th>
+									</tr>
+									<tr>
+										<th class="irs-calc-bucket-label">Buckets</th>
+										<th>Limit%</th>
+										<th class="text-end">RSL Mn.</th>
+										<th class="text-end">RSA Mn.</th>
+										<th class="text-end">Gap Mn.</th>
+										<th class="text-end irs-calc-limit-col">Limit in Amt</th>
+										<th class="text-end" id="irsCalcNetGapHeader">Net Gap as % to Total Assets</th>
+										<th style="width:12px;"></th>
+										<th class="text-end irs-calc-input-col">Liabilities</th>
+										<th class="text-end irs-calc-input-col">Asset</th>
+										<th class="text-end irs-calc-limit-pct-col">Limit %</th>
+									</tr>
+								</thead>
+								<tbody id="irsAnalyticalCalcBody"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Modal -->
 			<div class="modal fade" id="resultModal" tabindex="-1">
 				<div class="modal-dialog modal-dialog-centered">
@@ -5163,25 +5470,6 @@
 
 		$('#resultModal').modal('show');
 	}
-</script>
-<script>
-	function highlightNegativeTableCells() {
-		document.querySelectorAll('#usertable tbody td').forEach(function (cell) {
-			var rawText = (cell.textContent || '').replace(/,/g, '').trim();
-			var numericText = rawText.replace(/\(/g, '').replace(/\)/g, '');
-			var value = Number(numericText);
-			var isNegative = rawText.indexOf('-') !== -1 || (rawText.indexOf('(') !== -1 && rawText.indexOf(')') !== -1);
-
-			if (!Number.isNaN(value) && isNegative && value !== 0) {
-				cell.classList.add('negative-warning-blink');
-			} else {
-				cell.classList.remove('negative-warning-blink');
-			}
-		});
-	}
-
-	document.addEventListener('DOMContentLoaded', highlightNegativeTableCells);
-	window.addEventListener('pageshow', highlightNegativeTableCells);
 </script>
 <style>
 	.text-left {
@@ -5353,22 +5641,27 @@
 		border-bottom: 2px solid #2563EB;
 	}
 
-	#irsSensSummaryModal .irs-summary-analytical td.amt-right,
-	#irsSensSummaryModal .irs-summary-analytical th.amt-right {
+	#irsSensSummaryModal .irs-summary-bucket {
+		font-size: 12px;
+		margin-bottom: 0;
+	}
+
+	#irsSensSummaryModal .irs-summary-bucket thead th {
+		background-color: #dee2e6;
+		text-align: center;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+
+	#irsSensSummaryModal .irs-summary-bucket td.amt-right,
+	#irsSensSummaryModal .irs-summary-bucket th.amt-right {
 		text-align: right;
 		font-variant-numeric: tabular-nums;
 	}
 
-	#irsSensSummaryModal .irs-summary-ratio {
-		color: #1a7a1a;
-		font-weight: 600;
-	}
-
-	#irsSensSummaryModal .irs-summary-ratio-delta {
-		font-size: 11px;
-		color: #666;
-		font-weight: normal;
-		margin-left: 4px;
+	#irsSensSummaryModal .irs-summary-bucket tbody tr.total-row {
+		font-weight: 700;
+		background-color: #f2f2f2;
 	}
 </style>
 
@@ -5423,46 +5716,53 @@
 		return Number(value).toFixed(2) + '%';
 	}
 
-	function formatSummaryRatioCell(ratio, delta) {
-		if (ratio == null || ratio === '' || !Number.isFinite(Number(ratio))) {
+	function formatSummarySignedAmount(value) {
+		if (value == null || value === '' || !Number.isFinite(Number(value))) {
 			return '—';
 		}
-		var html = '<span class="irs-summary-ratio">' + formatSummaryPercent(ratio) + '</span>';
-		if (delta != null && delta !== '' && Number.isFinite(Number(delta)) && Number(delta) !== 0) {
-			var sign = Number(delta) > 0 ? '+' : '';
-			html += '<span class="irs-summary-ratio-delta">(Δ ' + sign + formatSummaryPercent(delta) + ')</span>';
+		var num = Number(value);
+		if (num < 0) {
+			return '(' + formatSummaryAmount(Math.abs(num)) + ')';
 		}
-		return html;
+		return formatSummaryAmount(num);
 	}
 
-	function buildSummaryAnalyticalTable(data, mode) {
+	function buildSummaryBucketTable(data, mode) {
 		var isDelta = mode === 'delta';
-		var outMed = isDelta ? data.deltaOutflowMediumTerm : data.outflowMediumTerm;
-		var outLong = isDelta ? data.deltaOutflowLongTerm : data.outflowLongTerm;
-		var inMed = isDelta ? data.deltaInflowMediumTerm : data.inflowMediumTerm;
-		var inLong = isDelta ? data.deltaInflowLongTerm : data.inflowLongTerm;
-		var longRatio = data.longTermRatio;
-		var medLongRatio = data.medLongTermRatio;
-		var longRatioDelta = isDelta ? data.deltaLongTermRatio : null;
-		var medLongRatioDelta = isDelta ? data.deltaMedLongTermRatio : null;
+		var buckets = data.buckets || [];
+		var rowsHtml = '';
 
-		return '<table class="table table-sm table-bordered">' +
+		buckets.forEach(function (row) {
+			var rsl = isDelta ? row.rsl : row.rsl;
+			var rsa = isDelta ? row.rsa : row.rsa;
+			rowsHtml +=
+				'<tr>' +
+				'<td>' + (row.bucket || '') + '</td>' +
+				'<td>' + (row.limitPct || '') + '</td>' +
+				'<td class="amt-right">' + formatSummarySignedAmount(rsl) + '</td>' +
+				'<td class="amt-right">' + formatSummarySignedAmount(rsa) + '</td>' +
+				'</tr>';
+		});
+
+		var totalRsl = isDelta ? data.deltaTotalRsl : data.totalRsl;
+		var totalRsa = isDelta ? data.deltaTotalRsa : data.totalRsa;
+
+		rowsHtml +=
+			'<tr class="total-row">' +
+			'<td>Total</td>' +
+			'<td></td>' +
+			'<td class="amt-right">' + formatSummarySignedAmount(totalRsl) + '</td>' +
+			'<td class="amt-right">' + formatSummarySignedAmount(totalRsa) + '</td>' +
+			'</tr>';
+
+		return '<table class="table table-sm table-bordered irs-summary-bucket">' +
 			'<thead><tr>' +
-			'<th>Resources/ outflows</th>' +
-			'<th class="amt-right">Amount in (Mn)</th>' +
-			'<th>Assets/ inflows</th>' +
-			'<th class="amt-right">Amount in (Mn)</th>' +
+			'<th>Buckets</th>' +
+			'<th>Limit%</th>' +
+			'<th class="amt-right">RSL AED Mn.</th>' +
+			'<th class="amt-right">RSA AED Mn</th>' +
 			'</tr></thead>' +
-			'<tbody>' +
-			'<tr><td>Medium Term (6 months to 3 years)</td><td class="amt-right">' + formatSummaryAmount(outMed) + '</td>' +
-			'<td>Medium Term</td><td class="amt-right">' + formatSummaryAmount(inMed) + '</td></tr>' +
-			'<tr><td>Long Term (above 3 years)</td><td class="amt-right">' + formatSummaryAmount(outLong) + '</td>' +
-			'<td>Long Term</td><td class="amt-right">' + formatSummaryAmount(inLong) + '</td></tr>' +
-			'<tr><td>Long Term (3/6)</td><td class="amt-right">' + formatSummaryRatioCell(longRatio, longRatioDelta) + '</td>' +
-			'<td>70%</td><td></td></tr>' +
-			'<tr><td>Medium to Long Term (2+3/5+6)</td><td class="amt-right">' + formatSummaryRatioCell(medLongRatio, medLongRatioDelta) + '</td>' +
-			'<td>80%</td><td></td></tr>' +
-			'</tbody></table>';
+			'<tbody>' + rowsHtml + '</tbody></table>';
 	}
 
 	function renderIrsSensSummaryContent(res, activeOffset) {
@@ -5476,7 +5776,7 @@
 				(base.asOfDateFormatted ? ' — ' + base.asOfDateFormatted : '');
 			baseWrap.innerHTML =
 				'<div class="irs-summary-day-title">Reference: ' + baseTitle + '</div>' +
-				'<div class="irs-summary-analytical">' + buildSummaryAnalyticalTable(base, 'absolute') + '</div>';
+				'<div class="irs-summary-bucket-wrap">' + buildSummaryBucketTable(base, 'absolute') + '</div>';
 		} else {
 			baseWrap.innerHTML = '';
 		}
@@ -5489,24 +5789,24 @@
 				' <span class="text-muted font-weight-normal">(difference vs Base)</span>';
 			daysHtml += '<div class="irs-summary-day-block' + (isActive ? ' active-day' : '') + '">' +
 				'<div class="irs-summary-day-title">' + title + '</div>' +
-				'<div class="irs-summary-analytical">' + buildSummaryAnalyticalTable(day, 'delta') + '</div>' +
+				'<div class="irs-summary-bucket-wrap">' + buildSummaryBucketTable(day, 'delta') + '</div>' +
 				'</div>';
 		});
 		daysWrap.innerHTML = daysHtml;
 	}
 
 	function showIrsSensSevenDaySummary() {
-		var reportDateEl = document.getElementById('positionDate') || document.getElementById('reportDate');
+		var reportdate = getPositionDateValue();
 		var currency = getAnalyticalCurrency();
 		var dayOffsetEl = document.getElementById('dayOffsetIn');
 		var activeOffset = dayOffsetEl ? parseInt(dayOffsetEl.value, 10) : 0;
-		if (!reportDateEl || !reportDateEl.textContent || !currency) {
+		if (!reportdate || !currency) {
 			alert('Report date and currency are required to show the summary.');
 			return;
 		}
 
 		document.getElementById('irsSensSummarySubtitle').textContent =
-			'Position date: ' + reportDateEl.textContent.trim() + ' · Currency: ' + currency;
+			'Position date: ' + reportdate + ' · Currency: ' + currency;
 		document.getElementById('irsSensSummaryLoading').style.display = 'block';
 		document.getElementById('irsSensSummaryError').style.display = 'none';
 		document.getElementById('irsSensSummaryError').textContent = '';
@@ -5519,7 +5819,7 @@
 			url: './irsSensSevenDaySummary',
 			type: 'GET',
 			data: {
-				reportdate: reportDateEl.textContent.trim(),
+				reportdate: reportdate,
 				currency: currency
 			},
 			success: function (res) {
@@ -5531,9 +5831,9 @@
 					return;
 				}
 				document.getElementById('irsSensSummarySubtitle').textContent =
-					'Position date: ' + (res.positionDate || reportDateEl.textContent.trim()) +
+					'Position date: ' + (res.positionDate || reportdate) +
 					' · Currency: ' + (res.currency || currency) +
-					' · Amounts show change from Base (Day 0); ratios show day position with Δ vs Base';
+					' · Day +1 to +6 show change from Base (Day 0) by bucket (RSL / RSA AED Mn)';
 				renderIrsSensSummaryContent(res, activeOffset);
 				document.getElementById('irsSensSummaryTableWrap').style.display = 'block';
 			},
@@ -5544,6 +5844,321 @@
 			}
 		});
 	}
+
+	var IRS_CALC_BUCKETS = [
+		{ suffix: 'Day1_28', label: '1 – 28 days', limitLabel: '20 % of total assets', limitPct: 0.20 },
+		{ suffix: 'Day29_3m', label: '29 days and upto 3 months', limitLabel: '40 % of total assets', limitPct: 0.40 },
+		{ suffix: 'Over3mTo6m', label: 'Over 3 months and upto 6 months', limitLabel: '40 % of total assets', limitPct: 0.40 },
+		{ suffix: 'Over6mTo1y', label: 'Over 6 months and upto 1 year', limitLabel: '40 % of total assets', limitPct: 0.40 },
+		{ suffix: 'Over1yTo3y', label: 'Over 1 year and upto 3 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'Over3yTo5y', label: 'Over 3 years and upto 5 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'Over5yTo7y', label: 'Over 5 years and upto 7 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'Over7yTo10y', label: 'Over 7 years and upto 10 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'Over10yTo15y', label: 'Over 10 years and upto 15 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'Over15y', label: 'Over 15 years', limitLabel: '30 % of total assets', limitPct: 0.30 },
+		{ suffix: 'NonSensitive', label: 'Non Rate Sensitive', limitLabel: '', limitPct: null }
+	];
+
+	function parseIrsCalcAmount(val) {
+		if (val == null || String(val).trim() === '') {
+			return 0;
+		}
+		var n = Number(String(val).replace(/,/g, '').trim());
+		return Number.isFinite(n) ? n : 0;
+	}
+
+	function formatIrsCalcAmount(n) {
+		if (!Number.isFinite(n)) {
+			return '0.00';
+		}
+		var abs = Math.abs(n);
+		var formatted = abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		return n < 0 ? '(' + formatted + ')' : formatted;
+	}
+
+	function formatIrsCalcPercent(n) {
+		if (!Number.isFinite(n)) {
+			return '0.00 %';
+		}
+		var abs = Math.abs(n);
+		var formatted = abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		return (n < 0 ? '(' + formatted + ' %)' : formatted + ' %');
+	}
+
+	function getIrsHiddenAmount(id) {
+		var el = document.getElementById(id);
+		return el ? parseIrsCalcAmount(el.value) : 0;
+	}
+
+	function getIrsTotalAssets() {
+		return getIrsHiddenAmount('irsTotalAssets');
+	}
+
+	var IRS_CALC_FORMULA = {
+		limitPolicy: 'Limit % as per Group ALM policy (descriptive)',
+		rsl: 'RSL Mn. = R45 (report base) + Liabilities adjustment',
+		rsa: 'RSA Mn. = R84 (report base) + Asset adjustment',
+		gap: 'Gap Mn. = RSA Mn. − RSL Mn.',
+		limitAmt: 'Limit in Amt = Total Assets × Limit %',
+		netGapPct: 'Net Gap as % to Total Assets = (Gap Mn. ÷ Total Assets) × 100',
+		liabInc: 'Liabilities adjustment — user-entered amount (Mn)',
+		assetInc: 'Asset adjustment — user-entered amount (Mn)',
+		limitPctCol: 'Policy limit % for this maturity bucket',
+		statusOk: 'No Breach: |Net Gap %| ≤ Limit %',
+		statusBreach: 'Breach: |Net Gap %| > Limit %',
+		totalRsl: 'Total RSL Mn. = Σ RSL Mn. across all buckets',
+		totalRsa: 'Total RSA Mn. = Σ RSA Mn. across all buckets',
+		totalGap: 'Total Gap Mn. = Σ Gap Mn. (= Total RSA − Total RSL)'
+	};
+
+	function setIrsCalcFormula(el, formula) {
+		if (el && formula) {
+			el.title = formula;
+			el.setAttribute('data-irs-formula', '1');
+		}
+	}
+
+	function applyIrsCalcHeaderFormulas() {
+		var table = document.getElementById('irsAnalyticalCalcTable');
+		if (!table) {
+			return;
+		}
+		var hdr = table.querySelectorAll('thead tr:nth-child(2) th');
+		if (hdr.length >= 11) {
+			setIrsCalcFormula(hdr[1], IRS_CALC_FORMULA.limitPolicy);
+			setIrsCalcFormula(hdr[2], IRS_CALC_FORMULA.rsl);
+			setIrsCalcFormula(hdr[3], IRS_CALC_FORMULA.rsa);
+			setIrsCalcFormula(hdr[4], IRS_CALC_FORMULA.gap);
+			setIrsCalcFormula(hdr[5], IRS_CALC_FORMULA.limitAmt);
+			setIrsCalcFormula(hdr[6], IRS_CALC_FORMULA.netGapPct);
+			setIrsCalcFormula(hdr[8], IRS_CALC_FORMULA.liabInc);
+			setIrsCalcFormula(hdr[9], IRS_CALC_FORMULA.assetInc);
+			setIrsCalcFormula(hdr[10], IRS_CALC_FORMULA.limitPctCol);
+		}
+		var netGapHdr = document.getElementById('irsCalcNetGapHeader');
+		if (netGapHdr) {
+			setIrsCalcFormula(netGapHdr, IRS_CALC_FORMULA.netGapPct);
+		}
+	}
+
+	function applyIrsCalcRowFormulas(row, bucket) {
+		if (!row) {
+			return;
+		}
+		if (row.cells[1]) {
+			setIrsCalcFormula(row.cells[1], IRS_CALC_FORMULA.limitPolicy);
+		}
+		setIrsCalcFormula(row.querySelector('.irs-calc-rsl'), IRS_CALC_FORMULA.rsl);
+		setIrsCalcFormula(row.querySelector('.irs-calc-rsa'), IRS_CALC_FORMULA.rsa);
+		setIrsCalcFormula(row.querySelector('.irs-calc-gap'), IRS_CALC_FORMULA.gap);
+		setIrsCalcFormula(row.querySelector('.irs-calc-limit'), IRS_CALC_FORMULA.limitAmt);
+		setIrsCalcFormula(row.querySelector('.irs-calc-netgap'), IRS_CALC_FORMULA.netGapPct);
+		setIrsCalcFormula(row.querySelector('.irs-calc-liab-inc'), IRS_CALC_FORMULA.liabInc);
+		setIrsCalcFormula(row.querySelector('.irs-calc-asset-inc'), IRS_CALC_FORMULA.assetInc);
+		var limitPctCell = row.querySelector('.irs-calc-limit-pct');
+		if (limitPctCell) {
+			var limitHint = bucket && bucket.limitPct != null
+				? IRS_CALC_FORMULA.limitPctCol + ' (' + Math.round(bucket.limitPct * 100) + '%)'
+				: IRS_CALC_FORMULA.limitPctCol;
+			setIrsCalcFormula(limitPctCell, limitHint);
+		}
+		var limitCol = row.querySelector('.irs-calc-limit-col');
+		setIrsCalcFormula(limitCol, IRS_CALC_FORMULA.limitAmt + '; ' + IRS_CALC_FORMULA.statusOk);
+	}
+
+	function applyIrsCalcTotalFormulas() {
+		setIrsCalcFormula(document.getElementById('irsCalcTotalRsl'), IRS_CALC_FORMULA.totalRsl);
+		setIrsCalcFormula(document.getElementById('irsCalcTotalRsa'), IRS_CALC_FORMULA.totalRsa);
+		setIrsCalcFormula(document.getElementById('irsCalcTotalGap'), IRS_CALC_FORMULA.totalGap);
+	}
+
+	function buildIrsAnalyticalRows() {
+		var tbody = document.getElementById('irsAnalyticalCalcBody');
+		if (!tbody) {
+			return;
+		}
+		tbody.innerHTML = '';
+		IRS_CALC_BUCKETS.forEach(function (bucket, index) {
+			var tr = document.createElement('tr');
+			tr.setAttribute('data-bucket-index', String(index));
+			tr.innerHTML =
+				'<td class="irs-calc-bucket-label">' + bucket.label + '</td>' +
+				'<td>' + bucket.limitLabel + '</td>' +
+				'<td class="text-end"><input type="text" class="calc-input calc-input-readonly irs-calc-rsl" readonly /></td>' +
+				'<td class="text-end"><input type="text" class="calc-input calc-input-readonly irs-calc-rsa" readonly /></td>' +
+				'<td class="text-end"><input type="text" class="calc-input calc-input-readonly irs-calc-gap" readonly /></td>' +
+				'<td class="text-end irs-calc-limit-col"><input type="text" class="calc-input calc-input-readonly irs-calc-limit" readonly /></td>' +
+				'<td class="text-end"><input type="text" class="calc-input calc-input-readonly irs-calc-netgap" readonly /></td>' +
+				'<td></td>' +
+				'<td class="text-end irs-calc-input-col"><input type="text" class="calc-input irs-calc-liab-inc" inputmode="decimal" autocomplete="off" value="0" /></td>' +
+				'<td class="text-end irs-calc-input-col"><input type="text" class="calc-input irs-calc-asset-inc" inputmode="decimal" autocomplete="off" value="0" /></td>' +
+				'<td class="text-end irs-calc-limit-pct-col irs-calc-limit-pct"></td>';
+			tbody.appendChild(tr);
+			applyIrsCalcRowFormulas(tr, bucket);
+		});
+
+		var totalRow = document.createElement('tr');
+		totalRow.className = 'irs-calc-total-row';
+		totalRow.innerHTML =
+			'<td class="irs-calc-bucket-label">Total</td>' +
+			'<td></td>' +
+			'<td class="text-end" id="irsCalcTotalRsl">0.00</td>' +
+			'<td class="text-end" id="irsCalcTotalRsa">0.00</td>' +
+			'<td class="text-end" id="irsCalcTotalGap">0.00</td>' +
+			'<td></td>' +
+			'<td></td>' +
+			'<td></td>' +
+			'<td></td>' +
+			'<td></td>' +
+			'<td></td>';
+		tbody.appendChild(totalRow);
+		applyIrsCalcTotalFormulas();
+	}
+
+	function recalcIrsAnalyticalRow(row) {
+		var index = Number(row.getAttribute('data-bucket-index'));
+		var bucket = IRS_CALC_BUCKETS[index];
+		if (!bucket) {
+			return;
+		}
+
+		var baseRsl = getIrsHiddenAmount('irsR45' + bucket.suffix);
+		var baseRsa = getIrsHiddenAmount('irsR84' + bucket.suffix);
+		var liabInc = parseIrsCalcAmount(row.querySelector('.irs-calc-liab-inc').value);
+		var assetInc = parseIrsCalcAmount(row.querySelector('.irs-calc-asset-inc').value);
+		var adjRsl = baseRsl + liabInc;
+		var adjRsa = baseRsa + assetInc;
+		var gap = adjRsa - adjRsl;
+		var totalAssets = getIrsTotalAssets();
+		var netGapPct = totalAssets !== 0 ? (gap / totalAssets) * 100 : 0;
+		var limitPct = bucket.limitPct;
+		var limitAmt = limitPct != null && limitPct > 0 ? totalAssets * limitPct : 0;
+		var limitPctCell = row.querySelector('.irs-calc-limit-pct');
+
+		row.querySelector('.irs-calc-rsl').value = formatIrsCalcAmount(adjRsl);
+		row.querySelector('.irs-calc-rsa').value = formatIrsCalcAmount(adjRsa);
+		row.querySelector('.irs-calc-gap').value = formatIrsCalcAmount(gap);
+		row.querySelector('.irs-calc-limit').value = formatIrsCalcAmount(limitAmt);
+		row.querySelector('.irs-calc-netgap').value = formatIrsCalcPercent(netGapPct);
+		if (limitPctCell) {
+			limitPctCell.textContent = limitPct != null ? Math.round(limitPct * 100) + '%' : '';
+		}
+
+		var limitCol = row.querySelector('.irs-calc-limit-col');
+		if (limitCol) {
+			limitCol.classList.remove('irs-calc-limit-ok', 'irs-calc-limit-breach');
+			if (limitPct != null && limitPct > 0) {
+				var limitPctValue = limitPct * 100;
+				var absNetGapPct = Math.abs(netGapPct);
+				if (absNetGapPct > limitPctValue) {
+					limitCol.classList.add('irs-calc-limit-breach');
+					setIrsCalcFormula(limitCol, IRS_CALC_FORMULA.statusBreach);
+				} else {
+					limitCol.classList.add('irs-calc-limit-ok');
+					setIrsCalcFormula(limitCol, IRS_CALC_FORMULA.statusOk);
+				}
+			} else {
+				setIrsCalcFormula(limitCol, IRS_CALC_FORMULA.limitAmt);
+			}
+		}
+
+		setIrsCalcFormula(row.querySelector('.irs-calc-rsl'),
+			IRS_CALC_FORMULA.rsl + ' = ' + formatIrsCalcAmount(baseRsl) + ' + ' + formatIrsCalcAmount(liabInc));
+		setIrsCalcFormula(row.querySelector('.irs-calc-rsa'),
+			IRS_CALC_FORMULA.rsa + ' = ' + formatIrsCalcAmount(baseRsa) + ' + ' + formatIrsCalcAmount(assetInc));
+		setIrsCalcFormula(row.querySelector('.irs-calc-gap'),
+			IRS_CALC_FORMULA.gap + ' = ' + formatIrsCalcAmount(adjRsa) + ' − ' + formatIrsCalcAmount(adjRsl));
+		setIrsCalcFormula(row.querySelector('.irs-calc-limit'),
+			IRS_CALC_FORMULA.limitAmt + ' = ' + formatIrsCalcAmount(totalAssets) + ' × ' +
+			(limitPct != null ? Math.round(limitPct * 100) + '%' : '0%'));
+		setIrsCalcFormula(row.querySelector('.irs-calc-netgap'),
+			IRS_CALC_FORMULA.netGapPct + ' = (' + formatIrsCalcAmount(gap) + ' ÷ ' +
+			formatIrsCalcAmount(totalAssets) + ') × 100');
+
+		var gapInput = row.querySelector('.irs-calc-gap');
+		var netGapInput = row.querySelector('.irs-calc-netgap');
+		gapInput.classList.toggle('amt-negative', gap < 0);
+		netGapInput.classList.toggle('amt-negative', netGapPct < 0);
+	}
+
+	function recalcIrsAnalyticalCalculator() {
+		var rows = document.querySelectorAll('#irsAnalyticalCalcBody tr[data-bucket-index]');
+		var totalRsl = 0;
+		var totalRsa = 0;
+		var totalGap = 0;
+
+		rows.forEach(function (row) {
+			recalcIrsAnalyticalRow(row);
+			var bucket = IRS_CALC_BUCKETS[Number(row.getAttribute('data-bucket-index'))];
+			var liabInc = parseIrsCalcAmount(row.querySelector('.irs-calc-liab-inc').value);
+			var assetInc = parseIrsCalcAmount(row.querySelector('.irs-calc-asset-inc').value);
+			var baseRsl = getIrsHiddenAmount('irsR45' + bucket.suffix);
+			var baseRsa = getIrsHiddenAmount('irsR84' + bucket.suffix);
+			totalRsl += baseRsl + liabInc;
+			totalRsa += baseRsa + assetInc;
+			totalGap += (baseRsa + assetInc) - (baseRsl + liabInc);
+		});
+
+		var totalRslEl = document.getElementById('irsCalcTotalRsl');
+		var totalRsaEl = document.getElementById('irsCalcTotalRsa');
+		var totalGapEl = document.getElementById('irsCalcTotalGap');
+		if (totalRslEl) {
+			totalRslEl.textContent = formatIrsCalcAmount(totalRsl);
+			setIrsCalcFormula(totalRslEl, IRS_CALC_FORMULA.totalRsl + ' = ' + formatIrsCalcAmount(totalRsl));
+		}
+		if (totalRsaEl) {
+			totalRsaEl.textContent = formatIrsCalcAmount(totalRsa);
+			setIrsCalcFormula(totalRsaEl, IRS_CALC_FORMULA.totalRsa + ' = ' + formatIrsCalcAmount(totalRsa));
+		}
+		if (totalGapEl) {
+			totalGapEl.textContent = formatIrsCalcAmount(totalGap);
+			setIrsCalcFormula(totalGapEl, IRS_CALC_FORMULA.totalGap + ' = ' + formatIrsCalcAmount(totalGap));
+			totalGapEl.classList.toggle('amt-negative', totalGap < 0);
+		}
+	}
+
+	function bindIrsAnalyticalCalcInputs() {
+		document.querySelectorAll('#irsAnalyticalCalcBody .irs-calc-liab-inc, #irsAnalyticalCalcBody .irs-calc-asset-inc')
+			.forEach(function (el) {
+				el.removeEventListener('input', recalcIrsAnalyticalCalculator);
+				el.addEventListener('input', recalcIrsAnalyticalCalculator);
+			});
+	}
+
+	function updateIrsCalcNetGapHeader() {
+		var headerEl = document.getElementById('irsCalcNetGapHeader');
+		var dataAsOnEl = document.getElementById('irsCalcDataAsOn');
+		if (!headerEl) {
+			return;
+		}
+		var reportDate = getPositionDateValue();
+		var formatted = reportDate.replace(/\//g, '.');
+		headerEl.textContent = 'Net Gap as % to Total Assets-' + formatted;
+		setIrsCalcFormula(headerEl, IRS_CALC_FORMULA.netGapPct);
+		if (dataAsOnEl) {
+			dataAsOnEl.textContent = reportDate;
+		}
+	}
+
+	function openIrsAnalyticalCalculator() {
+		if (!document.getElementById('irsTotalAssets')) {
+			showResultModal('IRS Analytical Calculator', 'Report data is not available for this date and currency.');
+			return;
+		}
+		buildIrsAnalyticalRows();
+		applyIrsCalcHeaderFormulas();
+		updateIrsCalcNetGapHeader();
+		bindIrsAnalyticalCalcInputs();
+		recalcIrsAnalyticalCalculator();
+		$('#irsAnalyticalCalcModal').modal('show');
+	}
+
+	$('#irsAnalyticalCalcModal').on('shown.bs.modal', function () {
+		$('.modal-backdrop').last().addClass('irs-analytical-backdrop');
+	});
+	$('#irsAnalyticalCalcModal').on('hidden.bs.modal', function () {
+		$('.modal-backdrop.irs-analytical-backdrop').removeClass('irs-analytical-backdrop');
+	});
 </script>
 
 </html>

@@ -18,7 +18,7 @@ public final class ExcelUploadHelper {
 
 	private static final Set<String> EXCEL_UPLOAD_REPORT_TYPES = new HashSet<>(Arrays.asList(
 			"FXP", "TR_PLC", "TR_INV", "TR_TB", "TR_SWD", "FWD_RVL",
-			"TR_INV_DEAL_DUMP", "plcdealdump", "DAY_LIGHT", "MFD", "ECL", "VARFILE"));
+			"TR_INV_DEAL_DUMP", "plcdealdump", "DAY_LIGHT", "MFD", "ECL", "VARFILE", "ONFC"));
 
 	private ExcelUploadHelper() {
 	}

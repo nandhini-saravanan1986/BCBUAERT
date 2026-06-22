@@ -86,6 +86,7 @@ import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
+import com.bornfire.xbrl.entities.RT_Overnight_Foreign_Ccy_Data_Summ_Repo;
 import com.bornfire.xbrl.entities.RT_Return_On_Asset_Entity;
 import com.bornfire.xbrl.entities.RT_Return_On_Asset_Repo;
 import com.bornfire.xbrl.entities.RT_SLS_Repository;
@@ -178,6 +179,9 @@ public class MIS_Rest_Controller {
 	
 	@Autowired
 	RT_Return_On_Asset_Repo RT_Return_On_Asset_Repo;
+
+	@Autowired
+	RT_Overnight_Foreign_Ccy_Data_Summ_Repo RT_Overnight_Foreign_Ccy_Data_Summ_Repo;
 	
 	@Autowired
 	RT_VAR_PORTFOLIO_Repo RT_VAR_PORTFOLIO_Repo;
@@ -745,7 +749,12 @@ public class MIS_Rest_Controller {
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date Selecteddate = dateFormat.parse(Report_date);
 
-		List<Object[]> RT_Chart_Data = RT_RWA_Fund_base_data_rep.getcatorywiseportfolio(Selecteddate, Branch_name);
+		List<Object[]> RT_Chart_Data;
+		if ("Total".equalsIgnoreCase(Branch_name)) {
+			RT_Chart_Data = RT_RWA_Fund_base_data_rep.getoverallcategorywiseportfolio(Selecteddate);
+		} else {
+			RT_Chart_Data = RT_RWA_Fund_base_data_rep.getcatorywiseportfolio(Selecteddate, Branch_name);
+		}
 
 		for (Object[] RT_data : RT_Chart_Data) {
 
@@ -865,6 +874,8 @@ public class MIS_Rest_Controller {
 			Exposuredata = RT_MID_FX_DEAL_REPO.GetselectedmonthBPVdata(Selecteddate);
 		}else if (Data_Type_Used.equals("RETURN_ON_ASSETS")) {
 			Exposuredata = RT_Return_On_Asset_Repo.GetByReportDate(Selecteddate);
+		} else if (Data_Type_Used.equals("ONFC_DAILY_RISK_LIMITS")) {
+			Exposuredata = RT_Overnight_Foreign_Ccy_Data_Summ_Repo.getDailyRiskLimitsForMonth(Selecteddate);
 		}
 
 		return Exposuredata;
@@ -953,7 +964,11 @@ public class MIS_Rest_Controller {
 		List<RT_RWA_Fund_base_data_entity> RT_RWA_Fund_base = new ArrayList<>();
 
 		if (Data_table_type.equals("TopExposuredata")) {
-			TopExposuredata = RT_RWA_Fund_base_data_rep.Gettopexpposure(Selecteddate, classification, Branch_name);
+			if ("Total".equalsIgnoreCase(Branch_name)) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Getoveralltopexpposure(Selecteddate, classification);
+			} else {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Gettopexpposure(Selecteddate, classification, Branch_name);
+			}
 			for (Object[] loopingExposuredata : TopExposuredata) {
 
 				RT_RWA_Fund_base_data_entity Entitydata = new RT_RWA_Fund_base_data_entity();
@@ -988,7 +1003,11 @@ public class MIS_Rest_Controller {
 			}
 		} else if (Data_table_type.equals("Branchsnapshot")) {
 
-			TopExposuredata = RT_RWA_Fund_base_data_rep.Getbranchportfoliosnap(Selecteddate, Branch_name);
+			if ("Total".equalsIgnoreCase(Branch_name)) {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Getallbranchportfoliosnap(Selecteddate);
+			} else {
+				TopExposuredata = RT_RWA_Fund_base_data_rep.Getbranchportfoliosnap(Selecteddate, Branch_name);
+			}
 
 			System.out.println(TopExposuredata.size() + " Selected Data Size");
 

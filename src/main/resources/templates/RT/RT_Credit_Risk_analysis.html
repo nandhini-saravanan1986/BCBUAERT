@@ -458,19 +458,32 @@
 		            textStyle: { color: '#1B4F72', fontSize: 12 }
 		        },
 
-		        // === NEW: center label in the donut ===
-		        graphic: {
-		            type: 'text',
-		            left: 'center',
-		            top: 'middle',
-		            style: {
-		                text: 'Total\n' + totalExposureBalFmt + ' AED (Mn)',
-		                textAlign: 'center',
-		                fill: '#333',
-		                fontSize: 12,
-		                fontWeight: 'bold'
+		        // === center label in the donut (clickable for overall category chart) ===
+		        graphic: [
+		            {
+		                type: 'circle',
+		                left: 'center',
+		                top: 'middle',
+		                shape: { r: 60 },
+		                z: 100,
+		                style: { fill: 'rgba(255,255,255,0.01)' },
+		                cursor: 'pointer'
+		            },
+		            {
+		                type: 'text',
+		                left: 'center',
+		                top: 'middle',
+		                z: 101,
+		                style: {
+		                    text: 'Total\n' + totalExposureBalFmt + ' AED (Mn)',
+		                    textAlign: 'center',
+		                    fill: '#333',
+		                    fontSize: 12,
+		                    fontWeight: 'bold'
+		                },
+		                cursor: 'pointer'
 		            }
-		        },
+		        ],
 
 		        series: [{
 		            name: 'Classification',
@@ -490,8 +503,23 @@
 
 		    myChart.setOption(option);
 
+		    function showOverallCategoryChart() {
+		        document.getElementById('segmentName').textContent = 'Total';
+		        document.getElementById('segmentValue').textContent =
+		            '100.00% ' + totalExposureBalFmt + ' AED (Mn)';
+
+		        categorywisedata('Total');
+		        BranchPortfoliorisksnapshot('Branchsnapshot');
+		        document.getElementById('Portfolio_analy_body').innerHTML = '';
+		    }
+
 		    // click event for details panel
 		    myChart.on('click', function (params) {
+		        if (params.componentType === 'graphic') {
+		            showOverallCategoryChart();
+		            return;
+		        }
+
 		        var bal = params.data.exposureBal || 0;
 		        var balFmt = bal.toLocaleString('en-US', {
 		            minimumFractionDigits: 2,
@@ -528,6 +556,16 @@
 				};
 			});
 
+			var totalExposureBal = Categorydata.reduce(function (sum, item) {
+				var v = Number(item.exposureBal) || 0;
+				return sum + v;
+			}, 0);
+
+			var totalExposureBalFmt = totalExposureBal.toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+
 			var option = {
 				backgroundColor: '#FFFFFF',
 				tooltip: {
@@ -551,6 +589,29 @@
 					top: 10,
 					textStyle: {color: '#1B4F72', fontSize: 12}
 				},
+				graphic: [
+					{
+						type: 'circle',
+						left: 'center',
+						top: 'middle',
+						shape: { r: 60 },
+						z: 100,
+						style: { fill: 'rgba(255,255,255,0.01)' }
+					},
+					{
+						type: 'text',
+						left: 'center',
+						top: 'middle',
+						z: 101,
+						style: {
+							text: 'Total\n' + totalExposureBalFmt + ' AED (Mn)',
+							textAlign: 'center',
+							fill: '#333',
+							fontSize: 12,
+							fontWeight: 'bold'
+						}
+					}
+				],
 				series: [{
 					name: 'Classification',
 					type: 'pie',
@@ -571,8 +632,9 @@
 
 			// click event for details panel
 			myChart.on('click', function (categoryparams) {
-				var bal = categoryparams.data.exposureBal || 0;
-				var balFmt = bal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+				if (categoryparams.componentType === 'graphic') {
+					return;
+				}
 
 				GetTop10Exposureclass(categoryparams.name, 'TopExposuredata');
 

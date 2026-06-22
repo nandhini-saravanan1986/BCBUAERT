@@ -490,7 +490,7 @@
 			position: relative;
 			text-align: center;
 			margin-bottom: 30px;
-			font-size: 0.70rem;
+			font-size: 1.6rem;
 			padding: 10px 12px;
 			color: var(--bank-text-on-dark, #fff);
 			background: var(--bank-header-gradient);
@@ -844,6 +844,84 @@
 				})
 				.catch(function (error) {
 					alert("Error loading ROA data: " + error.message);
+				});
+		}
+
+		function buildOnfcRiskLimitsTitle(reportDate) {
+			var raw = (reportDate || "").split("T")[0];
+			var parts = raw.indexOf("-") === 2 ? raw.split("-") : raw.split("/");
+			var monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+				"JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+			if (parts.length === 3) {
+				var monthIdx = parseInt(parts[1], 10) - 1;
+				var year = parts[2].length === 2 ? ("20" + parts[2]) : parts[2];
+				if (monthIdx >= 0 && monthIdx < 12) {
+					return "DAILY RISK LIMITS MONITORING REPORT - " + monthNames[monthIdx] + " " + year;
+				}
+			}
+			return "DAILY RISK LIMITS MONITORING REPORT";
+		}
+
+		function formatOnfcRiskCell(value, isText) {
+			if (isText) {
+				return value == null || value === "" ? "-" : value;
+			}
+			if (value == null || value === "") {
+				return "-";
+			}
+			return formatNumber(value);
+		}
+
+		function loadOnfcDailyRiskLimitsTable(reportDate) {
+			var titleEl = document.getElementById("ONFC_DAILY_RISK_LIMITS_TITLE");
+			if (titleEl) {
+				titleEl.textContent = buildOnfcRiskLimitsTitle(reportDate);
+			}
+			var bodyEl = document.getElementById("ONFC_DAILY_RISK_LIMITS_BODY");
+			if (bodyEl) {
+				bodyEl.innerHTML = "<tr><td colspan=\"12\" class=\"text-center text-muted\">Loading...</td></tr>";
+			}
+			fetch("./Limitdetaildata?Report_date=" + encodeURIComponent(reportDate) + "&Data_Type_Used=ONFC_DAILY_RISK_LIMITS", {
+				method: "POST",
+				headers: {"Content-Type": "application/x-www-form-urlencoded"}
+			})
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error("HTTP error " + response.status);
+					}
+					return response.json();
+				})
+				.then(function (list) {
+					var trHTML = "";
+					if (!list || !list.length) {
+						trHTML = "<tr><td colspan=\"12\" class=\"text-center text-muted\">No data available for the selected month.</td></tr>";
+					} else {
+						list.forEach(function (data) {
+							trHTML += "<tr>" +
+								"<td>" + (data[0] || "") + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[1], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[2], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[3], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[4], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[5], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[6], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[7], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[8], false) + "</td>" +
+								"<td class=\"text-right\">" + formatOnfcRiskCell(data[9], false) + "</td>" +
+								"<td class=\"text-center\">" + formatOnfcRiskCell(data[10], true) + "</td>" +
+								"<td class=\"text-center\">" + formatOnfcRiskCell(data[11], true) + "</td>" +
+								"</tr>";
+						});
+					}
+					if (bodyEl) {
+						bodyEl.innerHTML = trHTML;
+					}
+				})
+				.catch(function (error) {
+					if (bodyEl) {
+						bodyEl.innerHTML = "<tr><td colspan=\"12\" class=\"text-center text-danger\">Error loading data.</td></tr>";
+					}
+					alert("Error loading overnight foreign currency risk limits: " + error.message);
 				});
 		}
 
@@ -1385,7 +1463,8 @@
 				".Exposure_outside_GCC", ".Exposure_Only_GCC", ".Mortageloan_block", ".Mortageloan_table",
 				".Sector_Industrial", ".Netovernight_noop", ".UnsecuredPosition", ".CustomerChartdetails",
 				".MortgageLoanAppetitedetails", ".ProvisionCoverage", ".LongTermandMediumTerm",
-				".Depositconcentration", ".Generalprovisiongrid", ".BPVPV01_TABLE", ".irs"
+				".Depositconcentration", ".Generalprovisiongrid", ".BPVPV01_TABLE", ".irs",
+				".OnfcDailyRiskLimitsTable"
 			].forEach(function (selector) {
 				var el = document.querySelector(selector);
 				if (el) {
@@ -1538,6 +1617,11 @@
 
 
 
+
+			} else if (labelsrlno === "48") {
+				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
+				loadOnfcDailyRiskLimitsTable(labelReport_date);
+				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "block";
 
 			} else if (labelsrlno === "22") {
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
@@ -4352,6 +4436,11 @@
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 
+			} else if (Selectedmatrixlabel === "48") {
+				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "none";
+				loadOnfcDailyRiskLimitsTable(selectedDate);
+				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "block";
+
 			} else if (Selectedmatrixlabel === "45") {
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Stockapproachratio', {
@@ -5881,6 +5970,41 @@
 							<tbody id="RETURN_ON_ASSET_BODY">
 							</tbody>
 						</table>
+					</div>
+
+					<div class="OnfcDailyRiskLimitsTable" style="display: none;">
+						<div class="table-wrap" style="overflow-x: auto;">
+							<table class="table refund-table align-middle mb-0">
+								<thead>
+									<tr>
+										<th id="ONFC_DAILY_RISK_LIMITS_TITLE" colspan="12"
+											style="text-align: center; background-color: #fff3cd;">DAILY RISK LIMITS MONITORING REPORT</th>
+									</tr>
+									<tr>
+										<th rowspan="2">DATE</th>
+										<th colspan="2">Overnight Foreign Currency Position<br />(Limit INR 150 Crores)</th>
+										<th colspan="2">Net Overnight Open Position (NOOPL)<br />(Limit INR 2000 Crores)</th>
+										<th rowspan="2">Gap Limit (TAGL)<br />Limit USD 250 Million</th>
+										<th colspan="2">Aggregate Gap Limit<br />(Main Currency Limit USD 160 Million,<br />Other Currencies Limit USD 80 Million)</th>
+										<th colspan="2">Individual Gap Limit<br />(Main Currency Limit USD 80 Million,<br />Other Currencies Limit USD 30 Million)</th>
+										<th rowspan="2">Breach of Day Light Exposure<br />(Limit USD 20 Million)</th>
+										<th rowspan="2">Any Breach of Stop Loss Limit</th>
+									</tr>
+									<tr>
+										<th>OVER BOUGHT<br /><small>ACTUAL (IN INR)</small></th>
+										<th>OVER SOLD<br /><small>ACTUAL (IN INR)</small></th>
+										<th>OVER BOUGHT<br /><small>ACTUAL (IN INR)</small></th>
+										<th>OVER SOLD<br /><small>ACTUAL (IN INR)</small></th>
+										<th>MAIN CURRENCY<br /><small>(USD IN MILLIONS)</small></th>
+										<th>OTHER CURRENCIES<br /><small>(USD IN MILLIONS)</small></th>
+										<th>MAIN CURRENCY<br /><small>(USD IN MILLIONS)</small></th>
+										<th>OTHER CURRENCIES<br /><small>(USD IN MILLIONS)</small></th>
+									</tr>
+								</thead>
+								<tbody id="ONFC_DAILY_RISK_LIMITS_BODY">
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 					<div class="LongTermandMediumTerm" style="display: none;">

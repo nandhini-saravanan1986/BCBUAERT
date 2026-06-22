@@ -100,6 +100,26 @@
 			outline-offset: 2px;
 		}
 
+		.header-menu-icon[href] {
+			text-decoration: none;
+		}
+
+		.header-menu-icon.header-home-btn {
+			width: auto;
+			padding: 0 14px;
+			gap: 8px;
+			font-size: 0.9rem;
+			font-weight: 600;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+			white-space: nowrap;
+		}
+
+		/* Legacy sidebar replaced by /MenuLanding grid */
+		.app-sidebar,
+		.sidebar-touch-backdrop {
+			display: none !important;
+		}
+
 		/*
 		   Slide with `left` (not transform) so child `position:fixed` flyouts use the
 		   viewport — transform on the sidebar breaks fixed positioning and clips submenus.
@@ -395,6 +415,21 @@
 			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 		}
 
+		.header-actions {
+			display: flex;
+			align-items: center;
+			flex-shrink: 0;
+		}
+
+		.header-logout-form {
+			margin: 0;
+		}
+
+		button.header-logout-btn {
+			appearance: none;
+			-webkit-appearance: none;
+		}
+
 		.logo-text-highlight {
 			font-weight: bold;
 			color: #ffffff;
@@ -439,57 +474,6 @@
 			}
 		}
 
-		.user-info {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			color: #ffffff;
-			font-size: 13px;
-			flex-shrink: 0;
-		}
-
-		.user-info .css-user-alt {
-			width: 32px;
-			height: 32px;
-			border-radius: 50%;
-			border: 2px solid #ffffff;
-			background: rgba(255, 255, 255, 0.18);
-		}
-
-		.username {
-			font-weight: 600;
-		}
-
-		.logout-btn {
-			margin: 0;
-		}
-
-		.logout-btn button {
-			border: none;
-			background: #ffffff;
-			color: var(--bank-primary);
-			font-size: 13px;
-			font-weight: 600;
-			padding: 8px 14px;
-			border-radius: 20px;
-			cursor: pointer;
-			display: inline-flex;
-			align-items: center;
-			gap: 6px;
-			margin-right: 5px;
-			transition: all 0.2s ease-in-out;
-		}
-
-		.logout-btn button i {
-			font-size: 14px;
-		}
-
-		.logout-btn button:hover {
-			background: var(--bank-accent-soft);
-			color: var(--bank-primary-dark);
-			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
-			transform: translateY(-1px);
-		}
 	</style>
 </head>
 
@@ -498,12 +482,13 @@
 
 	<header class="header-bar">
 		<div class="header-nav-trigger" id="headerNavTrigger">
-			<button type="button" class="header-menu-icon" id="headerMenuIcon" aria-label="Navigation menu"
-				aria-expanded="false" aria-controls="appSidebar" aria-haspopup="true">
-				<i class="fa fa-th-large" aria-hidden="true"></i>
-			</button>
+			<a th:href="@{/MenuLanding}" class="header-menu-icon header-home-btn" id="headerMenuIcon"
+				aria-label="Go to Home" onclick="if (typeof showLoader === 'function') showLoader();">
+				<i class="fa fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
 			<div class="header-logo-wrap">
-				<a th:href="@{/Dashboard}" class="header-logo-link" onclick="showLoader()" aria-label="Go to Dashboard">
+				<a th:href="@{/MenuLanding}" class="header-logo-link" onclick="showLoader()" aria-label="Go to module menu">
 					<img th:src="@{/images/Dubaiboblogo.png}" alt="Bank of Baroda" class="header-logo-img">
 				</a>
 			</div>
@@ -771,13 +756,11 @@
 		</nav>
 		</aside>
 		</div>
-		<div class="logo-text-highlight">UAE RISK ANALYTICAL SYSTEM</div>
-		<div class="user-info">
-			<i class="fas fa-user"></i>
-			<span class="username" th:text="${session.USERNAME}">Username</span>
-			<form th:action="@{/logout}" onclick="showLoader()" method="post" class="logout-btn m-0">
-				<button type="submit">
-					<i class="fas fa-sign-out-alt"></i> Logout
+		<div class="logo-text-highlight">UAE INTEGRATED RISK ANALYTICAL SYSTEM</div>
+		<div class="header-actions">
+			<form th:action="@{/logout}" method="post" class="header-logout-form">
+				<button type="submit" class="header-menu-icon header-logout-btn" aria-label="Logout" title="Logout">
+					<i class="fa fa-power-off" aria-hidden="true"></i>
 				</button>
 			</form>
 		</div>
@@ -852,17 +835,7 @@
 				}
 			}
 
-			if (toggleBtn) {
-				toggleBtn.addEventListener("click", function (e) {
-					e.preventDefault();
-					setSidebarOpen(!sidebar.classList.contains("is-open"));
-				});
-				toggleBtn.addEventListener("keydown", function (e) {
-					if (e.key !== "Enter" && e.key !== " ") return;
-					e.preventDefault();
-					setSidebarOpen(!sidebar.classList.contains("is-open"));
-				});
-			}
+			/* Home link (#headerMenuIcon) navigates to /MenuLanding — no sidebar toggle */
 			var closeBtn = document.getElementById("sidebarCloseBtn");
 			if (closeBtn) {
 				closeBtn.addEventListener("click", function () {

@@ -731,117 +731,16 @@
 			}
 		});
 	</script>
-
-	<script>
-		function submitform() {
-
-			var counterPartyBankCode = $("#counterPartyBankCode").val().trim();
-			var counterPartyBank = $("#counterPartyBank").val().trim();
-			var location = $("#location").val().trim();
-			var expiryDate = $("#expiryDate").val().trim();
-			var rating = $("#rating").val().trim();
-			var regularLimit = $("#regularLimit").val().trim();
-			var adhocLimit = $("#adhocLimit").val().trim();
-			var creditLimit = $("#creditLimit").val().trim();
-			var settlementLimit = $("#settlementLimit").val().trim();
-			var moneyMarketLimit = $("#moneyMarketLimit").val().trim();
-			var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
-			var earmarkinglimit = $("#earmarkinglimit").val().trim(); // Added
-			var earmarkingdate = $("#earmarkingdate").val().trim(); // Added
-			var countryRating = $("#countryRating").val().trim();
-
-
-
-			if (regularLimit === "") {
-				alert("Please enter regularLimit.");
-				$("#regularLimit").focus();
-				return;
-			} if (adhocLimit === "") {
-				alert("Please enter adhocLimit.");
-				$("#adhocLimit").focus();
-				return;
-			} if (creditLimit === "") {
-				alert("Please enter creditLimit.");
-				$("#creditLimit").focus();
-				return;
-			} if (settlementLimit === "") {
-				alert("Please enter settlementLimit.");
-				$("#settlementLimit").focus();
-				return;
-			} if (moneyMarketLimit === "") {
-				alert("Please enter moneyMarketLimit.");
-				$("#moneyMarketLimit").focus();
-				return;
-			} if (tradeFinanceLimit === "") {
-				alert("Please enter tradeFinanceLimit.");
-				$("#tradeFinanceLimit").focus();
-				return;
-			}
-
-
-			if (counterPartyBank === "") {
-				alert("Please enter counterparty bank name.");
-				$("#counterPartyBank").focus();
-				return;
-			}
-			if (countryRating === "") {
-				alert("Please enter Country Rating.");
-				$("#countryRating").focus();
-				return false;
-			}
-			/*if (expiryDate === "") {
-				alert("Please enter Expiry Date.");
-				$("#expiryDate").focus();
-				return;
-			}*/
-			if (rating === "") {
-				alert("Please enter Rating .");
-				$("#rating").focus();
-				return;
-			}
-			if (location === "") {
-				alert("Please enter location.");
-				$("#location").focus();
-				return;
-			}
-			if (Adhoc_Limit_exp_date === "") {
-				alert("Please enter Adhoc Limit Expiry Date.");
-				$("#Adhoc_Limit_exp_date").focus();
-				return;
-			}
-
-			// All fields are valid — proceed with AJAX
-			var formData = $("#counterpartys").serialize();
-			console.log("Form data being submitted:", formData);
-
-			$.ajax({
-				url: "./Addcounter",
-				type: "POST",
-				data: formData,
-				success: function (response) {
-					console.log("Server response:", response);
-					saveDetailsSequentially();
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
-
-					// Trigger download using browser, not AJAX
-					/*  setTimeout(function() {
-						 window.location.href = "./download/excel";
-					 }, 200); */ // slight delay to ensure file generation completes
-				},
-				error: function (xhr, status, error) {
-					console.error("Error occurred:", error);
-					$("#alertmsg").text("An error occurred: " + error);
-					$('#alert').modal("toggle");
-				}
-			});
-		}
-
-	</script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var counterlist = /*[[${counterlist}]]*/[];
 		var getcode = /*[[${getcode}]]*/[];
+		if (!counterlist) {
+			counterlist = [];
+		}
+		if (!getcode) {
+			getcode = [];
+		}
 		console.log(getcode)
 		// -------------------- Bank Name Validation --------------------
 
@@ -937,6 +836,19 @@
 			font-size: unset !important;
 		}
 
+		.limit-mismatch {
+			border: 2px solid #dc3545 !important;
+			animation: limit-border-blink 0.9s ease-in-out infinite;
+		}
+
+		@keyframes limit-border-blink {
+			0%, 100% {
+				border-color: #dc3545;
+			}
+			50% {
+				border-color: #ff9999;
+			}
+		}
 
 		.container-fluid {
 
@@ -950,6 +862,9 @@
 	</style>
 	<script>
 		$(document).ready(function () {
+			if (!$('#usertable').length) {
+				return;
+			}
 			let tableHeight = $(window).height() - 330; // subtract header/footer space
 			if (tableHeight < 200) tableHeight = 200;   // minimum height
 
@@ -966,14 +881,6 @@
 				lengthChange: false,
 				responsive: true
 			});
-		});
-		var originalCreditLimit = 0;
-		var originalSettlementLimit = 0;
-
-		$(document).ready(function () {
-			// Capture the initial values loaded in the inputs (Edit Mode)
-			originalCreditLimit = parseFloat($("#creditLimit").val()) || 0;
-			originalSettlementLimit = parseFloat($("#settlementLimit").val()) || 0;
 		});
 	</script>
 
@@ -995,180 +902,12 @@
 
 	</script>
 
-
-	<script>
-		function modify() {
-
-			var counterPartyBankCode = $("#counterPartyBankCode").val().trim();
-			var counterPartyBank = $("#counterPartyBank").val().trim();
-			var location = $("#location").val().trim();
-			var expiryDate = $("#expiryDate").val().trim();
-			var rating = $("#rating").val().trim();
-			var regularLimit = $("#regularLimit").val().trim();
-			var adhocLimit = $("#adhocLimit").val().trim();
-			var creditLimit = $("#creditLimit").val().trim();
-			var settlementLimit = $("#settlementLimit").val().trim();
-			var moneyMarketLimit = $("#moneyMarketLimit").val().trim();
-			var tradeFinanceLimit = $("#tradeFinanceLimit").val().trim();
-			var earmarkinglimit = $("#earmarkinglimit").val().trim(); // Added
-			var earmarkingdate = $("#earmarkingdate").val().trim(); // Added
-			var countryRating = $("#countryRating").val().trim();
-
-
-			if (regularLimit === "") {
-				alert("Please enter regularLimit.");
-				$("#regularLimit").focus();
-				return;
-			} if (adhocLimit === "") {
-				alert("Please enter adhocLimit.");
-				$("#adhocLimit").focus();
-				return;
-			} if (creditLimit === "") {
-				alert("Please enter creditLimit.");
-				$("#creditLimit").focus();
-				return;
-			} if (settlementLimit === "") {
-				alert("Please enter settlementLimit.");
-				$("#settlementLimit").focus();
-				return;
-			} if (moneyMarketLimit === "") {
-				alert("Please enter moneyMarketLimit.");
-				$("#moneyMarketLimit").focus();
-				return;
-			} if (tradeFinanceLimit === "") {
-				alert("Please enter tradeFinanceLimit.");
-				$("#tradeFinanceLimit").focus();
-				return;
-			}
-
-
-			if (counterPartyBank === "") {
-				alert("Please enter counterparty bank name.");
-				$("#counterPartyBank").focus();
-				return;
-			}
-			if (countryRating === "") {
-				alert("Please enter Country Rating.");
-				$("#countryRating").focus();
-				return false;
-			}
-
-			/*if (expiryDate === "") {
-				alert("Please enter Expiry Date.");
-				$("#expiryDate").focus();
-				return;
-			}*/
-			if (rating === "") {
-				alert("Please enter Rating .");
-				$("#rating").focus();
-				return;
-			}
-			if (location === "") {
-				alert("Please enter location.");
-				$("#location").focus();
-				return;
-			}
-			if (Adhoc_Limit_exp_date === "") {
-				alert("Please enter Adhoc Limit Expiry Date.");
-				$("#Adhoc_Limit_exp_date").focus();
-				return;
-			}
-
-			// All fields are valid — proceed with AJAX
-			var formData = $("#counterpartys").serialize();
-			console.log("Form data being submitted:", formData);
-
-			$.ajax({
-				url: "./Addcounter?formmode=edit",
-				type: "POST",
-				data: formData,
-				success: function (response) {
-					console.log("Server response:", response);
-					$("#alertmsg").text(response);
-					$('#alert').modal("toggle");
-
-
-					// Trigger download using browser, not AJAX
-					/*  setTimeout(function() {
-						 window.location.href = "./download/excel";
-					 }, 200); */ // slight delay to ensure file generation completes
-				},
-				error: function (xhr, status, error) {
-					console.error("Error occurred:", error);
-					$("#alertmsg").text("An error occurred: " + error);
-					$('#alert').modal("toggle");
-				}
-			});
-		}
-
-
-	</script>
-
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 
-		// Global flag to prevent duplicate loading in modal
+		// Global flags for adhoc modal state
 		var isAdhocDataLoaded = false;
-
-		// 1. MAIN SUBMIT FUNCTION (ADD MODE)
-		function submitform() {
-			if (!validateMainForm()) return;
-
-			var formData = $("#counterpartys").serialize();
-			$.ajax({
-				url: "./Addcounter",
-				type: "POST",
-				data: formData,
-				success: function (response) {
-					// After master is saved, save the modal details
-					saveDetailsSequentially();
-					$("#alertmsg").text(response);
-					$('#alert').modal("show");
-				},
-				error: function (xhr) {
-					alert("Error saving master record: " + xhr.statusText);
-				}
-			});
-		}
-
-		// 2. MAIN MODIFY FUNCTION (EDIT MODE)
-		function modify() {
-			if (!validateMainForm()) return;
-
-			var formData = $("#counterpartys").serialize();
-			$.ajax({
-				url: "./Addcounter?formmode=edit",
-				type: "POST",
-				data: formData,
-				success: function (response) {
-					saveDetailsSequentially();
-					$("#alertmsg").text(response);
-					$('#alert').modal("show");
-				},
-				error: function (xhr) {
-					alert("Error modifying record: " + xhr.statusText);
-				}
-			});
-		}
-
-		// 3. VALIDATION HELPER
-		function validateMainForm() {
-			var bankCode = $("#counterPartyBankCode").val().trim();
-			var bankName = $("#counterPartyBank").val().trim();
-			var country = $("#location").val().trim();
-			var rating = $("#rating").val().trim();
-			var adhocExp = $("#Adhoc_Limit_exp_date").val();
-			var countryRating = $("#countryRating").val().trim();
-
-			//if (bankCode === "") {alert("Please enter Bank Code."); return false;}
-			if (bankName === "") {alert("Please enter Bank Name."); return false;}
-			if (country === "") {alert("Please enter Country."); return false;}
-			if (rating === "") {alert("Please enter Rating."); return false;}
-			if (adhocExp === "") {alert("Please enter Adhoc Limit Expiry Date."); return false;}
-			if (countryRating === "") {alert("Please enter Country Rating."); $("#countryRating").focus(); return false;}
-
-			return true;
-		}
+		var isAdhocModalTouched = false;
 
 		// 4. MODAL LOGIC
 		function openAdhocModal() {
@@ -1193,6 +932,7 @@
 			}
 
 			$('#adhocDetailModal').modal('show');
+			isAdhocModalTouched = true;
 
 			if (!isAdhocDataLoaded) {
 				if (formmode === 'edit' || formmode === 'view') {
@@ -1223,6 +963,7 @@
 		}
 
 		function addAdhocDetailRow(data = null) {
+			isAdhocModalTouched = true;
 			var bankname = $("#counterPartyBank").val();
 			var formmode = /*[[${formmode}]]*/ 'add';
 			var isViewMode = formmode === 'view';
@@ -1300,60 +1041,60 @@
 			$("#adhocLimit").val(total.toFixed(2));
 		}
 
-		function confirmAdhocDetails() {
+		function syncAdhocFormFromModal() {
+			if ($("#adhocDetailTable tbody tr").length === 0) {
+				return;
+			}
+
 			var totalAdhoc = 0;
-			var adhocCreditSum = 0;
-			var adhocSettlementSum = 0;
 			var maxexpdate = null;
 			var maxeardate = null;
 
-			// Loop through modal rows to sum up the NEW adhoc entries
 			$("#adhocDetailTable tbody tr").each(function () {
-				var limitType = $(this).find(".d-limit-type").val();
 				var limitVal = parseFloat($(this).find(".d-limit").val()) || 0;
 				var expdate = $(this).find(".d-exp").val();
 				var eardate = $(this).find(".d-ear-date").val();
 
-				if (maxexpdate === null || expdate <= maxexpdate) {
+				if (expdate && (maxexpdate === null || expdate <= maxexpdate)) {
 					maxexpdate = expdate;
-					maxeardate = eardate
+					maxeardate = eardate;
 				}
-
 
 				totalAdhoc += limitVal;
-
-				if (limitType === "Credit Limit") {
-					adhocCreditSum += limitVal;
-				} else if (limitType === "Settlement Limit") {
-					adhocSettlementSum += limitVal;
-				}
 			});
 
-			// 1. Update Adhoc Limit Total
+			// Keep existing form values if modal rows are still empty/unapplied
+			if (totalAdhoc <= 0) {
+				return;
+			}
+
 			$("#adhocLimit").val(totalAdhoc.toFixed(2));
-			$("#Adhoc_Limit_exp_date").val(maxexpdate);
-			$("#earmarkingdate").val(maxeardate);
+			if (maxexpdate) {
+				$("#Adhoc_Limit_exp_date").val(maxexpdate);
+			}
+			if (maxeardate) {
+				$("#earmarkingdate").val(maxeardate);
+			}
+		}
 
-
-			// 2. Update Credit Limit (Original Base + Modal Sum)
-			// If original was 100 and modal has 5, this sets it to 105
-			var finalCredit = originalCreditLimit + adhocCreditSum;
-			$("#creditLimit").val(finalCredit.toFixed(2));
-
-			// 3. Update Settlement Limit (Original Base + Modal Sum)
-			var finalSettlement = originalSettlementLimit + adhocSettlementSum;
-			$("#settlementLimit").val(finalSettlement.toFixed(2));
-
+		function confirmAdhocDetails() {
+			syncAdhocFormFromModal();
+			isAdhocModalTouched = true;
 			$('#adhocDetailModal').modal('hide');
 		}
 
-		function saveDetailsSequentially() {
+		function collectAdhocDetailRows() {
 			var adhocDetails = [];
 			$("#adhocDetailTable tbody tr").each(function () {
 				var row = $(this);
+				var limitVal = row.find(".d-limit").val();
+				if (!limitVal || parseFloat(limitVal) === 0) {
+					return;
+				}
+
 				adhocDetails.push({
 					limit_type: row.find(".d-limit-type").val(),
-					adhocLimit: row.find(".d-limit").val(),
+					adhocLimit: limitVal,
 					adhocLimitDate: row.find(".d-date").val(),
 					adhocLimitExpDate: row.find(".d-exp").val(),
 					earMarkingLimit: row.find(".d-ear-limit").val(),
@@ -1362,16 +1103,44 @@
 					rollOver: row.find(".d-roll").val()
 				});
 			});
+			return adhocDetails;
+		}
 
-			$.ajax({
-				url: "./saveDetailsRecord",
-				type: "POST",
-				data: {
-					adhocDetailsJson: JSON.stringify(adhocDetails),
-					srlNo: $("#srlNo").val(),
-					bankName: $("#counterPartyBank").val()
-				},
-				success: function (res) {console.log("Adhoc Details saved");}
+		function saveAdhocDetails() {
+			return new Promise(function (resolve, reject) {
+				var formmode = /*[[${formmode}]]*/ 'add';
+
+				if (!isAdhocModalTouched && formmode === 'edit') {
+					resolve("SKIPPED");
+					return;
+				}
+
+				var adhocDetails = collectAdhocDetailRows();
+				var srlNo = $("#srlNo").val();
+				if (!srlNo) {
+					reject("Serial number is missing.");
+					return;
+				}
+
+				$.ajax({
+					url: "./saveDetailsRecord",
+					type: "POST",
+					data: {
+						adhocDetailsJson: JSON.stringify(adhocDetails),
+						srlNo: srlNo,
+						bankName: $("#counterPartyBank").val()
+					},
+					success: function (res) {
+						if (res && res.indexOf("ERROR") === 0) {
+							reject(res);
+						} else {
+							resolve(res);
+						}
+					},
+					error: function (xhr) {
+						reject(xhr.responseText || xhr.statusText);
+					}
+				});
 			});
 		}
 
@@ -1424,6 +1193,7 @@
 			<!--<div th:insert="XBRLHeaderMenu :: header"></div>-->
 			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
 			<div class="col-sm-12">
+				<input type="hidden" id="pageFormmode" th:value="${formmode}" />
 
 				<div th:if="${formmode}=='list'">
 					<div class="card">
@@ -1804,8 +1574,7 @@
 
 
 											<div class="card-footer text-center">
-												<button type="button" class="role-btn" id="generatebtn"
-													onclick="submitform();">Submit</button>
+												<button type="button" class="role-btn" id="generatebtn">Submit</button>
 											</div>
 										</div>
 
@@ -1982,7 +1751,7 @@
 													<div class="input-group">
 														<input type="number" name="adhocLimit" id="adhocLimit"
 															th:value="${list.adhocLimit}"
-															class="form-control form-control-sm" readonly required />
+															class="form-control form-control-sm" readonly />
 														<div class="input-group-append">
 															<button class="btn btn-primary btn-sm" type="button"
 																onclick="openAdhocModal()">
@@ -2087,8 +1856,7 @@
 
 
 											<div class="card-footer text-center">
-												<button type="button" class="role-btn" id="generatebtn"
-													onclick="modify();">Submit</button>
+												<button type="button" class="role-btn" id="generatebtn">Submit</button>
 											</div>
 										</div>
 									</div>
@@ -2468,6 +2236,174 @@
 						</div>
 					</div>
 				</div>
+
+				<script type="text/javascript">
+					(function () {
+						function fieldVal(selector) {
+							var value = $(selector).val();
+							return value == null ? "" : String(value).trim();
+						}
+
+						function showLoader(show) {
+							var loader = document.getElementById("bob-loader");
+							if (loader) {
+								loader.setAttribute("aria-hidden", show ? "false" : "true");
+							}
+						}
+
+						var CREDIT_FORMULA_FIELDS = "#creditLimit, #moneyMarketLimit, #tradeFinanceLimit";
+						var REGULAR_FORMULA_FIELDS = "#regularLimit, #creditLimit, #settlementLimit";
+						var TOTAL_FORMULA_FIELDS = "#regularLimit, #creditLimit, #settlementLimit,#adhocLimit";
+						var ALL_LIMIT_VALIDATION_FIELDS = "#regularLimit, #creditLimit, #settlementLimit, #moneyMarketLimit, #tradeFinanceLimit";
+
+						function parseLimitAmount(selector) {
+							var value = parseFloat(fieldVal(selector));
+							return isNaN(value) ? 0 : value;
+						}
+
+						function clearLimitMismatchHighlight() {
+							$(ALL_LIMIT_VALIDATION_FIELDS).removeClass("limit-mismatch");
+						}
+
+						function highlightLimitFields(selector) {
+							$(selector).addClass("limit-mismatch");
+						}
+
+						function validateCreditLimitFormula() {
+							var creditLimit = parseLimitAmount("#creditLimit");
+							var moneyMarketLimit = parseLimitAmount("#moneyMarketLimit");
+							var tradeFinanceLimit = parseLimitAmount("#tradeFinanceLimit");
+							var expectedCredit = moneyMarketLimit + tradeFinanceLimit;
+
+							if (Math.abs(creditLimit - expectedCredit) > 0.009) {
+								highlightLimitFields(CREDIT_FORMULA_FIELDS);
+								alert(
+									"Credit Limit must equal Money Market Limit + Trade Finance Limit.\n" +
+									"Expected Credit Limit: " + expectedCredit.toFixed(2) + " USD (Mn)"
+								);
+								$("#creditLimit").focus();
+								return false;
+							}
+
+							return true;
+						}
+
+						
+						
+						function validateTotallimitFormula() {
+													var regularLimit = parseLimitAmount("#regularLimit");
+													var creditLimit = parseLimitAmount("#creditLimit");
+													var adhocLimit = parseLimitAmount("#adhocLimit");
+													var settlementLimit = parseLimitAmount("#settlementLimit");
+													
+													var expectedTotal1 = creditLimit + settlementLimit;
+													var expectedTotal2 = regularLimit + adhocLimit;
+
+													if (Math.abs(expectedTotal1 - expectedTotal2) > 0.009) {
+														highlightLimitFields(TOTAL_FORMULA_FIELDS);
+														alert(
+															"Regular Limit + Adhoc limit must equal Credit Limit + Settlement Limit." 
+														);
+														
+														return false;
+													}
+
+													return true;
+												}
+
+						function validateCounterpartyForm() {
+							var form = document.getElementById("counterpartys");
+							if (!form) {
+								alert("Form not found.");
+								return false;
+							}
+							if (!form.checkValidity()) {
+								form.reportValidity();
+								return false;
+							}
+
+							clearLimitMismatchHighlight();
+							if (!validateCreditLimitFormula()) {
+								return false;
+							}
+							
+							if (!validateTotallimitFormula()) {
+								return false;
+							}
+							return true;
+						}
+
+						function postCounterparty(formmode) {
+							if (!validateCounterpartyForm()) {
+								console.log("Submit blocked by form validation");
+								return;
+							}
+
+							var formData = $("#counterpartys").serialize();
+							var url = formmode === "edit" ? "./Addcounter?formmode=edit" : "./Addcounter";
+							console.log("Submitting counterparty (" + formmode + "):", formData);
+							showLoader(true);
+
+							$.ajax({
+								url: url,
+								type: "POST",
+								data: formData,
+								success: function (response) {
+									console.log("Addcounter response:", response);
+									var finish = function () {
+										showLoader(false);
+										$("#alertmsg").text(response);
+										$("#alert").modal("show");
+									};
+									if (typeof saveAdhocDetails === "function") {
+										saveAdhocDetails().then(finish).catch(function (err) {
+											showLoader(false);
+											$("#alertmsg").text(response + " (Adhoc details save failed: " + err + ")");
+											$("#alert").modal("show");
+										});
+									} else {
+										finish();
+									}
+								},
+								error: function (xhr) {
+									showLoader(false);
+									alert("Error saving record: " + (xhr.responseText || xhr.statusText));
+								}
+							});
+						}
+
+						window.submitform = function () {
+							console.log("submitform called");
+							postCounterparty("add");
+						};
+
+						window.modify = function () {
+							console.log("modify called");
+							postCounterparty("edit");
+						};
+
+						window.submitCounterpartyForm = function () {
+							var mode = fieldVal("#pageFormmode") || "add";
+							console.log("submitCounterpartyForm mode:", mode);
+							if (mode === "edit") {
+								window.modify();
+							} else {
+								window.submitform();
+							}
+						};
+
+						$(function () {
+							$(document).on("click", "#generatebtn", function (e) {
+								e.preventDefault();
+								window.submitCounterpartyForm();
+							});
+
+							$(document).on("input change", ALL_LIMIT_VALIDATION_FIELDS, function () {
+								clearLimitMismatchHighlight();
+							});
+						});
+					})();
+				</script>
 
 			</div>
 		</div>

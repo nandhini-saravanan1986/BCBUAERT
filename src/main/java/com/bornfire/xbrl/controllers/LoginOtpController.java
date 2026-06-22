@@ -21,7 +21,7 @@ public class LoginOtpController {
 			return "redirect:/login";
 		}
 		if (!Boolean.TRUE.equals(session.getAttribute("LOGIN_OTP_PENDING"))) {
-			return "redirect:/Dashboard";
+			return "redirect:/MenuLanding";
 		}
 		return "XBRLLoginOtp";
 	}
@@ -33,7 +33,7 @@ public class LoginOtpController {
 			return "redirect:/login";
 		}
 		if (!Boolean.TRUE.equals(session.getAttribute("LOGIN_OTP_PENDING"))) {
-			return "redirect:/Dashboard";
+			return "redirect:/MenuLanding";
 		}
 
 		String sessionOtp = (String) session.getAttribute("LOGIN_OTP");
@@ -47,7 +47,7 @@ public class LoginOtpController {
 			session.setAttribute("LOGIN_OTP_VERIFIED", true);
 			session.removeAttribute("LOGIN_OTP");
 			session.removeAttribute("LOGIN_OTP_ATTEMPTS");
-			return "redirect:/Dashboard";
+			return "redirect:/MenuLanding";
 		}
 
 		attempts = attempts + 1;
