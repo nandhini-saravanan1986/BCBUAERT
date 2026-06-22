@@ -28,7 +28,7 @@ body {
 	padding: 20px 25px;
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
+	min-height: 90vh;
 }
 
 .card {
@@ -122,7 +122,6 @@ body {
 }
 
 .table-container {
-	padding: 20px;
 	overflow-x: auto;
 	max-height: 60vh;
 	overflow-y: auto;
@@ -155,7 +154,7 @@ body {
 }
 
 .audit-table td {
-	padding: 12px 16px;
+	padding: 8px 16px;
 	border: 1px solid var(--border-color);
 	vertical-align: middle;
 	color: var(--text-color);
@@ -244,31 +243,45 @@ body {
 	padding: 4px 10px;
 	border-radius: 12px;
 	font-size: 11px;
-	font-weight: bold;
 	text-transform: uppercase;
-}
-
-.badge-add {
-	background-color: #dcfce7;
-	color: #15803d;
-	border: 1px solid #bbf7d0;
-}
-
-.badge-modify {
-	background-color: #fef3c7;
-	color: #b45309;
-	border: 1px solid #fde68a;
-}
-
-.badge-delete {
-	background-color: #fee2e2;
-	color: #b91c1c;
-	border: 1px solid #fecaca;
 }
 
 .empty-cell {
 	color: #adb5bd;
 	font-style: italic;
+}
+
+.nested-audit-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+	background-color: transparent !important;
+	border: none !important;
+}
+
+.nested-audit-table tr, .nested-audit-table td {
+	padding: 8px 12px;
+	text-align: left;
+	border-bottom: 1px dashed var(--border-color);
+	color: var(--text-color);
+	background-color: transparent !important;
+}
+
+.nested-audit-table tr:last-child td {
+	border-bottom: none;
+}
+
+.parsed-field-name {
+	width: 33%;
+	font-weight: bold;
+}
+
+.parsed-old-value {
+	width: 33%;
+}
+
+.parsed-new-value {
+	width: 33%;
 }
 
 .dropdown-menu {
@@ -411,13 +424,6 @@ rotate(
 						By: Default
 					</button>
 
-					<form id="searchForm" th:action="@{/MC_Service_Audit}" method="get"
-						style="margin: 0;">
-						<input type="text" id="searchInput" name="keyword"
-							th:value="${keyword}" class="audit-search-input"
-							placeholder="Search ...">
-					</form>
-
 					<button type="button" class="role-btn"
 						onclick="downloadAuditReport();">
 						<i class="fa fa-download" style="margin-right: 6px;"></i> Download
@@ -425,20 +431,67 @@ rotate(
 				</div>
 			</div>
 
-			<div class="d-flex justify-content-end align-items-center px-4 py-2"
-				style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;"
-				th:if="${page != null and page.totalPages > 1}">
-				<div class="text-muted mr-3" style="font-size: 11px;">
-					Page <span th:text="${page.number + 1}"></span> of <span
-						th:text="${page.totalPages}"></span>
+			<div
+				class="d-flex justify-content-between align-items-center px-4 py-2"
+				style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+
+				<div>
+					<form id="searchForm" th:action="@{/MC_Service_Audit}" method="get"
+						style="margin: 0;">
+						<input type="text" id="searchInput" name="keyword"
+							th:value="${keyword}" class="audit-search-input"
+							placeholder="Search ...">
+					</form>
 				</div>
-				<div class="audit-pagination" style="margin: 0;">
-					<a
-						th:href="@{/MC_Service_Audit(page=${page.number - 1}, keyword=${keyword})}"
-						th:class="${page.first ? 'page-btn disabled' : 'page-btn'}">&lt;</a>
-					<a
-						th:href="@{/MC_Service_Audit(page=${page.number + 1}, keyword=${keyword})}"
-						th:class="${page.last ? 'page-btn disabled' : 'page-btn'}">&gt;</a>
+
+				<div class="d-flex align-items-center"
+					th:if="${page != null and page.totalPages > 1}">
+					<div class="text-muted mr-3" style="font-size: 11px;">
+						Page <span th:text="${page.number + 1}"></span> of <span
+							th:text="${page.totalPages}"></span>
+					</div>
+					<div class="audit-pagination"
+						th:if="${page != null and page.totalPages > 1}">
+						<a
+							th:href="@{/MC_Service_Audit(page=${page.number - 1}, keyword=${keyword})}"
+							th:class="${page.first ? 'page-btn disabled' : 'page-btn'}">Previous</a>
+
+						<th:block th:if="${page.totalPages <= 5}">
+							<a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+								th:href="@{/MC_Service_Audit(page=${i}, keyword=${keyword})}"
+								th:text="${i + 1}"
+								th:class="${page.number == i ? 'page-btn active' : 'page-btn'}">1</a>
+						</th:block>
+
+						<th:block th:if="${page.totalPages > 5}">
+							<a th:href="@{/MC_Service_Audit(page=0, keyword=${keyword})}"
+								th:text="1"
+								th:class="${page.number == 0 ? 'page-btn active' : 'page-btn'}">1</a>
+
+							<span th:if="${page.number > 2}"
+								style="padding: 6px; color: #64748b;">...</span>
+
+							<th:block
+								th:with="start=${page.number <= 2 ? 1 : (page.number >= page.totalPages - 3 ? page.totalPages - 4 : page.number - 1)}, end=${page.number <= 2 ? 3 : (page.number >= page.totalPages - 3 ? page.totalPages - 2 : page.number + 1)}">
+								<a th:each="i : ${#numbers.sequence(start, end)}"
+									th:href="@{/MC_Service_Audit(page=${i}, keyword=${keyword})}"
+									th:text="${i + 1}"
+									th:class="${page.number == i ? 'page-btn active' : 'page-btn'}"></a>
+							</th:block>
+
+							<span th:if="${page.number < page.totalPages - 3}"
+								style="padding: 6px; color: #64748b;">...</span>
+
+							<a
+								th:href="@{/MC_Service_Audit(page=${page.totalPages - 1}, keyword=${keyword})}"
+								th:text="${page.totalPages}"
+								th:class="${page.number == page.totalPages - 1 ? 'page-btn active' : 'page-btn'}"></a>
+						</th:block>
+
+						<a
+							th:href="@{/MC_Service_Audit(page=${page.number + 1}, keyword=${keyword})}"
+							th:class="${page.last ? 'page-btn disabled' : 'page-btn'}">Next</a>
+					</div>
 				</div>
 			</div>
 
@@ -458,16 +511,15 @@ rotate(
 							<tr th:each="log : ${page?.content}" class="data-row">
 								<td class="col-screen" th:text="${log.audit_screen}"></td>
 								<td class="col-func" th:text="${log.func_code}"></td>
-								<td class="col-field" th:text="${log.field_name}"></td>
-								<td class="col-oldval" th:text="${log.old_value}"></td>
-								<td class="col-newval" th:text="${log.new_value}"></td>
+
+								<td class="col-modi" th:text="${log.modi_details}"></td>
+
 								<td class="col-user" th:text="${log.entry_user}"></td>
 								<td class="col-session" th:text="${log.session_id}"></td>
 								<td class="col-date"
 									th:text="${#dates.format(log.entry_time, 'dd-MM-yyyy')}"></td>
 								<td class="col-time"
 									th:text="${#dates.format(log.entry_time, 'hh:mm a')}"></td>
-
 							</tr>
 						</tbody>
 
@@ -483,9 +535,6 @@ rotate(
 			</div>
 
 			<div id="filterDropdown" class="dropdown-menu"></div>
-
-
-
 		</div>
 	</div>
 
@@ -500,7 +549,6 @@ rotate(
     const currentKeyword = urlParams.get('keyword') || '';
     const currentSortCol = urlParams.get('sortCol') || null;
     const currentSortDir = urlParams.get('sortDir') || null;
-    const currentFilterCol = urlParams.get('filterCol') || null;
     let currentGroupState = parseInt(urlParams.get('groupBy') || '0');
 
     function showLoader() { if(tableLoader) tableLoader.classList.remove('hidden'); }
@@ -557,49 +605,90 @@ rotate(
     
     function getVal(val) { return val ? val : '<span class="empty-cell">-</span>'; }
 
-    
+    function formatParsedDetails(modiString) {
+        if (!modiString || modiString.trim() === '' || modiString === 'null') {
+            return `<td><span class="empty-cell">-</span></td><td><span class="empty-cell">-</span></td><td><span class="empty-cell">-</span></td>`;
+        }
+
+        const changes = modiString.split('|||');
+
+        if (changes.length === 1) {
+            const match = changes[0].match(/(.*?):\s*OldValue:\s*(.*?),\s*NewValue:\s*(.*)/);
+            if (match) {
+                return `
+                    <td>${match[1].trim()}</td>
+                    <td>${match[2].trim() === 'null' ? '-' : match[2].trim()}</td>
+                    <td>${match[3].trim() === 'null' ? '-' : match[3].trim()}</td>
+                `;
+            } else {
+                return `<td colspan="3">${changes[0]}</td>`;
+            }
+        }
+
+        let rows = '';
+        changes.forEach(change => {
+            const match = change.match(/(.*?):\s*OldValue:\s*(.*?),\s*NewValue:\s*(.*)/);
+            if (match) {
+                rows += `
+                    <tr>
+                        <td style="width: 33%; ">${match[1].trim()}</td>
+                        <td style="width: 33%;">${match[2].trim() === 'null' ? '-' : match[2].trim()}</td>
+                        <td style="width: 33%;">${match[3].trim() === 'null' ? '-' : match[3].trim()}</td>
+                    </tr>
+                `;
+            } else {
+                rows += `<tr><td colspan="3">${change}</td></tr>`;
+            }
+        });
+
+        return `
+            <td colspan="3" style="padding: 0px;">
+                <table class="nested-audit-table">
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </td>
+        `;
+    }
+
     const rawRows = document.querySelectorAll('#rawTableBody tr.data-row');
     let auditData = [];
+    
     if (rawRows.length > 0) {
         auditData = Array.from(rawRows).map(tr => {
+            const modiTxt = tr.querySelector('.col-modi').innerText.trim();
+
             return {
                 html: `
                     <td>${tr.querySelector('.col-screen').innerText.trim()}</td>
                     <td>${getBadge(tr.querySelector('.col-func').innerText.trim())}</td>
-                    <td>${getVal(tr.querySelector('.col-field').innerText.trim())}</td>
-                    <td>${getVal(tr.querySelector('.col-oldval').innerText.trim())}</td>
-                    <td>${getVal(tr.querySelector('.col-newval').innerText.trim())}</td>
+                    
+                    ${formatParsedDetails(modiTxt)}
+                    
                     <td>${tr.querySelector('.col-user').innerText.trim()}</td>
                     <td>${tr.querySelector('.col-date').innerText.trim()}</td>
                     <td>${tr.querySelector('.col-time').innerText.trim()}</td>
-                    
                 `,
                 func: tr.querySelector('.col-func').innerText.trim(),
-                field: tr.querySelector('.col-field').innerText.trim(),
-                oldVal: tr.querySelector('.col-oldval').innerText.trim(),
-                newVal: tr.querySelector('.col-newval').innerText.trim(),
+                modiDetails: modiTxt, 
                 user: tr.querySelector('.col-user').innerText.trim(),
                 session: tr.querySelector('.col-session').innerText.trim(),
                 screen: tr.querySelector('.col-screen').innerText.trim(),
                 date: tr.querySelector('.col-date').innerText.trim(),
                 time: tr.querySelector('.col-time').innerText.trim()
-                
             };
         });
     }
 
-    const colToDataKey = {
-        "audit_screen": "screen", "func_code": "func", "entry_user": "user",
-        "entry_date": "date", "entry_time": "time", "field_name": "field",
-        "old_value": "oldVal", "new_value": "newVal"
-    };
-
-    
     const columns = [
-        { id: "audit_screen", label: "Screen Name" }, { id: "func_code", label: "Function Code" },
+        { id: "audit_screen", label: "Screen Name" }, 
+        { id: "func_code", label: "Function Code" },
         { id: "field_name", label: "Field Name" },
-        { id: "old_value", label: "Old Value" }, { id: "new_value", label: "New Value" },
-        { id: "entry_user", label: "User" }, { id: "entry_date", label: "Date" },
+        { id: "old_value", label: "Old Value" }, 
+        { id: "new_value", label: "New Value" },
+        { id: "entry_user", label: "User" }, 
+        { id: "entry_date", label: "Date" },
         { id: "entry_time", label: "Time" }
     ];
 
@@ -617,10 +706,13 @@ rotate(
                     <span class="sort-target" onclick="handleSort('${col.id}')">
                         ${col.label} <span id="sort-${col.id}" style="font-size: 10px; margin-left: 4px;"></span>
                     </span>
-                    <span class="filter-icon-wrapper ${urlParams.has(col.id) ? 'active' : ''}" 
-                          onclick="toggleFilterMenu(event, '${col.id}')" id="filter-icon-${col.id}">
-                        ${filterSvg}
-                    </span>
+                    
+                    ${(col.id === 'field_name' || col.id === 'old_value' || col.id === 'new_value') ? '' : `
+                        <span class="filter-icon-wrapper ${urlParams.has(col.id) ? 'active' : ''}" 
+                              onclick="toggleFilterMenu(event, '${col.id}')" id="filter-icon-${col.id}">
+                            ${filterSvg}
+                        </span>
+                    `}
                 </div>
             </th>
         `).join("");
@@ -632,6 +724,8 @@ rotate(
     }
 
     window.handleSort = function(column) {
+        if (column === 'field_name' || column === 'old_value' || column === 'new_value') return;
+
         let newDir = 'asc';
         if (currentSortCol === column) {
             if (currentSortDir === 'asc') newDir = 'desc';
@@ -640,7 +734,6 @@ rotate(
         triggerServerRequest({ sortCol: column, sortDir: newDir });
     };
 
-    
     const dateFilterInput = document.getElementById('globalDateFilter');
 
     function parseToHtmlDate(ddmmyyyy) {
@@ -661,7 +754,6 @@ rotate(
     let isDateCleared = sessionStorage.getItem('audit_date_cleared') === 'true';
 
     if (currentUrlDate) {
-        
         dateFilterInput.value = parseToHtmlDate(currentUrlDate);
         sessionStorage.removeItem('audit_date_cleared');
     } else if (isDateCleared) {
@@ -681,7 +773,6 @@ rotate(
     });
 
 
-    
     window.toggleFilterMenu = async function(e, column) {
         e.stopPropagation();
         
@@ -745,7 +836,7 @@ rotate(
         };
 
         if (column === 'entry_date' || column === 'entry_time') {
-            const dataKey = colToDataKey[column];
+            const dataKey = column === 'entry_date' ? 'date' : 'time';
             const localDistinctValues = [...new Set(auditData.map(row => row[dataKey] || "(Blank)"))].sort();
             renderMenuHtml(localDistinctValues);
             return; 
@@ -793,7 +884,6 @@ rotate(
         applyFilter(column, finalString);
     };
 
-    
     window.applyFilter = function(column, value) {
         if (!value || value.trim() === '' || value === '(Blank)') value = null;
         

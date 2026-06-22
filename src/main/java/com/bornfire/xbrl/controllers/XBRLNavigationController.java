@@ -7411,6 +7411,9 @@ System.out.println("sixe==="+excelData.length);
 				}
 			}
 			if (auditType == "MODIFY" || auditType.equals("MODIFY")) {
+				auditService.compareMCEntitiesmanual(oldcopy, record, reportDateStr,
+						rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD");
 
 			} else {
 				auditService.createBusinessAudit(reportDateStr, auditType, rT_MC_TABLE_Service.screenName(formMode),

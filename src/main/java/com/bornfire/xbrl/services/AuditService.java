@@ -31,9 +31,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.bornfire.xbrl.entities.AuditServicesEntity;
 import com.bornfire.xbrl.entities.AuditServicesRep;
+import com.bornfire.xbrl.entities.MC_Service_audit_entity;
 import com.bornfire.xbrl.entities.Service_audit_table_Rep;
 import com.bornfire.xbrl.entities.Service_audit_table_entity;
 import com.bornfire.xbrl.entities.UserProfile;
+import com.bornfire.xbrl.entities.MC_Service_audit_Repo;
 
 @Service
 public class AuditService {
@@ -43,6 +45,8 @@ public class AuditService {
 	
 	  @Autowired
 	Service_audit_table_Rep Service_audit_table_Reps;
+	@Autowired
+	MC_Service_audit_Repo MC_Service_audit_Repo;
 
 	public List<AuditServicesEntity> getUserServices(Date reportdata) {
 //		System.out.println(auditServicesRep.getUserAudit());
@@ -307,59 +311,103 @@ public class AuditService {
 		Service_audit_table_Reps.save(audit);
 
 	}
-//	
-//
-//	public void createMCAudit(final String customerId, final String functionCode, final String screenName,
-//			final Map<String, String> changeDetails, final String tableName,final String details) {
-//		try {
-//			System.out.println("Entered Service Audit");
-//			final UUID auditID = UUID.randomUUID();
-//			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-//			//System.out.println("ServletRequestAttributes : "+attr);
-//			String userId = null;
-//			String username = null;
-//			if (attr != null) {
-//				HttpServletRequest request = attr.getRequest();
-//				userId = (String) request.getSession().getAttribute("USERID");
-//				username = (String) request.getSession().getAttribute("USERNAME");
-//			}
-//			final Date currentDate = new Date();
-//
-//			Service_audit_table_entity audit = new Service_audit_table_entity();
-//			audit.setAudit_ref_no(auditID.toString());
-//			audit.setAudit_date(currentDate);
-//			audit.setEntry_time(currentDate);
-//			audit.setEntry_user(userId);
-//			audit.setEntry_user_name(username);
-//			audit.setFunc_code(functionCode);
-//			audit.setAudit_table(tableName);
-//			audit.setAudit_screen(screenName);
-//			audit.setEvent_id(userId);
-//			audit.setEvent_name(username);
-//
-//			if (changeDetails != null && !changeDetails.isEmpty()) {
-//				StringBuilder changes = new StringBuilder();
-//				changeDetails
-//						.forEach((field, value) -> changes.append(field).append(": ").append(value).append("||| "));
-//			
-//	            audit.setModi_details(changes.toString()); 
-//			}
-//
-//			if ("VERIFY".equalsIgnoreCase(functionCode)) {
-//				audit.setAuth_user(userId);
-//				audit.setAuth_user_name(username);
-//				audit.setAuth_time(currentDate);
-//			}
-//
-//			audit.setDomain_id(customerId);
-//
-////			System.out.println(audit);
-//			Service_audit_table_Reps.save(audit);
-//
-//		} catch (Exception e) {
-//			System.err.println("Error creating business audit: " + e.getMessage());
-//			e.printStackTrace();
-//		}
-//	}
+	public <T> void compareMCEntitiesmanual(T oldEntity, T newEntity, String id_values, String Screenname,
+			String tableName) {
+		System.out.println("Screen Name: " + Screenname);
+
+		if (oldEntity == null || newEntity == null) {
+			throw new IllegalArgumentException("Entities cannot be null");
+		}
+
+		// Check if both entities are of the same type
+		if (!oldEntity.getClass().equals(newEntity.getClass())) {
+			throw new IllegalArgumentException(
+					"Entities must be of the same type. " + "Old entity type: " + oldEntity.getClass().getSimpleName()
+							+ ", New entity type: " + newEntity.getClass().getSimpleName());
+		}
+		List<String> ignoreFields = Arrays.asList("createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
+				"lastModifiedDate", "lastModifiedBy", "version");
+		List<String> lowerCaseIgnoreFields = new ArrayList<String>();
+		if (ignoreFields != null) {
+			for (String field : ignoreFields) {
+				lowerCaseIgnoreFields.add(field.toLowerCase());
+			}
+		}
+
+		// Keep the existing StringBuilder for the combined changes string
+		StringBuilder changes = new StringBuilder();
+
+		// Create separate lists to hold the field names, old values, and new values
+		List<String> changedFieldNames = new ArrayList<>();
+		List<Object> changedOldValues = new ArrayList<>();
+		List<Object> changedNewValues = new ArrayList<>();
+
+		Class<?> clazz = oldEntity.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (Field field : fields) {
+		    // Skip if field is in ignore list (case-insensitive)
+		    if (lowerCaseIgnoreFields.contains(field.getName().toLowerCase())) {
+		        continue;
+		    }
+
+		    field.setAccessible(true);
+		    try {
+		        Object oldValue = field.get(oldEntity);
+		        Object newValue = field.get(newEntity);
+
+		        if (!areEqual(oldValue, newValue)) {
+		            // 1. Existing logic (kept exactly as you had it)
+		            if (changes.length() > 0) {
+		                changes.append("|||");
+		            }
+		            changes.append(field.getName())
+		                   .append(": OldValue: ").append(oldValue)
+		                   .append(", NewValue: ").append(newValue);
+
+		            // 2. Save into separate variables (lists)
+		            changedFieldNames.add(field.getName());
+		            changedOldValues.add(oldValue);
+		            changedNewValues.add(newValue);
+		        }
+		    } catch (IllegalAccessException e) {
+		        throw new RuntimeException("Error accessing field: " + field.getName(), e);
+		    }
+		}
+		System.out.println("Changes in Audit: " + changes.toString());
+		System.out.println("Changed Field Names: " + changedFieldNames);
+		System.out.println("Old Values         : " + changedOldValues);
+		System.out.println("New Values         : " + changedNewValues);
+
+		System.out.println("Entered MC Modify Service Audit");
+		final UUID auditID = UUID.randomUUID();
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		String userId = null;
+		String username = null;
+		if (attr != null) {
+			HttpServletRequest request = attr.getRequest();
+			userId = (String) request.getSession().getAttribute("USERID");
+			username = (String) request.getSession().getAttribute("USERNAME");
+			String sessionId = request.getSession().getId();
+		}
+		final Date currentDate = new Date();
+
+		MC_Service_audit_entity  audit = new MC_Service_audit_entity();
+		audit.setAudit_ref_no(auditID.toString());
+		audit.setAudit_date(currentDate);
+		audit.setEntry_time(currentDate);
+		audit.setEntry_user(userId);
+		audit.setEntry_user_name(username);
+		audit.setFunc_code("MODIFY");
+		audit.setAudit_table(tableName);
+		audit.setAudit_screen(Screenname);
+		audit.setEvent_id(userId);
+		audit.setEvent_name(username);
+		audit.setModi_details(changes.toString());
+		audit.setDomain_id(id_values);
+
+		MC_Service_audit_Repo.save(audit);
+
+	}
 	
 }
