@@ -17815,6 +17815,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (deptValidation !== 'YES') {
         let currentEditingInput = null;
+        let currentRowCol2Value = "";
         
         let ptReportData1 = /*[[${deptreportlist}]]*/ null; 
         let ptReportData2 = /*[[${deptreportlist2}]]*/ null; 
@@ -17871,7 +17872,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     const cellIndex = td.cellIndex;
 
                     let headerText = table && table.rows[0] ? table.rows[0].cells[cellIndex].innerText.trim() : "Unknown";
-
+                    currentRowCol2Value = "N/A";
+                    if (tr.cells.length >= 2) {
+                        const col2 = tr.cells[1];
+                        const col2Input = col2.querySelector('input');
+                        currentRowCol2Value = col2Input ? col2Input.value : col2.innerText.trim();
+                    }
                     const cellName = input.name || input.id || "UnknownCell";
 
                     const descSpan = document.getElementById('modal-col2-val');
@@ -18358,7 +18364,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("cellId", currentEditingInput.id || "UnknownId");
             formData.append("dataValue", finalDataValue);
             formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
-            
+            formData.append("productValue", currentRowCol2Value);
             formData.append("verifyFlg", actionType); 
             formData.append("remarks", remarksVal);
             formData.append("modifyFlg", modifyFlagVal);

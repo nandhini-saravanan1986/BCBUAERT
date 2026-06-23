@@ -311,33 +311,35 @@ public class AuditService {
 		Service_audit_table_Reps.save(audit);
 
 	}
+
 	public <T> void compareMCEntitiesmanual(T oldEntity, T newEntity, String id_values, String Screenname,
-			String tableName) {
+			String tableName, String modifyheader, String remarks) {
 		System.out.println("Screen Name: " + Screenname);
 
 		if (oldEntity == null || newEntity == null) {
 			throw new IllegalArgumentException("Entities cannot be null");
 		}
 
-		// Check if both entities are of the same type
 		if (!oldEntity.getClass().equals(newEntity.getClass())) {
 			throw new IllegalArgumentException(
 					"Entities must be of the same type. " + "Old entity type: " + oldEntity.getClass().getSimpleName()
 							+ ", New entity type: " + newEntity.getClass().getSimpleName());
 		}
+
 		List<String> ignoreFields = Arrays.asList("createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
-				"lastModifiedDate", "lastModifiedBy", "version");
-		List<String> lowerCaseIgnoreFields = new ArrayList<String>();
+				"lastModifiedDate", "lastModifiedBy", "version", "modifyFlg", "verifyFlg", "columnHeader",
+				"rowCol2Value", "formMode", "reportDate", "cellId", "cellName");
+		List<String> lowerCaseIgnoreFields = new ArrayList<>();
 		if (ignoreFields != null) {
 			for (String field : ignoreFields) {
 				lowerCaseIgnoreFields.add(field.toLowerCase());
 			}
 		}
 
-		// Keep the existing StringBuilder for the combined changes string
+		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks");
+		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks");
 		StringBuilder changes = new StringBuilder();
 
-		// Create separate lists to hold the field names, old values, and new values
 		List<String> changedFieldNames = new ArrayList<>();
 		List<Object> changedOldValues = new ArrayList<>();
 		List<Object> changedNewValues = new ArrayList<>();
@@ -346,53 +348,56 @@ public class AuditService {
 		Field[] fields = clazz.getDeclaredFields();
 
 		for (Field field : fields) {
-		    // Skip if field is in ignore list (case-insensitive)
-		    if (lowerCaseIgnoreFields.contains(field.getName().toLowerCase())) {
-		        continue;
-		    }
+			if (lowerCaseIgnoreFields.contains(field.getName().toLowerCase())) {
+				continue;
+			}
 
-		    field.setAccessible(true);
-		    try {
-		        Object oldValue = field.get(oldEntity);
-		        Object newValue = field.get(newEntity);
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(oldEntity);
+				Object newValue = field.get(newEntity);
 
-		        if (!areEqual(oldValue, newValue)) {
-		            // 1. Existing logic (kept exactly as you had it)
-		            if (changes.length() > 0) {
-		                changes.append("|||");
-		            }
-		            changes.append(field.getName())
-		                   .append(": OldValue: ").append(oldValue)
-		                   .append(", NewValue: ").append(newValue);
+				if (!areEqual(oldValue, newValue)) {
 
-		            // 2. Save into separate variables (lists)
-		            changedFieldNames.add(field.getName());
-		            changedOldValues.add(oldValue);
-		            changedNewValues.add(newValue);
-		        }
-		    } catch (IllegalAccessException e) {
-		        throw new RuntimeException("Error accessing field: " + field.getName(), e);
-		    }
+					String finalFieldName = field.getName();
+					int matchIndex = fieldNamesList.indexOf(finalFieldName);
+
+					if (matchIndex != -1 && matchIndex < equivalentValuesList.size()) {
+						finalFieldName = equivalentValuesList.get(matchIndex);
+					}
+
+					if (changes.length() > 0) {
+						changes.append("|||");
+					}
+
+					changes.append(finalFieldName).append(": OldValue: ").append(oldValue).append(", NewValue: ")
+							.append(newValue);
+
+					changedFieldNames.add(finalFieldName);
+					changedOldValues.add(oldValue);
+					changedNewValues.add(newValue);
+				}
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException("Error accessing field: " + field.getName(), e);
+			}
 		}
-		System.out.println("Changes in Audit: " + changes.toString());
-		System.out.println("Changed Field Names: " + changedFieldNames);
-		System.out.println("Old Values         : " + changedOldValues);
-		System.out.println("New Values         : " + changedNewValues);
 
 		System.out.println("Entered MC Modify Service Audit");
 		final UUID auditID = UUID.randomUUID();
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		String userId = null;
 		String username = null;
+		String sessionId = null;
 		if (attr != null) {
 			HttpServletRequest request = attr.getRequest();
 			userId = (String) request.getSession().getAttribute("USERID");
 			username = (String) request.getSession().getAttribute("USERNAME");
-			String sessionId = request.getSession().getId();
+			sessionId = request.getSession().getId();
 		}
+
 		final Date currentDate = new Date();
 
-		MC_Service_audit_entity  audit = new MC_Service_audit_entity();
+		MC_Service_audit_entity audit = new MC_Service_audit_entity();
 		audit.setAudit_ref_no(auditID.toString());
 		audit.setAudit_date(currentDate);
 		audit.setEntry_time(currentDate);
@@ -405,9 +410,136 @@ public class AuditService {
 		audit.setEvent_name(username);
 		audit.setModi_details(changes.toString());
 		audit.setDomain_id(id_values);
-
+		audit.setRemarks(remarks);
+		audit.setFIELD_HEADER(modifyheader);
+		audit.setSession_id(sessionId);
 		MC_Service_audit_Repo.save(audit);
-
 	}
-	
+
+	public <T> void auditAddMCEntitymanual(T newEntity, String id_values, String Screenname, String tableName,
+			String modifyheader, String remarks) {
+		System.out.println("Screen Name: " + Screenname);
+
+		if (newEntity == null) {
+			throw new IllegalArgumentException("Entity cannot be null for ADD operation");
+		}
+
+		List<String> ignoreFields = Arrays.asList("createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
+				"lastModifiedDate", "lastModifiedBy", "version", "modifyFlg", "verifyFlg", "columnHeader",
+				"rowCol2Value", "formMode", "reportDate", "cellId", "cellName");
+
+		List<String> lowerCaseIgnoreFields = new ArrayList<>();
+		if (ignoreFields != null) {
+			for (String field : ignoreFields) {
+				lowerCaseIgnoreFields.add(field.toLowerCase());
+			}
+		}
+
+		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks");
+		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks");
+
+		StringBuilder addedDetails = new StringBuilder();
+
+		Class<?> clazz = newEntity.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (Field field : fields) {
+			if (lowerCaseIgnoreFields.contains(field.getName().toLowerCase())) {
+				continue;
+			}
+
+			field.setAccessible(true);
+			try {
+				Object newValue = field.get(newEntity);
+
+				if (newValue != null && !String.valueOf(newValue).trim().isEmpty()) {
+
+					String finalFieldName = field.getName();
+					int matchIndex = fieldNamesList.indexOf(finalFieldName);
+
+					if (matchIndex != -1 && matchIndex < equivalentValuesList.size()) {
+						finalFieldName = equivalentValuesList.get(matchIndex);
+					}
+
+					if (addedDetails.length() > 0) {
+						addedDetails.append("|||");
+					}
+
+					addedDetails.append(finalFieldName).append(": Value: ").append(newValue);
+				}
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException("Error accessing field: " + field.getName(), e);
+			}
+		}
+
+		System.out.println("Entered MC Add Service Audit");
+		final UUID auditID = UUID.randomUUID();
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		String userId = null;
+		String username = null;
+		String sessionId = null;
+		if (attr != null) {
+			HttpServletRequest request = attr.getRequest();
+			userId = (String) request.getSession().getAttribute("USERID");
+			username = (String) request.getSession().getAttribute("USERNAME");
+			sessionId = request.getSession().getId();
+		}
+
+		final Date currentDate = new Date();
+
+		MC_Service_audit_entity audit = new MC_Service_audit_entity();
+		audit.setAudit_ref_no(auditID.toString());
+		audit.setAudit_date(currentDate);
+		audit.setEntry_time(currentDate);
+		audit.setEntry_user(userId);
+		audit.setEntry_user_name(username);
+		audit.setFunc_code("ADD");
+		audit.setAudit_table(tableName);
+		audit.setAudit_screen(Screenname);
+		audit.setEvent_id(userId);
+		audit.setEvent_name(username);
+		audit.setModi_details(addedDetails.toString());
+		audit.setDomain_id(id_values);
+		audit.setRemarks(remarks);
+		audit.setFIELD_HEADER(modifyheader);
+		audit.setSession_id(sessionId);
+		MC_Service_audit_Repo.save(audit);
+	}
+
+	public void auditMCEntitymanual(String fun_code, String id_values, String Screenname, String tableName,
+			String modifyheader, String remarks) {
+		System.out.println("Screen Name: " + Screenname);
+		System.out.println("Entered MC Common Service Audit");
+		final UUID auditID = UUID.randomUUID();
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		String userId = null;
+		String username = null;
+		String sessionId = null;
+		if (attr != null) {
+			HttpServletRequest request = attr.getRequest();
+			userId = (String) request.getSession().getAttribute("USERID");
+			username = (String) request.getSession().getAttribute("USERNAME");
+			sessionId = request.getSession().getId();
+		}
+
+		final Date currentDate = new Date();
+
+		MC_Service_audit_entity audit = new MC_Service_audit_entity();
+		audit.setAudit_ref_no(auditID.toString());
+		audit.setAudit_date(currentDate);
+		audit.setEntry_time(currentDate);
+		audit.setEntry_user(userId);
+		audit.setEntry_user_name(username);
+		audit.setFunc_code(fun_code);
+		audit.setAudit_table(tableName);
+		audit.setAudit_screen(Screenname);
+		audit.setEvent_id(userId);
+		audit.setEvent_name(username);
+		audit.setDomain_id(id_values);
+		audit.setRemarks(remarks);
+		audit.setFIELD_HEADER(modifyheader);
+		audit.setSession_id(sessionId);
+		MC_Service_audit_Repo.save(audit);
+	}
+
 }

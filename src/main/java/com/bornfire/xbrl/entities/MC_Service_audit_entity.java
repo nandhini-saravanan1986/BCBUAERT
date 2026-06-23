@@ -37,6 +37,15 @@ public class MC_Service_audit_entity {
 	private String domain_id;
 	private String entry_user_name;
 	private String auth_user_name;
+	private String FIELD_HEADER;
+
+	public String getFIELD_HEADER() {
+		return FIELD_HEADER;
+	}
+
+	public void setFIELD_HEADER(String fIELD_HEADER) {
+		FIELD_HEADER = fIELD_HEADER;
+	}
 
 	public String getAudit_ref_no() {
 		return audit_ref_no;

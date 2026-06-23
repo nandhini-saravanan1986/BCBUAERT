@@ -22,4 +22,8 @@ public interface MC_Service_audit_Repo extends JpaRepository<MC_Service_audit_en
 	@Query("SELECT a FROM MC_Service_audit_entity a ORDER BY a.entry_time DESC")
 	Page<MC_Service_audit_entity> findAllByOrderByDateDesc(Pageable pageable);
 
+	@Query(value = "SELECT * FROM RT_MC_SERVICE_AUDIT_TABLE WHERE entry_time BETWEEN :fromDate AND :toDate", nativeQuery = true)
+	List<MC_Service_audit_entity> findByEntryTimeBetween(@Param("fromDate") Date fromDate,
+			@Param("toDate") Date toDate);
+	
 }

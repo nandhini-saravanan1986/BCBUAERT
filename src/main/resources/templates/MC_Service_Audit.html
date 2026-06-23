@@ -10,7 +10,9 @@
 <link rel="stylesheet" type="text/css"
 	href="/webjars/font-awesome/5.9.0/css/all.min.css"
 	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 <title>RiskInsights - Service Audit</title>
 
 <style>
@@ -131,6 +133,7 @@ body {
 	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid var(--border-color);
+	table-layout: fixed;
 }
 
 .audit-table th {
@@ -154,7 +157,7 @@ body {
 }
 
 .audit-table td {
-	padding: 8px 16px;
+	padding: 8px 10px;
 	border: 1px solid var(--border-color);
 	vertical-align: middle;
 	color: var(--text-color);
@@ -272,16 +275,15 @@ body {
 }
 
 .parsed-field-name {
-	width: 33%;
-	font-weight: bold;
+	width: 20%;
 }
 
 .parsed-old-value {
-	width: 33%;
+	width: 25%;
 }
 
 .parsed-new-value {
-	width: 33%;
+	width: 25%;
 }
 
 .dropdown-menu {
@@ -419,13 +421,13 @@ rotate(
 							style="width: 140px; padding: 6px 12px;">
 					</div>
 
-					<button id="groupByBtn" class="role-btn">
+					<button id="groupByBtn" class="role-btn" style="display: none;">
 						<i class="fa fa-layer-group" style="margin-right: 6px;"></i> Group
 						By: Default
 					</button>
 
-					<button type="button" class="role-btn"
-						onclick="downloadAuditReport();">
+					<button type="button" class="role-btn" data-toggle="modal"
+						data-target="#downloadModal">
 						<i class="fa fa-download" style="margin-right: 6px;"></i> Download
 					</button>
 				</div>
@@ -446,12 +448,8 @@ rotate(
 
 				<div class="d-flex align-items-center"
 					th:if="${page != null and page.totalPages > 1}">
-					<div class="text-muted mr-3" style="font-size: 11px;">
-						Page <span th:text="${page.number + 1}"></span> of <span
-							th:text="${page.totalPages}"></span>
-					</div>
-					<div class="audit-pagination"
-						th:if="${page != null and page.totalPages > 1}">
+					<div class="audit-pagination" style="margin: 0;">
+
 						<a
 							th:href="@{/MC_Service_Audit(page=${page.number - 1}, keyword=${keyword})}"
 							th:class="${page.first ? 'page-btn disabled' : 'page-btn'}">Previous</a>
@@ -491,6 +489,7 @@ rotate(
 						<a
 							th:href="@{/MC_Service_Audit(page=${page.number + 1}, keyword=${keyword})}"
 							th:class="${page.last ? 'page-btn disabled' : 'page-btn'}">Next</a>
+
 					</div>
 				</div>
 			</div>
@@ -513,6 +512,7 @@ rotate(
 								<td class="col-func" th:text="${log.func_code}"></td>
 
 								<td class="col-modi" th:text="${log.modi_details}"></td>
+								<td class="col-field-header" th:text="${log.FIELD_HEADER}"></td>
 
 								<td class="col-user" th:text="${log.entry_user}"></td>
 								<td class="col-session" th:text="${log.session_id}"></td>
@@ -527,7 +527,7 @@ rotate(
 							<tr th:if="${#lists.isEmpty(page?.content)}">
 								<td colspan="8"
 									style="text-align: center; padding: 30px; color: #64748b;">No
-									matching logs found on server.</td>
+									matching logs found.</td>
 							</tr>
 						</tbody>
 					</table>
@@ -536,6 +536,39 @@ rotate(
 
 			<div id="filterDropdown" class="dropdown-menu"></div>
 		</div>
+		<!-- Download Excel Modal -->
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 450px;">
+        <div class="modal-content" style="border-radius: 8px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            
+            <div class="modal-header" style="border-bottom: none; padding: 20px 24px 10px;">
+                <h5 class="modal-title" id="downloadModalLabel" style="font-weight: 600; color: #1e293b; font-size: 18px;">Download Excel</h5>
+            </div>
+            
+            <div class="modal-body" style="padding: 10px 24px 20px;">
+                <div class="row">
+                    <div class="col-6">
+                        <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; font-size: 13px;">From Date</label>
+                        <input type="date" id="dlFromDate" class="form-control" style="border-radius: 4px; border: 1px solid #cbd5e1; font-size: 13px; color: #64748b;">
+                    </div>
+                    <div class="col-6">
+                        <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; font-size: 13px;">To Date</label>
+                        <input type="date" id="dlToDate" class="form-control" style="border-radius: 4px; border: 1px solid #cbd5e1; font-size: 13px; color: #64748b;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="border-top: 1px solid #f1f5f9; padding: 16px 24px;">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #007bff; border-color: #007bff; font-weight: 500; font-size: 13px; padding: 8px 16px;">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="executeDownload()" style="background-color: #007bff; border-color: #007bff; font-weight: 500; font-size: 13px; padding: 8px 16px;">
+                    <i class="fa fa-download" style="margin-right: 4px;"></i> Download Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 	</div>
 
 	<script>
@@ -605,51 +638,79 @@ rotate(
     
     function getVal(val) { return val ? val : '<span class="empty-cell">-</span>'; }
 
-    function formatParsedDetails(modiString) {
-        if (!modiString || modiString.trim() === '' || modiString === 'null') {
-            return `<td><span class="empty-cell">-</span></td><td><span class="empty-cell">-</span></td><td><span class="empty-cell">-</span></td>`;
-        }
-
-        const changes = modiString.split('|||');
-
-        if (changes.length === 1) {
-            const match = changes[0].match(/(.*?):\s*OldValue:\s*(.*?),\s*NewValue:\s*(.*)/);
-            if (match) {
-                return `
-                    <td>${match[1].trim()}</td>
-                    <td>${match[2].trim() === 'null' ? '-' : match[2].trim()}</td>
-                    <td>${match[3].trim() === 'null' ? '-' : match[3].trim()}</td>
-                `;
-            } else {
-                return `<td colspan="3">${changes[0]}</td>`;
-            }
-        }
-
+    function formatParsedDetails(modiString, funcCode, fieldHeader) {
+        const func = (funcCode || '').toUpperCase();
+        const safeModi = (!modiString || modiString.trim() === '' || modiString === 'null') ? '' : modiString;
         let rows = '';
-        changes.forEach(change => {
-            const match = change.match(/(.*?):\s*OldValue:\s*(.*?),\s*NewValue:\s*(.*)/);
-            if (match) {
+
+        const hasHeader = (fieldHeader && fieldHeader.trim() !== '' && fieldHeader !== 'null');
+        if (hasHeader) {
+            rows += `
+                <tr>
+                    <td colspan="3" style="padding: 6px 12px; font-weight: bold; color: var(--bank-primary-dark); border-bottom: 1px solid var(--border-color); background-color: rgba(37, 99, 235, 0.04);">
+                        ${fieldHeader}
+                    </td>
+                </tr>
+            `;
+        }
+
+        if (func !== 'ADD' && func !== 'MODIFY') {
+            if (safeModi !== '' || !hasHeader) {
                 rows += `
                     <tr>
-                        <td style="width: 33%; ">${match[1].trim()}</td>
-                        <td style="width: 33%;">${match[2].trim() === 'null' ? '-' : match[2].trim()}</td>
-                        <td style="width: 33%;">${match[3].trim() === 'null' ? '-' : match[3].trim()}</td>
+                        <td colspan="3" style="padding: 8px 12px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
+                            ${safeModi === '' ? '<span class="empty-cell">-</span>' : safeModi}
+                        </td>
+                    </tr>
+                `;
+            }
+        } else {
+            if (safeModi === '') {
+                rows += `
+                    <tr>
+                        <td><span class="empty-cell">-</span></td>
+                        <td><span class="empty-cell">-</span></td>
+                        <td><span class="empty-cell">-</span></td>
                     </tr>
                 `;
             } else {
-                rows += `<tr><td colspan="3">${change}</td></tr>`;
+                const changes = safeModi.split('|||');
+                changes.forEach(change => {
+                    const match = change.match(/(.*?):\s*OldValue:\s*(.*?),\s*NewValue:\s*(.*)/);
+                    if (match) {
+                        let field = match[1].trim();
+                        let oldVal = match[2].trim() === 'null' ? '-' : match[2].trim();
+                        let newVal = match[3].trim() === 'null' ? '-' : match[3].trim();
+
+                        if (func === 'ADD') oldVal = '<span class="empty-cell">-</span>';
+
+                        rows += `
+                            <tr>
+                                <td class="parsed-field-name" style="word-break: break-word; overflow-wrap: break-word;">${field}</td>
+                                <td class="parsed-old-value" style="word-break: break-word; overflow-wrap: break-word;">${oldVal}</td>
+                                <td class="parsed-new-value" style="word-break: break-word; overflow-wrap: break-word;">${newVal}</td>
+                            </tr>
+                        `;
+                    } else {
+                        rows += `<tr><td colspan="3" style="padding: 8px 12px; word-break: break-word; overflow-wrap: break-word;">${change}</td></tr>`;
+                    }
+                });
             }
-        });
+        }
 
         return `
-            <td colspan="3" style="padding: 0px;">
-                <table class="nested-audit-table">
-                    <tbody>
-                        ${rows}
-                    </tbody>
-                </table>
-            </td>
-        `;
+        <td colspan="3" style="padding: 0px;">
+            <table class="nested-audit-table" style="table-layout: fixed; width: 100%;">
+                
+                <colgroup>
+                    <col style="width: 20%;"> <col style="width: 25%;"> <col style="width: 25%;"> </colgroup>
+
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        </td>
+    `;
     }
 
     const rawRows = document.querySelectorAll('#rawTableBody tr.data-row');
@@ -658,13 +719,17 @@ rotate(
     if (rawRows.length > 0) {
         auditData = Array.from(rawRows).map(tr => {
             const modiTxt = tr.querySelector('.col-modi').innerText.trim();
+            const funcTxt = tr.querySelector('.col-func').innerText.trim();
+            
+            const headerEl = tr.querySelector('.col-field-header');
+            const fieldHeaderTxt = headerEl ? headerEl.innerText.trim() : '';
 
             return {
                 html: `
                     <td>${tr.querySelector('.col-screen').innerText.trim()}</td>
-                    <td>${getBadge(tr.querySelector('.col-func').innerText.trim())}</td>
+                    <td>${getBadge(funcTxt)}</td>
                     
-                    ${formatParsedDetails(modiTxt)}
+                    ${formatParsedDetails(modiTxt, funcTxt, fieldHeaderTxt)}
                     
                     <td>${tr.querySelector('.col-user').innerText.trim()}</td>
                     <td>${tr.querySelector('.col-date').innerText.trim()}</td>
@@ -701,13 +766,12 @@ rotate(
 
     function renderHeaders() {
         headerRow.innerHTML = columns.map(col => `
-            <th>
-                <div class="th-content">
+          <th style="width: ${col.width};"> <div class="th-content">
                     <span class="sort-target" onclick="handleSort('${col.id}')">
                         ${col.label} <span id="sort-${col.id}" style="font-size: 10px; margin-left: 4px;"></span>
                     </span>
                     
-                    ${(col.id === 'field_name' || col.id === 'old_value' || col.id === 'new_value') ? '' : `
+                    ${(col.id === 'field_name' || col.id === 'old_value' || col.id === 'new_value' || col.id === 'entry_date' || col.id === 'entry_time') ? '' : `
                         <span class="filter-icon-wrapper ${urlParams.has(col.id) ? 'active' : ''}" 
                               onclick="toggleFilterMenu(event, '${col.id}')" id="filter-icon-${col.id}">
                             ${filterSvg}
@@ -917,37 +981,54 @@ rotate(
         if (currentGroupState === 0) {
             auditData.forEach(row => tbody.innerHTML += `<tr>${row.html}</tr>`);
         } else {
-            const groups = [];
-            let currentGroup = null;
-            let currentKey = null;
-
+            const groupMap = {};
+            
             auditData.forEach(row => {
                 let key = currentGroupState === 1 ? `${row.func}-${row.user}` : row.session;
-                if (key !== currentKey) {
-                    currentKey = key; currentGroup = { key: key, rows: [row] }; groups.push(currentGroup);
-                } else {
-                    currentGroup.rows.push(row);
+                if (!groupMap[key]) {
+                    groupMap[key] = { rows: [] };
                 }
+                groupMap[key].rows.push(row);
             });
 
-            groups.forEach((group, index) => {
+            Object.values(groupMap).forEach((group, index) => {
                 const groupId = `grp-${index}`;
-                if (group.rows.length === 1) {
-                    tbody.innerHTML += `<tr>${group.rows[0].html}</tr>`;
-                } else {
-                    tbody.innerHTML += `
-                        <tr class="group-parent" onclick="toggleGroup('${groupId}', this)">
-                            <td colspan="8">
-                                <i class="fa fa-chevron-right toggle-icon" style="font-size: 10px; margin-right: 6px;"></i> 
-                                ${group.rows[0].screen} 
-                                <span class="item-count">+${group.rows.length - 1} items</span>
-                            </td>
-                        </tr>
-                    `;
-                    group.rows.forEach(row => {
-                        tbody.innerHTML += `<tr class="group-child ${groupId}" style="display:none;">${row.html}</tr>`;
-                    });
+                let title = "";
+                let summary = "";
+
+                const uniqueScreens = [...new Set(group.rows.map(r => r.screen))].join(", ");
+                const uniqueUsers = [...new Set(group.rows.map(r => r.user))].join(", ");
+
+                if (currentGroupState === 1) {
+                    title = `${getBadge(group.rows[0].func)} User: <strong>${group.rows[0].user}</strong>`;
+                    summary = `<span style="color:#64748b; font-size:11px; margin-left:15px;"><i class="fa fa-desktop" style="margin-right:4px;"></i>Screens: ${uniqueScreens}</span>`;
+                } else if (currentGroupState === 2) {
+                    title = `Session: <strong style="color: var(--bank-primary);">${group.rows[0].session}</strong>`;
+                    summary = `<span style="color:#64748b; font-size:11px; margin-left:15px;">
+                                  <i class="fa fa-user" style="margin-right:4px;"></i>Users: ${uniqueUsers} 
+                                  <span style="margin: 0 6px;">|</span> 
+                                  <i class="fa fa-desktop" style="margin-right:4px;"></i>Screens: ${uniqueScreens}
+                               </span>`;
                 }
+
+                tbody.innerHTML += `
+                    <tr class="group-parent" onclick="toggleGroup('${groupId}', this)">
+                        <td colspan="8" style="background: #f8fafc; border-top: 2px solid #e2e8f0; padding: 12px 16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <i class="fa fa-chevron-right toggle-icon" style="font-size: 10px; margin-right: 8px;"></i> 
+                                    ${title} 
+                                    ${summary}
+                                </div>
+                                <span class="item-count">${group.rows.length} Items</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                group.rows.forEach(row => {
+                    tbody.innerHTML += `<tr class="group-child ${groupId}" style="display:none;">${row.html}</tr>`;
+                });
             });
         }
     }
@@ -972,8 +1053,30 @@ rotate(
 
 })();
 
-function downloadAuditReport() {
-    alert("Download");
+function executeDownload() {
+    const fromDateRaw = document.getElementById('dlFromDate').value;
+    const toDateRaw = document.getElementById('dlToDate').value;
+
+    if (!fromDateRaw || !toDateRaw) {
+        alert("Please select both From Date and To Date.");
+        return;
+    }
+
+    if (new Date(fromDateRaw) > new Date(toDateRaw)) {
+        alert("From Date cannot be greater than To Date.");
+        return;
+    }
+
+    $('#downloadModal').modal('hide');
+
+    const fParts = fromDateRaw.split('-');
+    const fromDate = `${fParts[2]}-${fParts[1]}-${fParts[0]}`;
+    
+    const tParts = toDateRaw.split('-');
+    const toDate = `${tParts[2]}-${tParts[1]}-${tParts[0]}`;
+
+    const downloadUrl = `/Riskinsights/MC_Service_Audit/downloadExcel?fromDate=${fromDate}&toDate=${toDate}`;
+    window.location.href = downloadUrl;
 }
 </script>
 </body>

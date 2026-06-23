@@ -46,9 +46,13 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -56,6 +60,7 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import java.io.InputStream;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -93,6 +98,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bornfire.xbrl.entities.*;
 import com.bornfire.xbrl.entities.RT_MC_DATA_RECORD_REPO.RecordMetadataProjection;
@@ -7292,7 +7298,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam("dataValue") String dataValue, @RequestParam("justification") String justification,
 			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
 			@RequestParam(value = "modifyFlg", required = false) String modifyFlg,
-			@RequestParam(value = "remarks", required = false) String remarks,
+			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "productValue", required = false) String productValue,
 			@RequestParam(value = "retainedFiles", required = false) List<Integer> retainedFiles,
 			@RequestParam(value = "files", required = false) MultipartFile[] files) {
 
@@ -7351,7 +7357,7 @@ System.out.println("sixe==="+excelData.length);
 			}
 
 			if (record == null) {
-				auditType = "SAVE";
+				auditType = "ADD";
 				audittext = "Maker Saved Successfully";
 				record = new RT_MC_DATA_RECORD_ENTITY();
 				synchronized (this) {
@@ -7428,7 +7434,7 @@ System.out.println("sixe==="+excelData.length);
 					}
 				}
 			}
-
+			System.out.println("productValue : "+productValue);
 			rT_MC_DATA_RECORD_REPO.save(record);
 
 			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
@@ -7457,11 +7463,19 @@ System.out.println("sixe==="+excelData.length);
 			if (auditType == "MODIFY" || auditType.equals("MODIFY")) {
 				auditService.compareMCEntitiesmanual(oldcopy, record, reportDateStr,
 						rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD");
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext);
 
-			} else {
-				auditService.createBusinessAudit(reportDateStr, auditType, rT_MC_TABLE_Service.screenName(formMode),
-						null, rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD");
+			} 
+			else if (auditType == "ADD" || auditType.equals("ADD")) {
+				auditService.auditAddMCEntitymanual(record, reportDateStr,
+						rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext);
+
+			} 
+			else {
+				auditService.auditMCEntitymanual(auditType, reportDateStr,
+						rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext);
 			}
 
 			return ResponseEntity.ok("Record Saved Successfully!");
@@ -7719,5 +7733,240 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
 		}
 	}
-	
+
+	@Autowired
+	MC_Service_audit_Repo MC_Service_audit_Repo;
+	@GetMapping("/MC_Service_Audit/downloadExcel")
+	public ResponseEntity<byte[]> downloadExcel(@RequestParam("fromDate") String fromDateStr,
+			@RequestParam("toDate") String toDateStr) {
+
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			Date fromDate = sdf.parse(fromDateStr);
+			Date toDateParsed = sdf.parse(toDateStr);
+
+		    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+		    Pattern pattern = Pattern.compile("(.*?):\\s*OldValue:\\s*(.*?),\\s*NewValue:\\s*(.*)");
+		    
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(toDateParsed);
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+			Date toDate = calendar.getTime();
+
+			List<MC_Service_audit_entity> logs = MC_Service_audit_Repo.findByEntryTimeBetween(fromDate, toDate);
+
+			Workbook workbook = new XSSFWorkbook();
+			Sheet sheet = workbook.createSheet("Service Audit");
+			
+			sheet.setColumnWidth(0, 4000);
+			sheet.setColumnWidth(1, 3000);
+			sheet.setColumnWidth(2, 3500);
+			sheet.setColumnWidth(3, 4000);
+			sheet.setColumnWidth(4, 4000);
+			sheet.setColumnWidth(5, 3000);
+			sheet.setColumnWidth(6, 2500);
+			sheet.setColumnWidth(7, 2500);
+
+			Row headerRow = sheet.createRow(0);
+			String[] columns = { "Screen Name", "Function Code", "Field Name", "Old Value", "New Value", "User", "Date",
+					"Time" };
+
+			CellStyle headerStyle = workbook.createCellStyle();
+			Font headerFont = workbook.createFont();
+			headerFont.setBold(true);
+			headerStyle.setFont(headerFont);
+			headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setBorderBottom(BorderStyle.THIN);
+			headerStyle.setBorderTop(BorderStyle.THIN);
+			headerStyle.setBorderRight(BorderStyle.THIN);
+			headerStyle.setBorderLeft(BorderStyle.THIN);
+
+			for (int i = 0; i < columns.length; i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(columns[i]);
+				cell.setCellStyle(headerStyle);
+			}
+
+			CellStyle dataCellStyle = workbook.createCellStyle();
+			dataCellStyle.setBorderBottom(BorderStyle.THIN);
+			dataCellStyle.setBorderTop(BorderStyle.THIN);
+			dataCellStyle.setBorderRight(BorderStyle.THIN);
+			dataCellStyle.setBorderLeft(BorderStyle.THIN);
+			dataCellStyle.setWrapText(true);
+			dataCellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
+			Font fieldHeaderFont = workbook.createFont();
+			fieldHeaderFont.setBold(true);
+			CellStyle fieldHeaderStyle = workbook.createCellStyle();
+			fieldHeaderStyle.setFont(fieldHeaderFont);
+			fieldHeaderStyle.setBorderBottom(BorderStyle.THIN);
+			fieldHeaderStyle.setBorderTop(BorderStyle.THIN);
+			fieldHeaderStyle.setBorderRight(BorderStyle.THIN);
+			fieldHeaderStyle.setBorderLeft(BorderStyle.THIN);
+			fieldHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
+			fieldHeaderStyle.setWrapText(true);
+
+			int rowNum = 1;
+
+			for (MC_Service_audit_entity log : logs) {
+				String currentFuncCode = log.getFunc_code() != null ? log.getFunc_code() : "";
+				String funcCodeUpper = currentFuncCode.toUpperCase();
+				String modiDetails = log.getModi_details() != null ? log.getModi_details() : "";
+				String fieldHeader = log.getFIELD_HEADER();
+				
+				String dateStr = log.getEntry_time() != null ? sdf.format(log.getEntry_time()) : "";
+				String timeStr = log.getEntry_time() != null ? timeFormat.format(log.getEntry_time()) : "";
+				String screenName = log.getAudit_screen() != null ? log.getAudit_screen() : "";
+				String userName = log.getEntry_user() != null ? log.getEntry_user() : "";
+
+				boolean isAddOrModify = "ADD".equals(funcCodeUpper) || "MODIFY".equals(funcCodeUpper);
+
+				int fieldHeaderRowNum = -1;
+				if (isAddOrModify && fieldHeader != null && !fieldHeader.trim().isEmpty() && !fieldHeader.equals("null")) {
+					fieldHeaderRowNum = rowNum;
+					Row fieldHeaderRow = sheet.createRow(rowNum);
+					
+					fieldHeaderRow.createCell(0).setCellValue(screenName);
+					fieldHeaderRow.getCell(0).setCellStyle(fieldHeaderStyle);
+					fieldHeaderRow.createCell(1).setCellValue(currentFuncCode);
+					fieldHeaderRow.getCell(1).setCellStyle(fieldHeaderStyle);
+					
+					Cell fieldHeaderCell = fieldHeaderRow.createCell(2);
+					fieldHeaderCell.setCellValue(fieldHeader);
+					fieldHeaderCell.setCellStyle(fieldHeaderStyle);
+					
+					for (int c = 3; c < 8; c++) {
+						Cell cell = fieldHeaderRow.createCell(c);
+						cell.setCellStyle(fieldHeaderStyle);
+					}
+					
+					fieldHeaderRow.getCell(5).setCellValue(userName);
+					fieldHeaderRow.getCell(6).setCellValue(dateStr);
+					fieldHeaderRow.getCell(7).setCellValue(timeStr);
+					
+					sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 2, 4));
+					rowNum++;
+				}
+
+				if (isAddOrModify && !modiDetails.isEmpty()) {
+					String[] changes = modiDetails.split("\\|\\|\\|");
+					int firstDataRow = fieldHeaderRowNum != -1 ? fieldHeaderRowNum : rowNum;
+					
+					for (int changeIdx = 0; changeIdx < changes.length; changeIdx++) {
+						String change = changes[changeIdx];
+						Matcher matcher = pattern.matcher(change);
+						
+						Row dataRow = sheet.createRow(rowNum);
+						
+						for (int c = 0; c < 8; c++) {
+							Cell cell = dataRow.createCell(c);
+							cell.setCellStyle(dataCellStyle);
+						}
+						
+						dataRow.getCell(0).setCellValue(screenName);
+						dataRow.getCell(1).setCellValue(currentFuncCode);
+						
+						if (changeIdx == 0) {
+							dataRow.getCell(5).setCellValue(userName);
+							dataRow.getCell(6).setCellValue(dateStr);
+							dataRow.getCell(7).setCellValue(timeStr);
+						}
+						
+						if (matcher.find()) {
+							String fieldName = matcher.group(1).trim();
+							String oldValue = matcher.group(2).trim();
+							String newValue = matcher.group(3).trim();
+							
+							dataRow.getCell(2).setCellValue(fieldName);
+							
+							if ("ADD".equals(funcCodeUpper)) {
+								dataRow.getCell(3).setCellValue("-");
+							} else {
+								dataRow.getCell(3).setCellValue(oldValue.equals("null") ? "-" : oldValue);
+							}
+							
+							dataRow.getCell(4).setCellValue(newValue.equals("null") ? "-" : newValue);
+						}
+						
+						dataRow.setHeightInPoints(25);
+						rowNum++;
+					}
+					
+					if (changes.length >= 1 && (fieldHeaderRowNum != -1 || changes.length > 1)) {
+						sheet.addMergedRegion(new CellRangeAddress(firstDataRow, rowNum - 1, 0, 0));
+						sheet.addMergedRegion(new CellRangeAddress(firstDataRow, rowNum - 1, 1, 1));
+						sheet.addMergedRegion(new CellRangeAddress(firstDataRow, rowNum - 1, 5, 5));
+						sheet.addMergedRegion(new CellRangeAddress(firstDataRow, rowNum - 1, 6, 6));
+						sheet.addMergedRegion(new CellRangeAddress(firstDataRow, rowNum - 1, 7, 7));
+						
+						for (int row = firstDataRow; row < rowNum; row++) {
+							Row r = sheet.getRow(row);
+							if (r != null) {
+								if (r.getCell(0) != null) {
+									r.getCell(0).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+								}
+								if (r.getCell(1) != null) {
+									r.getCell(1).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+								}
+								if (r.getCell(5) != null) {
+									r.getCell(5).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+								}
+								if (r.getCell(6) != null) {
+									r.getCell(6).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+								}
+								if (r.getCell(7) != null) {
+									r.getCell(7).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+								}
+							}
+						}
+					}
+				} 
+				else {
+					Row dataRow = sheet.createRow(rowNum);
+					
+					for (int c = 0; c < 8; c++) {
+						Cell cell = dataRow.createCell(c);
+						cell.setCellStyle(dataCellStyle);
+					}
+					
+					dataRow.getCell(0).setCellValue(screenName);
+					dataRow.getCell(1).setCellValue(currentFuncCode);
+					dataRow.getCell(2).setCellValue("-");
+					dataRow.getCell(3).setCellValue("-");
+					dataRow.getCell(4).setCellValue("-");
+					dataRow.getCell(5).setCellValue(userName);
+					dataRow.getCell(6).setCellValue(dateStr);
+					dataRow.getCell(7).setCellValue(timeStr);
+					
+					sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 2, 4));
+					
+					dataRow.setHeightInPoints(25);
+					rowNum++;
+				}
+			}
+
+			for (int i = 0; i < columns.length; i++) {
+				sheet.autoSizeColumn(i);
+			}
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			workbook.write(out);
+			workbook.close();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(
+					MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+			headers.setContentDispositionFormData("attachment", "Service_Audit_Report.xlsx");
+			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+			return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
