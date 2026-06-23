@@ -53,7 +53,8 @@
 		"IRS Sensitivity": "fa-sliders-h",
 		IRS: "fa-percent",
 		"User Audit": "fa-user-check",
-		"Service Audit": "fa-server"
+		"Service Audit": "fa-server",
+		"Market Conduct Service Audit": "fa-server"
 	};
 
 	var HEX_RATIO = 2 / 1.73205;
