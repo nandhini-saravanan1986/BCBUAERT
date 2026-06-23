@@ -514,6 +514,8 @@ rotate(
 								<td class="col-modi" th:text="${log.modi_details}"></td>
 								<td class="col-field-header" th:text="${log.FIELD_HEADER}"></td>
 
+								<td class="col-is-modified" th:text="${log.ISMODIFIED}"></td>
+
 								<td class="col-user" th:text="${log.entry_user}"></td>
 								<td class="col-session" th:text="${log.session_id}"></td>
 								<td class="col-date"
@@ -638,12 +640,15 @@ rotate(
     
     function getVal(val) { return val ? val : '<span class="empty-cell">-</span>'; }
 
-    function formatParsedDetails(modiString, funcCode, fieldHeader) {
+    function formatParsedDetails(modiString, funcCode, fieldHeader, isModifiedFlag) {
         const func = (funcCode || '').toUpperCase();
         const safeModi = (!modiString || modiString.trim() === '' || modiString === 'null') ? '' : modiString;
         let rows = '';
 
         const hasHeader = (fieldHeader && fieldHeader.trim() !== '' && fieldHeader !== 'null');
+        
+        const showDetailedRows = (isModifiedFlag === 'Y' || isModifiedFlag === 'y');
+
         if (hasHeader) {
             rows += `
                 <tr>
@@ -654,7 +659,7 @@ rotate(
             `;
         }
 
-        if (func !== 'ADD' && func !== 'MODIFY') {
+        if (!showDetailedRows) {
             if (safeModi !== '' || !hasHeader) {
                 rows += `
                     <tr>
@@ -701,10 +706,9 @@ rotate(
         return `
         <td colspan="3" style="padding: 0px;">
             <table class="nested-audit-table" style="table-layout: fixed; width: 100%;">
-                
                 <colgroup>
-                    <col style="width: 20%;"> <col style="width: 25%;"> <col style="width: 25%;"> </colgroup>
-
+                    <col style="width: 20%;"> <col style="width: 25%;"> <col style="width: 25%;"> 
+                </colgroup>
                 <tbody>
                     ${rows}
                 </tbody>
@@ -723,13 +727,16 @@ rotate(
             
             const headerEl = tr.querySelector('.col-field-header');
             const fieldHeaderTxt = headerEl ? headerEl.innerText.trim() : '';
+            
+            const isModEl = tr.querySelector('.col-is-modified');
+            const isModifiedTxt = isModEl ? isModEl.innerText.trim() : '';
 
             return {
                 html: `
                     <td>${tr.querySelector('.col-screen').innerText.trim()}</td>
                     <td>${getBadge(funcTxt)}</td>
                     
-                    ${formatParsedDetails(modiTxt, funcTxt, fieldHeaderTxt)}
+                    ${formatParsedDetails(modiTxt, funcTxt, fieldHeaderTxt, isModifiedTxt)}
                     
                     <td>${tr.querySelector('.col-user').innerText.trim()}</td>
                     <td>${tr.querySelector('.col-date').innerText.trim()}</td>

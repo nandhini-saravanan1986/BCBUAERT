@@ -25,14 +25,25 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
     List<RecordMetadataProjection> findTop4ByFormModeAndCellNameOrderByReportDateDesc(String formMode, String cellName);
     
 	@Modifying
-	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = :verifyFlg WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.cellName = :cellName")
+	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = :verifyFlg , r.remarks = :remarks WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.cellName = :cellName")
 	int updateVerifyFlg(@Param("verifyFlg") String verifyFlg, @Param("formMode") String formMode,
-			@Param("reportDate") Date reportDate, @Param("cellName") String cellName);
+			@Param("reportDate") Date reportDate, @Param("cellName") String cellName,@Param("remarks") String remarks);
 
+	@Modifying
+	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = :verifyFlg WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.cellName = :cellName")
+	int updateVerifyFlgwithoutremarks(@Param("verifyFlg") String verifyFlg, @Param("formMode") String formMode,
+			@Param("reportDate") Date reportDate, @Param("cellName") String cellName);
+	
 	@Modifying
 	@Query("UPDATE RT_MC_DATA_RECORD_ENTITY r SET r.verifyFlg = 'Y' WHERE r.formMode = :formMode AND r.reportDate = :reportDate AND r.verifyFlg = 'MR'")
 	int revertMrCellsToVerified(@Param("formMode") String formMode, @Param("reportDate") Date reportDate);
 
+	@Query(value = "SELECT COALESCE(remarks, ' - ') FROM RT_MC_DATA_RECORD " + "WHERE form_mode = :formMode "
+			+ "AND report_date = :reportDate " + "AND cell_name = :cellName "
+			+ "ORDER BY id DESC LIMIT 1", nativeQuery = true)
+	String findRemarksByFormModeAndReportDateAndCellName(@Param("formMode") String formMode,
+			@Param("reportDate") Date reportDate, @Param("cellName") String cellName);
+	
 	public interface RecordMetadataProjection {
 	    BigDecimal getId();
 	    String getDataValue();

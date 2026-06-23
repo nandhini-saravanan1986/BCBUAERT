@@ -38,6 +38,15 @@ public class MC_Service_audit_entity {
 	private String entry_user_name;
 	private String auth_user_name;
 	private String FIELD_HEADER;
+	private String ISMODIFIED;
+
+	public String getISMODIFIED() {
+		return ISMODIFIED;
+	}
+
+	public void setISMODIFIED(String iSMODIFIED) {
+		ISMODIFIED = iSMODIFIED;
+	}
 
 	public String getFIELD_HEADER() {
 		return FIELD_HEADER;

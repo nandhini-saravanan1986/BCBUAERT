@@ -312,7 +312,7 @@ public class AuditService {
 
 	}
 
-	public <T> void compareMCEntitiesmanual(T oldEntity, T newEntity, String id_values, String Screenname,
+	public <T> void compareMCEntitiesmanual(T oldEntity, T newEntity, String id_values,String auditType, String Screenname,
 			String tableName, String modifyheader, String remarks) {
 		System.out.println("Screen Name: " + Screenname);
 
@@ -357,6 +357,13 @@ public class AuditService {
 				Object oldValue = field.get(oldEntity);
 				Object newValue = field.get(newEntity);
 
+				boolean isOldEmpty = (oldValue == null || oldValue.toString().trim().isEmpty());
+				boolean isNewEmpty = (newValue == null || newValue.toString().trim().isEmpty());
+
+				if (isOldEmpty && isNewEmpty) {
+					continue;
+				}
+				
 				if (!areEqual(oldValue, newValue)) {
 
 					String finalFieldName = field.getName();
@@ -403,7 +410,7 @@ public class AuditService {
 		audit.setEntry_time(currentDate);
 		audit.setEntry_user(userId);
 		audit.setEntry_user_name(username);
-		audit.setFunc_code("MODIFY");
+		audit.setFunc_code(auditType);
 		audit.setAudit_table(tableName);
 		audit.setAudit_screen(Screenname);
 		audit.setEvent_id(userId);
@@ -413,6 +420,13 @@ public class AuditService {
 		audit.setRemarks(remarks);
 		audit.setFIELD_HEADER(modifyheader);
 		audit.setSession_id(sessionId);
+		boolean ismodified = (changes.toString() == null || changes.toString().trim().isEmpty());
+
+		if (ismodified) {
+			audit.setISMODIFIED("N");
+		} else {
+			audit.setISMODIFIED("Y");
+		}
 		MC_Service_audit_Repo.save(audit);
 	}
 
@@ -424,7 +438,7 @@ public class AuditService {
 			throw new IllegalArgumentException("Entity cannot be null for ADD operation");
 		}
 
-		List<String> ignoreFields = Arrays.asList("createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
+		List<String> ignoreFields = Arrays.asList("id","createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
 				"lastModifiedDate", "lastModifiedBy", "version", "modifyFlg", "verifyFlg", "columnHeader",
 				"rowCol2Value", "formMode", "reportDate", "cellId", "cellName");
 
@@ -465,7 +479,7 @@ public class AuditService {
 						addedDetails.append("|||");
 					}
 
-					addedDetails.append(finalFieldName).append(": Value: ").append(newValue);
+					addedDetails.append(finalFieldName).append(": OldValue: -").append(", NewValue: ").append(newValue);
 				}
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException("Error accessing field: " + field.getName(), e);
@@ -503,11 +517,12 @@ public class AuditService {
 		audit.setRemarks(remarks);
 		audit.setFIELD_HEADER(modifyheader);
 		audit.setSession_id(sessionId);
+		audit.setISMODIFIED("Y");
 		MC_Service_audit_Repo.save(audit);
 	}
 
 	public void auditMCEntitymanual(String fun_code, String id_values, String Screenname, String tableName,
-			String modifyheader, String remarks) {
+			String modifyheader, String remarks, String changedRemarks) {
 		System.out.println("Screen Name: " + Screenname);
 		System.out.println("Entered MC Common Service Audit");
 		final UUID auditID = UUID.randomUUID();
@@ -539,6 +554,13 @@ public class AuditService {
 		audit.setRemarks(remarks);
 		audit.setFIELD_HEADER(modifyheader);
 		audit.setSession_id(sessionId);
+		boolean ismodified = (changedRemarks.toString() == null || changedRemarks.toString().trim().isEmpty());
+		if (ismodified) {
+			audit.setISMODIFIED("N");
+		} else {
+			audit.setISMODIFIED("Y");
+		}
+
 		MC_Service_audit_Repo.save(audit);
 	}
 
