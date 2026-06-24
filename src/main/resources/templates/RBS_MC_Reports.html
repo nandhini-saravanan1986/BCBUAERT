@@ -1871,9 +1871,164 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
     outline: none !important;
 }
 #editRecordModal .modal-body {
-    max-height: 74vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+	max-height: 74vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.picker-wrapper {
+	position: relative;
+	width: 100%;
+	max-width: 260px; 
+}
+
+.date-input-field {
+	width: 100%;
+	padding: 5px 10px;
+	font-size: 14px;
+	border: 2px solid white;
+	border-radius: 6px;
+	background: white;
+	color: #333;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.date-input-field:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.date-dropdown-content {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	margin-top: 8px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+	padding: 15px;
+	width: 100%;
+	z-index: 1000;
+	animation: slideDown 0.15s ease-out;
+}
+
+.date-dropdown-content.active {
+	display: block;
+	z-index:1100;
+}
+
+@keyframes slideDown {from { opacity:0;
+	transform: translateY(-5px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
+
+.year-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 15px;
+}
+
+.year-nav button {
+	background: #f0f4ff;
+	border: none;
+	border-radius: 4px;
+	font-size: 16px;
+	color: #E67E00 ;
+	cursor: pointer;
+	padding: 4px 12px;
+	transition: all 0.2s;
+	font-weight: bold;
+}
+
+.year-nav button:hover {
+	background: #E67E00 ;
+	color: white;
+}
+
+.year-display {
+	font-size: 16px;
+	font-weight: bold;
+	color: #333;
+}
+
+.quarters-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.quarter-btn {
+	padding: 8px;
+	border: 1px solid #ddd;
+	background: white;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 600;
+	color: #555;
+	transition: all 0.2s;
+}
+
+.quarter-btn:hover {
+	border-color: #E67E00 ;
+	color: #E67E00 ;
+	background: #f8faff;
+}
+
+.quarter-btn.active {
+	background: #E67E00 ;
+	color: white;
+	border-color: #E67E00 ;
+}
+
+.yearly-btn, .confirm-btn {
+	width: 100%;
+	padding: 8px;
+	border: none;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.yearly-btn {
+	background: #f0f4ff;
+	color: #E67E00 ;
+	margin-bottom: 8px;
+}
+
+.yearly-btn.active {
+	background: #E67E00 ;
+	color: white;
+}
+
+.yearly-btn:hover:not(.active) {
+	background: #e4ebfb;
+}
+
+.confirm-btn {
+	background: #E67E00 ;
+	color: white;
+}
+
+.confirm-btn:hover {
+	background: #E67E00 ;
+}
+
+.confirm-btn:disabled {
+	background: #ccc;
+	cursor: not-allowed;
 }
 </style>
 </head>
@@ -1992,8 +2147,45 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 					</div>
 
 				</div>
+				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION!='YES'}">
+					<div class="picker-wrapper" id="pickerWrapper">
+
+						<input type="text" class="date-input-field" id="dateInput"
+							th:data-report-date="${REPORT_DATE}"
+							th:data-timeperiod="${timeperiod}"
+							placeholder="Select Quarter End..." readonly>
+
+						<div class="date-dropdown-content" id="dropdownContent">
+							<div class="year-nav">
+								<button id="prevYear">&lt;</button>
+								<div class="year-display" id="yearDisplay">2026</div>
+								<button id="nextYear">&gt;</button>
+							</div>
+
+							<div class="quarters-grid">
+								<button class="quarter-btn" data-month="2">Mar (Q1)</button>
+								<button class="quarter-btn" data-month="5">Jun (Q2)</button>
+								<button class="quarter-btn" data-month="8">Sep (Q3)</button>
+								<button class="quarter-btn" data-month="11">Dec (Q4)</button>
+							</div>
+
+							<button class="yearly-btn" id="yearlyBtn">Yearly (Dec
+								31)</button>
+							<button class="confirm-btn" id="confirmBtn" disabled>Confirm</button>
+						</div>
+					</div>
+				</div>
+
 				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION=='YES'}">
 					<button class="role-btn" onclick="navigateTodatapage()">Summary
+					</button>
+				</div>
+				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+					<button class="role-btn" onclick="navigateTodatamgrsumpage()">M/C  View
+					</button>
+				</div>
+				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='NO' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+					<button class="role-btn" onclick="navigateTodatapage()">Manager View
 					</button>
 				</div>
 				<div class="form-group mb-0"
@@ -2389,6 +2581,110 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 										name="R22_NO_SER_SPC_TP"
 										th:value="${report.R22_NO_SER_SPC_TP}" readonly
 										class="table-input input-and-select auto-dropdown"></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td><textarea id="R23_PRODUCT" name="R23_PRODUCT"
+										th:text="${report.R23_PRODUCT}" readonly class="table-input "style="resize: none;"></textarea></td>
+									<td><textarea id="R23_NO_EMP_SPC_TP"
+										name="R23_NO_EMP_SPC_TP"
+										th:text="${report.R23_NO_EMP_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_CON_SPC_TP"
+										name="R23_NO_CON_SPC_TP"
+										th:text="${report.R23_NO_CON_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_AVG_NO_EMP_SPC_TP"
+										name="R23_AVG_NO_EMP_SPC_TP"
+										th:text="${report.R23_AVG_NO_EMP_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_BRN_SPC_TP"
+										name="R23_NO_BRN_SPC_TP"
+										th:text="${report.R23_NO_BRN_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_BRN_POD"
+										name="R23_TOT_NO_BRN_POD"
+										th:text="${report.R23_TOT_NO_BRN_POD}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_ATM_SPC_TP"
+										name="R23_NO_ATM_SPC_TP"
+										th:text="${report.R23_NO_ATM_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_ATM_DET_SPC_TP"
+										name="R23_NO_ATM_DET_SPC_TP"
+										th:text="${report.R23_NO_ATM_DET_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_AUT_SPC_TP"
+										name="R23_NO_AUT_SPC_TP"
+										th:text="${report.R23_NO_AUT_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_INS_BNK_SPC_TP"
+										name="R23_NO_INS_BNK_SPC_TP"
+										th:text="${report.R23_NO_INS_BNK_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_INS_DWN_SPC_TP"
+										name="R23_NO_INS_DWN_SPC_TP"
+										th:text="${report.R23_NO_INS_DWN_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_EMP_RSK_SPC_DTE"
+										name="R23_NO_EMP_RSK_SPC_DTE"
+										th:text="${report.R23_NO_EMP_RSK_SPC_DTE}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_EXT_FRD_SPC_TP"
+										name="R23_NO_EXT_FRD_SPC_TP"
+										th:text="${report.R23_NO_EXT_FRD_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_INT_FRD_SPC_TP"
+										name="R23_NO_INT_FRD_SPC_TP"
+										th:text="${report.R23_NO_INT_FRD_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_FRD_SPC_TP"
+										name="R23_NO_FRD_SPC_TP"
+										th:text="${report.R23_NO_FRD_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_FRD_PP"
+										name="R23_NO_FRD_PP" th:text="${report.R23_NO_FRD_PP}"
+										readonly class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_REV_SPC_TP"
+										name="R23_TOT_REV_SPC_TP"
+										th:text="${report.R23_TOT_REV_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_INS_UNP_SPC_TP"
+										name="R23_TOT_INS_UNP_SPC_TP"
+										th:text="${report.R23_TOT_INS_UNP_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_HRS_BNK"
+										name="R23_TOT_NO_HRS_BNK"
+										th:text="${report.R23_TOT_NO_HRS_BNK}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_INC_SPC_TP"
+										name="R23_TOT_NO_INC_SPC_TP"
+										th:text="${report.R23_TOT_NO_INC_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_PEN_SPC_TP"
+										name="R23_TOT_NO_PEN_SPC_TP"
+										th:text="${report.R23_TOT_NO_PEN_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_AUT_SPC_TP"
+										name="R23_TOT_NO_AUT_SPC_TP"
+										th:text="${report.R23_TOT_NO_AUT_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_SAL_SPC_TP"
+										name="R23_TOT_NO_SAL_SPC_TP"
+										th:text="${report.R23_TOT_NO_SAL_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_TOT_NO_MER_SPC_TP"
+										name="R23_TOT_NO_MER_SPC_TP"
+										th:text="${report.R23_TOT_NO_MER_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_INQ_SPC_TP"
+										name="R23_NO_INQ_SPC_TP"
+										th:text="${report.R23_NO_INQ_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
+									<td><textarea id="R23_NO_SER_SPC_TP"
+										name="R23_NO_SER_SPC_TP"
+										th:text="${report.R23_NO_SER_SPC_TP}" readonly
+										class="table-input remarks-input"></textarea></td>
 								</tr>
 							</tbody>
 						</table>
@@ -16738,6 +17034,161 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
 				Selecting</button>
 		</div>
 	</div>
+
+	<div class="modal fade" id="ccaDemoModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            
+            <div class="menu-title-header" style="padding: 15px 20px; background-color: #0056b3;">
+                <div class="modal-title" style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
+                    LFI Response
+                </div>
+            </div>
+
+            <div class="modal-body" style="padding: 25px 30px;">
+                <div style="margin-bottom: 20px; border-bottom: 1px solid #e9ecef; padding-bottom: 15px;">
+                    <h6 style="margin: 0; font-size: 13px; font-weight: 600;display:none">
+                        Field Name : <span id="cca-demo-header" style="font-weight: 500; margin-left: 5px; color: #6c757d;"></span>
+                    </h6>
+                    <h6 style="margin: 8px 0 0 0; font-size: 13px; font-weight: 600;">
+                        Assessment Clarification : <span id="cca-demo-col2" style="font-weight: 500; margin-left: 5px; color: #6c757d;"></span>
+                    </h6>
+                </div>
+
+                <div>
+                    <label style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600;">Remarks</label>
+                    <textarea id="cca-demo-textarea" style="width: 100%; height: 160px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Enter specific CCA details here..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px;">
+                <button type="button" class="role-btn" data-dismiss="modal" style="background-color: #6c757d; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button type="button" class="role-btn" id="btn-save-cca-special" style="background-color: #0056b3; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ccaAlternativeModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" style="overflow-y: hidden;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-wide" id="cca-modal-dialog" role="document">
+        <div class="modal-content" style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            
+            <div class="menu-title-header" style="padding: 15px 20px; background-color: #17a2b8;">
+                <div class="modal-title" style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
+                    CCA Standard Record
+                </div>
+            </div>
+
+            <div class="modal-body modal-body-split" style="text-align: left; padding: 25px 30px 0 30px;">
+                
+                <div class="form-pane">
+                    <div style="margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e9ecef;">
+                        <h6 style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600;display:none">
+                            Field Name : <span id="cca-alt-header" style="font-weight: 500; color: #6c757d;"></span>
+                        </h6>
+                        <h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+                            Assessment Clarification : <span id="cca-alt-col2" style="font-weight: 500; color: #6c757d;"></span>
+                        </h6>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
+                        <div style="display: flex; flex-direction: column;">
+                            <h5 style="font-size: 15px; font-weight: 600; margin: 0 0 15px 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">Data Entry</h5>
+                            <label style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600; display: block;">Value / Remarks</label>
+                            <textarea id="cca-alt-input" style="flex-grow: 1; width: 100%; min-height: 280px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: none; font-family: inherit;" placeholder="Enter value or detailed remarks..."></textarea>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column;">
+                            <h5 style="font-size: 15px; font-weight: 600; margin: 0 0 15px 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">Evidence Attachments</h5>
+                            
+                            <div class="file-scroll-container" style="flex-grow: 1; overflow-y: auto;">
+                                <div id="cca-dynamic-file-wrapper" style="display: flex; flex-direction: column; gap: 10px; width: 100%;"></div>
+                            </div>
+
+                            <div style="margin-top: 10px;">
+                                <button type="button" id="cca-add-file-btn" style="background-color: #f8f9fa; border: 1px dashed #0056b3; border-radius: 4px; padding: 8px 12px; cursor: pointer; color: #0056b3; font-size: 13px; font-weight: bold; width: 100%; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#e2e6ea';" onmouseout="this.style.backgroundColor='#f8f9fa';">
+                                    + Add Another File
+                                </button>
+                                <p style="font-size: 11px; color: #6c757d; margin-top: 8px; text-align: center; margin-bottom: 0;">Maximum 10 files allowed. You can edit the file names.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h5 style="font-size: 15px; color: #333; margin: 0; font-weight: bold;">Document Preview</h5>
+
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span id="cca-custom-zoom-tools" style="display: flex; gap: 8px; align-items: center; display: none;">
+                                <button type="button" id="cca-zoom-out-btn" class="preview-btn" style="padding: 2px 8px; font-size: 16px; font-weight: bold;" title="Zoom Out">&minus;</button> 
+                                <span id="cca-zoom-level-txt" style="font-size: 12px; color: #666; width: 35px; text-align: center;">100%</span>
+                                <button type="button" id="cca-zoom-in-btn" class="preview-btn" style="padding: 2px 8px; font-size: 16px; font-weight: bold;" title="Zoom In">&plus;</button> 
+                                <span style="border-left: 1px solid #ccc; height: 20px; margin: 0 5px;"></span>
+                            </span>
+
+                            <button type="button" id="cca-close-preview-btn" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="preview-window" id="cca-preview-window">
+                        <span style="color: #6c757d; font-size: 14px;">Select a file and click preview.</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="role-btn" data-dismiss="modal" style="background-color: #6c757d; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 14px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#5a6268';" onmouseout="this.style.backgroundColor='#6c757d';">
+                    Cancel
+                </button>
+                <button type="button" class="role-btn" id="btn-save-cca-alt" style="background-color: #17a2b8; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#138496';" onmouseout="this.style.backgroundColor='#17a2b8';">
+                    Save CCA Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ccaExtraModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            
+            <div class="menu-title-header" style="padding: 15px 20px;"> 
+                <div class="modal-title" style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
+                   Edit Record
+                </div>
+            </div>
+
+            <div class="modal-body" style="padding: 25px 30px;">
+                <div style="margin-bottom: 20px; border-bottom: 1px solid #e9ecef; padding-bottom: 15px;">
+                    <h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+                        Field Name : <span id="cca-extra-header" style="font-weight: 500; margin-left: 5px; color: #6c757d;"></span>
+                    </h6>
+                    <h6 style="margin: 8px 0 0 0; font-size: 13px; font-weight: 600;">
+                       Product  : <span id="cca-extra-col2" style="font-weight: 500; margin-left: 5px; color: #6c757d;"></span>
+                    </h6>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="margin: 0 0 5px 0; font-size: 13px; font-weight: 600;">Maker Comments</label>
+                        <textarea id="cca-extra-input1" style="width: 100%; min-height: 80px; padding: 8px 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Enter Maker comments..."></textarea>
+                    </div>
+                    <div>
+                        <label style="margin: 0 0 5px 0; font-size: 13px; font-weight: 600;">Checker Comments</label>
+                        <textarea id="cca-extra-input2" style="width: 100%; min-height: 80px; padding: 8px 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Enter Checker comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px;">
+                <button type="button" class="role-btn" data-dismiss="modal" style=" color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button type="button" class="role-btn" id="btn-save-cca-extra" style="color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
 	let formmode = /*[[${formmode}]]*/ null;
@@ -16752,7 +17203,12 @@ function navigateTodatapage(){
 	 window.location.href = 'RT_MC_Reports?formmode='+formmode;
 	
 }
-
+function navigateTodatamgrsumpage(){
+	let formmode = /*[[${formmode}]]*/ null;
+	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&mgrsummary=NO';
+	
+}
 </script>
 	<script>
 	function navigateToTab(tabId) {
@@ -16763,8 +17219,7 @@ function navigateTodatapage(){
 	}
 	function navigateToTabdept(tabId) {
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&deptvalid=YES';
-		
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&deptvalid=YES';		
 	}
 	
 	function handleClick(tabId) {
@@ -17509,12 +17964,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const deptValidation = /*[[${DEPARTMENTVALIDATION}]]*/ 'NO';
     const formMode = /*[[${formmode}]]*/ '';
     const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+    const timeperiod = /*[[${timeperiod}]]*/ '';
     const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
     const roleId = /*[[${ROLEID}]]*/ '';
     const isChecker = (roleId && (roleId.toUpperCase() === 'ADM-C' || roleId.toUpperCase() === 'USR-C'));
     const isManager = (roleId && (roleId.toUpperCase() === 'MGR' || roleId.toUpperCase() === 'SUP-ADM'));
     const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : (reportlist1 != null && !reportlist1.isEmpty() ? reportlist1[0].VERIFY_FLG : '')}]]*/ '';
-    
+    let currentEditingInput = null;
+    let currentRowCol2Value = "";
     const MAX_FILES = 10;
     let currentFileCount = 0;
     let currentlyPreviewedInput = null; 
@@ -17530,7 +17987,304 @@ document.addEventListener("DOMContentLoaded", function() {
     const zoomInBtn = document.getElementById('zoom-in-btn');
     const zoomOutBtn = document.getElementById('zoom-out-btn');
     const zoomLevelTxt = document.getElementById('zoom-level-txt');
+    const ccaModalDialog = document.getElementById('cca-modal-dialog');
+    const ccaPreviewWindow = document.getElementById('cca-preview-window');
+    const ccaClosePreviewBtn = document.getElementById('cca-close-preview-btn');
 
+    if (ccaClosePreviewBtn) {
+        ccaClosePreviewBtn.addEventListener('click', function() {
+            if (ccaModalDialog) ccaModalDialog.classList.remove('preview-active');
+            if (ccaPreviewWindow) ccaPreviewWindow.innerHTML = '<span style="color: #6c757d; font-size: 14px;">Select a file and click preview.</span>';
+        });
+    }
+
+    function renderCcaPreview(file) {
+        if (!file || !ccaModalDialog || !ccaPreviewWindow) return;
+        
+        ccaModalDialog.classList.add('preview-active');
+        const fileURL = URL.createObjectURL(file);
+        const fileType = file.type;
+        const fileName = file.name.toLowerCase();
+        
+        const ccaZoomTools = document.getElementById('cca-custom-zoom-tools');
+        const ccaZoomLevelTxt = document.getElementById('cca-zoom-level-txt');
+
+        currentZoom = 1.0;
+        if (ccaZoomLevelTxt) ccaZoomLevelTxt.innerText = '100%';
+        ccaPreviewWindow.style.alignItems = 'center';
+        ccaPreviewWindow.style.justifyContent = 'center';
+
+        if (fileType.startsWith('image/')) {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            ccaPreviewWindow.innerHTML = `<img src="${fileURL}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: width 0.2s, height 0.2s;" />`;
+            
+        } else if (fileType === 'application/pdf') {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'none'; 
+            ccaPreviewWindow.innerHTML = `<iframe src="${fileURL}#toolbar=1" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+            
+        } else if (fileType.startsWith('text/') || fileName.endsWith('.txt') || fileName.endsWith('.csv')) {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const htmlString = `<html><body style="font-family: Consolas, monospace; font-size: 14px; padding: 20px; color: #333; background-color: #f8f9fa; white-space: pre-wrap; word-wrap: break-word;">${textContent}</body></html>`;
+                const blob = new Blob([htmlString], { type: 'text/html' });
+                ccaPreviewWindow.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+            };
+            reader.readAsText(file);
+            
+        } else {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; margin-bottom: 15px;"></div><h5 style="color: #333;">Generating Preview...</h5></div>`;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch('./preview', { method: 'POST', body: formData })
+            .then(response => { 
+                if (!response.ok) throw new Error("Server could not generate preview."); 
+                return response.blob(); 
+            })
+            .then(pdfBlob => { 
+                ccaPreviewWindow.innerHTML = `<iframe src="${URL.createObjectURL(pdfBlob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`; 
+            })
+            .catch(error => { 
+                ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><h2 style="font-size: 40px; margin: 0 0 10px 0;">📄</h2><h4 style="color: #333; margin-bottom: 5px;">${file.name}</h4><p style="color: #dc3545; font-size: 13px; font-weight: bold;">Preview generation failed.</p></div>`; 
+            });
+        }
+    }
+    const CCA_MAX_FILES = 10;
+    let ccaCurrentFileCount = 0;
+    let ccaCurrentlyPreviewedInput = null;
+    let ccaCurrentZoom = 1.0;
+
+    const ccaFileWrapper = document.getElementById('cca-dynamic-file-wrapper');
+    const ccaAddFileBtn = document.getElementById('cca-add-file-btn');
+   /*  const ccaModalDialog = document.getElementById('cca-modal-dialog');
+    const ccaPreviewWindow = document.getElementById('cca-preview-window');
+    const ccaClosePreviewBtn = document.getElementById('cca-close-preview-btn'); */
+    const ccaZoomInBtn = document.getElementById('cca-zoom-in-btn');
+    const ccaZoomOutBtn = document.getElementById('cca-zoom-out-btn');
+    const ccaZoomLevelTxt = document.getElementById('cca-zoom-level-txt');
+    const ccaZoomTools = document.getElementById('cca-custom-zoom-tools');
+
+    function applyCcaZoom() {
+        if(ccaZoomLevelTxt) ccaZoomLevelTxt.innerText = Math.round(ccaCurrentZoom * 100) + '%';
+        const previewElement = ccaPreviewWindow.firstElementChild;
+        if (!previewElement) return;
+
+        if (ccaCurrentZoom > 1.0) {
+            ccaPreviewWindow.style.alignItems = 'flex-start';
+            ccaPreviewWindow.style.justifyContent = 'flex-start';
+        } else {
+            ccaPreviewWindow.style.alignItems = 'center';
+            ccaPreviewWindow.style.justifyContent = 'center';
+        }
+
+        let isGeneratedHtml = false;
+        if (previewElement.tagName === 'IFRAME') {
+            try {
+                const iframeDoc = previewElement.contentDocument || previewElement.contentWindow.document;
+                if (iframeDoc && iframeDoc.body && !iframeDoc.querySelector('embed[type="application/pdf"]')) {
+                    isGeneratedHtml = true;
+                    const excelTables = iframeDoc.querySelectorAll('.sheet-container table');
+                    if (excelTables.length > 0) {
+                        excelTables.forEach(table => {
+                            table.style.zoom = ccaCurrentZoom;
+                            table.style.transform = `scale(${ccaCurrentZoom})`;
+                            table.style.transformOrigin = 'top left';
+                        });
+                    } else {
+                        iframeDoc.body.style.zoom = ccaCurrentZoom;
+                        iframeDoc.body.style.transform = `scale(${ccaCurrentZoom})`;
+                        iframeDoc.body.style.transformOrigin = 'top left';
+                    }
+                }
+            } catch (e) {}
+        }
+
+        if (!isGeneratedHtml) {
+            if (previewElement.tagName === 'IMG') {
+                previewElement.style.maxWidth = 'none';
+                previewElement.style.maxHeight = 'none';
+                previewElement.style.transition = 'width 0.2s ease, height 0.2s ease';
+            }
+            previewElement.style.width = `${ccaCurrentZoom * 100}%`;
+            previewElement.style.height = `${ccaCurrentZoom * 100}%`;
+            previewElement.style.flexShrink = '0'; 
+        }
+    }
+
+    if(ccaZoomInBtn) ccaZoomInBtn.addEventListener('click', () => { if (ccaCurrentZoom < 3.0) { ccaCurrentZoom += 0.1; applyCcaZoom(); }});
+    if(ccaZoomOutBtn) ccaZoomOutBtn.addEventListener('click', () => { if (ccaCurrentZoom > 0.3) { ccaCurrentZoom -= 0.1; applyCcaZoom(); }});
+
+    function closeCcaPreview() {
+        if(ccaModalDialog) ccaModalDialog.classList.remove('preview-active');
+        ccaCurrentlyPreviewedInput = null;
+        if(ccaPreviewWindow) ccaPreviewWindow.innerHTML = '<span style="color: #6c757d; font-size: 14px;">Select a file and click preview.</span>';
+        if(ccaZoomTools) ccaZoomTools.style.display = 'none';
+    }
+
+    if (ccaClosePreviewBtn) ccaClosePreviewBtn.addEventListener('click', closeCcaPreview);
+
+    function renderCcaPreview(file) {
+        if (!file || !ccaModalDialog || !ccaPreviewWindow) return;
+        
+        ccaModalDialog.classList.add('preview-active');
+        const fileURL = URL.createObjectURL(file);
+        const fileType = file.type;
+        const fileName = file.name.toLowerCase();
+        
+        ccaCurrentZoom = 1.0;
+        if (ccaZoomLevelTxt) ccaZoomLevelTxt.innerText = '100%';
+        ccaPreviewWindow.style.alignItems = 'center';
+        ccaPreviewWindow.style.justifyContent = 'center';
+
+        if (fileType.startsWith('image/')) {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            ccaPreviewWindow.innerHTML = `<img src="${fileURL}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: width 0.2s, height 0.2s;" />`;
+            
+        } else if (fileType === 'application/pdf') {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'none'; 
+            ccaPreviewWindow.innerHTML = `<iframe src="${fileURL}#toolbar=1" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+            
+        } else if (fileType.startsWith('text/') || fileName.endsWith('.txt') || fileName.endsWith('.csv')) {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const htmlString = `<html><body style="font-family: Consolas, monospace; font-size: 14px; padding: 20px; color: #333; background-color: #f8f9fa; white-space: pre-wrap; word-wrap: break-word;">${textContent}</body></html>`;
+                const blob = new Blob([htmlString], { type: 'text/html' });
+                ccaPreviewWindow.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+            };
+            reader.readAsText(file);
+            
+        } else {
+            if (ccaZoomTools) ccaZoomTools.style.display = 'flex'; 
+            ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; margin-bottom: 15px;"></div><h5 style="color: #333;">Generating Preview...</h5></div>`;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch('./preview', { method: 'POST', body: formData })
+            .then(response => { 
+                if (!response.ok) throw new Error("Server could not generate preview."); 
+                return response.blob(); 
+            })
+            .then(pdfBlob => { 
+                ccaPreviewWindow.innerHTML = `<iframe src="${URL.createObjectURL(pdfBlob)}" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`; 
+            })
+            .catch(error => { 
+                ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><h2 style="font-size: 40px; margin: 0 0 10px 0;">📄</h2><h4 style="color: #333; margin-bottom: 5px;">${file.name}</h4><p style="color: #dc3545; font-size: 13px; font-weight: bold;">Preview generation failed.</p></div>`; 
+            });
+        }
+    }
+
+    function createCcaFileInputRow() {
+        if (ccaCurrentFileCount >= CCA_MAX_FILES) return;
+        ccaCurrentFileCount++;
+
+        const newRow = document.createElement('div');
+        newRow.className = 'cca-file-input-row';
+        newRow.style.display = 'flex';
+        newRow.style.alignItems = 'center';
+        newRow.style.gap = '8px';
+        newRow.style.width = '100%';
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none';
+
+        const chooseFileBtn = document.createElement('button');
+        chooseFileBtn.type = 'button';
+        chooseFileBtn.className = 'custom-file-btn';
+        chooseFileBtn.style.padding = '4px 10px';
+        chooseFileBtn.innerHTML = '<span>&#8682;</span> Browse...';
+
+        const fileNameInput = document.createElement('input');
+        fileNameInput.type = 'text';
+        fileNameInput.className = 'cca-editable-filename';
+        fileNameInput.style.display = 'none'; 
+        fileNameInput.style.flex = '1';
+        fileNameInput.style.padding = '4px 8px';
+        fileNameInput.style.fontSize = '13px';
+        fileNameInput.style.border = '1px solid #ced4da';
+        fileNameInput.style.borderRadius = '4px';
+        fileNameInput.style.outline = 'none';
+        fileNameInput.title = "You can edit this file name";
+
+        const previewBtn = document.createElement('button');
+        previewBtn.type = 'button';
+        previewBtn.className = 'preview-btn';
+        previewBtn.innerHTML = '&#128065; Preview';
+        previewBtn.style.display = 'none';
+        previewBtn.style.flexShrink = '0';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'file-remove-btn';
+        removeBtn.innerHTML = '&#10005;';
+        removeBtn.style.flexShrink = '0';
+        if (ccaCurrentFileCount === 1) removeBtn.style.display = 'none';
+
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                const selectedFile = fileInput.files[0];
+                chooseFileBtn.style.display = 'none';
+                
+                fileNameInput.style.display = 'block';
+                fileNameInput.value = selectedFile.name; 
+                
+                previewBtn.style.display = 'inline-block';
+                removeBtn.style.display = 'inline-block';
+
+                previewBtn.onclick = function(e) {
+                    e.preventDefault();
+                    ccaCurrentlyPreviewedInput = fileInput; 
+                    renderCcaPreview(fileInput.files[0]);
+                };
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            if (ccaCurrentlyPreviewedInput === fileInput) {
+                closeCcaPreview();
+            }
+
+            const totalRows = document.querySelectorAll('.cca-file-input-row').length;
+            if (totalRows === 1) {
+                fileInput.value = '';
+                chooseFileBtn.style.display = 'block';
+                fileNameInput.style.display = 'none';
+                previewBtn.style.display = 'none';
+                removeBtn.style.display = 'none';
+            } else {
+                newRow.remove();
+                ccaCurrentFileCount--;
+                ccaAddFileBtn.style.display = 'block';
+                const rows = document.querySelectorAll('.cca-file-input-row');
+                if (rows.length === 1 && rows[0].querySelector('input[type="file"]').files.length === 0) {
+                    rows[0].querySelector('.file-remove-btn').style.display = 'none';
+                }
+            }
+        });
+
+        newRow.appendChild(fileInput);
+        newRow.appendChild(chooseFileBtn);
+        newRow.appendChild(fileNameInput);
+        newRow.appendChild(previewBtn);
+        newRow.appendChild(removeBtn);
+        ccaFileWrapper.appendChild(newRow);
+
+        if (ccaCurrentFileCount >= CCA_MAX_FILES) ccaAddFileBtn.style.display = 'none';
+    }
+
+    if (ccaAddFileBtn) ccaAddFileBtn.addEventListener('click', createCcaFileInputRow);
+
+    if (ccaAddFileBtn) ccaAddFileBtn.addEventListener('click', createCcaFileInputRow);
+    
     function closePreview() {
         if(modalDialog) modalDialog.classList.remove('preview-active');
         currentlyPreviewedInput = null;
@@ -17802,7 +18556,6 @@ document.addEventListener("DOMContentLoaded", function() {
             fileWrapper.innerHTML = ''; 
             currentFileCount = 0;
             
-            // FIX: Ensure Manager is included in this safety check
             if (!isChecker && !isManager) {
                 createFileInputRow();
                 if (addFileBtn) addFileBtn.style.display = 'block';
@@ -17814,8 +18567,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     if (deptValidation !== 'YES') {
-        let currentEditingInput = null;
-        let currentRowCol2Value = "";
+        currentEditingInput = null;
+        currentRowCol2Value = "";
         
         let ptReportData1 = /*[[${deptreportlist}]]*/ null; 
         let ptReportData2 = /*[[${deptreportlist2}]]*/ null; 
@@ -17837,13 +18590,16 @@ document.addEventListener("DOMContentLoaded", function() {
             return false;
         };
 
-        const inputs = document.querySelectorAll('.input-and-select');
+        const inputs = document.querySelectorAll('.input-and-select, .remarks-input');
 
         inputs.forEach(input => {
             input.setAttribute('readonly', true);
             
             const fieldName = input.name || input.id;
-            const isAuthorized = isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+            
+            const isRemarksField = input.classList.contains('remarks-input');
+            
+            const isAuthorized = isRemarksField || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
 
             if (isAuthorized) {
                 const wrapper = document.createElement('div');
@@ -17854,16 +18610,50 @@ document.addEventListener("DOMContentLoaded", function() {
                 const iconBtn = document.createElement('button');
                 iconBtn.type = 'button';
                 iconBtn.className = 'dynamic-edit-icon';
-                
-                if (isChecker || isManager) {
-                    iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-                    iconBtn.title = isManager ? "View Record" : "Verify Record";
-                } else {
-                    iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
-                    iconBtn.title = "Edit Record";
-                }
-                wrapper.appendChild(iconBtn);
 
+                let skipIcon = false;
+
+                if (isRemarksField) {
+                    const rawVal = input.value || "";
+                    input.setAttribute('data-raw-value', rawVal);
+                    
+                    const parts = rawVal.split(" -|-|- ");
+                    const makerVal = parts[0] || "";
+                    const checkerVal = parts.length > 1 ? parts[1] : "";
+
+                    if (isManager) {
+                        let displayVal = "";
+                        if (makerVal) displayVal += "Maker Comments: " + makerVal;
+                        if (makerVal && checkerVal) displayVal += "\n\n";
+                        if (checkerVal) displayVal += "Checker Comments: " + checkerVal;
+                        input.value = displayVal;
+                        
+                        skipIcon = true; 
+                    } else if (isChecker) {
+                        input.value = checkerVal;
+                        
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                        iconBtn.title = "Edit Checker Comments";
+                    } else {
+                        input.value = makerVal;
+                        
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                        iconBtn.title = "Edit Maker Comments";
+                    }
+                }
+                else {
+                    if (isChecker || isManager) {
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                        iconBtn.title = isManager ? "View Record" : "Verify Record";
+                    } else {
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                        iconBtn.title = "Edit Record";
+                    }
+                }
+
+                if (!skipIcon) {
+                    wrapper.appendChild(iconBtn);
+                }
                 iconBtn.addEventListener('click', function() {
                     currentEditingInput = input;
                     const td = input.closest('td');
@@ -17879,12 +18669,57 @@ document.addEventListener("DOMContentLoaded", function() {
                         currentRowCol2Value = col2Input ? col2Input.value : col2.innerText.trim();
                     }
                     const cellName = input.name || input.id || "UnknownCell";
+                    if (input.classList.contains('remarks-input')) {
+                        document.getElementById('cca-extra-header').innerText = headerText;
+                        document.getElementById('cca-extra-col2').innerText = currentRowCol2Value;
+                        
+                        const makerInput = document.getElementById('cca-extra-input1');
+                        const checkerInput = document.getElementById('cca-extra-input2');
+                        
+                        const rawVal = input.getAttribute('data-raw-value') || "";
+                        const parts = rawVal.split(" -|-|- ");
+                        
+                        makerInput.value = parts[0] || "";
+                        checkerInput.value = parts.length > 1 ? parts[1] : "";
+                        
+                        makerInput.readOnly = true;
+                        checkerInput.readOnly = true;
+
+                        if (!isChecker && !isManager) {
+                            makerInput.readOnly = false;
+                        } else if (isChecker) {
+                            checkerInput.readOnly = false; 
+                        }
+                        
+                        $('#ccaExtraModal').modal('show');
+                        return;
+                    }
+                    
+                    if (formMode === 'conductcultureassessment') {
+                        if (cellName.endsWith('_LFI_RESP')) {
+                        	document.getElementById('cca-demo-header').innerText = headerText;
+                            document.getElementById('cca-demo-col2').innerText = currentRowCol2Value;
+                            document.getElementById('cca-demo-textarea').value = ''; 
+                            $('#ccaDemoModal').modal('show');
+                        } else {
+                            document.getElementById('cca-alt-header').innerText = headerText;
+                            document.getElementById('cca-alt-col2').innerText = currentRowCol2Value;
+                            document.getElementById('cca-alt-input').value = '';
+                            
+                            ccaFileWrapper.innerHTML = '';
+                            ccaCurrentFileCount = 0;
+                            createCcaFileInputRow(); 
+                            
+                            $('#ccaAlternativeModal').modal('show');
+                        }
+                        return; 
+                    }
 
                     const descSpan = document.getElementById('modal-col2-val');
                     descSpan.innerHTML = '<span class="spinner-border spinner-border-sm text-primary" role="status"></span> Fetching...';
                     descSpan.style.color = '#17a2b8';
 
-                    const descUrl = `./fetchFieldDescription?formMode=${encodeURIComponent(formMode)}&fieldName=${encodeURIComponent(headerText)}`;
+                    const descUrl = `./fetchFieldDescription?formMode=${encodeURIComponent(formMode)}&fieldName=${encodeURIComponent(headerText)}&timeperiod=${encodeURIComponent(timeperiod)}`;
                     
                     fetch(descUrl)
                         .then(res => {
@@ -17985,7 +18820,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
                     }
-                    const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}`;
+                    const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}&timeperiod=${encodeURIComponent(timeperiod)}`;
                     
                     let makerIsLocked = false; 
 
@@ -18368,6 +19203,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("verifyFlg", actionType); 
             formData.append("remarks", remarksVal);
             formData.append("modifyFlg", modifyFlagVal);
+            formData.append("timeperiod", timeperiod);
 
             const fileRows = document.querySelectorAll('.file-input-row');
             fileRows.forEach(row => {
@@ -18487,7 +19323,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (deptValidation !== 'YES') {
-        const flagUrl = `./fetchallverifyflags?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}`;
+    	const flagUrl = `./fetchallverifyflags?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&timeperiod=${encodeURIComponent(timeperiod)}`;
         
         fetch(flagUrl)
         .then(response => {
@@ -18673,6 +19509,7 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append("actionType", actionType); 
         formData.append("remarks", remarks);
         formData.append("mrCells", JSON.stringify(selectedMrCells));
+        formData.append("timeperiod", timeperiod);
 
         const originalText = btnClicked.innerText;
         btnClicked.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
@@ -18713,8 +19550,322 @@ document.addEventListener("DOMContentLoaded", function() {
             executeManagerAction('VERIFY_ALL', this);
         }
     });
-   
+    const ccaAltSaveBtn = document.getElementById('btn-save-cca-alt');
+    if (ccaAltSaveBtn) {
+        ccaAltSaveBtn.addEventListener('click', function() {
+            
+            let finalDataValue = document.getElementById('cca-alt-input').value.trim();
+            if (finalDataValue === "") finalDataValue = "0";
+            const columnHeader = document.getElementById('cca-alt-header').innerText;
+            const formData = new FormData();
+            formData.append("formMode", formMode); 
+            formData.append("reportDate", contextReportDate);
+            formData.append("columnHeader", columnHeader);
+            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
+            formData.append("dataValue", finalDataValue);
+            formData.append("productValue", document.getElementById('cca-alt-col2').innerText);
+            formData.append("timeperiod", timeperiod);
+            
+            formData.append("verifyFlg", ""); 
+            formData.append("modifyFlg", ""); 
+
+            const ccaRows = document.querySelectorAll('.cca-file-input-row');
+            ccaRows.forEach(row => {
+                const input = row.querySelector('input[type="file"]');
+                const customName = row.querySelector('.cca-editable-filename').value.trim();
+                
+                if (input && input.files && input.files.length > 0) {
+                    const originalFile = input.files[0];
+                    const finalName = customName !== '' ? customName : originalFile.name;
+                    
+                    const renamedFile = new File([originalFile], finalName, { type: originalFile.type });
+                    formData.append("files", renamedFile);
+                }
+            });
+
+            const originalBtnText = this.innerText;
+            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+            this.disabled = true;
+
+            fetch('./savedatarecord', { method: 'POST', body: formData })
+            .then(res => { if (!res.ok) throw new Error("Error"); return res.text(); })
+            .then(data => {
+                this.style.backgroundColor = '#28a745';
+                this.innerHTML = `&#10004; Saved!`;
+                setTimeout(() => {
+                    $('#ccaAlternativeModal').modal('hide');
+                    window.location.reload(); 
+                }, 1000);
+            })
+            .catch(err => {
+                alert("Failed to save CCA data.");
+                this.innerText = originalBtnText;
+                this.disabled = false;
+            });
+        });
+    }
+    
+    const btnSaveCcaSpecial = document.getElementById('btn-save-cca-special');
+    if (btnSaveCcaSpecial) {
+        btnSaveCcaSpecial.addEventListener('click', function() {
+            const btn = this;
+            const finalDataValue = document.getElementById('cca-demo-textarea').value.trim();
+
+            if (!currentEditingInput) return;
+            const columnHeader = document.getElementById('cca-demo-header').innerText;
+            const formData = new FormData();
+            formData.append("formMode", formMode); 
+            formData.append("reportDate", contextReportDate);
+            formData.append("columnHeader", columnHeader);
+            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
+            formData.append("cellId", currentEditingInput.id || "");
+            formData.append("dataValue", finalDataValue);
+            formData.append("productValue", currentRowCol2Value);     
+            formData.append("rowCol2Value", currentRowCol2Value);     
+            formData.append("source", "");
+            formData.append("justification", "");
+            formData.append("verifyFlg", "");
+            formData.append("modifyFlg", "");
+            formData.append("remarks", "");
+            formData.append("timeperiod", timeperiod);
+
+            const originalText = btn.innerText;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+            btn.disabled = true;
+
+            fetch('./savedatarecord', { method: 'POST', body: formData })
+            .then(res => { 
+                if (!res.ok) throw new Error("Network error"); 
+                return res.text(); 
+            })
+            .then(data => {
+                btn.style.backgroundColor = '#28a745';
+                btn.innerHTML = `&#10004; Saved!`;
+                setTimeout(() => {
+                    $('#ccaDemoModal').modal('hide');
+                    window.location.reload(); 
+                }, 1000);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Failed to save CCA data.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        });
+    }
+    const btnSaveCcaExtra = document.getElementById('btn-save-cca-extra');
+    if (btnSaveCcaExtra) {
+        btnSaveCcaExtra.addEventListener('click', function() {
+            const btn = this;
+            if (!currentEditingInput) return;
+
+            const makerVal = document.getElementById('cca-extra-input1').value.trim();
+            const checkerVal = document.getElementById('cca-extra-input2').value.trim();
+            const finalDataValue = makerVal + " -|-|- " + checkerVal;
+
+            const columnHeader = document.getElementById('cca-extra-header').innerText;
+            const formData = new FormData();
+            formData.append("formMode", formMode); 
+            formData.append("reportDate", contextReportDate);
+            formData.append("columnHeader", columnHeader);
+            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
+            formData.append("cellId", currentEditingInput.id || "");
+            formData.append("timeperiod", timeperiod);
+            
+            formData.append("dataValue", finalDataValue);
+            
+            formData.append("productValue", currentRowCol2Value);     
+            formData.append("rowCol2Value", currentRowCol2Value);     
+            formData.append("source", "");
+            formData.append("justification", "");
+            formData.append("verifyFlg", "");
+            formData.append("modifyFlg", "");
+            formData.append("remarks", "");
+
+            const originalText = btn.innerText;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+            btn.disabled = true;
+
+            fetch('./savedatarecord', { method: 'POST', body: formData })
+            .then(res => { 
+                if (!res.ok) throw new Error("Network error"); 
+                return res.text(); 
+            })
+            .then(data => {
+                btn.style.backgroundColor = '#28a745';
+                btn.innerHTML = `&#10004; Saved!`;
+                setTimeout(() => {
+                    $('#ccaExtraModal').modal('hide');
+                    window.location.reload(); 
+                }, 1000);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Failed to save data.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        });
+    }
+    
 });
+</script>
+<script>
+    let currentYear = new Date().getFullYear();
+    let pendingDisplayString = null;
+    let reportDateParam = null;
+    let timeperiodParam = null;
+
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const pickerWrapper = document.getElementById('pickerWrapper');
+    const dateInput = document.getElementById('dateInput');
+    const dropdownContent = document.getElementById('dropdownContent');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const prevYearBtn = document.getElementById('prevYear');
+    const nextYearBtn = document.getElementById('nextYear');
+    const quarterBtns = document.querySelectorAll('.quarter-btn');
+    const yearlyBtn = document.getElementById('yearlyBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    const padNum = (num) => String(num).padStart(2, '0');
+
+    const getLastDayOfMonth = (year, monthIndex) => {
+        return new Date(year, monthIndex + 1, 0).getDate();
+    };
+
+    dateInput.addEventListener('click', () => {
+        dropdownContent.classList.toggle('active');
+        if(dropdownContent.classList.contains('active')) {
+            updateYearDisplay();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!pickerWrapper.contains(e.target)) {
+            dropdownContent.classList.remove('active');
+        }
+    });
+
+    function updateYearDisplay() {
+        yearDisplay.textContent = currentYear;
+    }
+
+    function clearSelection() {
+        quarterBtns.forEach(b => b.classList.remove('active'));
+        yearlyBtn.classList.remove('active');
+        pendingDisplayString = null;
+        reportDateParam = null;
+        timeperiodParam = null;
+        confirmBtn.disabled = true;
+    }
+
+    [prevYearBtn, nextYearBtn].forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentYear = (btn.id === 'prevYear') ? currentYear - 1 : currentYear + 1;
+            updateYearDisplay();
+            clearSelection();
+        });
+    });
+
+    quarterBtns.forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearSelection();
+            btn.classList.add('active');
+            
+            const monthMap = [2, 5, 8, 11]; 
+            const targetMonthIndex = monthMap[index];
+            
+            pendingDisplayString = `${monthNames[targetMonthIndex]} ${currentYear} - Q${index + 1}`;
+            timeperiodParam = 'QUARTERLY';
+            
+            const lastDay = getLastDayOfMonth(currentYear, targetMonthIndex);
+            reportDateParam = `${padNum(lastDay)}-${padNum(targetMonthIndex + 1)}-${currentYear}`;
+            
+            confirmBtn.disabled = false;
+        });
+    });
+
+    yearlyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearSelection();
+        yearlyBtn.classList.add('active');
+        
+        pendingDisplayString = `December ${currentYear} - Yearly`;
+        timeperiodParam = 'YEARLY';
+        reportDateParam = `31-12-${currentYear}`; 
+        
+        confirmBtn.disabled = false;
+    });
+
+    confirmBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (reportDateParam && timeperiodParam) {
+            dateInput.value = pendingDisplayString;
+            dropdownContent.classList.remove('active');
+
+            const baseUrl = "/Riskinsights/RT_MC_Reports"; 
+            window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}`;
+        }
+    });
+
+    function initializePicker() {
+        const initReportDate = dateInput.getAttribute('data-report-date');
+        const initTimeperiod = dateInput.getAttribute('data-timeperiod');
+
+        console.log("Picker Initializing with Data:", initReportDate, initTimeperiod); 
+
+        if (initReportDate && initTimeperiod) {
+            const parts = initReportDate.split('-');
+            
+            if (parts.length === 3) {
+                const initMonthIndex = parseInt(parts[1], 10) - 1; 
+                currentYear = parseInt(parts[2], 10);
+                
+                updateYearDisplay();
+
+                if (initTimeperiod === 'YEARLY') {
+                    yearlyBtn.classList.add('active');
+                    pendingDisplayString = `December ${currentYear} - Yearly`;
+                    reportDateParam = initReportDate;
+                    timeperiodParam = initTimeperiod;
+                    
+                    dateInput.value = pendingDisplayString; 
+                    confirmBtn.disabled = false;
+                    
+                } else if (initTimeperiod === 'QUARTERLY') {
+                    const monthMap = [2, 5, 8, 11];
+                    const qIndex = monthMap.indexOf(initMonthIndex);
+                    
+                    if (qIndex !== -1) {
+                        quarterBtns[qIndex].classList.add('active');
+                        pendingDisplayString = `${monthNames[initMonthIndex]} ${currentYear} - Q${qIndex + 1}`;
+                        reportDateParam = initReportDate;
+                        timeperiodParam = initTimeperiod;
+                        
+                        dateInput.value = pendingDisplayString; 
+                        confirmBtn.disabled = false;
+                    } else {
+                        console.error("Month index did not match a quarter end month:", initMonthIndex);
+                    }
+                }
+            } else {
+                console.error("Date format incorrect. Expected DD-MM-YYYY, got:", initReportDate);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initializePicker();
+    });
+
+    initializePicker();
 </script>
 </body>
 </html>

@@ -554,7 +554,7 @@ public class AuditService {
 		audit.setRemarks(remarks);
 		audit.setFIELD_HEADER(modifyheader);
 		audit.setSession_id(sessionId);
-		boolean ismodified = (changedRemarks.toString() == null || changedRemarks.toString().trim().isEmpty());
+		boolean ismodified = (changedRemarks == null || changedRemarks.toString().trim().isEmpty());
 		if (ismodified) {
 			audit.setISMODIFIED("N");
 		} else {

@@ -5927,7 +5927,7 @@ System.out.println("sixe==="+excelData.length);
 	
 	@RequestMapping(value = "RT_MC_Reports", method = RequestMethod.GET)
 	public String RT_MC_Reports(@RequestParam(required = false) String formmode,@RequestParam(required = false) String reportDate,
-			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid,@RequestParam(required = false) String dept, Model md,
+			@RequestParam(required = false) String branch, @RequestParam(required = false) String deptvalid,@RequestParam(required = false) String dept,@RequestParam(required = false) String mgrsummary,@RequestParam(required = false) String timeperiod, Model md,
 			HttpServletRequest req) {
 
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
@@ -5937,6 +5937,14 @@ System.out.println("sixe==="+excelData.length);
 		if (deptvalid == null) {
 			deptvalid = "NO";
 		}
+		if (mgrsummary == null) {
+			mgrsummary = "YES";
+		}
+		if (timeperiod == null) {
+			timeperiod = "QUARTERLY";
+		}
+		md.addAttribute("mgrsummary", mgrsummary);
+		md.addAttribute("timeperiod", timeperiod);
 		System.out.println("DEPARTMENT VALIDATION : " + deptvalid);
 		String DEPARTMENT ;
 		if(dept==null || dept.isEmpty()) {
@@ -5964,7 +5972,7 @@ System.out.println("sixe==="+excelData.length);
 		String sessionId = req.getSession().getId();
 		//System.out.println("Session ID : "+sessionId);
 		
-		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))) {
+		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))&& (mgrsummary == "YES"|| mgrsummary.equals("YES"))) {
 			md.addAttribute("mgrscreen", "YES");
 			if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 				
@@ -5986,7 +5994,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findByReportDate(reportDate);
+				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 

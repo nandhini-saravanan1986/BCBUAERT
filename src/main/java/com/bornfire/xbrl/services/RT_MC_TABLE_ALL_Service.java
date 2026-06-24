@@ -5179,8 +5179,11 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE1_Modify(RT_MC_TABLE1_ENTITY updatedData) {
-		RT_MC_TABLE1_ENTITY existing = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+        List<RT_MC_TABLE1_ENTITY> rawdata = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
+		RT_MC_TABLE1_ENTITY existing =rawdata.get(0);
 		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE1_ENTITY.class.getDeclaredFields()) {
