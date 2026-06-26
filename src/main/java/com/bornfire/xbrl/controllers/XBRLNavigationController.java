@@ -7743,7 +7743,7 @@ System.out.println("sixe==="+excelData.length);
 			//System.out.println("Formmode : " + formMode+" Field Nmae : "+fieldName);
 			String description = (RT_MC_Description_Repo.findTopBySectionAndElementNative(formMode, fieldName))
 					.getDescription();
-			System.out.println("Descripion : " + description);
+			//System.out.println("Descripion : " + description);
 			if (description != null && !description.isEmpty()) {
 				return ResponseEntity.ok(description);
 			} else {

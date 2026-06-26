@@ -2783,7 +2783,7 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td class="clickable-cell manager-verify-cell"
+										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : 'NA'}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -2805,7 +2805,7 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : 'NA'}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
