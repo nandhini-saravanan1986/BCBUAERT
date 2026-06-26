@@ -1186,8 +1186,8 @@ body {
 }
 
 /* Force Column 2 to be exactly forever */
-.tab-pane:not(#conductcultureassessment) table thead th:nth-child(2),
-	.tab-pane:not(#conductcultureassessment) table tbody td:nth-child(2) {
+.tab-pane:not(#conductcultureassessment) .report-table-wrapper:not(#mgrReportTable) table thead th:nth-child(2),
+	.tab-pane:not(#conductcultureassessment) .report-table-wrapper:not(#mgrReportTable) table tbody td:nth-child(2) {
 	width: 370px !important;
 	min-width: 370px !important;
 	max-width: 370px !important;
@@ -2723,7 +2723,7 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="width: 400px;">Bank Information</th>
+										<th style="min-width: 400px ! important;">Bank Information</th>
 
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
@@ -2754,7 +2754,7 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}">Metric Name</td>
+										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : 'NA'}"
