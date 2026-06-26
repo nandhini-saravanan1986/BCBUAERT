@@ -18031,7 +18031,7 @@ to {
 					<button type="button" id="btn-mgr-verify-all"
 						class="btn btn-success"
 						style="font-weight: 600; white-space: nowrap;">Verify
-						Entire Report</button>
+						</button>
 
 				</div>
 			</div>
@@ -20485,6 +20485,37 @@ document.addEventListener("DOMContentLoaded", function() {
     let selectedMrCells = [];
     window.isMgrSelecting = false;
 
+    function updateManagerModalButtons() {
+        const verifyAllBtn = document.getElementById('btn-mgr-verify-all');
+        const sendRevisionsBtn = document.getElementById('btn-mgr-send-revisions');
+
+        if (selectedMrCells.length > 0) {
+            if (verifyAllBtn) {
+                verifyAllBtn.disabled = true;
+                verifyAllBtn.style.opacity = '0.5';
+                verifyAllBtn.style.cursor = 'not-allowed';
+                verifyAllBtn.title = "Cannot verify while cells are selected for revision.";
+            }
+            if (sendRevisionsBtn) {
+                sendRevisionsBtn.disabled = false;
+                sendRevisionsBtn.style.opacity = '1';
+                sendRevisionsBtn.style.cursor = 'pointer';
+            }
+        } else {
+            if (verifyAllBtn) {
+                verifyAllBtn.disabled = false;
+                verifyAllBtn.style.opacity = '1';
+                verifyAllBtn.style.cursor = 'pointer';
+                verifyAllBtn.title = "";
+            }
+            if (sendRevisionsBtn) {
+                sendRevisionsBtn.disabled = true;
+                sendRevisionsBtn.style.opacity = '0.5';
+                sendRevisionsBtn.style.cursor = 'not-allowed';
+            }
+        }
+    }
+
     const mainVerifyBtn = document.getElementById('verifyBtn');
     if (mainVerifyBtn) {
         mainVerifyBtn.onclick = function() {
@@ -20509,7 +20540,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const currentCount = selectedMrCells.length;
             document.getElementById('mgr-banner-sel-count').innerText = currentCount;
             document.getElementById('mgr-modal-sel-count').innerText = currentCount;
-
+            updateManagerModalButtons();
             $('#managerActionModal').modal('show');
         };
     }
@@ -20582,7 +20613,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const currentCount = selectedMrCells.length;
         document.getElementById('mgr-banner-sel-count').innerText = currentCount;
         document.getElementById('mgr-modal-sel-count').innerText = currentCount;
-        
+        updateManagerModalButtons();
         $('#managerActionModal').modal('show');
     });
     document.getElementById('btn-finish-selection').addEventListener('click', function() {
@@ -20596,11 +20627,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 saveBtn.innerText = "Save Revisions";
                 saveBtn.className = "btn btn-warning";
             } else {
-                saveBtn.innerText = "Verify Entire Report";
+                saveBtn.innerText = "Verify";
                 saveBtn.className = "btn btn-success";
             }
         }
-        
+        updateManagerModalButtons();
         $('#managerActionModal').modal('show');
     });
 
@@ -20653,7 +20684,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById('btn-mgr-verify-all').addEventListener('click', function() {
-        const warningMessage = "Are you sure you want to verify the entire report?\n\nAny selected revisions will be removed, and once the report is verified, it cannot be revoked.";
+        const warningMessage = "Are you sure you want to verify the report?\n\nAny selected revisions will be removed, and once the report is verified, it cannot be revoked.";
         
         if (confirm(warningMessage)) {
             executeManagerAction('VERIFY_ALL', this);
