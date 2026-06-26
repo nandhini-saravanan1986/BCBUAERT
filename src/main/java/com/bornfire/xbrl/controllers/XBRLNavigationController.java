@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -7392,15 +7393,30 @@ System.out.println("sixe==="+excelData.length);
 
 				String flagToSave = "REVOKE_CHECKER".equals(verifyFlg) ? null : verifyFlg;
 
-				String exixtingRemarks= rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
-						contextDate, cellName,timeperiod);
-				String changedDetails = "Checker Remaks : OldValue: "+exixtingRemarks+", NewValue: "+remarks ;
+				String existingRemarks = rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, contextDate, cellName, timeperiod);
+				String existingCheckerJustification = rT_MC_DATA_RECORD_REPO.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, reportDateStr, cellName, timeperiod);
+
+				String safeOldRemarks = (existingRemarks != null) ? existingRemarks : "";
+				String safeNewRemarks = (remarks != null) ? remarks : "";
+
+				String safeOldJustification = (existingCheckerJustification != null) ? existingCheckerJustification : "";
+				String safeNewJustification = (checkerJustification != null) ? checkerJustification : "";
+
+				StringJoiner changesJoiner = new StringJoiner(" ||| ");
+
+				if (!safeOldRemarks.equals(safeNewRemarks)) {
+				    changesJoiner.add("Checker Remarks : OldValue: " + safeOldRemarks + ", NewValue: " + safeNewRemarks);
+				}
+
+				if (!safeOldJustification.equals(safeNewJustification)) {
+				    changesJoiner.add("Checker Justification : OldValue: " + safeOldJustification + ", NewValue: " + safeNewJustification);
+				}
 				
 				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode,
 						contextDate, cellName,remarks,timeperiod,checkerJustification);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
-				
+				String changedDetails = changesJoiner.toString();
 				auditService.auditMCEntitymanual(auditType, reportDateStr,
 						rT_MC_TABLE_Service.screenName(formMode),
 						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext,changedDetails);
