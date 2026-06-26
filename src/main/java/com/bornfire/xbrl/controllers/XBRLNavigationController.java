@@ -5994,13 +5994,13 @@ System.out.println("sixe==="+excelData.length);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
-			} else {
-				
-				Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate,timeperiod);
-		        
-		        md.addAttribute("quarterDates", reportData.get("headerDates"));
-		        md.addAttribute("reportRows", reportData.get("reportRows"));
-		        md.addAttribute("yearDates", reportData.get("yearDates"));
+			} else {				
+		        if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
 		        
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				System.out.println("size : " + reportlist.size());
