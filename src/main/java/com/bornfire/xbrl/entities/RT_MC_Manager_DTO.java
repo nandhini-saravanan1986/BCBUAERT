@@ -1,35 +1,56 @@
 package com.bornfire.xbrl.entities;
 
+import java.util.regex.Pattern;
+
 public class RT_MC_Manager_DTO {
 
 	private String description;
-	private Double date1Value;
-	private Double date2Value;
-	private Double date3Value;
-	private Double date4Value;
-	private Double date5Value;
-	private Double comparison;
+	private Double q1Value;
+	private Double q2Value;
+	private Double q3Value;
+	private Double q4Value;
+	private Double currentYearValue;
+	private Double lastYearValue;
 
-	public RT_MC_Manager_DTO(String description, Object d1, Object d2, Object d3, Object d4, Object d5) {
+	private Double quarterlyComparison;
+	private Double yearlyComparison;
+	private String makerRemarks;
+	private String checkerRemarks;
+	private String cellName;
+
+	public RT_MC_Manager_DTO(String description, Object q1, Object q2, Object q3, Object q4, Object currentYear,
+			Object lastYear, Object makerRemarks, Object checkerRemarks, String cellName) {
+
 		this.description = description;
+		this.cellName = cellName;
+		this.q1Value = parseFlexibleNumber(q1);
+		this.q2Value = parseFlexibleNumber(q2);
+		this.q3Value = parseFlexibleNumber(q3);
+		this.q4Value = parseFlexibleNumber(q4);
+		this.currentYearValue = parseFlexibleNumber(currentYear);
+		this.lastYearValue = parseFlexibleNumber(lastYear);
 
-		this.date1Value = parseFlexibleNumber(d1);
-		this.date2Value = parseFlexibleNumber(d2);
-		this.date3Value = parseFlexibleNumber(d3);
-		this.date4Value = parseFlexibleNumber(d4);
-		this.date5Value = parseFlexibleNumber(d5);
+		double latestQuarter = (this.q4Value != null) ? this.q4Value : 0.0;
+		double previousQuarter = (this.q3Value != null) ? this.q3Value : 0.0;
+		this.quarterlyComparison = calculateVariation(latestQuarter, previousQuarter);
 
-		double latest = (this.date1Value != null) ? this.date1Value : 0.0;
-		double previous = (this.date2Value != null) ? this.date2Value : 0.0;
+		double currentY = (this.currentYearValue != null) ? this.currentYearValue : 0.0;
+		double lastY = (this.lastYearValue != null) ? this.lastYearValue : 0.0;
+		this.yearlyComparison = calculateVariation(currentY, lastY);
 
+		this.makerRemarks = (makerRemarks != null) ? String.valueOf(makerRemarks).trim() : "";
+		this.checkerRemarks = (checkerRemarks != null) ? String.valueOf(checkerRemarks).trim() : "";
+	}
+
+	private Double calculateVariation(double latest, double previous) {
 		if (previous == 0.0) {
 			if (latest == 0.0) {
-				this.comparison = 0.0;
+				return 0.0;
 			} else {
-				this.comparison = null;
+				return null;
 			}
 		} else {
-			this.comparison = (latest - previous) / previous;
+			return (latest - previous) / previous;
 		}
 	}
 
@@ -60,52 +81,90 @@ public class RT_MC_Manager_DTO {
 		this.description = description;
 	}
 
-	public Double getDate1Value() {
-		return date1Value;
+	public Double getQ1Value() {
+		return q1Value;
 	}
 
-	public void setDate1Value(Double date1Value) {
-		this.date1Value = date1Value;
+	public void setQ1Value(Double q1Value) {
+		this.q1Value = q1Value;
 	}
 
-	public Double getDate2Value() {
-		return date2Value;
+	public Double getQ2Value() {
+		return q2Value;
 	}
 
-	public void setDate2Value(Double date2Value) {
-		this.date2Value = date2Value;
+	public void setQ2Value(Double q2Value) {
+		this.q2Value = q2Value;
 	}
 
-	public Double getDate3Value() {
-		return date3Value;
+	public Double getQ3Value() {
+		return q3Value;
 	}
 
-	public void setDate3Value(Double date3Value) {
-		this.date3Value = date3Value;
+	public void setQ3Value(Double q3Value) {
+		this.q3Value = q3Value;
 	}
 
-	public Double getDate4Value() {
-		return date4Value;
+	public Double getQ4Value() {
+		return q4Value;
 	}
 
-	public void setDate4Value(Double date4Value) {
-		this.date4Value = date4Value;
+	public void setQ4Value(Double q4Value) {
+		this.q4Value = q4Value;
 	}
 
-	public Double getDate5Value() {
-		return date5Value;
+	public Double getCurrentYearValue() {
+		return currentYearValue;
 	}
 
-	public void setDate5Value(Double date5Value) {
-		this.date5Value = date5Value;
+	public void setCurrentYearValue(Double currentYearValue) {
+		this.currentYearValue = currentYearValue;
 	}
 
-	public Double getComparison() {
-		return comparison;
+	public Double getLastYearValue() {
+		return lastYearValue;
 	}
 
-	public void setComparison(Double comparison) {
-		this.comparison = comparison;
+	public void setLastYearValue(Double lastYearValue) {
+		this.lastYearValue = lastYearValue;
 	}
 
+	public Double getQuarterlyComparison() {
+		return quarterlyComparison;
+	}
+
+	public void setQuarterlyComparison(Double quarterlyComparison) {
+		this.quarterlyComparison = quarterlyComparison;
+	}
+
+	public Double getYearlyComparison() {
+		return yearlyComparison;
+	}
+
+	public void setYearlyComparison(Double yearlyComparison) {
+		this.yearlyComparison = yearlyComparison;
+	}
+
+	public String getMakerRemarks() {
+		return makerRemarks;
+	}
+
+	public void setMakerRemarks(String makerRemarks) {
+		this.makerRemarks = makerRemarks;
+	}
+
+	public String getCheckerRemarks() {
+		return checkerRemarks;
+	}
+
+	public void setCheckerRemarks(String checkerRemarks) {
+		this.checkerRemarks = checkerRemarks;
+	}
+	public String getCellName() {
+        return cellName;
+    }
+
+    public void setCellName(String cellName) {
+        this.cellName = cellName;
+    }
 }

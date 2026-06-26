@@ -727,7 +727,7 @@ label.error {
 	font-family: Arial, sans-serif !important;
 	font-size: 14px !important;
 	line-height: 1.1 !important;
-	padding: 2px 4px !important;
+	padding: 10px 4px !important;
 	vertical-align: middle;
 	white-space: normal;
 	box-shadow: inset 0 -1px 0 #dee2e6;
@@ -2030,6 +2030,28 @@ to {
 	background: #ccc;
 	cursor: not-allowed;
 }
+
+.report-table-wrapper {
+    display: none;
+}
+
+.report-table-wrapper.active-table {
+    display: block !important;
+}
+.active-table .mr-selected {
+	background-color: #ffc107 !important; 
+	color: #212529 !important;
+	border: 2px solid #e0a800 !important;
+	box-shadow: inset 0 0 5px rgba(224, 168, 0, 0.5) !important;
+	transition: all 0.2s ease;
+}
+    
+.active-table .mr-deselected {
+	background-color: #e9ecef !important;
+	color: #6c757d !important;
+	border: 1px dashed #ced4da !important;
+	opacity: 0.7;
+}
 </style>
 </head>
 
@@ -2180,16 +2202,17 @@ to {
 					<button class="role-btn" onclick="navigateTodatapage()">Summary
 					</button>
 				</div>
-				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+<!-- 				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
 					<button class="role-btn" onclick="navigateTodatamgrsumpage()">M/C  View
 					</button>
-				</div>
-				<div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='NO' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+				</div> -->
+				<button type="button" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}" class="role-btn" id="toggleTableBtn" onclick="toggleTable()"></button>
+				<!-- <div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='NO' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
 					<button class="role-btn" onclick="navigateTodatapage()">Manager View
 					</button>
-				</div>
+				</div> -->
 				<div class="form-group mb-0"
-					th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+					th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C')}">
 					<select name="selecteddept" id="selecteddept"
 						onchange="filtertabledept()"
 						style="background-color: #8a5a35; color: white ! important; border: 1px solid #8a5a35; border-radius: 5px;">
@@ -2205,7 +2228,7 @@ to {
 		</div>
 
 		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
-			th:if="${(formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment') and mgrscreen =='NO' }">
+			th:if="${(formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment') }">
 
 			<div class="tab-pane fade" id="bankinformation" role="tabpanel"
 				th:if="${formmode=='bankinformation'}">
@@ -2244,7 +2267,7 @@ to {
 								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }">Verify</button>
 							<!-- onclick="verifyData()">Verify</button> -->
 							<button type="button" class="role-btn" id="modifyBtn"
-								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
+								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and DEPARTMENTVALIDATION =='YES'}"
 								onclick="enableEdit()">Modify</button>
 							<button type="button" class="role-btn" id="checkerRemarksBtn"
 								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
@@ -2273,6 +2296,7 @@ to {
 						th:value="${reportlist[0].BRANCH_CODE}"> <input
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
+						<div class="report-table-wrapper" id="regularReportTable" data-screen-type="regular">
 					<div class="table-responsive" style="overflow: auto; border: none;">
 						<table id="usertable" class="table refund-table align-middle mb-0"
 							style="width: 100%">
@@ -2582,112 +2606,228 @@ to {
 										th:value="${report.R22_NO_SER_SPC_TP}" readonly
 										class="table-input input-and-select auto-dropdown"></td>
 								</tr>
-								<tr>
+								<tr style="display:none">
 									<td></td>
 									<td><textarea id="R23_PRODUCT" name="R23_PRODUCT"
 										th:text="${report.R23_PRODUCT}" readonly class="table-input "style="resize: none;"></textarea></td>
 									<td><textarea id="R23_NO_EMP_SPC_TP"
 										name="R23_NO_EMP_SPC_TP"
 										th:text="${report.R23_NO_EMP_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_CON_SPC_TP"
 										name="R23_NO_CON_SPC_TP"
 										th:text="${report.R23_NO_CON_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_AVG_NO_EMP_SPC_TP"
 										name="R23_AVG_NO_EMP_SPC_TP"
 										th:text="${report.R23_AVG_NO_EMP_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_BRN_SPC_TP"
 										name="R23_NO_BRN_SPC_TP"
 										th:text="${report.R23_NO_BRN_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_BRN_POD"
 										name="R23_TOT_NO_BRN_POD"
 										th:text="${report.R23_TOT_NO_BRN_POD}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_ATM_SPC_TP"
 										name="R23_NO_ATM_SPC_TP"
 										th:text="${report.R23_NO_ATM_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_ATM_DET_SPC_TP"
 										name="R23_NO_ATM_DET_SPC_TP"
 										th:text="${report.R23_NO_ATM_DET_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_AUT_SPC_TP"
 										name="R23_NO_AUT_SPC_TP"
 										th:text="${report.R23_NO_AUT_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_INS_BNK_SPC_TP"
 										name="R23_NO_INS_BNK_SPC_TP"
 										th:text="${report.R23_NO_INS_BNK_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_INS_DWN_SPC_TP"
 										name="R23_NO_INS_DWN_SPC_TP"
 										th:text="${report.R23_NO_INS_DWN_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_EMP_RSK_SPC_DTE"
 										name="R23_NO_EMP_RSK_SPC_DTE"
 										th:text="${report.R23_NO_EMP_RSK_SPC_DTE}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_EXT_FRD_SPC_TP"
 										name="R23_NO_EXT_FRD_SPC_TP"
 										th:text="${report.R23_NO_EXT_FRD_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_INT_FRD_SPC_TP"
 										name="R23_NO_INT_FRD_SPC_TP"
 										th:text="${report.R23_NO_INT_FRD_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_FRD_SPC_TP"
 										name="R23_NO_FRD_SPC_TP"
 										th:text="${report.R23_NO_FRD_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_FRD_PP"
 										name="R23_NO_FRD_PP" th:text="${report.R23_NO_FRD_PP}"
-										readonly class="table-input remarks-input"></textarea></td>
+										readonly class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_REV_SPC_TP"
 										name="R23_TOT_REV_SPC_TP"
 										th:text="${report.R23_TOT_REV_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_INS_UNP_SPC_TP"
 										name="R23_TOT_INS_UNP_SPC_TP"
 										th:text="${report.R23_TOT_INS_UNP_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_HRS_BNK"
 										name="R23_TOT_NO_HRS_BNK"
 										th:text="${report.R23_TOT_NO_HRS_BNK}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_INC_SPC_TP"
 										name="R23_TOT_NO_INC_SPC_TP"
 										th:text="${report.R23_TOT_NO_INC_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_PEN_SPC_TP"
 										name="R23_TOT_NO_PEN_SPC_TP"
 										th:text="${report.R23_TOT_NO_PEN_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_AUT_SPC_TP"
 										name="R23_TOT_NO_AUT_SPC_TP"
 										th:text="${report.R23_TOT_NO_AUT_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_SAL_SPC_TP"
 										name="R23_TOT_NO_SAL_SPC_TP"
 										th:text="${report.R23_TOT_NO_SAL_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_TOT_NO_MER_SPC_TP"
 										name="R23_TOT_NO_MER_SPC_TP"
 										th:text="${report.R23_TOT_NO_MER_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_INQ_SPC_TP"
 										name="R23_NO_INQ_SPC_TP"
 										th:text="${report.R23_NO_INQ_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 									<td><textarea id="R23_NO_SER_SPC_TP"
 										name="R23_NO_SER_SPC_TP"
 										th:text="${report.R23_NO_SER_SPC_TP}" readonly
-										class="table-input remarks-input"></textarea></td>
+										class="table-input input-and-select remarks-input"></textarea></td>
 								</tr>
 							</tbody>
 						</table>
+					</div>
+					</div>
+					<div class="report-table-wrapper" id="mgrReportTable"
+						data-screen-type="manager" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
+						<div class="table-responsive"
+							style="overflow: auto; border: none;">
+							<table id="managerusertable"
+								class="table refund-table align-middle mb-0" style="width: 100%">
+								<thead class="table-light">
+
+									<tr>
+										<th style="width: 400px;">Bank Information</th>
+
+										<th
+											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
+											1</th>
+										<th
+											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
+											2</th>
+										<th
+											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
+											3</th>
+										<th
+											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
+											4</th>
+										<th>Variation over Previous Qtr</th>
+										<th th:if="${timeperiod =='YEARLY'}"
+											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
+											Year</th>
+										<th th:if="${timeperiod =='YEARLY'}"
+											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
+											Year</th>
+
+										<th th:if="${timeperiod =='YEARLY'}">Variation over
+											Annual Data</th>
+										<th>Maker Remarks</th>
+										<th>Checker Remarks</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="row : ${reportRows}">
+
+										<td th:text="${row.description}">Metric Name</td>
+
+										<td class="clickable-cell"
+											th:text="${row.q1Value != null ? row.q1Value : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${quarterDates.size() > 3 ? quarterDates[3] : ''}"
+											th:data-reportdate="${reportDate}"
+											data-periodtype="QUARTERLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td class="clickable-cell"
+											th:text="${row.q2Value != null ? row.q2Value : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${quarterDates.size() > 2 ? quarterDates[2] : ''}"
+											th:data-reportdate="${reportDate}"
+											data-periodtype="QUARTERLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td class="clickable-cell"
+											th:text="${row.q3Value != null ? row.q3Value : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${quarterDates.size() > 1 ? quarterDates[1] : ''}"
+											th:data-reportdate="${reportDate}"
+											data-periodtype="QUARTERLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td class="clickable-cell manager-verify-cell"
+											th:text="${row.q4Value != null ? row.q4Value : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${quarterDates.size() > 0 ? quarterDates[0] : ''}"
+											th:data-reportdate="${reportDate}"
+											data-periodtype="QUARTERLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td><span th:if="${row.quarterlyComparison != null}" 
+											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
+												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
+											class="text-muted"> N/A </span></td>
+
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:text="${row.lastYearValue != null ? row.lastYearValue : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${yearDates.size() > 1 ? yearDates[1] : ''}"
+											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:text="${row.currentYearValue != null ? row.currentYearValue : 'NA'}"
+											th:data-cellname="${row.cellName}"
+											th:data-fieldname="${row.description}"
+											th:data-columndate="${yearDates.size() > 0 ? yearDates[0] : ''}"
+											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
+											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+										<td th:if="${timeperiod =='YEARLY'}"><span
+											th:if="${row.yearlyComparison != null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
+												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											class="text-muted"> N/A </span></td>
+
+										<td
+											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+										<td
+											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
@@ -16624,25 +16764,63 @@ to {
 		</div>
 
 
-		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+		<!-- <div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
 			th:if="${(formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment') and mgrscreen =='YES' }">
 			<div id="bankinformation" role="tabpanel"
 				th:if="${formmode=='bankinformation'}">
-				<form id="reportForm" method="POST" style="padding-top: 96px;">
-					<div class="table-responsive" style="overflow: auto; border: none;">
+				<form id="reportForm" method="POST" style="padding-top: 7px;">
+				<div class="text-right ml-auto" style="min-height: 38px;">
+						<div>
+							th:unless="${reportlist == null or #lists.isEmpty(reportlist)}">
+							<button type="button" class="role-btn" id="verifyBtn"
+								>Verify</button>
+								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES' }">Verify</button>
+							onclick="verifyData()">Verify</button>							
+							<button type="button" class="role-btn" id="checkerRemarksBtn">
+								View Manager Remarks</button> 
+								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist[0].VERIFY_FLG == 'N'}">
+								View Manager Remarks</button> 
+							<button type="button" class="role-btn" id="downloadBtn"
+								style="padding-right: 12px;" onclick="downloadData()">
+								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								style="padding-right: 12px;" onclick="downloadData()">
+								<i class="fa fa-download"></i>
+							</button>
+						</div>
+					</div>
+					<div  style="padding-top: 51px;">
+					<div class="table-responsive" style="overflow: auto;border: none;">
 						<table id="managerusertable"
 							class="table refund-table align-middle mb-0" style="width: 100%">
 							<thead class="table-light">
+
 								<tr>
-									<th style="width: 600px;">Bank Information</th>
+									<th style="width: 400px;">Bank Information</th>
 
-									<th th:text="${headerDates[4]}">Date 1</th>
-									<th th:text="${headerDates[3]}">Date 2</th>
-									<th th:text="${headerDates[2]}">Date 3</th>
-									<th th:text="${headerDates[1]}">Date 4</th>
-									<th th:text="${headerDates[0]}">Date 5</th>
-
+									<th
+										th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
+										1</th>
+									<th
+										th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
+										2</th>
+									<th
+										th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
+										3</th>
+									<th
+										th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
+										4</th>
 									<th>Variation over Previous Qtr</th>
+									<th th:if="${timeperiod =='YEARLY'}"
+										th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
+										Year</th>
+									<th th:if="${timeperiod =='YEARLY'}"
+										th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
+										Year</th>
+
+									<th th:if="${timeperiod =='YEARLY'}">Variation over Annual
+										Data</th>
+									<th>Maker Remarks</th>
+									<th>Checker Remarks</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -16650,29 +16828,78 @@ to {
 
 									<td th:text="${row.description}">Metric Name</td>
 
-									<td th:text="${row.date5Value != null ? row.date5Value : 'NA'}">0</td>
-									<td th:text="${row.date4Value != null ? row.date4Value : 'NA'}">0</td>
-									<td th:text="${row.date3Value != null ? row.date3Value : 'NA'}">0</td>
-									<td th:text="${row.date2Value != null ? row.date2Value : 'NA'}">0</td>
-									<td th:text="${row.date1Value != null ? row.date1Value : 'NA'}">0</td>
+									<td class="clickable-cell"
+										th:text="${row.q1Value != null ? row.q1Value : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${quarterDates.size() > 3 ? quarterDates[3] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="QUARTERLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-									<td>
-										<!-- th:classappend="${row.comparison != null && row.comparison > 0} ? 'text-success fw-bold' : (${row.comparison != null && row.comparison < 0} ? 'text-danger fw-bold' : '')"> -->
+									<td class="clickable-cell"
+										th:text="${row.q2Value != null ? row.q2Value : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${quarterDates.size() > 2 ? quarterDates[2] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="QUARTERLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<span th:if="${row.comparison != null}"
-										th:text="${#numbers.formatPercent(row.comparison, 1, 2)}">
-											0.00% </span> <span th:if="${row.comparison == null}"
-										class="text-muted"> N/A </span>
-									</td>
+									<td class="clickable-cell"
+										th:text="${row.q3Value != null ? row.q3Value : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${quarterDates.size() > 1 ? quarterDates[1] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="QUARTERLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+									<td class="clickable-cell"
+										th:text="${row.q4Value != null ? row.q4Value : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${quarterDates.size() > 0 ? quarterDates[0] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="QUARTERLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+									<td><span th:if="${row.quarterlyComparison != null}"
+										th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
+											0.00% </span> <span th:if="${row.quarterlyComparison == null}"
+										class="text-muted"> N/A </span></td>
+
+									<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+										th:text="${row.lastYearValue != null ? row.lastYearValue : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${yearDates.size() > 1 ? yearDates[1] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+									<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+										th:text="${row.currentYearValue != null ? row.currentYearValue : 'NA'}"
+										th:data-cellname="${row.cellName}"
+										th:data-fieldname="${row.description}"
+										th:data-columndate="${yearDates.size() > 0 ? yearDates[0] : ''}"
+										th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
+										onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+
+									<td th:if="${timeperiod =='YEARLY'}"><span
+										th:if="${row.yearlyComparison != null}"
+										th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
+											0.00% </span> <span th:if="${row.yearlyComparison == null}"
+										class="text-muted"> N/A </span></td>
+
+									<td
+										th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+									<td
+										th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
 								</tr>
 							</tbody>
 						</table>
-					</div>
+					</div></div>
 				</form>
 
 			</div>
-		</div>
+		</div> -->
 
 
 	</div>
@@ -16843,8 +17070,10 @@ to {
 										</div>
 									</div>
 
-									<label style="margin: 0; font-size: 13px; font-weight: 600;">Justification</label>
-									<input type="text" id="modal-justification-val"
+									<label style="margin: 0; font-size: 13px; font-weight: 600;">Maker Justification</label> <input type="text" id="modal-justification-val"
+										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" /> <label style="margin: 0; font-size: 13px; font-weight: 600;">Checker
+										Justification</label> <input type="text"
+										id="modal-checker-justification-val"
 										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" />
 
 									<label style="margin: 0; font-size: 13px; font-weight: 600;">Source</label>
@@ -16973,7 +17202,7 @@ to {
 					<textarea id="mgr-remarks-val"
 						th:text="${reportlist != null and !reportlist.isEmpty() ? reportlist[0].REMARKS : (reportlist1 != null and !reportlist1.isEmpty() ? reportlist1[0].REMARKS : '')}"
 						style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; resize: none; min-height: 80px;"
-						placeholder="Enter remarks (will be saved to main table)..."></textarea>
+						placeholder="Enter remarks..."></textarea>
 
 					<div id="mgr-selection-block"
 						style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; text-align: center;">
@@ -17009,25 +17238,28 @@ to {
 	</div>
 
 	<div id="mgrSelectionBanner"
-		style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 9999; align-items: center; gap: 20px; background-color: #8a5a35; color: #ffffff;">
+		style="display: none ! important; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 9999; display: flex; align-items: center; background-color: #8a5a35; color: #ffffff; min-width: 600px;">
 
-		<div style="display: flex; align-items: center; gap: 10px;">
-			<span class="spinner-grow spinner-grow-sm text-light" role="status"></span>
-			<span style="font-weight: 600; font-size: 14px;">Select cells
-				to flag for revision...</span>
+		<div style="display: flex; align-items: center; gap: 15px;">
+			<div style="display: flex; align-items: center; gap: 10px;">
+				<span class="spinner-grow spinner-grow-sm text-light" role="status"></span>
+				<span style="font-weight: 600; font-size: 14px;">Select cells
+					to flag...</span>
+			</div>
+
+			<div style="font-weight: 600;">
+				Selected: <strong id="mgr-banner-sel-count"
+					style="color: #ffffff; font-size: 14px;">0</strong>
+			</div>
+
+			<button type="button" id="btn-select-all" class="btn btn-sm btn-outline-light"
+				style="border-radius: 20px;">Select All</button>
 		</div>
 
-		<div
-			style="background-color: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px; font-size: 13px;">
-			Selected: <strong id="mgr-banner-sel-count"
-				style="color: #ffffff; font-size: 14px;">0</strong>
-		</div>
-
-		<div style="display: flex; gap: 10px;">
+		<div style="display: flex; gap: 10px; margin-left: auto;">
 			<button type="button" id="btn-cancel-selection"
 				class="btn btn-sm btn-outline-light"
 				style="border-radius: 20px; font-weight: 600;">Cancel</button>
-
 			<button type="button" id="btn-finish-selection"
 				class="btn btn-sm btn-light"
 				style="border-radius: 20px; font-weight: 600; color: #8a5a35;">Done
@@ -17285,7 +17517,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const dataType = /*[[${DEPARTMENTVALIDATION}]]*/ null;
 
-    if (dataType && dataType.trim().toUpperCase() === 'YES') {      
+    if (dataType && dataType.trim().toUpperCase() === 'YES') {
     	console.log("Loading DEPARTMENTVALIDATION Functions");
         enableEdit = function() {
         	 document.getElementById('modifyBtn').style.display = 'none';
@@ -17314,7 +17546,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
         	    }
 
-        	    document.querySelectorAll('.auto-dropdown').forEach(input => {
+        	    document.querySelectorAll('.input-and-select').forEach(input => {
         	        if (input.dataset.transformed === "true") return;
 
         	        input.setAttribute('data-original-value', input.value);
@@ -17599,7 +17831,18 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
 	const department = /*[[${DEPARTMENTVALIDATION}]]*/ null;
 	//alert(department);
-	if (department === 'YES') {
+if (department === 'YES') {
+	document.querySelectorAll('textarea.remarks-input').forEach(textarea => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = textarea.id;
+        input.name = textarea.name;
+        input.className = textarea.className + " input-and-select"; 
+        input.value = textarea.value;
+        input.setAttribute('readonly', true); 
+        
+        textarea.replaceWith(input);
+    });
 		const table = document.getElementById('usertable');
 		const modeToggleBtn = document.getElementById('mode-toggle');
 		const clearBtn = document.getElementById('clear-btn');
@@ -17946,7 +18189,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return false;
             };
 
-            document.querySelectorAll('#usertable .input-and-select').forEach(input => {
+            document.querySelectorAll('#usertable .input-and-select, #usertable .remarks-input').forEach(input => {
                 const fieldName = input.name; 
 
                 if (isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName)) {
@@ -18599,17 +18842,34 @@ document.addEventListener("DOMContentLoaded", function() {
             
             const isRemarksField = input.classList.contains('remarks-input');
             
-            const isAuthorized = isRemarksField || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+            const isAuthorized = isManager || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
 
             if (isAuthorized) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'dynamic-input-wrapper';
-                input.parentNode.insertBefore(wrapper, input);
-                wrapper.appendChild(input);
+            	const wrapper = document.createElement('div');
+            	wrapper.className = 'dynamic-input-wrapper';
+            	wrapper.style.display = 'flex';
+            	wrapper.style.alignItems = 'center';
+            	wrapper.style.gap = '5px';
+            	wrapper.style.width = '100%';    
+            	wrapper.style.overflow = 'hidden';  
+            	input.parentNode.insertBefore(wrapper, input);
+            	wrapper.appendChild(input);
+
+            	input.style.flex = '1';
+            	input.style.minWidth = '0';
 
                 const iconBtn = document.createElement('button');
                 iconBtn.type = 'button';
                 iconBtn.className = 'dynamic-edit-icon';
+                iconBtn.style.display = 'inline-block';
+                iconBtn.style.visibility = 'visible';
+                iconBtn.style.border = 'none';
+                iconBtn.style.background = 'transparent';
+                iconBtn.style.padding = '2px';
+                iconBtn.style.cursor = 'pointer';
+                iconBtn.style.zIndex = '1';
+                iconBtn.style.position = 'static';
+                iconBtn.style.flexShrink = '0';
 
                 let skipIcon = false;
 
@@ -18632,12 +18892,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else if (isChecker) {
                         input.value = checkerVal;
                         
-                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
                         iconBtn.title = "Edit Checker Comments";
                     } else {
                         input.value = makerVal;
                         
-                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+                        iconBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0056b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
                         iconBtn.title = "Edit Maker Comments";
                     }
                 }
@@ -18843,8 +19103,24 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
 
                             if (cur) {
-                                document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : input.value;
-                                if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = cur.justification || '';
+                            	document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : input.value;
+                                document.getElementById('modal-justification-val').value = cur.justification || '';
+                                document.getElementById('modal-checker-justification-val').value = cur.checkerJustification || ''; // Ensure this ID matches your HTML
+                                
+                                const makerJust = document.getElementById('modal-justification-val');
+                                const checkerJust = document.getElementById('modal-checker-justification-val');
+
+                                if (isChecker) {
+                                    makerJust.readOnly = true;
+                                    checkerJust.readOnly = false; 
+                                } else if (isManager) {
+                                    makerJust.readOnly = true;
+                                    checkerJust.readOnly = true;
+                                } else {
+                                    makerJust.readOnly = false;
+                                    checkerJust.readOnly = true; 
+                                }
+                                
                                 if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = cur.source || '';
                                 
                                 const remarksInput = document.getElementById('modal-remarks-val');
@@ -19199,6 +19475,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("cellId", currentEditingInput.id || "UnknownId");
             formData.append("dataValue", finalDataValue);
             formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
+            formData.append("checkerJustification", document.getElementById('modal-checker-justification-val').value);
             formData.append("productValue", currentRowCol2Value);
             formData.append("verifyFlg", actionType); 
             formData.append("remarks", remarksVal);
@@ -19331,17 +19608,18 @@ document.addEventListener("DOMContentLoaded", function() {
             return response.json();
         })
         .then(flagData => {
-            const allInputs = document.querySelectorAll('.input-and-select');
+        	const allInputs = document.querySelectorAll(
+        		    '.input-and-select:not(.remarks-input), .manager-verify-cell'
+        		);
             let allGreen = true; 
             if (allInputs.length === 0) allGreen = false;
             
             let isReadyForManager = true; 
             let hasMR = false;
             if (allInputs.length === 0) isReadyForManager = false;
-            existingMrCells = [];
             
             allInputs.forEach(input => {
-                const cellName = input.name || input.id;
+                const cellName = input.getAttribute('data-cellname') || input.name || input.id;
                 const flag = flagData[cellName];
                 
                 if (flag === 'Y') {
@@ -19355,7 +19633,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     input.style.border = '1px solid #eea236';
                     input.title = "Marked for Revision by Manager";
                     hasMR = true; 
-                    existingMrCells.push(cellName); 
                     input.classList.add('already-mr');
                 } else {                   
                     isReadyForManager = false;
@@ -19367,7 +19644,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             });
-            
 
             const managerVerifyBtn = document.getElementById('verifyBtn');
             const checkerRemarksBtn = document.getElementById('checkerRemarksBtn');
@@ -19375,24 +19651,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if (managerVerifyBtn) {
                 if (isReadyForManager) {
                     managerVerifyBtn.style.display = 'inline-block';
-                    managerVerifyBtn.onclick = function() {
-                        
-                        document.getElementById('mgr-modal-title').innerText = "Manager Final Review";
-                        document.getElementById('mgr-remarks-val').readOnly = false;
-                        document.getElementById('mgr-selection-block').style.display = 'block';
-                        document.getElementById('mgr-modal-footer').style.display = 'flex';
-                        
-                        selectedMrCells = [...existingMrCells];
-                        
-                        document.querySelectorAll('.input-and-select').forEach(el => el.classList.remove('mr-selected'));
-                        document.querySelectorAll('.already-mr').forEach(el => el.classList.add('mr-selected'));
-                        
-                        const currentCount = selectedMrCells.length;
-                        document.getElementById('mgr-banner-sel-count').innerText = currentCount;
-                        document.getElementById('mgr-modal-sel-count').innerText = currentCount;
-                        
-                        $('#managerActionModal').modal('show');
-                    };
                 } else {
                     managerVerifyBtn.style.display = 'none';
                 }
@@ -19400,12 +19658,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (checkerRemarksBtn) {
                 checkerRemarksBtn.addEventListener('click', function() {
-                    
                     document.getElementById('mgr-modal-title').innerText = "Manager Remarks";
                     document.getElementById('mgr-remarks-val').readOnly = true;
                     document.getElementById('mgr-selection-block').style.display = 'none';
                     document.getElementById('mgr-modal-footer').style.display = 'none';
-                    
                     $('#managerActionModal').modal('show');
                 });
             }
@@ -19414,61 +19670,101 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("Flag styling skipped: ", err);
         });
     }
-    let existingMrCells = [];
     let selectedMrCells = [];
-    let isMgrSelecting = false;
+    window.isMgrSelecting = false;
 
     const mainVerifyBtn = document.getElementById('verifyBtn');
     if (mainVerifyBtn) {
-        mainVerifyBtn.addEventListener('click', function() {
+        mainVerifyBtn.onclick = function() {
+            selectedMrCells = [];
+            const activeMrCells = document.querySelectorAll('.active-table .already-mr');
+            
+            activeMrCells.forEach(el => {
+                const cellName = el.getAttribute('data-cellname') || el.name || el.id;
+                if (!selectedMrCells.includes(cellName)) {
+                    selectedMrCells.push(cellName);
+                }
+            });
+
+            document.getElementById('mgr-modal-title').innerText = "Manager Final Review";
+            document.getElementById('mgr-remarks-val').readOnly = false;
+            document.getElementById('mgr-selection-block').style.display = 'block';
+            document.getElementById('mgr-modal-footer').style.display = 'flex';
+            
+            document.querySelectorAll('.active-table .input-and-select:not(.remarks-input), .active-table .manager-verify-cell').forEach(el => el.classList.remove('mr-selected'));
+            document.querySelectorAll('.active-table .already-mr').forEach(el => el.classList.add('mr-selected'));
+
+            const currentCount = selectedMrCells.length;
+            document.getElementById('mgr-banner-sel-count').innerText = currentCount;
+            document.getElementById('mgr-modal-sel-count').innerText = currentCount;
+
             $('#managerActionModal').modal('show');
-        });
+        };
     }
 
     document.getElementById('btn-start-selection').addEventListener('click', function() {
         $('#managerActionModal').modal('hide');
         document.getElementById('mgrSelectionBanner').style.display = 'flex';
         document.body.classList.add('mgr-selecting');
-        isMgrSelecting = true;
+        window.isMgrSelecting = true;
+        document.getElementById('btn-select-all').innerText = "Select All";
+        allSelected = false; 
     });
 
-    document.querySelectorAll('.input-and-select').forEach(input => {
+    document.querySelectorAll('.input-and-select:not(.remarks-input), .manager-verify-cell').forEach(input => {
         input.addEventListener('click', function(e) {
-            if (isMgrSelecting) {
+            if (window.isMgrSelecting) {
+                if (!this.closest('.active-table')) return;
+
                 e.preventDefault();
-                const cellName = this.name || this.id;
                 
-                if (selectedMrCells.includes(cellName)) {
-                    selectedMrCells = selectedMrCells.filter(c => c !== cellName);
+                if (this.classList.contains('mr-selected')) {
                     this.classList.remove('mr-selected');
                     this.classList.add('mr-deselected');
                 } else {
-                    selectedMrCells.push(cellName);
                     this.classList.remove('mr-deselected');
                     this.classList.add('mr-selected');
                 }
                 
+                selectedMrCells = [];
+                document.querySelectorAll('.active-table .mr-selected').forEach(selectedEl => {
+                    const name = selectedEl.getAttribute('data-cellname') || selectedEl.name || selectedEl.id;
+                    if (!selectedMrCells.includes(name)) {
+                        selectedMrCells.push(name);
+                    }
+                });
+                
                 document.getElementById('mgr-banner-sel-count').innerText = selectedMrCells.length;
                 document.getElementById('mgr-modal-sel-count').innerText = selectedMrCells.length;
+                
+                const activeInputs = document.querySelectorAll('.active-table .input-and-select:not(.remarks-input), .active-table .manager-verify-cell');
+                const allAreSelected = activeInputs.length > 0 && selectedMrCells.length === activeInputs.length;
+                
+                document.getElementById('btn-select-all').innerText = allAreSelected ? "Deselect All" : "Select All";
+                allSelected = allAreSelected; 
             }
         });
     });
 
-
     document.getElementById('btn-cancel-selection').addEventListener('click', function() {
-        isMgrSelecting = false;
+        window.isMgrSelecting = false;
         document.body.classList.remove('mgr-selecting');
         document.getElementById('mgrSelectionBanner').style.display = 'none';
         
-        selectedMrCells = [...existingMrCells];
-        
-        document.querySelectorAll('.input-and-select').forEach(el => {
-            el.classList.remove('mr-selected');
-            el.classList.remove('mr-deselected'); 
+        selectedMrCells = [];
+        const activeMrCells = document.querySelectorAll('.active-table .already-mr');
+        activeMrCells.forEach(el => {
+            const cellName = el.getAttribute('data-cellname') || el.name || el.id;
+            if (!selectedMrCells.includes(cellName)) {
+                selectedMrCells.push(cellName);
+            }
         });
         
-        document.querySelectorAll('.already-mr').forEach(el => {
-            el.classList.add('mr-selected');
+        document.querySelectorAll('.active-table .input-and-select:not(.remarks-input), .active-table .manager-verify-cell').forEach(el => {
+            el.classList.remove('mr-selected', 'mr-deselected'); 
+            if (el.classList.contains('already-mr')) {
+                el.classList.add('mr-selected');
+            }
         });
         
         const currentCount = selectedMrCells.length;
@@ -19477,19 +19773,20 @@ document.addEventListener("DOMContentLoaded", function() {
         
         $('#managerActionModal').modal('show');
     });
-
     document.getElementById('btn-finish-selection').addEventListener('click', function() {
-        isMgrSelecting = false;
+        window.isMgrSelecting = false;
         document.body.classList.remove('mgr-selecting');
         document.getElementById('mgrSelectionBanner').style.display = 'none';
         
         const saveBtn = document.getElementById('btn-mgr-save');
-        if (selectedMrCells.length > 0) {
-            saveBtn.innerText = "Save Revisions";
-            saveBtn.className = "btn btn-warning";
-        } else {
-            saveBtn.innerText = "Verify Entire Report";
-            saveBtn.className = "btn btn-success";
+        if (saveBtn) { 
+            if (selectedMrCells.length > 0) {
+                saveBtn.innerText = "Save Revisions";
+                saveBtn.className = "btn btn-warning";
+            } else {
+                saveBtn.innerText = "Verify Entire Report";
+                saveBtn.className = "btn btn-success";
+            }
         }
         
         $('#managerActionModal').modal('show');
@@ -19708,6 +20005,37 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+    const btnSelectAll = document.getElementById('btn-select-all');
+    let allSelected = false;
+
+    if (btnSelectAll) {
+        btnSelectAll.addEventListener('click', function() {
+            allSelected = !allSelected;
+            
+            selectedMrCells = [];
+            
+            const activeInputs = document.querySelectorAll('.active-table .input-and-select:not(.remarks-input), .active-table .manager-verify-cell');
+
+            activeInputs.forEach(input => {
+                const cellName = input.getAttribute('data-cellname') || input.name || input.id;
+                
+                if (allSelected) {
+                    input.classList.remove('mr-deselected');
+                    input.classList.add('mr-selected');
+                    if (!selectedMrCells.includes(cellName)) {
+                        selectedMrCells.push(cellName);
+                    }
+                } else {
+                    input.classList.remove('mr-selected');
+                    input.classList.add('mr-deselected');
+                }
+            });
+
+            btnSelectAll.innerText = allSelected ? "Deselect All" : "Select All";
+            document.getElementById('mgr-banner-sel-count').innerText = selectedMrCells.length;
+            document.getElementById('mgr-modal-sel-count').innerText = selectedMrCells.length;
+        });
+    }
     
 });
 </script>
@@ -19866,6 +20194,328 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     initializePicker();
+    function formatToLastDayOfMonth(dateInput) {
+        let d = new Date(dateInput);
+
+        if (isNaN(d.getTime())) {
+            console.error("Invalid date format passed to JS: " + dateInput);
+            return dateInput;
+        }
+        let year = d.getFullYear();
+        let month = d.getMonth();
+
+        let lastDayDate = new Date(year, month + 1, 0);
+
+        let dd = String(lastDayDate.getDate()).padStart(2, '0');
+        let mm = String(lastDayDate.getMonth() + 1).padStart(2, '0');
+        let yyyy = lastDayDate.getFullYear();
+
+        return `${dd}-${mm}-${yyyy}`;
+    }
+</script>
+<script th:inline="javascript">
+    let formmode = /*[[${formmode}]]*/ null;
+    
+    function generateReport(cellName, fieldName, rawColumnDate, reportDate, periodType) {
+    	if (window.isMgrSelecting) return;
+        let formattedColumnDate = formatToLastDayOfMonth(rawColumnDate);
+
+        //console.log("Cell Name: " + cellName);
+        //console.log("Field Name: " + fieldName);
+        //console.log("Form Mode: " + formmode);
+        //console.log("Original Date: " + rawColumnDate);
+        //console.log("Converted Date: " + formattedColumnDate);
+        //console.log("Period Type: " + periodType);
+
+        const targetReportDate = formattedColumnDate; 
+        const targetTimeperiod = periodType;
+        const targetCellName = cellName;
+        const fieldNameText = fieldName;
+        
+        currentEditingInput = { name: targetCellName, id: targetCellName };
+
+        const descSpan = document.getElementById('modal-col2-val');
+        if (descSpan) {
+            descSpan.innerHTML = '<span class="spinner-border spinner-border-sm text-primary" role="status"></span> Fetching...';
+            descSpan.style.color = '#17a2b8';
+
+            const descUrl = `./fetchFieldDescription?formMode=${encodeURIComponent(formmode || '')}&fieldName=${encodeURIComponent(fieldNameText)}&timeperiod=${encodeURIComponent(targetTimeperiod)}`;
+            
+            fetch(descUrl)
+                .then(res => { if (!res.ok) throw new Error("Network error"); return res.text(); })
+                .then(desc => {
+                    descSpan.innerText = (desc && desc.trim() !== '') ? desc : "No description available.";
+                    descSpan.style.color = '#6c757d';
+                })
+                .catch(err => {
+                    descSpan.innerText = "Error loading description.";
+                    descSpan.style.color = '#dc3545';
+                });
+        }
+
+        document.getElementById('modal-header-val').innerText = fieldNameText;
+        document.getElementById('modal-input-val').value = "Loading...";
+        if (document.getElementById('modal-current-dept-val')) {
+            document.getElementById('modal-current-dept-val').innerText = typeof currentDepartment !== 'undefined' ? currentDepartment : '';
+        }
+        
+        const inputsToClear = ['modal-justification-val', 'modal-checker-justification-val', 'modal-source-val', 'modal-remarks-val'];
+        inputsToClear.forEach(id => {
+            let el = document.getElementById(id);
+            if (el) { el.value = ''; el.readOnly = true; }
+        });
+
+        document.getElementById('modal-input-val').readOnly = true;
+        
+        const elementsToHide = ['modal-na-btn', 'add-file-btn', 'max-file-txt', 'modal-save-btn', 'modal-proceed-btn', 'modal-verify-btn', 'modal-revert-btn', 'modal-revoke-btn', 'checker-status-msg'];
+        elementsToHide.forEach(id => {
+            let el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+
+        const remarksContainer = document.getElementById('remarks-container');
+        if (remarksContainer) remarksContainer.style.display = 'flex';
+
+        $('#editRecordModal').modal('show');
+        
+
+        const fileWrapper = document.getElementById('dynamic-file-wrapper');
+        if (fileWrapper) {
+            fileWrapper.innerHTML = `
+                <div id="inline-file-loader" style="display: flex; align-items: center; gap: 10px; padding: 8px 0; color: #6c757d;">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                    <span style="font-size: 13px; font-weight: 500;">Fetching data...</span>
+                </div>
+            `;
+        }
+
+        const url = `./fetchdatarecord?formMode=${encodeURIComponent(formmode || '')}&reportDate=${encodeURIComponent(targetReportDate)}&cellName=${encodeURIComponent(targetCellName)}&timeperiod=${encodeURIComponent(targetTimeperiod)}`;
+
+        fetch(url)
+            .then(response => {
+                if (response.status === 404) return null;
+                if (!response.ok) throw new Error("Server Error");
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    const cur = data.currentRecord;
+                    const verFlg = cur ? (cur.verifyFlg || '') : '';
+                    
+                    if (cur) {
+                        document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : "";
+                        if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = cur.justification || '';
+                        if(document.getElementById('modal-checker-justification-val')) document.getElementById('modal-checker-justification-val').value = cur.checkerJustification || '';
+                        if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = cur.source || '';
+                        if(document.getElementById('modal-remarks-val')) document.getElementById('modal-remarks-val').value = cur.remarks || '';
+
+                        const statusMsg = document.getElementById('checker-status-msg');
+                        if (statusMsg) {
+                            statusMsg.style.display = 'inline-block';
+                            if (verFlg === 'Y') {
+                                statusMsg.innerText = 'Record is Verified.';
+                                statusMsg.style.color = '#28a745';
+                            } else if (verFlg === 'MR') {
+                                statusMsg.innerText = 'Marked for Revision.';
+                                statusMsg.style.color = '#f0ad4e';
+                            } else if (verFlg === 'N') {
+                                statusMsg.innerText = 'Record was Reverted.';
+                                statusMsg.style.color = '#dc3545';
+                            } else {
+                                statusMsg.innerText = 'Pending Checker Review.';
+                                statusMsg.style.color = '#17a2b8';
+                            }
+                        }
+                    } else {
+                        document.getElementById('modal-input-val').value = data.fallbackValue || "";
+                        const statusMsg = document.getElementById('checker-status-msg');
+                        if (statusMsg) {
+                            statusMsg.style.display = 'inline-block';
+                            statusMsg.innerText = 'No record exists for this period.';
+                            statusMsg.style.color = '#6c757d';
+                        }
+                    }
+
+                    const makerJust = document.getElementById('modal-justification-val');
+                    const checkerJust = document.getElementById('modal-checker-justification-val');
+                    if(makerJust) makerJust.readOnly = true;
+                    if(checkerJust) checkerJust.readOnly = true;
+
+                    const deptSpan = document.getElementById('modal-dept-val');
+                    if (deptSpan) { 
+                            deptSpan.innerText = data.accessibleDepartments;
+                            deptSpan.style.color = "#000";
+                    
+                    }
+                    
+                    const fileSource = cur ? cur : data; 
+                    const rawFiles = [
+                        { index: 1, name: fileSource.fileName1 }, { index: 2, name: fileSource.fileName2 },
+                        { index: 3, name: fileSource.fileName3 }, { index: 4, name: fileSource.fileName4 },
+                        { index: 5, name: fileSource.fileName5 }, { index: 6, name: fileSource.fileName6 },
+                        { index: 7, name: fileSource.fileName7 }, { index: 8, name: fileSource.fileName8 },
+                        { index: 9, name: fileSource.fileName9 }, { index: 10, name: fileSource.fileName10 }
+                    ];
+
+                    if(fileWrapper) {
+                        fileWrapper.innerHTML = ''; 
+                        let hasSavedFiles = false;
+                        
+                        rawFiles.forEach(fileMeta => {
+                            if (fileMeta.name && fileMeta.name.trim() !== '') {
+                                hasSavedFiles = true; 
+                                
+                                const newRow = document.createElement('div');
+                                newRow.className = 'file-input-row';
+                                newRow.style.display = 'flex';
+                                newRow.style.alignItems = 'center';
+                                newRow.style.gap = '8px';
+                                newRow.style.width = '100%';
+                                newRow.style.marginBottom = '8px';
+
+                                const nameDisplay = document.createElement('span');
+                                nameDisplay.style.display = 'flex';
+                                nameDisplay.style.alignItems = 'center';
+                                nameDisplay.style.gap = '6px';
+                                nameDisplay.style.flex = '1';
+                                nameDisplay.style.overflow = 'hidden';
+                                nameDisplay.style.whiteSpace = 'nowrap';
+                                nameDisplay.style.textOverflow = 'ellipsis';
+                                nameDisplay.innerHTML = `<span style="flex-shrink: 0;">💾</span> <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">${fileMeta.name} (Saved)</span>`;
+                                
+                                const previewBtn = document.createElement('button');
+                                previewBtn.type = 'button';
+                                previewBtn.className = 'preview-btn';
+                                previewBtn.innerHTML = '&#128065; Preview';
+                                previewBtn.style.display = 'inline-block'; 
+                                previewBtn.style.flexShrink = '0';
+                                
+                                previewBtn.onclick = function(e) {
+                                    e.preventDefault();
+                                    const modalDialog = document.getElementById('main-modal-dialog');
+                                    const previewWindow = document.getElementById('preview-window');
+                                    if(modalDialog) modalDialog.classList.add('preview-active');
+                                    if(previewWindow) {
+                                        previewWindow.style.alignItems = 'center';
+                                        previewWindow.style.justifyContent = 'center';
+                                        previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem; margin-bottom: 10px;"></div><h6 style="color: #333; margin: 0;">Loading Document...</h6></div>`;
+                                        
+                                        fetch(`./download-file?id=${fileSource.id}&fileIndex=${fileMeta.index}&timeperiod=${encodeURIComponent(targetTimeperiod)}`)
+                                        .then(res => {
+                                            if (!res.ok) throw new Error("Could not download file");
+                                            const contentType = res.headers.get('content-type');
+                                            return res.blob().then(blob => ({ blob, contentType }));
+                                        })
+                                        .then(({ blob, contentType }) => {
+                                            const fileURL = URL.createObjectURL(blob);
+                                            if (contentType.startsWith('image/')) {
+                                                previewWindow.innerHTML = `<img src="${fileURL}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />`;
+                                            } else {
+                                                previewWindow.innerHTML = `<iframe src="${fileURL}#toolbar=1" style="width: 100%; height: 100%; border: none; display: block;"></iframe>`;
+                                            }
+                                        })
+                                        .catch(err => {
+                                            previewWindow.innerHTML = `<span style="color: red;">Failed to load file preview.</span>`;
+                                        });
+                                    }
+                                };
+
+                                newRow.appendChild(nameDisplay);
+                                newRow.appendChild(previewBtn);
+                                fileWrapper.appendChild(newRow);
+                            }
+                        });
+                        
+                        if (!hasSavedFiles) {
+                            fileWrapper.innerHTML = `
+                                <div style="padding: 15px; text-align: center; background-color: #f8f9fa; border: 1px dashed #ced4da; border-radius: 4px;">
+                                    <span style="color: #6c757d; font-size: 13px; font-style: italic;">No files were attached to this record.</span>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    const historyWrapper = document.getElementById('modal-history-wrapper');
+                    if (historyWrapper) {
+                        historyWrapper.innerHTML = '';
+                        if (data.history && data.history.length > 0) {
+                            data.history.forEach(item => {
+                                const itemRow = document.createElement('div');
+                                itemRow.style.display = 'flex';
+                                itemRow.style.justifyContent = 'space-between';
+                                itemRow.style.padding = '4px 6px';
+                                itemRow.style.borderBottom = '1px dashed #dee2e6';
+                                itemRow.style.fontSize = '13px';
+                                itemRow.innerHTML = `<span style="color: #6c757d;">📅 ${item.date}</span> <span style="color: #333; font-weight: 600;">${item.value !== "" ? item.value : "Empty"}</span>`;
+                                historyWrapper.appendChild(itemRow);
+                            });
+                        } else {
+                            historyWrapper.innerHTML = `<span style="font-size: 12px; color: #868e96; font-style: italic;">No historical records found.</span>`;
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Could not fetch cell data:", error);
+                document.getElementById('modal-input-val').value = "Error fetching data";
+                if (fileWrapper) fileWrapper.innerHTML = `<span style="color: red;">Error loading files.</span>`;
+            });
+    }
+</script>
+<script th:inline="javascript">
+let currentTable = '';
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    let mgrscreen = /*[[${mgrscreen}]]*/ 'NO';
+
+    const regularTable = document.getElementById("regularReportTable");
+    const mgrTable = document.getElementById("mgrReportTable");
+    const toggleBtn = document.getElementById("toggleTableBtn");
+
+    if (mgrscreen === "YES") {
+
+        mgrTable.classList.add("active-table");
+        regularTable.classList.remove("active-table");
+
+        currentTable = 'manager';
+        toggleBtn.innerText = 'M/C View';
+
+    } else {
+
+        regularTable.classList.add("active-table");
+        mgrTable.classList.remove("active-table");
+
+        currentTable = 'regular';
+        toggleBtn.innerText = 'Manager View';
+    }
+});
+
+function toggleTable() {
+
+    const regularTable = document.getElementById("regularReportTable");
+    const mgrTable = document.getElementById("mgrReportTable");
+    const toggleBtn = document.getElementById("toggleTableBtn");
+    if (window.isMgrSelecting) {
+        document.getElementById('btn-cancel-selection').click();
+    }
+    if (currentTable === 'manager') {
+
+        mgrTable.classList.remove("active-table");
+        regularTable.classList.add("active-table");
+
+        currentTable = 'regular';
+        toggleBtn.innerText = 'Manager View';
+
+    } else {
+
+        regularTable.classList.remove("active-table");
+        mgrTable.classList.add("active-table");
+
+        currentTable = 'manager';
+        toggleBtn.innerText = 'M/C View';
+    }
+}
 </script>
 </body>
 </html>

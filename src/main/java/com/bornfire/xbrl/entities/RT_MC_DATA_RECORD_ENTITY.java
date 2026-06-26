@@ -61,6 +61,12 @@ public class RT_MC_DATA_RECORD_ENTITY {
 	@Column(name = "REMARKS")
 	private String remarks;
 
+	@Column(name = "TIMEPERIOD")
+	private String timeperiod;
+
+	@Column(name = "CHECKER_JUSTIFICATION")
+	private String checkerJustification;
+
 	@Column(name = "FILE_NAME_1")
 	private String fileName1;
 	@Column(name = "FILE_NAME_2")
@@ -392,6 +398,22 @@ public class RT_MC_DATA_RECORD_ENTITY {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getTimeperiod() {
+		return timeperiod;
+	}
+
+	public void setTimeperiod(String timeperiod) {
+		this.timeperiod = timeperiod;
+	}
+
+	public String getCheckerJustification() {
+		return checkerJustification;
+	}
+
+	public void setCheckerJustification(String checkerJustification) {
+		this.checkerJustification = checkerJustification;
 	}
 
 }

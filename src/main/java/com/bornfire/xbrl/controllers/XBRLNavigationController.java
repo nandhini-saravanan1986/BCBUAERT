@@ -5938,7 +5938,7 @@ System.out.println("sixe==="+excelData.length);
 			deptvalid = "NO";
 		}
 		if (mgrsummary == null) {
-			mgrsummary = "YES";
+			mgrsummary = "NO";
 		}
 		if (timeperiod == null) {
 			timeperiod = "QUARTERLY";
@@ -5972,20 +5972,21 @@ System.out.println("sixe==="+excelData.length);
 		String sessionId = req.getSession().getId();
 		//System.out.println("Session ID : "+sessionId);
 		
-		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))&& (mgrsummary == "YES"|| mgrsummary.equals("YES"))) {
-			md.addAttribute("mgrscreen", "YES");
-			if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
-				
-				Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate);
-		        
-		        md.addAttribute("headerDates", reportData.get("headerDates"));
-		        md.addAttribute("reportRows", reportData.get("reportRows"));
-		        
-				md.addAttribute("formmode", "bankinformation");
-			}
+		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))) {
+			mgrsummary = "YES";
+//			if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
+//				
+//				Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate,timeperiod);
+//		        
+//		        md.addAttribute("quarterDates", reportData.get("headerDates"));
+//		        md.addAttribute("reportRows", reportData.get("reportRows"));
+//		        md.addAttribute("yearDates", reportData.get("yearDates"));
+//		        
+//				md.addAttribute("formmode", "bankinformation");
+//			}
 }
-		else {
-			md.addAttribute("mgrscreen", "NO");
+//		else {
+			md.addAttribute("mgrscreen", mgrsummary);
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
@@ -5994,6 +5995,13 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
+				
+				Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate,timeperiod);
+		        
+		        md.addAttribute("quarterDates", reportData.get("headerDates"));
+		        md.addAttribute("reportRows", reportData.get("reportRows"));
+		        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
@@ -6298,7 +6306,7 @@ System.out.println("sixe==="+excelData.length);
 
 			md.addAttribute("formmode", "conductcultureassessment");
 		}
-		}
+		//}
 		return "RBS_MC_Reports";
 	}
 	public static String formatDate(Date date) {
@@ -7306,7 +7314,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam("dataValue") String dataValue, @RequestParam("justification") String justification,
 			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
 			@RequestParam(value = "modifyFlg", required = false) String modifyFlg,
-			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "productValue", required = false) String productValue,
+			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "timeperiod", required = false) String timeperiod,@RequestParam(value = "productValue", required = false) String productValue,@RequestParam(value = "checkerJustification", required = false) String checkerJustification,
 			@RequestParam(value = "retainedFiles", required = false) List<Integer> retainedFiles,
 			@RequestParam(value = "files", required = false) MultipartFile[] files) {
 
@@ -7347,12 +7355,12 @@ System.out.println("sixe==="+excelData.length);
 
 				String flagToSave = "REVOKE_CHECKER".equals(verifyFlg) ? null : verifyFlg;
 
-				String exixtingRemarks= rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellName(formMode,
-						contextDate, cellName);
+				String exixtingRemarks= rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
+						contextDate, cellName,timeperiod);
 				String changedDetails = "Checker Remaks : OldValue: "+exixtingRemarks+", NewValue: "+remarks ;
 				
 				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode,
-						contextDate, cellName,remarks);
+						contextDate, cellName,remarks,timeperiod,checkerJustification);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
 				
@@ -7365,8 +7373,8 @@ System.out.println("sixe==="+excelData.length);
 			RT_MC_DATA_RECORD_ENTITY record = null;
 			RT_MC_DATA_RECORD_ENTITY oldcopy = new RT_MC_DATA_RECORD_ENTITY();
 			if (contextDate != null) {
-				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode,
-						contextDate, cellName);
+				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameAndTimeperiodOrderByIdDesc(formMode,
+						contextDate, cellName,timeperiod);
 			}
 
 			if (record == null) {
@@ -7391,6 +7399,8 @@ System.out.println("sixe==="+excelData.length);
 			record.setCellId(cellId);
 			record.setDataValue(dataValue);
 			record.setJustification(justification);
+			record.setCheckerJustification(checkerJustification);
+			record.setTimeperiod(timeperiod);
 			if ("REVOKE_CHECKER".equals(verifyFlg)) {
 				record.setVerifyFlg(null);
 				record.setModifyFlg(modifyFlg);
@@ -7453,16 +7463,14 @@ System.out.println("sixe==="+excelData.length);
 			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
 			if (mainTable != null && !mainTable.isEmpty() && cellName != null && !cellName.isEmpty()
 					&& contextDate != null) {
-
 				String updateSql = "UPDATE " + mainTable + " SET " + cellName
-						+ " = :val WHERE REPORT_DATE = :reportDate AND BRANCH_CODE <> 'DEPT'";
+						+ " = :val WHERE REPORT_DATE = :reportDate AND BRANCH_CODE = :timeperiod";
 
 				try {
-					int rowsAffected = entityManager.createNativeQuery(updateSql)
-							.setParameter("val", dataValue)
-							.setParameter("reportDate", new java.sql.Date(contextDate.getTime())) 
-							.executeUpdate();
-							
+					int rowsAffected = entityManager.createNativeQuery(updateSql).setParameter("val", dataValue)
+							.setParameter("reportDate", new java.sql.Date(contextDate.getTime()))
+							.setParameter("timeperiod", timeperiod).executeUpdate();
+
 					System.out.println("DEBUG: Main table update complete. Rows affected: " + rowsAffected);
 					
 					if (rowsAffected == 0) {
@@ -7501,14 +7509,14 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/fetchdatarecord")
 	public ResponseEntity<?> fetchRecord(@RequestParam("formMode") String formMode,
-			@RequestParam("reportDate") String reportDateStr, @RequestParam("cellName") String cellName) {
+			@RequestParam("reportDate") String reportDateStr, @RequestParam("cellName") String cellName, @RequestParam("timeperiod") String timeperiod) {
 
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date reportDate = dateFormat.parse(reportDateStr);
 
 			RecordMetadataProjection record = rT_MC_DATA_RECORD_REPO
-					.findTopProjectionByFormModeAndReportDateAndCellNameOrderByIdDesc(formMode, reportDate, cellName);
+					.findTopProjectionByFormModeAndReportDateAndCellNameAndTimeperiodOrderByIdDesc(formMode, reportDate, cellName,timeperiod);
 
 			Map<String, Object> response = new HashMap<>();
 			response.put("currentRecord", record);
@@ -7517,12 +7525,13 @@ System.out.println("sixe==="+excelData.length);
 			
 
 			if (record == null && mainTable != null && !mainTable.isEmpty()) {
-				String fallbackSql = "SELECT " + cellName + " FROM " + mainTable + " WHERE REPORT_DATE = :reportDate AND BRANCH_CODE <> 'DEPT'";
+				String fallbackSql = "SELECT " + cellName + " FROM " + mainTable + " WHERE REPORT_DATE = :reportDate AND BRANCH_CODE = :timeperiod";
 				try {
-					List<?> fallbackResults = entityManager.createNativeQuery(fallbackSql)
-							.setParameter("reportDate", reportDate)
-							.setMaxResults(1) 
-							.getResultList();
+				    List<?> fallbackResults = entityManager.createNativeQuery(fallbackSql)
+				            .setParameter("reportDate", reportDate)
+				            .setParameter("timeperiod", timeperiod)
+				            .setMaxResults(1) 
+				            .getResultList();
 					
 					if (!fallbackResults.isEmpty()) {
 						Object fallbackValue = fallbackResults.get(0);
@@ -7539,11 +7548,12 @@ System.out.println("sixe==="+excelData.length);
 			List<Map<String, String>> historyData = new ArrayList<>();
 			if (mainTable != null && !mainTable.isEmpty()) {
 				String histSql = "SELECT REPORT_DATE, " + cellName + " FROM " + mainTable
-						+ " WHERE REPORT_DATE < :reportDate AND BRANCH_CODE <> 'DEPT' ORDER BY REPORT_DATE DESC";
+						+ " WHERE REPORT_DATE < :reportDate AND BRANCH_CODE = :timeperiod ORDER BY REPORT_DATE DESC";
 				try {
 					@SuppressWarnings("unchecked")
 					List<Object[]> histResults = entityManager.createNativeQuery(histSql)
-							.setParameter("reportDate", reportDate).setMaxResults(4).getResultList();
+							.setParameter("reportDate", reportDate).setParameter("timeperiod", timeperiod)
+							.setMaxResults(4).getResultList();
 
 					for (Object[] row : histResults) {
 						Map<String, String> histMap = new HashMap<>();
@@ -7636,20 +7646,19 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/fetchallverifyflags")
 	public ResponseEntity<Map<String, String>> fetchAllVerifyFlags(@RequestParam("formMode") String formMode,
-			@RequestParam("reportDate") String reportDateStr) {
+			@RequestParam("reportDate") String reportDateStr,@RequestParam("timeperiod") String timeperiod) {
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date reportDate = dateFormat.parse(reportDateStr);
 
 			String jpql = "SELECT r.cellName, r.verifyFlg FROM RT_MC_DATA_RECORD_ENTITY r " + "WHERE r.id IN ("
-					+ "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 "
-					+ "   WHERE r2.formMode = :formMode AND r2.reportDate = :reportDate " + "   GROUP BY r2.cellName"
-					+ ") AND r.verifyFlg IS NOT NULL";
+					+ "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 " + "   WHERE r2.formMode = :formMode "
+					+ "   AND r2.reportDate = :reportDate " + "   AND r2.timeperiod = :timeperiod "
+					+ "   GROUP BY r2.cellName" + ") AND r.verifyFlg IS NOT NULL";
 
 			@SuppressWarnings("unchecked")
 			List<Object[]> results = entityManager.createQuery(jpql).setParameter("formMode", formMode)
-					.setParameter("reportDate", reportDate).getResultList();
-
+					.setParameter("reportDate", reportDate).setParameter("timeperiod", timeperiod).getResultList();
 			Map<String, String> flags = new HashMap<>();
 			for (Object[] row : results) {
 				if (row[0] != null && row[1] != null) {
@@ -7669,7 +7678,7 @@ System.out.println("sixe==="+excelData.length);
 	@Transactional
 	public ResponseEntity<String> managerVerifyAction(@RequestParam("formMode") String formMode,
 			@RequestParam("reportDate") String reportDateStr, @RequestParam("actionType") String actionType,
-			@RequestParam(value = "remarks", required = false) String remarks,
+			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "timeperiod", required = false) String timeperiod,
 			@RequestParam(value = "mrCells", required = false) String mrCellsJson) {
 
 		try {
@@ -7677,10 +7686,10 @@ System.out.println("sixe==="+excelData.length);
 			Date reportDate = dateFormat.parse(reportDateStr);
 
 			if ("VERIFY_ALL".equals(actionType)) {
-				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"Y", remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"Y", remarks, reportDate,timeperiod);
 				System.out.println("Main Table Rows Verified : " + rows_updated);
 
-				int mr_cleaned = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				int mr_cleaned = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				System.out.println("MR Cells Cleaned to Y : " + mr_cleaned);
 
 				return ResponseEntity.ok("Report verified successfully.");
@@ -7689,9 +7698,9 @@ System.out.println("sixe==="+excelData.length);
 				ObjectMapper mapper = new ObjectMapper();
 				List<String> cellsToRevert = mapper.readValue(mrCellsJson, new TypeReference<List<String>>() {});
 
-				rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				for (String cellName : cellsToRevert) {
-					int rowsAffected = rT_MC_DATA_RECORD_REPO.updateVerifyFlgwithoutremarks("MR", formMode, reportDate, cellName);
+					int rowsAffected = rT_MC_DATA_RECORD_REPO.updateVerifyFlgwithoutremarks("MR", formMode, reportDate, cellName,timeperiod);
 
 					if (rowsAffected == 0) {
 						RT_MC_DATA_RECORD_ENTITY newRecord = new RT_MC_DATA_RECORD_ENTITY();
@@ -7704,16 +7713,16 @@ System.out.println("sixe==="+excelData.length);
 					}
 				}
 
-				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"N", remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"N", remarks, reportDate,timeperiod);
 				System.out.println("Main Table Rows Reverted : " + rows_updated);
 
 				return ResponseEntity.ok("Selected cells flagged for revision.");
 
 			} else if ("REVOKE_MGR".equals(actionType)) {
-				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,null, remarks, reportDate);
+				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,null, remarks, reportDate,timeperiod);
 				System.out.println("Main Table Rows Revoked : " + rows_updated);
 
-				int mr_revoked = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate);
+				int mr_revoked = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				System.out.println("MR Cells Revoked to Y : " + mr_revoked);
 
 				return ResponseEntity.ok("Manager actions successfully revoked.");
@@ -7731,7 +7740,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam("fieldName") String fieldName) {
 
 		try {
-			System.out.println("Formmode : " + formMode+" Field Nmae : "+fieldName);
+			//System.out.println("Formmode : " + formMode+" Field Nmae : "+fieldName);
 			String description = (RT_MC_Description_Repo.findTopBySectionAndElementNative(formMode, fieldName))
 					.getDescription();
 			System.out.println("Descripion : " + description);
