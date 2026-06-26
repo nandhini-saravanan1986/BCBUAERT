@@ -5996,7 +5996,8 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {				
 		        if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
-					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(reportDate,timeperiod);
+		        	formmode= "bankinformation";
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
 			        md.addAttribute("quarterDates", reportData.get("headerDates"));
 			        md.addAttribute("reportRows", reportData.get("reportRows"));
 			        md.addAttribute("yearDates", reportData.get("yearDates"));
@@ -6036,9 +6037,14 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 
 			} else {
-
-				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findByReportDate(reportDate);
-				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findByReportDate(reportDate);
+				 if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+						Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+				        md.addAttribute("quarterDates", reportData.get("headerDates"));
+				        md.addAttribute("reportRows", reportData.get("reportRows"));
+				        md.addAttribute("yearDates", reportData.get("yearDates"));
+			        }
+				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
+				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 
@@ -6074,8 +6080,13 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-
-				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				 System.out.println("Branch : " + branch);
 				 System.out.println("TABLE3 Size : " + reportlist.size());
 
@@ -6111,11 +6122,16 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 
 			} else {
-
-				List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE4_1_ENTITY> reportlist = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				 System.out.println("Branch : " + branch);
 				 System.out.println("TABLE4 Size : " + reportlist.size());
-				List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findByReportDate(reportDate);
+				List<RT_MC_TABLE4_2_ENTITY> reportlist1 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("reportlist1", reportlist1);
 
@@ -6147,7 +6163,13 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6179,8 +6201,13 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-
-				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6215,9 +6242,14 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 
 			} else {
-
-				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findByReportDate(reportDate);
-				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
+				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 
@@ -6250,8 +6282,13 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-
-				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findByReportDate(reportDate);
+				if(mgrsummary == "YES" || mgrsummary.equals("YES")) {
+					Map<String, Object> reportData = rT_MC_TABLE_Service.getManagerViewData(formmode,reportDate,timeperiod);
+			        md.addAttribute("quarterDates", reportData.get("headerDates"));
+			        md.addAttribute("reportRows", reportData.get("reportRows"));
+			        md.addAttribute("yearDates", reportData.get("yearDates"));
+		        }
+				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 
@@ -6282,7 +6319,7 @@ System.out.println("sixe==="+excelData.length);
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
 			} else {
-				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findByReportDate(reportDate);
+				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate,timeperiod);
 				 System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 

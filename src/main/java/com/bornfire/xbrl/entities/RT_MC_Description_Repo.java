@@ -12,8 +12,10 @@ public interface RT_MC_Description_Repo extends JpaRepository<RT_MC_Description_
 
     List<RT_MC_Description_Entity> findBySectionName(String sectionName);
     
-	@Query(value = "SELECT * FROM RT_MC_DESCRIPTION " + "WHERE SECTION_NAME = :sectionName "
-			+ "AND DATA_ELEMENT = :dataElement " + "AND ROWNUM = 1", nativeQuery = true)
+	@Query(value = "SELECT * FROM RT_MC_DESCRIPTION "
+			+ "WHERE REGEXP_REPLACE(SECTION_NAME, '[[:space:]]', '') = REGEXP_REPLACE(:sectionName, '[[:space:]]', '') "
+			+ "AND REGEXP_REPLACE(DATA_ELEMENT, '[[:space:]]', '') = REGEXP_REPLACE(:dataElement, '[[:space:]]', '') "
+			+ "AND ROWNUM = 1", nativeQuery = true)
 	RT_MC_Description_Entity findTopBySectionAndElementNative(@Param("sectionName") String sectionName,
 			@Param("dataElement") String dataElement);
 }

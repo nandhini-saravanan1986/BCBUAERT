@@ -75,56 +75,60 @@ public class RT_MC_TABLE_ALL_Service {
 	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 	@Autowired
 	RT_MC_DATA_RECORD_REPO RT_MC_DATA_RECORD_REPO;
-	
+
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
-	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate,
-			String userid, ServletRequestAttributes attr) throws Exception {
+	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate, String userid, ServletRequestAttributes attr) throws Exception {
 
 		byte[] file = null;
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
 					"RT_MC_TABLE1", attr);
-			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode,reportDate);
+			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
 					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", attr);
-			file = GenerateTable_2_Excel(branch, jobId, progressMap,formmode,reportDate);
+			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("complaints".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null, "RT_MC_TABLE3", attr);
-			file = GenerateTable_3_Excel(branch, jobId, progressMap,formmode,reportDate);
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null,
+					"RT_MC_TABLE3", attr);
+			file = GenerateTable_3_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
 					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", attr);
-			file = GenerateTable_4_Excel(branch, jobId, progressMap,formmode,reportDate);
+			file = GenerateTable_4_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null, "RT_MC_TABLE5", attr);
-			file = GenerateTable_5_Excel(branch, jobId, progressMap,formmode,reportDate);
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null,
+					"RT_MC_TABLE5", attr);
+			file = GenerateTable_5_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null, "RT_MC_TABLE6", attr);
-			file = GenerateTable_6_Excel(branch, jobId, progressMap,formmode,reportDate);
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null,
+					"RT_MC_TABLE6", attr);
+			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
 					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", attr);
-			file = GenerateTable_7_Excel(branch, jobId, progressMap,formmode,reportDate);
+			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null, "RT_MC_TABLE8", attr);
-			file = GenerateTable_8_Excel(branch, jobId, progressMap,formmode,reportDate);
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null,
+					"RT_MC_TABLE8", attr);
+			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment", null,
-					"RT_MC_TABLE9", attr);
-			file = GenerateTable_9_Excel(branch, jobId, progressMap,formmode,reportDate);
+			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment",
+					null, "RT_MC_TABLE9", attr);
+			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode, reportDate);
 		}
 
 		return file;
 	}
 
-	public byte[] GenerateTable_1_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_1_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -238,12 +242,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_2_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_2_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE2_1_ENTITY> dataList1 = RT_MC_TABLE2_1_REPO.findByReportDate(reportDate);
-		List<RT_MC_TABLE2_2_ENTITY> dataList2 = RT_MC_TABLE2_2_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE2_1_ENTITY> dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE2_2_ENTITY> dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -1379,11 +1383,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_3_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_3_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE3_ENTITY> dataList = RT_MC_TABLE3_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE3_ENTITY> dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -2242,12 +2246,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_4_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_4_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE4_1_ENTITY> dataList1 = RT_MC_TABLE4_1_REPO.findByReportDate(reportDate);
-		List<RT_MC_TABLE4_2_ENTITY> dataList2 = RT_MC_TABLE4_2_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE4_1_ENTITY> dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE4_2_ENTITY> dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3488,11 +3492,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_5_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_5_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE5_ENTITY> dataList = RT_MC_TABLE5_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE5_ENTITY> dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3656,11 +3660,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_6_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_6_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE6_ENTITY> dataList = RT_MC_TABLE6_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE6_ENTITY> dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -3817,12 +3821,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findByReportDate(reportDate);
-		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -4573,11 +4577,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -4889,11 +4893,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
-	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,String reportDate)
-			throws Exception {
+	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findByReportDate(reportDate);
+		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -5183,11 +5187,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 	public void MC_TABLE1_Modify(RT_MC_TABLE1_ENTITY updatedData) {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        String formattedDate = formatter.format(updatedData.getREPORT_DATE());
-        List<RT_MC_TABLE1_ENTITY> rawdata = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(formattedDate,
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE1_ENTITY> rawdata = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		RT_MC_TABLE1_ENTITY existing =rawdata.get(0);
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE1_ENTITY existing = rawdata.get(0);
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5239,9 +5243,14 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE2_1_Modify(RT_MC_TABLE2_1_ENTITY updatedData) {
-		RT_MC_TABLE2_1_ENTITY existing = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE2_1_ENTITY> rawdata = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE2_1_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE2_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5293,9 +5302,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE2_2_Modify(RT_MC_TABLE2_2_ENTITY updatedData) {
-		RT_MC_TABLE2_2_ENTITY existing = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE2_2_ENTITY> rawdata = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE2_2_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE2_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5347,9 +5360,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE3_Modify(RT_MC_TABLE3_ENTITY updatedData) {
-		RT_MC_TABLE3_ENTITY existing = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE3_ENTITY> rawdata = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE3_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE3_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5401,9 +5418,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE4_1_Modify(RT_MC_TABLE4_1_ENTITY updatedData) {
-		RT_MC_TABLE4_1_ENTITY existing = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE4_1_ENTITY> rawdata = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE4_1_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE4_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5455,9 +5476,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE4_2_Modify(RT_MC_TABLE4_2_ENTITY updatedData) {
-		RT_MC_TABLE4_2_ENTITY existing = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE4_2_ENTITY> rawdata = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE4_2_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE4_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5509,9 +5534,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE5_Modify(RT_MC_TABLE5_ENTITY updatedData) {
-		RT_MC_TABLE5_ENTITY existing = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE5_ENTITY> rawdata = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE5_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE5_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5563,9 +5592,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE6_Modify(RT_MC_TABLE6_ENTITY updatedData) {
-		RT_MC_TABLE6_ENTITY existing = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE6_ENTITY> rawdata = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE6_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE6_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5617,9 +5650,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE7_1_Modify(RT_MC_TABLE7_1_ENTITY updatedData) {
-		RT_MC_TABLE7_1_ENTITY existing = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE7_1_ENTITY> rawdata = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE7_1_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE7_1_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5671,9 +5708,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE7_2_Modify(RT_MC_TABLE7_2_ENTITY updatedData) {
-		RT_MC_TABLE7_2_ENTITY existing = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE7_2_ENTITY> rawdata = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE7_2_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE7_2_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5725,9 +5766,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE8_Modify(RT_MC_TABLE8_ENTITY updatedData) {
-		RT_MC_TABLE8_ENTITY existing = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE8_ENTITY> rawdata = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE8_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE8_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5779,9 +5824,13 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void MC_TABLE9_Modify(RT_MC_TABLE9_ENTITY updatedData) {
-		RT_MC_TABLE9_ENTITY existing = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(updatedData.getREPORT_DATE(),
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String formattedDate = formatter.format(updatedData.getREPORT_DATE());
+		List<RT_MC_TABLE9_ENTITY> rawdata = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg","VERIFY_FLG","VERIFY_USERID");
+		RT_MC_TABLE9_ENTITY existing = rawdata.get(0);
+
+		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
 		Map<String, String> changes = new LinkedHashMap<>();
 		for (Field field : RT_MC_TABLE9_ENTITY.class.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -5831,43 +5880,44 @@ public class RT_MC_TABLE_ALL_Service {
 			);
 		}
 	}
-	
-	public int updateVerifyFlgAndRemarks(String formMode,String verifyFlg,String remarks,Date reportDate,String timeperiod) {
-		
+
+	public int updateVerifyFlgAndRemarks(String formMode, String verifyFlg, String remarks, Date reportDate,
+			String timeperiod) {
+
 		int rows_updated = 0;
 
 		switch (formMode) {
 		case "bankinformation":
-			rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate,timeperiod);
+			rows_updated = RT_MC_TABLE1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		case "bankconsumers":
-			rows_updated = RT_MC_TABLE2_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
-			rows_updated = RT_MC_TABLE2_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
-				return rows_updated;
-			
+			rows_updated = RT_MC_TABLE2_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
+			rows_updated = RT_MC_TABLE2_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
+			return rows_updated;
+
 		case "complaints":
-			rows_updated = RT_MC_TABLE3_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE3_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		case "retailproducts":
-			rows_updated = RT_MC_TABLE4_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
-			rows_updated = RT_MC_TABLE4_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
-			
+			rows_updated = RT_MC_TABLE4_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
+			rows_updated = RT_MC_TABLE4_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
+
 			return rows_updated;
 		case "bankemployee":
-			rows_updated = RT_MC_TABLE5_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE5_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		case "trainings":
-			rows_updated = RT_MC_TABLE6_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE6_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
-		case "additionalinformation":			
-			rows_updated = RT_MC_TABLE7_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
-			rows_updated = RT_MC_TABLE7_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+		case "additionalinformation":
+			rows_updated = RT_MC_TABLE7_1_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
+			rows_updated = RT_MC_TABLE7_2_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		case "islamicbanking":
-			rows_updated = RT_MC_TABLE8_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE8_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		case "conductcultureassessment":
-			rows_updated = RT_MC_TABLE9_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate);
+			rows_updated = RT_MC_TABLE9_REPO.updateVerifyFlgAndRemarks(verifyFlg, remarks, reportDate, timeperiod);
 			return rows_updated;
 		default:
 			return rows_updated;
@@ -5948,12 +5998,46 @@ public class RT_MC_TABLE_ALL_Service {
 			return formMode;
 		}
 	}
-	
-	public Map<String, Object> getManagerViewData(String Date,String timeperiod) {
+
+	public Map<String, Object> getManagerViewData(String formmode, String Date, String timeperiod) {
+		Map<String, Object> managerdata = null;
+		switch (formmode) {
+		case "bankinformation":
+			managerdata = getManagerViewDataTable1(Date, timeperiod);
+			return managerdata;
+		case "bankconsumers":
+			managerdata = getManagerViewDataTable2(Date, timeperiod);
+			return managerdata;
+		case "complaints":
+			managerdata = getManagerViewDataTable3(Date, timeperiod);
+			return managerdata;
+		case "retailproducts":
+			managerdata = getManagerViewDataTable4(Date, timeperiod);
+			return managerdata;
+		case "bankemployee":
+			managerdata = getManagerViewDataTable5(Date, timeperiod);
+			return managerdata;
+		case "trainings":
+			managerdata = getManagerViewDataTable6(Date, timeperiod);
+			return managerdata;
+		case "additionalinformation":
+			managerdata = getManagerViewDataTable7(Date, timeperiod);
+			return managerdata;
+		case "islamicbanking":
+			managerdata = getManagerViewDataTable8(Date, timeperiod);
+			return managerdata;
+		case "conductcultureassessment":
+			managerdata = getManagerViewDataTable9(Date, timeperiod);
+			return managerdata;
+		default:
+			return managerdata;
+		}
+
+	}
+
+	public Map<String, Object> getManagerViewDataTable1(String Date, String timeperiod) {
 		List<RT_MC_TABLE1_ENTITY> top4Rows = RT_MC_TABLE1_REPO.findLastFourReports(Date, "QUARTERLY");
 		List<RT_MC_TABLE1_ENTITY> top2RowsYearly = RT_MC_TABLE1_REPO.findLastTwoReports(Date, "YEARLY");
-		List<RT_MC_TABLE1_ENTITY> remarksSourceList = "YEARLY".equalsIgnoreCase(timeperiod) ? top2RowsYearly : top4Rows;
-
 		List<String> headerDates = new ArrayList<>();
 		List<String> yearDates = new ArrayList<>();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
@@ -5967,10 +6051,9 @@ public class RT_MC_TABLE_ALL_Service {
 		for (RT_MC_TABLE1_ENTITY row : top2RowsYearly) {
 			Date rawDate = row.getREPORT_DATE();
 			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
-			yearDates.add("Yearly - "+displayDate.format(formatter));
+			yearDates.add("Yearly - " + displayDate.format(formatter));
 		}
 
-		
 		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
 
 		pivotTable.add(new RT_MC_Manager_DTO("Number of employees as of the specified time period",
@@ -6193,17 +6276,16 @@ public class RT_MC_TABLE_ALL_Service {
 				getMakerJustification("bankinformation", Date, "R22_TOT_NO_AUT_SPC_TP", timeperiod),
 				getCheckerJustification("bankinformation", Date, "R22_TOT_NO_AUT_SPC_TP", timeperiod),
 				"R22_TOT_NO_AUT_SPC_TP"));
-		pivotTable
-				.add(new RT_MC_Manager_DTO("Total Number of Point of Sale Terminals during the specified time period",
-						getSafeValue(top4Rows, 3, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getSafeValue(top4Rows, 2, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getSafeValue(top4Rows, 1, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getSafeValue(top4Rows, 0, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getSafeValue(top2RowsYearly, 0, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getSafeValue(top2RowsYearly, 1, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
-						getMakerJustification("bankinformation", Date, "R22_TOT_NO_SAL_SPC_TP", timeperiod),
-						getCheckerJustification("bankinformation", Date, "R22_TOT_NO_SAL_SPC_TP", timeperiod),
-						"R22_TOT_NO_SAL_SPC_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Point of Sale Terminals during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_SAL_SPC_TP),
+				getMakerJustification("bankinformation", Date, "R22_TOT_NO_SAL_SPC_TP", timeperiod),
+				getCheckerJustification("bankinformation", Date, "R22_TOT_NO_SAL_SPC_TP", timeperiod),
+				"R22_TOT_NO_SAL_SPC_TP"));
 		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Merchant tie ups during the specified time period",
 				getSafeValue(top4Rows, 3, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_MER_SPC_TP),
 				getSafeValue(top4Rows, 2, RT_MC_TABLE1_ENTITY::getR22_TOT_NO_MER_SPC_TP),
@@ -6236,25 +6318,2816 @@ public class RT_MC_TABLE_ALL_Service {
 				getCheckerJustification("bankinformation", Date, "R22_NO_SER_SPC_TP", timeperiod),
 				"R22_NO_SER_SPC_TP"));
 
-        Map<String, Object> modelData = new HashMap<>();
-        modelData.put("headerDates", headerDates);
-        modelData.put("yearDates", yearDates);
-        modelData.put("reportRows", pivotTable);
-        
-        return modelData;
-    }
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
 
-	private Object getSafeValue(List<RT_MC_TABLE1_ENTITY> list, int index, Function<RT_MC_TABLE1_ENTITY, Object> extractor) {
-	    if (list != null && list.size() > index && list.get(index) != null) {
-	        return extractor.apply(list.get(index)); 
-	    }
-	    return null;
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable2(String Date, String timeperiod) {
+		List<RT_MC_TABLE2_2_ENTITY> top4Rowstable2 = RT_MC_TABLE2_2_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE2_2_ENTITY> top2RowsYearlytable2 = RT_MC_TABLE2_2_REPO.findLastTwoReports(Date, "YEARLY");
+
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE2_2_ENTITY row : top4Rowstable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE2_2_ENTITY row : top2RowsYearlytable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable.add(new RT_MC_Manager_DTO("Number of women Consumers as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_WO_SD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_WO_SD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_WO_SD", timeperiod), "R22_NO_WO_SD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers tagged as People of Determination (PoD) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_POD_SD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_POD_SD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_POD_SD", timeperiod), "R22_NO_CON_POD_SD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers whose data has been accessed by unauthorized parties during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UNAU_SP_TP),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_UNAU_SP_TP", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_UNAU_SP_TP", timeperiod),
+				"R22_NO_CON_UNAU_SP_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers having DBR greater than and equal to 45% but less than 50%  ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_45_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_45_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_45_50", timeperiod), "R22_NO_CON_45_50"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers having DBR greater than  or equal to 50%",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_50", timeperiod), "R22_NO_CON_50"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of new Consumers onboarded having disposable income less than 50% of their total income",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_LES_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_LES_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_LES_50", timeperiod), "R22_NO_OF_LES_50"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that fall under the age bracket:  less than 18 years old as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_BNK_18", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_BNK_18", timeperiod), "R22_NO_OF_BNK_18"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that fall under the age bracket:  18-25 years as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_18_25),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_BNK_18_25", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_BNK_18_25", timeperiod),
+				"R22_NO_OF_BNK_18_25"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that fall under the age bracket:  26-35 years  as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_26_35),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_BNK_26_35", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_BNK_26_35", timeperiod),
+				"R22_NO_OF_BNK_26_35"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that fall under the age bracket:  36-50 years as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_BNK_36_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_BNK_36_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_BNK_36_50", timeperiod),
+				"R22_NO_OF_BNK_36_50"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that fall under the age bracket:  Greater than 50 years old as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BNK_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_BNK_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BNK_50", timeperiod), "R22_NO_CON_BNK_50"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books who's primary source of income is Salary as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SAL_SPD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_SAL_SPD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_SAL_SPD", timeperiod),
+				"R22_NO_CON_SAL_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books who's primary source of income is Income from Business as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BUS_SPD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_BUS_SPD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BUS_SPD", timeperiod),
+				"R22_NO_CON_BUS_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books who's primary source of income is from other sources including Investment properties as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_PRO_SPD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_PRO_SPD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_PRO_SPD", timeperiod),
+				"R22_NO_CON_PRO_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of monthly income as<= 5,000 AED as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_INC_5K", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_INC_5K", timeperiod), "R22_NO_CON_INC_5K"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of monthly income as5,001-10,000 AED as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_5K_10K),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_INC_5K_10K", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_INC_5K_10K", timeperiod),
+				"R22_NO_CON_INC_5K_10K"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of monthly income as 10,001-20,000 AED as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_10K_20K),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_INC_10K_20K", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_INC_10K_20K", timeperiod),
+				"R22_NO_CON_INC_10K_20K"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of monthly income as 20,001-35,000 AED as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_20K_35K),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_INC_20K_35K", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_INC_20K_35K", timeperiod),
+				"R22_NO_CON_INC_20K_35K"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of monthly income as >35,001 AED as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_INC_35K),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_INC_35K", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_INC_35K", timeperiod),
+				"R22_NO_CON_INC_35K"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of education as Secondary school or below as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BEL_SCL),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_BEL_SCL", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BEL_SCL", timeperiod),
+				"R22_NO_CON_BEL_SCL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of education as  Bachelor's degree as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_BAC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BAC", timeperiod), "R22_NO_CON_BAC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books with the level of education as Master's degree or above as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABV_MAS),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_ABV_MAS", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_ABV_MAS", timeperiod),
+				"R22_NO_CON_ABV_MAS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Abu Dhabi (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ABU_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_ABU_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_ABU_KYC", timeperiod),
+				"R22_NO_CON_ABU_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Dubai (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DUB_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_DUB_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_DUB_KYC", timeperiod),
+				"R22_NO_CON_DUB_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Sharjah (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_SHJ_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_SHJ_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_SHJ_KYC", timeperiod),
+				"R22_NO_CON_SHJ_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Ajman (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AJM_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_AJM_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_AJM_KYC", timeperiod),
+				"R22_NO_CON_AJM_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Fujairah (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_FUJ_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_FUJ_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_FUJ_KYC", timeperiod),
+				"R22_NO_CON_FUJ_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Ras Al Khaimah (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RAK_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_RAK_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_RAK_KYC", timeperiod),
+				"R22_NO_CON_RAK_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books that reside in Umm Al Quwain (as per the KYC document submitted to the Bank) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_UAQ_KYC),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_UAQ_KYC", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_UAQ_KYC", timeperiod),
+				"R22_NO_CON_UAQ_KYC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers on the Bank's books tagged by the Bank as " + "Retired"
+						+ " as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_RET", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_RET", timeperiod), "R22_NO_CON_RET"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers as of a specified date who were provided a loan when stress testing results revealed a breach of the CBUAE DBR limits incase of a increased interest/profit rate scenario",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DBR_LIM),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_DBR_LIM", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_DBR_LIM", timeperiod),
+				"R22_NO_CON_DBR_LIM"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of UAE national Consumers during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_SPC_TP),
+				getMakerJustification("bankconsumers", Date, "R22_NO_UAE_CON_SPC_TP", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_UAE_CON_SPC_TP", timeperiod),
+				"R22_NO_UAE_CON_SPC_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of UAE national Consumers enrolled for National Loan Scheme during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_UAE_CON_NLS),
+				getMakerJustification("bankconsumers", Date, "R22_NO_UAE_CON_NLS", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_UAE_CON_NLS", timeperiod),
+				"R22_NO_UAE_CON_NLS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Value of financial loss suffered by Consumers due to fraud during the specified time period (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_VAL_LOS_AED),
+				getMakerJustification("bankconsumers", Date, "R22_VAL_LOS_AED", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_VAL_LOS_AED", timeperiod), "R22_VAL_LOS_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of new consumer onboarded during the specified time period, who became delinquent and cured within 90 days",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_90),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_ONB_90", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_ONB_90", timeperiod), "R22_NO_CON_ONB_90"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of new Consumers who have received balloon payment options by the Bank",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_PAY),
+						getMakerJustification("bankconsumers", Date, "R22_NO_CON_BAL_PAY", timeperiod),
+						getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BAL_PAY", timeperiod),
+						"R22_NO_CON_BAL_PAY"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers who have received balloon payment options by the Bank during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_BAL_SPC_TP),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_BAL_SPC_TP", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_BAL_SPC_TP", timeperiod),
+				"R22_NO_CON_BAL_SPC_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers receiving debt counseling services during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_DEBT", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_DEBT", timeperiod), "R22_NO_CON_DEBT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of new Consumers onboarded (including consumers onboarded through referrals) during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_REF),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_ONB_REF", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_ONB_REF", timeperiod),
+				"R22_NO_CON_ONB_REF"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of new Consumers onboarded by Authorized Agents (including consumers onboarded through referrals) during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_ONB_AGE),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_ONB_AGE", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_ONB_AGE", timeperiod),
+				"R22_NO_CON_ONB_AGE"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers affected by Unauthorized Transactions during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_AFF_UNAU),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_AFF_UNAU", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_AFF_UNAU", timeperiod),
+				"R22_NO_CON_AFF_UNAU"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of accounts held by POD",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_OF_ACCS_POD),
+				getMakerJustification("bankconsumers", Date, "R22_NO_OF_ACCS_POD", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_OF_ACCS_POD", timeperiod),
+				"R22_NO_OF_ACCS_POD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Delinquent Consumers as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_DEL_CON),
+				getMakerJustification("bankconsumers", Date, "R22_NO_DEL_CON", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_DEL_CON", timeperiod), "R22_NO_DEL_CON"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances where consumer funds are misdirected to an incorrect account or recipient, or not reflected in the correct account, due to errors made by the LFI during the specified time period. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_INS_FUN_LFI),
+				getMakerJustification("bankconsumers", Date, "R22_NO_INS_FUN_LFI", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_INS_FUN_LFI", timeperiod),
+				"R22_NO_INS_FUN_LFI"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of customer who provided consent to waive off their cooling off periods for financing products",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_COL_FIN),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_COL_FIN", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_COL_FIN", timeperiod),
+				"R22_NO_CON_COL_FIN"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of new customers who availed the financing products",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_FIN),
+				getMakerJustification("bankconsumers", Date, "R22_TOT_NO_NEW_FIN", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_TOT_NO_NEW_FIN", timeperiod),
+				"R22_TOT_NO_NEW_FIN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of consumers which were onboarded, without signed acknowledgement of the receipt of Key Facts Statement",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_TOT_NO_NEW_NOSGN),
+				getMakerJustification("bankconsumers", Date, "R22_TOT_NO_NEW_NOSGN", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_TOT_NO_NEW_NOSGN", timeperiod),
+				"R22_TOT_NO_NEW_NOSGN"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of consumers at the start of the period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_START),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_START", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_START", timeperiod), "R22_NO_CON_START"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of new Consumers onboarded by the Bank during the specified time period",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONBO),
+						getMakerJustification("bankconsumers", Date, "R22_NO_NEW_CON_ONBO", timeperiod),
+						getCheckerJustification("bankconsumers", Date, "R22_NO_NEW_CON_ONBO", timeperiod),
+						"R22_NO_NEW_CON_ONBO"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of contactable Consumers receiving debt counselling services during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEBT_COUN),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_DEBT_COUN", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_DEBT_COUN", timeperiod),
+				"R22_NO_CON_DEBT_COUN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of consumers who become delinquent or tagged as NPA during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_DEL_NPA),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_DEL_NPA", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_DEL_NPA", timeperiod),
+				"R22_NO_CON_DEL_NPA"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers (excluding government housing schemes consumers) having DBR greater than or equal to 50% as of the specified date.",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_GOV_50),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_GOV_50", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_GOV_50", timeperiod), "R22_NO_CON_GOV_50"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of SME consumers (including Sole proprietorships)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_SME_SOLE),
+				getMakerJustification("bankconsumers", Date, "R22_NO_SME_SOLE", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_SME_SOLE", timeperiod), "R22_NO_SME_SOLE"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of consumers tagged as Vulnerable Consumers",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_TAG_VUL),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_TAG_VUL", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_TAG_VUL", timeperiod),
+				"R22_NO_CON_TAG_VUL"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of new customer onboarded in a given period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_NEW_CON_ONB_GNP),
+				getMakerJustification("bankconsumers", Date, "R22_NO_NEW_CON_ONB_GNP", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_NEW_CON_ONB_GNP", timeperiod),
+				"R22_NO_NEW_CON_ONB_GNP"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of consumers at end of the period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_END),
+				getMakerJustification("bankconsumers", Date, "R22_NO_CON_END", timeperiod),
+				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_END", timeperiod), "R22_NO_CON_END"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable3(String Date, String timeperiod) {
+		List<RT_MC_TABLE3_ENTITY> top4Rows = RT_MC_TABLE3_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE3_ENTITY> top2RowsYearly = RT_MC_TABLE3_REPO.findLastTwoReports(Date, "YEARLY");
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE3_ENTITY row : top4Rows) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE3_ENTITY row : top2RowsYearly) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SPC_TP),
+				getMakerJustification("complaints", Date, "R22_NO_COM_SPC_TP", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_SPC_TP", timeperiod), "R22_NO_COM_SPC_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints pending in court",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PEN),
+				getMakerJustification("complaints", Date, "R22_NO_COM_PEN", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_PEN", timeperiod), "R22_NO_COM_PEN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Amount of financial compensation provided to consumers as redressal for the complaints raised (AED (000's))",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_AMT_FIN_AED),
+				getMakerJustification("complaints", Date, "R22_AMT_FIN_AED", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_AMT_FIN_AED", timeperiod), "R22_AMT_FIN_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received by Bank on misleading or false advertisements such as incomplete information or improper disclosure such as annual fees/product features (excluding complaints against Authorized Agents)",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ADV_FEES),
+				getMakerJustification("complaints", Date, "R22_NO_COM_ADV_FEES", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_ADV_FEES", timeperiod), "R22_NO_COM_ADV_FEES"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints filed by People of Determination during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DET_SPC_PT),
+				getMakerJustification("complaints", Date, "R22_NO_COM_DET_SPC_PT", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_DET_SPC_PT", timeperiod),
+				"R22_NO_COM_DET_SPC_PT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints received on issues dealing with debt collection",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT),
+				getMakerJustification("complaints", Date, "R22_NO_COM_DEBT", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_DEBT", timeperiod), "R22_NO_COM_DEBT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received against Authorized Agents during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_AGNT),
+				getMakerJustification("complaints", Date, "R22_NO_COM_AGNT", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_AGNT", timeperiod), "R22_NO_COM_AGNT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints related to mis-selling by Authorized Agents during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_MISSEL),
+				getMakerJustification("complaints", Date, "R22_NO_COM_MISSEL", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_MISSEL", timeperiod), "R22_NO_COM_MISSEL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers that filed complaints during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FILCOM),
+				getMakerJustification("complaints", Date, "R22_NO_COM_FILCOM", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_FILCOM", timeperiod), "R22_NO_COM_FILCOM"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints related to fees and charges on Bank's products and services during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRO_SER),
+				getMakerJustification("complaints", Date, "R22_NO_COM_PRO_SER", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_PRO_SER", timeperiod), "R22_NO_COM_PRO_SER"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of root cause analysis conducted on the complaints associated with each of the following products during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_ASO_PROD),
+				getMakerJustification("complaints", Date, "R22_NO_ASO_PROD", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_ASO_PROD", timeperiod), "R22_NO_ASO_PROD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumer complaints received through a dedicated phone line during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_PHN),
+				getMakerJustification("complaints", Date, "R22_NO_CON_PHN", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_CON_PHN", timeperiod), "R22_NO_CON_PHN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumer complaints received through a secure web based portal system during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_WEB),
+				getMakerJustification("complaints", Date, "R22_NO_CON_WEB", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_CON_WEB", timeperiod), "R22_NO_CON_WEB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumer complaints received through the Bank's website during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_BNK),
+				getMakerJustification("complaints", Date, "R22_NO_CON_BNK", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_CON_BNK", timeperiod), "R22_NO_CON_BNK"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of outstanding complaints (unresolved complaints) during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_OUT_UNRES),
+				getMakerJustification("complaints", Date, "R22_NO_OUT_UNRES", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_OUT_UNRES", timeperiod), "R22_NO_OUT_UNRES"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints which were resolved in favor of the Consumers during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_RES_CON),
+				getMakerJustification("complaints", Date, "R22_NO_COM_RES_CON", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_RES_CON", timeperiod), "R22_NO_COM_RES_CON"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of resolved complaints after 30 days from the date of raising of complaint as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_30_COM),
+				getMakerJustification("complaints", Date, "R22_NO_RES_30_COM", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_RES_30_COM", timeperiod), "R22_NO_RES_30_COM"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Average time taken to resolve complaints during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_AVG_TME_RES_COM),
+				getMakerJustification("complaints", Date, "R22_AVG_TME_RES_COM", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_AVG_TME_RES_COM", timeperiod), "R22_AVG_TME_RES_COM"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received on staff misconduct during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_STF_MIS),
+				getMakerJustification("complaints", Date, "R22_NO_COM_STF_MIS", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_STF_MIS", timeperiod), "R22_NO_COM_STF_MIS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints filed by People of Determination Consumers on accessibility (branches, ATMs, kiosk machines, website) during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ATM_WEB),
+				getMakerJustification("complaints", Date, "R22_NO_COM_ATM_WEB", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_ATM_WEB", timeperiod), "R22_NO_COM_ATM_WEB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received by Consumers who have incurred financial loss during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FIN_LOS),
+				getMakerJustification("complaints", Date, "R22_NO_COM_FIN_LOS", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_FIN_LOS", timeperiod), "R22_NO_COM_FIN_LOS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints resolved in favor of Consumers wherein financial loss is involved during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAV_LOS),
+				getMakerJustification("complaints", Date, "R22_NO_COM_FAV_LOS", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_FAV_LOS", timeperiod), "R22_NO_COM_FAV_LOS"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints at previous reporting period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_PRV_PER),
+				getMakerJustification("complaints", Date, "R22_NO_COM_PRV_PER", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_PRV_PER", timeperiod), "R22_NO_COM_PRV_PER"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of resolved Complaints",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM),
+				getMakerJustification("complaints", Date, "R22_NO_RES_COM", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_RES_COM", timeperiod), "R22_NO_RES_COM"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of steps a consumer needs to go through to report a complaint related to loss, theft, fraud or misuse of consumer’s products and services",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_STEP_LOS),
+				getMakerJustification("complaints", Date, "R22_NO_STEP_LOS", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_STEP_LOS", timeperiod), "R22_NO_STEP_LOS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of customer complaints that evolved into legal cases during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CUST_LEGAL),
+				getMakerJustification("complaints", Date, "R22_NO_CUST_LEGAL", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_CUST_LEGAL", timeperiod), "R22_NO_CUST_LEGAL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints related to failure to provide clear contractual terms raised by consumers",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_FAIL),
+				getMakerJustification("complaints", Date, "R22_NO_COM_FAIL", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_FAIL", timeperiod), "R22_NO_COM_FAIL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"(Number of complaints related to not taking a expressed or explicit consent from consumers",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_EXP_CON),
+				getMakerJustification("complaints", Date, "R22_NO_COM_EXP_CON", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_EXP_CON", timeperiod), "R22_NO_COM_EXP_CON"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints escalated to Sanadak",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_SANA),
+				getMakerJustification("complaints", Date, "R22_NO_COM_SANA", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_SANA", timeperiod), "R22_NO_COM_SANA"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints escalated by Sanadak to CBUAE Market Conduct Supervision Department",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_CBUAE_SD),
+				getMakerJustification("complaints", Date, "R22_NO_COM_CBUAE_SD", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_CBUAE_SD", timeperiod), "R22_NO_COM_CBUAE_SD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of resolved complaints after 7 days from the date of raising the complaint as of specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_7),
+				getMakerJustification("complaints", Date, "R22_NO_RES_COM_7", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_RES_COM_7", timeperiod), "R22_NO_RES_COM_7"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of resolved complaints (excluding disputed transactions through schemes) after 15 days from the date of raising of complaint as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_RES_COM_15),
+				getMakerJustification("complaints", Date, "R22_NO_RES_COM_15", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_RES_COM_15", timeperiod), "R22_NO_RES_COM_15"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints upheld (in favour of consumer)",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_UPHEL),
+				getMakerJustification("complaints", Date, "R22_NO_COM_UPHEL", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_UPHEL", timeperiod), "R22_NO_COM_UPHEL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received against Bank's Staff during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_BNK_STF),
+				getMakerJustification("complaints", Date, "R22_NO_COM_BNK_STF", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_BNK_STF", timeperiod), "R22_NO_COM_BNK_STF"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints received against inhouse Authorized agent staff during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_INHOU),
+				getMakerJustification("complaints", Date, "R22_NO_COM_INHOU", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_INHOU", timeperiod), "R22_NO_COM_INHOU"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints acknowledged outside target time",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_ACK_TT),
+				getMakerJustification("complaints", Date, "R22_NO_COM_ACK_TT", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_ACK_TT", timeperiod), "R22_NO_COM_ACK_TT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of complaints related to Authorized agents on issues dealing with Debt Collection",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_DEBT_COLL),
+				getMakerJustification("complaints", Date, "R22_NO_COM_DEBT_COLL", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_DEBT_COLL", timeperiod),
+				"R22_NO_COM_DEBT_COLL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances of complaints or requests by consumers to change their credit rating during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_INST_CRE_RATE),
+				getMakerJustification("complaints", Date, "R22_NO_INST_CRE_RATE", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_INST_CRE_RATE", timeperiod),
+				"R22_NO_INST_CRE_RATE"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of consumer complaints due to delayed remittance",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_CON_DELAY),
+				getMakerJustification("complaints", Date, "R22_NO_CON_DELAY", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_CON_DELAY", timeperiod), "R22_NO_CON_DELAY"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints at reporting date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE3_ENTITY::getR22_NO_COM_REP_DTE),
+				getMakerJustification("complaints", Date, "R22_NO_COM_REP_DTE", timeperiod),
+				getCheckerJustification("complaints", Date, "R22_NO_COM_REP_DTE", timeperiod), "R22_NO_COM_REP_DTE"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable4(String Date, String timeperiod) {
+		List<RT_MC_TABLE4_2_ENTITY> top4Rowstable2 = RT_MC_TABLE4_2_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE4_2_ENTITY> top2RowsYearlytable2 = RT_MC_TABLE4_2_REPO.findLastTwoReports(Date, "YEARLY");
+
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE4_2_ENTITY row : top4Rowstable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE4_2_ENTITY row : top2RowsYearlytable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Average time taken to open an account for a consumer categorized as low risk (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_LWRSK),
+				getMakerJustification("retailproducts", Date, "R22_AVG_TME_LWRSK", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_TME_LWRSK", timeperiod), "R22_AVG_TME_LWRSK"));
+		pivotTable.add(new RT_MC_Manager_DTO("Average number of days taken to disburse a loan (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LOAN),
+				getMakerJustification("retailproducts", Date, "R22_AVG_NO_LOAN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_NO_LOAN", timeperiod), "R22_AVG_NO_LOAN"));
+		pivotTable.add(new RT_MC_Manager_DTO("Average number of days taken to open low risk SME accounts (days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_LWRSK_SME),
+				getMakerJustification("retailproducts", Date, "R22_AVG_NO_LWRSK_SME", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_NO_LWRSK_SME", timeperiod),
+				"R22_AVG_NO_LWRSK_SME"));
+		pivotTable.add(new RT_MC_Manager_DTO("Average number of days taken to disburse SME loans (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NO_DYS_SME),
+				getMakerJustification("retailproducts", Date, "R22_AVG_NO_DYS_SME", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_NO_DYS_SME", timeperiod),
+				"R22_AVG_NO_DYS_SME"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of requests for closure",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_CLO),
+				getMakerJustification("retailproducts", Date, "R22_NO_REQ_CLO", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_REQ_CLO", timeperiod), "R22_NO_REQ_CLO"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Product Variants during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_PRD_VAR_SPC_TP),
+				getMakerJustification("retailproducts", Date, "R22_NO_PRD_VAR_SPC_TP", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_PRD_VAR_SPC_TP", timeperiod),
+				"R22_NO_PRD_VAR_SPC_TP"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of requests for restructuring/rescheduling received during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_RES_SPT),
+				getMakerJustification("retailproducts", Date, "R22_NO_REQ_RES_SPT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_REQ_RES_SPT", timeperiod),
+				"R22_NO_REQ_RES_SPT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of requests for payment deferrals received during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_REQ_PAYDEF),
+				getMakerJustification("retailproducts", Date, "R22_NO_REQ_PAYDEF", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_REQ_PAYDEF", timeperiod), "R22_NO_REQ_PAYDEF"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Average time taken to provide Consumers with revised repayment/payment arrangement (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_REPAY),
+				getMakerJustification("retailproducts", Date, "R22_AVG_TME_REPAY", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_TME_REPAY", timeperiod), "R22_AVG_TME_REPAY"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances where Bank trangressions (errors and omissions) affected the balance reflection of Consumers",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_BAL),
+				getMakerJustification("retailproducts", Date, "R22_NO_INST_BAL", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_INST_BAL", timeperiod), "R22_NO_INST_BAL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Net Non-Interest/Profit (such as fees and commissions) earned during the specified time period (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NET_FEE_AED),
+				getMakerJustification("retailproducts", Date, "R22_NET_FEE_AED", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NET_FEE_AED", timeperiod), "R22_NET_FEE_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Net Interest/Profit earned during the specified time period (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NET_PROF_AED),
+				getMakerJustification("retailproducts", Date, "R22_NET_PROF_AED", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NET_PROF_AED", timeperiod), "R22_NET_PROF_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of accounts or loans as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_ACC_SPD),
+				getMakerJustification("retailproducts", Date, "R22_TOT_NO_ACC_SPD", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_NO_ACC_SPD", timeperiod),
+				"R22_TOT_NO_ACC_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of accounts that has been marked as Dormant Account",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_DOR),
+				getMakerJustification("retailproducts", Date, "R22_TOT_ACCS_DOR", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_ACCS_DOR", timeperiod), "R22_TOT_ACCS_DOR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of new loan given during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NEW_LOAN),
+				getMakerJustification("retailproducts", Date, "R22_TOT_NEW_LOAN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_NEW_LOAN", timeperiod), "R22_TOT_NEW_LOAN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total value associated with new loan accounts given during the specified time period (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_NEWACCS_AED),
+				getMakerJustification("retailproducts", Date, "R22_TOT_VAL_NEWACCS_AED", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_VAL_NEWACCS_AED", timeperiod),
+				"R22_TOT_VAL_NEWACCS_AED"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Total number of account or loan applications received as of the specified date",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_NO_LOAN_SPD),
+						getMakerJustification("retailproducts", Date, "R22_TOT_NO_LOAN_SPD", timeperiod),
+						getCheckerJustification("retailproducts", Date, "R22_TOT_NO_LOAN_SPD", timeperiod),
+						"R22_TOT_NO_LOAN_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total Number of request of transfer of loans from the Bank to another Bank during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_OTBNK),
+				getMakerJustification("retailproducts", Date, "R22_TOT_REQ_OTBNK", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_REQ_OTBNK", timeperiod), "R22_TOT_REQ_OTBNK"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of loans transferred from the Bank to another Bank during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_LOAN_OTBNK),
+				getMakerJustification("retailproducts", Date, "R22_TOT_LOAN_OTBNK", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_LOAN_OTBNK", timeperiod),
+				"R22_TOT_LOAN_OTBNK"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of credit card accounts where the Consumer paid only the minimum payment (instead of full outstanding amount) during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CRACC_MIN),
+				getMakerJustification("retailproducts", Date, "R22_NO_CRACC_MIN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CRACC_MIN", timeperiod), "R22_NO_CRACC_MIN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Average time taken to close an account (other than credit cards and investment accounts) (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_TME_CLSACC),
+				getMakerJustification("retailproducts", Date, "R22_AVG_TME_CLSACC", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_TME_CLSACC", timeperiod),
+				"R22_AVG_TME_CLSACC"));
+		pivotTable
+				.add(new RT_MC_Manager_DTO("Number of Consumers that received more than one (1) rescheduling of loans",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_N0_CON_MORE1_LOAN),
+						getMakerJustification("retailproducts", Date, "R22_N0_CON_MORE1_LOAN", timeperiod),
+						getCheckerJustification("retailproducts", Date, "R22_N0_CON_MORE1_LOAN", timeperiod),
+						"R22_N0_CON_MORE1_LOAN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances where Consumers terminated their business relationship (i.e., account closure) within 90 days of  opening it with the Bank during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_WITH90),
+				getMakerJustification("retailproducts", Date, "R22_NO_INST_WITH90", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_INST_WITH90", timeperiod),
+				"R22_NO_INST_WITH90"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Gross Assets",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_GROSS_ASET),
+				getMakerJustification("retailproducts", Date, "R22_TOT_GROSS_ASET", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_GROSS_ASET", timeperiod),
+				"R22_TOT_GROSS_ASET"));
+		pivotTable.add(new RT_MC_Manager_DTO("Retail Asset/ liabilitySize as of the specified date (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_RET_LIAB_AED),
+				getMakerJustification("retailproducts", Date, "R22_RET_LIAB_AED", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_RET_LIAB_AED", timeperiod), "R22_RET_LIAB_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Highest Annual Percentage Rates levied on each of the product category during the specified time period*",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_HIG_PER_PROD_CAT),
+				getMakerJustification("retailproducts", Date, "R22_HIG_PER_PROD_CAT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_HIG_PER_PROD_CAT", timeperiod),
+				"R22_HIG_PER_PROD_CAT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of accounts tagged under NPA (Non Performing Assets)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACCS_TAG_NPA),
+				getMakerJustification("retailproducts", Date, "R22_NO_ACCS_TAG_NPA", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_ACCS_TAG_NPA", timeperiod),
+				"R22_NO_ACCS_TAG_NPA"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of instances of change in fees and charges being greater than 5%",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CHG_FEE_GRT5),
+				getMakerJustification("retailproducts", Date, "R22_NO_CHG_FEE_GRT5", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CHG_FEE_GRT5", timeperiod),
+				"R22_NO_CHG_FEE_GRT5"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers with loan accounts that have flexible interest rates as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FLEX_INT),
+				getMakerJustification("retailproducts", Date, "R22_NO_CON_FLEX_INT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CON_FLEX_INT", timeperiod),
+				"R22_NO_CON_FLEX_INT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Consumers with loan accounts that have fixed interest rates as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CON_FIXED_INT),
+				getMakerJustification("retailproducts", Date, "R22_NO_CON_FIXED_INT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CON_FIXED_INT", timeperiod),
+				"R22_NO_CON_FIXED_INT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of loans disbursed prior to May 2011 as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_LOAN_MAY_2011),
+				getMakerJustification("retailproducts", Date, "R22_NO_LOAN_MAY_2011", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_LOAN_MAY_2011", timeperiod),
+				"R22_NO_LOAN_MAY_2011"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Value of Legacy Loans (loans disbursed prior to May 2011) outstanding as of the specified date (AED (000's))",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_VAL_LEGA_MAY_AED),
+				getMakerJustification("retailproducts", Date, "R22_VAL_LEGA_MAY_AED", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_VAL_LEGA_MAY_AED", timeperiod),
+				"R22_VAL_LEGA_MAY_AED"));
+		pivotTable.add(new RT_MC_Manager_DTO("Average number of days taken to issue no liability letters (Days)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_DAY_NLL),
+				getMakerJustification("retailproducts", Date, "R22_AVG_DAY_NLL", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_DAY_NLL", timeperiod), "R22_AVG_DAY_NLL"));
+		pivotTable.add(new RT_MC_Manager_DTO("Percentage of dormant accounts",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_PER_DOR_ACCS),
+				getMakerJustification("retailproducts", Date, "R22_PER_DOR_ACCS", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_PER_DOR_ACCS", timeperiod), "R22_PER_DOR_ACCS"));
+		pivotTable.add(new RT_MC_Manager_DTO("Interest income to retail portfolio",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_INT_RET_PROF),
+				getMakerJustification("retailproducts", Date, "R22_INT_RET_PROF", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_INT_RET_PROF", timeperiod), "R22_INT_RET_PROF"));
+		pivotTable.add(new RT_MC_Manager_DTO("Fees and commissions to retail portfolio",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_FEE_COMM_PROF),
+				getMakerJustification("retailproducts", Date, "R22_FEE_COMM_PROF", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_FEE_COMM_PROF", timeperiod), "R22_FEE_COMM_PROF"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total value of funds that become unclaimed (including unclaimed balances) in the last 90  days",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_UNCLM_90),
+				getMakerJustification("retailproducts", Date, "R22_TOT_UNCLM_90", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_UNCLM_90", timeperiod), "R22_TOT_UNCLM_90"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total value of unclaimed balances",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_VAL_UNBAL),
+				getMakerJustification("retailproducts", Date, "R22_TOT_VAL_UNBAL", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_VAL_UNBAL", timeperiod), "R22_TOT_VAL_UNBAL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances of contractual breaches related to consumer data protection by the Authorized Agents during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INST_CONTRACT),
+				getMakerJustification("retailproducts", Date, "R22_NO_INST_CONTRACT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_INST_CONTRACT", timeperiod),
+				"R22_NO_INST_CONTRACT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of accounts that has been marked as Dormant Account for which notice was sent to consumer",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DORACC_NOTICE),
+				getMakerJustification("retailproducts", Date, "R22_TOT_DORACC_NOTICE", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_DORACC_NOTICE", timeperiod),
+				"R22_TOT_DORACC_NOTICE"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of consumers who have been issued liability or no liability letters within 7 days of request",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CONS_LIAB_7DAY),
+				getMakerJustification("retailproducts", Date, "R22_NO_CONS_LIAB_7DAY", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CONS_LIAB_7DAY", timeperiod),
+				"R22_NO_CONS_LIAB_7DAY"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total Number of requests received from consumers for liability and no liability letters",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_REQ_LIAB_NONLIA),
+				getMakerJustification("retailproducts", Date, "R22_TOT_REQ_LIAB_NONLIA", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_REQ_LIAB_NONLIA", timeperiod),
+				"R22_TOT_REQ_LIAB_NONLIA"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of restructuring and rescheduling requests by new consumers onboarded by the Bank during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_RESTU_ONBO),
+				getMakerJustification("retailproducts", Date, "R22_NO_RESTU_ONBO", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_RESTU_ONBO", timeperiod), "R22_NO_RESTU_ONBO"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of instances of delay in  fund transfers as per  Bank policy defined TATs (other than AML reasons)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_DELAY_TAT),
+				getMakerJustification("retailproducts", Date, "R22_TOT_DELAY_TAT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_DELAY_TAT", timeperiod), "R22_TOT_DELAY_TAT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of fund transfer transactions",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_FND_TRAN),
+				getMakerJustification("retailproducts", Date, "R22_TOT_FND_TRAN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_FND_TRAN", timeperiod), "R22_TOT_FND_TRAN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances where consumer funds are retained (unless funds are in transit) for more than 24 hours",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_FUND_RET24),
+				getMakerJustification("retailproducts", Date, "R22_NO_FUND_RET24", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_FUND_RET24", timeperiod), "R22_NO_FUND_RET24"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of  failed transactions due to Bank's system or technical error",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_FAIL_TRAN),
+				getMakerJustification("retailproducts", Date, "R22_NO_FAIL_TRAN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_FAIL_TRAN", timeperiod), "R22_NO_FAIL_TRAN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of instances in which funds transferred failed to reach the beneficiary (where consumers successfully initiated transaction) during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_SPT),
+				getMakerJustification("retailproducts", Date, "R22_CUS_FND_SVF_SPT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_CUS_FND_SVF_SPT", timeperiod),
+				"R22_CUS_FND_SVF_SPT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total consumer funds (float) held in a segregated account by the SVF during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_CUS_FND_SVF_PRE),
+				getMakerJustification("retailproducts", Date, "R22_CUS_FND_SVF_PRE", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_CUS_FND_SVF_PRE", timeperiod),
+				"R22_CUS_FND_SVF_PRE"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total consumer funds (float) held in a segregated account by the SVF during the previous time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRDR_UND_SPT),
+				getMakerJustification("retailproducts", Date, "R22_TOT_CRDR_UND_SPT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_CRDR_UND_SPT", timeperiod),
+				"R22_TOT_CRDR_UND_SPT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of credit and debit cards undelivered to the consumers that have been issued during the specified period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_CRD_ISU_SPT),
+				getMakerJustification("retailproducts", Date, "R22_TOT_CRD_ISU_SPT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_CRD_ISU_SPT", timeperiod),
+				"R22_TOT_CRD_ISU_SPT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of cards issued during the specififed time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_ACC_BLK_FIN),
+				getMakerJustification("retailproducts", Date, "R22_NO_ACC_BLK_FIN", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_ACC_BLK_FIN", timeperiod),
+				"R22_NO_ACC_BLK_FIN"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of accounts blocked without informing consumers (other than AML, financial crime or regulatory reasons or if prohibited by regulatory authority)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INQ_AVL_BAL),
+				getMakerJustification("retailproducts", Date, "R22_NO_INQ_AVL_BAL", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_INQ_AVL_BAL", timeperiod),
+				"R22_NO_INQ_AVL_BAL"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of inquiries regarding the available balance in the prepaid card",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_EXP_SPT),
+				getMakerJustification("retailproducts", Date, "R22_TOT_PRE_EXP_SPT", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_PRE_EXP_SPT", timeperiod),
+				"R22_TOT_PRE_EXP_SPT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of prepaid cards having positive balance  that have expired during the specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_POS_EXP),
+				getMakerJustification("retailproducts", Date, "R22_TOT_PRE_POS_EXP", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_PRE_POS_EXP", timeperiod),
+				"R22_TOT_PRE_POS_EXP"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of prepaid cards as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_PRE_CARD_SPD),
+				getMakerJustification("retailproducts", Date, "R22_TOT_PRE_CARD_SPD", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_PRE_CARD_SPD", timeperiod),
+				"R22_TOT_PRE_CARD_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total number of Accounts as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_TOT_ACCS_SPD),
+				getMakerJustification("retailproducts", Date, "R22_TOT_ACCS_SPD", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_TOT_ACCS_SPD", timeperiod), "R22_TOT_ACCS_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of languages available through the voice response system",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_LANG_VOICE),
+				getMakerJustification("retailproducts", Date, "R22_NO_LANG_VOICE", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_LANG_VOICE", timeperiod), "R22_NO_LANG_VOICE"));
+		pivotTable.add(new RT_MC_Manager_DTO("Average number of days taken to open low risk accounts ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_AVG_NOD_LOWRSK),
+				getMakerJustification("retailproducts", Date, "R22_AVG_NOD_LOWRSK", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_AVG_NOD_LOWRSK", timeperiod),
+				"R22_AVG_NOD_LOWRSK"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of consumers who have been reissued liability letters",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_CUST_REISS_LIA),
+				getMakerJustification("retailproducts", Date, "R22_NO_CUST_REISS_LIA", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_CUST_REISS_LIA", timeperiod),
+				"R22_NO_CUST_REISS_LIA"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of instances of change in credit rating of consumers",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE4_2_ENTITY::getR22_NO_INS_CRRATE_CON),
+				getMakerJustification("retailproducts", Date, "R22_NO_INS_CRRATE_CON", timeperiod),
+				getCheckerJustification("retailproducts", Date, "R22_NO_INS_CRRATE_CON", timeperiod),
+				"R22_NO_INS_CRRATE_CON"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable5(String Date, String timeperiod) {
+		List<RT_MC_TABLE5_ENTITY> top4Rows = RT_MC_TABLE5_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE5_ENTITY> top2RowsYearly = RT_MC_TABLE5_REPO.findLastTwoReports(Date, "YEARLY");
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE5_ENTITY row : top4Rows) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE5_ENTITY row : top2RowsYearly) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumer facing employees as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_CON_EMP_SPCD),
+				getMakerJustification("bankemployee", Date, "R12_NO_CON_EMP_SPCD", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_CON_EMP_SPCD", timeperiod),
+				"R12_NO_CON_EMP_SPCD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of employees who resigned or have been dismissed from the LFI during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_LFI),
+				getMakerJustification("bankemployee", Date, "R12_NO_EMP_LFI", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_EMP_LFI", timeperiod), "R12_NO_EMP_LFI"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of employees who have been dismissed due to poor conduct/behaviour from the Bank during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_DIS_POOR),
+				getMakerJustification("bankemployee", Date, "R12_NO_DIS_POOR", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_DIS_POOR", timeperiod), "R12_NO_DIS_POOR"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances of contractual breaches by the Authorized Agents during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_CON_AGS),
+				getMakerJustification("bankemployee", Date, "R12_NO_CON_AGS", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_CON_AGS", timeperiod), "R12_NO_CON_AGS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Sales Staff Employees (including authorized agents) as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_STF_EMP),
+				getMakerJustification("bankemployee", Date, "R12_NO_SAL_STF_EMP", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_SAL_STF_EMP", timeperiod), "R12_NO_SAL_STF_EMP"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Sales Staff Employees (including authorized agents) having fixed remuneration with no variable component as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_FXD_RENUM),
+				getMakerJustification("bankemployee", Date, "R12_NO_FXD_RENUM", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_FXD_RENUM", timeperiod), "R12_NO_FXD_RENUM"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Sales Staff Employees (including authorized agents) having a variable component of their remuneration greater than or equal to 50% of their salary as of the specified date",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_SAL_REN_50),
+				getMakerJustification("bankemployee", Date, "R12_NO_SAL_REN_50", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_SAL_REN_50", timeperiod), "R12_NO_SAL_REN_50"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Average value of performance bonuses received by consumer facing employees (AED (000's))",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_AVG_BON_CON),
+				getMakerJustification("bankemployee", Date, "R12_AVG_BON_CON", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_AVG_BON_CON", timeperiod), "R12_AVG_BON_CON"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Employees Undergoing Disciplinary Actions for conduct breaches",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_EMP_DIS_ACT),
+				getMakerJustification("bankemployee", Date, "R12_NO_EMP_DIS_ACT", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_EMP_DIS_ACT", timeperiod), "R12_NO_EMP_DIS_ACT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of complaints received during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_COM_SPC_PT),
+				getMakerJustification("bankemployee", Date, "R12_NO_COM_SPC_PT", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_COM_SPC_PT", timeperiod), "R12_NO_COM_SPC_PT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of instances of breaches to the Code of Conduct of the Bank during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_INS_COC_PT),
+				getMakerJustification("bankemployee", Date, "R12_NO_INS_COC_PT", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_INS_COC_PT", timeperiod), "R12_NO_INS_COC_PT"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of whistleblower reports in the period related to conduct risk",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE5_ENTITY::getR12_NO_WSTLE_RSK),
+				getMakerJustification("bankemployee", Date, "R12_NO_WSTLE_RSK", timeperiod),
+				getCheckerJustification("bankemployee", Date, "R12_NO_WSTLE_RSK", timeperiod), "R12_NO_WSTLE_RSK"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable6(String Date, String timeperiod) {
+		List<RT_MC_TABLE6_ENTITY> top4Rows = RT_MC_TABLE6_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE6_ENTITY> top2RowsYearly = RT_MC_TABLE6_REPO.findLastTwoReports(Date, "YEARLY");
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE6_ENTITY row : top4Rows) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE6_ENTITY row : top2RowsYearly) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable
+				.add(new RT_MC_Manager_DTO("Number of trainings provided to senior management on the mentioned topics",
+						getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_NO_PRO_SNR),
+						getMakerJustification("trainings", Date, "R12_NO_PRO_SNR", timeperiod),
+						getCheckerJustification("trainings", Date, "R12_NO_PRO_SNR", timeperiod), "R12_NO_PRO_SNR"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of trainings sessions arranged for Bank employees other than Senior Management  on the mentioned topics during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_NO_TRA_SNR_SPT),
+				getMakerJustification("trainings", Date, "R12_NO_TRA_SNR_SPT", timeperiod),
+				getCheckerJustification("trainings", Date, "R12_NO_TRA_SNR_SPT", timeperiod), "R12_NO_TRA_SNR_SPT"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of consumer awareness initiatives for VC on the topic related to them",
+						getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CONS_VC),
+						getMakerJustification("trainings", Date, "R12_NO_CONS_VC", timeperiod),
+						getCheckerJustification("trainings", Date, "R12_NO_CONS_VC", timeperiod), "R12_NO_CONS_VC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of consumer awareness initiatives or campaign on the topic of frauds and scams only",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CON_FRA),
+				getMakerJustification("trainings", Date, "R12_NO_CON_FRA", timeperiod),
+				getCheckerJustification("trainings", Date, "R12_NO_CON_FRA", timeperiod), "R12_NO_CON_FRA"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of consumer awareness initiatives or campaign on market conduct issues (excluding awareness sessions on fraud) ",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_NO_CON_MRK_FRD),
+				getMakerJustification("trainings", Date, "R12_NO_CON_MRK_FRD", timeperiod),
+				getCheckerJustification("trainings", Date, "R12_NO_CON_MRK_FRD", timeperiod), "R12_NO_CON_MRK_FRD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of trainings arranged on the topic " + "consumer protection regulations"
+						+ ", issued by CBUAE",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
+				getMakerJustification("trainings", Date, "R12_TOT_CON_PRO_CBUAE", timeperiod),
+				getCheckerJustification("trainings", Date, "R12_TOT_CON_PRO_CBUAE", timeperiod),
+				"R12_TOT_CON_PRO_CBUAE"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of trainings arranged on the topic " + "Ombudsman regulations" + ", issued by CBUAE",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
+				getMakerJustification("trainings", Date, "R12_TOT_TRA_CBUAE", timeperiod),
+				getCheckerJustification("trainings", Date, "R12_TOT_TRA_CBUAE", timeperiod), "R12_TOT_TRA_CBUAE"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable7(String Date, String timeperiod) {
+		List<RT_MC_TABLE7_2_ENTITY> top4Rowstable2 = RT_MC_TABLE7_2_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE7_2_ENTITY> top2RowsYearlytable2 = RT_MC_TABLE7_2_REPO.findLastTwoReports(Date, "YEARLY");
+
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE7_2_ENTITY row : top4Rowstable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE7_2_ENTITY row : top2RowsYearlytable2) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Retail Asset Composition as of the specified date (Loan to Retail Consumers)",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTS),
+						getMakerJustification("additionalinformation", Date, "R23_RET_ASET_LTS", timeperiod),
+						getCheckerJustification("additionalinformation", Date, "R23_RET_ASET_LTS", timeperiod),
+						"R23_RET_ASET_LTS"));
+		pivotTable.add(new RT_MC_Manager_DTO("Retail Asset Composition as of the specified date (Loan to SME)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LTSME),
+				getMakerJustification("additionalinformation", Date, "R23_RET_ASET_LTSME", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_RET_ASET_LTSME", timeperiod),
+				"R23_RET_ASET_LTSME"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Retail Asset Composition as of the specified date (SME - Guarantees & Commitments )",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_SME_GUR),
+				getMakerJustification("additionalinformation", Date, "R23_RET_ASET_SME_GUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_RET_ASET_SME_GUR", timeperiod),
+				"R23_RET_ASET_SME_GUR"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Retail Asset Sales Composition - Loans disbursed to Retail Consumers - where the request application originated through digital channels such as loan application received through website or mobile application etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_LOAN_DIS),
+				getMakerJustification("additionalinformation", Date, "R23_RET_LOAN_DIS", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_RET_LOAN_DIS", timeperiod),
+				"R23_RET_LOAN_DIS"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Retail Asset Sales Composition - Loans disbursed to SME - where the request application originated through digital channels such as loan application received through website or mobile application etc.",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RET_ASET_LOAN_SME),
+				getMakerJustification("additionalinformation", Date, "R23_RET_ASET_LOAN_SME", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_RET_ASET_LOAN_SME", timeperiod),
+				"R23_RET_ASET_LOAN_SME"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Percentage of Loans / Financing disbursed to Retail Consumers - where the request application originated through digital channels such as loan application received through website or mobile application etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_LOAN_WEB),
+				getMakerJustification("additionalinformation", Date, "R23_PER_LOAN_WEB", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PER_LOAN_WEB", timeperiod),
+				"R23_PER_LOAN_WEB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Loans / Financingdisbursed to SMEs - where the request application originated through digital channels such as loan application received through website or mobile application etc.",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_LOAN_SME_WEB_MOB),
+				getMakerJustification("additionalinformation", Date, "R23_LOAN_SME_WEB_MOB", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_LOAN_SME_WEB_MOB", timeperiod),
+				"R23_LOAN_SME_WEB_MOB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Complaints received through digital channels such as complaints received through website, mobile application etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMPDIGI_MOB),
+				getMakerJustification("additionalinformation", Date, "R23_NO_COMPDIGI_MOB", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_COMPDIGI_MOB", timeperiod),
+				"R23_NO_COMPDIGI_MOB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Complaints received through traditional channels such as complaints received through call centres etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_COMP_TRADCALL),
+				getMakerJustification("additionalinformation", Date, "R23_NO_COMP_TRADCALL", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_COMP_TRADCALL", timeperiod),
+				"R23_NO_COMP_TRADCALL"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Percentage of Complaints received through digital channels such as complaints received through website, mobile application etc.",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_COMPDIGI_WEB),
+				getMakerJustification("additionalinformation", Date, "R23_PER_COMPDIGI_WEB", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PER_COMPDIGI_WEB", timeperiod),
+				"R23_PER_COMPDIGI_WEB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Percentage of Complaints received  through traditional channels such as complaints received consumer facing centers (e.g., through call centres, branches etc). ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PER_COM_TRADCALL),
+				getMakerJustification("additionalinformation", Date, "R23_PER_COM_TRADCALL", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PER_COM_TRADCALL", timeperiod),
+				"R23_PER_COM_TRADCALL"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Revenue from Retail Portfolio (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_REV_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_REV_PREV", timeperiod),
+				"R23_TOT_REV_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profits/Losses from Retail Portfolio (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOSS_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_LOSS_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_LOSS_PREV", timeperiod),
+				"R23_PROF_LOSS_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profit Margin (in percentage) from Retail Portfolio (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PORTFOLIO),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_MARG_PORTFOLIO", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_MARG_PORTFOLIO", timeperiod),
+				"R23_PROF_MARG_PORTFOLIO"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Retail Asset Size (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_PREV", timeperiod),
+				"R23_TOT_RET_ASET_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Non-Performing Loans/financing - Retail Portfolio (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NP_LOAN_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_NP_LOAN_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NP_LOAN_PREV", timeperiod),
+				"R23_NP_LOAN_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers (as on the last day of the period) (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_CON_ONLAST_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_NON_CON_ONLAST_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NON_CON_ONLAST_PREV", timeperiod),
+				"R23_NON_CON_ONLAST_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Branches (Previous Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRAN_PREV),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_BRAN_PREV", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_BRAN_PREV", timeperiod),
+				"R23_TOT_BRAN_PREV"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Revenue from Retail Portfolio (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_RET_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_REV_RET_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_REV_RET_CUR", timeperiod),
+				"R23_TOT_REV_RET_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profits/Losses from Retail Portfolio (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_PORT_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_LOS_PORT_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_LOS_PORT_CUR", timeperiod),
+				"R23_PROF_LOS_PORT_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profit Margin (in percentage) from Retail Portfolio (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_PERC_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_MARG_PERC_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_MARG_PERC_CUR", timeperiod),
+				"R23_PROF_MARG_PERC_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Retail Asset Size (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_CUR", timeperiod),
+				"R23_TOT_RET_ASET_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Non-Performing Loans/financing - Retail Portfolio (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PER_RET_PORT_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_NON_PER_RET_PORT_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NON_PER_RET_PORT_CUR", timeperiod),
+				"R23_NON_PER_RET_PORT_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers (as on the last day of the period) (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_NO_CON_LAST_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_CON_LAST_CUR", timeperiod),
+				"R23_NO_CON_LAST_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Branches (Current Year)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_CUR),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_BRANCH_CUR", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_BRANCH_CUR", timeperiod),
+				"R23_TOT_BRANCH_CUR"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Revenue from Retail Portfolio (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T1),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_REV_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_REV_T1", timeperiod),
+				"R23_TOT_REV_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profits/Losses from Retail Portfolio (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T1),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_LOS_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_LOS_T1", timeperiod),
+				"R23_PROF_LOS_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profit Margin (in percentage) from Retail Portfolio (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T1),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_MARG_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_MARG_T1", timeperiod),
+				"R23_PROF_MARG_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Retail Asset Size (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T1),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T1", timeperiod),
+				"R23_TOT_RET_ASET_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Non-Performing Loans/financing - Retail Portfolio (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T1),
+				getMakerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T1", timeperiod),
+				"R23_NON_PERF_PORT_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers (as on the last day of the period) (Next Year - T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T1),
+				getMakerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T1", timeperiod),
+				"R23_NO_CON_LAST_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Branches (Next Year -  T+1)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T1),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T1", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T1", timeperiod),
+				"R23_TOT_BRANCH_T1"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Revenue from Retail Portfolio (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T2),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_REV_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_REV_T2", timeperiod),
+				"R23_TOT_REV_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profits/Losses from Retail Portfolio (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T2),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_LOS_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_LOS_T2", timeperiod),
+				"R23_PROF_LOS_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profit Margin (in percentage) from Retail Portfolio (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T2),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_MARG_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_MARG_T2", timeperiod),
+				"R23_PROF_MARG_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Retail Asset Size (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T2),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T2", timeperiod),
+				"R23_TOT_RET_ASET_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Non-Performing Loans/financing - Retail Portfolio (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T2),
+				getMakerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T2", timeperiod),
+				"R23_NON_PERF_PORT_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers (as on the last day of the period) (Next Year - T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T2),
+				getMakerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T2", timeperiod),
+				"R23_NO_CON_LAST_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Branches (Next Year -  T+2)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T2),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T2", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T2", timeperiod),
+				"R23_TOT_BRANCH_T2"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Revenue from Retail Portfolio (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_REV_T3),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_REV_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_REV_T3", timeperiod),
+				"R23_TOT_REV_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profits/Losses from Retail Portfolio (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_LOS_T3),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_LOS_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_LOS_T3", timeperiod),
+				"R23_PROF_LOS_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Profit Margin (in percentage) from Retail Portfolio (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_PROF_MARG_T3),
+				getMakerJustification("additionalinformation", Date, "R23_PROF_MARG_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_PROF_MARG_T3", timeperiod),
+				"R23_PROF_MARG_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Retail Asset Size (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_RET_ASET_T3),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_RET_ASET_T3", timeperiod),
+				"R23_TOT_RET_ASET_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Non-Performing Loans/financing - Retail Portfolio (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NON_PERF_PORT_T3),
+				getMakerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NON_PERF_PORT_T3", timeperiod),
+				"R23_NON_PERF_PORT_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Consumers (as on the last day of the period) (Next Year - T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LAST_T3),
+				getMakerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_CON_LAST_T3", timeperiod),
+				"R23_NO_CON_LAST_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Branches (Next Year -  T+3)",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_BRANCH_T3),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T3", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_BRANCH_T3", timeperiod),
+				"R23_TOT_BRANCH_T3"));
+		pivotTable.add(new RT_MC_Manager_DTO("NPLs as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NPL_SPD),
+				getMakerJustification("additionalinformation", Date, "R23_NPL_SPD", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NPL_SPD", timeperiod), "R23_NPL_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Recoveries against NPLs / Debt Collection as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_RECO_NPL_SPD),
+				getMakerJustification("additionalinformation", Date, "R23_RECO_NPL_SPD", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_RECO_NPL_SPD", timeperiod),
+				"R23_RECO_NPL_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of new Consumers onboarded through digital channels during specified time period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_ONBO_DIGI),
+				getMakerJustification("additionalinformation", Date, "R23_NO_CON_ONBO_DIGI", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_CON_ONBO_DIGI", timeperiod),
+				"R23_NO_CON_ONBO_DIGI"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of Accounts closed during specified time period (Other than AML reason)",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_ACCS_AML),
+						getMakerJustification("additionalinformation", Date, "R23_NO_ACCS_AML", timeperiod),
+						getCheckerJustification("additionalinformation", Date, "R23_NO_ACCS_AML", timeperiod),
+						"R23_NO_ACCS_AML"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of account or loan applications rejected for new Loans / Financing or accounts applications (other than AML reasons) as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_ACC_LOAN_AML),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_ACC_LOAN_AML", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_ACC_LOAN_AML", timeperiod),
+				"R23_TOT_ACC_LOAN_AML"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of new accounts opened or new Loans / Financing disbursed as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_NEW_ACCS_SPD),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_NEW_ACCS_SPD", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_NEW_ACCS_SPD", timeperiod),
+				"R23_TOT_NEW_ACCS_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total value associated with new accounts opened or new Loans / Financing disbursed as of the specified date",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_VALS_LOANS_SPD),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_VALS_LOANS_SPD", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_VALS_LOANS_SPD", timeperiod),
+				"R23_TOT_VALS_LOANS_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Inquiries received through digital channels such as complaints received through website, mobile application etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_WEBMOB),
+				getMakerJustification("additionalinformation", Date, "R23_NO_INQ_WEBMOB", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_INQ_WEBMOB", timeperiod),
+				"R23_NO_INQ_WEBMOB"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Inquiries received through traditional channels such as complaints received consumer facing centers (e.g., through call centres, branches etc). ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_INQ_TRAD),
+				getMakerJustification("additionalinformation", Date, "R23_NO_INQ_TRAD", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_INQ_TRAD", timeperiod),
+				"R23_NO_INQ_TRAD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of retail transactions through POS terminal/Payment Gateway",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_RET_POS),
+				getMakerJustification("additionalinformation", Date, "R23_NO_RET_POS", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_RET_POS", timeperiod),
+				"R23_NO_RET_POS"));
+		pivotTable.add(new RT_MC_Manager_DTO("Amount of retail transactions through POS terminal/Payment Gateway",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_AMT_POS_GATE),
+				getMakerJustification("additionalinformation", Date, "R23_AMT_POS_GATE", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_AMT_POS_GATE", timeperiod),
+				"R23_AMT_POS_GATE"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of retail transactions through SVF Wallets of the Bank",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_TRAN_SVF_BNK),
+				getMakerJustification("additionalinformation", Date, "R23_NO_TRAN_SVF_BNK", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_NO_TRAN_SVF_BNK", timeperiod),
+				"R23_NO_TRAN_SVF_BNK"));
+		pivotTable.add(new RT_MC_Manager_DTO("Amount of retail transactions through SVF Wallets of the Bank",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_AMT_RET_SVF_BNK),
+				getMakerJustification("additionalinformation", Date, "R23_AMT_RET_SVF_BNK", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_AMT_RET_SVF_BNK", timeperiod),
+				"R23_AMT_RET_SVF_BNK"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total number of digital channels available such as website, mobile apps, online/internet banking portals, chatbots, and virtual assistants etc. ",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_TOT_WEB_MOB_VIRT),
+				getMakerJustification("additionalinformation", Date, "R23_TOT_WEB_MOB_VIRT", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_TOT_WEB_MOB_VIRT", timeperiod),
+				"R23_TOT_WEB_MOB_VIRT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Value of Unclaimed Balances (including unclaimed funds in SVF wallets, prepaid and credit cards) during the specified period",
+				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_VAL_UNCL_SVF),
+				getMakerJustification("additionalinformation", Date, "R23_VAL_UNCL_SVF", timeperiod),
+				getCheckerJustification("additionalinformation", Date, "R23_VAL_UNCL_SVF", timeperiod),
+				"R23_VAL_UNCL_SVF"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of Conusmer from countries categorised as low risk as per Bank's Policy",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_LOW_RSK),
+						getMakerJustification("additionalinformation", Date, "R23_NO_CON_LOW_RSK", timeperiod),
+						getCheckerJustification("additionalinformation", Date, "R23_NO_CON_LOW_RSK", timeperiod),
+						"R23_NO_CON_LOW_RSK"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of Conusmer from countries categorised as high risk as per Bank's Policy",
+						getSafeValue(top4Rowstable2, 3, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getSafeValue(top4Rowstable2, 2, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getSafeValue(top4Rowstable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getSafeValue(top4Rowstable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getSafeValue(top2RowsYearlytable2, 0, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getSafeValue(top2RowsYearlytable2, 1, RT_MC_TABLE7_2_ENTITY::getR23_NO_CON_HIGH_RSK),
+						getMakerJustification("additionalinformation", Date, "R23_NO_CON_HIGH_RSK", timeperiod),
+						getCheckerJustification("additionalinformation", Date, "R23_NO_CON_HIGH_RSK", timeperiod),
+						"R23_NO_CON_HIGH_RSK"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable8(String Date, String timeperiod) {
+		List<RT_MC_TABLE8_ENTITY> top4Rows = RT_MC_TABLE8_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE8_ENTITY> top2RowsYearly = RT_MC_TABLE8_REPO.findLastTwoReports(Date, "YEARLY");
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE8_ENTITY row : top4Rows) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE8_ENTITY row : top2RowsYearly) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of Retail Consumers (Conventional and Islamic) as of the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_NO_RET_CON_SPD),
+				getMakerJustification("islamicbanking", Date, "R24_NO_RET_CON_SPD", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_NO_RET_CON_SPD", timeperiod),
+				"R24_NO_RET_CON_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of Retail Consumers (Islamic) as of the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_NO_ISC_SPD),
+				getMakerJustification("islamicbanking", Date, "R24_NO_ISC_SPD", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_NO_ISC_SPD", timeperiod), "R24_NO_ISC_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Number of SME consumers (including Sole proprietorships) - Conventional and Islamic ",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_NO_SME_CON_ISC),
+				getMakerJustification("islamicbanking", Date, "R24_NO_SME_CON_ISC", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_NO_SME_CON_ISC", timeperiod),
+				"R24_NO_SME_CON_ISC"));
+		pivotTable.add(new RT_MC_Manager_DTO("Number of SME consumers (including Sole proprietorships) - Islamic ",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_NO_SME_ISC),
+				getMakerJustification("islamicbanking", Date, "R24_NO_SME_ISC", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_NO_SME_ISC", timeperiod), "R24_NO_SME_ISC"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total Number of Authorised Agents and outsourcing service providers (including services or systems outsourced to authorised agents)",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_AGE_OUT),
+				getMakerJustification("islamicbanking", Date, "R24_TOT_AGE_OUT", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_TOT_AGE_OUT", timeperiod), "R24_TOT_AGE_OUT"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Total Number of Point of Sale Terminals  during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_PONT_SALE),
+				getMakerJustification("islamicbanking", Date, "R24_TOT_PONT_SALE", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_TOT_PONT_SALE", timeperiod), "R24_TOT_PONT_SALE"));
+		pivotTable.add(new RT_MC_Manager_DTO("Total Number of Merchant tie ups  during the specified time period",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_TOT_MER_SPD),
+				getMakerJustification("islamicbanking", Date, "R24_TOT_MER_SPD", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_TOT_MER_SPD", timeperiod), "R24_TOT_MER_SPD"));
+		pivotTable.add(new RT_MC_Manager_DTO(
+				"Retail Asset/liability Size as of the specified date(Islamic Only) (AED (000's))",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_RET_SIZE_ISC_AED),
+				getMakerJustification("islamicbanking", Date, "R24_RET_SIZE_ISC_AED", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_RET_SIZE_ISC_AED", timeperiod),
+				"R24_RET_SIZE_ISC_AED"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Retail Asset Composition as of the specified date (Loan to Retail Consumers)",
+						getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LON_RET),
+						getMakerJustification("islamicbanking", Date, "R24_RET_ASSE_LON_RET", timeperiod),
+						getCheckerJustification("islamicbanking", Date, "R24_RET_ASSE_LON_RET", timeperiod),
+						"R24_RET_ASSE_LON_RET"));
+		pivotTable.add(new RT_MC_Manager_DTO("Retail Asset Composition as of the specified date (Loan to SME)",
+				getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_RET_ASSE_LOAN_SME),
+				getMakerJustification("islamicbanking", Date, "R24_RET_ASSE_LOAN_SME", timeperiod),
+				getCheckerJustification("islamicbanking", Date, "R24_RET_ASSE_LOAN_SME", timeperiod),
+				"R24_RET_ASSE_LOAN_SME"));
+		pivotTable.add(
+				new RT_MC_Manager_DTO("Number of complaints received during the specified time period (Islamic Only)",
+						getSafeValue(top4Rows, 3, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getSafeValue(top4Rows, 2, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getSafeValue(top4Rows, 1, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getSafeValue(top4Rows, 0, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getSafeValue(top2RowsYearly, 0, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getSafeValue(top2RowsYearly, 1, RT_MC_TABLE8_ENTITY::getR24_NO_COMP_ISLAMIC),
+						getMakerJustification("islamicbanking", Date, "R24_NO_COMP_ISLAMIC", timeperiod),
+						getCheckerJustification("islamicbanking", Date, "R24_NO_COMP_ISLAMIC", timeperiod),
+						"R24_NO_COMP_ISLAMIC"));
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	public Map<String, Object> getManagerViewDataTable9(String Date, String timeperiod) {
+		List<RT_MC_TABLE9_ENTITY> top4Rows = RT_MC_TABLE9_REPO.findLastFourReports(Date, "QUARTERLY");
+		List<RT_MC_TABLE9_ENTITY> top2RowsYearly = RT_MC_TABLE9_REPO.findLastTwoReports(Date, "YEARLY");
+		List<String> headerDates = new ArrayList<>();
+		List<String> yearDates = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM - yyyy");
+
+		for (RT_MC_TABLE9_ENTITY row : top4Rows) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			headerDates.add(displayDate.format(formatter));
+		}
+
+		for (RT_MC_TABLE9_ENTITY row : top2RowsYearly) {
+			Date rawDate = row.getREPORT_DATE();
+			LocalDate displayDate = new java.sql.Date(rawDate.getTime()).toLocalDate();
+			yearDates.add("Yearly - " + displayDate.format(formatter));
+		}
+
+		List<RT_MC_Manager_DTO> pivotTable = new ArrayList<>();
+
+		Map<String, Object> modelData = new HashMap<>();
+		modelData.put("headerDates", headerDates);
+		modelData.put("yearDates", yearDates);
+		modelData.put("reportRows", pivotTable);
+
+		return modelData;
+	}
+
+	private <T> Object getSafeValue(List<T> list, int index, Function<T, Object> extractor) {
+		if (list != null && index >= 0 && list.size() > index && list.get(index) != null) {
+			return extractor.apply(list.get(index));
+		}
+		return null;
 	}
 
 	public String getMakerJustification(String formMode, String reportDate, String cellName, String timeperiod) {
 		return RT_MC_DATA_RECORD_REPO.findMakerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
 				reportDate, cellName, timeperiod);
 	}
+
 	public String getCheckerJustification(String formMode, String reportDate, String cellName, String timeperiod) {
 		return RT_MC_DATA_RECORD_REPO.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
 				reportDate, cellName, timeperiod);
