@@ -84,12 +84,14 @@ public class RT_MC_TABLE_ALL_Service {
 		byte[] file = null;
 
 		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE1_Bank_Information", null,
-					"RT_MC_TABLE1", attr);
+			auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE1", "",
+					"Downloaded successfully", null);
+
 			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE2_Bank_Consumers", null,
-					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", attr);
+			auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
+					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", "", "Downloaded successfully", null);
+			
 			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode, reportDate);
 		} else if ("complaints".equalsIgnoreCase(formmode)) {
 			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null,
@@ -5971,7 +5973,7 @@ public class RT_MC_TABLE_ALL_Service {
 			screenName = "Bank Informaion - Market Conduct";
 			return screenName;
 		case "bankconsumers":
-			screenName = "Bant Consumers - Market Conduct";
+			screenName = "Bank Consumers - Market Conduct";
 			return screenName;
 		case "complaints":
 			screenName = "Complaints - Market Conduct";

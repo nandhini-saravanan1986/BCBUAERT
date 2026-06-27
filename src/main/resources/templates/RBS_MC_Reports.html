@@ -2056,6 +2056,56 @@ to {
     display: none !important;
 }
 </style>
+
+<style>
+.sys-stat-btn {
+    padding: 4px 8px;
+    cursor: pointer;
+    border: 1px solid #000;
+    background: #eee;
+}
+
+.sys-stat-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #808080;
+    z-index: 9999;
+}
+.sys-stat-overlay.sys-stat-active { display: flex; justify-content: center; align-items: center; }
+
+.sys-stat-content {
+    background: #fff;
+    width: 90%; max-width: 800px;
+    padding: 15px;
+    border: 2px solid #000;
+}
+
+.sys-stat-title { font-size: 16px; margin: 0 0 10px; border-bottom: 1px solid #000; padding-bottom: 5px; }
+
+.sys-stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+.sys-stat-table th, .sys-stat-table td {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+}
+.sys-stat-tick { color: green; }
+.sys-stat-cross { color: red; }
+
+.sys-stat-textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+</style>
+    
 </head>
 
 
@@ -2210,6 +2260,9 @@ to {
 					</button>
 				</div> -->
 				<button type="button" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}" class="role-btn" id="toggleTableBtn" onclick="toggleTable()"></button>
+				<button type="button" class="role-btn" data-toggle="modal" data-target="#tableStatusModal" onclick="fetchTableStatus()" style="padding: 8px 20px; border-radius: 4px; cursor: pointer;">
+    Signoff
+</button>
 				<!-- <div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='NO' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
 					<button class="role-btn" onclick="navigateTodatapage()">Manager View
 					</button>
@@ -18221,7 +18274,53 @@ to {
         </div>
     </div>
 </div>
+	<div class="modal fade" id="tableStatusModal" tabindex="-1"
+		role="dialog" aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered" role="document"
+			style="max-width: 1000px;">
+			<div class="modal-content"
+				style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
 
+				<div class="menu-title-header"
+					style="padding: 15px 20px; background-color: #343a40;">
+					<div class="modal-title"
+						style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
+						Sign Off</div>
+				</div>
+
+				<div class="modal-body" style="padding: 25px 30px;">
+
+					<div
+						style="padding-bottom: 5px;">
+						<h6 style="margin: 0; font-size: 13px; font-weight: 600;">
+							Verification Status: 
+						</h6>
+					</div>
+
+					<div id="statusTableContainer"
+						style="margin-bottom: 20px; overflow-x: auto;"></div>
+
+					<div style="display: flex; flex-direction: column; gap: 15px;">
+						<div>
+							<label
+								style="margin: 0 0 5px 0; font-size: 13px; font-weight: 600;">Sig Off
+								Remarks</label>
+							<textarea id="statusRemarks"
+								style="width: 100%; min-height: 80px; padding: 8px 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;"
+								placeholder="Enter remarks..."></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer"
+					style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px;">
+					<button type="button" class="role-btn" data-dismiss="modal">Close</button>
+					<button type="button" class="role-btn" id="btn-save-status">Save
+						Remarks</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
 	let formmode = /*[[${formmode}]]*/ null;
@@ -18344,6 +18443,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         const allLabel = document.createElement('label');
                         allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="background-color: initial;"> ALL`;
                         commonContent.insertBefore(allLabel, commonContent.firstChild);
+                        
+                        const naLabel = document.createElement('label');
+                        naLabel.innerHTML = `<input type="checkbox" value="Not Applicable" class="select-na-cb" style="background-color: initial;"> Not Applicable`;
+                        commonContent.insertBefore(naLabel, commonContent.children[1]);
                     }
         	    }
 
@@ -18368,6 +18471,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="accent-color: #E67E00;">ALL`;
                     content.appendChild(allLabel);
 
+                    const naLabel = document.createElement('label');
+                    naLabel.innerHTML = `<input type="checkbox" value="Not Applicable" class="select-na-cb" style="accent-color: #E67E00;">Not Applicable`;
+                    content.appendChild(naLabel);
+
         	        backendOptions.forEach(opt => {
         	            const label = document.createElement('label');
         	            label.innerHTML = `<input type="checkbox" value="${opt.value}"> <span>${opt.text}</span>`;
@@ -18379,22 +18486,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
         	        const savedValues = input.value.split(',').map(v => v.trim());
                     let checkCount = 0;
+                    let hasNA = false;
 
-        	        content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
+        	        content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => {
         	            if (savedValues.includes(cb.value)) {
                             cb.checked = true;
                             checkCount++;
                         }
         	        });
+                    
+                    const naCb = content.querySelector('.select-na-cb');
+                    if (savedValues.includes("Not Applicable") && naCb) {
+                        naCb.checked = true;
+                        hasNA = true;
+                    }
 
-                    if (checkCount === backendOptions.length && checkCount > 0) {
+                    if (checkCount === backendOptions.length && checkCount > 0 && !hasNA) {
                         content.querySelector('.select-all-cb').checked = true;
                     }
                     
-                    const dataBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):checked'));
+                    const dataBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):checked'));
                     const vals = dataBoxes.map(cb => cb.value);
                     
-                    if (vals.length === 0) {
+                    if (hasNA) {
+                        btn.innerHTML = "Not Applicable";
+                        btn.title = "Not Applicable";
+                    } else if (vals.length === 0) {
                         btn.innerHTML = " --- Select --- ";
                         btn.title = "Select";
                     } else if (vals.length === backendOptions.length && backendOptions.length > 0) {
@@ -18737,9 +18854,12 @@ if (department === 'YES') {
 		if (!content) content = document.querySelector(`.select-content[data-owner="${dropdown.id}"]`);
 
 		if (content) {
-			const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):checked'));
-            const totalBoxes = content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').length;
+			const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):checked'));
+            const totalBoxes = content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').length;
 			
+            const naCb = content.querySelector('.select-na-cb');
+            const isNaChecked = naCb && naCb.checked;
+
             const selectedValuesArray = checkedBoxes.map(cb => cb.value);
 			const commaSeparatedString = selectedValuesArray.join(', ');
             
@@ -18747,7 +18867,12 @@ if (department === 'YES') {
 			const hiddenInput = dropdown.querySelector('.backend-input');
             const allCb = content.querySelector('.select-all-cb');
 
-			if (selectedValuesArray.length === 0) {
+            if (isNaChecked) {
+                btn.innerText = "Not Applicable";
+				btn.title = "Not Applicable";
+				if(hiddenInput) hiddenInput.value = "Not Applicable"; 
+                if(allCb) allCb.checked = false;
+            } else if (selectedValuesArray.length === 0) {
 				btn.innerText = " --- Select --- ";
 				btn.title = "Select";
 				if(hiddenInput) hiddenInput.value = ""; 
@@ -18778,12 +18903,28 @@ if (department === 'YES') {
 			if (!dropdown) return;
 
             const isAllCb = e.target.classList.contains('select-all-cb');
+            const isNaCb = e.target.classList.contains('select-na-cb');
             const isChecked = e.target.checked;
 
-            if (isAllCb) {
+            if (isAllCb && isChecked) {
                 content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
-                    cb.checked = isChecked;
+                    if (cb.classList.contains('select-na-cb')) {
+                        cb.checked = false;
+                    } else {
+                        cb.checked = true;
+                    }
                 });
+            } else if (isAllCb && !isChecked) {
+                content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => {
+                    cb.checked = false;
+                });
+            } else if (isNaCb && isChecked) {
+                content.querySelectorAll('input[type="checkbox"]:not(.select-na-cb)').forEach(cb => {
+                    cb.checked = false;
+                });
+            } else if (!isAllCb && !isNaCb && isChecked) {
+                const naCb = content.querySelector('.select-na-cb');
+                if (naCb) naCb.checked = false;
             }
 			
 			if (dropdown.id === 'common-dropdown') {
@@ -18797,14 +18938,27 @@ if (department === 'YES') {
 						if (!cellContent) cellContent = document.querySelector(`.select-content[data-owner="${cellDropdown.id}"]`);
 						
 						if (cellContent) {
-                            if (isAllCb) {
-                                cellContent.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                                    cb.checked = isChecked;
+                            if (isAllCb && isChecked) {
+                                cellContent.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
+                                    if (cb.classList.contains('select-na-cb')) cb.checked = false;
+                                    else cb.checked = true;
                                 });
+                            } else if (isAllCb && !isChecked) {
+                                cellContent.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => cb.checked = false);
+                            } else if (isNaCb && isChecked) {
+                                cellContent.querySelectorAll('input[type="checkbox"]:not(.select-na-cb)').forEach(cb => cb.checked = false);
+                                const cellNaCb = cellContent.querySelector('.select-na-cb');
+                                if (cellNaCb) cellNaCb.checked = true;
+                            } else if (isNaCb && !isChecked) {
+                                const cellNaCb = cellContent.querySelector('.select-na-cb');
+                                if (cellNaCb) cellNaCb.checked = false;
                             } else {
                                 const cellCheckbox = cellContent.querySelector(`input[value="${valueChanged}"]`);
-                                if (cellCheckbox) {
-                                    cellCheckbox.checked = isChecked;
+                                if (cellCheckbox) cellCheckbox.checked = isChecked;
+                                
+                                if (isChecked) {
+                                    const cellNaCb = cellContent.querySelector('.select-na-cb');
+                                    if (cellNaCb) cellNaCb.checked = false;
                                 }
                             }
 							updateDropdownUI(cellDropdown);
@@ -20063,7 +20217,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                 
                                 if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
                                 if(document.getElementById('modal-source-val')) document.getElementById('modal-source-val').value = '';
-                            
+                                const checkerJust = document.getElementById('modal-checker-justification-val');
+                                if (checkerJust) {
+                                    checkerJust.value = "";
+                                    checkerJust.readOnly = !isChecker;
+                                }
                                 const remarksContainer = document.getElementById('remarks-container');
                                 const remarksInput = document.getElementById('modal-remarks-val');
                                 
@@ -20412,75 +20570,99 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (deptValidation !== 'YES') {
+    	
+    	let ptReportData1 = /*[[${deptreportlist}]]*/ null;
+    	let ptReportData2 = /*[[${deptreportlist2}]]*/ null;
+
+    	if (Array.isArray(ptReportData1) && ptReportData1.length > 0) {
+    	    ptReportData1 = ptReportData1[0];
+    	}
+
+    	if (Array.isArray(ptReportData2) && ptReportData2.length > 0) {
+    	    ptReportData2 = ptReportData2[0];
+    	}
+    	
     	const flagUrl = `./fetchallverifyflags?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&timeperiod=${encodeURIComponent(timeperiod)}`;
-        
-        fetch(flagUrl)
+    	console.log("ptReportData1 =", ptReportData1);
+    	console.log("ptReportData2 =", ptReportData2);
+    	fetch(flagUrl)
+    	fetch(flagUrl)
         .then(response => {
             if (!response.ok) throw new Error("Could not fetch verification flags");
             return response.json();
         })
         .then(flagData => {
-        	const allInputs = document.querySelectorAll(
-        		    '.input-and-select:not(.remarks-input), .manager-verify-cell'
-        		);
-            let allGreen = true; 
-            if (allInputs.length === 0) allGreen = false;
+            const stylingInputs = document.querySelectorAll('.input-and-select:not(.remarks-input), .manager-verify-cell');
+            const validationInputs = document.querySelectorAll('.input-and-select:not(.remarks-input)');
             
             let isReadyForManager = true; 
-            let hasMR = false;
-            if (allInputs.length === 0) isReadyForManager = false;
+            if (validationInputs.length === 0) isReadyForManager = false;
             
-            allInputs.forEach(input => {
+            const isCellNotApplicable = (element) => {
+                const keysToTest = [element.getAttribute('data-cellname'), element.name, element.id].filter(k => k);
+                const checkConfig = (configData) => {
+                    if (!configData) return false;
+                    for (let testKey of keysToTest) {
+                        const fieldClean = testKey.trim().toLowerCase();
+                        const actualKey = Object.keys(configData).find(key => key.trim().toLowerCase() === fieldClean);
+                        if (actualKey && configData[actualKey]) {
+                            const rawVal = String(configData[actualKey]).toLowerCase();
+                            if (rawVal.includes('not applicable') || rawVal === 'na' || rawVal === 'n/a') return true;
+                        }
+                    }
+                    return false;
+                };
+                return checkConfig(ptReportData1) || checkConfig(ptReportData2);
+            };
+
+            stylingInputs.forEach(input => {
                 const cellName = input.getAttribute('data-cellname') || input.name || input.id;
+                if (!cellName) return;
                 const flag = flagData[cellName];
+                const isNA = isCellNotApplicable(input);
                 
-                if (flag === 'Y') {
-                    input.style.backgroundColor = '#5cb85c'; 
-                    input.style.color = '#ffffff'; 
-                    input.style.border = '1px solid #4cae4c';
-                    input.title = "Verified by Checker";
-                } else if (flag === 'MR') {
-                    input.style.backgroundColor = '#f0ad4e';
-                    input.style.color = '#ffffff'; 
+                if (flag === 'MR') {
+                    input.style.backgroundColor = '#f0ad4e'; 
+                    input.style.color = '#ffffff';
                     input.style.border = '1px solid #eea236';
                     input.title = "Marked for Revision by Manager";
-                    hasMR = true; 
                     input.classList.add('already-mr');
-                } else {                   
+                } else if (isNA) {
+                    input.title = "Not Applicable - Treated as Verified";
+                    input.style.backgroundColor = '#6c757d'; 
+                    input.style.color = '#ffffff';
+                    input.style.border = '1px solid #5a6268';
+                } else if (flag === 'Y') {
+                    input.style.backgroundColor = '#5cb85c'; 
+                    input.style.color = '#ffffff';
+                    input.style.border = '1px solid #4cae4c';
+                    input.title = "Verified by Checker";
+                } else if (flag === 'N') {
+                    input.style.backgroundColor = '#d9534f';
+                    input.style.color = '#ffffff';
+                    input.style.border = '1px solid #d43f3a';
+                    input.title = "Reverted by Checker";
+                }
+            });
+
+            validationInputs.forEach(input => {
+                const cellName = input.getAttribute('data-cellname') || input.name || input.id;
+                const flag = flagData[cellName];
+                const isNA = isCellNotApplicable(input);
+
+                if (!isNA && (flag !== 'Y' && flag !== 'MR')) {
                     isReadyForManager = false;
-                    if (flag === 'N') {
-                        input.style.backgroundColor = '#d9534f';
-                        input.style.color = '#ffffff'; 
-                        input.style.border = '1px solid #d43f3a';
-                        input.title = "Reverted by Checker";
-                    }
+                    console.log("Verify Blocked by Input:", cellName, "Flag:", flag);
                 }
             });
 
             const managerVerifyBtn = document.getElementById('verifyBtn');
-            const checkerRemarksBtn = document.getElementById('checkerRemarksBtn');
-
             if (managerVerifyBtn) {
-                if (isReadyForManager) {
-                    managerVerifyBtn.style.display = 'inline-block';
-                } else {
-                    managerVerifyBtn.style.display = 'none';
-                }
-            }
-
-            if (checkerRemarksBtn) {
-                checkerRemarksBtn.addEventListener('click', function() {
-                    document.getElementById('mgr-modal-title').innerText = "Manager Remarks";
-                    document.getElementById('mgr-remarks-val').readOnly = true;
-                    document.getElementById('mgr-selection-block').style.display = 'none';
-                    document.getElementById('mgr-modal-footer').style.display = 'none';
-                    $('#managerActionModal').modal('show');
-                });
+                managerVerifyBtn.style.display = isReadyForManager ? 'inline-block' : 'none';
             }
         })
-        .catch(err => {
-            console.log("Flag styling skipped: ", err);
-        });
+        .catch(err => console.log("Flag styling skipped: ", err));
+       
     }
     let selectedMrCells = [];
     window.isMgrSelecting = false;
@@ -21359,6 +21541,55 @@ function toggleTable() {
         toggleBtn.innerText = 'M/C View';
     }
 }
+</script>
+<script>
+    async function fetchTableStatus() {
+        const container = document.getElementById('statusTableContainer');
+        
+        container.innerHTML = '<div style="text-align: center; font-size: 13px; color: #6c757d; padding: 20px 0;">Loading status data...</div>';
+
+        try {
+            const response = await fetch('./signofftablestatus');
+            if (!response.ok) throw new Error('Network response error');
+            
+            const data = await response.json();
+            
+            let theadHtml = '<tr>';
+            let tbodyHtml = '<tr>';
+
+            data.forEach(status => {
+                const isTick = status.flag === 'Y';
+                const iconColor = isTick ? '#28a745' : '#dc3545'; 
+                const iconCode = isTick ? '&#10004;' : '&#10008;';
+
+                theadHtml += `
+                    <th style="font-size: 11px; font-weight: 600; color: #495057; background-color: #f8f9fa; padding: 8px 4px; text-align: center; vertical-align: middle; border: 1px solid #dee2e6;">
+                        ${status.tableName}
+                    </th>`;
+                    
+                tbodyHtml += `
+                    <td style="font-size: 18px; color: ${iconColor}; padding: 6px 4px; text-align: center; vertical-align: middle; border: 1px solid #dee2e6;">
+                        ${iconCode}
+                    </td>`;
+            });
+
+            theadHtml += '</tr>';
+            tbodyHtml += '</tr>';
+
+            const tableHtml = `
+                <table class="table table-bordered" style="margin: 0; width: 100%; border-collapse: collapse;">
+                    <thead>${theadHtml}</thead>
+                    <tbody>${tbodyHtml}</tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+            
+        } catch (error) {
+            container.innerHTML = '<div style="text-align: center; font-size: 13px; color: #dc3545; padding: 20px 0;">Failed to fetch table data.</div>';
+            console.error('Error fetching table status:', error);
+        }
+    }
 </script>
 </body>
 </html>

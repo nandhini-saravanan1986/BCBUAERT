@@ -7757,11 +7757,13 @@ System.out.println("sixe==="+excelData.length);
 
 					if (rowsAffected == 0) {
 						RT_MC_DATA_RECORD_ENTITY newRecord = new RT_MC_DATA_RECORD_ENTITY();
+						BigDecimal currentMaxId = rT_MC_DATA_RECORD_REPO.findMaxId();
+						newRecord.setId(currentMaxId.add(BigDecimal.ONE));
 						newRecord.setFormMode(formMode);
 						newRecord.setReportDate(reportDate);
 						newRecord.setCellName(cellName);
 						newRecord.setVerifyFlg("MR");
-
+						newRecord.setTimeperiod(timeperiod);
 						rT_MC_DATA_RECORD_REPO.save(newRecord);
 					}
 				}
@@ -8029,4 +8031,32 @@ System.out.println("sixe==="+excelData.length);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	@GetMapping("/signofftablestatus")
+    public ResponseEntity<List<Map<String, Object>>> getSystemStatus() {
+        List<Map<String, Object>> tableStatuses = new ArrayList<>();
+
+        addTableStatus(tableStatuses, "Bank Informaion", "Y");
+        addTableStatus(tableStatuses, "Bank Consumers", "Y"); 
+        addTableStatus(tableStatuses, "Complaints", "N");
+        addTableStatus(tableStatuses, "Retail Products", "Y"); 
+        addTableStatus(tableStatuses, "Bank Employee", "N");
+        addTableStatus(tableStatuses, "Trainings", "Y"); 
+        addTableStatus(tableStatuses, "Additional Informaion", "Y");
+        addTableStatus(tableStatuses, "Islamic Banking", "Y");
+
+        boolean includeTable9 = true; 
+        if (includeTable9) {
+            addTableStatus(tableStatuses, "Conduct Cultureassessment", "N");
+        }
+
+        return ResponseEntity.ok(tableStatuses);
+    }
+
+    private void addTableStatus(List<Map<String, Object>> list, String tableName, String flag) {
+        Map<String, Object> statusMap = new HashMap<>();
+        statusMap.put("tableName", tableName);
+        statusMap.put("flag", flag);
+        list.add(statusMap);
+    }
+    
 }
