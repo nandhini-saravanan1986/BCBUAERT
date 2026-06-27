@@ -513,6 +513,15 @@ public class RT_MC_TABLE1_ENTITY {
 	public String VERIFY_FLG;
 	public String VERIFY_USERID;
 	public String REMARKS;
+	public String SIGNOFF_REMARKS;
+
+	public String getSIGNOFF_REMARKS() {
+		return SIGNOFF_REMARKS;
+	}
+
+	public void setSIGNOFF_REMARKS(String sIGNOFF_REMARKS) {
+		SIGNOFF_REMARKS = sIGNOFF_REMARKS;
+	}
 
 	public String getREMARKS() {
 		return REMARKS;

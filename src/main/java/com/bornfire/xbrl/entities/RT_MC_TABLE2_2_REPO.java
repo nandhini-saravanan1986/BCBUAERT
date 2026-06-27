@@ -44,4 +44,13 @@ public interface RT_MC_TABLE2_2_REPO extends JpaRepository<RT_MC_TABLE2_2_ENTITY
 			+ " ORDER BY REPORT_DATE DESC", nativeQuery = true)
 	List<RT_MC_TABLE2_2_ENTITY> findLastTwoReports(@Param("reportDate") String reportDate,
 			@Param("timeperiod") String timeperiod);
+	
+	@Modifying
+	@Transactional
+	@Query("UPDATE RT_MC_TABLE2_2_ENTITY r SET r.ENTITY_FLG = :entityFlg, r.SIGNOFF_REMARKS = :signoffremarks "
+			+ "WHERE r.REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND r.BRANCH_CODE = :timeperiod")
+	int updateEntityFlgAndSignOffRemarks(@Param("entityFlg") String entityFlg,
+			@Param("signoffremarks") String signoffremarks, @Param("reportDate") String reportDate,
+			@Param("timeperiod") String timeperiod);
+	
 }

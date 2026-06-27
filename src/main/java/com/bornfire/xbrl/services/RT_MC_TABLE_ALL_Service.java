@@ -79,69 +79,12 @@ public class RT_MC_TABLE_ALL_Service {
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
 	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate, String userid, ServletRequestAttributes attr) throws Exception {
-
-		byte[] file = null;
-
-		if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null) {
-			auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE1", "",
-					"Downloaded successfully", null);
-
-			file = GenerateTable_1_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
-			auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
-					"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", "", "Downloaded successfully", null);
-			
-			file = GenerateTable_2_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("complaints".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE3_Complaints", null,
-					"RT_MC_TABLE3", attr);
-			file = GenerateTable_3_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("retailproducts".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE4_Retail_Products", null,
-					"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", attr);
-			file = GenerateTable_4_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("bankemployee".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE5_Bank_Employee", null,
-					"RT_MC_TABLE5", attr);
-			file = GenerateTable_5_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("trainings".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE6_Trainings", null,
-					"RT_MC_TABLE6", attr);
-			file = GenerateTable_6_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE7_Additional_Information", null,
-					"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", attr);
-			file = GenerateTable_7_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE8_Islamic_Banking", null,
-					"RT_MC_TABLE8", attr);
-			file = GenerateTable_8_Excel(branch, jobId, progressMap, formmode, reportDate);
-		} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-			auditservice.createBusinessAuditbackground(userid, "DOWNLOAD", "RBS_MC_TABLE9_Conduct_Culture_Assessment",
-					null, "RT_MC_TABLE9", attr);
-			file = GenerateTable_9_Excel(branch, jobId, progressMap, formmode, reportDate);
-		}
-
-		return file;
-	}
-
-	public byte[] GenerateTable_1_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
-		logger.info("Service: Starting Excel generation process in memory.");
-
-		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
-		}
+			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated) throws Exception {
 		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_1.xlsx";
-		System.out.println(templateFileName);
 		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
+		System.out.println("Report Date : "+reportDate);
+		System.out.println("Branch : "+branch);
+		System.out.println("Consolidated : "+isConsolidated);
 		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
 
 		if (!Files.exists(templatePath)) {
@@ -155,6 +98,75 @@ public class RT_MC_TABLE_ALL_Service {
 		try (InputStream templateInputStream = Files.newInputStream(templatePath);
 				Workbook workbook = WorkbookFactory.create(templateInputStream);
 				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			if ("YES".equalsIgnoreCase(isConsolidated)) {				
+				GenerateTable_1_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("CONSOLIDATED DOWNLOAD", reportDate, screenName(formmode), "ALL_RBS_MC_TABLES", "",
+						"Downloaded successfully", null);
+			} else if ("bankinformation".equalsIgnoreCase(formmode)) {
+				GenerateTable_1_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE1", "",
+						"Downloaded successfully", null);
+
+			} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
+				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
+						"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", "", "Downloaded successfully", null);
+
+			} else if ("complaints".equalsIgnoreCase(formmode)) {
+				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE3", "",
+						"Downloaded successfully", null);
+			} else if ("retailproducts".equalsIgnoreCase(formmode)) {
+				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
+						"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", "", "Downloaded successfully", null);
+			} else if ("bankemployee".equalsIgnoreCase(formmode)) {
+				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE5", "",
+						"Downloaded successfully", null);
+			} else if ("trainings".equalsIgnoreCase(formmode)) {
+				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE6", "",
+						"Downloaded successfully", null);
+			} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
+				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
+						"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", "", "Downloaded successfully", null);
+			} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
+				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE8", "",
+						"Downloaded successfully", null);
+			} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
+				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE9", "",
+						"Downloaded successfully", null);
+			}
+			workbook.write(out);
+			return out.toByteArray();
+		}
+	}
+
+	public void GenerateTable_1_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+			String reportDate) throws Exception {
+		logger.info("Service: Starting Excel generation process in memory.");
+
+		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+
+		if (dataList.isEmpty()) {
+			logger.warn("Service: No data found for MC report. Returning empty result.");
+			return;
+		}
+		
+		try {
 
 			Sheet sheet = workbook.getSheetAt(3);
 
@@ -234,17 +246,14 @@ public class RT_MC_TABLE_ALL_Service {
 			} else {
 
 			}
-
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+		
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_2_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_2_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -253,27 +262,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_2.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try{
 
 			Sheet sheet = workbook.getSheetAt(4);
 
@@ -1376,16 +1368,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_3_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_3_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -1393,27 +1383,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_3.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
+		
 
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		try  {
 
 			Sheet sheet = workbook.getSheetAt(5);
 
@@ -2239,16 +2213,13 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_4_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_4_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -2257,27 +2228,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_2.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try {
 
 			Sheet sheet = workbook.getSheetAt(6);
 
@@ -3485,16 +3439,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_5_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_5_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -3502,27 +3454,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_3.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try  {
 
 			Sheet sheet = workbook.getSheetAt(7);
 
@@ -3652,17 +3587,14 @@ public class RT_MC_TABLE_ALL_Service {
 			} else {
 
 			}
-
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_6_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_6_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -3670,27 +3602,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_3.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try {
 
 			Sheet sheet = workbook.getSheetAt(8);
 
@@ -3814,16 +3729,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_7_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_7_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -3832,27 +3745,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_2.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try {
 
 			Sheet sheet = workbook.getSheetAt(9);
 
@@ -4570,16 +4466,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_8_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_8_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -4587,27 +4481,11 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_1.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
+		
 
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		try{
 
 			Sheet sheet = workbook.getSheetAt(10);
 
@@ -4886,16 +4764,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+		
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	public byte[] GenerateTable_9_Excel(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
+	public void GenerateTable_9_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
@@ -4903,27 +4779,10 @@ public class RT_MC_TABLE_ALL_Service {
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return new byte[0];
+			return;
 		}
-		String templateDir = env.getProperty("output.exportpathtemp");
-		// String templateFileName = "Table_1.xlsx";
-		System.out.println(templateFileName);
-		Path templatePath = Paths.get(templateDir, templateFileName);
-		System.out.println(templatePath);
-
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-		if (!Files.exists(templatePath)) {
-			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-		}
-		if (!Files.isReadable(templatePath)) {
-			throw new SecurityException(
-					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
-		}
-
-		try (InputStream templateInputStream = Files.newInputStream(templatePath);
-				Workbook workbook = WorkbookFactory.create(templateInputStream);
-				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		
+		try {
 
 			Sheet sheet = workbook.getSheetAt(11);
 
@@ -5142,25 +5001,14 @@ public class RT_MC_TABLE_ALL_Service {
 
 			}
 
-			workbook.write(out);
+			
 
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
 
-	/*
-	 * private void updateCellPreserveStyle(Row row, int colIndex, Object value,
-	 * String formatStr, CreationHelper helper) { Cell cell = (row.getCell(colIndex)
-	 * != null) ? row.getCell(colIndex) : row.createCell(colIndex); CellStyle style
-	 * = cell.getCellStyle(); if (value != null && formatStr != null) {
-	 * style.setDataFormat(helper.createDataFormat().getFormat(formatStr));
-	 * cell.setCellStyle(style); } if (value == null) { cell.setCellValue(""); }
-	 * else if (value instanceof Number) { cell.setCellValue(((Number)
-	 * value).doubleValue()); } else { cell.setCellValue(value.toString()); } }
-	 */
 	private void updateCellPreserveStyle(Row row, int colIndex, Object value, String formatStr, CreationHelper helper) {
 		Cell cell = (row.getCell(colIndex) != null) ? row.getCell(colIndex) : row.createCell(colIndex);
 
@@ -9133,6 +8981,31 @@ public class RT_MC_TABLE_ALL_Service {
 	public String getCheckerJustification(String formMode, String reportDate, String cellName, String timeperiod) {
 		return RT_MC_DATA_RECORD_REPO.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
 				reportDate, cellName, timeperiod);
+	}
+
+	public void saveSignOffRemarks(String reportDate, String timeperiod, String remarks) {
+		int rows_updated = 0;
+		rows_updated += RT_MC_TABLE1_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE2_1_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+		rows_updated += RT_MC_TABLE2_2_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+		
+		rows_updated += RT_MC_TABLE3_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE4_1_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+		rows_updated += RT_MC_TABLE4_2_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE5_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE6_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE7_1_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+		rows_updated += RT_MC_TABLE7_2_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE8_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+
+		rows_updated += RT_MC_TABLE9_REPO.updateEntityFlgAndSignOffRemarks("Y", remarks, reportDate, timeperiod);
+		System.out.println("No of row Updated in Sign Of : "+rows_updated);
 	}
 
 }

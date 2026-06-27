@@ -45,5 +45,15 @@ public interface RT_MC_TABLE1_REPO extends JpaRepository<RT_MC_TABLE1_ENTITY, MC
 	List<RT_MC_TABLE1_ENTITY> findLastTwoReports(@Param("reportDate") String reportDate,
 			@Param("timeperiod") String timeperiod);
 
+	@Modifying
+	@Transactional
+	@Query("UPDATE RT_MC_TABLE1_ENTITY r SET r.ENTITY_FLG = :entityFlg, r.SIGNOFF_REMARKS = :signoffremarks "
+			+ "WHERE r.REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND r.BRANCH_CODE = :timeperiod")
+	int updateEntityFlgAndSignOffRemarks(@Param("entityFlg") String entityFlg,
+			@Param("signoffremarks") String signoffremarks, @Param("reportDate") String reportDate,
+			@Param("timeperiod") String timeperiod);
+	
+	@Query(value = "SELECT SIGNOFF_REMARKS FROM RT_MC_TABLE1 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE = :branchCode ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
+	String findSignOffRemarks(@Param("reportDate") String reportDate, @Param("branchCode") String branchCode);
 	
 }

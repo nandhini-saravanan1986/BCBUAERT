@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -15,14 +16,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "RT_MC_DATA_RECORD")
+@IdClass(MCReportDataRecordId.class)
 public class RT_MC_DATA_RECORD_ENTITY {
-	@Id
 	@Column(name = "ID")
 	private BigDecimal id;
 
+	@Id
 	@Column(name = "FORM_MODE")
 	private String formMode;
 
+	@Id
 	@Temporal(TemporalType.DATE)
 	@Column(name = "REPORT_DATE")
 	private Date reportDate;
@@ -39,6 +42,7 @@ public class RT_MC_DATA_RECORD_ENTITY {
 	@Column(name = "ROW_COL2_VALUE")
 	private String rowCol2Value;
 
+	@Id
 	@Column(name = "CELL_NAME")
 	private String cellName;
 
@@ -61,6 +65,7 @@ public class RT_MC_DATA_RECORD_ENTITY {
 	@Column(name = "REMARKS")
 	private String remarks;
 
+	@Id
 	@Column(name = "TIMEPERIOD")
 	private String timeperiod;
 

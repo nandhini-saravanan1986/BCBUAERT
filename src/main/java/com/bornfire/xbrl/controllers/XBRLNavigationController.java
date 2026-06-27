@@ -721,6 +721,9 @@ public class XBRLNavigationController {
 		md.addAttribute("ROLEIDAC", ROLEIDAC);
 		md.addAttribute("loginuserid", loginuserid);
 
+		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing");
+		md.addAttribute("md", dropdownOptions);
+		
 		if (formmode == null || formmode.equals("list")) {
 			md.addAttribute("formmode", "list");
 			md.addAttribute("userProfiles", loginServices.getUsersList());
@@ -5963,7 +5966,7 @@ System.out.println("sixe==="+excelData.length);
 		} else {
 			md.addAttribute("BRANCHCODE", branch);
 		}
-		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations");
+		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing");
 		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
 		if(reportDate == null || reportDate.isEmpty()) {
@@ -6734,14 +6737,14 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/startMcReportJob")
 	@ResponseBody
-	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,@RequestParam("reportDate") String reportDate,HttpServletRequest req) {
+	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,@RequestParam("reportDate") String reportDate,@RequestParam("isConsolidated") String isConsolidated,HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
 			try {				
 				String userid = (String) req.getSession().getAttribute("USERID");
-				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,reportDate,userid,attr);
+				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,reportDate,userid,attr,isConsolidated);
 				System.out.println("File : "+((fileData==null)?"fail":"pass"));
 				System.out.println("Formmode : "+formmode);
 				newTaskFileStore.put(jobId, fileData);
@@ -8032,24 +8035,33 @@ System.out.println("sixe==="+excelData.length);
 		}
 	}
 	@GetMapping("/signofftablestatus")
-    public ResponseEntity<List<Map<String, Object>>> getSystemStatus() {
+	public ResponseEntity<Map<String, Object>> getSystemStatus(
+            @RequestParam(required = false) String reportDate,
+            @RequestParam(required = false) String timePeriod) {
         List<Map<String, Object>> tableStatuses = new ArrayList<>();
 
-        addTableStatus(tableStatuses, "Bank Informaion", "Y");
-        addTableStatus(tableStatuses, "Bank Consumers", "Y"); 
-        addTableStatus(tableStatuses, "Complaints", "N");
-        addTableStatus(tableStatuses, "Retail Products", "Y"); 
-        addTableStatus(tableStatuses, "Bank Employee", "N");
-        addTableStatus(tableStatuses, "Trainings", "Y"); 
-        addTableStatus(tableStatuses, "Additional Informaion", "Y");
-        addTableStatus(tableStatuses, "Islamic Banking", "Y");
+        addTableStatus(tableStatuses, "Bank Informaion", RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
+        addTableStatus(tableStatuses, "Bank Consumers", RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG()); 
+        addTableStatus(tableStatuses, "Complaints", RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
+        addTableStatus(tableStatuses, "Retail Products", RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG()); 
+        addTableStatus(tableStatuses, "Bank Employee", RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
+        addTableStatus(tableStatuses, "Trainings", RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG()); 
+        addTableStatus(tableStatuses, "Additional Informaion", RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
+        addTableStatus(tableStatuses, "Islamic Banking", RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
 
-        boolean includeTable9 = true; 
-        if (includeTable9) {
-            addTableStatus(tableStatuses, "Conduct Cultureassessment", "N");
+        if (timePeriod=="YEARLY") {
+            addTableStatus(tableStatuses, "Conduct Cultureassessment", RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
         }
-
-        return ResponseEntity.ok(tableStatuses);
+        String savedRemarks = RT_MC_TABLE1_REPO.findSignOffRemarks(reportDate,timePeriod);
+        if (savedRemarks == null) {
+            savedRemarks = ""; 
+        }
+        
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("statuses", tableStatuses);
+        responseData.put("remarks", savedRemarks);
+        
+        return ResponseEntity.ok(responseData); 
     }
 
     private void addTableStatus(List<Map<String, Object>> list, String tableName, String flag) {
@@ -8058,5 +8070,28 @@ System.out.println("sixe==="+excelData.length);
         statusMap.put("flag", flag);
         list.add(statusMap);
     }
+    @PostMapping("/signoffsave")
+    public ResponseEntity<?> saveSystemStatusRemarks(@RequestBody Map<String, String> payload) {
+        
+        String reportDate = payload.get("reportDate");
+        String timePeriod = payload.get("timePeriod");
+        String remarks = payload.get("remarks");
+
+        try {
+             rT_MC_TABLE_Service.saveSignOffRemarks(reportDate, timePeriod, remarks);
+            
+            System.out.println("Received Report Date: " + reportDate);
+            System.out.println("Received Time Period: " + timePeriod);
+            System.out.println("Received Remarks: " + remarks);
+
+            return ResponseEntity.ok().body("{\"message\": \"Saved successfully\"}");
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("{\"error\": \"Failed to save remarks\"}");
+		}
+    }
+    
     
 }
