@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_ENTITY, BigDecimal> {
+public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_ENTITY, MCReportDataRecordId> {
 
 	@Query("SELECT COALESCE(MAX(r.id), 0) FROM RT_MC_DATA_RECORD_ENTITY r")
 	BigDecimal findMaxId();

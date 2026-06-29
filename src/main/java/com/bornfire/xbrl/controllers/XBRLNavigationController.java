@@ -7399,20 +7399,30 @@ System.out.println("sixe==="+excelData.length);
 				String existingRemarks = rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, contextDate, cellName, timeperiod);
 				String existingCheckerJustification = rT_MC_DATA_RECORD_REPO.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, reportDateStr, cellName, timeperiod);
 
-				String safeOldRemarks = (existingRemarks != null) ? existingRemarks : "";
-				String safeNewRemarks = (remarks != null) ? remarks : "";
+				String compOldRemarks = (existingRemarks != null && !" - ".equals(existingRemarks)) ? existingRemarks
+						: "";
+				String compNewRemarks = (remarks != null && !" - ".equals(remarks)) ? remarks : "";
 
-				String safeOldJustification = (existingCheckerJustification != null) ? existingCheckerJustification : "";
-				String safeNewJustification = (checkerJustification != null) ? checkerJustification : "";
+				String compOldJustification = (existingCheckerJustification != null
+						&& !" - ".equals(existingCheckerJustification)) ? existingCheckerJustification : "";
+				String compNewJustification = (checkerJustification != null && !" - ".equals(checkerJustification))
+						? checkerJustification
+						: "";
 
 				StringJoiner changesJoiner = new StringJoiner(" ||| ");
 
-				if (!safeOldRemarks.equals(safeNewRemarks)) {
-				    changesJoiner.add("Checker Remarks : OldValue: " + safeOldRemarks + ", NewValue: " + safeNewRemarks);
+				if (!compOldRemarks.equals(compNewRemarks)) {
+					String displayOld = compOldRemarks.isEmpty() ? " - " : compOldRemarks;
+					String displayNew = compNewRemarks.isEmpty() ? " - " : compNewRemarks;
+
+					changesJoiner.add("Checker Remarks : OldValue: " + displayOld + ", NewValue: " + displayNew);
 				}
 
-				if (!safeOldJustification.equals(safeNewJustification)) {
-				    changesJoiner.add("Checker Justification : OldValue: " + safeOldJustification + ", NewValue: " + safeNewJustification);
+				if (!compOldJustification.equals(compNewJustification)) {
+					String displayOld = compOldJustification.isEmpty() ? " - " : compOldJustification;
+					String displayNew = compNewJustification.isEmpty() ? " - " : compNewJustification;
+
+					changesJoiner.add("Checker Justification : OldValue: " + displayOld + ", NewValue: " + displayNew);
 				}
 				
 				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode,
@@ -7420,6 +7430,7 @@ System.out.println("sixe==="+excelData.length);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
 				String changedDetails = changesJoiner.toString();
+				System.out.println("Changed Details : "+changedDetails);
 				auditService.auditMCEntitymanual(auditType, reportDateStr,
 						rT_MC_TABLE_Service.screenName(formMode),
 						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext,changedDetails);

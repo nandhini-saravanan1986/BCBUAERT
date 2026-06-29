@@ -13507,7 +13507,7 @@ to {
 								style="display: none;"
 								th:if="${(ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and reportlist1[0].VERIFY_FLG != 'Y' and DEPARTMENTVALIDATION !='YES'}">Verify</button>
 							<button type="button" class="role-btn" id="checkerRemarksBtn"
-								th:if="${(ROLEID == 'MGR')  and reportlist1[0].VERIFY_FLG == 'N'}">
+								th:if="${(ROLEID == 'ADM-C' or ROLEID == 'USR-C')  and reportlist1[0].VERIFY_FLG == 'N'}">
 								View Manager Remarks</button>
 							<button type="button" class="role-btn" id="modifyBtn"
 								th:if="${(ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR') and DEPARTMENTVALIDATION =='YES'}"
@@ -21164,7 +21164,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById('btn-mgr-verify-all').addEventListener('click', function() {
-        const warningMessage = "Are you sure you want to verify the report?\n\nAny selected revisions will be removed, and once the report is verified, it cannot be revoked.";
+        const warningMessage = "Are you sure you want to verify the report?\n\nOnce the report is verified, it cannot be revoked.";
         
         if (confirm(warningMessage)) {
             executeManagerAction('VERIFY_ALL', this);
