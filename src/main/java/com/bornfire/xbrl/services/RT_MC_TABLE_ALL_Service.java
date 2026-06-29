@@ -6507,8 +6507,7 @@ public class RT_MC_TABLE_ALL_Service {
 				getCheckerJustification("bankconsumers", Date, "R22_NO_CON_UAQ_KYC", timeperiod),
 				"R22_NO_CON_UAQ_KYC"));
 		pivotTable.add(new RT_MC_Manager_DTO(
-				"Number of Consumers on the Bank's books tagged by the Bank as " + "Retired"
-						+ " as of the specified date",
+				"Number of Consumers on the Bank's books tagged by the Bank as \"Retired\" as of the specified date",
 				getSafeValue(top4Rowstable2, 3, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
 				getSafeValue(top4Rowstable2, 2, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
 				getSafeValue(top4Rowstable2, 1, RT_MC_TABLE2_2_ENTITY::getR22_NO_CON_RET),
@@ -8085,8 +8084,7 @@ public class RT_MC_TABLE_ALL_Service {
 				getMakerJustification("trainings", Date, "R12_NO_CON_MRK_FRD", timeperiod),
 				getCheckerJustification("trainings", Date, "R12_NO_CON_MRK_FRD", timeperiod), "R12_NO_CON_MRK_FRD"));
 		pivotTable.add(new RT_MC_Manager_DTO(
-				"Total number of trainings arranged on the topic " + "consumer protection regulations"
-						+ ", issued by CBUAE",
+				"Total number of trainings arranged on the topic \"consumer protection regulations\", issued by CBUAE",
 				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
 				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
 				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_CON_PRO_CBUAE),
@@ -8097,7 +8095,7 @@ public class RT_MC_TABLE_ALL_Service {
 				getCheckerJustification("trainings", Date, "R12_TOT_CON_PRO_CBUAE", timeperiod),
 				"R12_TOT_CON_PRO_CBUAE"));
 		pivotTable.add(new RT_MC_Manager_DTO(
-				"Total number of trainings arranged on the topic " + "Ombudsman regulations" + ", issued by CBUAE",
+				"Total number of trainings arranged on the topic \"Ombudsman regulations\", issued by CBUAE",
 				getSafeValue(top4Rows, 3, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
 				getSafeValue(top4Rows, 2, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
 				getSafeValue(top4Rows, 1, RT_MC_TABLE6_ENTITY::getR12_TOT_TRA_CBUAE),
