@@ -7766,6 +7766,7 @@ System.out.println("sixe==="+excelData.length);
 						newRecord.setReportDate(reportDate);
 						newRecord.setCellName(cellName);
 						newRecord.setVerifyFlg("MR");
+						newRecord.setModifyFlg("C");
 						newRecord.setTimeperiod(timeperiod);
 						rT_MC_DATA_RECORD_REPO.save(newRecord);
 					}
