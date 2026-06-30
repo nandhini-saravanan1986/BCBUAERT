@@ -64,6 +64,10 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 			@Param("reportDate") String reportDate, @Param("cellName") String cellName,
 			@Param("timeperiod") String timeperiod);
 
+	@Query("SELECT r.cellName FROM RT_MC_DATA_RECORD_ENTITY r WHERE r.verifyFlg = :verifyFlg AND r.formMode = :formMode AND r.reportDate = :reportDate AND r.timeperiod = :timeperiod")
+	List<String> findCellNamesByVerifyFlg(@Param("verifyFlg") String verifyFlg, @Param("formMode") String formMode,
+			@Param("reportDate") Date reportDate, @Param("timeperiod") String timeperiod);
+	
 	public interface RecordMetadataProjection {
 		BigDecimal getId();
 

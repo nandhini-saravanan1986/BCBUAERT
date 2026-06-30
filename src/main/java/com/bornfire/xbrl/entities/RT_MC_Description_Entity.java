@@ -23,6 +23,17 @@ public class RT_MC_Description_Entity {
 
 	@Column(name = "DESCRIPTION")
 	private String description;
+	
+	@Column(name = "CELL_NAME")
+	private String cellName;	
+
+	public String getCellName() {
+		return cellName;
+	}
+
+	public void setCellName(String cellName) {
+		this.cellName = cellName;
+	}
 
 	public BigDecimal getsNo() {
 		return sNo;

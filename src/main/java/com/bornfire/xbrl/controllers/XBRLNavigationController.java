@@ -7740,7 +7740,6 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
 	@PostMapping("/managerVerifyAction")
 	@Transactional
 	public ResponseEntity<String> managerVerifyAction(@RequestParam("formMode") String formMode,
@@ -7758,12 +7757,15 @@ System.out.println("sixe==="+excelData.length);
 
 				int mr_cleaned = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				System.out.println("MR Cells Cleaned to Y : " + mr_cleaned);
-
+				
+				auditService.auditManagerVerifyActionGrouped(formMode, reportDateStr, actionType, remarks, timeperiod, null, null);
 				return ResponseEntity.ok("Report verified successfully.");
 
 			} else if ("REVERT_MR".equals(actionType)) {
 				ObjectMapper mapper = new ObjectMapper();
 				List<String> cellsToRevert = mapper.readValue(mrCellsJson, new TypeReference<List<String>>() {});
+
+				List<String> existingMrCells = rT_MC_DATA_RECORD_REPO.findCellNamesByVerifyFlg("MR", formMode, reportDate, timeperiod);
 
 				rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				for (String cellName : cellsToRevert) {
@@ -7785,7 +7787,8 @@ System.out.println("sixe==="+excelData.length);
 
 				int rows_updated = rT_MC_TABLE_Service.updateVerifyFlgAndRemarks(formMode,"N", remarks, reportDate,timeperiod);
 				System.out.println("Main Table Rows Reverted : " + rows_updated);
-
+				
+				auditService.auditManagerVerifyActionGrouped(formMode, reportDateStr, actionType, remarks, timeperiod, existingMrCells, cellsToRevert);
 				return ResponseEntity.ok("Selected cells flagged for revision.");
 
 			} else if ("REVOKE_MGR".equals(actionType)) {
@@ -7794,7 +7797,8 @@ System.out.println("sixe==="+excelData.length);
 
 				int mr_revoked = rT_MC_DATA_RECORD_REPO.revertMrCellsToVerified(formMode, reportDate,timeperiod);
 				System.out.println("MR Cells Revoked to Y : " + mr_revoked);
-
+				
+				auditService.auditManagerVerifyActionGrouped(formMode, reportDateStr, actionType, remarks, timeperiod, null, null);
 				return ResponseEntity.ok("Manager actions successfully revoked.");
 			}
 
@@ -8095,7 +8099,10 @@ System.out.println("sixe==="+excelData.length);
             System.out.println("Received Report Date: " + reportDate);
             System.out.println("Received Time Period: " + timePeriod);
             System.out.println("Received Remarks: " + remarks);
-
+            auditService.auditMCEntitymanual("Final Sign Off", reportDate,
+            		"RBS Market Conduct Reports",
+					"All Market Conduct Report Tables",null,"Sign Off Successfull",null);
+            
             return ResponseEntity.ok().body("{\"message\": \"Saved successfully\"}");
             
 		} catch (Exception e) {

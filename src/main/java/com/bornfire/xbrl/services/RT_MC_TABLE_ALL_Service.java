@@ -5041,55 +5041,14 @@ public class RT_MC_TABLE_ALL_Service {
 		List<RT_MC_TABLE1_ENTITY> rawdata = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(formattedDate,
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE1_ENTITY existing = rawdata.get(0);
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE1_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE1_Bank_Information", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE1" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("bankinformation"),
+				"RT_MC_TABLE1","bankinformation");
 	}
 
 	public void MC_TABLE2_1_Modify(RT_MC_TABLE2_1_ENTITY updatedData) {
@@ -5100,55 +5059,15 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE2_1_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE2_1_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE2_Bank_Consumers", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE2_1" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("bankconsumers"),
+				"RT_MC_TABLE2_1","bankconsumers");
+	    
 	}
 
 	public void MC_TABLE2_2_Modify(RT_MC_TABLE2_2_ENTITY updatedData) {
@@ -5158,55 +5077,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE2_2_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE2_2_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE2_Bank_Consumers", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE2_2" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("bankconsumers"),
+				"RT_MC_TABLE2_2","bankconsumers");
 	}
 
 	public void MC_TABLE3_Modify(RT_MC_TABLE3_ENTITY updatedData) {
@@ -5216,55 +5094,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE3_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE3_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE3_Complaints", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE3" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("complaints"),
+				"RT_MC_TABLE3","complaints");
 	}
 
 	public void MC_TABLE4_1_Modify(RT_MC_TABLE4_1_ENTITY updatedData) {
@@ -5274,55 +5111,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE4_1_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE4_1_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE4_Retail_Products", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE4_1" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("retailproducts"),
+				"RT_MC_TABLE4_1","retailproducts");
 	}
 
 	public void MC_TABLE4_2_Modify(RT_MC_TABLE4_2_ENTITY updatedData) {
@@ -5332,55 +5128,15 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE4_2_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE4_2_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE4_Retail_Products", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE4_2" // Table name
-			);
-		}
+
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("retailproducts"),
+				"RT_MC_TABLE4_2","retailproducts");
 	}
 
 	public void MC_TABLE5_Modify(RT_MC_TABLE5_ENTITY updatedData) {
@@ -5390,55 +5146,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE5_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE5_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE5_Bank_Employee", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE5" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("bankemployee"),
+				"RT_MC_TABLE5","bankemployee");
 	}
 
 	public void MC_TABLE6_Modify(RT_MC_TABLE6_ENTITY updatedData) {
@@ -5448,55 +5163,15 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE6_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE6_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE6_Trainings", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE6" // Table name
-			);
-		}
+
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("trainings"),
+				"RT_MC_TABLE6","trainings");
 	}
 
 	public void MC_TABLE7_1_Modify(RT_MC_TABLE7_1_ENTITY updatedData) {
@@ -5506,55 +5181,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE7_1_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE7_1_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE7_Additional_Information", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE7_1" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("additionalinformation"),
+				"RT_MC_TABLE7_1","additionalinformation");
 	}
 
 	public void MC_TABLE7_2_Modify(RT_MC_TABLE7_2_ENTITY updatedData) {
@@ -5564,55 +5198,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE7_2_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE7_2_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE7_Additional_Information", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE7_2" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("additionalinformation"),
+				"RT_MC_TABLE7_2","additionalinformation");
 	}
 
 	public void MC_TABLE8_Modify(RT_MC_TABLE8_ENTITY updatedData) {
@@ -5622,55 +5215,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE8_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE8_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE8_Islamic_Banking", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE8" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("islamicbanking"),
+				"RT_MC_TABLE8","islamicbanking");
 	}
 
 	public void MC_TABLE9_Modify(RT_MC_TABLE9_ENTITY updatedData) {
@@ -5680,55 +5232,14 @@ public class RT_MC_TABLE_ALL_Service {
 				updatedData.getBRANCH_CODE());
 		RT_MC_TABLE9_ENTITY existing = rawdata.get(0);
 
-		List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg", "VERIFY_FLG", "VERIFY_USERID");
-		Map<String, String> changes = new LinkedHashMap<>();
-		for (Field field : RT_MC_TABLE9_ENTITY.class.getDeclaredFields()) {
-			field.setAccessible(true);
-			try {
-				Object oldValue = field.get(existing);
-				Object newValue = field.get(updatedData);
-				if ((oldValue == null || oldValue.toString().trim().isEmpty())
-						&& (newValue == null || newValue.toString().trim().isEmpty())) {
-					continue;
-				}
-				if (ignoreFields.contains(field.getName()) && newValue == null) {
-					continue;
-				}
-				if (oldValue instanceof Date || newValue instanceof Date) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					String oldDateStr = (oldValue != null) ? sdf.format(oldValue) : null;
-					String newDateStr = (newValue != null) ? sdf.format(newValue) : null;
-					if (Objects.equals(oldDateStr, newDateStr)) {
-						continue;
-					}
-				} else {
-					if (Objects.equals(oldValue, newValue)) {
-						continue;
-					}
-				}
-				if (newValue == null) {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: null");
-				} else {
-					changes.put(field.getName(), "OldValue: " + oldValue + ", NewValue: " + newValue);
-				}
-				if (newValue != null) {
-					field.set(existing, newValue);
-				}
-			} catch (IllegalAccessException e) {
-				System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
-			}
-		}
-		System.out.println("changes : " + changes);
-		// Audit only if any field was changed
-		if (!changes.isEmpty()) {
-			auditservice.createBusinessAudit(updatedData.getREPORT_DATE() + " - " + updatedData.getBRANCH_CODE(), // Unique
-																													// ID
-					"MODIFY", // Action
-					"RBS_MC_TABLE9_Conduct_Culture_Assessment", // Screen name
-					changes, // Changed fields map
-					"RT_MC_TABLE9" // Table name
-			);
-		}
+		if (rawdata == null || rawdata.isEmpty()) {
+	        System.err.println("Audit skipped: No existing data found for " + formattedDate);
+	        return;
+	    }
+		String uniqueIdValues = formatter.format(updatedData.getREPORT_DATE()) + " - " + updatedData.getBRANCH_CODE();
+
+		auditservice.compareMCEntitiesManualGrouped(existing, updatedData, uniqueIdValues, screenName("conductcultureassessment"),
+				"RT_MC_TABLE9","conductcultureassessment");
 	}
 
 	public int updateVerifyFlgAndRemarks(String formMode, String verifyFlg, String remarks, Date reportDate,

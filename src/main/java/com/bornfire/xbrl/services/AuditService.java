@@ -1,8 +1,11 @@
 package com.bornfire.xbrl.services;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -32,6 +35,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.bornfire.xbrl.entities.AuditServicesEntity;
 import com.bornfire.xbrl.entities.AuditServicesRep;
 import com.bornfire.xbrl.entities.MC_Service_audit_entity;
+import com.bornfire.xbrl.entities.RT_MC_Description_Repo;
 import com.bornfire.xbrl.entities.Service_audit_table_Rep;
 import com.bornfire.xbrl.entities.Service_audit_table_entity;
 import com.bornfire.xbrl.entities.UserProfile;
@@ -47,6 +51,8 @@ public class AuditService {
 	Service_audit_table_Rep Service_audit_table_Reps;
 	@Autowired
 	MC_Service_audit_Repo MC_Service_audit_Repo;
+	@Autowired
+	RT_MC_TABLE_ALL_Service rt_MC_TABLE_ALL_Service;
 
 	public List<AuditServicesEntity> getUserServices(Date reportdata) {
 //		System.out.println(auditServicesRep.getUserAudit());
@@ -565,4 +571,469 @@ public class AuditService {
 		MC_Service_audit_Repo.save(audit);
 	}
 
+	@Autowired
+	RT_MC_Description_Repo rt_MC_Description_Repo;
+	
+	public <T> void compareMCEntitiesManualGrouped(T oldEntity, T newEntity, String id_values,
+			String Screenname, String tableName,  String formmode) {
+
+		System.out.println("Screen Name: " + Screenname);
+
+		if (oldEntity == null || newEntity == null) {
+			throw new IllegalArgumentException("Entities cannot be null");
+		}
+
+		if (!oldEntity.getClass().equals(newEntity.getClass())) {
+			throw new IllegalArgumentException("Entities must be of the same type.");
+		}
+
+		List<String> ignoreFields = Arrays.asList("createdAt", "updatedAt", "modifiedAt", "createdBy", "modifiedBy",
+				"lastModifiedDate", "lastModifiedBy", "version", "modifyFlg", "verifyFlg", "columnHeader",
+				"rowCol2Value", "formMode", "reportDate", "cellId", "cellName");
+
+		List<String> lowerCaseIgnoreFields = new ArrayList<>();
+		for (String field : ignoreFields) {
+			lowerCaseIgnoreFields.add(field.toLowerCase());
+		}
+
+		List<String> ignoreHeaders = Arrays.asList("DATE");
+
+		Map<String, Map<String, String>> groupedChanges = new LinkedHashMap<>();
+
+		Class<?> clazz = oldEntity.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (Field field : fields) {
+			if (lowerCaseIgnoreFields.contains(field.getName().toLowerCase())) {
+				continue;
+			}
+
+			field.setAccessible(true);
+			try {
+				Object oldValue = field.get(oldEntity);
+				Object newValue = field.get(newEntity);
+
+				boolean isOldEmpty = (oldValue == null || oldValue.toString().trim().isEmpty());
+				boolean isNewEmpty = (newValue == null || newValue.toString().trim().isEmpty());
+
+				if (isOldEmpty && isNewEmpty) {
+					continue;
+				}
+
+				if (!areEqual(oldValue, newValue)) {
+					String rawFieldName = field.getName();
+					String prefix = rawFieldName;
+					String suffix = rawFieldName;
+
+					String[] nameParts = rawFieldName.split("_", 2);
+					if (nameParts.length == 2) {
+						prefix = nameParts[0]; // e.g., "R5"
+						suffix = nameParts[1]; // e.g., "SOMETHING_ABC"
+					}
+
+					if (ignoreHeaders.contains(suffix.toUpperCase())) {
+						continue;
+					}
+
+					String resolvedFieldName = getFieldName(formmode,prefix);
+					String finalItemKey = (resolvedFieldName != null && !resolvedFieldName.isEmpty())
+							? resolvedFieldName
+							: prefix;
+
+					String resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formmode,suffix);
+					String finalGroupKey = (resolvedHeader != null && !resolvedHeader.isEmpty()) ? resolvedHeader
+							: suffix;
+
+					String changeText = "OldValue: " + oldValue + ", NewValue: " + newValue;
+
+					groupedChanges.computeIfAbsent(finalGroupKey, k -> new LinkedHashMap<>()).put(finalItemKey,
+							changeText);
+				}
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException("Error accessing field: " + field.getName(), e);
+			}
+		}
+
+		System.out.println("Entered MC Modify Service Audit (Grouped)");
+
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		String userId = null;
+		String username = null;
+		String sessionId = null;
+
+		if (attr != null) {
+			HttpServletRequest request = attr.getRequest();
+			userId = (String) request.getSession().getAttribute("USERID");
+			username = (String) request.getSession().getAttribute("USERNAME");
+			sessionId = request.getSession().getId();
+		}
+
+		final Date currentDate = new Date();
+
+		if (!groupedChanges.isEmpty()) {
+			for (Map.Entry<String, Map<String, String>> groupEntry : groupedChanges.entrySet()) {
+
+				String groupHeaderName = groupEntry.getKey();
+				Map<String, String> changesForGroup = groupEntry.getValue();
+
+				StringBuilder groupChangesBuilder = new StringBuilder();
+				for (Map.Entry<String, String> change : changesForGroup.entrySet()) {
+					if (groupChangesBuilder.length() > 0) {
+						groupChangesBuilder.append("|||");
+					}
+					groupChangesBuilder.append(change.getKey()).append(": ").append(change.getValue());
+				}
+
+				MC_Service_audit_entity audit = new MC_Service_audit_entity();
+				audit.setAudit_ref_no(UUID.randomUUID().toString());
+				audit.setAudit_date(currentDate);
+				audit.setEntry_time(currentDate);
+				audit.setEntry_user(userId);
+				audit.setEntry_user_name(username);
+				audit.setFunc_code("MODIFY");
+				audit.setAudit_table(tableName);
+				audit.setAudit_screen(Screenname + " - Department Validation");
+				audit.setEvent_id(userId);
+				audit.setEvent_name(username);
+				audit.setModi_details(groupChangesBuilder.toString());
+				audit.setDomain_id(id_values);
+				audit.setRemarks("Modified Successfully");
+
+				audit.setFIELD_HEADER(groupHeaderName);
+
+				audit.setSession_id(sessionId);
+				audit.setISMODIFIED("Y");
+
+				MC_Service_audit_Repo.save(audit);
+			}
+		}
+	}
+	public void auditManagerVerifyActionGrouped(String formMode, String reportDateStr, String actionType,
+			String remarks, String timeperiod, List<String> existingCells, List<String> incomingCells) {
+
+		System.out.println("Entered Manager Verify Service Audit");
+
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		String userId = null;
+		String username = null;
+		String sessionId = null;
+
+		if (attr != null) {
+			HttpServletRequest request = attr.getRequest();
+			userId = (String) request.getSession().getAttribute("USERID");
+			username = (String) request.getSession().getAttribute("USERNAME");
+			sessionId = request.getSession().getId();
+		}
+
+		final Date currentDate = new Date();
+		String uniqueIdValues = reportDateStr + " - " + formMode;
+		if (timeperiod != null) {
+			uniqueIdValues += " - " + timeperiod;
+		}
+
+		String mappedFuncCode;
+		String mappedIsModified;
+
+		switch (actionType) {
+			case "VERIFY_ALL":
+				mappedFuncCode = "VERIFY";
+				mappedIsModified = "N";
+				break;
+			case "REVERT_MR":
+				mappedFuncCode = "REVERT";
+				mappedIsModified = "Y";
+				break;
+			case "REVOKE_MGR":
+				mappedFuncCode = "REVOKE";
+				mappedIsModified = "N";
+				break;
+			default:
+				mappedFuncCode = actionType;
+				mappedIsModified = "Y";
+		}
+
+		if ("REVERT_MR".equals(actionType)) {
+
+			Set<String> oldSet = new HashSet<>(existingCells != null ? existingCells : new ArrayList<>());
+			Set<String> newSet = new HashSet<>(incomingCells != null ? incomingCells : new ArrayList<>());
+
+			Set<String> newlyReverted = new HashSet<>(newSet);
+			newlyReverted.removeAll(oldSet); 
+
+			Set<String> unReverted = new HashSet<>(oldSet);
+			unReverted.removeAll(newSet); 
+
+			if (newlyReverted.isEmpty() && unReverted.isEmpty()) {
+				return;
+			}
+
+			Map<String, Map<String, String>> groupedChanges = new LinkedHashMap<>();
+
+			processCellsForAudit(newlyReverted, "Status changed to Manager Rejected", groupedChanges,formMode);
+			processCellsForAudit(unReverted, "Status changed back to Verified", groupedChanges,formMode);
+
+			for (Map.Entry<String, Map<String, String>> groupEntry : groupedChanges.entrySet()) {
+				String groupHeaderName = groupEntry.getKey();
+				Map<String, String> changesForGroup = groupEntry.getValue();
+
+				StringBuilder groupChangesBuilder = new StringBuilder();
+				for (Map.Entry<String, String> change : changesForGroup.entrySet()) {
+					if (groupChangesBuilder.length() > 0) {
+						groupChangesBuilder.append("|||");
+					}
+					groupChangesBuilder.append(change.getKey()).append(": ").append(change.getValue());
+				}
+
+				MC_Service_audit_entity audit = new MC_Service_audit_entity();
+				audit.setAudit_ref_no(UUID.randomUUID().toString());
+				audit.setAudit_date(currentDate);
+				audit.setEntry_time(currentDate);
+				audit.setEntry_user(userId);
+				audit.setEntry_user_name(username);
+				
+				audit.setFunc_code(mappedFuncCode); 
+				audit.setAudit_table("RT_MC_DATA_RECORD");
+				audit.setAudit_screen(rt_MC_TABLE_ALL_Service.screenName(formMode));
+				audit.setEvent_id(userId);
+				audit.setEvent_name(username);
+				audit.setModi_details(groupChangesBuilder.toString());
+				audit.setDomain_id(uniqueIdValues);
+				audit.setRemarks(remarks);
+				audit.setFIELD_HEADER(groupHeaderName);
+				audit.setSession_id(sessionId);
+				
+				audit.setISMODIFIED(mappedIsModified); 
+
+				MC_Service_audit_Repo.save(audit);
+			}
+		}
+		else {
+			String actionDetails = "VERIFY_ALL".equals(actionType) ? "Entire form verified successfully."
+					: "Manager actions revoked for entire form.";
+
+			MC_Service_audit_entity audit = new MC_Service_audit_entity();
+			audit.setAudit_ref_no(UUID.randomUUID().toString());
+			audit.setAudit_date(currentDate);
+			audit.setEntry_time(currentDate);
+			audit.setEntry_user(userId);
+			audit.setEntry_user_name(username);
+			
+			audit.setFunc_code(mappedFuncCode); 
+			audit.setAudit_table("RT_MC_DATA_RECORD");
+			audit.setAudit_screen(rt_MC_TABLE_ALL_Service.screenName(formMode));
+			audit.setEvent_id(userId);
+			audit.setEvent_name(username);
+			if (mappedIsModified == "Y") {
+				audit.setModi_details(actionDetails);
+			}
+			audit.setDomain_id(uniqueIdValues);
+			audit.setRemarks(remarks);
+			audit.setFIELD_HEADER(rt_MC_TABLE_ALL_Service.screenName(formMode) + " verified");
+
+			audit.setSession_id(sessionId);
+
+			audit.setISMODIFIED(mappedIsModified); 
+
+			MC_Service_audit_Repo.save(audit);
+		}
+	}
+	private String getFieldName(String formmode, String prefix) {
+		if (prefix == null || prefix.trim().isEmpty()) {
+			return prefix;
+		}
+		System.out.println("Formmode : "+formmode+" Prefix : "+prefix);
+		switch (formmode) {
+		case "bankinformation" :
+			switch (prefix.toUpperCase()) {
+			case "R6": return "Current Account";
+			case "R7": return "Savings Account";
+			case "R8": return "Fixed Deposit";
+			case "R9": return "Mortgage Loans / Financing";
+			case "R10": return "Auto Loans / Financing";
+			case "R11": return "Personal Loans / Financing";
+			case "R12": return "SME Loans / Financing";
+			case "R13": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R14": return "Credit Cards";
+			case "R15": return "Structured Products";
+			case "R16": return "Insurance/takaful provided from Third-Parties";
+			case "R17": return "Remittance*";
+			case "R18": return "Foreign Exchange*";
+			case "R19": return "Prepaid Cards";
+			case "R20": return "SVF - Wallets (float amount)";
+			case "R21": return "Any additional retail products - please specify";
+			case "R22": return "Total";
+			
+			default:
+				return prefix;
+			}
+
+		case "bankconsumers" :
+			switch (prefix.toUpperCase()) {
+			case "R6": return "Current Account";
+			case "R7": return "Savings Account";
+			case "R8": return "Fixed Deposit";
+			case "R9": return "Mortgage Loans / Financing";
+			case "R10": return "Auto Loans / Financing";
+			case "R11": return "Personal Loans / Financing";
+			case "R12": return "SME Loans / Financing";
+			case "R13": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R14": return "Credit Cards";
+			case "R15": return "Structured Products";
+			case "R16": return "Insurance/takaful provided from Third-Parties";
+			case "R17": return "Remittance*";
+			case "R18": return "Foreign Exchange*";
+			case "R19": return "Prepaid Cards";
+			case "R20": return "SVF - Wallets (float amount)";
+			case "R21": return "Any additional retail products - please specify";
+			case "R22": return "Total";
+			
+			default:
+				return prefix;
+			}
+		case "complaints":
+			switch (prefix.toUpperCase()) {
+			case "R6": return "Current Account";
+			case "R7": return "Savings Account";
+			case "R8": return "Fixed Deposit";
+			case "R9": return "Mortgage Loans / Financing";
+			case "R10": return "Auto Loans / Financing";
+			case "R11": return "Personal Loans / Financing";
+			case "R12": return "SME Loans / Financing";
+			case "R13": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R14": return "Credit Cards";
+			case "R15": return "Structured Products";
+			case "R16": return "Insurance/takaful provided from Third-Parties";
+			case "R17": return "Remittance*";
+			case "R18": return "Foreign Exchange*";
+			case "R19": return "Prepaid Cards";
+			case "R20": return "SVF - Wallets (float amount)";
+			case "R21": return "Any additional retail products - please specify";
+			case "R22": return "Total";
+			
+			default:
+				return prefix;
+			}
+		case "retailproducts":
+			switch (prefix.toUpperCase()) {
+			case "R6": return "Current Account";
+			case "R7": return "Savings Account";
+			case "R8": return "Fixed Deposit";
+			case "R9": return "Mortgage Loans / Financing";
+			case "R10": return "Auto Loans / Financing";
+			case "R11": return "Personal Loans / Financing";
+			case "R12": return "SME Loans / Financing";
+			case "R13": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R14": return "Credit Cards";
+			case "R15": return "Structured Products";
+			case "R16": return "Insurance/takaful provided from Third-Parties";
+			case "R17": return "Remittance*";
+			case "R18": return "Foreign Exchange*";
+			case "R19": return "Prepaid Cards";
+			case "R20": return "SVF - Wallets (float amount)";
+			case "R21": return "Any additional retail products - please specify";
+			case "R22": return "Total";
+
+			default:
+				return prefix;
+			}
+		case "bankemployee":
+			switch (prefix.toUpperCase()) {
+			case "R8": return "Bank's Staff";
+			case "R9": return "Authorized Agent Staff";
+			case "R10": return "Insourced Authorized Agent Staff";
+			case "R11": return "Consumer facing Staff (including authorised agent staff)";
+			case "R12": return "Total";
+
+			default:
+				return prefix;
+			}
+		case "trainings":
+			switch (prefix.toUpperCase()) {
+			case "R7": return "Consumer Protection";
+			case "R8": return "Vulnerable Consumers";
+			case "R9": return "Internal Complaint Handling procedures";
+			case "R10": return "Consumer Data Management";
+			case "R11": return "Code of Fair Treatment of Consumers";
+			case "R12": return "Total";
+
+			default:
+				return prefix;
+			}
+		case "additionalinformation":
+			switch (prefix.toUpperCase()) {
+			case "R7": return "Current Account";
+			case "R8": return "Savings Account";
+			case "R9": return "Fixed Deposit";
+			case "R10": return "Mortgage";
+			case "R11": return "Auto Loans / Financing";
+			case "R12": return "Personal Loans / Financing";
+			case "R13": return "SME Loans / Financing";
+			case "R14": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R15": return "Credit Cards";
+			case "R16": return "Structured Products";
+			case "R17": return "Insurance provided from Third Parties";
+			case "R18": return "Remittance*";
+			case "R19": return "Foreign Exchange*";
+			case "R20": return "Prepaid Cards";
+			case "R21": return "SVF - Wallets (float amount)";
+			case "R22": return "Any additional retail products - please specify";
+			case "R23": return "Total";
+
+			default:
+				return prefix;
+			}
+		case "islamicbanking":
+			switch (prefix.toUpperCase()) {
+			case "R8": return "Current Account";
+			case "R9": return "Savings Account";
+			case "R10": return "Fixed Deposit";
+			case "R11": return "Mortgage";
+			case "R12": return "Auto Loans / Financing";
+			case "R13": return "Personal Loans / Financing";
+			case "R14": return "SME Loans / Financing";
+			case "R15": return "SME - Guarantees & Commitments (e.g., financial guranatee and Letter of credit)";
+			case "R16": return "Credit Cards";
+			case "R17": return "Structured Products";
+			case "R18": return "Insurance provided from Third Parties";
+			case "R19": return "Remittance*";
+			case "R20": return "Foreign Exchange*";
+			case "R21": return "Prepaid Cards";
+			case "R22": return "SVF - Wallets (float amount)";
+			case "R23": return "Any additional retail products - please specify";
+			case "R24": return "Total";
+
+			default:
+				return prefix;
+			}
+		default:
+			return prefix;
+		}
+	}
+	private void processCellsForAudit(Set<String> cells, String statusMessage, Map<String, Map<String, String>> groupedChanges, String formMode) {
+	    List<String> ignoreHeaders = Arrays.asList("DATE");
+
+	    for (String cellName : cells) {
+	        String prefix = cellName;
+	        String suffix = cellName;
+
+	        String[] nameParts = cellName.split("_", 2);
+	        if (nameParts.length == 2) {
+	            prefix = nameParts[0]; 
+	            suffix = nameParts[1]; 
+	        }
+
+	        if (ignoreHeaders.contains(suffix.toUpperCase())) {
+	            continue;
+	        }
+
+	        String resolvedFieldName = getFieldName(formMode,prefix);
+	        String finalItemKey = (resolvedFieldName != null && !resolvedFieldName.isEmpty()) ? resolvedFieldName : prefix;
+
+	        String resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formMode,suffix);
+	        String finalGroupKey = (resolvedHeader != null && !resolvedHeader.isEmpty()) ? resolvedHeader : suffix;
+
+	        groupedChanges.computeIfAbsent(finalGroupKey, k -> new LinkedHashMap<>())
+	                      .put(finalItemKey, statusMessage);
+	    }
+	}
 }
