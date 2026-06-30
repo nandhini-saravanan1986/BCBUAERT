@@ -18446,11 +18446,12 @@ function navigateTodatamgrsumpage(){
 	
 }
 </script>
-	<script>
+	<script th:inline="javascript">
 	function navigateToTab(tabId) {
-
+		const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+		
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		 window.location.href = 'RT_MC_Reports?formmode='+tabId; 
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&reportDate='+contextReportDate; 
 		
 	}
 	function navigateToTabdept(tabId) {
