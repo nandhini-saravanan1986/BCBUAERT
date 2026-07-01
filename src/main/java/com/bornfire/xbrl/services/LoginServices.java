@@ -415,7 +415,12 @@ public class LoginServices {
 			if (userProfile.getUser_status() == null) {
 				userProfile.setUser_status("Active");
 			}
-
+			if (userProfile.getDepartment() == null) {
+				userProfile.setDepartment(upOpt.get().getDepartment());
+			}
+			if (userProfile.getRole_id() == null) {
+				userProfile.setRole_id(upOpt.get().getRole_id());
+			}
 			// Login lock flag
 			if ("Active".equalsIgnoreCase(userProfile.getLogin_status())) {
 				userProfile.setUser_locked_flg("N");
