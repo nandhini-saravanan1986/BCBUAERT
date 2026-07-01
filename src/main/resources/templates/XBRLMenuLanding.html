@@ -130,7 +130,8 @@
 
 			<button type="button" class="menu-cell" data-label="Market Conduct"
 				data-desc="Management committee reporting."
-				data-drill="mcreports">
+				data-drill="mcreports"
+				th:if="${#strings.contains(session.DOMAINID, 'MC-MC_Reports') or #strings.contains(session.DOMAINID, 'MC-MC_Ser_audit') }">
 				<span class="menu-cell__label">Market Conduct</span>
 			</button>
 
@@ -407,11 +408,13 @@
 			</button>
 
 			<button type="button" class="menu-cell" data-label="Market Conduct Reports"
+			th:if="${#strings.contains(session.DOMAINID, 'MC-MC_Reports')}"
 				th:attr="data-url=@{/RT_MC_Reports}">
 				<span class="menu-cell__label">Market Conduct Reports</span>
 			</button>
 			
 			<button type="button" class="menu-cell" data-label="Market Conduct Service Audit"
+			th:if="${#strings.contains(session.DOMAINID, 'MC-MC_Ser_audit')}"
 				th:attr="data-url=@{/MC_Service_Audit}">
 				<span class="menu-cell__label">Market Conduct Service Audit</span>
 			</button>

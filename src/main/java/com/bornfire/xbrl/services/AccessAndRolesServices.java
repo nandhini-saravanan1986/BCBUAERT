@@ -311,7 +311,7 @@ public class AccessAndRolesServices {
 		query.setParameter(1, id);
 		List<AccessAndRoles> result = query.getResultList();
 		if (!result.isEmpty()) {
-			System.out.println(result.get(0).toString());
+			//System.out.println(result.get(0).toString());
 			return result.get(0);
 		} else {
 			return new AccessAndRoles();
