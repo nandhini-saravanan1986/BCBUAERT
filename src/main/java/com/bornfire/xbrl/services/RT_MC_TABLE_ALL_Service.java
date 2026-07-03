@@ -4824,7 +4824,7 @@ public class RT_MC_TABLE_ALL_Service {
 							formmode, branch, reportDatedf);
 			int startRow = 8;
 
-			if (!dataList.isEmpty()) {
+			if (!dataList.isEmpty() && !pastRecord.isEmpty()) {
 				for (int i = 0; i < dataList.size(); i++) {
 					RT_MC_TABLE9_ENTITY record = dataList.get(i);
 					System.out.println("rownumber=" + startRow + i);

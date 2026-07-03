@@ -342,8 +342,15 @@ public class AuditService {
 			}
 		}
 
-		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks");
-		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks");
+		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks", "fileName1",
+				"fileName2", "fileName3", "fileName4", "fileName5", "fileName6", "fileName7", "fileName8", "fileName9",
+				"fileName10", "fileData1", "fileData2", "fileData3", "fileData4", "fileData5", "fileData6", "fileData7",
+				"fileData8", "fileData9", "fileData10");
+		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks",
+				"File Name 1", "File Name 2", "File Name 3", "File Name 4", "File Name 5", "File Name 6", "File Name 7",
+				"File Name 8", "File Name 9", "File Name 10", "File Uploaded 1 ", "File Uploaded 2", "File Uploaded 3",
+				"File Uploaded 4", "File Uploaded 5", "File Uploaded 6", "File Uploaded 7", "File Uploaded 8",
+				"File Uploaded 9", "File Uploaded 10");
 		StringBuilder changes = new StringBuilder();
 
 		List<String> changedFieldNames = new ArrayList<>();
@@ -455,8 +462,15 @@ public class AuditService {
 			}
 		}
 
-		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks");
-		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks");
+		List<String> fieldNamesList = Arrays.asList("justification", "dataValue", "source", "remarks", "fileName1",
+				"fileName2", "fileName3", "fileName4", "fileName5", "fileName6", "fileName7", "fileName8", "fileName9",
+				"fileName10", "fileData1", "fileData2", "fileData3", "fileData4", "fileData5", "fileData6", "fileData7",
+				"fileData8", "fileData9", "fileData10");
+		List<String> equivalentValuesList = Arrays.asList("Justification", "Value", "Source", "Checker Remarks",
+				"File Name 1", "File Name 2", "File Name 3", "File Name 4", "File Name 5", "File Name 6", "File Name 7",
+				"File Name 8", "File Name 9", "File Name 10", "File Uploaded 1 ", "File Uploaded 2", "File Uploaded 3",
+				"File Uploaded 4", "File Uploaded 5", "File Uploaded 6", "File Uploaded 7", "File Uploaded 8",
+				"File Uploaded 9", "File Uploaded 10");
 
 		StringBuilder addedDetails = new StringBuilder();
 

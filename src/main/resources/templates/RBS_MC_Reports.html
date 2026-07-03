@@ -672,7 +672,7 @@ label.error {
 	vertical-align: middle;
 	white-space: normal;
 	/* ADD THESE THREE LINES */
-	padding: 2px 4px !important;
+	padding: 5px 4px !important;
 	/* Reduces internal spacing */
 	line-height: 1.1 !important;
 	/* Reduces space between wrapped text lines */
@@ -19615,6 +19615,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const totalRows = document.querySelectorAll('.cca-file-input-row').length;
             if (totalRows === 1) {
                 fileInput.value = '';
+                delete newRow.dataset.savedIndex; 
                 chooseFileBtn.style.display = 'block';
                 nameWrapper.style.display = 'none';
                 previewBtn.style.display = 'none';
@@ -19882,7 +19883,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const totalRows = document.querySelectorAll('.file-input-row').length;
             if (currentlyPreviewedInput === fileInput) closePreview();
             if (totalRows === 1) {
-                fileInput.value = ''; 
+                fileInput.value = '';
+                delete newRow.dataset.savedIndex;
                 chooseFileBtn.style.display = 'flex';
                 fileNameDisplay.style.display = 'none';
                 previewBtn.style.display = 'none';

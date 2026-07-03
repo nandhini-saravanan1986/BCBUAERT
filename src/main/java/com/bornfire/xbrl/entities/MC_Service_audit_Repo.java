@@ -11,13 +11,19 @@ import org.springframework.data.repository.query.Param;
 
 public interface MC_Service_audit_Repo extends JpaRepository<MC_Service_audit_entity, String> {
 
-	@Query("SELECT a FROM MC_Service_audit_entity a WHERE "
-			+ "(LOWER(a.audit_ref_no) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
-			+ "LOWER(a.audit_table) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
-			+ "LOWER(a.func_code) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
-			+ "LOWER(a.entry_user) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
-			+ "LOWER(a.entry_time) LIKE LOWER(CONCAT('%', :keyword, '%'))) " + "ORDER BY a.entry_time DESC")
-	Page<MC_Service_audit_entity> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	@Query(value = "SELECT * FROM RT_MC_SERVICE_AUDIT_TABLE WHERE " + "(LOWER(audit_screen) LIKE :wildcardKeyword OR "
+			+ "LOWER(func_code) LIKE :wildcardKeyword OR "
+			+ "DBMS_LOB.INSTR(LOWER(modi_details), :exactKeyword) > 0 OR "
+			+ "DBMS_LOB.INSTR(LOWER(FIELD_HEADER), :exactKeyword) > 0 OR "
+			+ "LOWER(entry_user) LIKE :wildcardKeyword OR " + "LOWER(session_id) LIKE :wildcardKeyword) "
+			+ "ORDER BY entry_time DESC", countQuery = "SELECT count(*) FROM RT_MC_SERVICE_AUDIT_TABLE WHERE "
+					+ "(LOWER(audit_screen) LIKE :wildcardKeyword OR " + "LOWER(func_code) LIKE :wildcardKeyword OR "
+					+ "DBMS_LOB.INSTR(LOWER(modi_details), :exactKeyword) > 0 OR "
+					+ "DBMS_LOB.INSTR(LOWER(FIELD_HEADER), :exactKeyword) > 0 OR "
+					+ "LOWER(entry_user) LIKE :wildcardKeyword OR "
+					+ "LOWER(session_id) LIKE :wildcardKeyword)", nativeQuery = true)
+	Page<MC_Service_audit_entity> searchByKeyword(@Param("wildcardKeyword") String wildcardKeyword,
+			@Param("exactKeyword") String exactKeyword, Pageable pageable);
 
 	@Query("SELECT a FROM MC_Service_audit_entity a ORDER BY a.entry_time DESC")
 	Page<MC_Service_audit_entity> findAllByOrderByDateDesc(Pageable pageable);

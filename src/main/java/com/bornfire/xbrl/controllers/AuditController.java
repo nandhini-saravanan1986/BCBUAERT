@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -254,10 +255,23 @@ public class AuditController {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (keyword != null && !keyword.trim().isEmpty()) {
-			String likePattern = "%" + keyword.trim().toLowerCase() + "%";
-			predicates.add(cb.or(cb.like(cb.lower(root.get("audit_screen")), likePattern),
-					cb.like(cb.lower(root.get("func_code")), likePattern),
-					cb.like(cb.lower(root.get("entry_user")), likePattern)));
+			String exactStr = keyword.trim().toLowerCase();
+			String likePattern = "%" + exactStr + "%";
+
+			Predicate pScreen = cb.like(cb.lower(root.get("audit_screen")), likePattern);
+			Predicate pFunc = cb.like(cb.lower(root.get("func_code")), likePattern);
+			Predicate pUser = cb.like(cb.lower(root.get("entry_user")), likePattern);
+			Predicate pSession = cb.like(cb.lower(root.get("session_id")), likePattern);
+
+			Expression<Integer> instrModi = cb.function("DBMS_LOB.INSTR", Integer.class,
+					cb.lower(root.get("modi_details")), cb.literal(exactStr));
+			Predicate pModi = cb.greaterThan(instrModi, 0);
+
+			Expression<Integer> instrHeader = cb.function("DBMS_LOB.INSTR", Integer.class,
+					cb.lower(root.get("FIELD_HEADER")), cb.literal(exactStr));
+			Predicate pHeader = cb.greaterThan(instrHeader, 0);
+
+			predicates.add(cb.or(pScreen, pFunc, pUser, pSession, pModi, pHeader));
 		}
 
 		List<String> ignoredParams = Arrays.asList("page", "size", "keyword", "sortCol", "sortDir", "groupBy", "_");
@@ -307,7 +321,6 @@ public class AuditController {
 		}
 		return predicates;
 	}
-
 	@ResponseBody
 	@RequestMapping(value = "/MC_Service_Audit/distinct", method = RequestMethod.GET)
 	public List<String> getDistinctValues(@RequestParam("targetColumn") String targetColumn,
