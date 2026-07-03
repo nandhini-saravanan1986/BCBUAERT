@@ -10,6 +10,7 @@ public class AnalyticalPivotRunResponseDto {
 	private List<String> columnColumns;
 	private String aggregation;
 	private String valueColumn;
+	private List<String> valueColumns;
 	private int rowCount;
 	private List<Map<String, Object>> data;
 
@@ -51,6 +52,14 @@ public class AnalyticalPivotRunResponseDto {
 
 	public void setValueColumn(String valueColumn) {
 		this.valueColumn = valueColumn;
+	}
+
+	public List<String> getValueColumns() {
+		return valueColumns;
+	}
+
+	public void setValueColumns(List<String> valueColumns) {
+		this.valueColumns = valueColumns;
 	}
 
 	public int getRowCount() {

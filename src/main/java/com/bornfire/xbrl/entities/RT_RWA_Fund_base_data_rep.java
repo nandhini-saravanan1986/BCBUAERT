@@ -494,8 +494,11 @@ public interface RT_RWA_Fund_base_data_rep extends JpaRepository<RT_RWA_Fund_bas
 		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Trading' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorTrading(Date Selecteddate);
 		
-		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Services' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenSectorServicesexcludingbank(Date Selecteddate);
+		
+		@Query(value="select ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Banks' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
+		List<Object[]> GetToptenSectorbank(Date Selecteddate);
 		
 		@Query(value="select  ACCOUNT_NAME, ROUND(BALANCE/1000000,2) as BALANCE, RW, ROUND(TOTAL_RWA/1000000,2) from brf95_rwa_data_fundbased where sector_classification = 'Real Estate' and report_date=?1 ORDER BY TOTAL_RWA DESC FETCH FIRST 10 ROWS ONLY",nativeQuery=true)
 		List<Object[]> GetToptenRealEstate(Date Selecteddate);

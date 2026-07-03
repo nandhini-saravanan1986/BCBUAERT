@@ -521,7 +521,7 @@ PURPOSE		:
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: rgb(255, 128, 0);
+			color: rgb(255, 123, 0);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -536,7 +536,7 @@ PURPOSE		:
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: rgb(255, 128, 0);
+			background-color: rgb(255, 123, 0);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -561,8 +561,19 @@ PURPOSE		:
 		//	}
 
 		function goBack() {
+			if (window.jQuery && $("#loader").length) {
+				$("#loader").css("display", "flex");
+			} else {
+				var loader = document.getElementById("bob-loader");
+				if (loader) {
+					loader.setAttribute("aria-hidden", "false");
+				}
+			}
+			location.href = './MenuLanding';
+		}
 
-			window.history.back();
+		function back() {
+			goBack();
 		}
 
 		function hideLoader() {

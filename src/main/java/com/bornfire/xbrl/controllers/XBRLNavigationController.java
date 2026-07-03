@@ -60,6 +60,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.http.HttpStatus;
@@ -515,29 +518,24 @@ public class XBRLNavigationController {
 	public String matrixAnalytics(@RequestParam("sno") String sno,
 			@RequestParam("reportDate") String reportDate,
 			@RequestParam("label") String label,
-			Model md, HttpServletRequest req) {
+			HttpServletRequest req) {
 		Boolean otpPending = (Boolean) req.getSession().getAttribute("LOGIN_OTP_PENDING");
 		Boolean otpVerified = (Boolean) req.getSession().getAttribute("LOGIN_OTP_VERIFIED");
 		if (Boolean.TRUE.equals(otpPending) || !Boolean.TRUE.equals(otpVerified)) {
 			return "redirect:/login-otp";
 		}
 
-		String userid = (String) req.getSession().getAttribute("USERID");
-		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal();
+		return "redirect:Dashboard?sno=" + encodeQueryParam(sno)
+				+ "&reportDate=" + encodeQueryParam(reportDate)
+				+ "&label=" + encodeQueryParam(label);
+	}
 
-		md.addAttribute("changepassword", loginServices.checkPasswordChangeReq(userid));
-		md.addAttribute("checkpassExpiry", loginServices.checkpassexpirty(userid));
-		md.addAttribute("checkAcctExpiry", loginServices.checkAcctexpirty(userid));
-		md.addAttribute("completed", 0);
-		md.addAttribute("uncompleted", 0);
-		md.addAttribute("Matrixlistdata", Matrixdata);
-		md.addAttribute("menu", "Dashboard");
-		md.addAttribute("CurrentYear_Tier_1_capital", Capitaladequacyratio_rep.GetCurrentyear_tier_1_capital());
-		md.addAttribute("analyticsOnly", true);
-		md.addAttribute("analyticsSno", sno);
-		md.addAttribute("analyticsReportDate", reportDate);
-		md.addAttribute("analyticsLabel", label);
-		return "XBRLDashboard";
+	private static String encodeQueryParam(String value) {
+		try {
+			return URLEncoder.encode(value != null ? value : "", StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			return value != null ? value : "";
+		}
 	}
 
 	@RequestMapping(value = "AccessandRoles", method = { RequestMethod.GET, RequestMethod.POST })
@@ -691,7 +689,6 @@ public class XBRLNavigationController {
 		}
 
 		role.setEntityFlg("Y");
-		role.setEntityFlg("N");
 		role.setAuthUser(userId);
 		role.setAuthTime(new Date());
 
@@ -5058,7 +5055,7 @@ System.out.println("sixe==="+excelData.length);
 		if (Report_date != null) {
 			Report_date = java.sql.Date.valueOf(normalizeDate(Report_date.toString()));
 		} else {
-			Report_date = java.sql.Date.valueOf(today.minusDays(42));
+			Report_date = java.sql.Date.valueOf(today.minusDays(1));
 		}
 
 		System.out.println("After validation Todaydate : " + Report_date);
@@ -6804,7 +6801,7 @@ System.out.println("sixe==="+excelData.length);
 	            
 
 	            if (Report_date != null && !Report_date.isEmpty()) {
-	                reportDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(Report_date);
+	                reportDateObj = java.sql.Date.valueOf(normalizeDate(Report_date.trim()));
 	            }
 
 	            krslist = krimastertablerep.getalllist(reportDateObj);
@@ -6936,7 +6933,7 @@ System.out.println("sixe==="+excelData.length);
         model.addAttribute("entity1", myEntity1);
 		model.addAttribute("entity2", myEntity2);
 		
-        return "XBRLDashboard :: eardashboardtable"; 
+        return "fragments/eardashboardtable :: eardashboardtable"; 
     }
 
 

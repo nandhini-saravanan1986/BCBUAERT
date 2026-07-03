@@ -34,8 +34,8 @@
 			<li class="menu-landing__motif menu-landing__motif--shield"><i class="fas fa-shield-alt" aria-hidden="true"></i></li>
 			<li class="menu-landing__motif menu-landing__motif--chart"><i class="fas fa-chart-line" aria-hidden="true"></i></li>
 			<li class="menu-landing__motif menu-landing__motif--balance"><i class="fas fa-balance-scale" aria-hidden="true"></i></li>
-			<li class="menu-landing__motif menu-landing__motif--pulse"><i class="fas fa-heartbeat" aria-hidden="true"></i></li>
-			<li class="menu-landing__motif menu-landing__motif--globe"><i class="fas fa-globe-americas" aria-hidden="true"></i></li>
+			<li class="menu-landing__motif menu-landing__motif--excel"><i class="fas fa-file-excel" aria-hidden="true"></i></li>
+			<li class="menu-landing__motif menu-landing__motif--bank"><i class="fas fa-university" aria-hidden="true"></i></li>
 			<li class="menu-landing__motif menu-landing__motif--chart-bar"><i class="fas fa-chart-bar" aria-hidden="true"></i></li>
 		</ul>
 		<div class="menu-landing__backdrop-watermark">
@@ -91,7 +91,8 @@
 
 			<button type="button" class="menu-cell" data-label="Admin"
 				data-desc="User management, access control, and system configuration."
-				data-drill="admin">
+				data-drill="admin"
+				th:if="${#strings.contains(session.DOMAINID, 'Adm-') or #strings.contains(session.DOMAINID, 'Rpt-Ctrl') or #strings.contains(session.DOMAINID, 'Adm-DataInventory') or #strings.contains(session.DOMAINID, 'Adm-EabExcep')}">
 				<span class="menu-cell__label">Admin</span>
 			</button>
 
@@ -111,7 +112,8 @@
 
 			<button type="button" class="menu-cell" data-label="Credit Risk"
 				data-desc="Portfolio analysis and analytical pivot tools."
-				data-drill="credit">
+				data-drill="credit"
+				th:if="${#strings.contains(session.DOMAINID, 'CR-Por_fol_anal') or #strings.contains(session.DOMAINID, 'Adm-AnalyticalPivot')}">
 				<span class="menu-cell__label">Credit Risk</span>
 			</button>
 
@@ -171,18 +173,21 @@
 
 			<button type="button" class="menu-cell" data-label="Report Control Center"
 				data-desc="Central report scheduling and control."
+				th:if="${#strings.contains(session.DOMAINID, 'Rpt-Ctrl_Center')}"
 				th:attr="data-url=@{/Report_control_center}">
 				<span class="menu-cell__label">Report Control</span>
 			</button>
 
 			<button type="button" class="menu-cell" data-label="Data Inventory"
 				data-desc="Data inventory dashboard and filters."
+				th:if="${#strings.contains(session.DOMAINID, 'Adm-DataInventory')}"
 				th:attr="data-url=@{/Data_inventory_dashboard}">
 				<span class="menu-cell__label">Data Inventory</span>
 			</button>
 
 			<button type="button" class="menu-cell" data-label="EAB Exceptions"
 				data-desc="EAB account exception management."
+				th:if="${#strings.contains(session.DOMAINID, 'Adm-EabExcep')}"
 				th:attr="data-url=@{/Eab_acct_Excep_mnmt}">
 				<span class="menu-cell__label">EAB Exceptions</span>
 			</button>
@@ -196,6 +201,7 @@
 
 			<button type="button" class="menu-cell" data-label="Bill Details"
 				data-desc="View and manage bill details."
+				th:if="${#strings.contains(session.DOMAINID, 'Adm-BillDetails')}"
 				th:attr="data-url=@{/Bill_Details}">
 				<span class="menu-cell__label">Bill Details</span>
 			</button>
@@ -354,6 +360,7 @@
 
 			<button type="button" class="menu-cell" data-label="Analytical Pivot"
 				data-desc="Interactive analytical pivot system."
+				th:if="${#strings.contains(session.DOMAINID, 'Adm-AnalyticalPivot')}"
 				th:attr="data-url=@{/Analytical_Pivot}">
 				<span class="menu-cell__label">Analytical Pivot</span>
 			</button>
@@ -392,7 +399,7 @@
 			</button>
 
 			<button type="button" class="menu-cell" data-label="User Audit"
-				th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit,')}"
+				th:if="${#strings.contains(session.DOMAINID, 'Audit-Usr_audit')}"
 				th:attr="data-url=@{/User_Audit}">
 				<span class="menu-cell__label">User Audit</span>
 			</button>

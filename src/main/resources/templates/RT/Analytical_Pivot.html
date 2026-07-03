@@ -158,6 +158,13 @@
             min-width: 180px;
             margin-bottom: 0;
         }
+        .measure-multiselect {
+            min-height: 72px;
+        }
+        #measureColumnHint {
+            font-size: 11px;
+            margin-top: 2px;
+        }
         .result-card {
             background: var(--bank-surface, #FCFBFA);
             border: 1px solid var(--bank-border, #E8DDD2);
@@ -368,8 +375,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Measure Column</label>
-                        <select id="measureColumn" class="form-control form-control-sm"></select>
+                        <label>Measure Column(s)</label>
+                        <select id="measureColumn" multiple class="form-control form-control-sm measure-multiselect" size="4"></select>
+                        <small id="measureColumnHint" class="text-muted d-block">Ctrl/Cmd+click to select multiple columns (SUM only)</small>
                     </div>
                     <div class="form-group" id="sumTransformGroup" style="display:none;">
                         <label>Apply to SUM</label>
@@ -601,6 +609,63 @@
             sumTransformGroupEl.style.display = isSum ? "block" : "none";
             var t = aggregateTransformEl.value;
             sumTransformOperandGroupEl.style.display = isSum && t !== "NONE" ? "block" : "none";
+            if (measureColumnEl) {
+                measureColumnEl.disabled = !isSum;
+            }
+            var hintEl = document.getElementById("measureColumnHint");
+            if (hintEl) {
+                hintEl.textContent = isSum
+                    ? "Ctrl/Cmd+click to select multiple columns (e.g. Balance and Interest suspense)"
+                    : "Not used for COUNT";
+            }
+            renderMeasureOptions();
+        }
+
+        function getSelectedMeasureColumns() {
+            var selected = [];
+            if (!measureColumnEl) {
+                return selected;
+            }
+            for (var i = 0; i < measureColumnEl.options.length; i++) {
+                var opt = measureColumnEl.options[i];
+                if (opt.selected && opt.value) {
+                    selected.push(normalizeName(opt.value));
+                }
+            }
+            return selected;
+        }
+
+        function measureSqlAlias(colName, isSingle) {
+            return isSingle ? "MEASURE_VALUE" : ("M_" + normalizeName(colName));
+        }
+
+        function pivotMeasureKeys(payload) {
+            if (payload.aggregation === "COUNT") {
+                return [{ field: "MEASURE_VALUE", label: "COUNT(*)" }];
+            }
+            var cols = payload.valueColumns && payload.valueColumns.length
+                ? payload.valueColumns.map(normalizeName)
+                : (payload.valueColumn ? [normalizeName(payload.valueColumn)] : []);
+            var single = cols.length === 1;
+            return cols.map(function (c) {
+                return {
+                    field: measureSqlAlias(c, single),
+                    label: "SUM(" + c + ")"
+                };
+            });
+        }
+
+        function buildPivotColKey(baseColKey, measureLabel, measureCount, colDimCount) {
+            if (measureCount === 1 && colDimCount > 0) {
+                return baseColKey;
+            }
+            if (measureCount === 1 && colDimCount === 0) {
+                return measureLabel;
+            }
+            if (colDimCount > 0) {
+                return baseColKey + " | " + measureLabel;
+            }
+            return measureLabel;
         }
 
         function renderTabs(tables) {
@@ -663,17 +728,23 @@
 
         function renderMeasureOptions() {
             measureColumnEl.innerHTML = "";
-            state.columnsMeta.forEach(function (col) {
+            var isSum = aggregationTypeEl && aggregationTypeEl.value === "SUM";
+            var cols = (state.columnsMeta || []).filter(function (col) {
+                return !isSum || col.numeric;
+            });
+            cols.forEach(function (col) {
                 var option = document.createElement("option");
                 option.value = col.columnName;
                 option.textContent = col.columnName + (col.numeric ? " (numeric)" : "");
                 measureColumnEl.appendChild(option);
             });
-            if (state.columnsMeta.length === 0) {
+            if (cols.length === 0) {
                 var empty = document.createElement("option");
                 empty.value = "";
-                empty.textContent = "No columns";
+                empty.textContent = isSum ? "No numeric columns" : "No columns";
                 measureColumnEl.appendChild(empty);
+            } else if (isSum) {
+                measureColumnEl.options[0].selected = true;
             }
         }
 
@@ -979,17 +1050,20 @@
                 });
         }
 
-        function setMeasureColumnFromLayout(valueColumn) {
-            if (!valueColumn) {
-                return;
+        function setMeasureColumnsFromLayout(valueColumn, valueColumns) {
+            var wants = [];
+            if (valueColumns && valueColumns.length) {
+                wants = valueColumns.map(normalizeName);
+            } else if (valueColumn) {
+                wants = [normalizeName(valueColumn)];
             }
-            var want = normalizeName(valueColumn);
             var opts = measureColumnEl.options;
-            for (var i = 0; i < opts.length; i++) {
-                if (normalizeName(opts[i].value) === want) {
-                    measureColumnEl.selectedIndex = i;
-                    return;
-                }
+            var i;
+            for (i = 0; i < opts.length; i++) {
+                opts[i].selected = wants.indexOf(normalizeName(opts[i].value)) >= 0;
+            }
+            if (wants.length === 0 && opts.length > 0) {
+                opts[0].selected = true;
             }
         }
 
@@ -1042,7 +1116,9 @@
             aggregateTransformOperandEl.value = "";
             toggleSumTransformUI();
             if (measureColumnEl && measureColumnEl.options.length > 0) {
-                measureColumnEl.selectedIndex = 0;
+                for (var mi = 0; mi < measureColumnEl.options.length; mi++) {
+                    measureColumnEl.options[mi].selected = mi === 0;
+                }
             }
             if (layoutNameEl) {
                 layoutNameEl.value = "";
@@ -1061,13 +1137,15 @@
             var agg = aggregationTypeEl.value;
             var trans = agg === "SUM" ? aggregateTransformEl.value : "NONE";
             var op = agg === "SUM" && trans !== "NONE" ? (aggregateTransformOperandEl.value || "").trim() : "";
+            var measureCols = agg === "SUM" ? getSelectedMeasureColumns() : [];
             return {
                 tableName: state.selectedTable,
                 rowDimensions: state.rows.map(dimensionToApiPayload),
                 columnDimensions: state.columns.map(dimensionToApiPayload),
                 filterDimensions: state.filters.map(dimensionToApiPayload),
                 aggregation: agg,
-                valueColumn: normalizeName(measureColumnEl.value),
+                valueColumns: measureCols,
+                valueColumn: measureCols.length ? measureCols[0] : "",
                 aggregateTransform: trans,
                 aggregateTransformOperand: op
             };
@@ -1075,6 +1153,10 @@
 
         function runPivot() {
             var payload = getPivotPayload();
+            if (payload.aggregation === "SUM" && (!payload.valueColumns || payload.valueColumns.length === 0)) {
+                setStatus("Select at least one measure column for SUM.");
+                return;
+            }
             setStatus("Running...");
             fetchJson(apiUrl("/api/analytical/pivot/run"), {
                 method: "POST",
@@ -1110,6 +1192,7 @@
             if (!dataRows || dataRows.length === 0) {
                 return null;
             }
+            var measures = pivotMeasureKeys(payload);
             var colKeyMap = {};
             var rowMap = {};
             dataRows.forEach(function (row) {
@@ -1117,19 +1200,22 @@
                     var v = rowField(row, k);
                     return v == null ? "" : v;
                 }).join(" | ");
-                var colKey = colCols.length > 0
+                var baseColKey = colCols.length > 0
                     ? colCols.map(function (k) {
                         var v = rowField(row, k);
                         return v == null ? "" : v;
                     }).join(" | ")
-                    : payload.aggregation + "(" + (payload.valueColumn || "*") + ")";
+                    : "";
 
-                colKeyMap[colKey] = true;
                 if (!rowMap[rowKey]) {
                     rowMap[rowKey] = { dimValues: {}, measures: {} };
                     rowCols.forEach(function (k) { rowMap[rowKey].dimValues[k] = rowField(row, k); });
                 }
-                rowMap[rowKey].measures[colKey] = rowField(row, "MEASURE_VALUE");
+                measures.forEach(function (m) {
+                    var colKey = buildPivotColKey(baseColKey, m.label, measures.length, colCols.length);
+                    colKeyMap[colKey] = true;
+                    rowMap[rowKey].measures[colKey] = rowField(row, m.field);
+                });
             });
             return {
                 rowCols: rowCols,
@@ -1860,7 +1946,11 @@
                     return { columnName: r.columnName };
                 }),
                 aggregation: aggregationTypeEl.value,
-                valueColumn: normalizeName(measureColumnEl.value),
+                valueColumns: getSelectedMeasureColumns(),
+                valueColumn: (function () {
+                    var cols = getSelectedMeasureColumns();
+                    return cols.length ? cols[0] : "";
+                })(),
                 aggregateTransform: aggregationTypeEl.value === "SUM" ? aggregateTransformEl.value : "NONE",
                 aggregateTransformOperand: aggregationTypeEl.value === "SUM" && aggregateTransformEl.value !== "NONE"
                     ? (aggregateTransformOperandEl.value || "").trim() : ""
@@ -1934,7 +2024,7 @@
                 state.rows = dimFromLayout(layout.rowDimensions, layout.rowColumns);
                 state.columns = dimFromLayout(layout.columnDimensions, layout.columnColumns);
                 renderDropItems();
-                setMeasureColumnFromLayout(layout.valueColumn);
+                setMeasureColumnsFromLayout(layout.valueColumn, layout.valueColumns);
                 aggregateTransformEl.value = layout.aggregateTransform || "NONE";
                 aggregateTransformOperandEl.value = layout.aggregateTransformOperand || "";
                 toggleSumTransformUI();

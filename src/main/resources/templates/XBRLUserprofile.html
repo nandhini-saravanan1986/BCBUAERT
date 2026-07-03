@@ -27,7 +27,7 @@
 
 	<style>
 		:root {
-			--bob-orange: #ff7f27;
+			--bob-orange: #FF7B00;
 			--bob-blue: #004080;
 		}
 
@@ -144,14 +144,38 @@
 			font-size: 12px;
 		}
 
+		.module-item label {
+			margin: 0;
+			font-weight: normal;
+			cursor: pointer;
+		}
+
+		.module-access-readonly {
+			max-height: 420px;
+			overflow-y: auto;
+			border: 1px solid var(--bank-border, #E8DDD2);
+			border-radius: 6px;
+			padding: 10px 12px;
+			background: #f8f9fa;
+		}
+
+		.module-access-readonly input[type="checkbox"] {
+			pointer-events: none;
+		}
+
+		.module-access-readonly label {
+			cursor: default;
+			color: #495057;
+		}
+
 		.modal-header {
-			background: var(--table-header-blue, #2563EB);
+			background: var(--table-header-blue, #FF7B00);
 			color: white;
 		}
 		.static-back-btn {
 		    background-color: rgb(255, 255, 255);
 		    border: none;
-		    color: var(--bank-primary, #2563EB);
+		    color: var(--bank-primary, #FF7B00);
 		    font-size: 16px;
 		    border-radius: 50%;
 		    width: 36px;
@@ -166,7 +190,7 @@
 
 		/* Hover effect */
 		.static-back-btn:hover {
-		    background-color: var(--bank-primary, #2563EB);   /* darker orange */
+		    background-color: var(--bank-primary, #FF7B00);   /* darker orange */
 		    color: rgb(255, 255, 255);
 		    transform: scale(1.08);
 		}
@@ -200,7 +224,7 @@
 		}
 
 		#usertable thead th {
-			background-color: var(--table-header-blue, #2563EB) !important;
+			background-color: var(--table-header-blue, #FF7B00) !important;
 			color: #fff;
 			font-family: Arial, sans-serif !important;
 			font-size: 14px !important;
@@ -265,18 +289,18 @@
 		}
 
 		.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link {
-			color: var(--bank-primary, #2563EB) !important;
+			color: var(--bank-primary, #FF7B00) !important;
 			background-color: transparent !important;
 			border-color: #dddddd !important;
 		}
 
 		.dataTables_wrapper .paginate_button:not(.previous):not(.next):not(.active) .page-link:hover {
 			background-color: #f5f5f5 !important;
-			color: var(--bank-primary, #2563EB) !important;
+			color: var(--bank-primary, #FF7B00) !important;
 		}
 
 		.dataTables_wrapper .paginate_button.active .page-link {
-			background-color: var(--bank-primary, #2563EB) !important;
+			background-color: var(--bank-primary, #FF7B00) !important;
 			border-color: var(--bank-primary-dark, #1E40AF) !important;
 			color: #ffffff !important;
 			cursor: default !important;
@@ -367,8 +391,6 @@
 				$("#role_desc").val("");
 				$("#work_class").val("");
 				$("#permissions").val("");
-				$("#domain_id").val("");
-				syncCheckboxes("");
 				return;
 			}
 			$.ajax({
@@ -380,16 +402,12 @@
 						$("#role_desc").val(data.roleDesc || "");
 						$("#work_class").val(data.workClass || "");
 						$("#permissions").val(data.permissions || "");
-						$("#domain_id").val(data.menulist || "");
-						syncCheckboxes(data.menulist || "");
 					}
 				},
 				error: function () {
 					$("#role_desc").val("");
 					$("#work_class").val("");
 					$("#permissions").val("");
-					$("#domain_id").val("");
-					syncCheckboxes("");
 					alert("Unable to load selected role details.");
 				}
 			});
@@ -400,19 +418,35 @@
 			$("#permissionForm input[name='domId']:checked").each(function () {
 				selected.push($(this).val());
 			});
-			$("#domain_id").val(selected.join(","));
+			if (selected.length === 0) {
+				alert("Please select at least one menu option.");
+				return;
+			}
+			$("#domain_id").val(Array.from(new Set(selected)).join(","));
 			$('#moduleModal').modal('hide');
 		}
 
-		function syncCheckboxes(menuString) {
-			$("#permissionForm input[name='domId']").prop("checked", false);
-			if (!menuString) return;
-			let menus = menuString.split(",");
-			$("#permissionForm input[name='domId']").each(function () {
-				if (menus.includes($(this).val())) {
+		function syncCheckboxes(menuString, formSelector) {
+			var form = formSelector || "#permissionForm";
+			$(form + " input[name='domId']").prop("checked", false);
+			if (!menuString) {
+				return;
+			}
+			var menus = menuString.split(",").map(function (item) {
+				return item.trim();
+			}).filter(Boolean);
+			$(form + " input[name='domId']").each(function () {
+				if (menus.indexOf($(this).val()) >= 0) {
 					$(this).prop("checked", true);
 				}
 			});
+		}
+
+		function initModuleAccessReadonlyView() {
+			if (!$("#permissionViewForm").length) {
+				return;
+			}
+			syncCheckboxes($("#domain_id").val(), "#permissionViewForm");
 		}
 
 		function validateUserId() {
@@ -437,16 +471,32 @@
 
 		function submitForm() {
 			if (!$("#userForm").valid()) return;
+			var formmode = $("#formmode").val();
 			var roleId = ($("#roleId").val() || "").trim();
 			var workClass = ($("#work_class").val() || "").trim();
 			var permissions = ($("#permissions").val() || "").trim();
 			var moduleAccess = ($("#domain_id").val() || "").trim();
+			var userId = ($("#userid").val() || "").trim();
+			var userIdRegex = /^[A-Za-z]{2}[0-9]{6}$/;
+
+			if (formmode === "add" && userId && !userIdRegex.test(userId)) {
+				alert("User ID must be 2 letters followed by 6 digits.");
+				return;
+			}
+			if (formmode === "add") {
+				var p = $("#password").val() || "";
+				var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{14,})/;
+				if (!strongRegex.test(p)) {
+					alert("Password must be at least 14 characters and include upper, lower, number, and special character.");
+					return;
+				}
+			}
 			if (!roleId) {
 				alert("Role ID is required.");
 				return;
 			}
 			if (!workClass || !permissions || !moduleAccess) {
-				alert("Role access details are not loaded. Please reselect Role ID.");
+				alert("Please select a Role ID and choose menu access using the search button next to Module Access.");
 				return;
 			}
 			showLoader();
@@ -477,10 +527,30 @@
 		}
 		$(document).ready(function () {
 			if ($('#userForm').length) {
-				$('#userForm').validate({ ignore: ':disabled' });
+				$('#userForm').validate({
+					ignore: ':disabled',
+					rules: {
+						userid: { required: true },
+						username: { required: true },
+						email_id: { email: true }
+					}
+				});
 				if ($('#roleId').val()) {
 					roledesc();
 				}
+				var existingAccess = $("#domain_id").val();
+				if (existingAccess) {
+					syncCheckboxes(existingAccess);
+				}
+				initModuleAccessReadonlyView();
+				$('#moduleModal').on('show.bs.modal', function () {
+					syncCheckboxes($("#domain_id").val());
+				});
+				$(document).on('change', "#permissionForm input[name='domId']", function () {
+					var val = $(this).val();
+					var checked = $(this).is(':checked');
+					$("#permissionForm input[name='domId'][value='" + val + "']").prop('checked', checked);
+				});
 			}
 			if ($('#usertable').length) {
 				$('#usertable').DataTable({
@@ -783,25 +853,100 @@
 							</div>
 						</div>
 
-						<div class="row formline">
+						<div class="row formline" th:if="${formmode == 'add' || formmode == 'edit'}">
 							<label class="col-sm-2">Work Class</label>
 							<div class="col-sm-3">
 								<input type="text" th:field="*{work_class}" id="work_class"
 									class="form-control form-control-sm" readonly>
 							</div>
 							<div class="col-sm-1"></div>
-							<label class="col-sm-2">Module Access <span
-									th:if="${formmode == 'add' || formmode == 'edit'}"
-									class="text-danger">*</span></label>
+							<label class="col-sm-2">Module Access <span class="text-danger">*</span></label>
 							<div class="col-sm-3">
 								<div class="input-group">
 									<input type="text" th:field="*{domain_id}" id="domain_id"
-										class="form-control form-control-sm" readonly required>
-									<div class="input-group-append" th:if="${formmode == 'add' || formmode == 'edit'}">
+										class="form-control form-control-sm" readonly required
+										placeholder="Select menu options">
+									<div class="input-group-append">
 										<button class="btn btn-outline-secondary btn-sm" type="button"
 											data-toggle="modal" data-target="#moduleModal"><i
 												class="fas fa-search"></i></button>
 									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row formline" th:if="${formmode == 'view' || formmode == 'verify'}">
+							<label class="col-sm-2">Work Class</label>
+							<div class="col-sm-3">
+								<input type="text" th:field="*{work_class}" id="work_class"
+									class="form-control form-control-sm" readonly>
+							</div>
+						</div>
+
+						<div class="row formline" th:if="${formmode == 'view' || formmode == 'verify'}">
+							<label class="col-sm-2">Module Access</label>
+							<div class="col-sm-9">
+								<input type="hidden" th:field="*{domain_id}" id="domain_id" />
+								<div class="module-access-readonly" id="moduleAccessReadonly">
+									<form id="permissionViewForm">
+										<div class="category-head">Admin</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-Usrprf" disabled> Admin — User Profile</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-AccessRole" disabled> Admin — Access and Roles</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-BloombergData" disabled> Admin — Bloomberg Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Rpt-Ctrl_Center" disabled> Admin — Report Control Center</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-DataInventory" disabled> Admin — Data Inventory Dashboard</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-EabExcep" disabled> Admin — EAB Account Exception Mnmt</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-CustgrpMain" disabled> Admin — Customer Group Maintenance</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-BillDetails" disabled> Admin — Bill Details</label></div>
+										</div>
+										<div class="category-head">CBUAE Reports</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT1" disabled> CBUAE Reports — Nostro Account Balance</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT2" disabled> CBUAE Reports — FX Risk Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT3" disabled> CBUAE Reports — Trade Market Risk</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT4" disabled> CBUAE Reports — MM Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT5" disabled> CBUAE Reports — Repo Data Template</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT6" disabled> CBUAE Reports — Investment Risk Dashboard</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT7" disabled> CBUAE Reports — Treasury Credit Limit Management</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT8" disabled> CBUAE Reports — Trade Level Data Derivatives</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT9" disabled> CBUAE Reports — Trade Level Data Simplified</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT10" disabled> CBUAE Reports — CCR Data Templates</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT11" disabled> CBUAE Reports — Cross Currency Funding Spread</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT12" disabled> CBUAE Reports — Liquidity Risk Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT13" disabled> CBUAE Reports — Investment Securities Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT14" disabled> CBUAE Reports — Liquidity Risk Dashboard</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT15" disabled> CBUAE Reports — IRRBB Data Template</label></div>
+										</div>
+										<div class="category-head">ASL</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Authcounterparty" disabled> ASL — Auth Counterparties</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Exp_data" disabled> ASL — Exposure Data</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Intr_setl" disabled> ASL — Interbank Placements</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Swap_setl" disabled> ASL — Swap Settlement</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Final_stmt" disabled> ASL — Final Risk View</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Sblc_maint" disabled> ASL — SBLC Maintenance</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Bank-Limit-Check" disabled> ASL — Bank Limit Check</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Limit-Request" disabled> ASL — ASL Limit Request</label></div>
+										</div>
+										<div class="category-head">Credit Risk</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal" disabled> Credit Risk — Portfolio Analysis Report</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-AnalyticalPivot" disabled> Credit Risk — Analytical Pivot System</label></div>
+										</div>
+										<div class="category-head">Liquidity &amp; Risk</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal" disabled> Liquidity &amp; Risk — SLS</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal" disabled> Liquidity &amp; Risk — IRS</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-SLS-Sens" disabled> Liquidity &amp; Risk — SLS Sensitivity Report</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-IRS-Sens" disabled> Liquidity &amp; Risk — IRS Sensitivity Report</label></div>
+										</div>
+										<div class="category-head">Audit</div>
+										<div class="module-grid">
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Usr_audit" disabled> Audit — User Audit</label></div>
+											<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Ser_audit" disabled> Audit — Service Audit</label></div>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -833,90 +978,74 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="moduleModalLabel">Access Rights Selection</h5>
+					<h5 class="modal-title" id="moduleModalLabel">Menu Access Selection</h5>
 					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body" style="max-height: 550px; overflow-y: auto;">
 					<form id="permissionForm">
-						<div class="category-head">Admin Management</div>
+						<div class="category-head">Admin</div>
 						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="Adm-Usrprf"> User
-								Profile</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="Adm-AccessRole"> Access
-								& Roles</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="Adm-CustgrpMain">
-								Customer Group Maintenance</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="Adm-BillDetails"> Bill
-								Details</div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-Usrprf"> Admin — User Profile</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-AccessRole"> Admin — Access and Roles</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-BloombergData"> Admin — Bloomberg Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Rpt-Ctrl_Center"> Admin — Report Control Center</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-DataInventory"> Admin — Data Inventory Dashboard</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-EabExcep"> Admin — EAB Account Exception Mnmt</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-CustgrpMain"> Admin — Customer Group Maintenance</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-BillDetails"> Admin — Bill Details</label></div>
 						</div>
-						<div class="category-head">RT Reports</div>
-						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT1"> Nostro Account
-								Balance</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT2"> FX Risk Data
-							</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT3"> Trade Market
-								Risk</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT4"> MM Data</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT5"> Repo Data
-								Template</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT6"> Investment
-								Risk Dashboard</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT7"> Treasury
-								Credit Limit Management</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT8"> Trade Level
-								Data
-								Derivatives</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT9"> Trade Level
-								Data Simplified</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT10"> CCR Data
-								Templates</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT11"> Cross
-								Currency Funding
-								Spread</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT12"> Liquidity
-								Risk Data</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT13"> Investment
-								Securities
-								Data</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT14"> Liquidity
-								Risk
-								Dashboard</div>
 
-							<div class="module-item"><input type="checkbox" name="domId" value="RT-RPT15"> IRRBB Data
-								Template</div>
-						</div>
-						<div class="category-head">ASL & Settlements</div>
+						<div class="category-head">CBUAE Reports</div>
 						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Authcounterparty">
-								Auth Counterparty</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Exp_data"> Exposure
-								Data</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Intr_setl">
-								Interbank Placements</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="ASL-Final_stmt"> ASL
-								Final Statement</div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT1"> CBUAE Reports — Nostro Account Balance</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT2"> CBUAE Reports — FX Risk Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT3"> CBUAE Reports — Trade Market Risk</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT4"> CBUAE Reports — MM Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT5"> CBUAE Reports — Repo Data Template</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT6"> CBUAE Reports — Investment Risk Dashboard</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT7"> CBUAE Reports — Treasury Credit Limit Management</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT8"> CBUAE Reports — Trade Level Data Derivatives</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT9"> CBUAE Reports — Trade Level Data Simplified</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT10"> CBUAE Reports — CCR Data Templates</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT11"> CBUAE Reports — Cross Currency Funding Spread</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT12"> CBUAE Reports — Liquidity Risk Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT13"> CBUAE Reports — Investment Securities Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT14"> CBUAE Reports — Liquidity Risk Dashboard</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="RT-RPT15"> CBUAE Reports — IRRBB Data Template</label></div>
 						</div>
-						<div class="category-head">ASL Data Upload</div>
+
+						<div class="category-head">ASL</div>
 						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="Bill-Plac_data">
-								Treasury Placement Upload</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="Bill-Swap_data">
-								Settlement Upload</div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Authcounterparty"> ASL — Auth Counterparties</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Exp_data"> ASL — Exposure Data</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Intr_setl"> ASL — Interbank Placements</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Swap_setl"> ASL — Swap Settlement</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Final_stmt"> ASL — Final Risk View</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Sblc_maint"> ASL — SBLC Maintenance</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Bank-Limit-Check"> ASL — Bank Limit Check</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="ASL-Limit-Request"> ASL — ASL Limit Request</label></div>
 						</div>
+
 						<div class="category-head">Credit Risk</div>
 						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="CR-Por_fol_anal">
-								Portfolio Analysis</div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal"> Credit Risk — Portfolio Analysis Report</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Adm-AnalyticalPivot"> Credit Risk — Analytical Pivot System</label></div>
 						</div>
-						<div class="category-head">Audit Services</div>
+
+						<div class="category-head">Liquidity &amp; Risk</div>
 						<div class="module-grid">
-							<div class="module-item"><input type="checkbox" name="domId" value="Audit-Usr_audit"> User
-								Audit</div>
-							<div class="module-item"><input type="checkbox" name="domId" value="Audit-Ser_audit">
-								Service Audit</div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal"> Liquidity &amp; Risk — SLS</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-Por_fol_anal"> Liquidity &amp; Risk — IRS</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-SLS-Sens"> Liquidity &amp; Risk — SLS Sensitivity Report</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-IRS-Sens"> Liquidity &amp; Risk — IRS Sensitivity Report</label></div>
+						</div>
+
+						<div class="category-head">Audit</div>
+						<div class="module-grid">
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Usr_audit"> Audit — User Audit</label></div>
+							<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Ser_audit"> Audit — Service Audit</label></div>
 						</div>
 					</form>
 				</div>

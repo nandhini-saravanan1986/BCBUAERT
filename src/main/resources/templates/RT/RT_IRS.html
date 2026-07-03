@@ -73,7 +73,7 @@ PURPOSE		:
 		}
 
 		.btn-primary {
-			background-color: var(--bank-primary, #2563EB);
+			background-color: var(--bank-primary, #FF7B00);
 			border-color: #0c0c0c;
 		}
 
@@ -357,7 +357,7 @@ PURPOSE		:
 
 		/* Header rows */
 		#usertable thead th {
-			background-color: var(--table-header-blue, #2563EB);
+			background-color: var(--table-header-blue, #FF7B00);
 			/* brown header */
 			color: #ffffff;
 			text-align: center;
@@ -404,7 +404,7 @@ PURPOSE		:
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: var(--bank-primary, #2563EB);
+			color: var(--bank-primary, #FF7B00);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -419,7 +419,7 @@ PURPOSE		:
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: var(--bank-primary, #2563EB);
+			background-color: var(--bank-primary, #FF7B00);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -545,8 +545,19 @@ PURPOSE		:
 		//		window.history.back();
 		//	}
 		function goBack() {
+			if (window.jQuery && $("#loader").length) {
+				$("#loader").css("display", "flex");
+			} else {
+				var loader = document.getElementById("bob-loader");
+				if (loader) {
+					loader.setAttribute("aria-hidden", "false");
+				}
+			}
+			location.href = './MenuLanding';
+		}
 
-			window.history.back();
+		function back() {
+			goBack();
 		}
 
 		function hideLoader() {

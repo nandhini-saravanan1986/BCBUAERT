@@ -48,11 +48,57 @@ public class RtLiquidityReportService {
 	}
 
 	public Optional<RT_SLS_SENS_ENTITIES> findLatestSlsSensReport() {
-		return slsSensRepository.findLatestReport();
+		return resolveLatestSlsSensEntryPoint();
 	}
 
 	public Optional<RT_IRS_SENS_ENTITIES> findLatestIrsSensReport() {
-		return irsSensRepository.findLatestReport();
+		return resolveLatestIrsSensEntryPoint();
+	}
+
+	public Optional<RT_SLS_SENS_ENTITIES> resolveLatestSlsSensEntryPoint() {
+		List<Date> dates = slsSensRepository.findDistinctPositionDates();
+		if (dates.isEmpty()) {
+			return Optional.empty();
+		}
+		Date maxPositionDate = dates.get(0);
+		List<RT_SLS_SENS_ENTITIES> currencyRows = slsSensRepository.findCurrenciesByPositionDate(maxPositionDate);
+		if (currencyRows.isEmpty()) {
+			return Optional.empty();
+		}
+		String currency = pickPreferredSensCurrency(currencyRows);
+		return slsSensRepository.findByPositionDateAndDayOffsetAndCurrency(maxPositionDate, 0, currency);
+	}
+
+	public Optional<RT_IRS_SENS_ENTITIES> resolveLatestIrsSensEntryPoint() {
+		List<Date> dates = irsSensRepository.findDistinctPositionDates();
+		if (dates.isEmpty()) {
+			return Optional.empty();
+		}
+		Date maxPositionDate = dates.get(0);
+		List<RT_IRS_SENS_ENTITIES> currencyRows = irsSensRepository.findCurrenciesByPositionDate(maxPositionDate);
+		if (currencyRows.isEmpty()) {
+			return Optional.empty();
+		}
+		String currency = pickPreferredIrsSensCurrency(currencyRows);
+		return irsSensRepository.findByPositionDateAndDayOffsetAndCurrency(maxPositionDate, 0, currency);
+	}
+
+	private static String pickPreferredSensCurrency(List<RT_SLS_SENS_ENTITIES> currencyRows) {
+		for (RT_SLS_SENS_ENTITIES row : currencyRows) {
+			if ("ONLY_USD_CCY_REPORT".equals(row.getREPORT_CURRENCY())) {
+				return row.getREPORT_CURRENCY();
+			}
+		}
+		return currencyRows.get(0).getREPORT_CURRENCY();
+	}
+
+	private static String pickPreferredIrsSensCurrency(List<RT_IRS_SENS_ENTITIES> currencyRows) {
+		for (RT_IRS_SENS_ENTITIES row : currencyRows) {
+			if ("ONLY_USD_CCY_REPORT".equals(row.getReport_currency())) {
+				return row.getReport_currency();
+			}
+		}
+		return currencyRows.get(0).getReport_currency();
 	}
 
 	public List<Date> findDistinctSlsReportDates() {

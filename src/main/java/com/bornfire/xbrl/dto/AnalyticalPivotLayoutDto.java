@@ -15,6 +15,7 @@ public class AnalyticalPivotLayoutDto {
 	private List<AnalyticalPivotDimensionDto> columnDimensions;
 	private String aggregation;
 	private String valueColumn;
+	private List<String> valueColumns;
 	private String aggregateTransform;
 	private String aggregateTransformOperand;
 
@@ -72,6 +73,14 @@ public class AnalyticalPivotLayoutDto {
 
 	public void setValueColumn(String valueColumn) {
 		this.valueColumn = valueColumn;
+	}
+
+	public List<String> getValueColumns() {
+		return valueColumns;
+	}
+
+	public void setValueColumns(List<String> valueColumns) {
+		this.valueColumns = valueColumns;
 	}
 
 	public List<AnalyticalPivotDimensionDto> getRowDimensions() {

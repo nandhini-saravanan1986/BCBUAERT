@@ -686,7 +686,7 @@
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: rgb(255, 128, 0);
+			color: rgb(255, 123, 0);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -701,7 +701,7 @@
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: rgb(255, 128, 0);
+			background-color: rgb(255, 123, 0);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -984,8 +984,19 @@
 		}
 
 		function goBack() {
+			if (window.jQuery && $("#loader").length) {
+				$("#loader").css("display", "flex");
+			} else {
+				var loader = document.getElementById("bob-loader");
+				if (loader) {
+					loader.setAttribute("aria-hidden", "false");
+				}
+			}
+			location.href = './MenuLanding';
+		}
 
-			window.history.back();
+		function back() {
+			goBack();
 		}
 
 		function hideLoader() {
@@ -1358,12 +1369,20 @@
 		}
 
 		#irsAnalyticalCalcModal.modal {
-			z-index: 4110 !important;
+			z-index: 10060 !important;
 			padding-top: 70px;
 		}
 
 		body.modal-open .modal-backdrop.irs-analytical-backdrop {
-			z-index: 4105 !important;
+			z-index: 10055 !important;
+		}
+
+		#resultModal.modal {
+			z-index: 10060 !important;
+		}
+
+		body.modal-open .modal-backdrop.show {
+			z-index: 10055 !important;
 		}
 
 		#irsAnalyticalCalcModal .modal-dialog {
@@ -1621,8 +1640,9 @@
 						<i class="fa fa-calculator"></i> Analytical calculator
 					</button>
 
-					<th:block th:if="${formmode == 'summary' and irslist != null and !irslist.isEmpty() and irsList2 != null and !irsList2.isEmpty()}">
-						<input type="hidden" id="irsTotalAssets" th:value="${irsList2[0].r84_total}" />
+					<th:block th:if="${formmode == 'summary' and irslist != null and !irslist.isEmpty()}">
+						<input type="hidden" id="irsTotalAssets"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_total : 0}" />
 						<input type="hidden" id="irsR45Day1_28" th:value="${irslist[0].r45_day1_28}" />
 						<input type="hidden" id="irsR45Day29_3m" th:value="${irslist[0].r45_day29_3m}" />
 						<input type="hidden" id="irsR45Over3mTo6m" th:value="${irslist[0].r45_over3m_to_6m}" />
@@ -1634,17 +1654,28 @@
 						<input type="hidden" id="irsR45Over10yTo15y" th:value="${irslist[0].r45_over10y_to_15y}" />
 						<input type="hidden" id="irsR45Over15y" th:value="${irslist[0].r45_over15y}" />
 						<input type="hidden" id="irsR45NonSensitive" th:value="${irslist[0].r45_non_sensitive}" />
-						<input type="hidden" id="irsR84Day1_28" th:value="${irsList2[0].r84_day1_28}" />
-						<input type="hidden" id="irsR84Day29_3m" th:value="${irsList2[0].r84_day29_3m}" />
-						<input type="hidden" id="irsR84Over3mTo6m" th:value="${irsList2[0].r84_over3m_to_6m}" />
-						<input type="hidden" id="irsR84Over6mTo1y" th:value="${irsList2[0].r84_over6m_to_1y}" />
-						<input type="hidden" id="irsR84Over1yTo3y" th:value="${irsList2[0].r84_over1y_to_3y}" />
-						<input type="hidden" id="irsR84Over3yTo5y" th:value="${irsList2[0].r84_over3y_to_5y}" />
-						<input type="hidden" id="irsR84Over5yTo7y" th:value="${irsList2[0].r84_over5y_to_7y}" />
-						<input type="hidden" id="irsR84Over7yTo10y" th:value="${irsList2[0].r84_over7y_to_10y}" />
-						<input type="hidden" id="irsR84Over10yTo15y" th:value="${irsList2[0].r84_over10y_to_15y}" />
-						<input type="hidden" id="irsR84Over15y" th:value="${irsList2[0].r84_over15y}" />
-						<input type="hidden" id="irsR84NonSensitive" th:value="${irsList2[0].r84_non_sensitive}" />
+						<input type="hidden" id="irsR84Day1_28"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_day1_28 : 0}" />
+						<input type="hidden" id="irsR84Day29_3m"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_day29_3m : 0}" />
+						<input type="hidden" id="irsR84Over3mTo6m"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over3m_to_6m : 0}" />
+						<input type="hidden" id="irsR84Over6mTo1y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over6m_to_1y : 0}" />
+						<input type="hidden" id="irsR84Over1yTo3y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over1y_to_3y : 0}" />
+						<input type="hidden" id="irsR84Over3yTo5y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over3y_to_5y : 0}" />
+						<input type="hidden" id="irsR84Over5yTo7y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over5y_to_7y : 0}" />
+						<input type="hidden" id="irsR84Over7yTo10y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over7y_to_10y : 0}" />
+						<input type="hidden" id="irsR84Over10yTo15y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over10y_to_15y : 0}" />
+						<input type="hidden" id="irsR84Over15y"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_over15y : 0}" />
+						<input type="hidden" id="irsR84NonSensitive"
+							th:value="${irsList2 != null and !irsList2.isEmpty() ? irsList2[0].r84_non_sensitive : 0}" />
 					</th:block>
 
 					<button type="button" class="role-btn" th:if="${formmode == 'summary'}" onclick="getdetails();" title="Details">
@@ -5346,7 +5377,10 @@
 					</div>
 				</div>
 			</div>
-			<div id="loader" class="loader-overlay">
+	</div>
+	</div>
+
+	<div id="loader" class="loader-overlay">
 				<div class="loader-card">
 					<div class="loader-logo-wrap">
 						<div class="loader-ring"></div>
@@ -5436,8 +5470,6 @@
 				</div>
 			</div>
 
-
-</body>
 
 <script>
 	function showResultModal(title, message) {
@@ -5744,9 +5776,16 @@
 	}
 
 	function openIrsAnalyticalCalculator() {
-		if (!document.getElementById('irsTotalAssets')) {
-			showResultModal('IRS Analytical Calculator', 'Report data is not available for this date and currency.');
+		var modalEl = document.getElementById('irsAnalyticalCalcModal');
+		if (!modalEl) {
 			return;
+		}
+		if (modalEl.parentElement !== document.body) {
+			document.body.appendChild(modalEl);
+		}
+		var resultModalEl = document.getElementById('resultModal');
+		if (resultModalEl && resultModalEl.parentElement !== document.body) {
+			document.body.appendChild(resultModalEl);
 		}
 		buildIrsAnalyticalRows();
 		applyIrsCalcHeaderFormulas();
@@ -5794,5 +5833,7 @@
 		height: 32px;
 	}
 </style>
+
+</body>
 
 </html>

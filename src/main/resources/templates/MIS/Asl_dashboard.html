@@ -38,17 +38,9 @@
 	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
 		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
 
-	<!-- Stylesheets -->
-	<link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-	<link rel="stylesheet" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-	<link rel="stylesheet" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-	<link rel="stylesheet" th:href="@{/webjars/datatables/1.10.19/css/dataTables.bootstrap4.min.css}">
-	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
-	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
-
 	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
 
-	<title>RiskInsights</title>
+	<title>Risk Insights — ASL Final Sheet</title>
 
 
 	<style>
@@ -69,7 +61,7 @@
 		}
 
 		:root {
-			--bob-orange: #0073e6;
+			--bob-orange: #FF7B00;
 			--bob-blue: #004080;
 			--overlay-bg: rgba(255, 255, 255, 0.9);
 		}
@@ -154,10 +146,10 @@
 		.role-page-underline {
 			width: 158px;
 			height: 3px;
-			background-color: #0073e6;
+			background-color: #FF7B00;
 			border-radius: 2px;
 			margin-top: 6px;
-			box-shadow: 0 4px 12px rgba(0, 115, 230, 0.6);
+			box-shadow: 0 4px 12px rgba(255, 123, 0, 0.6);
 			/* soft glow below */
 		}
 	</style>
@@ -206,11 +198,11 @@
 	<style>
 /* Active (selected tab) */
 		.role-btn.active {
-			background: #E67E00;
+			background: #E66E00;
 			/* solid orange */
 			color: #fff;
 			/* white text */
-			border-color: #E67E00;
+			border-color: #E66E00;
 			transform: translateY(-1px);
 			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
 		}
@@ -244,20 +236,25 @@
 		document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
+			if (!backBtn && !forwardBtn) {
+				return;
+			}
 			const screenWidth = window.innerWidth;
 
-			// Left edge (back)
-			if (e.clientX < 50) {
-				backBtn.classList.add('show');
-			} else {
-				backBtn.classList.remove('show');
+			if (backBtn) {
+				if (e.clientX < 50) {
+					backBtn.classList.add('show');
+				} else {
+					backBtn.classList.remove('show');
+				}
 			}
 
-			// Right edge (forward)
-			if (screenWidth - e.clientX < 50) {
-				forwardBtn.classList.add('show');
-			} else {
-				forwardBtn.classList.remove('show');
+			if (forwardBtn) {
+				if (screenWidth - e.clientX < 50) {
+					forwardBtn.classList.add('show');
+				} else {
+					forwardBtn.classList.remove('show');
+				}
 			}
 		});
 	</script>
@@ -268,7 +265,7 @@
 		#floatingForwardBtn {
 			position: fixed;
 			top: 50%;
-			background-color: #0073e6;
+			background-color: #FF7B00;
 			border: none;
 			color: white;
 			font-size: 20px;
@@ -371,95 +368,184 @@
 
 		}
 	</style>
-	<!-- Custom Styles -->
+	<!-- Page layout -->
 	<style>
 		body {
 			font-family: 'Segoe UI', Arial, sans-serif;
-			font-size: 5px;
+			font-size: 12px;
+			background: var(--bank-page-bg, #F7F4F1);
 			margin: 0;
+			padding: 0;
+			min-height: 100vh;
 			overflow-x: hidden;
-			/* ⛔ Prevent full-page scroll */
 		}
 
-		.table .thead-light th {
-			background-color: var(--table-header-blue, #2563EB);
-			border-color: #dee2e6;
-			font-family: Arial, Helvetica, sans-serif;
-			color: white;
-			font-size: 0.85rem;
+		.asl-dashboard-page {
+			margin-top: 20px;
+			padding: 0 12px 24px;
+			max-width: 100%;
 		}
 
-		.page-item.active .page-link {
-			z-index: 1;
+		@media (max-width: 767px) {
+			.asl-dashboard-page {
+				padding: 0 8px 16px;
+			}
+		}
+
+		.user-list-card {
+			background: #fff;
+			border-radius: 8px;
+			border: 1px solid var(--bank-border, #E8DDD2);
+			box-shadow: 0 2px 8px rgba(61, 43, 31, 0.06);
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			min-height: calc(100vh - 100px);
+		}
+
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 12px 16px;
+			border-radius: 8px 8px 0 0;
+		}
+
+		.page-title {
+			margin: 0;
+			line-height: 36px;
+			font-family: Verdana, Arial, sans-serif;
+			font-size: 20px;
+			font-weight: bold;
+			color: #0D0D0C;
+		}
+
+		.asl-toolbar {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 10px;
+			padding: 12px 16px;
+			background: #fafafa;
+			border-top: 1px solid var(--bank-border, #E8DDD2);
+			border-bottom: 1px solid var(--bank-border, #E8DDD2);
+		}
+
+		.asl-toolbar-label {
+			font-weight: 600;
+			margin: 0;
+			white-space: nowrap;
+		}
+
+		.asl-toolbar-actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.table-wrap,
+		.asl-table-area {
+			padding: 12px;
+			overflow: hidden;
+			flex: 1;
+			min-height: 0;
+		}
+
+		#usertable_wrapper {
+			width: 100%;
+		}
+
+		#usertable_wrapper .dataTables_scroll {
+			width: 100% !important;
+		}
+
+		#usertable_wrapper .dataTables_scrollHead {
+			overflow: visible !important;
+		}
+
+		#usertable_wrapper .dataTables_scrollBody {
+			border: 1px solid #e8e8e8;
+			border-top: none;
+		}
+
+		/* DataTables scrollX clones headers into scroll body — hide that duplicate row */
+		.dataTables_scrollBody thead {
+			display: none !important;
+		}
+
+		.dataTables_scrollHead thead th {
+			background-color: var(--table-header-blue, #FF7B00) !important;
+			color: #fff !important;
+		}
+
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+			width: 100% !important;
+		}
+
+		#usertable thead th {
+			background-color: var(--table-header-blue, #FF7B00) !important;
 			color: #fff;
-			background-color: #007bff;
-			border-color: #007bff;
+			font-family: Arial, sans-serif !important;
+			font-size: 13px !important;
+			text-align: left;
+			vertical-align: middle;
+			white-space: nowrap;
+			padding: 10px 8px !important;
+			line-height: 1.1 !important;
+			border: 1px solid rgba(0, 0, 0, 0.08);
 		}
 
-		.container-fluid {
-
-			width: 100%;
-			padding-top: 1px;
-			padding-right: 0px !important;
-			padding-left: 0px !important;
-			margin-right: auto;
-			margin-left: auto;
+		#usertable td {
+			padding: 8px !important;
+			border: 1px solid #e8e8e8 !important;
+			background: #fafafa;
+			white-space: nowrap;
+			vertical-align: middle;
+			font-size: 12px !important;
 		}
 
-		.btn-primary {
-			background-color: var(--bank-primary, #2563EB);
-			border-color: #0c0c0c;
+		#usertable tbody tr:nth-child(even) td {
+			background-color: #f4f2ef !important;
 		}
 
-		.btn-primary:hover,
-		.btn-primary:active {
-			background-color: #cc000000;
-			border-color: #161617;
+		#usertable tbody tr:nth-child(odd) td {
+			background-color: #ffffff !important;
 		}
 
-		.table-responsive {
-			max-height: calc(100vh - 205px);
-			overflow: auto;
+		#usertable tbody tr:hover td {
+			background-color: #f1f1f1 !important;
 		}
 
-		.btn {
-			font-size: inherit !important;
+		.dataTables_wrapper .paginate_button.active .page-link {
+			background-color: var(--bank-primary, #FF7B00) !important;
+			border-color: var(--bank-primary-dark, #1E40AF) !important;
+			color: #ffffff !important;
 		}
 
-		.table-container {
-			width: 100%;
-			overflow-x: auto;
-		}
-	</style>
-	<style>
-		#pageHeader {
-			position: sticky;
-			top: 110px;
-			z-index: 1050;
-			background: white;
-			padding-top: 10px;
+		.role-btn {
+			background: var(--bob-orange, #FF7B00);
+			color: #fff;
+			border: none;
+			padding: 6px 14px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 12px;
+			white-space: nowrap;
 		}
 
-		#tabHeader {
-			position: sticky;
-			top: 5px;
-			/* just below page header */
-			z-index: 1040;
-			background: white;
-			padding: 5px 0;
+		.role-btn:hover {
+			color: #fff;
+			opacity: 0.92;
 		}
 
-		#mainHeader {
-			position: sticky;
-			top: 0;
-			z-index: 9999;
-			background: white;
-		}
-		
 		.static-back-btn {
 								    background-color: rgb(255, 255, 255);
 								    border: none;
-								    color: var(--bank-primary, #2563EB);
+								    color: var(--bank-primary, #FF7B00);
 								    font-size: 16px;
 								    border-radius: 50%;
 								    width: 36px;
@@ -474,7 +560,7 @@
 
 								/* Hover effect */
 								.static-back-btn:hover {
-								    background-color: var(--bank-primary, #2563EB);   /* darker orange */
+								    background-color: var(--bank-primary, #FF7B00);   /* darker orange */
 								    color: rgb(255, 255, 255);
 								    transform: scale(1.08);
 								}
@@ -622,224 +708,128 @@
 
 			}
 		}
-		$(document).ready(function () {
-			let tableHeight = $(window).height() - 330; // subtract header/footer space
-			if (tableHeight < 200) tableHeight = 200;   // minimum height
+		function getAslTableScrollHeight() {
+			var tableArea = document.querySelector('.asl-table-area');
+			if (!tableArea) {
+				return Math.max(220, window.innerHeight - 330);
+			}
+			var top = tableArea.getBoundingClientRect().top;
+			var reserved = 112;
+			return Math.max(220, Math.floor(window.innerHeight - top - reserved));
+		}
 
-			$('#usertable').DataTable({
+		function initAslUserTable() {
+			if (!$('#usertable').length) {
+				return;
+			}
+			var tableHeight = getAslTableScrollHeight();
+			var table = $('#usertable').DataTable({
 				destroy: true,
-				scrollY: tableHeight + "px", // dynamic height
-				scrollCollapse: false,
+				scrollY: tableHeight + 'px',
+				scrollCollapse: true,
+				scrollX: true,
 				paging: true,
 				autoWidth: false,
 				ordering: false,
 				searching: true,
-				scrollX: true,
-				pageLength: 100,
+				pageLength: 25,
 				lengthChange: false,
-				responsive: true
+				dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
 			});
+			table.columns.adjust();
+		}
+
+		var aslTableResizeTimer;
+		$(window).on('resize', function () {
+			clearTimeout(aslTableResizeTimer);
+			aslTableResizeTimer = setTimeout(function () {
+				if ($.fn.DataTable.isDataTable('#usertable')) {
+					$('#usertable').DataTable().destroy();
+					initAslUserTable();
+				}
+			}, 150);
+		});
+
+		$(document).ready(function () {
+			initAslUserTable();
+			hideLoader();
 		});
 		/*]]>*/
 	</script>
 </head>
 
 <body>
-	<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-12">
-				<div th:if="${formmode}=='list'">
-					<div class="card">
-						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center">
-							<!-- Left: Page Title -->
-							
-							<div class="role-page-title">
-								<div class="d-flex align-items-center">
+	<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
 
-																								<button class="static-back-btn" onclick="goBack()" title="Go Back">
-																									<i class="fa fa-arrow-left"></i>
-																								</button>
-								<h4>ASL - Final Sheet</h4>
-							</div>
-							</div>
-							<div class="form-inline">
-								<!-- Report Date Label + Input -->
-								<label for="reportDate" class="mr-2">Report Date:</label>
-								<input type="date" name="ReportDate" id="ReportDate" onchange="getall()"
-									class="form-control form-control-sm" style="width: auto;"
-									th:value="${#dates.format(currentDate, 'yyyy-MM-dd')}" />
-
-								<!-- Buttons -->
-								<button type="button" class="role-btn ml-3" onclick="calculate()">
-									<i class="fas fa-calculator"></i>Calculate</button>
-								<button type="button" class="role-btn ml-3" onclick="final_sheet()">
-									<i class="fas fa-download"></i> Final Report</button>
-								<button type="button" class="role-btn ml-3" onclick="Download_detail_report()">
-									<i class="fas fa-download"></i>
-									Detail Report</button>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-sm-12">
-
-								<!--<div class="table-container" style="padding: 0px 15px;">
-									<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">-->
-
-								<div class="table-container">
-									<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
-
-										<thead class="thead-light">
-											<tr>
-												<th style="white-space: nowrap;">S. no.</th>
-												<!--	<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Territory Name</th>-->
-												<th style="white-space: nowrap;">Bank Name</th>
-												<th style="white-space: nowrap;">Country of origin</th>
-												<th style="white-space: nowrap;">Rating</th>
-												<!--<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Reg Limit</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Adhoc Limit</th>-->
-												<th style="white-space: nowrap;">Total Limit</th>
-												<th style="white-space: nowrap;">Total Exposure</th>
-												<th style="white-space: nowrap;">Credit Limit</th>
-												<th style="white-space: nowrap;">Credit Exposure</th>
-												<th style="white-space: nowrap;">Settlement Limit</th>
-												<th style="white-space: nowrap;">Settlement Exposure</th>
-												<!--<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Money Market Limit</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Money Market Exposure</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Trade Finance Limits</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">TF Limits Available</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Trade Finance Exposure</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">FX Exposure</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Check for Total limit</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Exposure To Capital</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Credit Limit Check</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Money Market Limit Check</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Settlement limit Check</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">TF Limit Check</th>
-												<th th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="white-space: nowrap;">Limit Utilization</th>-->
-											</tr>
-										</thead>
-
-										<tbody>
-											<tr th:each="row, iterStat : ${list}" style="font-family: Verdana, Geneva, Tahoma, sans-serif;
-											font-size:0.85rem;">
-												<td th:text="${iterStat.index + 1}"></td>
-												<!--<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													th:text="${row.territory_name}"></td>-->
-												<td th:text="${row.bank_name}"></td>
-												<td th:text="${row.country_of_origin}"></td>
-												<td th:text="${row.rating}"></td>
-												<!--<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.reg_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.adhoc_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>-->
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.total_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.total_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.credit_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.credit_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.settlement_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.settlement_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<!--<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.money_market_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.money_market_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.trade_finance_limits, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.tf_limits_avlble, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.trade_finance_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.fx_exposure, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.check_for_total_limit, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.exposure_to_capital, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.credit_limit_check, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.money_market_limit_check, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.settlement_limit_check, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													style="text-align:right"
-													th:text="${#numbers.formatDecimal(row.tf_limit_check, 2, 'COMMA', 2, 'POINT')}">
-												</td>
-												<td th:if="${#strings.contains(session.ROLEID, 'ADM')}"
-													th:text="${row.limit_utilization}"></td>-->
-											</tr>
-										</tbody>
-
-									</table>
-								</div>
-
-								<!--	<div class="card-footer text-center">
-							<button type="button" class="custom-tab-btn" 
-								onclick="home();">Home</button>
-							<button type="button" class="custom-tab-btn" 
-								onclick="back();">Back</button>
-						</div>-->
-							</div>
-						</div>
+	<div class="container-fluid asl-dashboard-page">
+		<div th:if="${formmode}=='list'">
+			<div class="user-list-card">
+				<div class="role-page-header d-flex justify-content-between align-items-center">
+					<div class="d-flex align-items-center">
+						<button class="static-back-btn" type="button" onclick="goBack()" title="Go Back">
+							<i class="fa fa-arrow-left"></i>
+						</button>
+						<h4 class="page-title">ASL - Final Sheet</h4>
 					</div>
 				</div>
-			</div>
 
+				<div class="asl-toolbar">
+					<label for="ReportDate" class="asl-toolbar-label">Report Date:</label>
+					<input type="date" name="ReportDate" id="ReportDate" onchange="getall()"
+						class="form-control form-control-sm" style="width: auto; min-width: 150px;"
+						th:value="${#dates.format(currentDate, 'yyyy-MM-dd')}" />
+					<div class="asl-toolbar-actions">
+						<button type="button" class="role-btn" onclick="calculate()">
+							<i class="fas fa-calculator"></i> Calculate
+						</button>
+						<button type="button" class="role-btn" onclick="final_sheet()">
+							<i class="fas fa-download"></i> Final Report
+						</button>
+						<button type="button" class="role-btn" onclick="Download_detail_report()">
+							<i class="fas fa-download"></i> Detail Report
+						</button>
+					</div>
+				</div>
+
+				<div class="table-wrap asl-table-area">
+					<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
+						<thead>
+							<tr>
+								<th>S. no.</th>
+								<th>Bank Name</th>
+								<th>Country of origin</th>
+								<th>Rating</th>
+								<th style="text-align:right;">Total Limit</th>
+								<th style="text-align:right;">Total Exposure</th>
+								<th style="text-align:right;">Credit Limit</th>
+								<th style="text-align:right;">Credit Exposure</th>
+								<th style="text-align:right;">Settlement Limit</th>
+								<th style="text-align:right;">Settlement Exposure</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="row, iterStat : ${list}">
+								<td th:text="${iterStat.index + 1}"></td>
+								<td th:text="${row.bank_name}"></td>
+								<td th:text="${row.country_of_origin}"></td>
+								<td th:text="${row.rating}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.total_limit, 2, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.total_exposure, 2, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.credit_limit, 2, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.credit_exposure, 2, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.settlement_limit, 2, 'COMMA', 2, 'POINT')}"></td>
+								<td style="text-align:right"
+									th:text="${#numbers.formatDecimal(row.settlement_exposure, 2, 'COMMA', 2, 'POINT')}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 

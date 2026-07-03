@@ -74,7 +74,6 @@ public class AccessAndRolesServices {
 	        alertparam.setAudit_us(auditUsValue);
 	        alertparam.setEntryUser(USERID);
 	        alertparam.setEntryTime(new Date());
-	        alertparam.setMenulist(finalString);
 	        
 	        AccessAndRoles newdata=new AccessAndRoles(); 
 	        Map<String, String> changes = new LinkedHashMap<>();
@@ -143,7 +142,6 @@ public class AccessAndRolesServices {
 	        alertparam.setAsl(aslValue);
 	        alertparam.setAsl_upload(aslUploadValue);
 	        alertparam.setAudit_us(auditUsValue);
-	        alertparam.setMenulist(finalString.isEmpty() ? existing.getMenulist() : finalString);
 
 	        alertparam.setDelFlg("N");
 	        alertparam.setModifyFlg("Y");
@@ -207,7 +205,7 @@ public class AccessAndRolesServices {
 	            }
 	        }               auditservice.createBusinessAudit(USERID,"MODIFY","ACCESS_AND_ROLE_SCREEN",changes,"BRF_ACCESS_AND_ROLES_TABLE");
 
-	        accessandrolesrepository.save(alertparam);
+	        accessandrolesrepository.save(dbUser);
 	        msg = "Role Edited Successfully";
 
 	    } else if ("delete".equalsIgnoreCase(formmode)) {

@@ -158,9 +158,15 @@ public class AnalyticalPivotService {
 
 		String aggExpr;
 		if ("COUNT".equals(validated.aggregation)) {
-			aggExpr = "COUNT(*)";
+			aggExpr = "COUNT(*) AS MEASURE_VALUE";
 		} else {
-			aggExpr = "SUM(" + validated.valueColumn + ")";
+			List<String> aggParts = new ArrayList<String>();
+			boolean singleMeasure = validated.valueColumns.size() == 1;
+			for (String col : validated.valueColumns) {
+				String alias = sqlMeasureAlias(col, singleMeasure);
+				aggParts.add("SUM(" + col + ") AS " + alias);
+			}
+			aggExpr = String.join(", ", aggParts);
 		}
 
 		List<Object> args = new ArrayList<Object>();
@@ -169,7 +175,7 @@ public class AnalyticalPivotService {
 		if (!dimensions.isEmpty()) {
 			sql.append(String.join(", ", dimensions)).append(", ");
 		}
-		sql.append(aggExpr).append(" AS MEASURE_VALUE ");
+		sql.append(aggExpr).append(" ");
 		sql.append("FROM ").append(validated.tableName).append(" ");
 		appendWhereClause(sql, args, validated.rowDims, validated.colDims, validated.filterDims);
 		if (!dimensions.isEmpty()) {
@@ -198,7 +204,8 @@ public class AnalyticalPivotService {
 		response.setRowColumns(dimensionNames(validated.rowDims));
 		response.setColumnColumns(dimensionNames(validated.colDims));
 		response.setAggregation(validated.aggregation);
-		response.setValueColumn(validated.valueColumn);
+		response.setValueColumn(validated.valueColumns.isEmpty() ? null : validated.valueColumns.get(0));
+		response.setValueColumns(new ArrayList<String>(validated.valueColumns));
 		response.setData(dataRows);
 		response.setRowCount(dataRows.size());
 		return response;
@@ -227,6 +234,7 @@ public class AnalyticalPivotService {
 		}
 		validateReq.setAggregation(request.getAggregation());
 		validateReq.setValueColumn(request.getValueColumn());
+		validateReq.setValueColumns(request.getValueColumns());
 		validateReq.setAggregateTransform(request.getAggregateTransform());
 		validateReq.setAggregateTransformOperand(request.getAggregateTransformOperand());
 
@@ -252,7 +260,7 @@ public class AnalyticalPivotService {
 			throw new IllegalArgumentException("Could not save layout payload");
 		}
 		entity.setAggregationType(validated.aggregation);
-		entity.setValueColumn(validated.valueColumn);
+		entity.setValueColumn(joinValueColumns(validated.valueColumns));
 		entity.setAggregateTransform(validated.aggregateTransform);
 		entity.setAggregateOperand(validated.aggregateOperand != null ? validated.aggregateOperand.toPlainString() : null);
 		entity.setUpdatedTime(now);
@@ -354,19 +362,24 @@ public class AnalyticalPivotService {
 
 		for (Map<String, Object> row : data) {
 			String rowKey = joinKey(rowColumns, row);
-			String colKey = colColumns.isEmpty()
-					? result.getAggregation() + "(" + ("SUM".equals(result.getAggregation()) ? result.getValueColumn() : "*") + ")"
-					: joinKey(colColumns, row);
-			dynamicColumnHeaders.add(colKey);
-			Map<String, Object> record = rowMap.get(rowKey);
-			if (record == null) {
-				record = new LinkedHashMap<String, Object>();
-				for (String rowCol : rowColumns) {
-					record.put(rowCol, getMapValueIgnoreCase(row, rowCol));
+			List<MeasureDef> measures = resolveMeasuresForResult(result);
+			for (MeasureDef measure : measures) {
+				String baseColKey = colColumns.isEmpty() ? measure.displayLabel
+						: joinKey(colColumns, row);
+				String colKey = measures.size() > 1 && !colColumns.isEmpty()
+						? baseColKey + " | " + measure.displayLabel
+						: baseColKey;
+				dynamicColumnHeaders.add(colKey);
+				Map<String, Object> record = rowMap.get(rowKey);
+				if (record == null) {
+					record = new LinkedHashMap<String, Object>();
+					for (String rowCol : rowColumns) {
+						record.put(rowCol, getMapValueIgnoreCase(row, rowCol));
+					}
+					rowMap.put(rowKey, record);
 				}
-				rowMap.put(rowKey, record);
+				record.put(colKey, getMapValueIgnoreCase(row, measure.sqlAlias));
 			}
-			record.put(colKey, getMapValueIgnoreCase(row, "MEASURE_VALUE"));
 		}
 
 		Map<String, Object> out = new LinkedHashMap<String, Object>();
@@ -548,20 +561,22 @@ public class AnalyticalPivotService {
 					putMapValueIgnoreCase(row, dim, formatDateDisplay(val));
 				}
 			}
-			Object mv = getMapValueIgnoreCase(row, "MEASURE_VALUE");
-			if (mv == null) {
-				continue;
-			}
-			try {
-				BigDecimal bd = toBigDecimal(mv);
-				if ("SUM".equals(v.aggregation)) {
-					bd = applyMeasureTransform(bd, v.aggregateTransform, v.aggregateOperand);
-					putMapValueIgnoreCase(row, "MEASURE_VALUE", bd.setScale(2, RoundingMode.HALF_UP));
-				} else if ("COUNT".equals(v.aggregation)) {
-					putMapValueIgnoreCase(row, "MEASURE_VALUE", bd.setScale(2, RoundingMode.HALF_UP));
+			for (MeasureDef measure : resolveMeasuresForRequest(v)) {
+				Object mv = getMapValueIgnoreCase(row, measure.sqlAlias);
+				if (mv == null) {
+					continue;
 				}
-			} catch (Exception ignored) {
-				// leave raw value
+				try {
+					BigDecimal bd = toBigDecimal(mv);
+					if ("SUM".equals(v.aggregation)) {
+						bd = applyMeasureTransform(bd, v.aggregateTransform, v.aggregateOperand);
+						putMapValueIgnoreCase(row, measure.sqlAlias, bd.setScale(2, RoundingMode.HALF_UP));
+					} else if ("COUNT".equals(v.aggregation)) {
+						putMapValueIgnoreCase(row, measure.sqlAlias, bd.setScale(2, RoundingMode.HALF_UP));
+					}
+				} catch (Exception ignored) {
+					// leave raw value
+				}
 			}
 		}
 	}
@@ -693,17 +708,19 @@ public class AnalyticalPivotService {
 			throw new IllegalArgumentException("Aggregation must be SUM or COUNT");
 		}
 
-		String valueColumn = safeUpper(request.getValueColumn());
+		List<String> valueColumns = resolveValueColumns(request);
 		if ("SUM".equals(aggregation)) {
-			if (valueColumn.isEmpty()) {
-				throw new IllegalArgumentException("Value column is required for SUM");
+			if (valueColumns.isEmpty()) {
+				throw new IllegalArgumentException("At least one measure column is required for SUM");
 			}
-			AnalyticalPivotColumnDto metricMeta = metadataByName.get(valueColumn);
-			if (metricMeta == null) {
-				throw new IllegalArgumentException("Unknown value column: " + valueColumn);
-			}
-			if (!metricMeta.isNumeric()) {
-				throw new IllegalArgumentException("SUM is allowed only on numeric columns");
+			for (String vc : valueColumns) {
+				AnalyticalPivotColumnDto metricMeta = metadataByName.get(vc);
+				if (metricMeta == null) {
+					throw new IllegalArgumentException("Unknown value column: " + vc);
+				}
+				if (!metricMeta.isNumeric()) {
+					throw new IllegalArgumentException("SUM is allowed only on numeric columns: " + vc);
+				}
 			}
 		}
 
@@ -743,7 +760,7 @@ public class AnalyticalPivotService {
 		out.colDims = colDims;
 		out.filterDims = filterDims;
 		out.aggregation = aggregation;
-		out.valueColumn = valueColumn;
+		out.valueColumns = valueColumns;
 		out.metadataByName = metadataByName;
 		out.aggregateTransform = aggTrans;
 		out.aggregateOperand = aggOp;
@@ -867,7 +884,9 @@ public class AnalyticalPivotService {
 		dto.setLayoutName(row.getLayoutName());
 		dto.setTableName(row.getTableName());
 		dto.setAggregation(row.getAggregationType());
-		dto.setValueColumn(row.getValueColumn());
+		List<String> valueCols = splitColumns(row.getValueColumn());
+		dto.setValueColumns(valueCols);
+		dto.setValueColumn(valueCols.isEmpty() ? row.getValueColumn() : valueCols.get(0));
 		try {
 			List<AnalyticalPivotDimensionDto> rowDims = parseStoredDimensions(row.getRowColumns());
 			List<AnalyticalPivotDimensionDto> colDims = parseStoredDimensions(row.getColumnColumns());
@@ -913,16 +932,109 @@ public class AnalyticalPivotService {
 		return out;
 	}
 
+	private List<String> resolveValueColumns(AnalyticalPivotRequestDto request) {
+		List<String> out = new ArrayList<String>();
+		if (request.getValueColumns() != null) {
+			for (String c : request.getValueColumns()) {
+				if (c == null || c.trim().isEmpty()) {
+					continue;
+				}
+				String u = safeUpper(c);
+				if (!out.contains(u)) {
+					out.add(u);
+				}
+			}
+		}
+		if (out.isEmpty()) {
+			String single = safeUpper(request.getValueColumn());
+			if (!single.isEmpty()) {
+				out.add(single);
+			}
+		}
+		return out;
+	}
+
+	private String joinValueColumns(List<String> valueColumns) {
+		if (valueColumns == null || valueColumns.isEmpty()) {
+			return null;
+		}
+		return String.join(",", valueColumns);
+	}
+
+	private String sqlMeasureAlias(String columnName, boolean singleMeasure) {
+		return singleMeasure ? "MEASURE_VALUE" : ("M_" + columnName);
+	}
+
+	private String measureDisplayLabel(String aggregation, String columnName) {
+		if ("COUNT".equals(aggregation)) {
+			return "COUNT(*)";
+		}
+		return "SUM(" + columnName + ")";
+	}
+
+	private List<MeasureDef> resolveMeasuresForRequest(ValidatedRequest v) {
+		List<MeasureDef> out = new ArrayList<MeasureDef>();
+		if ("COUNT".equals(v.aggregation)) {
+			MeasureDef m = new MeasureDef();
+			m.columnName = null;
+			m.sqlAlias = "MEASURE_VALUE";
+			m.displayLabel = "COUNT(*)";
+			out.add(m);
+			return out;
+		}
+		boolean single = v.valueColumns.size() == 1;
+		for (String col : v.valueColumns) {
+			MeasureDef m = new MeasureDef();
+			m.columnName = col;
+			m.sqlAlias = sqlMeasureAlias(col, single);
+			m.displayLabel = measureDisplayLabel(v.aggregation, col);
+			out.add(m);
+		}
+		return out;
+	}
+
+	private List<MeasureDef> resolveMeasuresForResult(AnalyticalPivotRunResponseDto result) {
+		List<MeasureDef> out = new ArrayList<MeasureDef>();
+		if ("COUNT".equals(result.getAggregation())) {
+			MeasureDef m = new MeasureDef();
+			m.columnName = null;
+			m.sqlAlias = "MEASURE_VALUE";
+			m.displayLabel = "COUNT(*)";
+			out.add(m);
+			return out;
+		}
+		List<String> cols = result.getValueColumns();
+		if (cols == null || cols.isEmpty()) {
+			String single = safeUpper(result.getValueColumn());
+			cols = single.isEmpty() ? Collections.<String>emptyList() : Collections.singletonList(single);
+		}
+		boolean single = cols.size() == 1;
+		for (String col : cols) {
+			MeasureDef m = new MeasureDef();
+			m.columnName = col;
+			m.sqlAlias = sqlMeasureAlias(col, single);
+			m.displayLabel = measureDisplayLabel(result.getAggregation(), col);
+			out.add(m);
+		}
+		return out;
+	}
+
 	private static class ValidatedRequest {
 		private String tableName;
 		private List<DimensionDef> rowDims;
 		private List<DimensionDef> colDims;
 		private List<DimensionDef> filterDims;
 		private String aggregation;
-		private String valueColumn;
+		private List<String> valueColumns;
 		private Map<String, AnalyticalPivotColumnDto> metadataByName;
 		private String aggregateTransform;
 		private BigDecimal aggregateOperand;
+	}
+
+	private static class MeasureDef {
+		private String columnName;
+		private String sqlAlias;
+		private String displayLabel;
 	}
 
 	private static class DimensionDef {

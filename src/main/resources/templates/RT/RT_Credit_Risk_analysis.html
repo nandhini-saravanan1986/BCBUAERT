@@ -404,6 +404,7 @@
 		var formmode = /*[[${formmode}]]*/'';
 		var Centralized_Report_date = /*[[${Report_date}]]*/'';
 		/*]]>*/
+		
 
 	</script>
 
@@ -412,16 +413,19 @@
 		///Branch Wise portfolio exposure 
 		var branchdom = document.getElementById('Branchchart');
 		if (branchdom) {
+		
 		    var myChart = echarts.init(branchdom);
 
-		    // Convert rawData -> ECharts 'data' format
-		    var chartData = (rawData || []).map(function (item) {
+			 // Convert rawData -> ECharts 'data' format
+		    var chartData = (rawData || []).map(function (item) {				
 		        return {
 		            value: item.exposureperc,   // numeric percentage
 		            name: item.classification,  // label
 		            exposureBal: item.exposurebal
 		        };
 		    });
+			
+	    	console.log("chartData =", chartData);
 
 		    // === NEW: total exposure balance for center text ===
 		    var totalExposureBal = chartData.reduce(function (sum, item) {

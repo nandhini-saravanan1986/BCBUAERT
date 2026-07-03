@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,9 +72,9 @@ import com.bornfire.xbrl.entities.Groupexp_cust_maintain_rep;
 import com.bornfire.xbrl.entities.Leverage_ratio_rep;
 import com.bornfire.xbrl.entities.MatrixRunJobEntity;
 import com.bornfire.xbrl.entities.Mis_exposure_bill_detail_entity;
+import com.bornfire.xbrl.entities.RT_Chart_pojo;
 import com.bornfire.xbrl.entities.RT_Data_Inventory_Entity;
 import com.bornfire.xbrl.entities.RT_Data_Inventory_Repo;
-import com.bornfire.xbrl.entities.RT_Chart_pojo;
 import com.bornfire.xbrl.entities.RT_IRS2_REPOSITORY;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY;
 import com.bornfire.xbrl.entities.RT_IRS_ENTITY2;
@@ -84,9 +85,9 @@ import com.bornfire.xbrl.entities.RT_Matrix_monitoring_rep;
 import com.bornfire.xbrl.entities.RT_Mis_Fund_Based_Adv_Rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_rep;
 import com.bornfire.xbrl.entities.RT_Noop_net_position_summ_rep;
+import com.bornfire.xbrl.entities.RT_Overnight_Foreign_Ccy_Data_Summ_Repo;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_entity;
 import com.bornfire.xbrl.entities.RT_RWA_Fund_base_data_rep;
-import com.bornfire.xbrl.entities.RT_Overnight_Foreign_Ccy_Data_Summ_Repo;
 import com.bornfire.xbrl.entities.RT_Return_On_Asset_Entity;
 import com.bornfire.xbrl.entities.RT_Return_On_Asset_Repo;
 import com.bornfire.xbrl.entities.RT_SLS_Repository;
@@ -819,6 +820,7 @@ public class MIS_Rest_Controller {
 		} else if (Data_Type_Used.equals("Sector_Trading")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Trading_Classifi(Selecteddate);
 		} else if (Data_Type_Used.equals("Sector_Services")) {
+			System.out.println("Fetching Services Details");
 			Exposuredata = RT_RWA_Fund_base_data_rep.Services_Classifi(Selecteddate);
 		} else if (Data_Type_Used.equals("Sector_Banks")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.Banks_Classifi(Selecteddate);
@@ -851,7 +853,7 @@ public class MIS_Rest_Controller {
 		} else if (Data_Type_Used.equals("tenaccountServicesexcludingbank")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
 		} else if (Data_Type_Used.equals("tenaccountBank")) {
-			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorServicesexcludingbank(Selecteddate);
+			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenSectorbank(Selecteddate);
 		} else if (Data_Type_Used.equals("tenaccountRealEstate")) {
 			Exposuredata = RT_RWA_Fund_base_data_rep.GetToptenRealEstate(Selecteddate);
 		} else if (Data_Type_Used.equals("tenaccountOtherSectors")) {
@@ -1211,6 +1213,37 @@ public class MIS_Rest_Controller {
 				if (dataEndExcelRow >= dataStartExcelRow) {
 					writeNoopSummaryBlock(sheet, workbook, headerStyle, dataStartExcelRow, dataEndExcelRow);
 				}
+			} else if ("22".equals(Matrix_Srl_no)) {
+				filename = "BPV PV01 detail";
+				String[] headers = { "Report Date", "Forex Currency Swap, Outright Forwards",
+						"IRS/CIRS", "Gsec., Corporate Bonds, Treasury Bills",
+						"Investment in CPs, CDs", "Total PV01" };
+
+				for (int i = 0; i < headers.length; i++) {
+					Cell headerCell = headerRow.createCell(i);
+					headerCell.setCellValue(headers[i]);
+					headerCell.setCellStyle(headerStyle);
+				}
+
+				List<Object[]> bpvDetail = RT_MID_FX_DEAL_REPO.GetselectedmonthBPVdata(Selecteddate);
+				if (bpvDetail != null && !bpvDetail.isEmpty()) {
+					for (Object[] obj : bpvDetail) {
+						Row row = sheet.createRow(rowNum++);
+						for (int i = 0; i < headers.length; i++) {
+							Cell cell = row.createCell(i);
+							if (obj != null && i < obj.length && obj[i] != null) {
+								if (i == 0) {
+									cell.setCellValue(obj[i].toString());
+								} else {
+									cell.setCellValue(new BigDecimal(obj[i].toString()).doubleValue());
+								}
+							} else {
+								cell.setCellValue("");
+							}
+							cell.setCellStyle(dataCellStyle);
+						}
+					}
+				}
 			}
 
 			// -------- Auto-size Columns --------
@@ -1542,25 +1575,51 @@ public class MIS_Rest_Controller {
 		throw new IllegalArgumentException("Invalid date format: " + input);
 	}
 	
+	/** Limit % per IRS bucket (same as IRS Report Analytical calculator). */
+	private static final BigDecimal[] IRS_BUCKET_LIMIT_PCT = {
+			new BigDecimal("0.20"),
+			new BigDecimal("0.40"),
+			new BigDecimal("0.40"),
+			new BigDecimal("0.40"),
+			new BigDecimal("0.30"),
+			new BigDecimal("0.30"),
+			new BigDecimal("0.30"),
+			new BigDecimal("0.30"),
+			new BigDecimal("0.30"),
+			new BigDecimal("0.30"),
+			null
+	};
+
+	private Map<String, Object> buildIrsDashboardRow(BigDecimal rsl, BigDecimal rsa, BigDecimal gap,
+			BigDecimal totalAssets, BigDecimal limitPct) {
+		Map<String, Object> row = new LinkedHashMap<>();
+		BigDecimal safeGap = gap != null ? gap : BigDecimal.ZERO;
+		BigDecimal safeRsl = rsl != null ? rsl : BigDecimal.ZERO;
+		BigDecimal safeRsa = rsa != null ? rsa : BigDecimal.ZERO;
+		BigDecimal netGapPct = BigDecimal.ZERO;
+		if (totalAssets != null && totalAssets.signum() != 0) {
+			netGapPct = safeGap.divide(totalAssets, 6, RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
+		}
+		BigDecimal limitAmt = null;
+		if (totalAssets != null && limitPct != null && limitPct.signum() > 0) {
+			limitAmt = totalAssets.multiply(limitPct).setScale(2, RoundingMode.HALF_UP);
+		}
+		row.put("rsl", safeRsl);
+		row.put("rsa", safeRsa);
+		row.put("gap", safeGap);
+		row.put("netGapPct", netGapPct);
+		row.put("limitAmt", limitAmt);
+		row.put("limitPct", limitPct);
+		return row;
+	}
+
 	@RequestMapping(value = "/getIRSData", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Object[]> getIRSData(
-	        @RequestParam  String reportdate,
+	public Map<String, Object> getIRSData(
+	        @RequestParam String reportdate,
 	        @RequestParam String currency) throws ParseException {
 
-		
-
-
-		Date reportDateFor;
-		reportDateFor = new SimpleDateFormat("dd-MM-yyyy").parse(reportdate);
-
-		SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yy");
-	
-		String formattedDate = outputFormat.format(reportDateFor);
-
-		System.out.println("Final Date: " + formattedDate);
-
-	    System.out.println("DATEEEEEEE:: " + reportDateFor);
+		Date reportDateFor = java.sql.Date.valueOf(normalizeDate(reportdate));
 
 	    List<RT_IRS_ENTITY> list1 =
 	            RT_irs_repository.rtirslistbydate(reportDateFor, currency);
@@ -1568,96 +1627,34 @@ public class MIS_Rest_Controller {
 	    List<RT_IRS_ENTITY2> list2 =
 	            RT_IRS2_REPOSITORY.rtirslistbydate(reportDateFor, currency);
 
-	    List<Object[]> result = new ArrayList<>();
+	    Map<String, Object> response = new LinkedHashMap<>();
+	    List<Map<String, Object>> rows = new ArrayList<>();
 
-System.out.println("esff"+list1.size());
-System.out.println(list2.size());
 	    if (list1.isEmpty() || list2.isEmpty()) {
-	        return result;
+	    	response.put("totalAssets", BigDecimal.ZERO);
+	    	response.put("rows", rows);
+	        return response;
 	    }
 
+	    RT_IRS_ENTITY e1 = list1.get(0);
+	    RT_IRS_ENTITY2 e2 = list2.get(0);
+	    BigDecimal totalAssets = e2.getR84_total() != null ? e2.getR84_total() : BigDecimal.ZERO;
 
-	    RT_IRS_ENTITY e1 = list1.get(0);   // RSL
-	    RT_IRS_ENTITY2 e2 = list2.get(0);  // RSA + GAP + %
+	    rows.add(buildIrsDashboardRow(e1.getR45_day1_28(), e2.getR84_day1_28(), e2.getR85_day1_28(), totalAssets, IRS_BUCKET_LIMIT_PCT[0]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_day29_3m(), e2.getR84_day29_3m(), e2.getR85_day29_3m(), totalAssets, IRS_BUCKET_LIMIT_PCT[1]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over3m_to_6m(), e2.getR84_over3m_to_6m(), e2.getR85_over3m_to_6m(), totalAssets, IRS_BUCKET_LIMIT_PCT[2]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over6m_to_1y(), e2.getR84_over6m_to_1y(), e2.getR85_over6m_to_1y(), totalAssets, IRS_BUCKET_LIMIT_PCT[3]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over1y_to_3y(), e2.getR84_over1y_to_3y(), e2.getR85_over1y_to_3y(), totalAssets, IRS_BUCKET_LIMIT_PCT[4]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over3y_to_5y(), e2.getR84_over3y_to_5y(), e2.getR85_over3y_to_5y(), totalAssets, IRS_BUCKET_LIMIT_PCT[5]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over5y_to_7y(), e2.getR84_over5y_to_7y(), e2.getR85_over5y_to_7y(), totalAssets, IRS_BUCKET_LIMIT_PCT[6]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over7y_to_10y(), e2.getR84_over7y_to_10y(), e2.getR85_over7y_to_10y(), totalAssets, IRS_BUCKET_LIMIT_PCT[7]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over10y_to_15y(), e2.getR84_over10y_to_15y(), e2.getR85_over10y_to_15y(), totalAssets, IRS_BUCKET_LIMIT_PCT[8]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_over15y(), e2.getR84_over15y(), e2.getR85_over15y(), totalAssets, IRS_BUCKET_LIMIT_PCT[9]));
+	    rows.add(buildIrsDashboardRow(e1.getR45_non_sensitive(), e2.getR84_non_sensitive(), e2.getR85_non_sensitive(), totalAssets, IRS_BUCKET_LIMIT_PCT[10]));
 
-	    result.add(new Object[]{
-	        e1.getR45_day1_28(), 
-	        e2.getR84_day1_28(),
-	        e2.getR85_day1_28(),
-	        e2.getR87_day1_28()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_day29_3m(), 
-	        e2.getR84_day29_3m(),
-	        e2.getR85_day29_3m(),
-	        e2.getR87_day29_3m()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over3m_to_6m(), 
-	        e2.getR84_over3m_to_6m(),
-	        e2.getR85_over3m_to_6m(),
-	        e2.getR87_over3m_to_6m()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over6m_to_1y(), 
-	        e2.getR84_over6m_to_1y(),
-	        e2.getR85_over6m_to_1y(),
-	        e2.getR87_over6m_to_1y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over1y_to_3y(), 
-	        e2.getR84_over1y_to_3y(),
-	        e2.getR85_over1y_to_3y(),
-	        e2.getR87_over1y_to_3y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over3y_to_5y(), 
-	        e2.getR84_over3y_to_5y(),
-	        e2.getR85_over3y_to_5y(),
-	        e2.getR87_over3y_to_5y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over5y_to_7y(), 
-	        e2.getR84_over5y_to_7y(),
-	        e2.getR85_over5y_to_7y(),
-	        e2.getR87_over5y_to_7y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over7y_to_10y(), 
-	        e2.getR84_over7y_to_10y(),
-	        e2.getR85_over7y_to_10y(),
-	        e2.getR87_over7y_to_10y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over10y_to_15y(), 
-	        e2.getR84_over10y_to_15y(),
-	        e2.getR85_over10y_to_15y(),
-	        e2.getR87_over10y_to_15y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_over15y(), 
-	        e2.getR84_over15y(),
-	        e2.getR85_over15y(),
-	        e2.getR87_over15y()
-	    });
-
-	    result.add(new Object[]{
-	        e1.getR45_non_sensitive(), 
-	        e2.getR84_non_sensitive(),
-	        e2.getR85_non_sensitive(),
-	        e2.getR87_non_sensitive()
-	    });
-
-	    return result;
+	    response.put("totalAssets", totalAssets);
+	    response.put("rows", rows);
+	    return response;
 	}
 
 }

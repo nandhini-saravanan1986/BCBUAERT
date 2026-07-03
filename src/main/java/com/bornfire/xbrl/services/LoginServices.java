@@ -164,6 +164,9 @@ public class LoginServices {
 				if (roleSyncError != null) {
 					return roleSyncError;
 				}
+				if (up.getDomain_id() == null || up.getDomain_id().trim().isEmpty()) {
+					return "Please select at least one menu option for the user.";
+				}
 				if (up.getLogin_status() == null || up.getLogin_status().trim().isEmpty()) {
 					up.setLogin_status("Active");
 				}
@@ -262,6 +265,9 @@ public class LoginServices {
 					if (roleSyncError != null) {
 						return roleSyncError;
 					}
+					if (userProfile.getDomain_id() == null || userProfile.getDomain_id().trim().isEmpty()) {
+						return "Please select at least one menu option for the user.";
+					}
 					if (userProfile.getLogin_status() == null || userProfile.getLogin_status().trim().isEmpty()) {
 						userProfile.setLogin_status(up.getLogin_status());
 					}
@@ -348,7 +354,7 @@ public class LoginServices {
 					auditservice.createBusinessAudit(userProfile.getUserid(), // or whatever id you track
 							"MODIFY", "USER_PROFILE_SCREEN", changes, "User profile updated");
 
-					userProfileRep.save(userProfile);
+					userProfileRep.save(dbUser);
 					msg = "User Edited Successfully";
 				} else {
 					msg = "User Not found to edit";
@@ -382,113 +388,125 @@ public class LoginServices {
 		up.setRole_desc(roleMaster.getRoleDesc());
 		up.setWork_class(roleMaster.getWorkClass());
 		up.setPermissions(roleMaster.getPermissions());
-		String menuAccess = roleMaster.getMenulist();
-		if (menuAccess == null || menuAccess.trim().isEmpty()) {
-			menuAccess = roleMaster.getDomainId();
-		}
-		up.setDomain_id(menuAccess);
 		return null;
 	}
 
 	public String verifyUser(UserProfile userProfile, String inputUser) {
 
-		String msg = "";
+	    try {
 
-		try {
+	        UserProfile user = userProfileRep.findById(userProfile.getUserid()).orElse(null);
 
-			Optional<UserProfile> upOpt = userProfileRep.findById(userProfile.getUserid());
+	        if (user == null) {
+	            return "User not found";
+	        }
 
-			if (!upOpt.isPresent()) {
-				return "User not found";
-			}
+	        // Update username if provided
+	        if (userProfile.getUsername() != null && !userProfile.getUsername().trim().isEmpty()) {
+	            String username = userProfile.getUsername().trim();
+	            user.setUsername(username);
+	            user.setEmp_name(username);
+	        }
 
-			UserProfile existingUser = upOpt.get();
+	        // Update department if provided
+	        if (userProfile.getDepartment() != null) {
+	            user.setDepartment(userProfile.getDepartment());
+	        }
 
-			// Preserve existing password
-			userProfile.setPassword(existingUser.getPassword());
+	        // Update role if provided
+	        if (userProfile.getRole_id() != null) {
+	            user.setRole_id(userProfile.getRole_id());
+	        }
 
-			// Default status handling
-			if (userProfile.getLogin_status() == null) {
-				userProfile.setLogin_status("Active");
-			}
+	        // Login Status
+	        String loginStatus = userProfile.getLogin_status();
+	        if (loginStatus == null || loginStatus.trim().isEmpty()) {
+	            loginStatus = user.getLogin_status();
+	        }
+	        if (loginStatus == null || loginStatus.trim().isEmpty()) {
+	            loginStatus = "Active";
+	        }
 
-			if (userProfile.getUser_status() == null) {
-				userProfile.setUser_status("Active");
-			}
-			if (userProfile.getDepartment() == null) {
-				userProfile.setDepartment(upOpt.get().getDepartment());
-			}
-			if (userProfile.getRole_id() == null) {
-				userProfile.setRole_id(upOpt.get().getRole_id());
-			}
-			// Login lock flag
-			if ("Active".equalsIgnoreCase(userProfile.getLogin_status())) {
-				userProfile.setUser_locked_flg("N");
-			} else {
-				userProfile.setUser_locked_flg("Y");
-			}
+	        user.setLogin_status(loginStatus);
+	        user.setUser_locked_flg(
+	                "Active".equalsIgnoreCase(loginStatus) ? "N" : "Y");
 
-			// Disable flag
-			if ("Active".equalsIgnoreCase(userProfile.getUser_status())) {
-				userProfile.setDisable_flg("N");
-			} else {
-				userProfile.setDisable_flg("Y");
-			}
+	        // User Status
+	        String userStatus = userProfile.getUser_status();
+	        if (userStatus == null || userStatus.trim().isEmpty()) {
+	            userStatus = user.getUser_status();
+	        }
+	        if (userStatus == null || userStatus.trim().isEmpty()) {
+	            userStatus = "Active";
+	        }
 
-			// Reset login related flags
-			userProfile.setNo_of_attmp(0);
-			userProfile.setEntity_flg("Y");
-			userProfile.setLogin_flg("N");
+	        user.setUser_status(userStatus);
+	        user.setDisable_flg(
+	                "Active".equalsIgnoreCase(userStatus) ? "N" : "Y");
 
-			// Login time window
-			userProfile.setLogin_low("00:00");
-			userProfile.setLogin_high("23:59");
+	        // Reset login details
+	        user.setNo_of_attmp(0);
+	        user.setEntity_flg("Y");
+	        user.setLogin_flg("N");
+	        user.setLogin_low("00:00");
+	        user.setLogin_high("23:59");
 
-			// Disable dates → today
-			Date today = new Date();
-			userProfile.setDisable_start_date(today);
-			userProfile.setDisable_end_date(today);
+	        // Disable dates
+	        Date today = new Date();
+	        user.setDisable_start_date(today);
+	        user.setDisable_end_date(today);
 
-			// Employee name
-			userProfile.setEmp_name(userProfile.getUsername());
+	        // Account expiry date (3 years)
+	        Calendar accExpCal = Calendar.getInstance();
+	        accExpCal.set(Calendar.HOUR_OF_DAY, 0);
+	        accExpCal.set(Calendar.MINUTE, 0);
+	        accExpCal.set(Calendar.SECOND, 0);
+	        accExpCal.set(Calendar.MILLISECOND, 0);
+	        accExpCal.add(Calendar.YEAR, 3);
+	        user.setAcc_exp_date(accExpCal.getTime());
 
-			// Account expiry date → 3 years from today
-			Calendar accExpCal = Calendar.getInstance();
-			accExpCal.set(Calendar.HOUR_OF_DAY, 0);
-			accExpCal.set(Calendar.MINUTE, 0);
-			accExpCal.set(Calendar.SECOND, 0);
-			accExpCal.set(Calendar.MILLISECOND, 0);
-			accExpCal.add(Calendar.YEAR, 3);
+	        // Password expiry days
+	        int expiryDays = 90;
+	        String passExpDays = userProfile.getPass_exp_days();
 
-			userProfile.setAcc_exp_date(accExpCal.getTime());
+	        if (passExpDays == null || passExpDays.trim().isEmpty()) {
+	            passExpDays = user.getPass_exp_days();
+	        }
 
-			// Password expiry calculation
-			int expiryDays = 90; // default
+	        if (passExpDays != null && !passExpDays.trim().isEmpty()) {
+	            try {
+	                expiryDays = Integer.parseInt(passExpDays.trim());
+	                user.setPass_exp_days(passExpDays.trim());
+	            } catch (NumberFormatException e) {
+	                expiryDays = 90;
+	                user.setPass_exp_days("90");
+	            }
+	        } else {
+	            user.setPass_exp_days("90");
+	        }
 
-			if (userProfile.getPass_exp_days() != null && !userProfile.getPass_exp_days().trim().isEmpty()) {
-				expiryDays = Integer.parseInt(userProfile.getPass_exp_days());
-			}
+	        user.setPass_exp_date(java.sql.Date.valueOf(LocalDate.now().plusDays(expiryDays)));
 
-			LocalDate passExpDate = LocalDate.now().plusDays(expiryDays);
-			userProfile.setPass_exp_date(java.sql.Date.valueOf(passExpDate));
+	        // Authorization details
+	        user.setAuth_user(inputUser);
+	        user.setAuth_time(new Date());
 
-			// Audit info
-			userProfile.setAuth_user(inputUser);
-			userProfile.setAuth_time(new Date());
+	        // Audit
+	        auditservice.createBusinessAudit(
+	                user.getUserid(),
+	                "Verify",
+	                "userProfile-verify",
+	                null,
+	                "BRF_USER_PROFILE_TABLE");
 
-			auditservice.createBusinessAudit(userProfile.getUserid(), "Verify", "userProfile-verify", null,
-					"BRF_USER_PROFILE_TABLE");
+	        userProfileRep.save(user);
 
-			// Save
-			userProfileRep.save(userProfile);
+	        return "User Verified Successfully";
 
-			msg = "User Verified Successfully";
-
-		} catch (Exception e) {
-			msg = "Error occurred. Please contact Administrator";
-		}
-
-		return msg;
+	    } catch (Exception e) {
+	        logger.error("Error occurred while verifying user", e);
+	        return "Error occurred. Please contact Administrator";
+	    }
 	}
 
 	public String passwordReset(UserProfile userprofile, String userid) {

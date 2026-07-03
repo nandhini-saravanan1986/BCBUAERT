@@ -804,7 +804,7 @@
 		.static-back-btn {
 			background-color: rgb(255, 255, 255);
 			border: none;
-			color: rgb(255, 128, 0);
+			color: rgb(255, 123, 0);
 			font-size: 16px;
 			border-radius: 50%;
 			width: 36px;
@@ -819,7 +819,7 @@
 
 		/* Hover effect */
 		.static-back-btn:hover {
-			background-color: rgb(255, 128, 0);
+			background-color: rgb(255, 123, 0);
 			/* darker orange */
 			color: rgb(255, 255, 255);
 			transform: scale(1.08);
@@ -1253,8 +1253,19 @@
 		}
 
 		function goBack() {
+			if (window.jQuery && $("#loader").length) {
+				$("#loader").css("display", "flex");
+			} else {
+				var loader = document.getElementById("bob-loader");
+				if (loader) {
+					loader.setAttribute("aria-hidden", "false");
+				}
+			}
+			location.href = './MenuLanding';
+		}
 
-			window.history.back();
+		function back() {
+			goBack();
 		}
 
 		function hideLoader() {
@@ -1380,6 +1391,47 @@
 		font-weight: 600;
 	}
 
+	.sls-analytical-calc td.sl-limit-cell {
+		text-align: center;
+		font-weight: 700;
+	}
+
+	.sls-analytical-calc td.sl-limit-lt {
+		--sl-limit-rest: #ffe082;
+		--sl-limit-blink: #ff9800;
+	}
+
+	.sls-analytical-calc td.sl-limit-ml {
+		--sl-limit-rest: #90caf9;
+		--sl-limit-blink: #1565c0;
+	}
+
+	@keyframes slAlmLimitBlink {
+		0%,
+		100% {
+			background-color: var(--sl-limit-blink);
+		}
+
+		50% {
+			background-color: var(--sl-limit-rest);
+		}
+	}
+
+	.sls-analytical-calc td.sl-limit-cell.sl-limit-blink-active {
+		animation: slAlmLimitBlink 0.55s ease-in-out 30;
+		animation-fill-mode: forwards;
+	}
+
+	.sls-analytical-calc td.sl-limit-lt.sl-limit-highlighted {
+		background-color: #ff9800 !important;
+		color: #ffffff;
+	}
+
+	.sls-analytical-calc td.sl-limit-ml.sl-limit-highlighted {
+		background-color: #1565c0 !important;
+		color: #ffffff;
+	}
+
 	.sls-analytical-calc input.calc-input {
 		width: 100%;
 		border: 1px solid #999;
@@ -1392,6 +1444,12 @@
 
 	.sls-analytical-calc input.calc-input-green {
 		background: #92d050;
+		font-weight: 600;
+	}
+
+	.sls-analytical-calc input.calc-input-limit-breach {
+		background: #dc2626 !important;
+		color: #ffffff;
 		font-weight: 600;
 	}
 
@@ -1475,7 +1533,7 @@
 	}
 
 	.sls-analytical-calc input.calc-input-orange {
-		background: #ffc000;
+		background: #FF7B00;
 		font-weight: 600;
 	}
 
@@ -1510,12 +1568,14 @@
 
 	.sls-gap-analysis-calc .gap-analysis-scroll {
 		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 
-	.sls-gap-analysis-calc table {
+	.sls-gap-analysis-calc #gapAnalysisTable {
 		width: 100%;
 		min-width: 1180px;
-		border-collapse: collapse;
+		border-collapse: separate;
+		border-spacing: 0;
 		font-size: 11px;
 		font-family: Verdana, Geneva, Tahoma, sans-serif;
 	}
@@ -1534,6 +1594,26 @@
 		font-weight: 600;
 		text-align: center;
 		border-color: var(--bank-primary-dark) !important;
+	}
+
+	.sls-gap-analysis-calc #gapAnalysisTable .gap-bucket-col,
+	.sls-gap-analysis-calc #gapAnalysisTable .gap-bucket-label {
+		position: sticky;
+		left: 0;
+		z-index: 2;
+		background: #ffffff;
+		box-shadow: 2px 0 6px rgba(0, 0, 0, 0.12);
+	}
+
+	.sls-gap-analysis-calc #gapAnalysisTable thead .gap-bucket-col {
+		z-index: 4;
+		background: var(--bank-header-gradient) !important;
+		color: var(--bank-text-on-dark) !important;
+	}
+
+	.sls-gap-analysis-calc #gapAnalysisTable .gap-total-row .gap-bucket-label {
+		background: #f2f2f2 !important;
+		z-index: 3;
 	}
 
 	.sls-gap-analysis-calc .gap-enter-hdr {
@@ -3388,7 +3468,7 @@
 								<td><input type="text" class="calc-input calc-input-green ac-ratio" id="acLongTerm36"
 										inputmode="decimal" autocomplete="off" value="0%" readonly
 										title="Resources Long Term / Assets Long Term (%)" /></td>
-								<td class="sl-muted">70%</td>
+								<td class="sl-limit-cell sl-limit-lt">70%</td>
 								<td></td>
 								
 							</tr>
@@ -3398,7 +3478,7 @@
 								<td><input type="text" class="calc-input calc-input-green ac-ratio" id="acMedLongTerm"
 										inputmode="decimal" autocomplete="off" value="0%" readonly
 										title="(Medium + Long Term resources) / (Medium + Long Term assets) (%)" /></td>
-								<td class="sl-muted">80%</td>
+								<td class="sl-limit-cell sl-limit-ml">80%</td>
 								<td></td>
 								
 							</tr>
@@ -3553,7 +3633,7 @@
 						<table id="gapAnalysisTable">
 							<thead>
 								<tr>
-									<th rowspan="2">Bucket</th>
+									<th rowspan="2" class="gap-bucket-col gap-bucket-label">Bucket</th>
 									<th rowspan="2">Total Outflows</th>
 									<th rowspan="2">Cumulative Outflows</th>
 									<th rowspan="2">Total Inflows</th>
@@ -3642,8 +3722,8 @@
 		medLongTermS2: 'Medium to Long Term at Position As on date = ((R39 Med+Long) ÷ (R70 Med+Long)) × 100 from report',
 		varLongTerm36: 'Variation = Current Long Term (3/6) − Prior Long Term (3/6)',
 		varMedLongTerm: 'Variation = Current Med–Long Term − Prior Med–Long Term',
-		hrLongTerm36: 'Head-Room Available = 70% − Long Term (3/6)',
-		hrMedLongTerm: 'Head-Room Available = 80% − Medium to Long Term (2+3/5+6)',
+		hrLongTerm36: 'Head-Room Available = Long Term (3/6) − 70%',
+		hrMedLongTerm: 'Head-Room Available = Medium to Long Term (2+3/5+6) − 80%',
 		limitLongTerm: 'ALM policy limit for Long Term (3/6) ratio',
 		limitMedLong: 'ALM policy limit for Medium to Long Term ratio',
 		incResMed: 'Scenario 1 — increase medium-term resources/outflows (Mn)',
@@ -3687,7 +3767,7 @@
 		});
 		var calcPanel = document.querySelector('.ac-calc-layout');
 		if (calcPanel) {
-			calcPanel.querySelectorAll('td.sl-muted').forEach(function (cell) {
+			calcPanel.querySelectorAll('td.sl-limit-cell').forEach(function (cell) {
 				var text = (cell.textContent || '').trim();
 				if (text === '70%') {
 					setSlsCalcFormula(cell, SLS_CALC_FORMULA.limitLongTerm);
@@ -3748,15 +3828,17 @@
 		var priorLt = parseCalcPercent(document.getElementById('acLongTerm36S2').value);
 		setSlsCalcFormula(document.getElementById('acVarLongTerm36'),
 			SLS_CALC_FORMULA.varLongTerm36 + ' = ' + formatCalcPercent(currentLt) + ' − ' + formatCalcPercent(priorLt));
+		var hrLt = (currentLt == null ? 0 : currentLt) - 70;
 		setSlsCalcFormula(document.getElementById('acHrLongTerm36'),
-			SLS_CALC_FORMULA.hrLongTerm36 + ' = 70% − ' + formatCalcPercent(currentLt));
+			SLS_CALC_FORMULA.hrLongTerm36 + ' = ' + formatCalcPercent(currentLt) + ' − 70% = ' + formatCalcPercent(hrLt));
 
 		var currentMl = parseCalcPercent(document.getElementById('acMedLongTerm').value);
 		var priorMl = parseCalcPercent(document.getElementById('acMedLongTermS2').value);
 		setSlsCalcFormula(document.getElementById('acVarMedLongTerm'),
 			SLS_CALC_FORMULA.varMedLongTerm + ' = ' + formatCalcPercent(currentMl) + ' − ' + formatCalcPercent(priorMl));
+		var hrMl = (currentMl == null ? 0 : currentMl) - 80;
 		setSlsCalcFormula(document.getElementById('acHrMedLongTerm'),
-			SLS_CALC_FORMULA.hrMedLongTerm + ' = 80% − ' + formatCalcPercent(currentMl));
+			SLS_CALC_FORMULA.hrMedLongTerm + ' = ' + formatCalcPercent(currentMl) + ' − 80% = ' + formatCalcPercent(hrMl));
 
 		var ltS2El = document.getElementById('acLongTerm36S2');
 		if (ltS2El) {
@@ -3924,6 +4006,32 @@
 		return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 	}
 
+	function getSlsAlmLimitPercent(limitClass, fallback) {
+		var cell = document.querySelector('.sl-limit-cell.' + limitClass);
+		if (!cell) {
+			return fallback;
+		}
+		var parsed = parseCalcPercent(cell.textContent);
+		return parsed == null ? fallback : parsed;
+	}
+
+	function updateAcRatioLimitStyle(inputId, limitClass, fallbackLimit) {
+		var el = document.getElementById(inputId);
+		if (!el) {
+			return;
+		}
+		var limit = getSlsAlmLimitPercent(limitClass, fallbackLimit);
+		var current = parseCalcPercent(el.value);
+		var breach = current != null && current < limit;
+		el.classList.toggle('calc-input-limit-breach', breach);
+		el.classList.toggle('calc-input-green', !breach);
+	}
+
+	function updateAcRatioLimitStyles() {
+		updateAcRatioLimitStyle('acLongTerm36', 'sl-limit-lt', 70);
+		updateAcRatioLimitStyle('acMedLongTerm', 'sl-limit-ml', 80);
+	}
+
 	function calcAcVarLongTerm36() {
 		var current = parseCalcPercent(document.getElementById('acLongTerm36').value);
 		var prior = parseCalcPercent(document.getElementById('acLongTerm36S2').value);
@@ -3936,6 +4044,18 @@
 		var prior = parseCalcPercent(document.getElementById('acMedLongTermS2').value);
 		var variation = (current == null ? 0 : current) - (prior == null ? 0 : prior);
 		setAcPercentField('acVarMedLongTerm', formatCalcPercent(variation));
+	}
+
+	function calcAcHrLongTerm36() {
+		var current = parseCalcPercent(document.getElementById('acLongTerm36').value);
+		var headroom = (current == null ? 0 : current) - 70;
+		setAcPercentField('acHrLongTerm36', formatCalcPercent(headroom));
+	}
+
+	function calcAcHrMedLongTerm() {
+		var current = parseCalcPercent(document.getElementById('acMedLongTerm').value);
+		var headroom = (current == null ? 0 : current) - 80;
+		setAcPercentField('acHrMedLongTerm', formatCalcPercent(headroom));
 	}
 
 	function getAnalyticalCurrency() {
@@ -4064,6 +4184,9 @@
 		setAcPercentField('acMedLongTerm', formatCalcPercent(medLongPct));
 		calcAcVarLongTerm36();
 		calcAcVarMedLongTerm();
+		calcAcHrLongTerm36();
+		calcAcHrMedLongTerm();
+		updateAcRatioLimitStyles();
 		updateSlsCalcDynamicFormulas();
 	}
 
@@ -4114,6 +4237,22 @@
 		}
 	}
 
+	function triggerSlsAlmLimitCellBlink(modalSelector) {
+		var modal = document.querySelector(modalSelector);
+		if (!modal) {
+			return;
+		}
+		modal.querySelectorAll('.sl-limit-cell').forEach(function (cell) {
+			cell.classList.remove('sl-limit-blink-active', 'sl-limit-highlighted');
+			void cell.offsetWidth;
+			cell.classList.add('sl-limit-blink-active');
+			cell.addEventListener('animationend', function onEnd() {
+				cell.classList.remove('sl-limit-blink-active');
+				cell.classList.add('sl-limit-highlighted');
+			}, { once: true });
+		});
+	}
+
 	function openAnalyticalCalculator() {
 		var dateText = getReportDateValue();
 		var dateVal = '';
@@ -4137,6 +4276,9 @@
 		ensureAcPercentDefaults();
 		refreshAcSection2Ratios();
 		$('#slsAnalyticalCalcModal').modal('show');
+		$('#slsAnalyticalCalcModal').one('shown.bs.modal', function () {
+			triggerSlsAlmLimitCellBlink('#slsAnalyticalCalcModal');
+		});
 	}
 
 	var SLS_GAP_BUCKETS = [

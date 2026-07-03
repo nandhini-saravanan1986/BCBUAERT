@@ -2,635 +2,564 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Risk Insights — Group</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Risk Insights — Group Exposure</title>
 
-    <!-- CSS Dependencies -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
-    <link rel="stylesheet" th:href="@{/css/CustomButton.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}" />
+	<link rel="stylesheet" th:href="@{/css/CustomButton.css}" />
 	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
-    <link rel="stylesheet" th:href="@{/css/all.min.css}">
-    <script th:src="@{/js/echarts.min.js}"></script>
-    <link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
-    <link rel="stylesheet" type="text/css"
-          href="/webjars/font-awesome/5.9.0/css/all.min.css"
-          th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
-
-    <style>
-        :root {
-            --bg: #f9fbff;
-            --surface: #ffffff;
-            --border: #e6eaf0;
-            --text: #0f172a;
-            --muted: #6b7280;
-            --textcolorheaderwhite: white;
-            --processing: #3b82f6;
-            --approved: #16a34a;
-            --rejected: #ef4444;
-            --pending: #f59e0b;
-            --refunded: #8b5cf6;
-
-            --color-primary: #8b5cf6;
-            --color-primary-hover: #7c3aed;
-            --color-primary-50: rgba(139, 92, 246, 0.05);
-            --color-primary-100: rgba(139, 92, 246, 0.1);
-            --color-primary-200: rgba(139, 92, 246, 0.2);
-
-            --color-success: #10b981;
-            --color-success-50: rgba(16, 185, 129, 0.05);
-            --color-success-100: rgba(16, 185, 129, 0.1);
-            --color-warning: #f59e0b;
-            --color-warning-50: rgba(245, 158, 11, 0.05);
-            --color-warning-100: rgba(245, 158, 11, 0.1);
-            --color-error: #ef4444;
-            --color-error-50: rgba(239, 68, 68, 0.05);
-            --color-error-100: rgba(239, 68, 68, 0.1);
-            --color-info: #3b82f6;
-            --color-info-50: rgba(59, 130, 246, 0.05);
-            --color-info-100: rgba(59, 130, 246, 0.1);
-
-            --color-text: #1e293b;
-            --color-text-secondary: #475569;
-            --color-text-muted: #94a3b8;
-
-            --color-background: #ffffff;
-            --color-surface: #f8fafc;
-            --color-surface-hover: #f1f5f9;
-
-            --color-border: #e2e8f0;
-
-            --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --text-xs: 0.75rem;
-            --text-sm: 0.875rem;
-            --text-base: 1rem;
-            --text-lg: 1.125rem;
-            --text-xl: 1.25rem;
-            --text-2xl: 1.5rem;
-            --text-3xl: 1.75rem;
-            --text-4xl: 2rem;
-
-            --weight-normal: 400;
-            --weight-medium: 500;
-            --weight-semibold: 600;
-            --weight-bold: 700;
-
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-base: 0.75rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
-
-            --radius-sm: 0.25rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-full: 9999px;
-
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 80px;
-            --header-height: 64px;
-
-            --transition: 0.2s ease;
-        }
-
-        body {
-            padding: 0;
-            margin: 0;
-            margin-top: 5px;
-            background: var(--bg);
-            font-family: Arial, sans-serif;
-        }
-
-        .container-fluid {
-            margin-top: 115px;
-        }
-
-		.menuname {
-		    width: 100%;
-		    display: flex;
-		    justify-content: space-between;   /* heading left, button right */
-		    align-items: center;
-		}
-
-        .menuname h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .menuname label {
-            margin: 0;
-            padding-left: 10px;
-            padding-right: 5px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .table-wrap {
-            overflow: auto;
-            background: var(--surface);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .table.refund-table {
-            background: var(--surface);
-            color: var(--text);
-            margin-bottom: 0;
-        }
-
-        .table.refund-table thead th {
-            position: sticky;
-            top: 0;
-            background-color: rgba(33, 37, 41, 65%);
-            color: var(--textcolorheaderwhite);
-            font-weight: 700;
-            font-size: 0.65rem;
-            border: 2px solid;
-            text-transform: uppercase;
-        }
-
-        .table.refund-table tbody td {
-            font-size: 0.70rem;
-            border: 2px solid;
-            border-color: var(--border);
-        }
-
-        .table.refund-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        h4 {
-            text-align: left;
-            margin-bottom: 30px;
-            font-size: 0.70rem;
-
-            padding: 10px;
-        }
-		.th-left{
-		    text-align: left !important;
-		}
-
-        .my-button {
-            background: transparent linear-gradient(90deg, #f26522 0%, #fe8639 100%) 0% 0% no-repeat padding-box;
-            border: none;
-            border-radius: 50px;
-            color: white;
-            padding: 5px 12px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.95rem;
-            font-weight: bold;
-            margin-left: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .my-button:hover {
-            background: transparent linear-gradient(90deg, #fe8639 0%, #f26522 100%) 0% 0% no-repeat padding-box;
-            padding-inline: 14px;
-        }
-
-        @media (max-width: 767.98px) {
-            .table.refund-table thead {
-                display: none;
-            }
-
-            .table.refund-table,
-            .table.refund-table tbody,
-            .table.refund-table tr,
-            .table.refund-table td {
-                display: block;
-                width: 100%;
-            }
-
-            .table.refund-table tr {
-                margin: 0.75rem 0;
-                padding: 1rem;
-                border-radius: 10px;
-                background: var(--surface);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            }
-
-            .table.refund-table tbody td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                color: var(--muted);
-                display: block;
-                margin-bottom: 5px;
-            }
-        }
-		
-		#usertable {
-		    border-collapse: collapse !important;
-		    font-family: Arial, sans-serif !important;
-		    font-size: 12px !important;
-		}
-
-		/* HEADER */
-		#usertable thead th {
-		    background-color: var(--table-header-blue, #2563EB);
-		    color: #fff;
-		    font-family: Arial, sans-serif !important;
-		    font-size: 14px !important;
-		    text-align: center;
-		    vertical-align: middle;
-		    padding: 10px 4px !important;
-		    line-height: 1.1 !important;
-		}
-
-		/* BODY CELLS */
-		#usertable td {
-		    padding: 5px 6px !important;
-		    border: 1px solid #e8e8e8 !important;
-		    background: #fafafa;
-		}
-
-		/* EVEN ROW */
-		#usertable tbody tr:nth-child(even) {
-		    background-color: #f4f2ef !important;
-		}
-
-		/* ODD ROW */
-		#usertable tbody tr:nth-child(odd) {
-		    background-color: #ffffff !important;
-		}
-
-		/* HOVER */
-		#usertable tbody tr:hover {
-		    background-color: #f1f1f1;
-		}
-		.table-container{
-		    overflow-x:auto;
-		}
-    </style>
-<style>
-	.static-back-btn {
-			    background-color: rgb(255, 255, 255);
-			    border: none;
-			    color: var(--bank-primary, #2563EB);
-			    font-size: 16px;
-			    border-radius: 50%;
-			    width: 36px;
-			    height: 36px;
-			    display: flex;
-			    align-items: center;
-			    justify-content: center;
-			    margin-right: 10px;
-			    transition: background-color 0.25s ease, transform 0.15s ease;
-			    cursor: pointer;
-			}
-
-			/* Hover effect */
-			.static-back-btn:hover {
-			    background-color: var(--bank-primary, #2563EB);   /* darker orange */
-			    color: rgb(255, 255, 255);
-			    transform: scale(1.08);
-			}
-
-			/* Optional click effect */
-			.static-back-btn:active {
-			    transform: scale(0.95);
-			}
-</style>
 	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
+	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
+
+	<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+	<style>
+		:root {
+			--bob-orange: #FF7B00;
+		}
+
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			font-size: 12px;
+			background: var(--bank-page-bg, #F7F4F1);
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			overflow-x: hidden;
+		}
+
+		.group-exposure-page {
+			margin-top: 20px;
+			padding: 0 12px 24px;
+			max-width: 100%;
+		}
+
+		.formline label {
+			word-break: break-word;
+		}
+
+		@media (max-width: 767px) {
+			.group-exposure-page {
+				padding: 0 8px 16px;
+			}
+
+			.formline label {
+				margin-bottom: 4px;
+			}
+		}
+
+		.role-page-header {
+			background-color: #ffffff;
+			padding: 12px 16px;
+			border-radius: 8px 8px 0 0;
+		}
+
+		.user-list-card,
+		.user-form-card {
+			background: #fff;
+			border-radius: 8px;
+			border: 1px solid var(--bank-border, #E8DDD2);
+			box-shadow: 0 2px 8px rgba(61, 43, 31, 0.06);
+			overflow: hidden;
+		}
+
+		.table-wrap {
+			padding: 12px;
+			overflow-x: auto;
+		}
+
+		.formline {
+			padding-bottom: 15px;
+			align-items: center;
+		}
+
+		.bob-loader {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(255, 255, 255, 0.7);
+			backdrop-filter: blur(4px);
+			z-index: 9999;
+			visibility: hidden;
+			opacity: 0;
+			transition: 0.3s;
+		}
+
+		.bob-loader.show {
+			visibility: visible;
+			opacity: 1;
+		}
+
+		.role-btn {
+			background: var(--bob-orange);
+			color: white;
+			border: none;
+			padding: 6px 14px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 12px;
+		}
+
+		.role-btn:hover {
+			color: #fff;
+			opacity: 0.92;
+		}
+
+		.static-back-btn {
+			background-color: #fff;
+			border: none;
+			color: var(--bank-primary, #FF7B00);
+			font-size: 16px;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10px;
+			transition: background-color 0.25s ease, transform 0.15s ease;
+			cursor: pointer;
+		}
+
+		.static-back-btn:hover {
+			background-color: var(--bank-primary, #FF7B00);
+			color: #fff;
+			transform: scale(1.08);
+		}
+
+		.page-title {
+			margin: 0;
+			line-height: 36px;
+			font-family: Verdana, Arial, sans-serif;
+			font-size: 20px;
+			font-weight: bold;
+			color: #0D0D0C;
+		}
+
+		.user-form-card-body {
+			padding: 16px 20px 24px;
+		}
+
+		#usertable {
+			border-collapse: collapse !important;
+			font-family: Arial, sans-serif !important;
+			font-size: 12px !important;
+			width: 100% !important;
+		}
+
+		#usertable thead th {
+			background-color: var(--table-header-blue, #FF7B00) !important;
+			color: #fff;
+			font-family: Arial, sans-serif !important;
+			font-size: 14px !important;
+			text-align: left;
+			vertical-align: middle;
+			white-space: normal;
+			padding: 10px 8px !important;
+			line-height: 1.1 !important;
+			border: 1px solid rgba(0, 0, 0, 0.08);
+		}
+
+		#usertable td {
+			padding: 8px !important;
+			border: 1px solid #e8e8e8 !important;
+			background: #fafafa;
+			white-space: normal !important;
+			vertical-align: middle;
+		}
+
+		#usertable tbody tr:nth-child(even) td {
+			background-color: #f4f2ef !important;
+		}
+
+		#usertable tbody tr:nth-child(odd) td {
+			background-color: #ffffff !important;
+		}
+
+		#usertable tbody tr:hover td {
+			background-color: #f1f1f1 !important;
+		}
+
+		.status-active {
+			color: #fff;
+			background-color: #10b981;
+			font-weight: 600;
+			text-align: center;
+		}
+
+		.status-inactive {
+			color: #fff;
+			background-color: #ef4444;
+			font-weight: 600;
+			text-align: center;
+		}
+
+		.action-cell {
+			text-align: center;
+			white-space: nowrap;
+		}
+
+		.action-btn {
+			border: none;
+			border-radius: 4px;
+			padding: 4px 8px;
+			cursor: pointer;
+		}
+
+		.action-btn-danger {
+			background-color: #ef4444;
+			color: #fff;
+		}
+
+		.dataTables_filter label {
+			display: flex !important;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 0 !important;
+		}
+
+		.dataTables_filter input {
+			margin-left: 5px;
+		}
+
+		.dataTables_wrapper .page-link:focus,
+		.dataTables_wrapper .page-link:active {
+			box-shadow: none !important;
+			outline: none !important;
+		}
+
+		.dataTables_wrapper .paginate_button.active .page-link {
+			background-color: var(--bank-primary, #FF7B00) !important;
+			border-color: var(--bank-primary-dark, #1E40AF) !important;
+			color: #ffffff !important;
+		}
+
+		.customer-picker {
+			height: 250px;
+			overflow-y: auto;
+		}
+	</style>
+
+	<script>
+		function showLoader() {
+			var el = document.querySelector('.bob-loader');
+			if (el) {
+				el.classList.add('show');
+			}
+		}
+
+		function hideLoader() {
+			var el = document.querySelector('.bob-loader');
+			if (el) {
+				el.classList.remove('show');
+			}
+		}
+
+		function Addgroup() {
+			showLoader();
+			location.href = "CustomerGrp_Maintenance?formmode=add";
+		}
+
+		function goToList() {
+			showLoader();
+			location.href = "CustomerGrp_Maintenance?formmode=list";
+		}
+
+		function GetGroupdetails(el) {
+			const groupId = el.getAttribute('data-group-id');
+			if (!groupId) {
+				return;
+			}
+			showLoader();
+			location.href = "CustomerGrp_Maintenance?formmode=edit&Group_id=" + encodeURIComponent(groupId);
+		}
+
+		function InactiveGroupdetails(el) {
+			const groupId = el.getAttribute('data-group-id');
+			if (!groupId) {
+				return;
+			}
+			if (!confirm("Mark this group as inactive?")) {
+				return;
+			}
+			showLoader();
+			fetch("./UpdatedCustgroupdetail?Group_id=" + encodeURIComponent(groupId) + "&funtion_code=00")
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error("HTTP error " + response.status);
+					}
+					return response.text();
+				})
+				.then(function (text) {
+					alert(text);
+					window.location.reload();
+				})
+				.catch(function (err) {
+					hideLoader();
+					alert("Error: " + err.message);
+				});
+		}
+
+		function saveGroup() {
+			const form = document.getElementById('Groupdetail');
+			const formData = new FormData(form);
+			showLoader();
+			fetch('./CustomerGrp_Maintenance_Rest', {
+				method: 'POST',
+				body: formData
+			})
+				.then(function (response) {
+					return response.text();
+				})
+				.then(function (msg) {
+					alert(msg);
+					goToList();
+				})
+				.catch(function (err) {
+					hideLoader();
+					console.error(err);
+					alert("Save failed.");
+				});
+		}
+
+		function updateCustomerIds() {
+			var selected = [];
+			document.querySelectorAll('.cust-checkbox:checked').forEach(function (cb) {
+				selected.push(cb.value);
+			});
+			var joined = selected.join(',');
+			var display = document.getElementById('groupCustomerIdsDisplay');
+			var hidden = document.getElementById('groupCustomerIds');
+			if (display) {
+				display.value = joined;
+			}
+			if (hidden) {
+				hidden.value = joined;
+			}
+		}
+
+		function searchCustomers(term) {
+			var container = document.getElementById('customerlistid');
+			var hiddenField = document.getElementById('groupCustomerIds');
+			if (!container || !hiddenField) {
+				return;
+			}
+			var alreadySelected = (hiddenField.value || '')
+				.split(',')
+				.map(function (s) {
+					return s.trim();
+				})
+				.filter(Boolean);
+			var url = './groupdetail/customer-search?term=' + encodeURIComponent(term);
+			fetch(url)
+				.then(function (resp) {
+					return resp.json();
+				})
+				.then(function (data) {
+					var searchResult = Array.isArray(data) ? data : [];
+					var combinedIds = Array.from(new Set(alreadySelected.concat(searchResult)));
+					container.innerHTML = '';
+					combinedIds.forEach(function (id) {
+						var label = document.createElement('label');
+						label.className = 'd-block mb-1';
+						var cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.className = 'cust-checkbox';
+						cb.value = id;
+						if (alreadySelected.indexOf(id) >= 0) {
+							cb.checked = true;
+						}
+						cb.addEventListener('change', updateCustomerIds);
+						var span = document.createElement('span');
+						span.textContent = ' ' + id;
+						label.appendChild(cb);
+						label.appendChild(span);
+						container.appendChild(label);
+					});
+					updateCustomerIds();
+				})
+				.catch(function (err) {
+					console.error('Search error', err);
+				});
+		}
+
+		function goBack() {
+			window.history.back();
+		}
+
+		document.addEventListener('DOMContentLoaded', function () {
+			if ($('#usertable').length) {
+				$('#usertable').DataTable({
+					paging: true,
+					ordering: false,
+					searching: true,
+					pageLength: 10,
+					lengthChange: false,
+					responsive: true,
+					autoWidth: false,
+					dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
+				});
+			}
+
+			var searchInput = document.getElementById('customerSearch');
+			if (searchInput) {
+				searchInput.addEventListener('input', function () {
+					searchCustomers(this.value);
+				});
+			}
+
+			document.querySelectorAll('.cust-checkbox').forEach(function (cb) {
+				cb.addEventListener('change', updateCustomerIds);
+			});
+
+			updateCustomerIds();
+
+			var hiddenIds = document.getElementById('groupCustomerIds');
+			if (hiddenIds && hiddenIds.value) {
+				searchCustomers('');
+			}
+
+			hideLoader();
+		});
+
+		window.addEventListener('pageshow', function () {
+			hideLoader();
+		});
+	</script>
 </head>
 
 <body>
-    <!-- Core JS helpers -->
-    <script>
-        function Addgroup() {
-            location.href = "CustomerGrp_Maintenance?formmode=add";
-        }
-
-		function GetGroupdetails(el) {
-		    const groupId = el.getAttribute('data-group-id');
-		    if (!groupId) {
-		        console.error('data-group-id not found on element');
-		        return;
-		    }
-		    location.href = "CustomerGrp_Maintenance?formmode=edit&Group_id=" 
-		                    + encodeURIComponent(groupId);
-		}
-		
-		function InactiveGroupdetails(el) {
-				const groupId = el.getAttribute('data-group-id');
-				if (!groupId) {
-					console.error('data-group-id not found on element');
-					return;
-				}
-				fetch("./UpdatedCustgroupdetail?Group_id=" + encodeURIComponent(groupId)+'&funtion_code='+'00')
-				    .then(response => {
-				        if (!response.ok) {
-				            throw new Error("HTTP error " + response.status);
-				        }
-				        return response.text();           // because backend returns String
-				    })
-				    .then(text => {
-				        alert(text);                      // show String response
-				        window.location.reload();
-				    })
-				    .catch(err => {
-				        console.error("Fetch error:", err);
-				        alert("Error: " + err.message);
-				    });
-			}
-			
-			function saveGroup() {
-			    const form = document.getElementById('Groupdetail');
-			    const formData = new FormData(form);
-
-			    // You can append extra values if needed:
-			    // formData.append('status', 'INACTIVE');
-
-			    fetch('./CustomerGrp_Maintenance_Rest', {
-			        method: 'POST',
-			        body: formData   // no explicit Content-Type; browser sets multipart/form-data
-			    })
-			    .then(response => response.text())
-			    .then(msg => alert(msg))
-				
-			    .catch(err => console.error(err));
-				window.location.reload();
-			}
-
-			
-
-        // Collect all checked customer IDs and push into textarea + hidden field
-        function updateCustomerIds() {
-            var selected = [];
-            document.querySelectorAll('.cust-checkbox:checked').forEach(function (cb) {
-                selected.push(cb.value);
-            });
-
-            var joined = selected.join(',');
-
-            var display = document.getElementById('groupCustomerIdsDisplay');
-            var hidden = document.getElementById('groupCustomerIds');
-
-            if (display) display.value = joined;
-            if (hidden) hidden.value = joined;
-        }
-
-        /**
-         * AJAX search: when user types >= 5 chars, hit backend and rebuild checkbox list.
-         * Endpoint expected to return JSON array of strings (cust_id).
-         */
-		 function searchCustomers(term) {
-		     // only start searching when 5 or more characters are entered
-		     const container   = document.getElementById('customerlistid');
-		     const hiddenField = document.getElementById('groupCustomerIds');
-		     if (!container || !hiddenField) {
-		         return;
-		     }
-
-		     // 1) read already selected IDs from hidden field
-		     const alreadySelected = (hiddenField.value || '')
-		         .split(',')
-		         .map(s => s.trim())
-		         .filter(Boolean);   // e.g. ["123456789", "987654321"]
-
-		     const url = './groupdetail/customer-search?term=' + encodeURIComponent(term);
-
-		     fetch(url)
-		         .then(resp => resp.json())
-		         .then(data => {
-		             // 2) backend result IDs (search result)
-		             const searchResult = Array.isArray(data) ? data : [];
-
-		             // 3) combined list = previously selected + new search results (remove duplicates)
-		             const combinedIds = Array.from(new Set([...alreadySelected, ...searchResult]));
-
-		             // 4) clear old checkboxes
-		             container.innerHTML = '';
-
-		             // 5) rebuild checkbox list
-		             combinedIds.forEach(id => {
-		                 const label = document.createElement('label');
-		                 label.className = 'd-block';
-
-		                 const cb = document.createElement('input');
-		                 cb.type = 'checkbox';
-		                 cb.className = 'cust-checkbox';
-		                 cb.value = id;
-
-		                 // mark previously selected as checked
-		                 if (alreadySelected.includes(id)) {
-		                     cb.checked = true;
-		                     // OPTIONAL: if you don't want them to be uncheckable, uncomment:
-		                     // cb.disabled = true;
-		                 }
-
-		                 // when clicked, update selected IDs
-		                 cb.addEventListener('change', updateCustomerIds);
-
-		                 const span = document.createElement('span');
-		                 span.textContent = ' ' + id;
-
-		                 label.appendChild(cb);
-		                 label.appendChild(span);
-		                 container.appendChild(label);
-		             });
-
-		             // 6) sync textarea + hidden field
-		             updateCustomerIds();
-		         })
-		         .catch(err => {
-		             console.error('Search error', err);
-		         });
-		 }
-    </script>
-
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('customerSearch');
-
-            if (searchInput) {
-                searchInput.addEventListener('input', function () {
-                    searchCustomers(this.value);
-                });
-            }
-
-            // Bind checkboxes to keep textarea + hidden field updated (initial Thymeleaf list)
-            document.querySelectorAll('.cust-checkbox').forEach(function (cb) {
-                cb.addEventListener('change', updateCustomerIds);
-            });
-
-            // Initialize selected list in edit mode
-            updateCustomerIds();
-        });
-		
-		function goBack() {
-			    window.history.back();
-			}
-    </script>
-
-    <div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
-
-    <div class="container-fluid main-content">
-		<div class="d-flex align-items-center">
-
-													<button class="static-back-btn" onclick="goBack()" title="Go Back">
-																			        <i class="fa fa-arrow-left"></i>
-																			    </button>
-        <div class="menuname">
-            			<h4 th:text="${menuname}" 
-		style="font-family: Verdana; font-size: 20px; font-weight: bold; color: #0D0D0C; margin-bottom: 5px;">
-		
-	</h4>
-	
-	<!-- Add Button (only in list mode) -->
-	<button class="my-button"
-	        type="button"
-	        onclick="Addgroup();"
-	        th:if="${formmode} == 'list'">
-	    Add Group
-	</button>
-
-	<!-- List Button (only in add mode) -->
-	<button class="my-button"
-	        type="button"
-	        onclick="location.href='CustomerGrp_Maintenance?formmode=list'"
-	        th:if="${formmode} == 'add'">
-	    List
-	</button>		
-        </div>
+	<div class="bob-loader" role="status">
+		<div class="text-center">
+			<img th:src="@{/images/bobn.png}" height="60" alt="Loading...">
+			<div class="progress mt-2" style="height: 5px; width: 200px;">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+			</div>
 		</div>
-        <!-- LIST MODE -->
-        <div th:if="${formmode}=='list'">
-            <div class="table-container" style="padding:0px 5px;">
-                <table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="th-left">Group Id</th>
-                            <th class="th-left">Group Name</th>
-                            <th class="th-left">Customer Id's</th>
-                            <th class="th-left">Group Status</th>
-                            <th class="th-left">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="grpdtl : ${Groupdetails}">
-                            <td th:text="${grpdtl.group_id}"></td>
-                            <td th:text="${grpdtl.group_name}"></td>
-                            <td th:text="${grpdtl.belonging_customer_id}"></td>
-							<th:block th:switch="${grpdtl.del_flg}">
-								<td th:case="Y" style="color: white;background-color: tomato;">Inactive Group</td>
-								<td th:case="N" style="color: white;background-color: #10b981;">Active Group</td>
-							</th:block>
-							<td><!--<button style="border: none;border-radius: 2px;background-color: skyblue;"><i class="fas fa-edit"
-										th:attr="data-group-id=${grpdtl.group_id}" onclick="GetGroupdetails(this)"
-										title="Edit Group"></i></button>-->
-								<button style="border: none;border-radius: 2px;background-color: tomato;color: white;"><i class="fas fa-circle-xmark"
-										th:attr="data-group-id=${grpdtl.group_id}" onclick="InactiveGroupdetails(this)"
-										title="Cancel Group"></i></button>
-							</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+	</div>
 
-        <!-- FORM MODES -->
-        <div th:if="${formmode}=='view' OR ${formmode}=='add' OR ${formmode}=='cancel' OR
-                    ${formmode}=='edit' OR ${formmode}=='delete' OR ${formmode}=='verify' OR
-                    ${formmode}=='viewnew'">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card-body" style="margin-left: 10px;">
-                        <form action="#"
-                              th:object="${Groupdetail}"
-                              method="post"
-                              autocomplete="off"
-                              id="Groupdetail"
-                              th:fragment="finuserapply">
+	<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
 
-                            <div class="form-group row mb-1">
-                                <label class="col-sm-2 col-form-label">Group ID</label>
-                                <div class="col-sm-4">
-                                    <input type="text"
-                                           class="form-control"
-                                           th:field="*{group_id}"
-                                           th:readonly="${formmode} != 'add' and ${formmode} != 'edit'" />
-                                </div>
+	<div class="container-fluid group-exposure-page">
 
-                                <label class="col-sm-2 col-form-label">Group Name</label>
-                                <div class="col-sm-4">
-                                    <input type="text"
-                                           class="form-control"
-                                           th:field="*{group_name}"
-                                           th:readonly="${formmode} != 'add' and ${formmode} != 'edit'" />
-                                </div>
-                            </div>
+		<!-- LIST MODE -->
+		<div th:if="${formmode == 'list'}">
+			<div class="user-list-card">
+				<div class="role-page-header d-flex justify-content-between align-items-center">
+					<div class="d-flex align-items-center">
+						<button class="static-back-btn" type="button" onclick="goBack()" title="Go Back">
+							<i class="fa fa-arrow-left"></i>
+						</button>
+						<h4 class="page-title" th:text="${menuname}">Group Exposure - list</h4>
+					</div>
+					<button class="role-btn" type="button" onclick="Addgroup()">Add Group</button>
+				</div>
+				<div class="table-wrap">
+					<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
+						<thead>
+							<tr>
+								<th style="text-align:left;">Group Id</th>
+								<th style="text-align:left;">Group Name</th>
+								<th style="text-align:left;">Customer Id's</th>
+								<th style="text-align:left;">Group Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="grpdtl : ${Groupdetails}">
+								<td th:text="${grpdtl.group_id}"></td>
+								<td th:text="${grpdtl.group_name}"></td>
+								<td th:text="${grpdtl.belonging_customer_id}"></td>
+								<th:block th:switch="${grpdtl.del_flg}">
+									<td th:case="'Y'" class="status-inactive">Inactive Group</td>
+									<td th:case="'N'" class="status-active">Active Group</td>
+									<td th:case="*" th:text="${grpdtl.del_flg}"></td>
+								</th:block>
+								<td class="action-cell text-center">
+									<i class="fa fa-edit text-primary mr-3" style="cursor:pointer" title="Edit"
+										th:attr="data-group-id=${grpdtl.group_id}" onclick="GetGroupdetails(this)"></i>
+									<i class="fas fa-circle-xmark text-danger" style="cursor:pointer" title="Deactivate Group"
+										th:attr="data-group-id=${grpdtl.group_id}" onclick="InactiveGroupdetails(this)"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
 
-                            <div class="form-group row mb-1">
-                                <!-- Read-only selected IDs -->
-                                <label class="col-sm-2 col-form-label">Group Customer Id's</label>
-                                <div class="col-sm-4">
-                                    <textarea class="form-control"
-                                              id="groupCustomerIdsDisplay"
-                                              th:text="*{belonging_customer_id}"
-                                              readonly
-                                              style="height:250px; overflow-y:auto;"
-                                              placeholder="Selected customer Id's"></textarea>
+		<!-- FORM MODES -->
+		<div th:if="${formmode == 'view' or formmode == 'add' or formmode == 'cancel' or formmode == 'edit' or formmode == 'delete' or formmode == 'verify' or formmode == 'viewnew'}">
+			<div class="user-form-card shadow-sm">
+				<div class="role-page-header d-flex justify-content-between align-items-center">
+					<div class="d-flex align-items-center">
+						<button class="static-back-btn" type="button" onclick="goBack()" title="Go Back">
+							<i class="fa fa-arrow-left"></i>
+						</button>
+						<h4 class="page-title" th:text="${menuname}">Group Exposure</h4>
+					</div>
+					<button class="role-btn" type="button" onclick="goToList()">List</button>
+				</div>
+				<div class="user-form-card-body">
+					<form th:object="${Groupdetail}" method="post" autocomplete="off" id="Groupdetail">
 
-                                    <input type="hidden"
-                                           id="groupCustomerIds"
-                                           th:field="*{belonging_customer_id}" />
-                                </div>
+						<div class="row formline">
+							<label class="col-sm-2 col-form-label">Group ID</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control form-control-sm" th:field="*{group_id}"
+									th:readonly="${formmode != 'add' and formmode != 'edit'}" />
+							</div>
+							<label class="col-sm-2 col-form-label">Group Name</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control form-control-sm" th:field="*{group_name}"
+									th:readonly="${formmode != 'add' and formmode != 'edit'}" />
+							</div>
+						</div>
 
-                                <!-- Search + selectable IDs -->
-                                <label class="col-sm-2 col-form-label">Select Customer Id's</label>
-                                <div class="col-sm-4">
-                                    <input type="text"
-                                           id="customerSearch"
-                                           class="form-control mb-1"
-                                           placeholder="Type first 5 digits to search..." />
+						<div class="row formline">
+							<label class="col-sm-2 col-form-label">Group Customer Id's</label>
+							<div class="col-sm-4">
+								<textarea class="form-control form-control-sm customer-picker" id="groupCustomerIdsDisplay"
+									th:text="*{belonging_customer_id}" readonly
+									placeholder="Selected customer Id's"></textarea>
+								<input type="hidden" id="groupCustomerIds" th:field="*{belonging_customer_id}" />
+							</div>
+							<label class="col-sm-2 col-form-label">Select Customer Id's</label>
+							<div class="col-sm-4">
+								<input type="text" id="customerSearch" class="form-control form-control-sm mb-2"
+									placeholder="Type first 5 digits to search..." />
+								<div class="form-control form-control-sm customer-picker" id="customerlistid">
+									<div th:each="cust : ${customerList}">
+										<label class="d-block mb-1">
+											<input type="checkbox" class="cust-checkbox" th:value="${cust}" />
+											<span th:text="${cust}"></span>
+										</label>
+									</div>
+								</div>
+								<small class="form-text text-muted">
+									Showing max 100 records initially. Type at least 5 digits to search from full list.
+								</small>
+							</div>
+						</div>
 
-                                    <div class="form-control"
-                                         style="height:250px; overflow-y:auto;"
-                                         id="customerlistid">
-                                        <!-- Initial 100 (or so) from backend -->
-                                        <div th:each="cust : ${customerList}">
-                                            <label class="d-block">
-                                                <input type="checkbox"
-                                                       class="cust-checkbox"
-                                                       th:value="${cust}" />
-                                                <span th:text="${cust}"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <small class="form-text text-muted">
-                                        Showing max 100 records initially. Type at least 5 digits to search from full list.
-                                    </small>
-                                </div>
-                            </div>
-
-                            <!-- Add Save / Cancel buttons here if needed -->
-							<button class="my-button" onclick="saveGroup()" type="button" style="margin-left: 50%;">Submit</button>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+						<div class="text-center mt-3">
+							<button class="role-btn px-5" type="button" onclick="saveGroup()">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>

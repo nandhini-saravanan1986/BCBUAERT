@@ -59,7 +59,7 @@
 		}
 
 		:root {
-			--bob-orange: #0073e6;
+			--bob-orange: #FF7B00;
 			--bob-blue: #004080;
 			--overlay-bg: rgba(255, 255, 255, 0.9);
 		}
@@ -166,7 +166,7 @@
 		}
 
 		.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-			background: #E67E00 !important;
+			background: #E66E00 !important;
 			/* orange */
 			color: white !important;
 		}
@@ -271,7 +271,7 @@
 		#floatingForwardBtn {
 			position: fixed;
 			top: 50%;
-			background-color: #0073e6;
+			background-color: #FF7B00;
 			border: none;
 			color: white;
 			font-size: 20px;
@@ -329,8 +329,8 @@
 		.page-item.active .page-link {
 			z-index: 1;
 			color: #fff;
-			background-color: #E67E00;
-			border-color: #E67E00;
+			background-color: #E66E00;
+			border-color: #E66E00;
 		}
 
 		.col-sm-5 {
@@ -376,7 +376,7 @@
 		}
 
 		.btn-primary {
-			background-color: var(--bank-primary, #2563EB);
+			background-color: var(--bank-primary, #FF7B00);
 			border-color: #0c0c0c;
 		}
 
@@ -485,11 +485,11 @@
 	<style>
 /* Active (selected tab) */
 		.role-btn.active {
-			background: #E67E00;
+			background: #E66E00;
 			/* solid orange */
 			color: #fff;
 			/* white text */
-			border-color: #E67E00;
+			border-color: #E66E00;
 			transform: translateY(-1px);
 			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
 		}
@@ -551,7 +551,7 @@
 			background-color: #f1f1f1;
 		}
 		.table .thead-light th {
-					background-color: var(--table-header-blue, #2563EB);
+					background-color: var(--table-header-blue, #FF7B00);
 					border-color: #dee2e6;
 					font-family: sans-serif;
 					color: white;
@@ -562,7 +562,7 @@
 				.static-back-btn {
 										    background-color: rgb(255, 255, 255);
 										    border: none;
-										    color: var(--bank-primary, #2563EB);
+										    color: var(--bank-primary, #FF7B00);
 										    font-size: 16px;
 										    border-radius: 50%;
 										    width: 36px;
@@ -577,7 +577,7 @@
 
 										/* Hover effect */
 										.static-back-btn:hover {
-										    background-color: var(--bank-primary, #2563EB);   /* darker orange */
+										    background-color: var(--bank-primary, #FF7B00);   /* darker orange */
 										    color: rgb(255, 255, 255);
 										    transform: scale(1.08);
 										}
@@ -664,6 +664,10 @@
 		                totalLimit += Number(item.settlement_limit) || 0;
 		                totalExposure += Number(item.settlement_exposure) || 0;
 		            }
+					else if (RequestType === "Totallimit") {
+					    totalLimit += Number(item.settlement_limit+item.money_market_limit+item.trade_finance_limits) || 0;
+					    totalExposure += Number(item.settlement_exposure+item.money_market_exposure+item.trade_finance_exposure) || 0;
+					}
 		        }
 		    });
 
@@ -697,9 +701,16 @@
 		
 		
 		function goBack() {
-									    document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-									    window.history.back();
-									}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			var mode = new URLSearchParams(window.location.search).get('formmode') || '';
+			if (mode === 'Branchrequestadd') {
+				location.href = 'ASLCheck?formmode=Branchrequestlistactive';
+			} else if (mode === 'Branchrequestlistactive' || mode === 'Branchrequestlisthistory') {
+				location.href = 'ASLCheck';
+			} else {
+				location.href = './MenuLanding';
+			}
+		}
 
 									function hideLoader() {
 									    document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
@@ -821,7 +832,7 @@
 							<div class="role-page-title">
 								<div class="d-flex align-items-center">
 
-								<button class="static-back-btn" onclick="goBack()" title="Go Back">
+								<button type="button" class="static-back-btn" onclick="goBack()" title="Go Back">
 									<i class="fa fa-arrow-left"></i>
 										</button>
 								<h4 th:text="${menu}"></h4>
@@ -861,6 +872,7 @@
 												<option value="TradeFinance">Trade Finance</option>
 												<option value="MoneyMarket">Money Market</option>
 												<option value="SettlementLimit">Settlement Limit</option>
+												<option value="Totallimit">Total Limit</option>
 												
 												</select>
 											</td>
@@ -883,13 +895,17 @@
 			</div>
 			
 			<div th:if="${formmode=='Branchrequestlistactive' or formmode=='Branchrequestlisthistory'}" >
-				<form action="#" method="post" autocomplete="off" id="Branchrequest">
+				<form action="#" autocomplete="off" id="Branchrequest" onsubmit="return false;">
 					<div class="card">
-						<div id="pageHeader" class="role-page-header">
+						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center">
 
 							<div class="role-page-title">
-								<h4 th:text="${menu}"></h4>
-
+								<div class="d-flex align-items-center">
+									<button type="button" class="static-back-btn" onclick="goBack()" title="Go Back">
+										<i class="fa fa-arrow-left"></i>
+									</button>
+									<h4 th:text="${menu}"></h4>
+								</div>
 							</div>
 							<div class="btn-group">
 								<button type="button" class="role-btn" th:if="${roleId=='ADM-M' and formmode == 'Branchrequestlistactive'}" onclick="getbranchrequestadd();">
@@ -946,14 +962,14 @@
 			
 			
 			<div th:if="${formmode}=='Branchrequestadd'" >
-				<form action="#" method="post" autocomplete="off" id="Branchrequest">
+				<form action="#" autocomplete="off" id="Branchrequest" onsubmit="return false;">
 					<div class="card">
 						<div id="pageHeader" class="role-page-header">
 
 							<div class="role-page-title">
 								<div class="d-flex align-items-center">
 
-									<button class="static-back-btn" onclick="goBack()" title="Go Back">
+									<button type="button" class="static-back-btn" onclick="goBack()" title="Go Back">
 										<i class="fa fa-arrow-left"></i>
 														</button>
 								<h4 th:text="${menu}"></h4>

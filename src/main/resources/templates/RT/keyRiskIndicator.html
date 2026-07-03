@@ -60,7 +60,7 @@
 		}
 
 		:root {
-			--bob-orange: #0073e6;
+			--bob-orange: #FF7B00;
 			--bob-blue: #004080;
 			--overlay-bg: rgba(255, 255, 255, 0.9);
 		}
@@ -167,7 +167,7 @@
 		}
 
 		.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-			background: #E67E00 !important;
+			background: #E66E00 !important;
 			/* orange */
 			color: white !important;
 		}
@@ -200,21 +200,79 @@
 		/* === ROLE PAGE CUSTOM HEADER === */
 		.role-page-header {
 			background-color: #ffffff;
-			padding: 15px 20px;
+			padding: 12px 16px;
 			display: flex;
-			/* Added for alignment */
 			justify-content: space-between;
-			/* Added for alignment */
 			align-items: center;
-			/* Added for alignment */
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.kri-page {
+			flex: 1;
+			width: 100%;
+			padding: 12px 12px 16px;
+			min-height: 0;
+		}
+
+		.kri-page-card {
+			display: flex;
+			flex-direction: column;
+			min-height: calc(100vh - 84px);
+			overflow: hidden;
+		}
+
+		.kri-table-section {
+			flex: 1;
+			min-height: 0;
+			display: flex;
+			flex-direction: column;
+			padding: 0 12px 12px;
+		}
+
+		.kri-table-section .table-wrap {
+			flex: 1;
+			min-height: 0;
+			padding: 0;
+		}
+
+		.kri-page-card .dataTables_wrapper {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			min-height: 0;
+		}
+
+		.kri-page-card .dataTables_scroll {
+			flex: 1;
+			min-height: 0;
+		}
+
+		.kri-page-card .dataTables_scrollHead {
+			position: relative;
+			z-index: 2;
+		}
+
+		.kri-page-card .dataTables_filter {
+			padding: 8px 0 10px;
+			flex-shrink: 0;
 		}
 
 		.role-page-title h4 {
 			color: #212529;
 			font-family: "Segoe UI", Arial, sans-serif;
-			font-size: 26px;
-			font-weight: 500;
+			font-size: 22px;
+			font-weight: 600;
 			margin: 0;
+			line-height: 1.2;
+		}
+
+		#pageHeader .form-inline {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-left: auto;
 		}
 	</style>
 
@@ -275,8 +333,8 @@
 		.page-item.active .page-link {
 			z-index: 1;
 			color: #fff;
-			background-color: #E67E00;
-			border-color: #E67E00;
+			background-color: #E66E00;
+			border-color: #E66E00;
 		}
 
 		.col-sm-5 {
@@ -322,7 +380,7 @@
 		}
 
 		.btn-primary {
-			background-color: var(--bank-primary, #2563EB);
+			background-color: var(--bank-primary, #FF7B00);
 			border-color: #0c0c0c;
 		}
 
@@ -358,6 +416,12 @@
 			border: 1px solid #e0e0e0;
 			border-radius: 8px;
 			box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+			margin-bottom: 0;
+		}
+
+		.kri-page-card .card-footer {
+			flex-shrink: 0;
+			border-top: 1px solid #e0e0e0;
 		}
 
 		.card-header {
@@ -375,10 +439,16 @@
 		html,
 		body {
 			height: 100%;
-			overflow: hidden;
-			/* This removes both X and Y window scrollbars */
 			margin: 0;
 			padding: 0;
+			overflow-x: hidden;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			background: #f4f6f8;
 		}
 
 		.card-body {
@@ -431,11 +501,11 @@
 	<style>
 /* Active (selected tab) */
 		.role-btn.active {
-			background: #E67E00;
+			background: #E66E00;
 			/* solid orange */
 			color: #fff;
 			/* white text */
-			border-color: #E67E00;
+			border-color: #E66E00;
 			transform: translateY(-1px);
 			box-shadow: 0 1px 8px rgba(230, 126, 0, 0.3);
 		}
@@ -446,28 +516,28 @@
 		}
 	</style>
 	<style>
-		#pageHeader {
-			position: sticky;
-			top: 110px;
-			z-index: 1050;
-			background: white;
-			padding-top: 10px;
-		}
-
-		#tabHeader {
-			position: sticky;
-			top: 5px;
-			/* just below page header */
-			z-index: 1040;
-			background: white;
-			padding: 5px 0;
-		}
-
 		#mainHeader {
 			position: sticky;
 			top: 0;
-			z-index: 9999;
+			z-index: 1000;
+			flex-shrink: 0;
 			background: white;
+		}
+
+		#pageHeader {
+			position: relative;
+			flex-shrink: 0;
+			z-index: 5;
+			background: #ffffff;
+			border-bottom: 1px solid #e5e7eb;
+		}
+
+		#tabHeader {
+			position: relative;
+			flex: 1;
+			min-height: 0;
+			z-index: 1;
+			background: #ffffff;
 		}
 
 		#bankSuggestions,
@@ -497,13 +567,18 @@
 			background-color: #f1f1f1;
 		}
 		.table .thead-light th {
-					background-color: var(--table-header-blue, #2563EB);
+					background-color: var(--table-header-blue, #FF7B00) !important;
 					border-color: #dee2e6;
 					font-family: sans-serif;
-					color: white;
+					color: white !important;
 					font-size: 0.70rem;
 
 				}
+
+		.kri-page-card .dataTables_scrollHead thead th {
+			background-color: var(--table-header-blue, #FF7B00) !important;
+			color: white !important;
+		}
 				
 		#usertable tbody td {
     		font-size: 0.65rem;
@@ -513,7 +588,7 @@
 				.static-back-btn {
 										    background-color: rgb(255, 255, 255);
 										    border: none;
-										    color: var(--bank-primary, #2563EB);
+										    color: var(--bank-primary, #FF7B00);
 										    font-size: 16px;
 										    border-radius: 50%;
 										    width: 36px;
@@ -528,7 +603,7 @@
 
 										/* Hover effect */
 										.static-back-btn:hover {
-										    background-color: var(--bank-primary, #2563EB);   /* darker orange */
+										    background-color: var(--bank-primary, #FF7B00);   /* darker orange */
 										    color: rgb(255, 255, 255);
 										    transform: scale(1.08);
 										}
@@ -559,15 +634,39 @@
 			margin-right: auto;
 			margin-left: auto;
 		}
+
+		.container-fluid.kri-page {
+			padding: 12px 12px 16px !important;
+		}
 		body {
 		    -webkit-print-color-adjust: exact;
 		    print-color-adjust: exact;
 		}
 	</style>
 	<script>
+	function getKriTableScrollHeight() {
+		  var offset = 72;
+		  var pageHeader = document.getElementById('pageHeader');
+		  var footer = document.querySelector('.kri-page-card .card-footer');
+		  var filterBar = document.querySelector('.kri-page-card .dataTables_filter');
+		  if (pageHeader) {
+			offset += pageHeader.offsetHeight;
+		  }
+		  if (footer) {
+			offset += footer.offsetHeight;
+		  }
+		  if (filterBar) {
+			offset += filterBar.offsetHeight;
+		  } else {
+			offset += 48;
+		  }
+		  offset += 56;
+		  var tableHeight = $(window).height() - offset;
+		  return Math.max(200, tableHeight);
+		}
+
 	function initUserTable() {
-		  let tableHeight = $(window).height() - 330;
-		  if (tableHeight < 200) tableHeight = 50;
+		  let tableHeight = getKriTableScrollHeight();
 
 		  $('#usertable').DataTable({
 		    destroy: true,
@@ -970,7 +1069,7 @@
 
 	                /* ✅ HEADER STYLE */
 	                thead th {
-	                    background-color: var(--table-header-blue, #2563EB) !important;
+	                    background-color: var(--table-header-blue, #FF7B00) !important;
 	                    color: white !important;
 	                }
 
@@ -1217,14 +1316,11 @@
 <title>RiskInsights</title>
 
 <body>
-	<div>
-		<div class="row">
-			<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
-			<div class="col-sm-12">
-
+	<div id="mainHeader" th:insert="XBRLHeaderMenu :: header"></div>
+	<div class="container-fluid kri-page">
 				<div th:if="${formmode}=='edit'">
-					<div class="card">
-						<div id="pageHeader" class="role-page-header">
+					<div class="card kri-page-card">
+						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center flex-wrap w-100">
 							<div class="d-flex align-items-center">
 
 									<button class="static-back-btn" onclick="goBack()" title="Go Back">
@@ -1250,10 +1346,8 @@
 							</div>
 						</div>
 
-						<div id="tabHeader" class="row">
-							<div class="col-sm-12">
+						<div id="tabHeader" class="kri-table-section">
 								<div class="table-wrap">
-									<!--<div class="table-container" style="padding: 0px 15px;">-->
 									<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 										<thead class="thead-light">
 											<tr>
@@ -1311,7 +1405,6 @@
 										</tbody>
 									</table>
 								</div>
-							</div>
 						</div>
 							 <!-- Footer -->
 		                   <div class="card-footer text-center d-flex justify-content-center" >
@@ -1328,8 +1421,8 @@
 				
 				
 				<div th:if="${formmode}=='list'">
-					<div class="card">
-						<div id="pageHeader" class="role-page-header">
+					<div class="card kri-page-card">
+						<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center flex-wrap w-100">
 							<div class="d-flex align-items-center">
 
 									<button class="static-back-btn" onclick="goBack()" title="Go Back">
@@ -1352,10 +1445,8 @@
 							</div>
 						</div>
 
-						<div id="tabHeader" class="row">
-							<div class="col-sm-12">
+						<div id="tabHeader" class="kri-table-section">
 								<div class="table-wrap">
-									<!--<div class="table-container" style="padding: 0px 15px;">-->
 									<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 										<thead class="thead-light">
 											<tr>
@@ -2127,7 +2218,6 @@
 										</tbody>
 									</table>
 								</div>
-							</div>
 						</div>
 							 <!-- Footer -->
 		                   <div class="card-footer text-center" >
@@ -2170,8 +2260,6 @@
 					</div>
 				</div>
 
-			</div>
-		</div>
 	</div>
 
 

@@ -5,14 +5,12 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
 	<link rel="icon" th:href="@{/images/Bornfire.png}" type="image/x-icon">
-	<title th:text="${analyticsLabel != null ? analyticsLabel : 'Risk Insights — Dashboard'}">Risk Insights — Dashboard</title>
+	<title>Risk Insights — Dashboard</title>
 
 	<!-- CSS Dependencies -->
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<link rel="stylesheet" th:href="@{/css/datatables.min.css}">
 	<link rel="stylesheet" th:href="@{/css/CustomButton.css}">
-	<link rel="stylesheet" th:href="@{/css/bank-theme.css}" />
-	<link rel="stylesheet" th:href="@{/css/UniversalTable.css}" />
 	<link rel="stylesheet" th:href="@{/css/all.min.css}">
 	<script th:src="@{/js/chart.js}"></script>
 	<script th:src="@{/js/datatablesnew.js}"></script>
@@ -107,10 +105,15 @@
 			--transition: 0.2s ease;
 		}
 
+		html {
+			font-size: 17px;
+		}
+
 		body {
 			margin-top: 5px;
 			background: var(--bg);
 			font-family: Arial, sans-serif;
+			font-size: 1rem;
 		}
 
 		.container-fluid {
@@ -135,16 +138,17 @@
 		.table.refund-table thead th {
 			position: sticky;
 			top: 0;
-			background: var(--table-header, #8A5A35);
-			color: var(--bank-text-on-dark, #fff);
+			background: brown;
+			color: var(--textcolorheaderwhite);
 			font-weight: 700;
-			font-size: 0.65rem;
-			border: 1px solid var(--bank-border-soft, #F0E8DF);
+			font-size: 0.725rem;
+			border: 1px solid;
 			text-transform: uppercase;
+			border-color: black;
 		}
 
 		.table.refund-table tbody td {
-			font-size: 0.65rem;
+			font-size: 0.725rem;
 			border: 1px solid;
 			border-color: black;
 		}
@@ -156,7 +160,7 @@
 		.badge-status {
 			padding: 0.25rem 0.55rem;
 			border-radius: 12px;
-			font-size: 0.65rem;
+			font-size: 0.725rem;
 			font-weight: 600;
 			display: inline-flex;
 			gap: 6px;
@@ -262,7 +266,7 @@
 		}
 
 		.stat-card-title {
-			font-size: 0.72rem;
+			font-size: 0.8rem;
 			color: #475569;
 			font-weight: 600;
 			line-height: 1.4;
@@ -281,7 +285,7 @@
 		}
 
 		.stat-card-value {
-			font-size: 1.125rem;
+			font-size: 1.21rem;
 			font-weight: 700;
 			color: #0f2744;
 			margin-bottom: 0;
@@ -485,12 +489,15 @@
 			color: var(--color-primary-hover);
 		}
 
-		h4,
-		#Analyticsheadername {
+		.container-fluid.main-content {
+			font-family: Verdana, Geneva, sans-serif;
+		}
+
+		.matrix-dashboard-header {
 			position: relative;
 			text-align: center;
 			margin-bottom: 30px;
-			font-size: 1.6rem;
+			font-size: 1.725rem;
 			padding: 10px 12px;
 			color: var(--bank-text-on-dark, #fff);
 			background: var(--bank-header-gradient);
@@ -499,10 +506,11 @@
 			box-shadow: var(--bank-shadow-header);
 			font-weight: 600;
 			letter-spacing: 0.02em;
+			line-height: 1.4;
 		}
 
 		/* Glassy moving layer */
-		h4::before {
+		.matrix-dashboard-header::before {
 			content: "";
 			position: absolute;
 			top: 0;
@@ -538,33 +546,47 @@
 			gap: 6px;
 		}
 
-		body.matrix-analytics-only .matrix-dashboard-table-col {
-			display: none !important;
-		}
-
-		body.matrix-analytics-only .matrix-dashboard-analytics-col {
+		.matrix-dashboard-table-col {
 			flex: 0 0 100%;
 			max-width: 100%;
 		}
 
-		body:not(.matrix-analytics-only) .matrix-dashboard-analytics-col {
-			display: none !important;
+		.matrix-dashboard-analytics-col {
+			display: none;
 		}
 
-		body:not(.matrix-analytics-only) .matrix-dashboard-table-col {
-			flex: 0 0 100%;
-			max-width: 100%;
-			width: 100%;
+		body.matrix-split-view .matrix-dashboard-table-col,
+		body.matrix-split-view .matrix-dashboard-analytics-col {
+			flex: 0 0 50%;
+			max-width: 50%;
+			width: 50%;
 		}
 
-		body.matrix-analytics-only {
-			margin-top: 0;
-			padding-top: 0;
+		body.matrix-split-view .matrix-dashboard-analytics-col {
+			display: block;
+			max-height: calc(100vh - 90px);
+			overflow-y: auto;
 		}
 
-		body.matrix-analytics-only .container-fluid.main-content {
-			margin-top: 0;
-			padding-top: 12px;
+		body.matrix-split-view .matrix-dashboard-table-col .table-wrap {
+			max-height: calc(100vh - 150px);
+		}
+
+		@media (max-width: 991.98px) {
+			body.matrix-split-view .matrix-dashboard-table-col,
+			body.matrix-split-view .matrix-dashboard-analytics-col {
+				flex: 0 0 100%;
+				max-width: 100%;
+				width: 100%;
+			}
+		}
+
+		input.badge-status.matrix-report-date {
+			width: 9.5em;
+			min-width: 9.5em;
+			text-align: center;
+			font-variant-numeric: tabular-nums;
+			letter-spacing: 0.02em;
 		}
 
 		.btn-run-date {
@@ -573,7 +595,7 @@
 			color: #fff;
 			border-radius: 8px;
 			padding: 3px 10px;
-			font-size: 11px;
+			font-size: 12px;
 			font-weight: 600;
 			cursor: pointer;
 		}
@@ -659,8 +681,7 @@
 				margin-bottom: 5px;
 			}
 		}
-	</style>
-	<style>
+
 		.brown-tabs {
 			border-bottom: 2px solid #a52a2a;
 			margin-bottom: 20px;
@@ -676,7 +697,7 @@
 			border: none;
 			padding: 12px 24px;
 			cursor: pointer;
-			font-size: 14px;
+			font-size: 15px;
 			font-weight: 600;
 			border-radius: 6px 6px 0 0;
 			transition: background-color 0.2s ease, color 0.2s ease;
@@ -696,7 +717,7 @@
 			width: 100%;
 			border-collapse: collapse;
 			border: 1px solid;
-			font-size: 10.4px;
+			font-size: 11.5px;
 		}
 
 		.outer-border-table th,
@@ -721,7 +742,7 @@
 
 		.ear-free-text-col label {
 			display: block;
-			font-size: 11px;
+			font-size: 12px;
 			font-weight: bold;
 			color: #5c1717;
 			margin-bottom: 6px;
@@ -731,10 +752,10 @@
 			width: 100%;
 			min-height: 120px;
 			padding: 8px 10px;
-			font-size: 11px;
+			font-size: 12px;
 			font-weight: bold;
 			line-height: 1.45;
-			border: 0px solid #ccc;
+			border: 0 solid #ccc;
 			border-radius: 4px;
 			resize: vertical;
 			box-sizing: border-box;
@@ -742,14 +763,7 @@
 	</style>
 </head>
 
-<body th:classappend="${analyticsOnly} ? 'matrix-analytics-only' : ''">
-	<script th:if="${analyticsOnly}" th:inline="javascript">
-		window.__MATRIX_ANALYTICS_BOOT__ = {
-			sno: /*[[${analyticsSno}]]*/ "",
-			label: /*[[${analyticsLabel}]]*/ "",
-			reportDate: /*[[${analyticsReportDate}]]*/ ""
-		};
-	</script>
+<body>
 	<script th:inline="javascript">
 
 		let progressChartInstance = null;
@@ -788,9 +802,17 @@
 			}
 		}
 
+		function normalizeReportDateForLimitApi(reportDate) {
+			var iso = parseMatrixReportDateToIso(reportDate);
+			if (iso) {
+				return formatIsoToDdMmYyyy(iso) || iso;
+			}
+			return (reportDate || "").split("T")[0];
+		}
+
 		function loadReturnOnAssetTable(labelReport_date, opts) {
 			opts = opts || {};
-			var rd = (labelReport_date || "").split("T")[0];
+			var apiDate = normalizeReportDateForLimitApi(labelReport_date);
 			var section = document.querySelector(".RETURN_ON_ASSET_TABLE");
 			if (section) {
 				section.setAttribute("data-report-date", labelReport_date || "");
@@ -803,7 +825,7 @@
 			if (saveBtnPre) {
 				saveBtnPre.style.display = "none";
 			}
-			fetch("./Limitdetaildata?Report_date=" + encodeURIComponent(labelReport_date) + "&Data_Type_Used=RETURN_ON_ASSETS", {
+			fetch("./Limitdetaildata?Report_date=" + encodeURIComponent(apiDate) + "&Data_Type_Used=RETURN_ON_ASSETS", {
 				method: "POST",
 				headers: {"Content-Type": "application/x-www-form-urlencoded"}
 			})
@@ -847,84 +869,6 @@
 				});
 		}
 
-		function buildOnfcRiskLimitsTitle(reportDate) {
-			var raw = (reportDate || "").split("T")[0];
-			var parts = raw.indexOf("-") === 2 ? raw.split("-") : raw.split("/");
-			var monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-				"JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-			if (parts.length === 3) {
-				var monthIdx = parseInt(parts[1], 10) - 1;
-				var year = parts[2].length === 2 ? ("20" + parts[2]) : parts[2];
-				if (monthIdx >= 0 && monthIdx < 12) {
-					return "DAILY RISK LIMITS MONITORING REPORT - " + monthNames[monthIdx] + " " + year;
-				}
-			}
-			return "DAILY RISK LIMITS MONITORING REPORT";
-		}
-
-		function formatOnfcRiskCell(value, isText) {
-			if (isText) {
-				return value == null || value === "" ? "-" : value;
-			}
-			if (value == null || value === "") {
-				return "-";
-			}
-			return formatNumber(value);
-		}
-
-		function loadOnfcDailyRiskLimitsTable(reportDate) {
-			var titleEl = document.getElementById("ONFC_DAILY_RISK_LIMITS_TITLE");
-			if (titleEl) {
-				titleEl.textContent = buildOnfcRiskLimitsTitle(reportDate);
-			}
-			var bodyEl = document.getElementById("ONFC_DAILY_RISK_LIMITS_BODY");
-			if (bodyEl) {
-				bodyEl.innerHTML = "<tr><td colspan=\"12\" class=\"text-center text-muted\">Loading...</td></tr>";
-			}
-			fetch("./Limitdetaildata?Report_date=" + encodeURIComponent(reportDate) + "&Data_Type_Used=ONFC_DAILY_RISK_LIMITS", {
-				method: "POST",
-				headers: {"Content-Type": "application/x-www-form-urlencoded"}
-			})
-				.then(function (response) {
-					if (!response.ok) {
-						throw new Error("HTTP error " + response.status);
-					}
-					return response.json();
-				})
-				.then(function (list) {
-					var trHTML = "";
-					if (!list || !list.length) {
-						trHTML = "<tr><td colspan=\"12\" class=\"text-center text-muted\">No data available for the selected month.</td></tr>";
-					} else {
-						list.forEach(function (data) {
-							trHTML += "<tr>" +
-								"<td>" + (data[0] || "") + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[1], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[2], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[3], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[4], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[5], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[6], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[7], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[8], false) + "</td>" +
-								"<td class=\"text-right\">" + formatOnfcRiskCell(data[9], false) + "</td>" +
-								"<td class=\"text-center\">" + formatOnfcRiskCell(data[10], true) + "</td>" +
-								"<td class=\"text-center\">" + formatOnfcRiskCell(data[11], true) + "</td>" +
-								"</tr>";
-						});
-					}
-					if (bodyEl) {
-						bodyEl.innerHTML = trHTML;
-					}
-				})
-				.catch(function (error) {
-					if (bodyEl) {
-						bodyEl.innerHTML = "<tr><td colspan=\"12\" class=\"text-center text-danger\">Error loading data.</td></tr>";
-					}
-					alert("Error loading overnight foreign currency risk limits: " + error.message);
-				});
-		}
-
 		function saveReturnOnAssetRow() {
 			var wrap = document.querySelector(".RETURN_ON_ASSET_TABLE");
 			var rd = wrap ? wrap.getAttribute("data-report-date") : "";
@@ -938,8 +882,9 @@
 			if (!dEl || !nEl || !rEl) {
 				return;
 			}
+			var iso = parseMatrixReportDateToIso(rd) || rd.split("T")[0];
 			var params = new URLSearchParams();
-			params.append("reportDate", rd.split("T")[0]);
+			params.append("reportDate", iso);
 			params.append("dailyAvgAssets", dEl.value);
 			params.append("netProfit", nEl.value);
 			params.append("returnOnAssetPercent", rEl.value);
@@ -983,8 +928,160 @@
 				});
 		}
 
+		function loadEarDashboardTable(reportDate) {
+			var earDate = formatDateDdMmYyyy(reportDate) || normalizeReportDateForLimitApi(reportDate);
+			fetch("./eardashboarddata?reportdate=" + encodeURIComponent(earDate))
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+					document.getElementById("eardatacontainer").style.display = "block";
+					return response.text();
+				})
+				.then(function (htmlString) {
+					document.getElementById("eardatacontainer").innerHTML = htmlString;
+				})
+				.catch(function (error) {
+					console.error("Error fetching EAR data:", error);
+					alert("Error loading EAR data: " + error.message);
+				});
+		}
+
+		const IRS_DASHBOARD_BUCKETS = [
+			{label: "1 – 28 days", limitLabel: "20 % of total assets"},
+			{label: "29 days and upto 3 months", limitLabel: "40 % of total assets"},
+			{label: "Over 3 months and upto 6 months", limitLabel: "40 % of total assets"},
+			{label: "Over 6 months and upto 1 year", limitLabel: "40 % of total assets"},
+			{label: "Over 1 year and upto 3 years", limitLabel: "30 % of total assets"},
+			{label: "Over 3 years and upto 5 years", limitLabel: "30 % of total assets"},
+			{label: "Over 5 years and upto 7 years", limitLabel: "30 % of total assets"},
+			{label: "Over 7 years and upto 10 years", limitLabel: "30 % of total assets"},
+			{label: "Over 10 years and upto 15 years", limitLabel: "30 % of total assets"},
+			{label: "Over 15 years", limitLabel: "30 % of total assets"},
+			{label: "Non Rate Sensitive", limitLabel: ""}
+		];
+
+		function parseIrsDashboardNumber(val) {
+			if (val == null || String(val).trim() === "") {
+				return 0;
+			}
+			var n = Number(String(val).replace(/,/g, "").trim());
+			return Number.isFinite(n) ? n : 0;
+		}
+
+		function formatIrsDashboardAmount(n) {
+			if (!Number.isFinite(n)) {
+				return "0.00";
+			}
+			var abs = Math.abs(n);
+			var formatted = abs.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			return n < 0 ? "(" + formatted + ")" : formatted;
+		}
+
+		function formatIrsDashboardPercent(n) {
+			if (!Number.isFinite(n)) {
+				return "0.00 %";
+			}
+			var abs = Math.abs(n);
+			var formatted = abs.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			return n < 0 ? "(" + formatted + " %)" : formatted + " %";
+		}
+
+		function formatIrsDashboardHeaderDate(reportDate) {
+			var iso = parseMatrixReportDateToIso(reportDate);
+			if (!iso) {
+				return String(reportDate || "").split("T")[0].split("-").reverse().join(".");
+			}
+			var parts = iso.split("-");
+			return parts[2] + "." + parts[1] + "." + parts[0];
+		}
+
+		function renderIrsDashboardTable(reportDate, payload) {
+			var tbody = document.getElementById("irsbody");
+			if (!tbody) {
+				return;
+			}
+			tbody.innerHTML = "";
+			var rows = (payload && payload.rows) ? payload.rows : [];
+			var totalRsl = 0;
+			var totalRsa = 0;
+
+			rows.forEach(function (data, index) {
+				var bucket = IRS_DASHBOARD_BUCKETS[index] || {label: "", limitLabel: ""};
+				var rsl = parseIrsDashboardNumber(data.rsl);
+				var rsa = parseIrsDashboardNumber(data.rsa);
+				var gap = parseIrsDashboardNumber(data.gap);
+				var netGapPct = parseIrsDashboardNumber(data.netGapPct);
+				var limitAmt = data.limitAmt != null ? parseIrsDashboardNumber(data.limitAmt) : null;
+				var limitPct = data.limitPct != null ? parseIrsDashboardNumber(data.limitPct) : null;
+
+				totalRsl += rsl;
+				totalRsa += rsa;
+
+				var limitPctDisplay = "";
+				if (limitPct != null && limitPct > 0) {
+					limitPctDisplay = Math.round(limitPct * 100) + "%";
+				}
+
+				var limitAmtCell = limitAmt != null && limitAmt > 0 ? formatIrsDashboardAmount(limitAmt) : "";
+				var limitStyle = "";
+				if (limitPct != null && limitPct > 0) {
+					var limitPctValue = limitPct * 100;
+					if (Math.abs(netGapPct) > limitPctValue) {
+						limitStyle = "background-color:#fee2e2;color:#b91c1c;font-weight:600;";
+					} else {
+						limitStyle = "background-color:#dcfce7;color:#166534;font-weight:600;";
+					}
+				}
+
+				var row = "<tr>" +
+					"<td data-label=\"Buckets\">" + bucket.label + "</td>" +
+					"<td data-label=\"Limit (Policy)\">" + bucket.limitLabel + "</td>" +
+					"<td data-label=\"RSL AED Mn.\">" + formatIrsDashboardAmount(rsl) + "</td>" +
+					"<td data-label=\"RSA AED Mn\">" + formatIrsDashboardAmount(rsa) + "</td>" +
+					"<td data-label=\"Gap AED Mn.\" style=\"color:" + (gap < 0 ? "red" : "black") + "\">" + formatIrsDashboardAmount(gap) + "</td>" +
+					"<td data-label=\"Limit in Amt\" style=\"" + limitStyle + "\">" + limitAmtCell + "</td>" +
+					"<td data-label=\"Limit %\" style=\"" + limitStyle + "\">" + limitPctDisplay + "</td>" +
+					"<td data-label=\"Net Gap %\" style=\"color:" + (netGapPct < 0 ? "red" : "black") + "\">" + formatIrsDashboardPercent(netGapPct) + "</td>" +
+					"</tr>";
+				tbody.innerHTML += row;
+			});
+
+			tbody.innerHTML += "<tr style=\"font-weight:bold; background:#f2f2f2\">" +
+				"<td data-label=\"Buckets\">Total</td><td data-label=\"Limit (Policy)\"></td>" +
+				"<td data-label=\"RSL AED Mn.\">" + formatIrsDashboardAmount(totalRsl) + "</td>" +
+				"<td data-label=\"RSA AED Mn\">" + formatIrsDashboardAmount(totalRsa) + "</td>" +
+				"<td data-label=\"Gap AED Mn.\"></td><td data-label=\"Limit in Amt\"></td>" +
+				"<td data-label=\"Limit %\"></td><td data-label=\"Net Gap %\"></td>" +
+				"</tr>";
+
+			var netGapHeader = document.getElementById("netGapHeader");
+			if (netGapHeader) {
+				netGapHeader.textContent = "Net Gap as % to Total Assets-" + formatIrsDashboardHeaderDate(reportDate);
+			}
+		}
+
+		function loadIrsDashboardTable(reportDate) {
+			var apiDate = formatDateDdMmYyyy(reportDate) || normalizeReportDateForLimitApi(reportDate);
+			fetch("./getIRSData?reportdate=" + encodeURIComponent(apiDate) + "&currency=Only_USD_currency_converted_into_AED")
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error("HTTP error " + response.status);
+					}
+					return response.json();
+				})
+				.then(function (payload) {
+					renderIrsDashboardTable(reportDate, payload);
+				})
+				.catch(function (error) {
+					alert("Error fetching IRS data: " + error.message);
+					$("#invalidfile").modal("toggle");
+				});
+		}
+
 		const MATRIX_CHART_RANGES = ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "HALF_YEARLY", "YEARLY"];
 		const MATRIX_CHART_TYPES = ["line", "area", "bar", "horizontalBar", "radar"];
+		const MATRIX_CHART_BREACH_TYPES = ["line", "area"];
 		const MATRIX_CHART_COLOR = "#8b5cf6";
 		const MATRIX_CHART_FILL = "rgba(139, 92, 246, 0.65)";
 		const MATRIX_CHART_FILL_AREA = "rgba(139, 92, 246, 0.35)";
@@ -996,8 +1093,272 @@
 			monthlyRows: [],
 			dailyRows: [],
 			loading: false,
-			lastRender: null
+			lastRender: null,
+			limitValue: null,
+			valueMeta: null,
+			breachLimitVisible: true
 		};
+
+		/* Per-Srl unit when limit text has no % / Million / Crore hint (plain number). */
+		const MATRIX_CHART_SRL_UNIT = {
+			"18": "percent",
+			"19": "plain",
+			"20": "plain",
+			"21": "aed_million",
+			"22": "aed_million",
+			"24": "inr_crore",
+			"32": "plain",
+			"39": "usd_million",
+			"41": "usd_million",
+			"42": "aed_million",
+			"43": "aed_million",
+			"46": "aed_million",
+			"47": "aed_million",
+			"48": "inr_crore"
+		};
+
+		function buildMatrixChartUnitMeta(unitKey) {
+			const defs = {
+				percent: {
+					isPercent: true,
+					unitLabel: "Percentage (%)",
+					axisTitle: "Percentage (%)",
+					suffix: "%",
+					datasetLabel: "Position (%)"
+				},
+				aed_million: {
+					isPercent: false,
+					unitLabel: "AED Million",
+					axisTitle: "AED Million",
+					suffix: "",
+					datasetLabel: "Position (AED Million)"
+				},
+				usd_million: {
+					isPercent: false,
+					unitLabel: "USD Million",
+					axisTitle: "USD Million",
+					suffix: "",
+					datasetLabel: "Position (USD Million)"
+				},
+				inr_crore: {
+					isPercent: false,
+					unitLabel: "INR Crore",
+					axisTitle: "INR Crore",
+					suffix: "",
+					datasetLabel: "Position (INR Crore)"
+				},
+				plain: {
+					isPercent: false,
+					unitLabel: "Units",
+					axisTitle: "Position",
+					suffix: "",
+					datasetLabel: "Position"
+				}
+			};
+			return defs[unitKey] || defs.percent;
+		}
+
+		function inferMatrixChartUnitFromLimit(limitStr) {
+			const raw = String(limitStr || "").trim().toLowerCase();
+			if (!raw) {
+				return null;
+			}
+			if (/crore|\bcr\b|\binr\b/.test(raw)) {
+				return buildMatrixChartUnitMeta("inr_crore");
+			}
+			if (/%|percent|\bpct\b/.test(raw)) {
+				return buildMatrixChartUnitMeta("percent");
+			}
+			if (/\busd\b/.test(raw) && (/million|\bmn\b|\bm\b/.test(raw))) {
+				return buildMatrixChartUnitMeta("usd_million");
+			}
+			if (/\baed\b/.test(raw) && (/million|\bmn\b/.test(raw))) {
+				return buildMatrixChartUnitMeta("aed_million");
+			}
+			if (/million|\bmn\b/.test(raw)) {
+				return buildMatrixChartUnitMeta("aed_million");
+			}
+			return null;
+		}
+
+		function resolveMatrixChartUnitMeta(srlNo, limitStr) {
+			const srl = String(srlNo || "");
+			let unitMeta = inferMatrixChartUnitFromLimit(limitStr);
+			if (!unitMeta && MATRIX_CHART_SRL_UNIT[srl]) {
+				unitMeta = buildMatrixChartUnitMeta(MATRIX_CHART_SRL_UNIT[srl]);
+			}
+			if (!unitMeta) {
+				unitMeta = buildMatrixChartUnitMeta("percent");
+			}
+			return unitMeta;
+		}
+
+		function getMatrixAnalyticsHeaderCaption(labelName, unitMeta) {
+			if (!labelName) {
+				return "Analytics";
+			}
+			if (unitMeta.isPercent) {
+				return labelName + " — Values in AED Million";
+			}
+			return labelName + " — All figures are in " + unitMeta.unitLabel;
+		}
+
+		function parseMatrixLimitValue(limitStr) {
+			if (limitStr == null || limitStr === "") {
+				return null;
+			}
+			const raw = String(limitStr).trim();
+			if (!raw || raw === "-" || raw === "N/A" || raw === "NA") {
+				return null;
+			}
+			const hasPercent = raw.indexOf("%") >= 0;
+			const numMatch = raw.replace(/,/g, "").match(/-?\d+(\.\d+)?/);
+			if (!numMatch) {
+				return null;
+			}
+			const num = parseFloat(numMatch[0]);
+			return isNaN(num) ? null : {value: num, isPercent: hasPercent};
+		}
+
+		function matrixChartShowsBreachLimit(chartType) {
+			return MATRIX_CHART_BREACH_TYPES.includes(chartType);
+		}
+
+		function matrixChartIncludesBreachInScale(chartType) {
+			return matrixChartState.breachLimitVisible !== false
+				&& matrixChartShowsBreachLimit(chartType)
+				&& matrixChartState.limitValue != null
+				&& !isNaN(matrixChartState.limitValue);
+		}
+
+		function resolveMatrixChartEffectiveMax(maxValue, chartType) {
+			const breachLimit = matrixChartState.limitValue;
+			if (!matrixChartIncludesBreachInScale(chartType) || breachLimit == null || isNaN(breachLimit)) {
+				return maxValue;
+			}
+			return Math.max(maxValue, breachLimit);
+		}
+
+		function computeMatrixChartYAxisScale(dataValues, chartType) {
+			const numericValues = (dataValues || []).filter(function (v) {
+				return !isNaN(v);
+			});
+			const maxValue = numericValues.length ? Math.max.apply(null, numericValues) : 0;
+			const yaxismaxsize = getRoundedMax(resolveMatrixChartEffectiveMax(maxValue, chartType));
+			const calculatedStepSize = getStepSize(yaxismaxsize);
+			return {yaxismaxsize: yaxismaxsize, calculatedStepSize: calculatedStepSize};
+		}
+
+		function applyMatrixChartYAxisToInstance(chart, yaxismaxsize, calculatedStepSize) {
+			if (!chart || !chart.options || !chart.options.scales) {
+				return;
+			}
+			const chartType = matrixChartState.chartType || "line";
+			const scales = chart.options.scales;
+			if (chartType === "horizontalBar" && scales.x) {
+				scales.x.max = yaxismaxsize;
+				if (scales.x.ticks) {
+					scales.x.ticks.stepSize = calculatedStepSize;
+				}
+			} else if (chartType === "radar" && scales.r) {
+				scales.r.max = yaxismaxsize;
+				if (scales.r.ticks) {
+					scales.r.ticks.stepSize = calculatedStepSize;
+				}
+			} else if (scales.y) {
+				scales.y.max = yaxismaxsize;
+				if (scales.y.ticks) {
+					scales.y.ticks.stepSize = calculatedStepSize;
+				}
+			}
+		}
+
+		function refreshMatrixChartYAxisScale(chartInstance) {
+			const render = matrixChartState.lastRender;
+			const chart = chartInstance || barChartInstance;
+			if (!render || !chart) {
+				return;
+			}
+			const chartType = matrixChartState.chartType || "line";
+			const scale = computeMatrixChartYAxisScale(render.dataValues, chartType);
+			render.calculatedStepSize = scale.calculatedStepSize;
+			render.yaxismaxsize = scale.yaxismaxsize;
+			applyMatrixChartYAxisToInstance(chart, scale.yaxismaxsize, scale.calculatedStepSize);
+			chart.update();
+		}
+
+		function handleMatrixChartLegendClick(e, legendItem, legend) {
+			const chart = legend.chart;
+			const index = legendItem.datasetIndex;
+			const dataset = chart.data.datasets[index];
+			const currentlyVisible = chart.isDatasetVisible(index);
+			chart.setDatasetVisibility(index, !currentlyVisible);
+
+			if (dataset && dataset.isBreachLimit) {
+				matrixChartState.breachLimitVisible = chart.isDatasetVisible(index);
+				refreshMatrixChartYAxisScale(chart);
+				return;
+			}
+			chart.update();
+		}
+
+		function resolveMatrixChartValueMeta(srlNo, limitStr) {
+			const parsed = parseMatrixLimitValue(limitStr);
+			const srl = String(srlNo || "");
+			const rawLimitText = limitStr != null ? String(limitStr).trim() : "";
+			let unitMeta = resolveMatrixChartUnitMeta(srlNo, limitStr);
+			let limitValue = parsed ? parsed.value : null;
+			/* Srl 23: chart values are scaled to % of daylight limit (value/45*100). */
+			if (srl === "23" && limitValue != null && parsed && !parsed.isPercent && limitValue <= 45) {
+				limitValue = (limitValue / 45) * 100;
+				unitMeta = buildMatrixChartUnitMeta("percent");
+			}
+			const suffix = unitMeta.suffix;
+			const breachLabel = rawLimitText
+				|| (limitValue != null
+					? ("Breach Limit (" + formatDecimalValue(limitValue) + suffix + ")")
+					: "Breach Limit");
+			return Object.assign({}, unitMeta, {
+				limitValue: limitValue,
+				breachLabel: breachLabel
+			});
+		}
+
+		function applyMatrixChartLimitMeta(srlNo, limitAssigned) {
+			const meta = resolveMatrixChartValueMeta(srlNo, limitAssigned);
+			matrixChartState.limitValue = meta.limitValue;
+			matrixChartState.valueMeta = meta;
+			matrixChartState.breachLimitVisible = true;
+			return meta;
+		}
+
+		function formatMatrixChartValue(value, meta) {
+			const chartMeta = meta || matrixChartState.valueMeta || {suffix: "%", isPercent: true};
+			if (value == null || isNaN(value)) {
+				return chartMeta.isPercent ? "0%" : "0";
+			}
+			const formatted = formatDecimalValue(value);
+			return chartMeta.isPercent ? formatted + chartMeta.suffix : formatted;
+		}
+
+		function formatMatrixChartTick(value, meta) {
+			const chartMeta = meta || matrixChartState.valueMeta || {suffix: "%", isPercent: true};
+			if (value == null || isNaN(value)) {
+				return chartMeta.isPercent ? "0%" : "0";
+			}
+			if (chartMeta.isPercent) {
+				return formatDecimalValue(value) + chartMeta.suffix;
+			}
+			return formatDecimalValue(value);
+		}
+
+		function getMatrixChartValueAxisTitle(chartType, meta) {
+			const chartMeta = meta || {axisTitle: "Percentage (%)"};
+			if (chartType === "horizontalBar") {
+				return chartMeta.axisTitle;
+			}
+			return chartMeta.axisTitle;
+		}
 
 		function hideMatrixChartRangePanel() {
 			const panel = document.getElementById("matrixChartRangePanel");
@@ -1027,7 +1388,8 @@
 			showMatrixChartRangePanel();
 			if (matrixChartState.lastRender) {
 				const r = matrixChartState.lastRender;
-				renderUnifiedMatrixChart(r.labels, r.dataValues, r.calculatedStepSize, r.yaxismaxsize, r.reportDates);
+				const scale = computeMatrixChartYAxisScale(r.dataValues, chartType);
+				renderUnifiedMatrixChart(r.labels, r.dataValues, scale.calculatedStepSize, scale.yaxismaxsize, r.reportDates);
 				return;
 			}
 			refreshMatrixChartFromRange();
@@ -1043,12 +1405,13 @@
 			return "line";
 		}
 
-		function buildMatrixChartDataset(chartType, dataValues) {
+		function buildMatrixChartDataset(chartType, dataValues, datasetLabel) {
 			const base = {
-				label: "Utilization %",
+				label: datasetLabel || "Utilization %",
 				data: dataValues,
 				borderColor: MATRIX_CHART_COLOR,
-				borderWidth: chartType === "bar" || chartType === "horizontalBar" ? 0 : 2
+				borderWidth: chartType === "bar" || chartType === "horizontalBar" ? 0 : 2,
+				order: 1
 			};
 			if (chartType === "area") {
 				return Object.assign(base, {
@@ -1084,27 +1447,77 @@
 			});
 		}
 
+		function buildMatrixChartBreachDataset(chartType, labels, limitValue, breachLabel) {
+			if (limitValue == null || isNaN(limitValue) || !matrixChartShowsBreachLimit(chartType)) {
+				return null;
+			}
+			return {
+				type: "line",
+				label: breachLabel || "Breach Limit",
+				isBreachLimit: true,
+				data: labels.map(function () {
+					return limitValue;
+				}),
+				borderColor: "rgba(220, 38, 38, 0.95)",
+				backgroundColor: "transparent",
+				borderWidth: 2.5,
+				borderDash: [10, 6],
+				pointRadius: 0,
+				pointHoverRadius: 0,
+				fill: false,
+				tension: 0,
+				order: 0,
+				spanGaps: true
+			};
+		}
+
 		function buildMatrixChartOptions(chartType, labels, CalculatedStepSize, yaxismaxsize, reportDates) {
+			const valueMeta = matrixChartState.valueMeta || buildMatrixChartUnitMeta("percent");
+			const showBreachLegend = matrixChartState.limitValue != null && matrixChartShowsBreachLimit(chartType);
+			const valueAxisTitle = getMatrixChartValueAxisTitle(chartType, valueMeta);
 			const valueTick = function (value) {
-				return value + "%";
+				return formatMatrixChartTick(value, valueMeta);
+			};
+			const valueScaleTitle = {
+				display: true,
+				text: valueAxisTitle,
+				color: "#0f172a",
+				font: {size: 12, weight: "700"},
+				padding: {top: 4, bottom: 8}
 			};
 			const commonPlugins = {
-				legend: {display: false},
+				legend: {
+					display: showBreachLegend,
+					position: "top",
+					align: "end",
+					onClick: handleMatrixChartLegendClick,
+					labels: {
+						usePointStyle: true,
+						boxWidth: 8,
+						font: {size: 11, weight: "600"}
+					}
+				},
 				tooltip: {
 					callbacks: {
 						label: function (ctx) {
 							const v = chartType === "horizontalBar" ? ctx.parsed.x : ctx.parsed.y;
-							return (v != null ? v : 0) + "%";
+							const label = ctx.dataset.label || "";
+							if (ctx.dataset.isBreachLimit) {
+								return label;
+							}
+							return label + ": " + formatMatrixChartValue(v, valueMeta);
 						}
 					}
 				},
 				datalabels: {
-					color: "black",
 					font: {weight: "bold", size: 10},
 					anchor: "end",
 					align: chartType === "horizontalBar" ? "right" : "top",
 					offset: 0,
 					display: function (context) {
+						if (context.dataset.isBreachLimit) {
+							return context.dataIndex === context.dataset.data.length - 1;
+						}
 						const chart = context.chart;
 						const activePoints = chart.getActiveElements();
 						if (activePoints.length) {
@@ -1115,8 +1528,11 @@
 						}
 						return chartType !== "radar" || labels.length <= 12;
 					},
-					formatter: function (value) {
-						return value + "%";
+					formatter: function (value, context) {
+						return formatMatrixChartValue(value, valueMeta);
+					},
+					color: function (context) {
+						return context.dataset.isBreachLimit ? "rgba(220, 38, 38, 0.95)" : "black";
 					}
 				}
 			};
@@ -1145,7 +1561,8 @@
 							pointLabels: {
 								color: "#0f172a",
 								font: {size: 10, weight: "700"}
-							}
+							},
+							title: valueScaleTitle
 						}
 					}
 				};
@@ -1171,7 +1588,8 @@
 								color: "#0f172a",
 								font: {size: 10, weight: "bold"},
 								callback: valueTick
-							}
+							},
+							title: valueScaleTitle
 						},
 						y: {
 							grid: {display: false},
@@ -1217,7 +1635,8 @@
 							color: "#0f172a",
 							font: {size: 10, weight: "bold"},
 							callback: valueTick
-						}
+						},
+						title: valueScaleTitle
 					}
 				}
 			};
@@ -1393,17 +1812,15 @@
 			if (!numericValues.length) {
 				return;
 			}
-			const maxValue = Math.max.apply(null, numericValues);
-			const yaxismaxsize = getRoundedMax(maxValue);
-			const calculatedStepSize = getStepSize(yaxismaxsize);
+			const scale = computeMatrixChartYAxisScale(series.values, matrixChartState.chartType || "line");
 			matrixChartState.lastRender = {
 				labels: series.labels,
 				dataValues: series.values,
 				reportDates: series.reportDates || [],
-				calculatedStepSize: calculatedStepSize,
-				yaxismaxsize: yaxismaxsize
+				calculatedStepSize: scale.calculatedStepSize,
+				yaxismaxsize: scale.yaxismaxsize
 			};
-			renderUnifiedMatrixChart(series.labels, series.values, calculatedStepSize, yaxismaxsize, series.reportDates);
+			renderUnifiedMatrixChart(series.labels, series.values, scale.calculatedStepSize, scale.yaxismaxsize, series.reportDates);
 		}
 
 		function selectMatrixChartRange(range) {
@@ -1423,6 +1840,7 @@
 			matrixChartState.monthlyRows = [];
 			matrixChartState.dailyRows = [];
 			matrixChartState.loading = true;
+			matrixChartState.breachLimitVisible = true;
 
 			showMatrixChartRangePanel();
 
@@ -1463,8 +1881,7 @@
 				".Exposure_outside_GCC", ".Exposure_Only_GCC", ".Mortageloan_block", ".Mortageloan_table",
 				".Sector_Industrial", ".Netovernight_noop", ".UnsecuredPosition", ".CustomerChartdetails",
 				".MortgageLoanAppetitedetails", ".ProvisionCoverage", ".LongTermandMediumTerm",
-				".Depositconcentration", ".Generalprovisiongrid", ".BPVPV01_TABLE", ".irs",
-				".OnfcDailyRiskLimitsTable"
+				".Depositconcentration", ".Generalprovisiongrid", ".BPVPV01_TABLE", ".irs"
 			].forEach(function (selector) {
 				var el = document.querySelector(selector);
 				if (el) {
@@ -1505,29 +1922,47 @@
 			}
 		}
 
+		function showMatrixSplitView() {
+			document.body.classList.add("matrix-split-view");
+			var analyticsCol = document.querySelector(".matrix-dashboard-analytics-col");
+			if (analyticsCol && window.matchMedia("(max-width: 991.98px)").matches) {
+				analyticsCol.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		}
+
 		function Getanalyticaldata(linkEl) {
 			var labelname = linkEl.getAttribute("setlabelname");
 			var labelsrlno = linkEl.getAttribute("setlabelsrlno");
 			var labelReport_date = linkEl.getAttribute("setreport_date");
-			var url = "./matrix-analytics?sno=" + encodeURIComponent(labelsrlno)
-				+ "&reportDate=" + encodeURIComponent(labelReport_date)
-				+ "&label=" + encodeURIComponent(labelname);
-			window.open(url, "_blank");
+			if (labelsrlno === "25") {
+				var kriReportDate = parseMatrixReportDateToIso(labelReport_date);
+				if (kriReportDate) {
+					window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + encodeURIComponent(kriReportDate);
+				}
+				return false;
+			}
+			var limitAssigned = linkEl.getAttribute("setlimitassigned");
+			if (!limitAssigned) {
+				var limitCell = linkEl.closest("tr");
+				if (limitCell) {
+					var limitSpan = limitCell.querySelector(".limit-value");
+					if (limitSpan) {
+						limitAssigned = limitSpan.textContent;
+					}
+				}
+			}
+			showMatrixSplitView();
+			openMatrixAnalytics(labelname, labelsrlno, labelReport_date, limitAssigned);
 			return false;
 		}
 
-		function openMatrixAnalytics(labelnameselected, labelsrlno, labelReport_date) {
+		function openMatrixAnalytics(labelnameselected, labelsrlno, labelReport_date, limitAssigned) {
+			showMatrixSplitView();
 			hideMatrixChartRangePanel();
 			Selectedmatrixlabel = labelsrlno;
-			if (Selectedmatrixlabel === "24") {
-				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in INR Crore';
-			} else if (Selectedmatrixlabel === "39") {
-				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in USD Million';
-			} else if (Selectedmatrixlabel === "41") {
-				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in USD Million';
-			} else {
-				document.getElementById("Analyticsheadername").innerHTML = labelnameselected + '— All figures are in AED Million';
-			}
+			const chartUnitMeta = applyMatrixChartLimitMeta(labelsrlno, limitAssigned);
+			document.getElementById("Analyticsheadername").innerHTML =
+				getMatrixAnalyticsHeaderCaption(labelnameselected, chartUnitMeta);
 			hideDashboardAnalyticsSections();
 
 			// Show sections based on the selected S.No
@@ -1607,21 +2042,11 @@
 				document.querySelector(".LiquidAssetsRatio").style.display = "block";
 
 
-			} else if (labelsrlno === "18") {
-
-				loadReturnOnAssetTable(labelReport_date);
-				document.querySelector(".RETURN_ON_ASSET_TABLE").style.display = "block";
-
 			} else if (labelsrlno === "47") {
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
 
 
 
-
-			} else if (labelsrlno === "48") {
-				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
-				loadOnfcDailyRiskLimitsTable(labelReport_date);
-				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "block";
 
 			} else if (labelsrlno === "22") {
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
@@ -1665,12 +2090,15 @@
 					});
 
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
-
-
-
+				document.getElementById("BpvPv01reportBtn").dataset.reportDate = labelReport_date;
+				document.getElementById("BpvPv01reportBtn").dataset.matrixSrl = labelsrlno;
 
 			} else if (labelsrlno === "23") {
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
+
+			} else if (labelsrlno === "26") {
+				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
+
 
 
 
@@ -2192,36 +2620,6 @@
 
 			} else if (labelsrlno === "7") {
 
-				//	fetch("./Getbarchart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				// .then(response => response.json())
-				// .then(result => {
-				// const labels = result.map(row => row.date);
-				// const dataValues = result.map(row => parseFloat(row.value));
-
-				// const maxValue = Math.max(...dataValues);
-				// const yaxismaxsize = getRoundedMax(maxValue);
-				// const CalculatedStepSize = getStepSize(yaxismaxsize);
-
-				// Initiatemonthlychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-				// });
-
-				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				// .then(response => response.json())
-				// .then(result => {
-				// const labels = result.map(row => row.date);
-				// const dataValues = result.map(row => parseFloat(row.value));
-
-				// const maxValue = Math.max(...dataValues);
-				// const yaxismaxsize = getRoundedMax(maxValue);
-				// const CalculatedStepSize = getStepSize(yaxismaxsize);
-
-				// Initiatedailychart(labels, dataValues, CalculatedStepSize, yaxismaxsize);
-				// });
-
-
-
-
-
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'FreshslippageQoQ', {
 					method: 'POST',
 					headers: {
@@ -2235,9 +2633,6 @@
 						return response.json();
 					})
 					.then(list => {
-						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							document.getElementById("Current_Qtr_sli_per").textContent =
 								(data[0] + ' %');
@@ -2245,22 +2640,18 @@
 								(data[1]);
 							document.getElementById("last_year_slip_bal").textContent =
 								formatNumber(data[2]);
-
 							document.getElementById("First_qtr_slip_hdr").innerHTML =
 								(data[3]);
 							document.getElementById("First_qtr_slip_bal").textContent =
 								formatNumber(data[4]);
-
 							document.getElementById("Second_qtr_slip_hdr").innerHTML =
 								(data[5]);
 							document.getElementById("Second_qtr_slip_bal").textContent =
 								formatNumber(data[6]);
-
 							document.getElementById("Third_qtr_slip_hdr").innerHTML =
 								(data[7]);
 							document.getElementById("Third_qtr_slip_bal").textContent =
 								formatNumber(data[8]);
-
 							document.getElementById("Fourth_qtr_slip_hdr").innerHTML =
 								(data[9]);
 							document.getElementById("Fourth_qtr_slip_bal").textContent =
@@ -2273,7 +2664,6 @@
 					});
 
 				document.querySelectorAll(".Freshslippage_tot_adv").forEach(el => el.style.display = "grid");
-
 
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
@@ -2292,8 +2682,6 @@
 					})
 					.then(list => {
 						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							trHTML +=
 								"<tr>" +
@@ -2303,8 +2691,6 @@
 								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
 								"</tr>";
 						});
-
-						// Replace body content
 						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
@@ -2314,18 +2700,9 @@
 					});
 				document.querySelector(".CustomerChartdetails").style.display = "block";
 
-
-
-
-
 			} else if (labelsrlno === "11") {
 
-
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
-
-
-
-
 
 				document.getElementById("Sector_title_name").innerHTML = 'Industry Exposure';
 				document.getElementById("Sector_title_name_per").innerHTML = 'Industry Exposure (%)';
@@ -2336,7 +2713,6 @@
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
 				})
-
 					.then(response => {
 						if (!response.ok) {
 							throw new Error("HTTP error " + response.status);
@@ -2344,12 +2720,7 @@
 						return response.json();
 					})
 					.then(list => {
-						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
-
-
 							document.getElementById("Sector_classifi_expo").textContent =
 								formatDecimalValue(data[0]);
 							document.getElementById("Total_expo").textContent =
@@ -2382,8 +2753,6 @@
 					})
 					.then(list => {
 						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							trHTML +=
 								"<tr>" +
@@ -2393,8 +2762,6 @@
 								"<td>" + (formatDecimalValue(data[3]) || "") + "</td>" +
 								"</tr>";
 						});
-
-						// Replace body content
 						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
@@ -2536,7 +2903,7 @@
 				var trHTML = "";
 				document.getElementById("labletype").innerHTML = "Top 10 Services excluding bank";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
-				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountSectorTrading', {
+				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'tenaccountServicesexcludingbank', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -2828,16 +3195,6 @@
 
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date, {monthlyOnly: true});
 
-				// fetch("./Getprogresschart?Matrix_Srl_no=" + labelsrlno + '&Report_date=' + labelReport_date) // your API URL
-				// .then(response => response.json())
-				// .then(result => {
-				// const labels = result.map(row => row.date);
-				// const dataValues = result.map(row => parseFloat(row.value));
-				// Initiatedailychart(labels, dataValues, 5, 20);
-				// });
-
-
-
 				var trHTML = "";
 				document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'RealEstateaccountdetail', {
@@ -2854,8 +3211,6 @@
 					})
 					.then(list => {
 						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							trHTML +=
 								"<tr>" +
@@ -2865,8 +3220,6 @@
 								"<td>" + (formatNumber(data[3]) || "") + "</td>" +
 								"</tr>";
 						});
-
-						// Replace body content
 						document.getElementById("ToptenBorrowerdate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("CustomerChartdetailsbody").innerHTML = trHTML;
 					})
@@ -2879,8 +3232,6 @@
 			} else if (labelsrlno === "8") {
 
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
-
-
 
 				var trHTML = "";
 				document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
@@ -2899,12 +3250,9 @@
 					})
 					.then(list => {
 						var trHTML = "";
-
-						// Use plain JS loop; you already use jQuery only for DOM
 						list.forEach(function (data) {
 							trHTML +=
 								"<tr>" +
-
 								"<td>" + (data[0] || "") + "</td>" +
 								"<td>" + (formatNumber(data[1]) || "") + "</td>" +
 								"<td>" + (formatNumber(data[2]) || "") + "</td>" +
@@ -2912,8 +3260,6 @@
 								"<td>" + (formatNumber(data[4]) || "") + "</td>" +
 								"</tr>";
 						});
-
-						// Replace body content
 						document.getElementById("ToptenProvisiondate").innerHTML = 'Report Date : ' + labelReport_date.split("T")[0];
 						document.getElementById("ProvisionCoveragebody").innerHTML = trHTML;
 					})
@@ -2923,6 +3269,15 @@
 					});
 				document.querySelector(".ProvisionCoverage").style.display = "block";
 
+			} else if (labelsrlno === "18") {
+
+				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
+				loadReturnOnAssetTable(labelReport_date);
+				document.querySelector(".RETURN_ON_ASSET_TABLE").style.display = "block";
+
+			} else if (labelsrlno === "19" || labelsrlno === "20" || labelsrlno === "21" || labelsrlno === "32" || labelsrlno === "48") {
+
+				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
 
 			} else if (labelsrlno === "24") {
 				loadMatrixAnalyticsCharts(labelsrlno, labelReport_date);
@@ -3177,130 +3532,17 @@
 				document.querySelector(".Depositconcentration").style.display = "block";
 
 
-			} else if (labelsrlno === "33") {
+			}else if (labelsrlno === "33") {
 
 				document.getElementById("labletype").innerHTML = "Interest Rate Sensitivity (IRS)";
-
-				fetch('./getIRSData?reportdate=' + labelReport_date + '&currency=USD')
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("HTTP error " + response.status);
-						}
-						return response.json();
-					})
-					.then(list => {
-
-						let tbody = document.getElementById("irsbody");
-						tbody.innerHTML = "";
-
-						// ✅ Bucket Names
-						let buckets = [
-							"1 – 28 days",
-							"29 days and upto 3 months",
-							"Over 3 months and upto 6 months",
-							"Over 6 months and upto 1 year",
-							"Over 1 year and upto 3 years",
-							"Over 3 years and upto 5 years",
-							"Over 5 years and upto 7 years",
-							"Over 7 years and upto 10 years",
-							"Over 10 years and upto 15 years",
-							"Over 15 years",
-							"Non Rate Sensitive"
-						];
-
-						// ✅ Limits
-						let limits = [
-							"20 % of total assets",
-							"40 % of total assets",
-							"40 % of total assets",
-							"40 % of total assets",
-							"30 % of total assets",
-							"30 % of total assets",
-							"30 % of total assets",
-							"30 % of total assets",
-							"30 % of total assets",
-							"30 % of total assets",
-							""
-						];
-
-						let totalRSL = 0;
-						let totalRSA = 0;
-
-						list.forEach((data, index) => {
-
-							let rsl = parseFloat(data[0]) || 0;
-							let rsa = parseFloat(data[1]) || 0;
-							let gap = parseFloat(data[2]) || 0;
-							let per = parseFloat(data[3]) || 0;
-
-							totalRSL += rsl;
-							totalRSA += rsa;
-
-							let row = `<tr>
-								            <td>${buckets[index]}</td>
-								            <td>${limits[index]}</td>
-								            <td>${formatNumber(rsl)}</td>
-								            <td>${formatNumber(rsa)}</td>
-								            <td style="color:${gap < 0 ? 'red' : 'black'}">
-								                ${gap < 0 ? '(' + formatNumber(Math.abs(gap)) + ')' : formatNumber(gap)}
-								            </td>
-								            <td style="color:${per < 0 ? 'red' : 'black'}">
-								                ${per < 0 ? '(' + Math.abs(per) + '%)' : per + ' %'}
-								            </td>
-								        </tr>`;
-
-							tbody.innerHTML += row;
-						});
-
-						// ✅ TOTAL ROW
-						let totalRow = `<tr style="font-weight:bold; background:#f2f2f2">
-								        <td>Total</td>
-								        <td></td>
-								        <td>${formatNumber(totalRSL)}</td>
-								        <td>${formatNumber(totalRSA)}</td>
-								        <td></td>
-								        <td></td>
-								    </tr>`;
-
-						tbody.innerHTML += totalRow;
-
-						document.getElementById("ToptenBorrowerdate").innerHTML =
-							'Report Date : ' + labelReport_date.split("T")[0];
-						let formattedDate = labelReport_date.split("T")[0].split("-").reverse().join(".");
-
-						document.querySelector("#irsheader th:nth-child(6)").innerText =
-							"Net Gap as % to Total Assets-" + formattedDate;
-
-					})
-					.catch(error => {
-						alert("Error fetching IRS data: " + error.message);
-						$("#invalidfile").modal("toggle");
-					});
-
+				loadIrsDashboardTable(labelReport_date);
 				document.querySelector(".irs").style.display = "block";
+
 			} else if (labelsrlno === "44") {
 
-
-				fetch('./eardashboarddata?reportdate=' + labelReport_date)
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("Network response was not ok");
-						}
-						document.getElementById("eardatacontainer").style.display = "block";
-						return response.text();
-					})
-					.then(htmlString => {
-						document.getElementById('eardatacontainer').innerHTML = htmlString;
-					})
-					.catch(error => {
-						console.error('Error fetching data:', error);
-					});
-
+				loadEarDashboardTable(labelReport_date);
 
 			}
-
-
-
 		}
 
 		function Getexposuredetail(a, el) {
@@ -4436,11 +4678,6 @@
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";
 
-			} else if (Selectedmatrixlabel === "48") {
-				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "none";
-				loadOnfcDailyRiskLimitsTable(selectedDate);
-				document.querySelector(".OnfcDailyRiskLimitsTable").style.display = "block";
-
 			} else if (Selectedmatrixlabel === "45") {
 				document.querySelectorAll(".Stockapproachtables").forEach(el => el.style.display = "none");
 				fetch('./Limitdetaildata?Report_date=' + selectedDate + '&Data_Type_Used=' + 'Stockapproachratio', {
@@ -4801,11 +5038,21 @@
 						$("#invalidfile").modal("toggle");
 					});
 
-				loadMatrixAnalyticsCharts(labelsrlno, selectedDate);
+				loadMatrixAnalyticsCharts(Selectedmatrixlabel, selectedDate);
 
+				document.getElementById("BpvPv01reportBtn").dataset.reportDate = selectedDate;
+				document.getElementById("BpvPv01reportBtn").dataset.matrixSrl = Selectedmatrixlabel;
 				document.querySelector(".BPVPV01_TABLE").style.display = "block";
 
-
+			} else if (Selectedmatrixlabel === "18") {
+				loadReturnOnAssetTable(selectedDate);
+				var roaChartClick = document.querySelector(".RETURN_ON_ASSET_TABLE");
+				if (roaChartClick) {
+					roaChartClick.style.display = "block";
+				}
+			} else if (Selectedmatrixlabel === "19" || Selectedmatrixlabel === "20" || Selectedmatrixlabel === "21"
+				|| Selectedmatrixlabel === "32" || Selectedmatrixlabel === "48") {
+				/* Chart-only limits: values come from Matrix Monitor (POSITION_OF_MATRIX). */
 			} else {
 				alert('Sorry invalid operation selected')
 			}
@@ -4890,23 +5137,106 @@
 			return `${year}-${month}-${day}`;
 		}
 
+		function formatDateDdMmYyyy(dateValue) {
+			if (!dateValue) {
+				return "";
+			}
+			const raw = String(dateValue).trim().split("T")[0];
+			const dmy = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+			if (dmy) {
+				return String(dmy[1]).padStart(2, "0") + "-" + String(dmy[2]).padStart(2, "0") + "-" + dmy[3];
+			}
+			const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+			if (iso) {
+				return String(iso[3]).padStart(2, "0") + "-" + String(iso[2]).padStart(2, "0") + "-" + iso[1];
+			}
+			const slash = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+			if (slash) {
+				return String(slash[1]).padStart(2, "0") + "-" + String(slash[2]).padStart(2, "0") + "-" + slash[3];
+			}
+			const d = new Date(dateValue);
+			if (isNaN(d.getTime())) {
+				return "";
+			}
+			const day = String(d.getDate()).padStart(2, "0");
+			const month = String(d.getMonth() + 1).padStart(2, "0");
+			const year = d.getFullYear();
+			return day + "-" + month + "-" + year;
+		}
+
+		function parseMatrixReportDateToIso(raw) {
+			if (!raw) {
+				return null;
+			}
+			const s = String(raw).trim().split("T")[0];
+			const dmy = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+			if (dmy) {
+				return dmy[3] + "-" + String(dmy[2]).padStart(2, "0") + "-" + String(dmy[1]).padStart(2, "0");
+			}
+			const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+			if (iso) {
+				return iso[1] + "-" + String(iso[2]).padStart(2, "0") + "-" + String(iso[3]).padStart(2, "0");
+			}
+			const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+			if (slash) {
+				return slash[3] + "-" + String(slash[2]).padStart(2, "0") + "-" + String(slash[1]).padStart(2, "0");
+			}
+			const parsed = formatDateDdMmYyyy(s);
+			if (!parsed) {
+				return null;
+			}
+			const parts = parsed.split("-");
+			return parts[2] + "-" + parts[1] + "-" + parts[0];
+		}
+
+		function formatIsoToDdMmYyyy(iso) {
+			if (!iso) {
+				return "";
+			}
+			const p = String(iso).trim().split("T")[0].split("-");
+			if (p.length !== 3) {
+				return "";
+			}
+			return p[2] + "-" + p[1] + "-" + p[0];
+		}
+
+		function syncMatrixReportDateInput(input) {
+			if (!input) {
+				return false;
+			}
+			const iso = parseMatrixReportDateToIso(input.value);
+			if (!iso) {
+				return false;
+			}
+			input.value = formatIsoToDdMmYyyy(iso);
+			return true;
+		}
+
+		function getMatrixReportDateFromInput(input) {
+			return parseMatrixReportDateToIso(input && input.value);
+		}
+
 
 		function onDateChange(input) {
 			hideDashboardAnalyticsSections();
 			const statusDiv = document.getElementById("dataStatus");
 
-			const selectedDate = input.value;
+			syncMatrixReportDateInput(input);
+			const selectedDate = getMatrixReportDateFromInput(input);
+			if (!selectedDate) {
+				return;
+			}
 			const sNo = input.dataset.sno;
 			const label = input.dataset.label;
 			var trHTML = "";
 			//document.getElementById("Matrixtablebody").innerHTML = trHTML;
 
 			if (sNo === "25") {
-				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + selectedDate;
+				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + encodeURIComponent(selectedDate);
 				return;
 			}
 
-			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + selectedDate + '&Matrixserial_no=' + sNo + '&MatrixLabel=' +
+			fetch('./GetRT_Matrix_monitoring_entity?Report_date=' + encodeURIComponent(selectedDate) + '&Matrixserial_no=' + sNo + '&MatrixLabel=' +
 				label, {
 				method: 'POST',
 				headers: {
@@ -4925,8 +5255,8 @@
 					// CHECK IF RESPONSE IS EMPTY
 					if (!list || list.length === 0) {
 
-						// Return on Asset (18): no procedure prompt — open ROA with zeros (or saved figures) for manual entry
 						if (String(sNo) === "18") {
+							statusDiv.style.display = "block";
 							statusDiv.style.background = "#0c63e4";
 							statusDiv.style.color = "white";
 							statusDiv.innerText = "No limit run for this date. ROA shows zero until you enter values and save.";
@@ -4943,6 +5273,7 @@
 							return;
 						}
 
+						statusDiv.style.display = "block";
 						statusDiv.style.background = "red";
 						statusDiv.style.color = "white";
 						statusDiv.innerText = "No data available for the selected date.";
@@ -4965,7 +5296,7 @@
 
 
 						trHTML += `
-						        <tr style="font-size: small;">
+						        <tr style="font-size: 0.875rem;">
 						           <td style="font-weight: 600;">${index + 1}</td>
 
 						            <td class="truncate" style="font-weight:600;">
@@ -4973,7 +5304,8 @@
 						                   onclick="return Getanalyticaldata(this);"
 						                   setlabelname="${data.matrix_label ?? ""}"
 						                   setlabelsrlno="${data.s_no ?? ""}"
-										   setreport_date="${data.report_date ?? ""}">
+										   setreport_date="${formatDateDdMmYyyy(data.report_date) ?? ""}"
+										   setlimitassigned="${(data.limit_assigned) ?? ""}">
 						                   ${data.matrix_label ?? ""}
 						                </a>
 						            </td>
@@ -5001,13 +5333,20 @@
 						            <!-- Date -->
 						            <td style="text-align: center;">
 						            	<div class="run-date-wrap">
-						                <input class="badge-status"
-						                       type="date"
-						                       value="${formatDateForInput(data.report_date) ?? ""}"
+						                <input class="badge-status matrix-report-date"
+						                       type="text"
+						                       inputmode="numeric"
+						                       placeholder="dd-mm-yyyy"
+						                       title="Date format: dd-mm-yyyy"
+						                       maxlength="10"
+						                       value="${formatDateDdMmYyyy(data.report_date) ?? ""}"
 						                       data-sno="${data.s_no ?? ""}"
 						                       data-label="${data.matrix_label ?? ""}"
+						                       onblur="syncMatrixReportDateInput(this)"
 						                       onchange="onDateChange(this)">
+										<!-- Run button retained for future use; date change now auto-triggers procedure check
 										<button class="btn-run-date" type="button" onclick="runMatrixForDate(this)">Run</button>
+										-->
 										</div>
 						            </td>
 
@@ -5022,11 +5361,11 @@
 					// Replace body content
 					document.getElementById("Matrixtablebody").innerHTML = trHTML;
 
+					statusDiv.style.display = "block";
 					statusDiv.style.background = "green";
 					statusDiv.style.color = "white";
 					statusDiv.innerText = "Required data available. Calculating limits...";
 
-					// Refresh ROA panel if user has S.No 18 analytics open (date from row 18 or from this row when sNo is 18)
 					if (String(Selectedmatrixlabel) === "18") {
 						var roaReportDate = selectedDate;
 						if (String(sNo) !== "18") {
@@ -5034,7 +5373,7 @@
 								return String(d.s_no) === "18";
 							});
 							if (rowFor18 && rowFor18.report_date) {
-								roaReportDate = formatDateForInput(rowFor18.report_date) || rowFor18.report_date;
+								roaReportDate = formatDateDdMmYyyy(rowFor18.report_date) || rowFor18.report_date;
 							}
 						}
 						loadReturnOnAssetTable(roaReportDate);
@@ -5084,23 +5423,26 @@
 		}
 
 		function runMatrixForDate(button) {
-			const dateInput = button.closest(".run-date-wrap").querySelector("input[type='date']");
+			const dateInput = button.closest(".run-date-wrap").querySelector(".matrix-report-date");
 			if (!dateInput || !dateInput.value) {
 				setSessionToggle("error", "Please select a date before running calculation.");
 				return;
 			}
-
-			const reportDate = dateInput.value;
+			syncMatrixReportDateInput(dateInput);
+			const reportDate = getMatrixReportDateFromInput(dateInput);
+			if (!reportDate) {
+				setSessionToggle("error", "Enter a valid date as dd-mm-yyyy.");
+				return;
+			}
 			const sNo = dateInput.dataset.sno;
 			const label = dateInput.dataset.label;
 			button.disabled = true;
 			button.textContent = "Running...";
 
 			if (sNo === "25") {
-				//alert("hi");
 				button.disabled = false;
 				button.textContent = "Run";
-				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + reportDate;
+				window.location.href = "./RT_Key_Risk_Indicator?Report_date=" + encodeURIComponent(reportDate);
 				return;
 			}
 			runMatrixForDateDirect(reportDate, sNo, label, function () {
@@ -5193,9 +5535,13 @@
 
 		document.addEventListener("DOMContentLoaded", function () {
 			showSessionToggleIfAny();
-			if (window.__MATRIX_ANALYTICS_BOOT__) {
-				var boot = window.__MATRIX_ANALYTICS_BOOT__;
-				openMatrixAnalytics(boot.label, boot.sno, boot.reportDate);
+			var params = new URLSearchParams(window.location.search);
+			var sno = params.get("sno");
+			var label = params.get("label");
+			var reportDate = params.get("reportDate");
+			if (sno && label && reportDate) {
+				showMatrixSplitView();
+				openMatrixAnalytics(label, sno, reportDate, null);
 			}
 		});
 
@@ -5454,6 +5800,10 @@
 			if (!ctx) return;
 
 			const chartType = matrixChartState.chartType || "line";
+			const valueMeta = matrixChartState.valueMeta || {datasetLabel: "Utilization %"};
+			const scale = computeMatrixChartYAxisScale(dataValues, chartType);
+			CalculatedStepSize = scale.calculatedStepSize;
+			yaxismaxsize = scale.yaxismaxsize;
 			matrixChartState.lastRender = {
 				labels: labels,
 				dataValues: dataValues,
@@ -5470,14 +5820,34 @@
 				progressChartInstance = null;
 			}
 
+			const datasets = [buildMatrixChartDataset(chartType, dataValues, valueMeta.datasetLabel)];
+			const breachDataset = buildMatrixChartBreachDataset(
+				chartType,
+				labels,
+				matrixChartState.limitValue,
+				valueMeta.breachLabel
+			);
+			if (breachDataset) {
+				datasets.push(breachDataset);
+			}
+
 			barChartInstance = new Chart(ctx, {
 				type: resolveMatrixChartJsType(chartType),
 				data: {
 					labels: labels,
-					datasets: [buildMatrixChartDataset(chartType, dataValues)]
+					datasets: datasets
 				},
 				options: buildMatrixChartOptions(chartType, labels, CalculatedStepSize, yaxismaxsize, reportDates)
 			});
+			if (matrixChartState.breachLimitVisible === false && breachDataset) {
+				const breachIdx = datasets.findIndex(function (ds) {
+					return ds.isBreachLimit;
+				});
+				if (breachIdx >= 0) {
+					barChartInstance.getDatasetMeta(breachIdx).hidden = true;
+					barChartInstance.update();
+				}
+			}
 			showGraphUI({monthly: true});
 			showMatrixChartRangePanel();
 			var chartDownloadEl = document.getElementById("chartDownloadActions");
@@ -5520,16 +5890,14 @@
 
 	</script>
 
-	<div th:unless="${analyticsOnly}" th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
+	<div th:insert="~{XBRLHeaderMenu :: header}" class="fixed-top"></div>
 
 	<!-- Use full width of page -->
 	<div class="container-fluid main-content">
 		<div class="row g-3">
-			<!-- Matrix table — full width on dashboard; analytics open in a new tab -->
+			<!-- Matrix table (left) and analytics panel (right) -->
 			<div class="col-12 matrix-dashboard-table-col">
-				<h4>List Of All Ratios Monitored By
-					Risk Management
-				</h4>
+				<h4 id="MatrixTableheadername" class="matrix-dashboard-header">List Of All Ratios Monitored By Risk Management</h4>
 				<div id="dataStatus" style="display:none;padding:8px;margin-bottom:10px;
 				     font-weight:600;border-radius:5px;">
 				</div>
@@ -5546,8 +5914,8 @@
 								<th>Regulatory Caps / Limits</th>
 								<th>Guidelines / Policy</th>
 								<th>Limit</th>
-								<th>Today's Position</th>
-								<th>Reporting Date Position</th>
+								<th>Position</th>
+								<th>Position Report Date</th>
 								<th>Status</th>
 							</tr>
 						</thead>
@@ -5559,7 +5927,8 @@
 								<td class="truncate" style="font-weight: 600;">
 									<a href="#" th:text="${Matrixlist.matrix_label}" onclick="return Getanalyticaldata(this);"
 										th:attr="setlabelname=${Matrixlist.matrix_label},setlabelsrlno=${Matrixlist.s_no},
-										setreport_date=${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')}"></a>
+										setreport_date=${#dates.format(Matrixlist.report_date,'dd-MM-yyyy')},
+										setlimitassigned=${Matrixlist.limit_assigned}"></a>
 								</td>
 
 								<td th:text="${Matrixlist.guidelines_or_policy}" style="font-weight: 600;">CBUAE</td>
@@ -5567,7 +5936,7 @@
 								<!-- 1st percentage -->
 								<td style="text-align: center;">
 									<span class="badge-status">
-										<span th:text="${Matrixlist.limit_assigned}">0.00</span>
+										<span class="limit-value" th:text="${Matrixlist.limit_assigned}">0.00</span>
 									</span>
 								</td>
 
@@ -5583,11 +5952,16 @@
 								<td style="text-align: center;">
 
 									<div class="run-date-wrap">
-										<input class="badge-status" type="date" th:attr="data-sno=${Matrixlist.s_no},
-										data-label=${Matrixlist.matrix_label}" onchange="onDateChange(this)"
-											th:value="${#dates.format(Matrixlist.report_date, 'yyyy-MM-dd')}" />
+										<input class="badge-status matrix-report-date" type="text"
+											inputmode="numeric" placeholder="dd-mm-yyyy" title="Date format: dd-mm-yyyy"
+											maxlength="10" th:attr="data-sno=${Matrixlist.s_no},
+										data-label=${Matrixlist.matrix_label}"
+											onblur="syncMatrixReportDateInput(this)" onchange="onDateChange(this)"
+											th:value="${#dates.format(Matrixlist.report_date, 'dd-MM-yyyy')}" />
+										<!-- Run button retained for future use; date change now auto-triggers procedure check
 										<button class="btn-run-date" type="button"
 											onclick="runMatrixForDate(this)">Run</button>
+										-->
 									</div>
 								</td>
 								<th:block th:switch="${Matrixlist.status}">
@@ -5604,10 +5978,9 @@
 				</div>
 			</div>
 
-			<!-- Analytics panel (new tab only; hidden on main dashboard) -->
-			<div th:if="${analyticsOnly}" class="col-12 matrix-dashboard-analytics-col">
-				<h4 id="Analyticsheadername">Analytics
-				</h4>
+			<!-- Analytics panel (right side when a ratio is selected) -->
+			<div class="col-12 matrix-dashboard-analytics-col">
+				<h4 id="Analyticsheadername" class="matrix-dashboard-header">Analytics</h4>
 				<div class="chart-card">
 					<div class="stats-grid Leverageratiosummblock" style="display: none;">
 						<div class="stat-card">
@@ -5881,8 +6254,8 @@
 						<canvas id="StockLinechartformonthlyreport"></canvas>
 
 					</div>
-
-
+					
+					
 
 					<!--Current Month progressing chart-->
 					<div class="Dailychart-container" style="display: none;">
@@ -5932,7 +6305,12 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th></th>
+									<th>
+										<button id="BpvPv01reportBtn" class="btn-run-date"
+											onclick="Downloadexcelreport(this)" title="Download BPV/PV01 detail as Excel">
+											<i class="fa fa-file-excel" aria-hidden="true"></i> Detail
+										</button>
+									</th>
 									<th colspan="2">Derivatives</th>
 									<th>Investments Bonds</th>
 									<th>Money Market</th>
@@ -5970,41 +6348,6 @@
 							<tbody id="RETURN_ON_ASSET_BODY">
 							</tbody>
 						</table>
-					</div>
-
-					<div class="OnfcDailyRiskLimitsTable" style="display: none;">
-						<div class="table-wrap" style="overflow-x: auto;">
-							<table class="table refund-table align-middle mb-0">
-								<thead>
-									<tr>
-										<th id="ONFC_DAILY_RISK_LIMITS_TITLE" colspan="12"
-											style="text-align: center; background-color: #fff3cd;">DAILY RISK LIMITS MONITORING REPORT</th>
-									</tr>
-									<tr>
-										<th rowspan="2">DATE</th>
-										<th colspan="2">Overnight Foreign Currency Position<br />(Limit INR 150 Crores)</th>
-										<th colspan="2">Net Overnight Open Position (NOOPL)<br />(Limit INR 2000 Crores)</th>
-										<th rowspan="2">Gap Limit (TAGL)<br />Limit USD 250 Million</th>
-										<th colspan="2">Aggregate Gap Limit<br />(Main Currency Limit USD 160 Million,<br />Other Currencies Limit USD 80 Million)</th>
-										<th colspan="2">Individual Gap Limit<br />(Main Currency Limit USD 80 Million,<br />Other Currencies Limit USD 30 Million)</th>
-										<th rowspan="2">Breach of Day Light Exposure<br />(Limit USD 20 Million)</th>
-										<th rowspan="2">Any Breach of Stop Loss Limit</th>
-									</tr>
-									<tr>
-										<th>OVER BOUGHT<br /><small>ACTUAL (IN INR)</small></th>
-										<th>OVER SOLD<br /><small>ACTUAL (IN INR)</small></th>
-										<th>OVER BOUGHT<br /><small>ACTUAL (IN INR)</small></th>
-										<th>OVER SOLD<br /><small>ACTUAL (IN INR)</small></th>
-										<th>MAIN CURRENCY<br /><small>(USD IN MILLIONS)</small></th>
-										<th>OTHER CURRENCIES<br /><small>(USD IN MILLIONS)</small></th>
-										<th>MAIN CURRENCY<br /><small>(USD IN MILLIONS)</small></th>
-										<th>OTHER CURRENCIES<br /><small>(USD IN MILLIONS)</small></th>
-									</tr>
-								</thead>
-								<tbody id="ONFC_DAILY_RISK_LIMITS_BODY">
-								</tbody>
-							</table>
-						</div>
 					</div>
 
 					<div class="LongTermandMediumTerm" style="display: none;">
@@ -6312,11 +6655,10 @@
 						<table class="table refund-table align-middle mb-0">
 							<thead>
 								<tr>
-									<th id="Depositconcentrationtype" colspan="2"> Top 10 Borrower </th>
+									<th id="Depositconcentrationtype" colspan="2"> Top 10 Deposit </th>
 									<th id="ToptenDepositconcentrationdate" colspan="2">Report date</th>
 								</tr>
 								<tr style="background-color: #dee2e6">
-									<th>Customer Id</th>
 									<th>Account Name</th>
 									<th>Balance</th>
 									<th>Percentage</th>
@@ -6420,688 +6762,27 @@
 						</table>
 					</div>
 					<div class="irs" style="display: none;">
-						<table class="table refund-table align-middle mb-0">
-							<thead>
-								<tr style="background-color: #dee2e6" id="irsheader">
-									<th>Buckets</th>
-									<th>Limit</th>
-									<th>RSL AED Mn.</th>
-									<th>RSA AED Mn</th>
-									<th>Gap AED Mn.</th>
-									<th id="netGapHeader">Net Gap as % to Total Assets</th>
-								</tr>
-							</thead>
+										    <table class="table refund-table align-middle mb-0">
+										        <thead>
+										            <tr style="background-color: #dee2e6" id="irsheader">
+										                <th>Buckets</th>
+										                <th>Limit (Policy)</th>
+										                <th>RSL AED Mn.</th>
+										                <th>RSA AED Mn</th>
+										                <th>Gap AED Mn.</th>
+										                <th>Limit in Amt</th>
+										                <th>Limit %</th>
+										              <th id="netGapHeader">Net Gap as % to Total Assets</th>
+										            </tr>
+										        </thead>
 
-							<tbody id="irsbody">
-
-							</tbody>
-						</table>
-					</div>
-
-					<div id="eardatacontainer" style="margin-top: 20px;">
-
-						<div th:fragment="eardashboardtable" th:if="${entity1 != null and entity2 != null}">
-
-							<div class="brown-tabs">
-								<button onclick="openTab(event, 'Tab1')" class="tab-link active">EAR</button>
-								<button onclick="openTab(event, 'Tab2')" class="tab-link">EAR QTR</button>
-							</div>
-
-							<div id="Tab1" class="tab-content" style="display: block;">
-								<div style="display: flex; justify-content: flex-end;">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Date of Review :</div>
-											<div style="margin-bottom: 5px;">Last Year End Date :</div>
-											<div style="margin-bottom: 5px;">
-												6 Months USD LIBOR as on <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>:
-											</div>
-											<div style="margin-bottom: 5px;">
-												AED / INR Rate as on <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>:
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Earned for the Year ended <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>
-												(Amount AED in Thousands) :
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Paid for the Year ended <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>
-												(Amount AED in Thousands) :
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Earned for the Year ended <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>(Amount
-												INR in Thousands) :
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Paid for the Year ended <span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>
-												(Amount INR in Thousands) :
-											</div>
-
+												<tbody id="irsbody">
+												   
+												</tbody>
+										    </table>
 										</div>
 
-
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px; font-weight: bold; ">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${#dates.format(entity1.REPORT_DATE, 'dd-MMM-yyyy')}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${#dates.format(entity1.LAST_YEAR_END_DATE, 'dd-MMM-yyyy')}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span>0%</span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity1.AED_TO_INR_CONV_RATE}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity1.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity1.INT_EARNED_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity1.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
-									<b>A . Assets</b>
-								</div>
-
-								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
-									style="width: 100%; border-collapse: collapse;">
-									<thead>
-										<tr>
-											<th style="min-width: 125px;">Time Bucket</th>
-											<th style="text-align: right;">Total Assets Repricing
-												(Amount AED in Thousands)</th>
-											<th style="text-align: right;">Average Remaining in
-												Months</th>
-											<th style="text-align: right;">Total Repricable Asset
-												Product</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>A. 1 - 28 Days</td>
-											<td th:text="${entity1.REPRICING_ASSETS_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">11.5000
-											</td>
-											<td th:text="${entity1.REPRICABLE_ASSETS_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>B. 29 Days - 3 Months</td>
-											<td th:text="${entity1.REPRICING_ASSETS_29_TO_3MON}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">10.0000
-											</td>
-											<td th:text="${entity1.REPRICABLE_ASSETS_29_TO_3MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>C. 3 - 6 Months</td>
-											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}" style="text-align: right;">
-											</td>
-											<td style="text-align: right;">7.5000
-											</td>
-											<td th:text="${entity1.REPRICABLE_ASSETS_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>D. 6 Months - 1 Year</td>
-											<td th:text="${entity1.REPRICING_ASSETS_6MON_1YEAR}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">3.0000
-											</td>
-											<td th:text="${entity1.REPRICABLE_ASSETS_6MON_1YEAR}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td style="font-weight: bold;">Total</td>
-											<td style="text-align: right;font-weight: bold;"
-												th:text="${entity1.TOTAL_ASST_REPRICING_AMT_IN_AED_THOUSAND}"></td>
-											<td style="text-align: right;"></td>
-											<td th:text="${entity1.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-										</tr>
-									</tbody>
-								</table>
-								<div style="display: flex; justify-content: flex-end; font-weight: bold;">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Total Assets Product :</div>
-											<div style="margin-bottom: 5px;">A = Net Asset Product
-												* 0.01 / 12 :</div>
-										</div>
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px;">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity1.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity1.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
-									<b>B. Liabilities</b>
-								</div>
-
-								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
-									style="width: 100%; border-collapse: collapse;">
-									<thead>
-										<tr>
-											<th style="min-width: 125px;">Time Bucket</th>
-											<th style="text-align: right;">Total Liabilities
-												Repricing (Amount AED in Thousands)</th>
-											<th style="text-align: right;">Average Remaining in
-												Months</th>
-											<th style="text-align: right;">Total Repricable
-												Liability Product</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>A. 1 - 28 Days</td>
-											<td th:text="${entity1.REPRICING_LIAB_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">11.5000
-											</td>
-											<td th:text="${entity1.REPRICABLE_LIAB_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>B. 29 Days - 3 Months</td>
-											<td th:text="${entity1.REPRICING_LIAB_29_TO_3MON}"
-												style="text-align: right;">
-											</td>
-											<td style="text-align: right;">10.0000</td>
-											<td th:text="${entity1.REPRICABLE_LIAB_29_TO_3MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>C. 3 - 6 Months</td>
-											<td th:text="${entity1.REPRICING_LIAB_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">7.5000
-											</td>
-											<td th:text="${entity1.REPRICABLE_LIAB_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>D. 6 Months - 1 Year</td>
-											<td th:text="${entity1.REPRICING_LIAB_6MON_1YEAR}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">3.0000
-											</td>
-											<td th:text="${entity1.REPRICABLE_LIAB_6MON_1YEAR}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td style="font-weight: bold;">Total</td>
-											<td th:text="${entity1.TOTAL_LIAB_REPRICING_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-											<td style="text-align: right;"></td>
-											<td th:text="${entity1.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-										</tr>
-									</tbody>
-								</table>
-								<div style="display: flex; justify-content: flex-end;">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px; font-weight: bold;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Net Liability Product
-												:</div>
-											<div style="margin-bottom: 5px;">B = Net Liability
-												Product * 0.01 / 12 :</div>
-										</div>
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px;">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity1.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity1.NET_LIAB_PRODUCT_AMT_IN_AED}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<table class="outer-border-table" style="font-weight: bold;">
-
-									<tbody>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit (%
-												of Last Year's NII or last 4 trailing quarters, whichever is
-												higher)</td>
-											<td>10.00%</td>
-											<td></td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td>Last year's NII</td>
-											<td>Amount AED in Thousands</td>
-											<td th:text="${entity1.LAST_YEAR_NII_AMT_IN_AED}"></td>
-											<td>INR Crs.</td>
-											<td th:text="${entity1.LAST_YEAR_NII_AMT_IN_INR_CRORE}"></td>
-										</tr>
-										<tr>
-											<td>NII of last 4 quarters</td>
-											<td>Amount AED in Thousands</td>
-											<td th:text="${entity1.LAST_4_QUARTER_AMT_IN_AED}"></td>
-											<td>INR Crs.</td>
-											<td th:text="${entity1.LAST_4_QUARTER_AMT_IN_INR_CRORE}"></td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit
-												(Amount AED in Thousands) =</td>
-											<td th:text="${entity1.EAR_TOLERANCE_LIMIT_AMT_IN_AED}"></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) A - B (Amount AED
-												in Thousands) =</td>
-											<td th:text="${entity1.EAR_AMT_IN_AED}"></td>
-											<td>Breached</td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit
-												(Amount INR in Crores) =</td>
-											<td th:text="${entity1.EAR_TOLERANCE_LIMIT_AMT_IN_INR_CRORE}"></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) A - B (Amount INR
-												in Crores) =</td>
-											<td th:text="${entity1.EAR_AMT_IN_INR_CRORE}"></td>
-											<td>Breached</td>
-										</tr>
-										<tr>
-										</tr>
-									</tbody>
-								</table>
-
-								<div class="ear-free-text-row">
-									<div class="ear-free-text-col">
-										<label for="earFreeTextTab1Left"></label>
-										<textarea id="earFreeTextTab1Left" class="ear-free-text-area"
-											placeholder="Enter remarks (left section)..."></textarea>
-									</div>
-									<div class="ear-free-text-col">
-										<label for="earFreeTextTab1Right"></label>
-										<textarea id="earFreeTextTab1Right" class="ear-free-text-area"
-											placeholder="Enter remarks (right section)..."></textarea>
-									</div>
-								</div>
-							</div>
-
-							<div id="Tab2" class="tab-content" style="display: none;">
-								<div style="display: flex; justify-content: flex-end; ">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Date of Review :</div>
-											<div style="margin-bottom: 5px;">Start Date of Last 4
-												Trailing Quarters :</div>
-											<div style="margin-bottom: 5px;">End Date of Last 4
-												Trailing Quarters :</div>
-											<div style="margin-bottom: 5px;">
-												6 Months USD LIBOR as on <span
-													th:text="${#dates.format(entity2.REPORT_DATE, 'dd-MMM-yyyy')}"></span>:
-											</div>
-											<div style="margin-bottom: 5px;">
-												AED / INR Rate as on <span
-													th:text="${#dates.format(entity2.REPORT_DATE, 'dd-MMM-yyyy')}"></span>:
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Earned for the Period from <span
-													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
-												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
-												(Amount AED in Thousands) :
-
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Paid for the Period from <span
-													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
-												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>(Amount
-												AED in Thousands) :
-
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Earned for the Period from <span
-													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
-												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
-												(Amount INR in Thousands) :
-
-											</div>
-											<div style="margin-bottom: 5px;">
-												Interest Paid for the Period from <span
-													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>to
-												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
-												(Amount INR in Thousands) :
-											</div>
-
-										</div>
-
-
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px; font-weight: bold; ">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${#dates.format(entity2.REPORT_DATE, 'dd-MMM-yyyy')}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${#dates.format(entity2.START_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${#dates.format(entity2.END_DATE_LAST_4, 'dd-MMM-yyyy')}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span>0%</span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity2.AED_TO_INR_CONV_RATE}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity2.INT_EARNED_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity2.INT_EARNED_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity2.INT_PAID_YEAR_END_AMT_IN_INR_THOUSAND}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
-									<b>A . Assets</b>
-								</div>
-
-								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
-									style="width: 100%; border-collapse: collapse;">
-									<thead>
-										<tr>
-											<th style="min-width: 125px;">Time Bucket</th>
-											<th style="text-align: right;">Total Assets Repricing
-												(Amount AED in Thousands)</th>
-											<th style="text-align: right;">Average Remaining in
-												Months</th>
-											<th style="text-align: right;">Total Repricable Asset
-												Product</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>A. 1 - 28 Days</td>
-											<td th:text="${entity2.REPRICING_ASSETS_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">11.5000
-											</td>
-											<td th:text="${entity2.REPRICABLE_ASSETS_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>B. 29 Days - 3 Months</td>
-											<td th:text="${entity2.REPRICING_ASSETS_29_TO_3MON}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">10.0000
-											</td>
-											<td th:text="${entity2.REPRICABLE_ASSETS_29_TO_3MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>C. 3 - 6 Months</td>
-											<td th:text="${REPRICING_ASSETS_3MON_TO_6MON}" style="text-align: right;">
-											</td>
-											<td style="text-align: right;">7.5000
-											</td>
-											<td th:text="${entity2.REPRICABLE_ASSETS_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>D. 6 Months - 1 Year</td>
-											<td th:text="${entity2.REPRICING_ASSETS_6MON_1YEAR}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">3.0000
-											</td>
-											<td th:text="${entity2.REPRICABLE_ASSETS_6MON_1YEAR}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td style="font-weight: bold;">Total</td>
-											<td style="text-align: right;font-weight: bold;"
-												th:text="${entity2.TOTAL_ASST_REPRICING_AMT_IN_AED_THOUSAND}"></td>
-											<td style="text-align: right;"></td>
-											<td th:text="${entity2.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-										</tr>
-									</tbody>
-								</table>
-								<div style="display: flex; justify-content: flex-end; font-weight: bold;">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Total Assets Product :</div>
-											<div style="margin-bottom: 5px;">A = Net Asset Product
-												* 0.01 / 12 :</div>
-										</div>
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px;">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity2.TOTAL_ASST_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity2.NET_ASST_PRODUCT_AMT_IN_AED}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div style="min-width: 180px; text-align: left; font-size: 10.4px">
-									<b>B. Liabilities</b>
-								</div>
-
-								<table border="1" cellpadding="8" class="table refund-table align-middle mb-0"
-									style="width: 100%; border-collapse: collapse;">
-									<thead>
-										<tr>
-											<th style="min-width: 125px;">Time Bucket</th>
-											<th style="text-align: right;">Total Liabilities
-												Repricing (Amount AED in Thousands)</th>
-											<th style="text-align: right;">Average Remaining in
-												Months</th>
-											<th style="text-align: right;">Total Repricable
-												Liability Product</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>A. 1 - 28 Days</td>
-											<td th:text="${entity2.REPRICING_LIAB_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">11.5000
-											</td>
-											<td th:text="${entity2.REPRICABLE_LIAB_ONE_28_DAYS}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>B. 29 Days - 3 Months</td>
-											<td th:text="${entity2.REPRICING_LIAB_29_TO_3MON}"
-												style="text-align: right;">
-											</td>
-											<td style="text-align: right;">10.0000</td>
-											<td th:text="${entity2.REPRICABLE_LIAB_29_TO_3MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>C. 3 - 6 Months</td>
-											<td th:text="${entity2.REPRICING_LIAB_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">7.5000
-											</td>
-											<td th:text="${entity2.REPRICABLE_LIAB_3MON_TO_6MON}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td>D. 6 Months - 1 Year</td>
-											<td th:text="${entity2.REPRICING_LIAB_6MON_1YEAR}"
-												style="text-align: right;"></td>
-											<td style="text-align: right;">3.0000
-											</td>
-											<td th:text="${entity2.REPRICABLE_LIAB_6MON_1YEAR}"
-												style="text-align: right;"></td>
-										</tr>
-										<tr>
-											<td style="font-weight: bold;">Total</td>
-											<td th:text="${entity2.TOTAL_LIAB_REPRICING_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-											<td style="text-align: right;"></td>
-											<td th:text="${entity2.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"
-												style="text-align: right;font-weight: bold;"></td>
-										</tr>
-									</tbody>
-								</table>
-								<div style="display: flex; justify-content: flex-end;">
-									<div
-										style="display: flex; gap: 20px; padding: 10px; border-radius: 4px; font-size: 10.4px; font-weight: bold;">
-
-										<div style="min-width: 180px; text-align: right;">
-											<div style="margin-bottom: 5px;">Net Liability Product
-												:</div>
-											<div style="margin-bottom: 5px;">B = Net Liability
-												Product * 0.01 / 12 :</div>
-										</div>
-										<div
-											style="min-width: 80px; text-align: left; border-left: 1px solid #ccc; padding-left: 15px;">
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span
-													th:text="${entity2.TOTAL_LIAB_REPRICABLE_AMT_IN_AED_THOUSAND}"></span>
-											</div>
-											<div style="margin-bottom: 5px;min-height: 15px;">
-												<span th:text="${entity2.NET_LIAB_PRODUCT_AMT_IN_AED}"></span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<table class="outer-border-table" style="font-weight: bold;">
-
-									<tbody>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit (%
-												of Last Year's NII or last 4 trailing quarters, whichever is
-												higher)</td>
-											<td>10.00%</td>
-											<td></td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td>Last year's NII</td>
-											<td>Amount AED in Thousands</td>
-											<td th:text="${entity2.LAST_YEAR_NII_AMT_IN_AED}"></td>
-											<td>INR Crs.</td>
-											<td th:text="${entity2.LAST_YEAR_NII_AMT_IN_INR_CRORE}"></td>
-										</tr>
-										<tr>
-											<td>NII of last 4 quarters</td>
-											<td>Amount AED in Thousands</td>
-											<td th:text="${entity2.LAST_4_QUARTER_AMT_IN_AED}"></td>
-											<td>INR Crs.</td>
-											<td th:text="${entity2.LAST_4_QUARTER_AMT_IN_INR_CRORE}"></td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit
-												(Amount AED in Thousands) =</td>
-											<td th:text="${entity2.EAR_TOLERANCE_LIMIT_AMT_IN_AED}"></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) A - B (Amount AED
-												in Thousands) =</td>
-											<td th:text="${entity2.EAR_AMT_IN_AED}"></td>
-											<td>Breached</td>
-										</tr>
-										<tr>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) Tolerance Limit
-												(Amount INR in Crores) =</td>
-											<td th:text="${entity2.EAR_TOLERANCE_LIMIT_AMT_IN_INR_CRORE}"></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td colspan=3>Earning at Risk (EaR) A - B (Amount INR
-												in Crores) =</td>
-											<td th:text="${entity2.EAR_AMT_IN_INR_CRORE}"></td>
-											<td>Breached</td>
-										</tr>
-										<tr>
-										</tr>
-									</tbody>
-								</table>
-
-								<div class="ear-free-text-row">
-									<div class="ear-free-text-col">
-										<label for="earFreeTextTab2Left"></label>
-										<textarea id="earFreeTextTab2Left" class="ear-free-text-area"
-											placeholder="Enter remarks (left section)..."></textarea>
-									</div>
-									<div class="ear-free-text-col">
-										<label for="earFreeTextTab2Right"></label>
-										<textarea id="earFreeTextTab2Right" class="ear-free-text-area"
-											placeholder="Enter remarks (right section)..."></textarea>
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</div>
-
+					<div id="eardatacontainer" style="margin-top: 20px; display: none;"></div>
 
 					<!--Net Overnight position Noop calculation-->
 
@@ -7548,23 +7229,26 @@
 		</div>
 
 	</div>
+
 	<script>
 		function openTab(evt, tabName) {
-			// 1. Hide all elements with class="tab-content"
-			const tabcontent = document.querySelectorAll(".tab-content");
-			tabcontent.forEach(content => {
+			var container = document.getElementById("eardatacontainer");
+			var root = container || document;
+			const tabcontent = root.querySelectorAll(".tab-content");
+			tabcontent.forEach(function (content) {
 				content.style.display = "none";
 			});
-
-			// 2. Remove the "active" class from all tab buttons
-			const tablinks = document.querySelectorAll(".tab-link");
-			tablinks.forEach(link => {
+			const tablinks = root.querySelectorAll(".brown-tabs .tab-link");
+			tablinks.forEach(function (link) {
 				link.classList.remove("active");
 			});
-
-			// 3. Show the current tab, and add the "active" class to the button that opened it
-			document.getElementById(tabName).style.display = "block";
-			evt.currentTarget.classList.add("active");
+			var tabEl = root.querySelector("#" + tabName);
+			if (tabEl) {
+				tabEl.style.display = "block";
+			}
+			if (evt && evt.currentTarget) {
+				evt.currentTarget.classList.add("active");
+			}
 		}
 	</script>
 </body>

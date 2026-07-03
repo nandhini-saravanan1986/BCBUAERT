@@ -15,7 +15,10 @@ public class AnalyticalPivotRequestDto {
 	/** Optional: filter-only dimensions (applied to WHERE, not GROUP BY). */
 	private List<AnalyticalPivotDimensionDto> filterDimensions;
 	private String aggregation;
+	/** Legacy single measure; ignored when valueColumns is non-empty. */
 	private String valueColumn;
+	/** Preferred: one or more numeric columns to SUM (SUM aggregation only). */
+	private List<String> valueColumns;
 	/** NONE | DIVIDE | MULTIPLY | PERCENT_OF — applied only when aggregation is SUM. */
 	private String aggregateTransform;
 	/** Numeric operand (divide by / multiply by / denominator for percent). */
@@ -59,6 +62,14 @@ public class AnalyticalPivotRequestDto {
 
 	public void setValueColumn(String valueColumn) {
 		this.valueColumn = valueColumn;
+	}
+
+	public List<String> getValueColumns() {
+		return valueColumns;
+	}
+
+	public void setValueColumns(List<String> valueColumns) {
+		this.valueColumns = valueColumns;
 	}
 
 	public List<AnalyticalPivotDimensionDto> getRowDimensions() {

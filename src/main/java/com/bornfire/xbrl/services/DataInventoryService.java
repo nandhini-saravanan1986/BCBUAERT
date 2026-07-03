@@ -60,7 +60,7 @@ public class DataInventoryService {
 	@Autowired
 	private RT_Data_Inventory_Repo inventoryRepo;
 
-	@Value("${data.inventory.maxExportRows:50000}")
+	@Value("${data.inventory.maxExportRows:150000}")
 	private int maxExportRows;
 
 	@Autowired

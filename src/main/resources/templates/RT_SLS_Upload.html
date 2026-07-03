@@ -36,7 +36,7 @@
 		}
 
 		.card-header-professional {
-			background-color: rgb(255, 128, 64);
+			background-color: rgb(255, 149, 51);
 			/* Corporate Blue */
 			color: white;
 			padding: 15px 25px;
@@ -99,7 +99,7 @@
 			background-color: #e9ecef;
 		}
 
-		/* Loader */
+		/* Loader (same pattern as RT_SLSREPORT.html) */
 		.loader-overlay {
 			display: none;
 			position: fixed;
@@ -116,67 +116,57 @@
 			background: #ffffff;
 			border-radius: 16px;
 			padding: 22px 20px 18px;
-			box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+			box-shadow: 0 14px 34px rgba(8, 20, 40, 0.22);
 			text-align: center;
-			border: 1px solid #e7eef8;
+			border: 1px solid rgba(148, 163, 184, 0.35);
 		}
 
 		.loader-logo-wrap {
 			position: relative;
-			width: 86px;
-			height: 86px;
-			margin: 0 auto 14px auto;
+			width: 84px;
+			height: 84px;
+			margin: 0 auto 14px;
+			display: grid;
+			place-items: center;
 		}
 
 		.loader-logo {
-			width: 68px;
-			height: 68px;
+			width: 56px;
+			height: 56px;
 			object-fit: contain;
-			position: absolute;
-			top: 9px;
-			left: 9px;
-			border-radius: 50%;
-			background: #fff;
-			padding: 6px;
-			box-shadow: 0 4px 12px rgba(11, 94, 215, 0.2);
+			filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.18));
 			animation: loaderPulse 1.6s ease-in-out infinite;
 		}
 
 		.loader-ring {
-			width: 86px;
-			height: 86px;
+			position: absolute;
+			inset: 0;
 			border-radius: 50%;
-			border: 3px solid #d6e4ff;
-			border-top-color: #0d6efd;
+			border: 4px solid #e2e8f0;
+			border-top-color: #f97316;
 			animation: loaderSpin 1s linear infinite;
 		}
 
 		.loader-title {
-			color: #173a6b;
-			font-size: 16px;
-			font-weight: 700;
-			letter-spacing: .2px;
-		}
-
-		.loader-text {
-			color: #4f617a;
-			font-weight: 500;
-			font-size: 13px;
-			margin-top: 6px;
+			font-size: 1.02rem;
+			font-weight: 600;
+			color: #0f172a;
+			margin-bottom: 10px;
+			letter-spacing: 0.2px;
 		}
 
 		.loader-progress {
-			margin-top: 14px;
-			height: 6px;
+			width: 100%;
+			height: 8px;
+			background: #e2e8f0;
 			border-radius: 999px;
-			background: #e9f1ff;
 			overflow: hidden;
 		}
 
 		.loader-progress-bar {
 			height: 100%;
-			width: 42%;
-			background: linear-gradient(90deg, #0d6efd, #5a9bff);
+			width: 38%;
+			background: linear-gradient(90deg, #f97316, #fb923c);
 			border-radius: 999px;
 			animation: loaderProgress 1.6s ease-in-out infinite;
 		}
@@ -192,30 +182,28 @@
 		}
 
 		@keyframes loaderPulse {
-
-			0%,
-			100% {
+			0%, 100% {
 				transform: scale(1);
 				opacity: 1;
 			}
 
 			50% {
-				transform: scale(1.07);
-				opacity: .92;
+				transform: scale(0.96);
+				opacity: 0.92;
 			}
 		}
 
 		@keyframes loaderProgress {
 			0% {
-				transform: translateX(-110%);
+				transform: translateX(-120%);
 			}
 
 			50% {
-				transform: translateX(70%);
+				transform: translateX(90%);
 			}
 
 			100% {
-				transform: translateX(210%);
+				transform: translateX(240%);
 			}
 		}
 
@@ -330,7 +318,6 @@
 										<option value="GAMDATADUMP">EOD & GAM DATA</option>
 										<option value="ONLY_EAB_TABLE_DATA">Only Eab data</option>
 										<option value="TR_PLC">Treasury Placement</option>
-										<option value="TR_INV">Treasury Investment</option>
 										<option value="TR_TB">Treasury TB</option>
 										<option value="TR_SWD">Treasury SWD</option>
 										<option value="FWD_RVL">Forward Reveal</option>
@@ -409,21 +396,6 @@
 								</div>
 							</div>
 						</form>
-
-						<!-- Loader Status -->
-						<div id="loader" class="loader-overlay">
-							<div class="loader-card">
-								<div class="loader-logo-wrap">
-									<div class="loader-ring"></div>
-									<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}"
-										alt="Client Logo" />
-								</div>
-								<div class="loader-title">Request Processing</div>
-								<div class="loader-progress">
-									<div class="loader-progress-bar"></div>
-								</div>
-							</div>
-						</div>
 
 						<!-- Feedback Area -->
 						<div id="uploadResult" class="mt-3"></div>
@@ -1415,7 +1387,7 @@
 	</style>
 	<style>
 		.confirm-header {
-			background: #E67E00;
+			background: #E66E00;
 			color: white;
 		}
 
@@ -1425,7 +1397,7 @@
 		}
 
 		#confirmUploadModal .btn-primary {
-			background: #E67E00;
+			background: #E66E00;
 		}
 
 		.modal-content {
@@ -1433,7 +1405,7 @@
 		}
 
 		.success-header {
-			background: #E67E00;
+			background: #E66E00;
 			color: white;
 		}
 
@@ -1448,6 +1420,20 @@
 			margin-bottom: 10px;
 		}
 	</style>
+
+	<!-- Loader (same markup as RT_SLSREPORT.html) -->
+	<div id="loader" class="loader-overlay">
+		<div class="loader-card">
+			<div class="loader-logo-wrap">
+				<div class="loader-ring"></div>
+				<img class="loader-logo" th:src="@{/images/client_Logo_bkp.png}" alt="Client Logo" />
+			</div>
+			<div class="loader-title">Request Processing</div>
+			<div class="loader-progress">
+				<div class="loader-progress-bar"></div>
+			</div>
+		</div>
+	</div>
 </body>
 
 </html>
