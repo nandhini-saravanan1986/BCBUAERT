@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.bornfire.xbrl.entities.*;
+import com.bornfire.xbrl.entities.RT_MC_DATA_RECORD_REPO.RecordMetadataProjection;
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
 
 @Service
@@ -4815,7 +4817,11 @@ public class RT_MC_TABLE_ALL_Service {
 			numberStyle.setBorderRight(BorderStyle.THIN);
 			numberStyle.setFont(font);
 			// --- End of Style Definitions ---
-
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date reportDatedf = dateFormat.parse(reportDate);
+			List<RecordMetadataProjection> pastRecord = RT_MC_DATA_RECORD_REPO
+					.findByFormModeAndTimeperiodAndReportDateOrderByReportDateDesc(
+							formmode, branch, reportDatedf);
 			int startRow = 8;
 
 			if (!dataList.isEmpty()) {
@@ -4827,173 +4833,173 @@ public class RT_MC_TABLE_ALL_Service {
 						row = sheet.createRow(startRow + i);
 					}
 					progressMap.put(jobId, 5);
-
+					
 					updateCellPreserveStyle(row, 4, record.getR9_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR9_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R9_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(9);
 
 					updateCellPreserveStyle(row, 4, record.getR10_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR10_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R10_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(10);
 
 					updateCellPreserveStyle(row, 4, record.getR11_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR11_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R11_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(11);
 
 					updateCellPreserveStyle(row, 4, record.getR12_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR12_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R12_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(12);
 
 					updateCellPreserveStyle(row, 4, record.getR13_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR13_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R13_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(13);
 
 					updateCellPreserveStyle(row, 4, record.getR14_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR14_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R14_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(14);
 
 					progressMap.put(jobId, 10);
 					updateCellPreserveStyle(row, 4, record.getR15_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR15_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R15_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(15);
 
 					updateCellPreserveStyle(row, 4, record.getR16_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR16_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R16_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(16);
 
 					updateCellPreserveStyle(row, 4, record.getR17_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR17_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R17_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(19);
 
 					progressMap.put(jobId, 15);
 					updateCellPreserveStyle(row, 4, record.getR20_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR20_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R20_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(20);
 
 					updateCellPreserveStyle(row, 4, record.getR21_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR21_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R21_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(23);
 
 					updateCellPreserveStyle(row, 4, record.getR24_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR24_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R24_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(24);
 
 					updateCellPreserveStyle(row, 4, record.getR25_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR25_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R25_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(25);
 
 					updateCellPreserveStyle(row, 4, record.getR26_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR26_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R26_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(26);
 
 					updateCellPreserveStyle(row, 4, record.getR27_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR27_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R27_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(27);
 
 					updateCellPreserveStyle(row, 4, record.getR28_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR28_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R28_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(28);
 
 					updateCellPreserveStyle(row, 4, record.getR29_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR29_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R29_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(29);
 
 					progressMap.put(jobId, 35);
 					updateCellPreserveStyle(row, 4, record.getR30_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR30_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R30_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(30);
 
 					updateCellPreserveStyle(row, 4, record.getR31_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR31_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R31_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(33);
 
 					updateCellPreserveStyle(row, 4, record.getR34_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR34_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R34_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(34);
 
 					updateCellPreserveStyle(row, 4, record.getR35_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR35_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R35_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(37);
 
 					updateCellPreserveStyle(row, 4, record.getR38_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR38_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R38_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(38);
 
 					updateCellPreserveStyle(row, 4, record.getR39_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR39_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R39_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(41);
 
 					updateCellPreserveStyle(row, 4, record.getR42_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR42_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R42_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(42);
 
 					updateCellPreserveStyle(row, 4, record.getR43_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR43_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R43_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(43);
 
 					updateCellPreserveStyle(row, 4, record.getR44_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR44_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R44_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(46);
 
 					updateCellPreserveStyle(row, 4, record.getR47_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR47_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R47_EVID_PRO_LFI"), null, createHelper);
 
 					row = sheet.getRow(49);
 
 					progressMap.put(jobId, 70);
 					updateCellPreserveStyle(row, 4, record.getR50_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR50_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R50_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(50);
 
 					updateCellPreserveStyle(row, 4, record.getR51_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR51_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R51_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(51);
 
 					updateCellPreserveStyle(row, 4, record.getR52_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR52_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R52_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(52);
 
 					updateCellPreserveStyle(row, 4, record.getR53_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR53_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R53_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(53);
 
 					updateCellPreserveStyle(row, 4, record.getR54_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR54_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R54_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(54);
 
 					updateCellPreserveStyle(row, 4, record.getR55_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR55_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R55_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(55);
 
 					updateCellPreserveStyle(row, 4, record.getR56_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR56_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R56_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(56);
 
 					updateCellPreserveStyle(row, 4, record.getR57_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR57_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R57_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(57);
 
 					updateCellPreserveStyle(row, 4, record.getR58_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR58_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R58_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(58);
 
 					updateCellPreserveStyle(row, 4, record.getR59_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR59_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R59_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(59);
 
 					progressMap.put(jobId, 90);
 					updateCellPreserveStyle(row, 4, record.getR60_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR60_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R60_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(60);
 
 					updateCellPreserveStyle(row, 4, record.getR61_LFI_RESP(), null, createHelper);
-					updateCellPreserveStyle(row, 5, record.getR61_EVID_PRO_LFI(), null, createHelper);
+					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R61_EVID_PRO_LFI"), null, createHelper);
 
 				}
 				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -5009,15 +5015,50 @@ public class RT_MC_TABLE_ALL_Service {
 
 	}
 
+	private String buildDisplayValueWithFiles(List<RecordMetadataProjection> records, String name) {
+		RecordMetadataProjection record = records.stream().filter(d -> name.equals(d.getCellName())).findFirst()
+				.orElse(null);
+		StringBuilder sb = new StringBuilder();
+		if (record != null) {
+
+			sb.append(record.getDataValue() != null ? record.getDataValue() : "");
+
+			List<String> fileNames = Arrays.asList(record.getFileName1(), record.getFileName2(), record.getFileName3(),
+					record.getFileName4(), record.getFileName5(), record.getFileName6(), record.getFileName7(),
+					record.getFileName8(), record.getFileName9(), record.getFileName10());
+
+			List<String> nonBlank = fileNames.stream().filter(fn -> fn != null && !fn.trim().isEmpty())
+					.map(String::trim).map(this::stripExtension).collect(Collectors.toList());
+
+			if (!nonBlank.isEmpty()) {
+				sb.append("\n\n").append(String.join("\n", nonBlank));
+			}
+		}
+		return sb.toString();
+	}
+
+	private String stripExtension(String fileName) {
+		int lastDot = fileName.lastIndexOf('.');
+		return (lastDot > 0) ? fileName.substring(0, lastDot) : fileName;
+	}
+
 	private void updateCellPreserveStyle(Row row, int colIndex, Object value, String formatStr, CreationHelper helper) {
 		Cell cell = (row.getCell(colIndex) != null) ? row.getCell(colIndex) : row.createCell(colIndex);
 
-		// System.out.println("value : " + value);
+		boolean needsWrap = value != null && value.toString().contains("\n");
 
 		if (formatStr != null && !formatStr.isEmpty()) {
 			CellStyle newStyle = row.getSheet().getWorkbook().createCellStyle();
 			newStyle.cloneStyleFrom(cell.getCellStyle());
 			newStyle.setDataFormat(helper.createDataFormat().getFormat(formatStr));
+			if (needsWrap) {
+				newStyle.setWrapText(true);
+			}
+			cell.setCellStyle(newStyle);
+		} else if (needsWrap) {
+			CellStyle newStyle = row.getSheet().getWorkbook().createCellStyle();
+			newStyle.cloneStyleFrom(cell.getCellStyle());
+			newStyle.setWrapText(true);
 			cell.setCellStyle(newStyle);
 		}
 

@@ -1018,7 +1018,7 @@ body {
 }
 
 .role-page-header .float-left .role-btn.active {
-	background: #E66E00 !important;
+	background: #FF7B00 !important;
 	color: #ffffff !important;
 	z-index: 2;
 }
@@ -1098,7 +1098,7 @@ body {
 
 /* Ensure the table wrapper allows scrolling */
 .table-responsive {
-	max-height: calc(100vh - 324px);
+	max-height: calc(100vh - 300px);
 	overflow-y: auto;
 	overflow-x: auto;
 	position: relative;
@@ -2272,7 +2272,7 @@ to {
 					<button class="role-btn" onclick="navigateTodatamgrsumpage()">M/C  View
 					</button>
 				</div> -->
-				<button type="button" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}" class="role-btn" id="toggleTableBtn" onclick="toggleTable()"></button>
+				<button type="button" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM') and formmode != 'conductcultureassessment'}" class="role-btn" id="toggleTableBtn" onclick="toggleTable()"></button>
 				
 				<!-- <div class="form-group mb-0" th:if="${DEPARTMENTVALIDATION != 'YES' and mgrsummary =='NO' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
 					<button class="role-btn" onclick="navigateTodatapage()">Manager View
@@ -2282,13 +2282,13 @@ to {
 					th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C')}">
 					<select name="selecteddept" id="selecteddept"
 						onchange="filtertabledept()"
-						style="background-color: #8a5a35; color: white ! important; border: 1px solid #8a5a35; border-radius: 5px;">
+						style="background-color: transparent; color: white ! important; border: 1px solid #8a5a35; border-radius: 5px;">
 						<!-- <option style="background-color:#8a5a35; color:white;" value="" disabled>-- Select --</option> -->
-						<option style="background-color: #8a5a35; color: white;"
+						<option style="background-color: #FF7B00; color: white;"
 							th:each="option : ${md}" th:value="${option}" th:text="${option}"
 							th:selected="${option == DEPARTMENT}"></option>
 					</select> <label class="form-legend"
-						style="margin-bottom: 0px; background-color: #8a5a35; color: white ! important;">Department
+						style="margin-bottom: 0px; background-color: transparent; color: white ! important;">Department
 						:</label>
 				</div>
 			</div>
@@ -17091,10 +17091,10 @@ to {
 						th:value="${reportlist[0].BRANCH_CODE}"> <input
 						type="hidden" id="MODIFY_USERID" name="MODIFY_USERID"
 						th:value="${reportlist[0].MODIFY_USERID}">
-							<div class="report-table-wrapper" id="regularReportTable" data-screen-type="regular">
+							<div class="report-table-wrapper active-table"> 
 					<div class="table-responsive" style="overflow: auto; border: none;">
 						<table id="usertable" class="table refund-table align-middle mb-0"
-							style="width: 100%">
+							style="width: 100%;min-width:1000px">
 
 							<thead class="thead-light">
 								<tr>
@@ -17723,8 +17723,8 @@ to {
 							</tbody>
 						</table>
 					</div>
-					</div>
-					<div class="report-table-wrapper" id="mgrReportTable"
+					 </div> 
+					<!-- <div class="report-table-wrapper" id="mgrReportTable"
 						data-screen-type="manager" th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}">
 						<div class="table-responsive"
 							style="overflow: auto; border: none;">
@@ -17838,7 +17838,7 @@ to {
 								</tbody>
 							</table>
 						</div>
-					</div>
+					</div> -->
 					<div class="card-footer text-center"
 						style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); padding-bottom: 10px; padding-top: 3px">
 						<button type="button" class="role-btn" id="bottomSaveBtn"
@@ -18169,12 +18169,12 @@ to {
 						data-dismiss="modal" style="white-space: nowrap;">Close</button>
 
 					<button type="button" id="btn-mgr-send-revisions"
-						class="btn btn-danger"
+						class="role-btn"
 						style="font-weight: 600; white-space: nowrap;">Send
 						Revisions</button>
 
 					<button type="button" id="btn-mgr-verify-all"
-						class="btn btn-success"
+						class="role-btn"
 						style="font-weight: 600; white-space: nowrap;">Verify
 						</button>
 
@@ -18233,15 +18233,20 @@ to {
                     </h6>
                 </div>
 
-                <div>
+              <div>
                     <label style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600;">Remarks</label>
-                    <textarea id="cca-demo-textarea" style="width: 100%; height: 160px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Enter specific CCA details here..."></textarea>
+                    <textarea id="cca-demo-textarea" style="width: 100%; height: 100px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Enter details here..."></textarea>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <label style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600;">Checker Justification</label>
+                    <textarea id="cca-demo-checker-justification" style="width: 100%; height: 80px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical;" placeholder="Mandatory when verifying or reverting..."></textarea>
                 </div>
             </div>
 
             <div class="modal-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px;">
-                <button type="button" class="role-btn" data-dismiss="modal" style="background-color: #6c757d; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                <button type="button" class="role-btn" id="btn-save-cca-special" style="background-color: #0056b3; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Changes</button>
+                <button type="button" class="role-btn" data-dismiss="modal" >Cancel</button>
+                <button type="button" class="role-btn" id="btn-save-cca-special">Save Changes</button>
             </div>
         </div>
     </div>
@@ -18252,7 +18257,7 @@ to {
             
             <div class="menu-title-header" style="padding: 15px 20px; background-color: #17a2b8;">
                 <div class="modal-title" style="text-align: left; color: white; margin: 0; font-weight: bold; font-size: 18px;">
-                    CCA Standard Record
+                    Evidence to be provided by LFI
                 </div>
             </div>
 
@@ -18269,10 +18274,14 @@ to {
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
-                        <div style="display: flex; flex-direction: column;">
+                      <div style="display: flex; flex-direction: column;">
                             <h5 style="font-size: 15px; font-weight: 600; margin: 0 0 15px 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">Data Entry</h5>
-                            <label style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600; display: block;">Value / Remarks</label>
-                            <textarea id="cca-alt-input" style="flex-grow: 1; width: 100%; min-height: 280px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: none; font-family: inherit;" placeholder="Enter value or detailed remarks..."></textarea>
+
+                            <label style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600; display: block;">Remarks</label>
+                            <textarea id="cca-alt-input" style="flex-grow: 1; width: 100%; min-height: 120px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: none; font-family: inherit; margin-bottom: 15px;" placeholder="Enter details here..."></textarea>
+                            
+                            <label style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600; display: block;">Checker Justification</label>
+                            <textarea id="cca-alt-checker-justification" style="width: 100%; min-height: 80px; padding: 12px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none; resize: vertical; font-family: inherit;" placeholder="Mandatory when verifying or reverting..."></textarea>
                         </div>
 
                         <div style="display: flex; flex-direction: column;">
@@ -18316,10 +18325,10 @@ to {
             </div>
 
             <div class="modal-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 15px 30px; display: flex; justify-content: flex-end; gap: 12px;">
-                <button type="button" class="role-btn" data-dismiss="modal" style="background-color: #6c757d; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 14px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#5a6268';" onmouseout="this.style.backgroundColor='#6c757d';">
+                <button type="button" class="role-btn" data-dismiss="modal" >
                     Cancel
                 </button>
-                <button type="button" class="role-btn" id="btn-save-cca-alt" style="background-color: #17a2b8; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#138496';" onmouseout="this.style.backgroundColor='#17a2b8';">
+                <button type="button" class="role-btn" id="btn-save-cca-alt">
                     Save CCA Data
                 </button>
             </div>
@@ -18416,21 +18425,30 @@ to {
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
 	let formmode = /*[[${formmode}]]*/ null;
+	let timeperiod = /*[[${timeperiod}]]*/ null;
+	let reportDate = /*[[${REPORT_DATE}]]*/ null;
 	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&deptvalid=YES';
+	window.location.href = 'RT_MC_Reports?formmode='+formmode+'&deptvalid=YES'+'&reportDate='+reportDate+'&timeperiod='+timeperiod;
 	
 }
 
 function navigateTodatapage(){
 	let formmode = /*[[${formmode}]]*/ null;
+	let timeperiod = /*[[${timeperiod}]]*/ null;
+	let reportDate = /*[[${REPORT_DATE}]]*/ null;
+	if(timeperiod!=='YEARLY' && formmode==='conductcultureassessment'){
+		formmode='bankinformation';
+	}
 	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-	 window.location.href = 'RT_MC_Reports?formmode='+formmode;
+	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&reportDate='+reportDate+'&timeperiod='+timeperiod;
 	
 }
 function navigateTodatamgrsumpage(){
 	let formmode = /*[[${formmode}]]*/ null;
+	let timeperiod = /*[[${timeperiod}]]*/ null;
+	let reportDate = /*[[${REPORT_DATE}]]*/ null;
 	document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&mgrsummary=NO';
+	 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&mgrsummary=NO'+'&reportDate='+reportDate+'&timeperiod='+timeperiod;
 	
 }
 </script>
@@ -18444,8 +18462,10 @@ function navigateTodatamgrsumpage(){
 		
 	}
 	function navigateToTabdept(tabId) {
+		const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+		const timeperiod = /*[[${timeperiod}]]*/ '';
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&deptvalid=YES';		
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&deptvalid=YES'+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod;		
 	}
 	
 	function handleClick(tabId) {
@@ -18490,6 +18510,8 @@ function navigateTodatamgrsumpage(){
 	}
 	
 	function filtertabledept(){		
+		const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+		const timeperiod = /*[[${timeperiod}]]*/ '';
 		const params = new URLSearchParams(window.location.search);
 		let formmode = params.get('formmode');		
 		if(formmode===null){
@@ -18499,7 +18521,7 @@ function navigateTodatamgrsumpage(){
 		let selecteddeptvalue= selecteddept.value;
 		
 		console.log("formmode : "+ formmode +" selecteddeptvalue : "+selecteddeptvalue);		
-		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&dept='+selecteddeptvalue;		
+		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&dept='+selecteddeptvalue+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod;;		
 	}
 		
 </script>
@@ -18562,7 +18584,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     content.setAttribute('data-owner', wrapper.id); 
 
                     const allLabel = document.createElement('label');
-                    allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="accent-color: #E66E00;">ALL`;
+                    allLabel.innerHTML = `<input type="checkbox" value="ALL" class="select-all-cb" style="accent-color: #E67E00;">ALL`;
                     content.appendChild(allLabel);
 
                     const naLabel = document.createElement('label');
@@ -19512,17 +19534,37 @@ document.addEventListener("DOMContentLoaded", function() {
         chooseFileBtn.style.padding = '4px 10px';
         chooseFileBtn.innerHTML = '<span>&#8682;</span> Browse...';
 
+        const nameWrapper = document.createElement('div');
+        nameWrapper.style.display = 'none';
+        nameWrapper.style.flex = '1';
+        nameWrapper.style.alignItems = 'stretch'; 
+        
         const fileNameInput = document.createElement('input');
         fileNameInput.type = 'text';
         fileNameInput.className = 'cca-editable-filename';
-        fileNameInput.style.display = 'none'; 
         fileNameInput.style.flex = '1';
         fileNameInput.style.padding = '4px 8px';
         fileNameInput.style.fontSize = '13px';
         fileNameInput.style.border = '1px solid #ced4da';
-        fileNameInput.style.borderRadius = '4px';
+        fileNameInput.style.borderRadius = '4px 0 0 4px';
         fileNameInput.style.outline = 'none';
+        fileNameInput.style.minWidth = '0';
         fileNameInput.title = "You can edit this file name";
+
+        const fileExtSpan = document.createElement('span');
+        fileExtSpan.className = 'cca-file-ext';
+        fileExtSpan.style.padding = '4px 8px';
+        fileExtSpan.style.backgroundColor = '#e9ecef';
+        fileExtSpan.style.border = '1px solid #ced4da';
+        fileExtSpan.style.borderLeft = 'none';
+        fileExtSpan.style.borderRadius = '0 4px 4px 0';
+        fileExtSpan.style.color = '#495057';
+        fileExtSpan.style.fontSize = '13px';
+        fileExtSpan.style.display = 'flex';
+        fileExtSpan.style.alignItems = 'center';
+
+        nameWrapper.appendChild(fileNameInput);
+        nameWrapper.appendChild(fileExtSpan);
 
         const previewBtn = document.createElement('button');
         previewBtn.type = 'button';
@@ -19545,8 +19587,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 const selectedFile = fileInput.files[0];
                 chooseFileBtn.style.display = 'none';
                 
-                fileNameInput.style.display = 'block';
-                fileNameInput.value = selectedFile.name; 
+                nameWrapper.style.display = 'flex'; 
+                
+                const lastDotIndex = selectedFile.name.lastIndexOf('.');
+                if (lastDotIndex !== -1) {
+                    fileNameInput.value = selectedFile.name.substring(0, lastDotIndex);
+                    fileExtSpan.innerText = selectedFile.name.substring(lastDotIndex);
+                } else {
+                    fileNameInput.value = selectedFile.name;
+                    fileExtSpan.innerText = '';
+                }
                 
                 previewBtn.style.display = 'inline-block';
                 removeBtn.style.display = 'inline-block';
@@ -19560,15 +19610,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         removeBtn.addEventListener('click', function() {
-            if (ccaCurrentlyPreviewedInput === fileInput) {
-                closeCcaPreview();
-            }
+            if (ccaCurrentlyPreviewedInput === fileInput) closeCcaPreview();
 
             const totalRows = document.querySelectorAll('.cca-file-input-row').length;
             if (totalRows === 1) {
                 fileInput.value = '';
                 chooseFileBtn.style.display = 'block';
-                fileNameInput.style.display = 'none';
+                nameWrapper.style.display = 'none';
                 previewBtn.style.display = 'none';
                 removeBtn.style.display = 'none';
             } else {
@@ -19584,7 +19632,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         newRow.appendChild(fileInput);
         newRow.appendChild(chooseFileBtn);
-        newRow.appendChild(fileNameInput);
+        newRow.appendChild(nameWrapper);
         newRow.appendChild(previewBtn);
         newRow.appendChild(removeBtn);
         ccaFileWrapper.appendChild(newRow);
@@ -19917,6 +19965,126 @@ document.addEventListener("DOMContentLoaded", function() {
             return false;
         };
 
+        if (formMode === 'conductcultureassessment') {
+        	document.querySelectorAll('input[type="text"].input-and-select').forEach(input => {
+                const textarea = document.createElement('textarea');
+                textarea.id = input.id;
+                textarea.name = input.name;
+                textarea.className = input.className;
+                textarea.value = input.value;
+                textarea.readOnly = input.readOnly;
+                
+                textarea.rows = 2;
+                textarea.style.width = '100%';
+                textarea.style.height = '100%';
+                textarea.style.minHeight = '50px'; 
+                textarea.style.resize = 'none';
+                textarea.style.boxSizing = 'border-box';
+                textarea.style.fontFamily = 'inherit';
+                textarea.style.padding = '6px';
+                textarea.style.overflow = 'hidden';
+                textarea.style.cursor = 'pointer';
+                
+                Array.from(input.attributes).forEach(attr => {
+                    if (attr.name.startsWith('data-')) {
+                        textarea.setAttribute(attr.name, attr.value);
+                    }
+                });
+
+                const autoResize = function() {
+                    const row = this.closest('tr');
+                    
+                    if (!row) {
+                        this.style.height = 'auto';
+                        this.style.height = this.scrollHeight + 'px';
+                        return;
+                    }
+                    
+                    const rowTextareas = row.querySelectorAll('textarea');
+                    let maxHeight = 50;
+                    
+                    rowTextareas.forEach(ta => ta.style.height = 'auto');
+                    
+                    rowTextareas.forEach(ta => {
+                        if (ta.scrollHeight > maxHeight) {
+                            maxHeight = ta.scrollHeight;
+                        }
+                    });
+                    
+                    rowTextareas.forEach(ta => {
+                        ta.style.height = maxHeight + 'px';
+                    });
+                };
+                
+                textarea.addEventListener('input', autoResize);
+
+                input.parentNode.replaceChild(textarea, input);
+                
+                setTimeout(() => autoResize.call(textarea), 0);
+            });
+            function autoSizeCcaTextarea(textarea) {
+                const lineCount = (textarea.value.match(/\n/g) || []).length + 1;
+                textarea.rows = Math.max(3, Math.min(lineCount, 12));
+            }
+            
+            function populateCcaSavedFileNames() {
+                const ccaCells = document.querySelectorAll('.input-and-select:not(.remarks-input)');
+
+                ccaCells.forEach(cell => {
+                    const cellName = cell.name || cell.id;
+                    if (!cellName) return;
+
+                    const isDemo = cellName.endsWith('_LFI_RESP');
+                    if (isDemo) return;
+
+                    const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}&timeperiod=${encodeURIComponent(timeperiod)}`;
+
+                    fetch(url)
+                        .then(res => {
+                            if (res.status === 404) return null;
+                            if (!res.ok) throw new Error("Server Error");
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (!data) return;
+                            const cur = data.currentRecord;
+                            if (!cur) return;
+
+                            const fileSource = cur;
+                            let displayVal = cur.dataValue !== null ? cur.dataValue : "";
+
+                            const rawFiles = [
+                                fileSource.fileName1, fileSource.fileName2, fileSource.fileName3,
+                                fileSource.fileName4, fileSource.fileName5, fileSource.fileName6,
+                                fileSource.fileName7, fileSource.fileName8, fileSource.fileName9,
+                                fileSource.fileName10
+                            ];
+
+                            const fileNames = rawFiles
+                            .filter(name => name && name.trim() !== '')
+                            .map(name => {
+                                let cleanName = name.trim();
+                                const lastDot = cleanName.lastIndexOf('.');
+                                if (lastDot !== -1) {
+                                    cleanName = cleanName.substring(0, lastDot);
+                                }
+                                return cleanName;
+                            });
+
+                        if (fileNames.length > 0) {
+                            displayVal += '\n\n' + fileNames.join('\n');
+                        }
+
+                        cell.value = displayVal;
+                        cell.dispatchEvent(new Event('input'));
+                        })
+                        .catch(err => console.log("Could not preload saved files for " + cellName, err));
+                });
+            }
+
+            populateCcaSavedFileNames();
+        }
+
         const inputs = document.querySelectorAll('.input-and-select, .remarks-input');
 
         inputs.forEach(input => {
@@ -19932,9 +20100,10 @@ document.addEventListener("DOMContentLoaded", function() {
             	const wrapper = document.createElement('div');
             	wrapper.className = 'dynamic-input-wrapper';
             	wrapper.style.display = 'flex';
-            	wrapper.style.alignItems = 'center';
+            	wrapper.style.alignItems = (input.tagName === 'TEXTAREA') ? 'stretch' : 'center';
             	wrapper.style.gap = '5px';
             	wrapper.style.width = '100%';    
+                wrapper.style.height = '100%';
             	wrapper.style.overflow = 'hidden';  
             	input.parentNode.insertBefore(wrapper, input);
             	wrapper.appendChild(input);
@@ -19956,8 +20125,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 iconBtn.style.flexShrink = '0';
                 
                 iconBtn.style.color = '#000000';
+                iconBtn.style.alignSelf = 'center';
                 iconBtn.style.opacity = '0.7';
-
+                if (input.tagName === 'TEXTAREA') {
+                    iconBtn.style.alignSelf = 'flex-start';
+                    iconBtn.style.marginTop = '6px';
+                }
                 let skipIcon = false;
 
                 const eyeSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.2s;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -20002,6 +20175,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     wrapper.appendChild(iconBtn);
                 }
                 wrapper.addEventListener('click', function(e) {
+                	if (window.isMgrSelecting) {
+                        if (e.target !== input) {
+                            input.click(); 
+                        }
+                        return; 
+                    }
                     e.preventDefault();
                     currentEditingInput = input;
                     const td = input.closest('td');
@@ -20080,25 +20259,300 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     
                     if (formMode === 'conductcultureassessment') {
-                        if (cellName.endsWith('_LFI_RESP')) {
-                        	document.getElementById('cca-demo-header').innerText = headerText;
-                            document.getElementById('cca-demo-col2').innerText = currentRowCol2Value;
-                            document.getElementById('cca-demo-textarea').value = ''; 
-                            $('#ccaDemoModal').modal('show');
-                        } else {
-                            document.getElementById('cca-alt-header').innerText = headerText;
-                            document.getElementById('cca-alt-col2').innerText = currentRowCol2Value;
-                            document.getElementById('cca-alt-input').value = '';
-                            
-                            ccaFileWrapper.innerHTML = '';
-                            ccaCurrentFileCount = 0;
-                            createCcaFileInputRow(); 
-                            
-                            $('#ccaAlternativeModal').modal('show');
+                        const isDemo = cellName.endsWith('_LFI_RESP');
+                        const modalId = isDemo ? 'ccaDemoModal' : 'ccaAlternativeModal';
+                        const inputId = isDemo ? 'cca-demo-textarea' : 'cca-alt-input';
+                        const headerId = isDemo ? 'cca-demo-header' : 'cca-alt-header';
+                        const col2Id = isDemo ? 'cca-demo-col2' : 'cca-alt-col2';
+                        
+                        document.getElementById(headerId).innerText = headerText;
+                        document.getElementById(col2Id).innerText = currentRowCol2Value;
+                        const targetModal = document.getElementById(modalId);
+                        if (targetModal) {
+                            const oldBtns = targetModal.querySelector('.cca-mc-buttons');
+                            if (oldBtns) oldBtns.innerHTML = '';
+                            const oldStatus = targetModal.querySelector('.cca-mc-status');
+                            if (oldStatus) oldStatus.style.display = 'none';
                         }
+                        
+                        const mainInputEl = document.getElementById(inputId);
+                        mainInputEl.value = 'Fetching data...';
+                        mainInputEl.readOnly = true; 
+                        
+                        const checkerJustId = isDemo ? 'cca-demo-checker-justification' : 'cca-alt-checker-justification';
+                        const checkerJustEl = document.getElementById(checkerJustId);
+                        if (checkerJustEl) {
+                            checkerJustEl.value = 'Fetching...';
+                            checkerJustEl.readOnly = true;
+                        }
+                        
+                        if (!isDemo && ccaFileWrapper) {
+                            ccaFileWrapper.innerHTML = `
+                                <div style="padding: 15px; text-align: center; color: #6c757d; background-color: #f8f9fa; border: 1px dashed #ced4da; border-radius: 4px;">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div> 
+                                    <span style="margin-left: 8px; font-size: 13px;">Fetching data...</span>
+                                </div>`;
+                        }
+
+                        const oldAltBtn = document.getElementById('btn-save-cca-alt');
+                        const oldDemoBtn = document.getElementById('btn-save-cca-special');
+                        if (oldAltBtn) oldAltBtn.style.display = 'none';
+                        if (oldDemoBtn) oldDemoBtn.style.display = 'none';
+
+                        $(`#${modalId}`).modal('show');
+
+                        const url = `./fetchdatarecord?formMode=${encodeURIComponent(formMode)}&reportDate=${encodeURIComponent(contextReportDate)}&cellName=${encodeURIComponent(cellName)}&timeperiod=${encodeURIComponent(timeperiod)}`;
+                        
+                        fetch(url)
+                        .then(response => {
+                            if (response.status === 404) return null;
+                            if (!response.ok) throw new Error("Server Error");
+                            return response.json();
+                        })
+                        .then(data => {
+                            const cur = data ? data.currentRecord : null;
+                            const fileSource = cur ? cur : data;
+
+                            let makerIsLocked = false; 
+                            const verFlg = cur ? (cur.verifyFlg || '') : '';
+                            const modFlg = cur ? (cur.modifyFlg || '') : '';
+                            const remarks = cur ? (cur.remarks || '') : '';
+
+                            if (!isChecker && !isManager && cur) {
+                            	if (verFlg === 'Y' || verFlg === 'MR' || (modFlg === 'C' && verFlg !== 'N')) {
+                                    makerIsLocked = true;
+                                }
+                            }
+                            const checkerJustId = isDemo ? 'cca-demo-checker-justification' : 'cca-alt-checker-justification';
+                            const checkerJustEl = document.getElementById(checkerJustId);
+
+                            if (checkerJustEl) checkerJustEl.value = cur ? (cur.checkerJustification || '') : '';
+
+                            if (isChecker) {
+                                if (checkerJustEl) checkerJustEl.readOnly = (verFlg === 'Y');
+                            } else {
+                                if (checkerJustEl) checkerJustEl.readOnly = true;
+                            }
+
+                            let valToShow = "";
+                            if (cur) {
+                                valToShow = (cur.dataValue !== null) ? cur.dataValue : "";
+                            } else {
+                                valToShow = input.value;
+                            }
+                            
+                            document.getElementById(inputId).value = valToShow;
+                            document.getElementById(inputId).readOnly = (isChecker || isManager || makerIsLocked);
+
+                            if (!isDemo && ccaFileWrapper) {
+                                ccaFileWrapper.innerHTML = '';
+                                ccaCurrentFileCount = 0;
+                                let hasSavedFiles = false;
+
+                                if (fileSource) {
+                                    const rawFiles = [
+                                        { index: 1, name: fileSource.fileName1 }, { index: 2, name: fileSource.fileName2 },
+                                        { index: 3, name: fileSource.fileName3 }, { index: 4, name: fileSource.fileName4 },
+                                        { index: 5, name: fileSource.fileName5 }, { index: 6, name: fileSource.fileName6 },
+                                        { index: 7, name: fileSource.fileName7 }, { index: 8, name: fileSource.fileName8 },
+                                        { index: 9, name: fileSource.fileName9 }, { index: 10, name: fileSource.fileName10 }
+                                    ];
+
+                                    rawFiles.forEach(fileMeta => {
+                                        if (fileMeta.name && fileMeta.name.trim() !== '') {
+                                            hasSavedFiles = true;
+                                            document.getElementById('cca-add-file-btn').click(); 
+                                            const lastRow = ccaFileWrapper.lastElementChild;
+                                            lastRow.dataset.savedIndex = fileMeta.index;
+
+                                            const chooseBtn = lastRow.querySelector('.custom-file-btn');
+                                            const nameInput = lastRow.querySelector('.cca-editable-filename');
+                                            const extSpan = lastRow.querySelector('.cca-file-ext');
+                                            const nameWrapper = nameInput.parentElement;
+                                            const previewBtn = lastRow.querySelector('.preview-btn');
+                                            const removeBtn = lastRow.querySelector('.file-remove-btn');
+
+                                            chooseBtn.style.display = 'none';
+                                            nameWrapper.style.display = 'flex'; 
+                                            
+                                            const lastDot = fileMeta.name.lastIndexOf('.');
+                                            if (lastDot !== -1) {
+                                                nameInput.value = fileMeta.name.substring(0, lastDot);
+                                                extSpan.innerText = fileMeta.name.substring(lastDot);
+                                            } else {
+                                                nameInput.value = fileMeta.name;
+                                                extSpan.innerText = '';
+                                            }
+                                            
+                                            nameInput.title = "Saved File";
+
+                                            if (isChecker || isManager || makerIsLocked) {
+                                                nameInput.readOnly = true; 
+                                                nameInput.style.backgroundColor = "#e9ecef";
+                                                removeBtn.style.display = 'none';
+                                            } else {
+                                                nameInput.readOnly = false; 
+                                                nameInput.style.backgroundColor = "#ffffff";
+                                                removeBtn.style.display = 'inline-block';
+                                            }
+                                            
+                                            previewBtn.style.display = 'inline-block';
+                                            previewBtn.onclick = function(e) {
+                                                e.preventDefault();
+                                                ccaModalDialog.classList.add('preview-active');
+                                                ccaPreviewWindow.style.alignItems = 'center';
+                                                ccaPreviewWindow.style.justifyContent = 'center';
+                                                ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem; margin-bottom: 10px;"></div><h6 style="color: #333; margin: 0;">Generating Preview...</h6></div>`;
+
+                                                fetch(`./download-file?id=${fileSource.id}&fileIndex=${fileMeta.index}`)
+                                                .then(res => {
+                                                    if (!res.ok) throw new Error("Could not download file");
+                                                    const contentType = res.headers.get('content-type');
+                                                    return res.blob().then(blob => ({ blob, contentType }));
+                                                })
+                                                .then(({ blob, contentType }) => {
+                                                    const downloadedFile = new File([blob], fileMeta.name, { type: contentType });
+                                                    renderCcaPreview(downloadedFile); 
+                                                })
+                                                .catch(err => {
+                                                    console.error("Download error:", err);
+                                                    ccaPreviewWindow.innerHTML = `<span style="color: red;">Failed to load file preview.</span>`;
+                                                });
+                                            };
+                                        }
+                                    });
+                                }
+
+                                if (!hasSavedFiles) {
+                                    if (!isChecker && !isManager && !makerIsLocked) {
+                                        createCcaFileInputRow(); 
+                                    } else {
+                                        ccaFileWrapper.innerHTML = `
+                                            <div style="padding: 15px; text-align: center; background-color: #f8f9fa; border: 1px dashed #ced4da; border-radius: 4px;">
+                                                <span style="color: #6c757d; font-size: 13px; font-style: italic;">No files were attached to this record.</span>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            }
+
+                            const modalElem = document.getElementById(modalId);
+                            if (modalElem) {
+                                const footer = modalElem.querySelector('.modal-footer');
+                                
+                                if (footer) {
+                                    footer.style.justifyContent = 'space-between';
+                                    footer.style.display = 'flex';
+                                    footer.style.alignItems = 'center';
+                                }
+
+                                let statusBanner = modalElem.querySelector('.cca-mc-status');
+                                if (!statusBanner && footer) {
+                                    statusBanner = document.createElement('div');
+                                    statusBanner.className = 'cca-mc-status';
+                                    statusBanner.style.fontSize = '14px'; 
+                                    statusBanner.style.fontWeight = '500';
+                                    statusBanner.style.flex = '1';
+                                    statusBanner.style.textAlign = 'left';
+                                    statusBanner.style.margin = '0 15px'; 
+                                    footer.appendChild(statusBanner);
+                                }
+
+                                let btnContainer = modalElem.querySelector('.cca-mc-buttons');
+                                if (!btnContainer && footer) {
+                                    btnContainer = document.createElement('div');
+                                    btnContainer.className = 'cca-mc-buttons';
+                                    btnContainer.style.display = 'flex';
+                                    btnContainer.style.gap = '8px';
+                                    footer.appendChild(btnContainer); 
+                                }
+
+                                btnContainer.innerHTML = '';
+                                statusBanner.style.display = 'inline-block';
+                                statusBanner.className = 'cca-mc-status';
+
+                                const createBtn = (text, btnClass, vFlg, mFlg) => {
+                                    const btn = document.createElement('button');
+                                    btn.className = `btn ${btnClass}`;
+                                    btn.innerText = text;
+                                    btn.onclick = function(e) {
+                                        e.preventDefault();
+                                        submitCcaRecord(isDemo, vFlg, mFlg, this);
+                                    };
+                                    btnContainer.appendChild(btn);
+                                };
+
+                                if (isManager) {
+                                    if (verFlg === 'Y') {
+                                        statusBanner.innerText = 'Record is Verified.';
+                                        statusBanner.style.color = '#28a745';
+                                    } else if (verFlg === 'N') {
+                                        statusBanner.innerText = 'Record was Reverted.';
+                                        statusBanner.style.color = '#dc3545';
+                                    } else if (verFlg === 'MR') {
+                                        statusBanner.innerText = 'Marked for Revision.';
+                                        statusBanner.style.color = '#f0ad4e';
+                                    } else {
+                                        statusBanner.innerText = 'Pending Checker Review.';
+                                        statusBanner.style.color = '#17a2b8';
+                                    }
+                                } else if (isChecker) {
+                                    if (modFlg !== 'C') {
+                                        statusBanner.innerText = 'Maker needs to finalize this record.';
+                                        statusBanner.style.color = '#dc3545';
+                                    } else if (verFlg === 'Y') {
+                                        if (globalVerifyFlg === 'Y') {
+                                            statusBanner.innerText = 'Manager Approved. Record is Locked.';
+                                        } else {
+                                            statusBanner.innerText = 'You have Verified this record.';
+                                            createBtn('Revoke', 'role-btn', 'REVOKE_CHECKER', 'C');
+                                        }
+                                        statusBanner.style.color = '#28a745';
+                                    } else if (verFlg === 'N') {
+                                        statusBanner.innerText = 'Record has been Reverted.';
+                                        statusBanner.style.color = '#dc3545';
+                                    } else if (verFlg === 'MR') {
+                                        statusBanner.innerHTML = `Manager requested revision. Please Verify or Revert.`;
+                                        statusBanner.style.color = '#f0ad4e';
+                                        createBtn('Verify', 'role-btn', 'Y', 'C');
+                                        createBtn('Revert', 'role-btn', 'N', 'C');
+                                    } else {
+                                        statusBanner.style.display = 'none';
+                                        createBtn('Verify', 'role-btn', 'Y', 'C');
+                                        createBtn('Revert', 'role-btn', 'N', 'C');
+                                    }
+                                } else {
+                                    if (makerIsLocked) {
+                                        if (modFlg === 'C' && verFlg === '') {
+                                            statusBanner.innerText = 'Sent to Checker. Pending verification.';
+                                            statusBanner.style.color = '#17a2b8';
+                                            createBtn('Revoke', 'role-btn', 'REVOKE_MAKER', '');
+                                        } else if (verFlg === 'Y') {
+                                            statusBanner.innerText = 'Record is Verified. Editing is disabled.';
+                                            statusBanner.style.color = '#28a745';
+                                        } else if (verFlg === 'MR') {
+                                            statusBanner.innerText = 'Record flagged by Manager. Pending Checker review.';
+                                            statusBanner.style.color = '#f0ad4e';
+                                        }
+                                    } else {
+                                        if (verFlg === 'N') {
+                                            statusBanner.innerHTML = `Record has been Reverted.`;
+                                            statusBanner.style.color = '#dc3545';
+                                        } else {
+                                            statusBanner.style.display = 'none';
+                                        }
+                                        createBtn('Save Changes', 'btn-primary', '', '');
+                                        createBtn('Proceed to Verify', 'btn-primary', '', 'C');
+                                    }
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Failed to fetch CCA data:", err);
+                        });
+
                         return; 
                     }
-
                     const descSpan = document.getElementById('modal-col2-val');
                     descSpan.innerHTML = '<span class="spinner-border spinner-border-sm text-primary" role="status"></span> Fetching...';
                     descSpan.style.color = '#17a2b8';
@@ -20663,7 +21117,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     
                     if (currentEditingInput) {
                         
-                        if (currentEditingInput.tagName === 'INPUT') {
+                        if (currentEditingInput.tagName === 'INPUT' || currentEditingInput.tagName === 'TEXTAREA') {
                             currentEditingInput.value = finalDataValue;
                         } else {
                             currentEditingInput.innerText = finalDataValue;
@@ -20717,7 +21171,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         }
                         
-                        if (currentEditingInput.tagName === 'INPUT') {
+                        if (currentEditingInput.tagName === 'INPUT' || currentEditingInput.tagName === 'TEXTAREA') {
                             currentEditingInput.dispatchEvent(new Event('input', { bubbles: true }));
                         }
                     } else {
@@ -20919,7 +21373,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     if (flag !== 'Y' && flag !== 'MR') {
                         isReadyForManager = false;
-                        console.error("Verify Blocked: Input [" + cellName + "] is not verified. Current Flag value: " + flag);
+                        //console.error("Verify Blocked: Input [" + cellName + "] is not verified. Current Flag value: " + flag);
                     }
                 }
             });
@@ -21031,12 +21485,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 e.preventDefault();
                 
+                const wrapper = this.closest('.dynamic-input-wrapper');
+                
                 if (this.classList.contains('mr-selected')) {
                     this.classList.remove('mr-selected');
                     this.classList.add('mr-deselected');
+                    if (wrapper) wrapper.style.backgroundColor = 'transparent';
                 } else {
                     this.classList.remove('mr-deselected');
                     this.classList.add('mr-selected');
+                    if (wrapper) wrapper.style.backgroundColor = '#f8d7da';
                 }
                 
                 selectedMrCells = [];
@@ -21095,10 +21553,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (saveBtn) { 
             if (selectedMrCells.length > 0) {
                 saveBtn.innerText = "Save Revisions";
-                saveBtn.className = "btn btn-warning";
+                saveBtn.className = "role-btn";
             } else {
                 saveBtn.innerText = "Verify";
-                saveBtn.className = "btn btn-success";
+                saveBtn.className = "role-btn";
             }
         }
         updateManagerModalButtons();
@@ -21160,25 +21618,67 @@ document.addEventListener("DOMContentLoaded", function() {
             executeManagerAction('VERIFY_ALL', this);
         }
     });
-    const ccaAltSaveBtn = document.getElementById('btn-save-cca-alt');
-    if (ccaAltSaveBtn) {
-        ccaAltSaveBtn.addEventListener('click', function() {
-            
-            let finalDataValue = document.getElementById('cca-alt-input').value.trim();
-            if (finalDataValue === "") finalDataValue = "0";
-            const columnHeader = document.getElementById('cca-alt-header').innerText;
-            const formData = new FormData();
-            formData.append("formMode", formMode); 
-            formData.append("reportDate", contextReportDate);
-            formData.append("columnHeader", columnHeader);
-            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
-            formData.append("dataValue", finalDataValue);
-            formData.append("productValue", document.getElementById('cca-alt-col2').innerText);
-            formData.append("timeperiod", timeperiod);
-            
-            formData.append("verifyFlg", ""); 
-            formData.append("modifyFlg", ""); 
+    window.submitCcaRecord = function(isDemo, vFlg, mFlg, btnClicked) {
+        if (!currentEditingInput) return;
 
+        let finalDataValue = "";
+        let columnHeader = "";
+        let productValue = "";
+        let activeInputField = null;
+        
+        if (isDemo) {
+            activeInputField = document.getElementById('cca-demo-textarea');
+            finalDataValue = activeInputField.value.trim();
+            columnHeader = document.getElementById('cca-demo-header').innerText;
+            productValue = document.getElementById('cca-demo-col2').innerText;
+        } else {
+            activeInputField = document.getElementById('cca-alt-input');
+            finalDataValue = activeInputField.value.trim();
+            columnHeader = document.getElementById('cca-alt-header').innerText;
+            productValue = document.getElementById('cca-alt-col2').innerText;
+        }
+
+        if (isDemo && finalDataValue === "") {
+            alert("This field is mandatory. Please enter a value before saving.");
+            if (activeInputField) activeInputField.focus();
+            return;
+        }
+        
+        const checkerJustId = isDemo ? 'cca-demo-checker-justification' : 'cca-alt-checker-justification';
+        const checkerJustEl = document.getElementById(checkerJustId);
+        const checkerJustVal = checkerJustEl ? checkerJustEl.value.trim() : "";
+
+        if (isChecker) {
+            if ((vFlg === 'Y' || vFlg === 'N') && checkerJustVal === "") {
+                alert("Checker Justification is mandatory. Please enter your justification before verifying or reverting.");
+                if (checkerJustEl) checkerJustEl.focus();
+                return;
+            }
+        }
+        const activeModalId = isDemo ? 'ccaDemoModal' : 'ccaAlternativeModal';
+        const activeModal = document.getElementById(activeModalId);
+        const remarksField = activeModal ? activeModal.querySelector('#cca-remarks-val, .cca-remarks') : null;
+        const remarksVal = remarksField ? remarksField.value.trim() : "";
+        
+        const formData = new FormData();
+        formData.append("formMode", formMode); 
+        formData.append("reportDate", contextReportDate);
+        formData.append("columnHeader", columnHeader);
+        formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
+        formData.append("cellId", currentEditingInput.id || "");
+        formData.append("dataValue", finalDataValue);
+        formData.append("rowCol2Value", productValue);
+        formData.append("productValue", productValue);
+        formData.append("timeperiod", timeperiod);
+        
+        formData.append("verifyFlg", (vFlg === 'REVOKE_MAKER' || vFlg === 'REVOKE_CHECKER') ? '' : vFlg); 
+        formData.append("modifyFlg", vFlg === 'REVOKE_MAKER' ? '' : mFlg); 
+        formData.append("source", "");
+        formData.append("justification", "");
+        formData.append("checkerJustification", checkerJustVal);
+        formData.append("remarks", "");
+
+        if (!isDemo) {
             const ccaRows = document.querySelectorAll('.cca-file-input-row');
             ccaRows.forEach(row => {
                 const input = row.querySelector('input[type="file"]');
@@ -21186,84 +21686,132 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 if (input && input.files && input.files.length > 0) {
                     const originalFile = input.files[0];
-                    const finalName = customName !== '' ? customName : originalFile.name;
+                    let finalName = customName !== '' ? customName : originalFile.name;
                     
+                    const lastDotIndex = originalFile.name.lastIndexOf('.');
+                    if (lastDotIndex !== -1) {
+                        const originalExt = originalFile.name.substring(lastDotIndex); 
+                        const customDotIndex = finalName.lastIndexOf('.');
+                        if (customDotIndex !== -1 && customDotIndex > 0) {
+                            finalName = finalName.substring(0, customDotIndex);
+                        }
+                        finalName = finalName + originalExt;
+                    }
                     const renamedFile = new File([originalFile], finalName, { type: originalFile.type });
                     formData.append("files", renamedFile);
+                } 
+                else if (row.dataset.savedIndex) {
+                    formData.append("retainedFiles", row.dataset.savedIndex);
                 }
             });
+        }
 
-            const originalBtnText = this.innerText;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
-            this.disabled = true;
+        const originalText = btnClicked.innerText;
+        btnClicked.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+        btnClicked.disabled = true;
 
-            fetch('./savedatarecord', { method: 'POST', body: formData })
-            .then(res => { if (!res.ok) throw new Error("Error"); return res.text(); })
-            .then(data => {
-                this.style.backgroundColor = '#28a745';
-                this.innerHTML = `&#10004; Saved!`;
-                setTimeout(() => {
-                    $('#ccaAlternativeModal').modal('hide');
-                    window.location.reload(); 
-                }, 1000);
-            })
-            .catch(err => {
-                alert("Failed to save CCA data.");
-                this.innerText = originalBtnText;
-                this.disabled = false;
-            });
+        fetch('./savedatarecord', { method: 'POST', body: formData })
+        .then(res => { if (!res.ok) throw new Error("Error"); return res.text(); })
+        .then(data => {
+            btnClicked.style.backgroundColor = '#28a745';
+            btnClicked.style.color = '#ffffff';
+            btnClicked.style.border = 'none';
+            btnClicked.innerHTML = `&#10004; Success`;
+            
+            setTimeout(() => {
+                if (isDemo) $('#ccaDemoModal').modal('hide');
+                else $('#ccaAlternativeModal').modal('hide');
+                
+                let tableDisplayValue = finalDataValue;
+                
+                if (!isDemo) {
+                    let fileNames = [];
+                    const ccaRows = document.querySelectorAll('.cca-file-input-row');
+                    ccaRows.forEach(row => {
+                        const nameInput = row.querySelector('.cca-editable-filename');
+                        const fileInput = row.querySelector('input[type="file"]');
+                        
+                        if (row.dataset.savedIndex || (fileInput && fileInput.files.length > 0)) {
+                            if (nameInput && nameInput.value.trim() !== '') {
+                                fileNames.push(nameInput.value.trim());
+                            }
+                        }
+                    });
+                    
+                    if (fileNames.length > 0) {
+                        if (tableDisplayValue.trim() === "") {
+                            tableDisplayValue = fileNames.join('\n');
+                        } else {
+                            tableDisplayValue += '\n\n' + fileNames.join('\n');
+                        }
+                    }                
+                }
+                
+                const actionType = (vFlg === 'REVOKE_MAKER' || vFlg === 'REVOKE_CHECKER') ? '' : vFlg;
+                
+                currentEditingInput.value = tableDisplayValue;
+                autoSizeCcaTextarea(currentEditingInput);
+                
+                const wrapper = currentEditingInput.closest('.dynamic-input-wrapper');
+                const icon = wrapper ? wrapper.querySelector('.dynamic-edit-icon') : null;
+
+                const applyInstantStyle = (bgColor, borderColor, textColor) => {
+                    currentEditingInput.style.color = textColor;
+                    if (wrapper) {
+                        wrapper.style.backgroundColor = bgColor;
+                        wrapper.style.border = `1px solid ${borderColor}`;
+                        wrapper.style.borderRadius = '4px';
+                        currentEditingInput.style.backgroundColor = 'transparent';
+                        currentEditingInput.style.border = 'none';
+                        currentEditingInput.style.outline = 'none';
+                    } else {
+                        currentEditingInput.style.backgroundColor = bgColor;
+                        currentEditingInput.style.border = `1px solid ${borderColor}`;
+                    }
+                    if (icon) {
+                        icon.style.color = textColor;
+                        icon.style.opacity = '1';
+                    }
+                };
+
+                currentEditingInput.classList.remove('already-mr');
+                
+                if (actionType === 'Y') {
+                    currentEditingInput.title = "Verified by Checker";
+                    applyInstantStyle('#5cb85c', '#4cae4c', '#ffffff');
+                } else if (actionType === 'N') {
+                    currentEditingInput.title = "Reverted by Checker";
+                    applyInstantStyle('#d9534f', '#d43f3a', '#ffffff');
+                } else {
+                    currentEditingInput.title = "Pending Verification";
+                    currentEditingInput.style.color = '#495057';
+                    
+                    if (wrapper) {
+                        wrapper.style.backgroundColor = '#ffffff';
+                        wrapper.style.border = '1px solid #ced4da';
+                        currentEditingInput.style.backgroundColor = 'transparent';
+                    } else {
+                        currentEditingInput.style.backgroundColor = 'transparent';
+                        currentEditingInput.style.border = '1px solid #ced4da';
+                    }
+                    if (icon) {
+                        icon.style.color = '#000000';
+                        icon.style.opacity = '0.7';
+                    }
+                }
+                
+                if (currentEditingInput.tagName === 'INPUT' || currentEditingInput.tagName === 'TEXTAREA') {
+                    currentEditingInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                
+            }, 1000);
+        })
+        .catch(err => {
+            alert("Failed to process action.");
+            btnClicked.innerText = originalText;
+            btnClicked.disabled = false;
         });
-    }
-    
-    const btnSaveCcaSpecial = document.getElementById('btn-save-cca-special');
-    if (btnSaveCcaSpecial) {
-        btnSaveCcaSpecial.addEventListener('click', function() {
-            const btn = this;
-            const finalDataValue = document.getElementById('cca-demo-textarea').value.trim();
-
-            if (!currentEditingInput) return;
-            const columnHeader = document.getElementById('cca-demo-header').innerText;
-            const formData = new FormData();
-            formData.append("formMode", formMode); 
-            formData.append("reportDate", contextReportDate);
-            formData.append("columnHeader", columnHeader);
-            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
-            formData.append("cellId", currentEditingInput.id || "");
-            formData.append("dataValue", finalDataValue);
-            formData.append("productValue", currentRowCol2Value);     
-            formData.append("rowCol2Value", currentRowCol2Value);     
-            formData.append("source", "");
-            formData.append("justification", "");
-            formData.append("verifyFlg", "");
-            formData.append("modifyFlg", "");
-            formData.append("remarks", "");
-            formData.append("timeperiod", timeperiod);
-
-            const originalText = btn.innerText;
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
-            btn.disabled = true;
-
-            fetch('./savedatarecord', { method: 'POST', body: formData })
-            .then(res => { 
-                if (!res.ok) throw new Error("Network error"); 
-                return res.text(); 
-            })
-            .then(data => {
-                btn.style.backgroundColor = '#28a745';
-                btn.innerHTML = `&#10004; Saved!`;
-                setTimeout(() => {
-                    $('#ccaDemoModal').modal('hide');
-                    window.location.reload(); 
-                }, 1000);
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Failed to save CCA data.");
-                btn.innerText = originalText;
-                btn.disabled = false;
-            });
-        });
-    }
+    };
     const btnSaveCcaExtra = document.getElementById('btn-save-cca-extra');
     if (btnSaveCcaExtra) {
         btnSaveCcaExtra.addEventListener('click', function() {
@@ -21331,16 +21879,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
             activeInputs.forEach(input => {
                 const cellName = input.getAttribute('data-cellname') || input.name || input.id;
+                const wrapper = input.closest('.dynamic-input-wrapper');
                 
                 if (allSelected) {
                     input.classList.remove('mr-deselected');
                     input.classList.add('mr-selected');
+                    if (wrapper) wrapper.style.backgroundColor = '#f8d7da';
                     if (!selectedMrCells.includes(cellName)) {
                         selectedMrCells.push(cellName);
                     }
                 } else {
                     input.classList.remove('mr-selected');
                     input.classList.add('mr-deselected');
+                    if (wrapper) wrapper.style.backgroundColor = 'transparent';
                 }
             });
 
@@ -21781,7 +22332,8 @@ let currentTable = '';
 document.addEventListener("DOMContentLoaded", function () {
 
     let mgrscreen = /*[[${mgrscreen}]]*/ 'NO';
-
+    let formmode = /*[[${formmode}]]*/ null;
+    if(formmode!=='conductcultureassessment'){
     const regularTable = document.getElementById("regularReportTable");
     const mgrTable = document.getElementById("mgrReportTable");
     const toggleBtn = document.getElementById("toggleTableBtn");
@@ -21802,10 +22354,10 @@ document.addEventListener("DOMContentLoaded", function () {
         currentTable = 'regular';
         toggleBtn.innerText = 'Manager View';
     }
+    }
 });
 
 function toggleTable() {
-
     const regularTable = document.getElementById("regularReportTable");
     const mgrTable = document.getElementById("mgrReportTable");
     const toggleBtn = document.getElementById("toggleTableBtn");

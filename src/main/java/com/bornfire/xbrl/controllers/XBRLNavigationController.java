@@ -7349,7 +7349,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam(value = "source", required = false) String source,
 			@RequestParam("columnHeader") String columnHeader, @RequestParam("rowCol2Value") String rowCol2Value,
 			@RequestParam("cellName") String cellName, @RequestParam("cellId") String cellId,
-			@RequestParam("dataValue") String dataValue, @RequestParam("justification") String justification,
+			@RequestParam("dataValue") String dataValue, @RequestParam(value = "justification", required = false) String justification,
 			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
 			@RequestParam(value = "modifyFlg", required = false) String modifyFlg,
 			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "timeperiod", required = false) String timeperiod,@RequestParam(value = "productValue", required = false) String productValue,@RequestParam(value = "checkerJustification", required = false) String checkerJustification,
@@ -7584,6 +7584,26 @@ System.out.println("sixe==="+excelData.length);
 
 			Map<String, Object> response = new HashMap<>();
 			response.put("currentRecord", record);
+			
+			if (record == null && "conductcultureassessment".equalsIgnoreCase(formMode)) {
+				RecordMetadataProjection pastRecord = rT_MC_DATA_RECORD_REPO
+						.findTopProjectionByFormModeAndCellNameAndTimeperiodAndReportDateLessThanOrderByReportDateDesc(
+								formMode, cellName, timeperiod, reportDate);
+				
+				if (pastRecord != null) {
+					response.put("id", pastRecord.getId()); 
+					response.put("fileName1", pastRecord.getFileName1());
+					response.put("fileName2", pastRecord.getFileName2());
+					response.put("fileName3", pastRecord.getFileName3());
+					response.put("fileName4", pastRecord.getFileName4());
+					response.put("fileName5", pastRecord.getFileName5());
+					response.put("fileName6", pastRecord.getFileName6());
+					response.put("fileName7", pastRecord.getFileName7());
+					response.put("fileName8", pastRecord.getFileName8());
+					response.put("fileName9", pastRecord.getFileName9());
+					response.put("fileName10", pastRecord.getFileName10());
+				}
+			}
 
 			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
 			
@@ -8062,7 +8082,8 @@ System.out.println("sixe==="+excelData.length);
         addTableStatus(tableStatuses, "Additional Informaion", RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
         addTableStatus(tableStatuses, "Islamic Banking", RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
 
-        if (timePeriod=="YEARLY") {
+        System.out.println("Timeperiod : "+timePeriod);
+        if (timePeriod=="YEARLY" || "YEARLY".equals(timePeriod)) {
             addTableStatus(tableStatuses, "Conduct Cultureassessment", RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
         }
         String savedRemarks = RT_MC_TABLE1_REPO.findSignOffRemarks(reportDate,timePeriod);

@@ -68,6 +68,12 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 	List<String> findCellNamesByVerifyFlg(@Param("verifyFlg") String verifyFlg, @Param("formMode") String formMode,
 			@Param("reportDate") Date reportDate, @Param("timeperiod") String timeperiod);
 	
+	RecordMetadataProjection findTopProjectionByFormModeAndCellNameAndTimeperiodAndReportDateLessThanOrderByReportDateDesc(
+			String formMode, String cellName, String timeperiod, Date reportDate);
+	
+	List<RecordMetadataProjection> findByFormModeAndTimeperiodAndReportDateOrderByReportDateDesc(
+			String formMode, String timeperiod, Date reportDate);
+
 	public interface RecordMetadataProjection {
 		BigDecimal getId();
 
@@ -76,6 +82,8 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 		String getJustification();
 
 		String getCheckerJustification();
+
+		String getCellName();
 
 		String getSource();
 

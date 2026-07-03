@@ -822,24 +822,13 @@ rotate(
     }
 
     let currentUrlDate = urlParams.get('entry_date');
-    let isDateCleared = sessionStorage.getItem('audit_date_cleared') === 'true';
-
     if (currentUrlDate) {
         dateFilterInput.value = parseToHtmlDate(currentUrlDate);
-        sessionStorage.removeItem('audit_date_cleared');
-    } else if (isDateCleared) {
-        dateFilterInput.value = '';
     } else {
-        const today = new Date().toISOString().split('T')[0];
-        dateFilterInput.value = today;
+        dateFilterInput.value = '';
     }
 
     dateFilterInput.addEventListener('change', function() {
-        if (!this.value) {
-            sessionStorage.setItem('audit_date_cleared', 'true');
-        } else {
-            sessionStorage.removeItem('audit_date_cleared');
-        }
         triggerServerRequest({ 'entry_date': formatToBackendDate(this.value) });
     });
 
@@ -958,11 +947,6 @@ rotate(
     window.applyFilter = function(column, value) {
         if (!value || value.trim() === '' || value === '(Blank)') value = null;
         
-        if (column === 'entry_date') {
-            if (value === null) sessionStorage.setItem('audit_date_cleared', 'true');
-            else sessionStorage.removeItem('audit_date_cleared');
-        }
-
         const params = {};
         params[column] = value;
         triggerServerRequest(params);

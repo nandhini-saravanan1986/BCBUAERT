@@ -634,13 +634,21 @@ public class AuditService {
 					if (ignoreHeaders.contains(suffix.toUpperCase())) {
 						continue;
 					}
+					String resolvedFieldName = getFieldName(formmode, prefix);
 
-					String resolvedFieldName = getFieldName(formmode,prefix);
 					String finalItemKey = (resolvedFieldName != null && !resolvedFieldName.isEmpty())
 							? resolvedFieldName
 							: prefix;
-
-					String resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formmode,suffix);
+					String resolvedHeader;
+					if (formmode == "conductcultureassessment" || "conductcultureassessment".equals(formmode)) {
+						if (suffix == "LFI_RESP") {
+							resolvedHeader = "LFI Response";
+						} else {
+							resolvedHeader = "Evidence to be provided by LFI";
+						}
+					} else {
+						resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formmode, suffix);
+					}
 					String finalGroupKey = (resolvedHeader != null && !resolvedHeader.isEmpty()) ? resolvedHeader
 							: suffix;
 
@@ -1005,6 +1013,52 @@ public class AuditService {
 			default:
 				return prefix;
 			}
+			
+		case "conductcultureassessment":
+			switch (prefix.toUpperCase()) {
+			case "R9": return "Sr. No : 1.1";
+			case "R10": return "Sr. No : 1.2";
+			case "R11": return "Sr. No : 1.3";
+			case "R12": return "Sr. No : 1.4";
+			case "R13": return "Sr. No : 1.5";
+			case "R14": return "Sr. No : 1.6";
+			case "R15": return "Sr. No : 1.7";
+			case "R16": return "Sr. No : 1.8";
+			case "R17": return "Sr. No : 1.9";
+			case "R20": return "Sr. No : 2.1";
+			case "R21": return "Sr. No : 2.2";
+			case "R24": return "Sr. No : 3.1";
+			case "R25": return "Sr. No : 3.2";
+			case "R26": return "Sr. No : 3.3";
+			case "R27": return "Sr. No : 3.4";
+			case "R28": return "Sr. No : 3.5";
+			case "R29": return "Sr. No : 3.6";
+			case "R30": return "Sr. No : 3.7";
+			case "R31": return "Sr. No : 3.8";
+			case "R34": return "Sr. No : 4.1";
+			case "R35": return "Sr. No : 4.2";
+			case "R38": return "Sr. No : 5.1";
+			case "R39": return "Sr. No : 5.2";
+			case "R42": return "Sr. No : 6.1";
+			case "R43": return "Sr. No : 6.2";
+			case "R44": return "Sr. No : 6.3";
+			case "R47": return "Sr. No : 7.1";
+			case "R50": return "Sr. No : 8.1";
+			case "R51": return "Sr. No : 8.2";
+			case "R52": return "Sr. No : 8.3";
+			case "R53": return "Sr. No : 8.4";
+			case "R54": return "Sr. No : 8.5";
+			case "R55": return "Sr. No : 8.6";
+			case "R56": return "Sr. No : 8.7";
+			case "R57": return "Sr. No : 8.8";
+			case "R58": return "Sr. No : 8.9";
+			case "R59": return "Sr. No : 8.10";
+			case "R60": return "Sr. No : 8.11";
+			case "R61": return "Sr. No : 8.12";
+
+			default:
+				return prefix;
+			}
 		default:
 			return prefix;
 		}
@@ -1025,12 +1079,21 @@ public class AuditService {
 	        if (ignoreHeaders.contains(suffix.toUpperCase())) {
 	            continue;
 	        }
+			String resolvedFieldName = getFieldName(formMode, prefix);
 
-	        String resolvedFieldName = getFieldName(formMode,prefix);
-	        String finalItemKey = (resolvedFieldName != null && !resolvedFieldName.isEmpty()) ? resolvedFieldName : prefix;
-
-	        String resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formMode,suffix);
-	        String finalGroupKey = (resolvedHeader != null && !resolvedHeader.isEmpty()) ? resolvedHeader : suffix;
+			String finalItemKey = (resolvedFieldName != null && !resolvedFieldName.isEmpty()) ? resolvedFieldName
+					: prefix;
+			String resolvedHeader;
+			if (formMode == "conductcultureassessment" || "conductcultureassessment".equals(formMode)) {
+				if (suffix == "LFI_RESP") {
+					resolvedHeader = "LFI Response";
+				} else {
+					resolvedHeader = "Evidence to be provided by LFI";
+				}
+			} else {
+				resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formMode, suffix);
+			}
+			String finalGroupKey = (resolvedHeader != null && !resolvedHeader.isEmpty()) ? resolvedHeader : suffix;
 
 	        groupedChanges.computeIfAbsent(finalGroupKey, k -> new LinkedHashMap<>())
 	                      .put(finalItemKey, statusMessage);
