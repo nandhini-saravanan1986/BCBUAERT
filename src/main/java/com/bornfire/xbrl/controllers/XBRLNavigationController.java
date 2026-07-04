@@ -718,7 +718,7 @@ public class XBRLNavigationController {
 		md.addAttribute("ROLEIDAC", ROLEIDAC);
 		md.addAttribute("loginuserid", loginuserid);
 
-		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing");
+		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing","IA","Compliance");
 		md.addAttribute("md", dropdownOptions);
 		
 		if (formmode == null || formmode.equals("list")) {
@@ -5963,7 +5963,7 @@ System.out.println("sixe==="+excelData.length);
 		} else {
 			md.addAttribute("BRANCHCODE", branch);
 		}
-		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing");
+		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing","IA","Compliance");
 		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
 		if(reportDate == null || reportDate.isEmpty()) {

@@ -477,6 +477,7 @@
 			var permissions = ($("#permissions").val() || "").trim();
 			var moduleAccess = ($("#domain_id").val() || "").trim();
 			var userId = ($("#userid").val() || "").trim();
+			var department = ($("#department").val() || "").trim();
 			var userIdRegex = /^[A-Za-z]{2}[0-9]{6}$/;
 
 			if (formmode === "add" && userId && !userIdRegex.test(userId)) {
@@ -493,6 +494,10 @@
 			}
 			if (!roleId) {
 				alert("Role ID is required.");
+				return;
+			}
+			if (!department) {
+				alert("Department is required.");
 				return;
 			}
 			if (!workClass || !permissions || !moduleAccess) {
@@ -941,6 +946,19 @@
 											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-SLS-Sens" disabled> Liquidity &amp; Risk — SLS Sensitivity Report</label></div>
 											<div class="module-item"><label><input type="checkbox" name="domId" value="CR-IRS-Sens" disabled> Liquidity &amp; Risk — IRS Sensitivity Report</label></div>
 										</div>
+										<div class="category-head">Market Conduct</div>
+										<div class="module-grid">
+											<div class="module-item">
+												<label><input type="checkbox" name="domId"
+													value="MC-MC_Reports"> Market Conduct — Market
+													Conduct Reports</label>
+											</div>
+											<div class="module-item">
+												<label><input type="checkbox" name="domId"
+													value="MC-MC_Ser_audit"> Market Conduct — Market
+													Conduct Service Audit</label>
+											</div>
+										</div>
 										<div class="category-head">Audit</div>
 										<div class="module-grid">
 											<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Usr_audit" disabled> Audit — User Audit</label></div>
@@ -1041,7 +1059,19 @@
 							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-SLS-Sens"> Liquidity &amp; Risk — SLS Sensitivity Report</label></div>
 							<div class="module-item"><label><input type="checkbox" name="domId" value="CR-IRS-Sens"> Liquidity &amp; Risk — IRS Sensitivity Report</label></div>
 						</div>
-
+						<div class="category-head">Market Conduct</div>
+						<div class="module-grid">
+							<div class="module-item">
+								<label><input type="checkbox" name="domId"
+									value="MC-MC_Reports"> Market Conduct — Market
+									Conduct Reports</label>
+							</div>
+							<div class="module-item">
+								<label><input type="checkbox" name="domId"
+									value="MC-MC_Ser_audit"> Market Conduct — Market
+									Conduct Service Audit</label>
+							</div>
+						</div>
 						<div class="category-head">Audit</div>
 						<div class="module-grid">
 							<div class="module-item"><label><input type="checkbox" name="domId" value="Audit-Usr_audit"> Audit — User Audit</label></div>
