@@ -656,9 +656,9 @@ public class AuditService {
 					String resolvedHeader;
 					if (formmode == "conductcultureassessment" || "conductcultureassessment".equals(formmode)) {
 						if (suffix == "LFI_RESP") {
-							resolvedHeader = "LFI Response";
+							resolvedHeader = "Bank Response";
 						} else {
-							resolvedHeader = "Evidence to be provided by LFI";
+							resolvedHeader = "Evidence to be provided by Bank";
 						}
 					} else {
 						resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formmode, suffix);
@@ -1100,9 +1100,9 @@ public class AuditService {
 			String resolvedHeader;
 			if (formMode == "conductcultureassessment" || "conductcultureassessment".equals(formMode)) {
 				if (suffix == "LFI_RESP") {
-					resolvedHeader = "LFI Response";
+					resolvedHeader = "Bank Response";
 				} else {
-					resolvedHeader = "Evidence to be provided by LFI";
+					resolvedHeader = "Evidence to be provided by Bank";
 				}
 			} else {
 				resolvedHeader = rt_MC_Description_Repo.findHeaderNameByCode(formMode, suffix);
