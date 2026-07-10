@@ -3,6 +3,7 @@ package com.bornfire.xbrl.entities;
 import java.util.Date;
 import org.springframework.data.jpa.repository.Modifying;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -55,5 +56,13 @@ public interface RT_MC_TABLE1_REPO extends JpaRepository<RT_MC_TABLE1_ENTITY, MC
 	
 	@Query(value = "SELECT SIGNOFF_REMARKS FROM RT_MC_TABLE1 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE = :branchCode ORDER BY REPORT_DATE DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
 	String findSignOffRemarks(@Param("reportDate") String reportDate, @Param("branchCode") String branchCode);
+	
+	@Query(value = "SELECT COUNT(*) FROM RT_MC_TABLE1 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE = :branchCode ", nativeQuery = true)
+	int countByReportDateAndTimeperiod(@Param("reportDate") String reportDate,
+			@Param("branchCode") String branchCode);
+	
+	@Query(value = "SELECT * FROM ( SELECT TO_CHAR(REPORT_DATE, 'DD-MM-YYYY') AS REPORT_DATE_STRING, BRANCH_CODE "
+			+ " FROM RT_MC_TABLE1 ORDER BY REPORT_DATE DESC, BRANCH_CODE DESC ) WHERE ROWNUM = 1 AND BRANCH_CODE <> 'DEPT' ", nativeQuery = true)
+	Map<String, Object> findLatestReportDateAndTimeperiod();
 	
 }

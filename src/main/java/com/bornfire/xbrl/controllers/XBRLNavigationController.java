@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -5941,11 +5942,7 @@ System.out.println("sixe==="+excelData.length);
 		if (mgrsummary == null) {
 			mgrsummary = "NO";
 		}
-		if (timeperiod == null) {
-			timeperiod = "QUARTERLY";
-		}
 		md.addAttribute("mgrsummary", mgrsummary);
-		md.addAttribute("timeperiod", timeperiod);
 		System.out.println("DEPARTMENT VALIDATION : " + deptvalid);
 		String DEPARTMENT ;
 		if(dept==null || dept.isEmpty()) {
@@ -5966,10 +5963,25 @@ System.out.println("sixe==="+excelData.length);
 		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing","IA","Compliance");
 		md.addAttribute("md", dropdownOptions);
 		System.out.println("branch : " + branch);
+		
+		if (reportDate == null || reportDate.isEmpty()) {
+			Map<String, Object> latestReportData = RT_MC_TABLE1_REPO.findLatestReportDateAndTimeperiod();
+			if (latestReportData != null && !latestReportData.isEmpty()) {
+				reportDate = (String) latestReportData.get("REPORT_DATE_STRING");
+				timeperiod = (String) latestReportData.get("BRANCH_CODE");
+				System.out.println("Latest Date: " + reportDate);
+				System.out.println("Time Period: " + timeperiod);
+			}
+		}
+
 		if(reportDate == null || reportDate.isEmpty()) {
 			reportDate="31-03-2026";
 		}
+		if (timeperiod == null) {
+			timeperiod = "QUARTERLY";
+		}
 		md.addAttribute("REPORT_DATE", reportDate);
+		md.addAttribute("timeperiod", timeperiod);
 		String sessionId = req.getSession().getId();
 		//System.out.println("Session ID : "+sessionId);
 		
@@ -8073,7 +8085,7 @@ System.out.println("sixe==="+excelData.length);
             @RequestParam(required = false) String timePeriod) {
         List<Map<String, Object>> tableStatuses = new ArrayList<>();
 
-        addTableStatus(tableStatuses, "Bank Informaion", RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
+        addTableStatus(tableStatuses, "Bank Information", RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
         addTableStatus(tableStatuses, "Bank Consumers", RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG()); 
         addTableStatus(tableStatuses, "Complaints", RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG());
         addTableStatus(tableStatuses, "Retail Products", RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate,timePeriod).get(0).getVERIFY_FLG()); 
@@ -8129,6 +8141,160 @@ System.out.println("sixe==="+excelData.length);
 					.body("{\"error\": \"Failed to save remarks\"}");
 		}
     }
-    
-    
+    @ResponseBody
+    @GetMapping("/checkDataAvailability")
+    public Map<String, Object> checkDataAvailability(
+            @RequestParam("reportDate") String reportDate,
+            @RequestParam("timeperiod") String timeperiod) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            boolean isexistingRecord = verifyDataAvailability(reportDate, timeperiod);
+            
+            if (isexistingRecord) {
+                response.put("exists", true);
+                response.put("canGenerate", false);
+                response.put("missingMessage", "");
+                return response;
+            }
+
+            response.put("exists", false);
+            
+            List<String> missingItems = getMissingPrerequisites(reportDate, timeperiod);
+            
+            if (missingItems.isEmpty()) {
+                response.put("canGenerate", true);
+                response.put("missingMessage", "");
+            } else {
+                response.put("canGenerate", false);
+                
+                StringBuilder msgBuilder = new StringBuilder("Cannot generate report. The following required periods are missing:<br><ul style='margin-top: 8px; margin-bottom: 0; padding-left: 20px;'>");
+                for (String item : missingItems) {
+                    msgBuilder.append("<li><strong>").append(item).append("</strong></li>");
+                }
+                msgBuilder.append("</ul>");
+                
+                response.put("missingMessage", msgBuilder.toString());
+            }
+
+        } catch (Exception e) {
+            response.put("exists", false);
+            response.put("canGenerate", false);
+            response.put("missingMessage", "Server error while verifying report availability.");
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+    @ResponseBody
+    @PostMapping("/generateReportProcedures")
+    public Map<String, Object> generateReportProcedures(
+            @RequestParam("reportDate") String reportDate,
+            @RequestParam("timeperiod") String timeperiod) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String callSql = "{call COMMON_RT_MC_TRIGGERING_PROCEDURE(?, ?,'ALL')}";
+            
+            jdbcTemplate.update(callSql, reportDate, timeperiod);
+
+            response.put("success", true);
+            response.put("errorMessage", "");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Unknown database error occurred.";
+            response.put("errorMessage", "Procedure execution failed: " + errorMsg);
+            
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+	private boolean verifyDataAvailability(String reportDate, String timeperiod) {
+		if (reportDate == null || reportDate.trim().isEmpty()) {
+			return false;
+		}
+
+		int count1 = RT_MC_TABLE1_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count2 = RT_MC_TABLE2_1_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count3 = RT_MC_TABLE3_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count4 = RT_MC_TABLE4_1_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count5 = RT_MC_TABLE5_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count6 = RT_MC_TABLE6_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count7 = RT_MC_TABLE7_1_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+		int count8 = RT_MC_TABLE8_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+
+		boolean baseDataExists = (count1 > 0) && (count2 > 0) && (count3 > 0) && (count4 > 0) && (count5 > 0)
+				&& (count6 > 0) && (count7 > 0) && (count8 > 0);
+		if (!baseDataExists) {
+			return false;
+		}
+		if ("YEARLY".equalsIgnoreCase(timeperiod)) {
+			int count9 = RT_MC_TABLE9_REPO.countByReportDateAndTimeperiod(reportDate, timeperiod);
+			if (count9 == 0) {
+				return false;
+			}
+		}
+		return true;
+
+	}
+
+	private List<String> getMissingPrerequisites(String reportDate, String timeperiod) {
+		List<String> missing = new ArrayList<>();
+		if (reportDate == null || reportDate.trim().isEmpty()) {
+			missing.add("Invalid report date provided.");
+			return missing;
+		}
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		LocalDate targetDate = LocalDate.parse(reportDate, formatter);
+
+		if ("QUARTERLY".equalsIgnoreCase(timeperiod)) {
+			boolean isQuarterlyTarget = true;
+			missing.addAll(getMissingPastQuarters(targetDate, 4, formatter, isQuarterlyTarget));
+
+		} else if ("YEARLY".equalsIgnoreCase(timeperiod)) {
+			boolean isQuarterlyTarget = false;
+			missing.addAll(getMissingPastQuarters(targetDate, 4, formatter, isQuarterlyTarget));
+
+			LocalDate lastYearDate = targetDate.minusYears(1).with(TemporalAdjusters.lastDayOfMonth());
+			String lastYearString = lastYearDate.format(formatter);
+
+			if (!verifyDataAvailability(lastYearString, "YEARLY")) {
+				missing.add("Yearly Report for " + lastYearDate.getYear() + " (" + lastYearString + ")");
+			}
+		}
+		return missing;
+	}
+
+	private List<String> getMissingPastQuarters(LocalDate targetDate, int quartersToCheck, DateTimeFormatter formatter,
+			boolean isQuarterlyTarget) {
+		List<String> missingQuarters = new ArrayList<>();
+		LocalDate currentDate = targetDate;
+
+		String[] quarterOrdinals = { "1st", "2nd", "3rd", "4th" };
+
+		if (isQuarterlyTarget) {
+			currentDate = currentDate.minusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
+		}
+
+		for (int i = 0; i < quartersToCheck; i++) {
+			String pastQuarterString = currentDate.format(formatter);
+
+			if (!verifyDataAvailability(pastQuarterString, "QUARTERLY")) {
+				int month = currentDate.getMonthValue();
+				int quarter = (month - 1) / 3 + 1;
+				String ordinalString = quarterOrdinals[quarter - 1];
+				missingQuarters.add(ordinalString + " Quarter Report for " + currentDate.getYear() + " ("
+						+ pastQuarterString + ")");
+			}
+			currentDate = currentDate.minusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
+		}
+
+		return missingQuarters;
+	}
 }

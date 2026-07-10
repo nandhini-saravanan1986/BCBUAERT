@@ -52,5 +52,9 @@ public interface RT_MC_TABLE9_REPO extends JpaRepository<RT_MC_TABLE9_ENTITY, MC
 	int updateEntityFlgAndSignOffRemarks(@Param("entityFlg") String entityFlg,
 			@Param("signoffremarks") String signoffremarks, @Param("reportDate") String reportDate,
 			@Param("timeperiod") String timeperiod);
+	
+	@Query(value = "SELECT COUNT(*) FROM RT_MC_TABLE9 WHERE REPORT_DATE = TO_DATE(:reportDate, 'DD-MM-YYYY') AND BRANCH_CODE = :branchCode ", nativeQuery = true)
+	int countByReportDateAndTimeperiod(@Param("reportDate") String reportDate,
+			@Param("branchCode") String branchCode);
 
 }

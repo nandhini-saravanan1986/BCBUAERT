@@ -5370,7 +5370,7 @@ public class RT_MC_TABLE_ALL_Service {
 		String screenName = null;
 		switch (formMode) {
 		case "bankinformation":
-			screenName = "Bank Informaion - Market Conduct";
+			screenName = "Bank Information - Market Conduct";
 			return screenName;
 		case "bankconsumers":
 			screenName = "Bank Consumers - Market Conduct";

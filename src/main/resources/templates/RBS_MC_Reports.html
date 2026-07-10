@@ -650,10 +650,10 @@ label.error {
 }
 </style>
 <style>
+/*
 #usertable {
-	min-width: 2800px;
-	/* adjust based on columns */
-}
+	min-width: 2800px;	
+}*/
 
 #usertable {
 	border-collapse: collapse !important;
@@ -1443,6 +1443,7 @@ table.selection-mode td {
   align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
+  background: var(--bank-header-gradient) !important;
 }
 
 .modal-header h3 {
@@ -18422,6 +18423,38 @@ to {
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="generateReportModal" tabindex="-1"
+		role="dialog" aria-labelledby="generateReportModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content" style="border: none;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="generateReportModalLabel">Report
+						Not Found</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="gen-modal-body" style="font-size: 14px;">
+				</div>
+				<div class="modal-footer" style="justify-content: space-between;">
+
+					<div id="gen-error-msg"
+						style="color: #dc3545; font-size: 13px; font-weight: 500; display: none; max-width: 70%;"></div>
+
+					<div class="d-flex ml-auto gap-2">
+						<button type="button" class="btn btn-primary"
+							data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary"
+							id="btn-gen-report" style="display: none;">Generate
+							Report</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
 	<script th:inline="javascript">
 function navigateTodeptvalidpage() {
 	let formmode = /*[[${formmode}]]*/ null;
@@ -18519,7 +18552,7 @@ function navigateTodatamgrsumpage(){
 		}
 		let selecteddept = document.getElementById("selecteddept");
 		let selecteddeptvalue= selecteddept.value;
-		
+		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 		console.log("formmode : "+ formmode +" selecteddeptvalue : "+selecteddeptvalue);		
 		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&dept='+selecteddeptvalue+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod;;		
 	}
@@ -21033,7 +21066,177 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
         });
+        const tables = document.querySelectorAll('table');
+        let globalHiddenCols = new Set();
+        let allTrackedCols = new Set(); 
+        let tableData = new Map();
+        let maxVisualCols = 0; 
 
+        tables.forEach(table => {
+            let matrix = [];
+            let rows = Array.from(table.rows);
+            let cellSpanInfo = new Map(); 
+
+            for (let r = 0; r < rows.length; r++) {
+                if (!matrix[r]) matrix[r] = [];
+                let c = 0;
+                
+                for (let cell of rows[r].cells) {
+                    while (matrix[r][c]) c++; 
+                    let rs = parseInt(cell.getAttribute('rowspan') || 1, 10);
+                    let cs = parseInt(cell.getAttribute('colspan') || 1, 10);
+                    
+                    let coveredCols = [];
+                    for (let i = 0; i < cs; i++) coveredCols.push(c + i);
+                    cellSpanInfo.set(cell, { startCol: c, colspan: cs, coveredCols: coveredCols });
+
+                    for (let i = 0; i < rs; i++) {
+                        if (!matrix[r + i]) matrix[r + i] = [];
+                        for (let j = 0; j < cs; j++) {
+                            matrix[r + i][c + j] = cell;
+                        }
+                    }
+                    c += cs; 
+                    if (c > maxVisualCols) maxVisualCols = c;
+                }
+            }
+
+            let colHasSingleInput = {};
+            let colSingleAuth = {};
+            let colHasMultiInput = {};
+            let colMultiAuth = {};
+
+            cellSpanInfo.forEach((info, cell) => {
+                if (window.getComputedStyle(cell).display === 'none') return;
+
+                const inputsInCell = cell.querySelectorAll('.input-and-select, .remarks-input');
+                if (inputsInCell.length > 0) {
+                    let cellHasAuth = false;
+                    inputsInCell.forEach(input => {
+                        const fieldName = input.name || input.id;
+                        const isAuthorized = isManager || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+                        
+                        if (isAuthorized) {
+                            cellHasAuth = true;
+                           // console.warn(`KEEPING COLUMN ${info.startCol} ALIVE: Department is authorized for field [${fieldName}]`);
+                        }
+                    });
+                    
+                    if (info.colspan === 1) {
+                        colHasSingleInput[info.startCol] = true;
+                        if (cellHasAuth) colSingleAuth[info.startCol] = true;
+                    } else {
+                        info.coveredCols.forEach(c => {
+                            colHasMultiInput[c] = true;
+                            if (cellHasAuth) colMultiAuth[c] = true;
+                        });
+                    }
+                }
+            });
+
+            const localTracked = new Set([...Object.keys(colHasSingleInput), ...Object.keys(colHasMultiInput)]);
+            localTracked.forEach(colStr => {
+                const c = parseInt(colStr);
+                allTrackedCols.add(c); 
+                
+                if (colHasSingleInput[c]) {
+                    if (!colSingleAuth[c]) globalHiddenCols.add(c);
+                } else if (colHasMultiInput[c]) {
+                    if (!colMultiAuth[c]) globalHiddenCols.add(c);
+                }
+            });
+            
+            tableData.set(table, cellSpanInfo);
+        });
+
+        let ghostBelongsToGroup = {};
+        let ghostIsAlive = {};
+
+        tableData.forEach((cellSpanInfo) => {
+            cellSpanInfo.forEach((info, cell) => {
+                if (window.getComputedStyle(cell).display === 'none') return;
+
+                if (info.colspan > 1) {
+                    let hasDataCols = false;
+                    let hasAuthorizedDataCols = false;
+
+                    info.coveredCols.forEach(c => {
+                        if (allTrackedCols.has(c)) {
+                            hasDataCols = true;
+                            if (!globalHiddenCols.has(c)) hasAuthorizedDataCols = true;
+                        }
+                    });
+
+                    if (hasDataCols) {
+                        info.coveredCols.forEach(c => {
+                            if (!allTrackedCols.has(c)) {
+                                ghostBelongsToGroup[c] = true;
+                                if (hasAuthorizedDataCols) ghostIsAlive[c] = true;
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        for (let c = 0; c < maxVisualCols; c++) {
+            if (!allTrackedCols.has(c) && ghostBelongsToGroup[c] && !ghostIsAlive[c]) {
+                globalHiddenCols.add(c);
+            }
+        }
+
+        if (globalHiddenCols.size > 0) {
+            tableData.forEach((cellSpanInfo, table) => {
+                cellSpanInfo.forEach((info, cell) => {
+                    let hiddenSpanCount = 0;
+
+                    info.coveredCols.forEach(c => {
+                        if (globalHiddenCols.has(c)) {
+                            hiddenSpanCount++; 
+                        }
+                    });
+
+                    if (hiddenSpanCount === info.colspan) {
+                        cell.style.setProperty('display', 'none', 'important'); 
+                    } 
+                    else if (hiddenSpanCount > 0) {
+                        cell.setAttribute('colspan', info.colspan - hiddenSpanCount); 
+                    }
+                });
+
+                let colTags = Array.from(table.querySelectorAll('col'));
+                colTags.forEach((col, index) => {
+                    if (globalHiddenCols.has(index)) {
+                        col.style.setProperty('display', 'none', 'important');
+                    }
+                });
+            });
+        }
+        let authorizedColsCount = 0;
+        allTrackedCols.forEach(c => {
+            if (!globalHiddenCols.has(c)) {
+                authorizedColsCount++;
+            }
+        });
+
+        if (allTrackedCols.size > 0 && authorizedColsCount === 0) {
+            tables.forEach(table => {
+                table.style.setProperty('display', 'none', 'important');
+                
+                if (table.previousElementSibling && table.previousElementSibling.classList.contains('no-access-msg')) {
+                    return; 
+                }
+
+                const alertMsg = document.createElement('div');
+                alertMsg.className = 'alert alert-warning no-access-msg text-center mt-4 mb-4';
+                alertMsg.style.fontWeight = '500';
+                alertMsg.innerHTML = '&#9888; No cells are allocated to your current department.';
+                
+                table.parentNode.insertBefore(alertMsg, table);
+            });
+
+          
+        }
         function executeDatabaseAction(actionType, modifyFlagVal, btnClicked) {
         	if (!currentEditingInput) return;
 
@@ -21935,6 +22138,7 @@ document.addEventListener("DOMContentLoaded", function() {
     dateInput.addEventListener('click', () => {
         dropdownContent.classList.toggle('active');
         if(dropdownContent.classList.contains('active')) {
+        	syncPickerToInput();
             updateYearDisplay();
         }
     });
@@ -21998,17 +22202,120 @@ document.addEventListener("DOMContentLoaded", function() {
         confirmBtn.disabled = false;
     });
 
-    confirmBtn.addEventListener('click', (e) => {
+    
+	let originalDateValue = "";
+	confirmBtn.addEventListener('click', async (e) => {
         e.preventDefault();
+        
         if (reportDateParam && timeperiodParam) {
+            originalDateValue = dateInput.value; 
             dateInput.value = pendingDisplayString;
             dropdownContent.classList.remove('active');
 
-            const baseUrl = "/Riskinsights/RT_MC_Reports"; 
-            window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}`;
+            const baseUrl = "/Riskinsights/RT_MC_Reports";
+            const originalText = confirmBtn.innerHTML;
+            
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
+            confirmBtn.disabled = true;
+
+    		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+            try {
+                const checkUrl = `./checkDataAvailability?reportDate=${encodeURIComponent(reportDateParam)}&timeperiod=${encodeURIComponent(timeperiodParam)}`;
+                const response = await fetch(checkUrl);
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                if (!response.ok) throw new Error("Server error during availability check.");
+                const data = await response.json();
+                if (data.exists) {
+                    window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}`;
+                } else {
+                    showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
+                }
+
+            } catch (error) {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                console.error(error);
+                alert("Failed to connect to the server to verify report availability.");
+            } finally {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                confirmBtn.innerHTML = originalText;
+                confirmBtn.disabled = false;
+            }
         }
     });
 
+    function showGenerationModal(canGenerate, missingMessage, reportDate, timeperiod, baseUrl) {
+        const modalBody = document.getElementById('gen-modal-body');
+        const generateBtn = document.getElementById('btn-gen-report');
+        const errorMsg = document.getElementById('gen-error-msg');
+
+        errorMsg.style.display = 'none';
+        generateBtn.disabled = false;
+        generateBtn.className = 'btn btn-primary';
+        generateBtn.innerText = 'Generate Report';
+
+        if (canGenerate) {
+            modalBody.innerHTML = `
+                <p style="color: #333; margin-bottom: 0;">
+                    Data for ${timeperiod} (${reportDate}) does not exist yet.<br><br>
+                    All prerequisite data is available. Would you like to generate this report now?
+                </p>`;
+            generateBtn.style.display = 'inline-block';
+            
+            generateBtn.onclick = () => executeReportGeneration(reportDate, timeperiod, baseUrl);
+        } else {
+            const fallbackMsg = missingMessage || "You are missing prerequisite data (e.g., previous 4 quarters) required to generate this report.";
+            modalBody.innerHTML = `
+                <div style="color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 4px;">
+                    <strong>&#9888; Cannot Generate Report</strong><br>
+                    ${fallbackMsg}
+                </div>`;
+            generateBtn.style.display = 'none';
+        }
+
+        $('#generateReportModal').modal('show');
+    }
+
+    async function executeReportGeneration(reportDate, timeperiod, baseUrl) {
+        const generateBtn = document.getElementById('btn-gen-report');
+        const errorMsg = document.getElementById('gen-error-msg');
+
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Generating...';
+        generateBtn.disabled = true;
+        errorMsg.style.display = 'none';
+
+        try {
+            const formData = new FormData();
+            formData.append("reportDate", reportDate);
+            formData.append("timeperiod", timeperiod);
+            const response = await fetch('./generateReportProcedures', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Network error during procedure execution.");
+            const result = await response.json();
+
+            if (result.success) {
+                generateBtn.className = 'btn btn-success';
+                generateBtn.innerHTML = '&#10004; Success!';
+                
+                setTimeout(() => {
+                    $('#generateReportModal').modal('hide');
+                    window.location.href = `${baseUrl}?reportDate=${reportDate}&timeperiod=${timeperiod}`;
+                }, 1500);
+            } else {
+                throw new Error(result.errorMessage || "A database error occurred during generation.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            errorMsg.innerText = error.message;
+            errorMsg.style.display = 'block';
+            
+            generateBtn.innerHTML = 'Try Again';
+            generateBtn.disabled = false;
+        }
+    }
     function initializePicker() {
         const initReportDate = dateInput.getAttribute('data-report-date');
         const initTimeperiod = dateInput.getAttribute('data-timeperiod');
@@ -22505,6 +22812,47 @@ function toggleTable() {
     document.addEventListener('DOMContentLoaded', () => {
         fetchTableStatus();
     });
+    $('#generateReportModal').on('hidden.bs.modal', function () {
+        if (originalDateValue !== "") {
+            dateInput.value = originalDateValue;
+            
+        }
+    });
+    function syncPickerToInput() {
+        const currentValue = dateInput.value || "";
+        const highlightClass = 'active';
+        const allButtons = dropdownContent.querySelectorAll('button, .btn, div'); 
+
+        allButtons.forEach(btn => {
+            if (btn.classList) {
+                btn.classList.remove(highlightClass);
+            }
+        });
+
+        if (currentValue.trim() === "") return;
+        const yearMatch = currentValue.match(/\d{4}/);
+        if (yearMatch) {
+            currentDisplayedYear = parseInt(yearMatch[0], 10);
+            if (typeof updateYearDisplay === "function") {
+                updateYearDisplay(); 
+            }
+        }
+
+        let targetKeyword = "";
+        if (currentValue.includes("Q1") || currentValue.includes("Mar")) targetKeyword = "Q1";
+        else if (currentValue.includes("Q2") || currentValue.includes("Jun")) targetKeyword = "Q2";
+        else if (currentValue.includes("Q3") || currentValue.includes("Sep")) targetKeyword = "Q3";
+        else if (currentValue.includes("Q4") || currentValue.includes("Dec")) targetKeyword = "Q4";
+        else if (currentValue.includes("Yearly")) targetKeyword = "Yearly";
+
+        if (targetKeyword !== "") {
+            allButtons.forEach(btn => {
+                if (btn.innerText && btn.innerText.includes(targetKeyword)) {
+                    btn.classList.add(highlightClass);
+                }
+            });
+        }
+    }
 </script>
 </body>
 </html>
