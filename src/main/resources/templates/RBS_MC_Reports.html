@@ -18584,8 +18584,13 @@ document.addEventListener("DOMContentLoaded", function() {
         	    const backendOptions = [];
         	    if (commonDropdown) {
         	        commonDropdown.querySelectorAll('.select-content label').forEach(label => {
-                        const val = label.querySelector('input').value;
-                        if (val !== 'ALL') backendOptions.push({ value: val, text: label.querySelector('span').innerText });
+        	            const input = label.querySelector('input');
+        	            if (!input || input.classList.contains('select-all-cb') || input.classList.contains('select-na-cb')) return;
+        	            const span = label.querySelector('span');
+        	            if (!span) return;
+        	            if (input.value !== 'ALL') {
+        	                backendOptions.push({ value: input.value, text: span.innerText });
+        	            }
         	        });
                     let commonContent = commonDropdown.querySelector('.select-content');
                     if (commonContent && !commonContent.querySelector('.select-all-cb')) {
@@ -18748,6 +18753,13 @@ document.addEventListener("DOMContentLoaded", function() {
         	        }
         	    });
 
+        	    const commonDropdown = document.getElementById('common-dropdown');
+        	    if (commonDropdown) {
+        	        commonDropdown.querySelectorAll('.select-all-cb, .select-na-cb').forEach(cb => {
+        	            cb.closest('label')?.remove();
+        	        });
+        	    }
+        	    
         	    document.getElementById('usertable').classList.remove('is-editing');
         	    document.querySelector('.toolbar').style.display = 'none';
         	    
