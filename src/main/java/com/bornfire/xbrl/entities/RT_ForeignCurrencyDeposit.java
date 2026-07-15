@@ -22,6 +22,7 @@ public class RT_ForeignCurrencyDeposit{
 	
 	@Column(name = "REPORT_DATE")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Temporal(TemporalType.DATE)
 	private Date date;
 	
 	@Column(name = "BANK_NAME")
