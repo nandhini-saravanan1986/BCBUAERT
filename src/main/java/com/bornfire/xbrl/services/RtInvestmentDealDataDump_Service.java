@@ -89,32 +89,24 @@ public class RtInvestmentDealDataDump_Service {
 							invdealdump.setType(formatter.formatCellValue(row.getCell(2)));
 							invdealdump.setOptionType(formatter.formatCellValue(row.getCell(3)));
 							invdealdump.setTypeOfEvent(formatter.formatCellValue(row.getCell(4)));
-							invdealdump.setBlkNo(new BigDecimal(formatter.formatCellValue(row.getCell(5))));
-							invdealdump.setAmount1(new BigDecimal(formatter.formatCellValue(row.getCell(6))));
-							invdealdump.setAmount2(new BigDecimal(formatter.formatCellValue(row.getCell(7))));
-							invdealdump.setRatePrice(new BigDecimal(formatter.formatCellValue(row.getCell(8))));
+							invdealdump.setBlkNo(getSafeBigDecimal(row.getCell(5), formatter));
+							invdealdump.setAmount1(getSafeBigDecimal(row.getCell(6) ,formatter));
+							invdealdump.setAmount2(getSafeBigDecimal(row.getCell(7) ,formatter));
+							invdealdump.setRatePrice(getSafeBigDecimal(row.getCell(8) ,formatter));
+							invdealdump.setStrike(getSafeBigDecimal(row.getCell(9) ,formatter));
 							//System.out.println(formatter.formatCellValue(row.getCell(9)));
-							if(!formatter.formatCellValue(row.getCell(9)).isEmpty()) {
-								invdealdump.setStrike(new BigDecimal(formatter.formatCellValue(row.getCell(9))));
-							}
+							invdealdump.setClRate(getSafeBigDecimal(row.getCell(10) ,formatter));
+							invdealdump.setClMargin(getSafeBigDecimal(row.getCell(11),formatter));
 							
-							if(!formatter.formatCellValue(row.getCell(10)).isEmpty()) {
-								invdealdump.setClRate(new BigDecimal(formatter.formatCellValue(row.getCell(10))));
-							}
-							
-							if(!formatter.formatCellValue(row.getCell(11)).isEmpty()) {
-								invdealdump.setClMargin(new BigDecimal(formatter.formatCellValue(row.getCell(11))));
-							}
 			
 							invdealdump.setSecurity(formatter.formatCellValue(row.getCell(12)));
 							invdealdump.setSecurityName(formatter.formatCellValue(row.getCell(13)));
-							invdealdump.setTradeDate(java.sql.Date.valueOf(getLocalDateFromCell(row.getCell(14))));
-							invdealdump.setValueDate(java.sql.Date.valueOf(getLocalDateFromCell(row.getCell(15))));
-							invdealdump.setMatDate(java.sql.Date.valueOf(getLocalDateFromCell(row.getCell(16))));
-							if(!formatter.formatCellValue(row.getCell(17)).isEmpty()) {
-								invdealdump.setLiquidationDate(java.sql.Date.valueOf(getLocalDateFromCell(row.getCell(17))));
-							}
-							invdealdump.setQuantity(new BigDecimal(formatter.formatCellValue(row.getCell(18))));
+							invdealdump.setTradeDate(getSafeDate(row.getCell(14)));
+							invdealdump.setValueDate(getSafeDate(row.getCell(15)));
+							invdealdump.setMatDate(getSafeDate(row.getCell(16)));
+							invdealdump.setLiquidationDate(getSafeDate(row.getCell(17)));
+						
+							invdealdump.setQuantity(getSafeBigDecimal(row.getCell(18) ,formatter));
 							invdealdump.setQuantity(null);
 							invdealdump.setCpty(formatter.formatCellValue(row.getCell(20)));
 							invdealdump.setCptyName(formatter.formatCellValue(row.getCell(21)));
@@ -127,7 +119,8 @@ public class RtInvestmentDealDataDump_Service {
 							if(!formatter.formatCellValue(row.getCell(25)).isEmpty()) {
 								invdealdump.setComments(formatter.formatCellValue(row.getCell(25)));
 							}
-							invdealdump.setLastDate(java.sql.Date.valueOf(getLocalDateFromCell(row.getCell(26))));
+							
+							invdealdump.setLastDate(getSafeDate(row.getCell(26)));
 							invdealdump.setDownloadKey(formatter.formatCellValue(row.getCell(27)));
 							invdealdump.setCaptureTimestamp(formatter.formatCellValue(row.getCell(28)));
 							invdealdump.setReportDate(toDate);
@@ -215,6 +208,7 @@ public class RtInvestmentDealDataDump_Service {
 					+ No_of_Records;
 				} 
 			}
+			
 
 			return Response;
 		}
