@@ -177,7 +177,7 @@ left
 							// }
 
 							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
+							/* document.addEventListener('mousemove', function(e) {
 							    const backBtn = document.getElementById('floatingBackBtn');
 							    const forwardBtn = document.getElementById('floatingForwardBtn');
 							    const screenWidth = window.innerWidth;
@@ -195,7 +195,7 @@ left
 							    } else {
 							        forwardBtn.classList.remove('show');
 							    }
-							});
+							}); */
 							</script>
 
 <style>
@@ -567,18 +567,13 @@ label.error {
 	}
 
 	function list() {
+		
+		var lastDate = /*[[${lastDate}]]*/null;
 		$("#loader").css("display", "flex");
-		location.href = 'Foreign_Currency_Deposit?formmode=list';
+		location.href = 'Foreign_Currency_Deposit?formmode=list&Report_date='+lastDate;
+		
 	}
 
-	
-	$(document).ready(function () {
-	    // On modal close, redirect to your controller method path
-	    $('#alert').on('hidden.bs.modal', function () {
-	        window.location.href = './Fx_Risk_Data';
-	    });
-	});
-	
 	function fxrisk() {
 		location.href = 'Foreign_Currency_Deposit';
 	}
@@ -714,7 +709,7 @@ label.error {
 
     // Check if SI_NO is present before sending
     var formData = $('#Foreigncurrencydeposit').serialize(); // Make sure this ID is correct (capital F)
-
+    const date = document.getElementById("date").value;
     console.log("Serialized Data:", formData); // Debug
 
     $.ajax({
@@ -730,7 +725,7 @@ label.error {
 
             if (response.includes("successful")) {
                 setTimeout(function() {
-                    window.location.href = "./Foreign_Currency_Deposit?formmode=list";
+                    window.location.href = "./Foreign_Currency_Deposit?formmode=list&Report_date="+date;
                 }, 1500);
             }
         },

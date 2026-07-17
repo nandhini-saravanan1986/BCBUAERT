@@ -969,6 +969,7 @@ public class XBRLNavigationController {
 			md.addAttribute("repoData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getReportDate()), formatter));
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("repoList", repoRepo.getlist(Report_date));
 			System.out.println("list is formmode");
@@ -3342,6 +3343,7 @@ public class XBRLNavigationController {
 			md.addAttribute("foreigncurrencydeposit", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getDate()), formatter));
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", foreigncurrencydepositRepo.getlist(Report_date));
@@ -3439,6 +3441,7 @@ public class XBRLNavigationController {
 			md.addAttribute("ImpactAnalysis", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getDate()), formatter));
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", impactanalysisRepo.getlist(Report_date));
