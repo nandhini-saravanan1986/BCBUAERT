@@ -193,7 +193,7 @@ PURPOSE		: Nostra Account balance Report
 		}
 
 		// Detect mouse near screen edges
-		document.addEventListener('mousemove', function (e) {
+		/*document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
 			const screenWidth = window.innerWidth;
@@ -211,7 +211,7 @@ PURPOSE		: Nostra Account balance Report
 			} else {
 				forwardBtn.classList.remove('show');
 			}
-		});
+		});*/
 	</script>
 
 	<style>
@@ -524,8 +524,8 @@ PURPOSE		: Nostra Account balance Report
 
 	<style>
 		.scrollable-exist-viewport {
-			/*max-height: calc(100vh - 195px);*/
-			max-height: 95vh;
+			max-height: calc(100vh - 195px);
+			/*max-height: 95vh;*/
 			overflow-y: auto;
 			overflow-x: hidden;
 			padding-right: 10px;
@@ -765,9 +765,10 @@ PURPOSE		: Nostra Account balance Report
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$("#loader").css("display", "flex");
-			location.href = 'Nostro_Account_Bal?formmode=list';
+			location.href = 'Nostro_Account_Bal?formmode=list&Report_date='+lastDate;
 		}
 
 		function nostro() {
@@ -775,13 +776,14 @@ PURPOSE		: Nostra Account balance Report
 			$("#loader").css("display", "flex");
 			location.href = 'Nostro_Account_Bal';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Nostro_Account_Bal';
 			});
 		});
-
+*/
 
 
 		function updateform(event) {
@@ -1329,7 +1331,7 @@ PURPOSE		: Nostra Account balance Report
 							<!-- Loop to render data dynamically -->
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;"><a
-										th:href="@{'/Nostro_Account_Bal?formmode=edit&accountNo=' + ${data.accountNo}}">
+										th:href="@{'/Nostro_Account_Bal?formmode=edit&accountNo=' + ${data.accountNo} + '&Report_date='+${#dates.format(data.reportDate, 'yyyy-MM-dd')}}">
 										<i class="fa fa-edit" style="color: #fa7b32; text-align:center;"></i>
 									</a></td>
 
@@ -1602,14 +1604,15 @@ PURPOSE		: Nostra Account balance Report
 
 							</div>
 
+							<input type="hidden" class="form-control number-24-2" th:field="*{reportDate}" />
 
 
 
 							<!-- Submit -->
 							<div class="card-footer text-center">
 								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-								<a th:href="@{/Nostro_Account_Bal(formmode='list')}" class="role-btn"
-									style="text-decoration: none;">Cancel</a>
+								<a  class="role-btn"
+									style="text-decoration: none;" onclick="list()">Cancel</a>
 							</div>
 						</div>
 					</div>

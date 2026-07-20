@@ -861,9 +861,10 @@ public class XBRLNavigationController {
 		   }
 
 		if ("edit".equalsIgnoreCase(formmode) && accountNo != null && !accountNo.isEmpty()) {
-			RT_NostroAccBalData data = nostroAccBalRepo.findById(accountNo).orElse(null);
+			RT_NostroAccBalData data = nostroAccBalRepo.getbyAcctNoReportDate(Report_date,accountNo);
 			md.addAttribute("nostroData", data);
 			System.out.println("edit is formmode");
+			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", nostroAccBalRepo.getlist(Report_date));
@@ -1094,6 +1095,7 @@ public class XBRLNavigationController {
 		if ("edit".equalsIgnoreCase(formmode) && slNo != null) {
 			model.addAttribute("formmode", "edit");
 			model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
+			model.addAttribute("lastDate",LocalDate.parse(sdf.format(treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()).getReportDate()), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			model.addAttribute("formmode", "list");
 			model.addAttribute("TClist", treasuryCreditRepo.getTClist(Report_date));
@@ -1257,6 +1259,7 @@ public class XBRLNavigationController {
 		if ("edit".equalsIgnoreCase(formmode) && siNo != null) {
 			model.addAttribute("formmode", "edit");
 			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo));
+			model.addAttribute("lastDate",LocalDate.parse(sdf.format(investmentSecuritiesDataTemplateRepo.findById(siNo).get().getReportDate()), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist(Report_date);
 
@@ -1542,6 +1545,7 @@ public class XBRLNavigationController {
 					.getParticularDataBySI_NO(Serialnumber);
 			md.addAttribute("investmentriskdatadashboard", data);
 			System.out.println("edit is formmode");
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate()), formatter) );
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist(Report_date));
@@ -1755,6 +1759,7 @@ public class XBRLNavigationController {
 			RT_Fxriskdata data = friskdataRepo.getParticularDataBySI_NO(SI_NO);
 			md.addAttribute("fxriskData", data);
 			System.out.println("edit is formmode");
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
@@ -1910,6 +1915,7 @@ public class XBRLNavigationController {
 			model.addAttribute("data", data);
 			model.addAttribute("formmode", "edit");
 			System.out.println("Edit mode activated");
+			model.addAttribute("lastDate",LocalDate.parse(sdf.format(reportDate), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.getlist(Report_date);
 			model.addAttribute("dataList", list);
@@ -2133,9 +2139,10 @@ public class XBRLNavigationController {
 	    // ================= EDIT =================
 	    if ("edit".equalsIgnoreCase(formmode) && deal_no != null && !deal_no.isEmpty()) {
 
-	        RT_MmData data = mmdataRepo.getParticularDataBySI_NO(deal_no);
+	        RT_MmData data = mmdataRepo.getParticularDataBySI_NOReportdDate(Report_date,deal_no);
 	        md.addAttribute("mmData", data);
 	        md.addAttribute("formmode", "edit");
+	        md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 
 	    }
 
@@ -3067,6 +3074,7 @@ public class XBRLNavigationController {
 			md.addAttribute("tradeleveldataderivative", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", tradeleveldataderivativesRepo.getlist(Report_date));
@@ -3178,6 +3186,7 @@ public class XBRLNavigationController {
 			md.addAttribute("repoData", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate()), formatter) );
 			System.out.println("marginCallFrequency = " + data.getMarginCallFrequency());
 			System.out.println("netCollateralOutstandingAed = " + data.getNetCollateralOutstandingAed());
 
@@ -3703,6 +3712,7 @@ public class XBRLNavigationController {
 			md.addAttribute("tradeleveldataderivative", data);
 			System.out.println("edit is formmode");
 			md.addAttribute("formmode", "edit");
+			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist(Report_date));
@@ -3902,7 +3912,7 @@ System.out.println("sixe==="+excelData.length);
 
 				allData.addAll(data);
 			}
-	        
+		    model.addAttribute("lastDate",report_date);
 	        model.addAttribute("reportdetails", allData);
 	        model.addAttribute("formmode", "detail");
 	        model.addAttribute("rowid", rowid);
@@ -3919,6 +3929,8 @@ System.out.println("sixe==="+excelData.length);
 	        RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
 	        model.addAttribute("liquidityriskdashboard", data);
 	        model.addAttribute("formmode", "edit");
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        model.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate())) );
 	    }
 	    // 4. ADD MODE (Default Data Controls)
 	    else {

@@ -262,7 +262,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 //		}
 
 		// Detect mouse near screen edges
-		document.addEventListener('mousemove', function (e) {
+		/*document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
 			const screenWidth = window.innerWidth;
@@ -280,7 +280,7 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 			} else {
 				forwardBtn.classList.remove('show');
 			}
-		});
+		});*/
 		function goBack() {
 		    $("#loader").css("display", "flex");
 		    window.history.back();
@@ -700,25 +700,33 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 
 		function list() {
 			$("#loader").css("display", "flex");
-			var Report_date = document.getElementById("portfolioDate").value;
+			var lastDate = /*[[${lastDate}]]*/null;
+			//alert(lastDate);
+			/*var Report_date = document.getElementById("portfolioDate").value;
 
 		    if (Report_date) {
 		        var parts = Report_date.split("-"); 
 		        Report_date = parts[2] + "-" + parts[1] + "-" + parts[0];
+		    }*/
+		    var formattedDate = null;
+
+		    if (lastDate) {
+		        formattedDate = lastDate.split('-').reverse().join('-');
 		    }
-			location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list&report_date=' + Report_date;
+			location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list&report_date=' + formattedDate;
 			
 		}
 
 		function nostro() {
 			location.href = 'Liquidity_Risk_Dashboard_Template';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Liquidity_Risk_Dashboard_Template';
 			});
-		});
+		});*/
 
 		function updateform(event) {
 
@@ -753,17 +761,20 @@ PURPOSE		: LIQUIDITY RISK DASHBOARD TEMPLATE
 </head>
 
 
-<script>
+<script th:inline="javascript">
 function navigateToTab(tabId) {
     $("#loader").css("display", "flex");
 
-    var Report_date = document.getElementById("portfolioDate").value;
-
+    var Report_date = document.getElementById("portfolioDate")?.value || "";
+    var fallback_date = /*[[${lastDate}]]*/ null;
     if (Report_date) {
         var parts = Report_date.split("-"); 
         Report_date = parts[2] + "-" + parts[1] + "-" + parts[0];
     }
-
+    else if (fallback_date) {
+    	Report_date = fallback_date;
+    }
+    
     if (tabId === 'data') {
         window.location.href = 'Liquidity_Risk_Dashboard_Template?formmode=list&report_date=' + Report_date;
     } 
@@ -1773,7 +1784,7 @@ function navigateToTab(tabId) {
 			</div>
 
 			<div class="tab-pane fade show active" id="detail" role="tabpanel" th:if="${formmode == 'detail'}">
-			    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd;">
+			    <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd;">
 			        <table class="table table-bordered table-sm" id="reportdetails">
 			            <thead class="thead-light">
 			                <tr>
@@ -3048,8 +3059,8 @@ function navigateToTab(tabId) {
 
 						<div class="card-footer text-center">
 							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Liquidity_Risk_Dashboard_Template(formmode='list')}" class="role-btn"
-								style="text-decoration: none;">Cancel</a>
+							<a onclick="list()" class="role-btn"
+								style="text-decoration: none;color:white">Cancel</a>
 						</div>
 					</div>
 				</div>

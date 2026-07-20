@@ -655,14 +655,16 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			$("#loader").css("display", "flex");
-			location.href = 'Treasury_Credit_Limit_Management?formmode=list';
+			location.href = 'Treasury_Credit_Limit_Management?formmode=list&Report_date='+lastDate;
 		}
 
 		function nostro() {
 			$("#loader").css("display", "flex");
 			location.href = 'Treasury_Credit_Limit_Management';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
@@ -670,7 +672,7 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 				window.location.href = './Treasury_Credit_Limit_Management';
 			});
 		});
-
+*/
 		function updateform(event) {
 
 			event.preventDefault();
@@ -1782,8 +1784,8 @@ PURPOSE		: CBUAE_Treasury_Credit_Limit_Management_Data_Template
 
 						<div class="card-footer text-center">
 							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/Treasury_Credit_Limit_Management(formmode='list')}" class="role-btn"
-								style="text-decoration: none;">Cancel</a>
+							<a onclick="list()" class="role-btn"
+								style="text-decoration: none;color:white">Cancel</a>
 						</div>
 					</div>
 			</form>

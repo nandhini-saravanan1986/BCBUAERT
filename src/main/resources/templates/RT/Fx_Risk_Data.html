@@ -845,29 +845,31 @@ TESTED BY   : RAJALAKSHMI R
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			//document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
 			$("#loader").css("display", "flex");
-			location.href = 'Fx_Risk_Data?formmode=list';
+			location.href = 'Fx_Risk_Data?formmode=list&Report_date='+lastDate;
 		}
 
-
+/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Fx_Risk_Data';
 			});
-		});
+		});*/
 
 		function fxrisk() {
 			location.href = 'Fx_Risk_Data';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Fx_Risk_Data';
 			});
 		});
-
+*/
 		function updateform(event) {
 			event.preventDefault();
 
@@ -892,11 +894,11 @@ TESTED BY   : RAJALAKSHMI R
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
 
-					if (response.includes("successful")) {
+					/*if (response.includes("successful")) {
 						setTimeout(function () {
 							window.location.href = "./Fx_Risk_Data?formmode=list";
 						}, 1500);
-					}
+					}*/
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
@@ -1947,8 +1949,8 @@ TESTED BY   : RAJALAKSHMI R
 							<!-- Submit -->
 							<div class="card-footer text-center">
 								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-								<a th:href="@{/Fx_Risk_Data(formmode='list')}" class="role-btn"
-									style="text-decoration: none;">Cancel</a>
+								<a  onclick="list()" class="role-btn"
+									style="text-decoration: none;color:white">Cancel</a>
 							</div>
 						</div>
 					</div>

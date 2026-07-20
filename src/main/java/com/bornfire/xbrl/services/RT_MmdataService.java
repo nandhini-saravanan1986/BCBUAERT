@@ -51,9 +51,9 @@ public class RT_MmdataService {
 	AuditService auditservice;
     
     public boolean updateMmdata(RT_MmData updatedData) {
-	    System.out.println("Looking for record with SI_NO: " + updatedData.getDeal_no());
-	    
-	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NO(updatedData.getDeal_no());
+	    System.out.println("Looking for record with SI_NO: " + updatedData.getDeal_no()+" and Report Date : "+ updatedData.getReport_date());
+	    System.out.println("cust id : "+updatedData.getCustomer_id());
+	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NOReportdDate(updatedData.getReport_date(),updatedData.getDeal_no());
 	    
 	    RT_MmData dbUser = new RT_MmData();
 

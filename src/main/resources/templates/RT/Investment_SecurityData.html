@@ -264,7 +264,7 @@ TESTED BY   : RAJALAKSHMI R
 //		}
 
 		// Detect mouse near screen edges
-		document.addEventListener('mousemove', function (e) {
+		/*document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
 			const screenWidth = window.innerWidth;
@@ -282,7 +282,7 @@ TESTED BY   : RAJALAKSHMI R
 			} else {
 				forwardBtn.classList.remove('show');
 			}
-		});
+		});*/
 	</script>
 
 	<style>
@@ -799,20 +799,21 @@ TESTED BY   : RAJALAKSHMI R
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			$("#loader").css("display", "flex");
-			location.href = 'Investment_Securities_Data?formmode=list';
+			location.href = 'Investment_Securities_Data?formmode=list&Report_date='+lastDate;
 		}
 
 		function nostro() {
 			$("#loader").css("display", "flex");
 			location.href = 'Investment_Securities_Data';
 		}
-		$(document).ready(function () {
+		/*$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Investment_Securities_Data';
 			});
-		});
+		});*/
 
 		function updateform(event) {
 
@@ -2191,8 +2192,8 @@ TESTED BY   : RAJALAKSHMI R
 
 					<div class="card-footer text-center">
 						<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-						<a th:href="@{/Investment_Securities_Data}" class="role-btn"
-							style="text-decoration: none;">Cancel</a>
+						<a onclick="list()" class="role-btn"
+							style="text-decoration: none;color:white">Cancel</a>
 					</div>
 				</div>
 			</div>

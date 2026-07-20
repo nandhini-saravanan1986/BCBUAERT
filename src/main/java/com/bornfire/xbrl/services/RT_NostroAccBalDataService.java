@@ -42,10 +42,11 @@ public class RT_NostroAccBalDataService {
 	private Environment env;
 
 	public boolean updateNostro(RT_NostroAccBalData updatedData) {
-	    Optional<RT_NostroAccBalData> existingOpt = nostroAccBalRepo.findById(updatedData.getAccountNo());
+		System.out.println("Report Date : "+updatedData.getReportDate()+" Act no : "+updatedData.getAccountNo());
+	    RT_NostroAccBalData existingOpt = nostroAccBalRepo.getbyAcctNoReportDate(updatedData.getReportDate(),updatedData.getAccountNo());
 
-	    if (existingOpt.isPresent()) {
-	        RT_NostroAccBalData existing = existingOpt.get();
+	    if (!existingOpt.equals(null)) {
+	        RT_NostroAccBalData existing = existingOpt;
 	        
 	        RT_NostroAccBalData dbUser = new RT_NostroAccBalData();
 			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);

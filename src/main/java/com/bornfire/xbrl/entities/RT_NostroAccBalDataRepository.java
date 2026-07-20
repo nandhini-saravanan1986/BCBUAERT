@@ -14,6 +14,9 @@ public interface RT_NostroAccBalDataRepository extends JpaRepository<RT_NostroAc
 
 	@Query(value = "select * from BCBUAE_NOSTRO_ACC_BAL_DATA where DEL_FLG != 'Y' and  REPORT_DATE=?1", nativeQuery = true)
 	List<RT_NostroAccBalData> getlist(Date REPORT_DATE);
+	
+	@Query(value = "select * from BCBUAE_NOSTRO_ACC_BAL_DATA where DEL_FLG != 'Y' and  REPORT_DATE=?1 and  ACCOUNT_NO =?2 ", nativeQuery = true)
+	RT_NostroAccBalData getbyAcctNoReportDate(Date REPORT_DATE,String accountNo);
 
 
 	@Query(value = "SELECT " + "DATA_DATE, BANK_NAME, HEAD_OFFICE_SUBSIDIARY, SUBSIDIARY, "

@@ -577,13 +577,14 @@ label.error {
 	function fxrisk() {
 		location.href = 'Foreign_Currency_Deposit';
 	}
+	/*
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
 	        window.location.href = './Foreign_Currency_Deposit';
 	    });
 	});
-	
+	*/
 	
 
 	function submitForm1() {
@@ -723,11 +724,11 @@ label.error {
             $("#alertmsg").text(response);
             $("#alert").modal("toggle");
 
-            if (response.includes("successful")) {
+           /* if (response.includes("successful")) {
                 setTimeout(function() {
                     window.location.href = "./Foreign_Currency_Deposit?formmode=list&Report_date="+date;
                 }, 1500);
-            }
+            }*/
         },
         error: function(xhr, status, error) {
             console.error("Error in modify:", error);
@@ -1792,8 +1793,8 @@ label.error {
 							<div class="card-footer text-center">
 								<button type="submit" class="role-btn"
 									onclick="updateform(event)">Update</button>
-								<a th:href="@{/Foreign_Currency_Deposit(formmode='list')}"
-									class="role-btn" style="text-decoration: none;">Cancel</a>
+								<a onclick="list()"
+									class="role-btn" style="text-decoration: none; color:white">Cancel</a>
 							</div>
 	</div>
 						</div>

@@ -709,28 +709,30 @@ label.error {
 	}
 
 	function list() {
+		var lastDate = /*[[${lastDate}]]*/null;
 		$("#loader").css("display", "flex");
-		location.href = 'Trade_Level_Data_Derivatives?formmode=list';
+		location.href = 'Trade_Level_Data_Derivatives?formmode=list&Report_date='+lastDate;
 	}
 
-	
+	/*
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
 	        window.location.href = './Trade_Level_Data_Derivatives';
 	    });
 	});
-	
+	*/
 	function trade() {
 		location.href = 'Trade_Level_Data_Derivatives';
 	}
+	/*
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
 	        window.location.href = './Trade_Level_Data_Derivatives';
 	    });
 	});
-	
+	*/
 	
 
 	
@@ -2919,8 +2921,8 @@ if (tabId === 'data') {
 						<div class="card-footer text-center">
 							<button type="submit" class="role-btn"
 								onclick="updateform(event)">Update</button>
-							<a th:href="@{/Trade_Level_Data_Derivatives(formmode='list')}"
-								class="role-btn" style="text-decoration: none;">Cancel</a>
+							<a onclick="list()"
+								class="role-btn" style="text-decoration: none;color:white">Cancel</a>
 						</div>
 </div>
 					</div>

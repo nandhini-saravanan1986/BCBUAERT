@@ -176,7 +176,7 @@ left
 		//					}
 
 							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
+							/*document.addEventListener('mousemove', function(e) {
 							    const backBtn = document.getElementById('floatingBackBtn');
 							    const forwardBtn = document.getElementById('floatingForwardBtn');
 							    const screenWidth = window.innerWidth;
@@ -194,7 +194,7 @@ left
 							    } else {
 							        forwardBtn.classList.remove('show');
 							    }
-							});
+							});*/
 							</script>
 
 <style>
@@ -796,21 +796,22 @@ label.error {
 	}
 
 	function list() {
+		var lastDate = /*[[${lastDate}]]*/null;
        $("#loader").css("display", "flex");
-		location.href = 'Trade_Market_Risk?formmode=list';
+		location.href = 'Trade_Market_Risk?formmode=list&Report_date='+lastDate;
 	}
 
 	function trade() {
 		$("#loader").css("display", "flex");
 		location.href = 'Trade_Market_Risk';
 	}
-
+/*
 	$(document).ready(function () {
 		// On modal close, redirect to the list view
 		$('#alert').on('hidden.bs.modal', function () {
 			window.location.href = './Trade_Market_Risk?formmode=list';
 		});
-	});
+	});*/
 
 	// This function handles the submission of the edit form.
 	function updateform(event) {
@@ -2339,8 +2340,8 @@ label.error {
 						<div class="card-footer text-center">
 							<button type="button" class="role-btn"
 								onclick="updateform(event)">Update</button>
-							<a th:href="@{/Trade_Market_Risk(formmode='list')}"
-								class="role-btn" style="text-decoration: none;">Cancel</a>
+							<a   onclick="list()"
+								class="role-btn" style="text-decoration: none;color:white">Cancel</a>
 						</div>
 					</div>
 				</div>

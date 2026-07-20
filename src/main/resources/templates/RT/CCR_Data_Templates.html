@@ -863,20 +863,22 @@ Tested by   : Rajalakshmi
 			//location.href = 'CCR_Data_Templates?formmode=list';
 		//}
 		function list() {
-		    let Report_date = document.querySelector("#portfolioDate")?.value;
-		    location.href = 'CCR_Data_Templates?formmode=list&Report_date=' + Report_date;
+			var lastDate = /*[[${lastDate}]]*/null;
+		    //let Report_date = document.querySelector("#portfolioDate")?.value;
+		    location.href = 'CCR_Data_Templates?formmode=list&Report_date=' +lastDate;
 		}
 		function nostro() {
 			$("#loader").css("display", "flex");
 			location.href = 'CCR_Data_Templates';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './CCR_Data_Templates';
 			});
 		});
-
+*/
 		function updateform(event) {
 			event.preventDefault();
 			$("#loader").css("display", "flex");
@@ -1858,8 +1860,8 @@ Tested by   : Rajalakshmi
 						<!-- ✅ Footer section -->
 						<div class="card-footer text-center">
 							<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-							<a th:href="@{/CCR_Data_Templates (formmode='list')}" class="role-btn"
-								style="text-decoration: none;">Cancel</a>
+							<a onclick="list()" class="role-btn"
+								style="text-decoration: none; color : white">Cancel</a>
 							<!--<a th:href="@{/home}" class="custom-tab-btn">Home</a>-->
 						</div>
 					</div>

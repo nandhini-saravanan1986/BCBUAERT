@@ -261,7 +261,7 @@ left
 	//						}
 
 							// Detect mouse near screen edges
-							document.addEventListener('mousemove', function(e) {
+							/*document.addEventListener('mousemove', function(e) {
 							    const backBtn = document.getElementById('floatingBackBtn');
 							    const forwardBtn = document.getElementById('floatingForwardBtn');
 							    const screenWidth = window.innerWidth;
@@ -279,7 +279,7 @@ left
 							    } else {
 							        forwardBtn.classList.remove('show');
 							    }
-							});
+							});*/
 							</script>
 
 <style>
@@ -687,14 +687,16 @@ $(document).ready(function () {
 	}
 
 	function list() {
+		var lastDate = /*[[${lastDate}]]*/null;
 		$("#loader").css("display", "flex");
-		location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=list';
+		location.href = 'Investment_Risk_Data_Dashboard_Template?formmode=list&Report_date='+lastDate;
 	}
 	
 	function nostro() {
 		$("#loader").css("display", "flex");
 		location.href = 'Investment_Risk_Data_Dashboard_Template';
 	}
+	/*
 	$(document).ready(function () {
 	    // On modal close, redirect to your controller method path
 	    $('#alert').on('hidden.bs.modal', function () {
@@ -702,7 +704,7 @@ $(document).ready(function () {
 	        window.location.href = './Investment_Risk_Data_Dashboard_Template';
 	    });
 	});
-
+*/
 
 	/*function updateform() {
 		
@@ -787,11 +789,11 @@ $(document).ready(function () {
             $("#alertmsg").text(response);
             $("#alert").modal("toggle");
 
-            if (response.includes("successful")) {
+            /*if (response.includes("successful")) {
                 setTimeout(function() {
                     window.location.href = "./Investment_Risk_Data_Dashboard_Template?formmode=list";
                 }, 1500);
-            }
+            }*/
         },
         error: function(xhr, status, error) {
             console.error("Error in modify:", error);
@@ -1390,7 +1392,7 @@ $(document).ready(function () {
 
 
 
-			<div class="table-responsive list-table-wrapper">
+			<div class="table-responsive list-table-wrapper" style="overflow-x: hidden;">
 				<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%">
 					<thead class="thead-light">
 						<tr>
@@ -2660,8 +2662,8 @@ $(document).ready(function () {
 						<button type="submit" class="role-btn"
 							onclick="updateform(event)">Update</button>
 						<a
-							th:href="@{/Investment_Risk_Data_Dashboard_Template(formmode='list')}"
-							class="role-btn" style="text-decoration: none;">Cancel</a>
+							 onclick="list()"
+							class="role-btn" style="text-decoration: none;color:white">Cancel</a>
 					</div>
 					
 					

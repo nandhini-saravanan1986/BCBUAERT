@@ -209,7 +209,7 @@ Tested by   : Rajalakshmi R
 		//				}
 
 		// Detect mouse near screen edges
-		document.addEventListener('mousemove', function (e) {
+		/*document.addEventListener('mousemove', function (e) {
 			const backBtn = document.getElementById('floatingBackBtn');
 			const forwardBtn = document.getElementById('floatingForwardBtn');
 			const screenWidth = window.innerWidth;
@@ -227,7 +227,7 @@ Tested by   : Rajalakshmi R
 			} else {
 				forwardBtn.classList.remove('show');
 			}
-		});
+		});*/
 	</script>
 
 	<style>
@@ -684,8 +684,9 @@ Tested by   : Rajalakshmi R
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			$("#loader").css("display", "flex");
-			location.href = 'Mm_Data?formmode=list';
+			location.href = 'Mm_Data?formmode=list&Report_date='+lastDate;
 		}
 
 
@@ -694,7 +695,7 @@ Tested by   : Rajalakshmi R
 		function mmdata() {
 			location.href = 'Mm_Data';
 		}
-
+/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
@@ -702,7 +703,7 @@ Tested by   : Rajalakshmi R
 				window.location.href = './Mm_Data';
 			});
 		});
-
+*/
 
 
 		function submitForm1() {
@@ -748,12 +749,13 @@ Tested by   : Rajalakshmi R
 		function mmdata() {
 			location.href = 'Mm_Data';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Mm_Data';
 			});
-		});
+		});*/
 		function updateform(event) {
 			event.preventDefault();
 
@@ -778,11 +780,11 @@ Tested by   : Rajalakshmi R
 					$("#alertmsg").text(response);
 					$("#alert").modal("toggle");
 
-					if (response.includes("successful")) {
+					/*if (response.includes("successful")) {
 						setTimeout(function () {
 							window.location.href = "./Mm_Data?formmode=list";
 						}, 1500);
-					}
+					}*/
 				},
 				error: function (xhr, status, error) {
 					console.error("Error in modify:", error);
@@ -1391,7 +1393,7 @@ Tested by   : Rajalakshmi R
 							<!-- Loop to render data dynamically -->
 							<tr th:each="data : ${branchList}">
 								<td style="text-align: center;min-width: 100px;"><a
-										th:href="@{'/Mm_Data?formmode=edit&deal_no=' + ${data.deal_no}}">
+										th:href="@{'/Mm_Data?formmode=edit&deal_no=' + ${data.deal_no}+ '&Report_date='+${#dates.format(data.report_date, 'yyyy-MM-dd')}}">
 										<i class="fa fa-edit" style="color: #f7a47c;"></i>
 									</a></td>
 
@@ -1476,7 +1478,7 @@ Tested by   : Rajalakshmi R
 							</div>
 						</div>
 						<div class="card-body" style="max-height: 500px; overflow-y: auto;">
-							<input type="hidden" th:field="*{deal_no}" />
+							<!-- <input type="hidden" th:field="*{deal_no}" /> -->
 
 							<!-- Row: Bank Date -->
 							<div class="form-group row">
@@ -1551,7 +1553,7 @@ Tested by   : Rajalakshmi R
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">Deal No</label>
 								<div class="col-sm-4">
-									<input type="text" class="form-control number-24-2" th:field="*{deal_no}" />
+									<input type="text" class="form-control number-24-2" th:field="*{deal_no}" readonly/>
 								</div>
 
 								<label class="col-sm-2 col-form-label">Customer ID</label>
@@ -1718,8 +1720,8 @@ Tested by   : Rajalakshmi R
 							<!-- Submit -->
 							<div class="card-footer text-center">
 								<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
-								<a th:href="@{/Mm_Data(formmode='list')}" class="role-btn"
-									style="text-decoration: none;">Cancel</a>
+								<a  onclick="list()" class="role-btn"
+									style="text-decoration: none;color:white">Cancel</a>
 							</div>
 						</div>
 				</form>
