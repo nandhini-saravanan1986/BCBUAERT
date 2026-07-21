@@ -1345,8 +1345,12 @@ public class XBRLNavigationController {
 
 	@RequestMapping(value = "Liquidity_Risk_Data", method = RequestMethod.GET)
 	public String liquidityData(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) BigDecimal slno, Model model,@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
-		  LocalDate today = LocalDate.now();
+			@RequestParam(required = false) BigDecimal slno, Model model,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date,
+			@RequestParam(required = false) String glLevel1, @RequestParam(required = false) String glLevel2,
+			@RequestParam(required = false) String glLevel3,
+			@RequestParam(required = false) String instrumentCurrency) {
+		LocalDate today = LocalDate.now();
 		   String formattedDate = null;
 		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -1356,10 +1360,13 @@ public class XBRLNavigationController {
 		       formattedDate = sdf.format(Report_date);
 		   }
 		   
-		if ("edit".equalsIgnoreCase(formmode) && slno != null) {
-			model.addAttribute("formmode", "edit");
-//			model.addAttribute("liquidityData",
-//					LiquidityRiskDataRepository.findById(slno).orElse(new RT_Liquidity_Risk_Data_Template()));
+			if ("edit".equalsIgnoreCase(formmode) && glLevel1 != null && glLevel2 != null && glLevel3 != null
+					&& Report_date != null && instrumentCurrency != null) {
+				model.addAttribute("formmode", "edit");
+				RT_Liquidity_Risk_Data_Template data = LiquidityRiskDataRepository
+						.getbyGlLevelsReportDateIC(Report_date, glLevel1, glLevel2, glLevel3, instrumentCurrency);
+				model.addAttribute("liquidityData", data);
+				model.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getReportDate()), formatter));
 		} else if ("list".equalsIgnoreCase(formmode)) {
 			model.addAttribute("formmode", "list");
 			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist(Report_date));

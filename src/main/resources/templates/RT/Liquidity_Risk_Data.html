@@ -644,20 +644,22 @@ left
 		}
 
 		function list() {
+			var lastDate = /*[[${lastDate}]]*/null;
 			$("#loader").css("display", "flex");
-			location.href = 'Liquidity_Risk_Data?formmode=list';
+			location.href = 'Liquidity_Risk_Data?formmode=list&Report_date='+lastDate;
 		}
 
 		function nostro() {
 			$("#loader").css("display", "flex");
 			location.href = 'Liquidity_Risk_Data';
 		}
+		/*
 		$(document).ready(function () {
 			// On modal close, redirect to your controller method path
 			$('#alert').on('hidden.bs.modal', function () {
 				window.location.href = './Liquidity_Risk_Data';
 			});
-		});
+		});*/
 
 		function updateform(event) {
 			event.preventDefault();
@@ -1229,7 +1231,7 @@ left
 
 
 									<td style="text-align: center;min-width: 100px;">
-										<a th:href="@{'/Liquidity_Risk_Data?formmode=edit&slno=' + ${data?.slno}}">
+										<a th:href="@{'/Liquidity_Risk_Data?formmode=edit'+'&Report_date='+ ${#dates.format(data?.reportDate, 'yyyy-MM-dd')} +'&glLevel1='+ ${data.glLevel1} +'&glLevel2='+ ${data.glLevel2}+'&glLevel3='+ ${data.glLevel3}+'&instrumentCurrency='+ ${data.instrumentCurrency}}">
 											<i class="fa fa-edit" style="color: var(--bank-primary, #FF7B00);"></i>
 										</a>
 									</td>
@@ -1383,7 +1385,7 @@ left
 									
 									<select class="form-control" th:field="*{glLevel2}">
 									        <option value="" disabled selected>-- Select --</option>
-									        <option value="Cash and Balances with central Banks">Cash and Balances with central Banks</option>
+									        <!-- <option value="Cash and Balances with central Banks">Cash and Balances with central Banks</option>
 										    <option value="Due from Banks financial institutions">Due from Banks financial institutions</option>
 											<option value="Derivatives Financial Assets">Derivatives Financial Assets</option>
 											<option value="Loans and advances performing">Loans and advances performing</option>
@@ -1391,9 +1393,29 @@ left
 											<option value="Investment in Associaates">Investment in Associaates</option>
 											<option value="Intangible assets">Intangible assets</option>
 											<option value="Other assets">Other assets</option>
-											<option value="Fixed assets">Fixed assets</option>
-										
-							    </select>
+											<option value="Fixed assets">Fixed assets</option> -->
+											<option value="Cash_and_balances_with_central_banks">Cash and balances with central banks</option>
+									<option value="Due_from_banks_and_financial_institutions">Due from banks_and financial institutions</option>
+									<option value="Derivatives_Financial_Assets">Derivatives Financial Assets</option>
+									<option value="Securities">Securities</option>
+									<option value="Loans_and_Advances_Performing">Loans and Advances Performing</option>
+									<option value="Loans_and_Advances_Non_Performing">Loans and Advances Non Performing</option>
+									<option value="Investment_in_associates">Investment in associates</option>
+									<option value="Investment_in_property">Investment in property</option>
+									<option value="Intangible_Assets">Intangible Assets</option>
+									<option value="Other_Assets">Other Assets</option>
+									<option value="Fixed_Assets">Fixed Assets</option>
+									<option value="Due_to_central_banks">Due to central banks</option>
+									<option value="Due_to_Banks">Due to Banks</option>
+									<option value="Derivatives_Financial_Liabilities">Derivatives Financial Liabilities</option>
+									<option value="Medium_and_Long_Term_issuance">Medium and Long Term issuance</option>
+									<option value="Customer_Deposit">Customer Deposit</option>
+									<option value="Other_Liabilities">Other Liabilities</option>
+									<option value="Equity_level2">Equity level2</option>
+									<option value="Off_BS_level2">Off BS level2</option>
+
+
+								</select>
 								</div>
 
 								<label class="col-sm-2 col-form-label">GL Level 3</label>
@@ -1401,7 +1423,7 @@ left
 									
 							<select class="form-control" th:field="*{glLevel3}">
 							  <option value="" disabled selected>-- Select --</option>
-							    <option value="Cash and Cash items">Cash and Cash items</option>
+							    <!-- <option value="Cash and Cash items">Cash and Cash items</option>
 							 <option value="Central Bank Current Account">Central Bank Current Account</option>
 								<option value="Central Bank Reserve Account">Central Bank Reserve Account</option>
 								<option value="Due from Central Bank -ODF">Due from Central Bank -ODF</option>
@@ -1413,8 +1435,418 @@ left
 								<option value="Inter Bank Placements">Inter Bank Placements</option>
 						      <option value="Reverse Repo">Reverse Repo</option>	
 								<option value="Islamic Reverse Repo">Islamic Reverse Repo</option>
-								<option value="Islamic Placements">Islamic Placements</option>									
-							    </select>
+								<option value="Islamic Placements">Islamic Placements</option>	 -->
+								<option value="CASH AND CASH ITEMS">CASH AND CASH ITEMS</option>
+									<option value="CENTRAL BANK CURRENT ACCOUNT">CENTRAL
+										BANK CURRENT ACCOUNT</option>
+									<option value="CENTRAL BANK RESERVE ACCOUNT">CENTRAL
+										BANK RESERVE ACCOUNT</option>
+									<option value="DUE FROM CENTRAL BANK – ODF">DUE FROM
+										CENTRAL BANK – ODF</option>
+									<option value="DUE FROM CENTRAL BANK - CD">DUE FROM
+										CENTRAL BANK - CD</option>
+									<option value="DUE FROM CENTRAL BANK - MBILLS">DUE
+										FROM CENTRAL BANK - MBILLS</option>
+									<option value="REVERSE REPOS WITH CENTRAL BANKS">REVERSE
+										REPOS WITH CENTRAL BANKS</option>
+									<option value="DUE FROM BANKS NOSTRO">DUE FROM BANKS
+										NOSTRO</option>
+									<option value="INTER BANK MARGIN CALL">INTER BANK
+										MARGIN CALL</option>
+									<option value="INTER BANK PLACEMENTS">INTER BANK
+										PLACEMENTS</option>
+									<option value="REVERSE REPO">REVERSE REPO</option>
+									<option value="ISLAMIC REVERSE REPO">ISLAMIC REVERSE
+										REPO</option>
+									<option value="ISLAMIC PLACEMENTS">ISLAMIC PLACEMENTS</option>
+									<option value="POSITIVE FAIR VALUE OF CCIR DERIVATIVES">POSITIVE
+										FAIR VALUE OF CCIR DERIVATIVES</option>
+									<option value="POSITIVE FAIR VALUE OF IR DERIVATIVES">POSITIVE
+										FAIR VALUE OF IR DERIVATIVES</option>
+									<option value="POSITIVE FAIR VALUE OF FX CASH">POSITIVE
+										FAIR VALUE OF FX CASH</option>
+									<option value="POSITIVE FAIR VALUE OF EQUITY DERIVATIVES">POSITIVE
+										FAIR VALUE OF EQUITY DERIVATIVES</option>
+									<option value="POSITIVE FAIR VALUE OF CREDIT DERIVATIVES">POSITIVE
+										FAIR VALUE OF CREDIT DERIVATIVES</option>
+									<option value="POSITIVE FAIR VALUE OF COMMODITY DERIVATIVES">POSITIVE
+										FAIR VALUE OF COMMODITY DERIVATIVES</option>
+									<option value="POSITIVE FAIR VALUE OF OTHER DERIVATIVES">POSITIVE
+										FAIR VALUE OF OTHER DERIVATIVES</option>
+									<option value="INVESTMENTS - FVTPL">INVESTMENTS -
+										FVTPL</option>
+									<option value="FVOCI DEBT SECURITIES - SOVEREIGN FIXED RATE">FVOCI
+										DEBT SECURITIES - SOVEREIGN FIXED RATE</option>
+									<option value="FVOCI DEBT SECURITIES - SOVEREIGN FLOATING RATE">FVOCI
+										DEBT SECURITIES - SOVEREIGN FLOATING RATE</option>
+									<option value="FVOCI DEBT SECURITIES - CORPORATE FIXED RATE">FVOCI
+										DEBT SECURITIES - CORPORATE FIXED RATE</option>
+									<option value="FVOCI DEBT SECURITIES - CORPORATE FLOATING RATE">FVOCI
+										DEBT SECURITIES - CORPORATE FLOATING RATE</option>
+									<option value="FVOCI DEBT SECURITIES - FI FIXED RATE">FVOCI
+										DEBT SECURITIES - FI FIXED RATE</option>
+									<option value="FVOCI DEBT SECURITIES - FI FLOATING RATE">FVOCI
+										DEBT SECURITIES - FI FLOATING RATE</option>
+									<option value="FVOCI DEBT SECURITIES - NBFI FIXED RATE">FVOCI
+										DEBT SECURITIES - NBFI FIXED RATE</option>
+									<option value="FVOCI DEBT SECURITIES - NBFI FLOATING RATE">FVOCI
+										DEBT SECURITIES - NBFI FLOATING RATE</option>
+									<option value="FVOCI - EQUITIES">FVOCI - EQUITIES</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - SOVEREIGN FIXED RATE">AMORTISED
+										COST DEBT SECURITIES - SOVEREIGN FIXED RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - SOVEREIGN FLOATING RATE">AMORTISED
+										COST DEBT SECURITIES - SOVEREIGN FLOATING RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - CORPORATE FIXED RATE">AMORTISED
+										COST DEBT SECURITIES - CORPORATE FIXED RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - CORPORATE FLOATING RATE">AMORTISED
+										COST DEBT SECURITIES - CORPORATE FLOATING RATE</option>
+									<option value="AMORTISED COST DEBT SECURITIES - FI FIXED RATE">AMORTISED
+										COST DEBT SECURITIES - FI FIXED RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - FI FLOATING RATE">AMORTISED
+										COST DEBT SECURITIES - FI FLOATING RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - NBFI FIXED RATE">AMORTISED
+										COST DEBT SECURITIES - NBFI FIXED RATE</option>
+									<option
+										value="AMORTISED COST DEBT SECURITIES - NBFI FLOATING RATE">AMORTISED
+										COST DEBT SECURITIES - NBFI FLOATING RATE</option>
+									<option value="CURRENT ACCOUNTS OVERDRAFT">CURRENT
+										ACCOUNTS OVERDRAFT</option>
+									<option value="SAVING ACCOUNTS OVERDRAFT">SAVING
+										ACCOUNTS OVERDRAFT</option>
+									<option value="CALL ACCOUNTS  OVERDRAFT">CALL ACCOUNTS
+										OVERDRAFT</option>
+									<option value="CREDIT CARD RECEIVABLES">CREDIT CARD
+										RECEIVABLES</option>
+									<option value="LOANS & ADVANCES - SOVEREIGN & GRE - FIXED RATE">LOANS
+										& ADVANCES - SOVEREIGN & GRE - FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES - SOVEREIGN & GRE - FLOATING RATE">LOANS
+										& ADVANCES - SOVEREIGN & GRE - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC- SOVEREIGN & GRE - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- SOVEREIGN & GRE - FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC - SOVEREIGN & GRE - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC - SOVEREIGN & GRE - FLOATING RATE</option>
+									<option value="LOANS & ADVANCES - RETAIL - FIXED RATE">LOANS
+										& ADVANCES - RETAIL - FIXED RATE</option>
+									<option value="LOANS & ADVANCES - RETAIL - FLOATING RATE">LOANS
+										& ADVANCES - RETAIL - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES - RETAIL - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES - RETAIL - FLOATING RATE WITH EMBEDDED OPTION</option>
+									<option
+										value="LOANS & ADVANCES - RETAIL - RESIDENTIAL MORTGAGES FIXED RATE">LOANS
+										& ADVANCES - RETAIL - RESIDENTIAL MORTGAGES FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES - RETAIL - RESIDENTIAL MORTGAGES HYBRID FIXED RATE ">LOANS
+										& ADVANCES - RETAIL - RESIDENTIAL MORTGAGES HYBRID FIXED RATE
+									</option>
+									<option
+										value="LOANS & ADVANCES - RETAIL - RESIDENTIAL MORTGAGES FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES - RETAIL - RESIDENTIAL MORTGAGES FLOATING RATE WITH
+										EMBEDDED OPTION</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- RETAIL - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- RETAIL - FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- RETAIL - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC- RETAIL - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- RETAIL - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES ISLAMIC- RETAIL - FLOATING RATE WITH EMBEDDED
+										OPTION</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC- RETAIL - RESIDENTIAL MORTGAGES FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- RETAIL - RESIDENTIAL MORTGAGES FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC- RETAIL - RESIDENTIAL MORTGAGES HYBRID FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- RETAIL - RESIDENTIAL MORTGAGES HYBRID
+										FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC - RETAIL - RESIDENTIAL MORTGAGES FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC - RETAIL - RESIDENTIAL MORTGAGES FLOATING
+										RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC - RETAIL - RESIDENTIAL MORTGAGES FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES ISLAMIC - RETAIL - RESIDENTIAL MORTGAGES FLOATING
+										RATE WITH EMBEDDED OPTION</option>
+									<option value="LOANS & ADVANCES - SME - FIXED RATE">LOANS
+										& ADVANCES - SME - FIXED RATE</option>
+									<option value="LOANS & ADVANCES - SME - FLOATING RATE">LOANS
+										& ADVANCES - SME - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES - SME - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES - SME - FLOATING RATE WITH EMBEDDED OPTION</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- SME - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- SME - FIXED RATE</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- SME - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC- SME - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- SME - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES ISLAMIC- SME - FLOATING RATE WITH EMBEDDED OPTION</option>
+									<option value="LOANS & ADVANCES - WHOLESALE - FIXED RATE">LOANS
+										& ADVANCES - WHOLESALE - FIXED RATE</option>
+									<option value="LOANS & ADVANCES - WHOLESALE - FLOATING RATE">LOANS
+										& ADVANCES - WHOLESALE - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES - WHOLESALE - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES - WHOLESALE - FLOATING RATE WITH EMBEDDED OPTION</option>
+									<option
+										value="LOANS & ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FIXED RATE">LOANS
+										& ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FIXED RATE HYBRID">LOANS
+										& ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FIXED RATE
+										HYBRID</option>
+									<option
+										value="LOANS & ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FLOATING RATE">LOANS
+										& ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES - WHOLESALE - COMMERCIAL REAL ESTATE FLOATING RATE
+										WITH EMBEDDED OPTION</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- WHOLESALE - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- WHOLESALE - FIXED RATE</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- WHOLESALE - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC- WHOLESALE - FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES  ISLAMIC- WHOLESALE - FLOATING RATE WITH EMBEDDED OPTION">LOANS
+										& ADVANCES ISLAMIC- WHOLESALE - FLOATING RATE WITH EMBEDDED
+										OPTION</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC- WHOLESALE - RESIDENTIAL MORTGAGES FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- WHOLESALE - RESIDENTIAL MORTGAGES FIXED
+										RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC - WHOLESALE - RESIDENTIAL MORTGAGES FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC - WHOLESALE - RESIDENTIAL MORTGAGES
+										FLOATING RATE</option>
+									<option
+										value="LOANS & ADVANCES ISLAMIC - WHOLESALE - ADMINISTRATIF MANAGED RATE">LOANS
+										& ADVANCES ISLAMIC - WHOLESALE - ADMINISTRATIF MANAGED RATE</option>
+									<option value="LOANS & ADVANCES - FI - FIXED RATE">LOANS
+										& ADVANCES - FI - FIXED RATE</option>
+									<option value="LOANS & ADVANCES - FI - FLOATING RATE">LOANS
+										& ADVANCES - FI - FLOATING RATE</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- FI - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- FI - FIXED RATE</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- FI - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC- FI - FLOATING RATE</option>
+									<option value="LOANS & ADVANCES - NBFI - FIXED RATE">LOANS
+										& ADVANCES - NBFI - FIXED RATE</option>
+									<option value="LOANS & ADVANCES - NBFI - FLOATING RATE">LOANS
+										& ADVANCES - NBFI - FLOATING RATE</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- NBFI - FIXED RATE">LOANS
+										& ADVANCES ISLAMIC- NBFI - FIXED RATE</option>
+									<option value="LOANS & ADVANCES  ISLAMIC- NBFI - FLOATING RATE">LOANS
+										& ADVANCES ISLAMIC- NBFI - FLOATING RATE</option>
+									<option value="NON PERFORMING ADVANCES-SOVEREIGN & GRE">NON
+										PERFORMING ADVANCES-SOVEREIGN & GRE</option>
+									<option value="NON PERFORMING ADVANCES-RETAIL">NON
+										PERFORMING ADVANCES-RETAIL</option>
+									<option value="NON PERFORMING ADVANCES-SME">NON
+										PERFORMING ADVANCES-SME</option>
+									<option value="NON PERFORMING ADVANCES-WHOLESALE">NON
+										PERFORMING ADVANCES-WHOLESALE</option>
+									<option value="NON PERFORMING ADVANCES-FI">NON
+										PERFORMING ADVANCES-FI</option>
+									<option value="NON PERFORMING ADVANCES-NBFI">NON
+										PERFORMING ADVANCES-NBFI</option>
+									<option
+										value="NON PERFORMING ADVANCES ISLAMIC- SOVEREIGN & GRE">NON
+										PERFORMING ADVANCES ISLAMIC- SOVEREIGN & GRE</option>
+									<option value="NON PERFORMING ADVANCES ISLAMIC - RETAIL">NON
+										PERFORMING ADVANCES ISLAMIC - RETAIL</option>
+									<option value="NON PERFORMING ADVANCES ISLAMIC - SME">NON
+										PERFORMING ADVANCES ISLAMIC - SME</option>
+									<option value="NON PERFORMING ADVANCES ISLAMIC - WHOLESALE">NON
+										PERFORMING ADVANCES ISLAMIC - WHOLESALE</option>
+									<option value="NON PERFORMING ADVANCES ISLAMIC - FI">NON
+										PERFORMING ADVANCES ISLAMIC - FI</option>
+									<option value="NON PERFORMING ADVANCES ISLAMIC - NBFI">NON
+										PERFORMING ADVANCES ISLAMIC - NBFI</option>
+									<option value="INVESTMENT IN ASSOCIATE">INVESTMENT IN
+										ASSOCIATE</option>
+									<option value="INVESTMENT IN PROPERTY">INVESTMENT IN
+										PROPERTY</option>
+									<option value="INTANGIBLE ASSETS">INTANGIBLE ASSETS</option>
+									<option value="OTHER ASSETS">OTHER ASSETS</option>
+									<option value="FIXED ASSETS">FIXED ASSETS</option>
+									<option value="DUE TO OVERSEAS CENTRAL BANK">DUE TO
+										OVERSEAS CENTRAL BANK</option>
+									<option value="DUE TO CENTRAL BANK NOSTRO">DUE TO
+										CENTRAL BANK NOSTRO</option>
+									<option value="DUE TO BANKS - DEMAND">DUE TO BANKS -
+										DEMAND</option>
+									<option value="DUE TO BANKS - CALL ACCOUNTS & VOSTRO">DUE
+										TO BANKS - CALL ACCOUNTS & VOSTRO</option>
+									<option value="DUE TO BANKS - MARGIN CALL">DUE TO
+										BANKS - MARGIN CALL</option>
+									<option value="INTERBANK BORROWING - MONEY MARKET">INTERBANK
+										BORROWING - MONEY MARKET</option>
+									<option value="INTERBANK BORROWING - REPO & COLLATERAL">INTERBANK
+										BORROWING - REPO & COLLATERAL</option>
+									<option value="INTERBANK ISLAMIC BORROWING - MONEY MARKET">INTERBANK
+										ISLAMIC BORROWING - MONEY MARKET</option>
+									<option value="INTERBANK ISLAMIC BORROWING - REPO & COLLATERAL">INTERBANK
+										ISLAMIC BORROWING - REPO & COLLATERAL</option>
+									<option value="NEGATIVE FAIR VALUE OF CCIR DERIVATIVES">NEGATIVE
+										FAIR VALUE OF CCIR DERIVATIVES</option>
+									<option value="NEGATIVE FAIR VALUE OF IR DERIVATIVES">NEGATIVE
+										FAIR VALUE OF IR DERIVATIVES</option>
+									<option value="NEGATIVE FAIR VALUE OF FX CASH">NEGATIVE
+										FAIR VALUE OF FX CASH</option>
+									<option value="NEGATIVE FAIR VALUE OF EQUITY DERIVATIVES">NEGATIVE
+										FAIR VALUE OF EQUITY DERIVATIVES</option>
+									<option value="NEGATIVE FAIR VALUE OF CREDIT DERIVATIVES">NEGATIVE
+										FAIR VALUE OF CREDIT DERIVATIVES</option>
+									<option value="NEGATIVE FAIR VALUE OF COMMODITY DERIVATIVES">NEGATIVE
+										FAIR VALUE OF COMMODITY DERIVATIVES</option>
+									<option value="NEGATIVE FAIR VALUE OF OTHER DERIVATIVES">NEGATIVE
+										FAIR VALUE OF OTHER DERIVATIVES</option>
+									<option value="BONDS FIXED RATE">BONDS FIXED RATE</option>
+									<option value="BONDS FLOATING RATE">BONDS FLOATING
+										RATE</option>
+									<option value="SUKUK FIXED RATE">SUKUK FIXED RATE</option>
+									<option value="SUKUK FLOATING RATE">SUKUK FLOATING
+										RATE</option>
+									<option value="EMTN FIXED RATE">EMTN FIXED RATE</option>
+									<option value="EMTN FLOATING RATE">EMTN FLOATING RATE</option>
+									<option value="RETAIL CALL ACCOUNTS">RETAIL CALL
+										ACCOUNTS</option>
+									<option value="RETAIL CURRENT ACCOUNTS">RETAIL CURRENT
+										ACCOUNTS</option>
+									<option value="RETAIL SAVINGS">RETAIL SAVINGS</option>
+									<option value="RETAIL COLLATERAL/MARGIN DEPOSITS">RETAIL
+										COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="RETAIL TERM DEPOSITS FIXED RATE">RETAIL
+										TERM DEPOSITS FIXED RATE</option>
+									<option value="RETAIL TERM DEPOSITS FLOATING RATE">RETAIL
+										TERM DEPOSITS FLOATING RATE</option>
+									<option value="RETAIL ISLAMIC CALL ACCOUNTS">RETAIL
+										ISLAMIC CALL ACCOUNTS</option>
+									<option value="RETAIL ISLAMIC CURRENT ACCOUNTS">RETAIL
+										ISLAMIC CURRENT ACCOUNTS</option>
+									<option value="RETAIL ISLAMIC SAVINGS">RETAIL ISLAMIC
+										SAVINGS</option>
+									<option
+										value="RETAIL ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS">RETAIL
+										ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="RETAIL ISLAMIC TERM DEPOSITS FIXED RATE">RETAIL
+										ISLAMIC TERM DEPOSITS FIXED RATE</option>
+									<option value="RETAIL ISLAMIC TERM DEPOSITS FLOATING RATE">RETAIL
+										ISLAMIC TERM DEPOSITS FLOATING RATE</option>
+									<option value="SOVEREIGN & GRE CALL ACCOUNTS">SOVEREIGN
+										& GRE CALL ACCOUNTS</option>
+									<option value="SOVEREIGN & GRE CURRENT ACCOUNTS">SOVEREIGN
+										& GRE CURRENT ACCOUNTS</option>
+									<option value="SOVEREIGN & GRE MARGIN DEPOSITS">SOVEREIGN
+										& GRE MARGIN DEPOSITS</option>
+									<option value="SOVEREIGN & GRE TERM DEPOSITS FIXED RATE">SOVEREIGN
+										& GRE TERM DEPOSITS FIXED RATE</option>
+									<option value="SOVEREIGN & GRE TERM DEPOSITS FLOATING RATE">SOVEREIGN
+										& GRE TERM DEPOSITS FLOATING RATE</option>
+									<option value="SOVEREIGN & GRE ISLAMIC CALL ACCOUNTS">SOVEREIGN
+										& GRE ISLAMIC CALL ACCOUNTS</option>
+									<option value="SOVEREIGN & GRE ISLAMIC CURRENT ACCOUNTS">SOVEREIGN
+										& GRE ISLAMIC CURRENT ACCOUNTS</option>
+									<option
+										value="SOVEREIGN & GRE ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS">SOVEREIGN
+										& GRE ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option
+										value="SOVEREIGN & GRE ISLAMIC TERM DEPOSITS FIXED RATE">SOVEREIGN
+										& GRE ISLAMIC TERM DEPOSITS FIXED RATE</option>
+									<option
+										value="SOVEREIGN & GRE ISLAMIC TERM DEPOSITS FLOATING RATE">SOVEREIGN
+										& GRE ISLAMIC TERM DEPOSITS FLOATING RATE</option>
+									<option value="SME CURRENT ACCOUNTS">SME CURRENT
+										ACCOUNTS</option>
+									<option value="SME CALL ACCOUNTS">SME CALL ACCOUNTS</option>
+									<option value="SME MARGIN COLLATERAL/MARGIN DEPOSITS">SME
+										MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="SME TERM DEPOSITS FIXED RATE">SME TERM
+										DEPOSITS FIXED RATE</option>
+									<option value="SME TERM DEPOSITS FLOATING RATE">SME
+										TERM DEPOSITS FLOATING RATE</option>
+									<option value="SME ISLAMIC CALL ACCOUNTS">SME ISLAMIC
+										CALL ACCOUNTS</option>
+									<option value="SME ISLAMIC CURRENT ACCOUNTS">SME
+										ISLAMIC CURRENT ACCOUNTS</option>
+									<option value="SME ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS">SME
+										ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="SME ISLAMIC TERM DEPOSITS FIXED RATE">SME
+										ISLAMIC TERM DEPOSITS FIXED RATE</option>
+									<option value="SME ISLAMIC TERM DEPOSITS FLOATING RATE">SME
+										ISLAMIC TERM DEPOSITS FLOATING RATE</option>
+									<option value="WHOLESALE CALL ACCOUNTS">WHOLESALE CALL
+										ACCOUNTS</option>
+									<option value="WHOLESALE CURRENT ACCOUNTS">WHOLESALE
+										CURRENT ACCOUNTS</option>
+									<option value="WHOLESALE MARGIN COLLATERAL/MARGIN DEPOSITS">WHOLESALE
+										MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="WHOLESALE TERM DEPOSITS FIXED RATE">WHOLESALE
+										TERM DEPOSITS FIXED RATE</option>
+									<option value="WHOLESALE TERM DEPOSITS FLOATING RATE">WHOLESALE
+										TERM DEPOSITS FLOATING RATE</option>
+									<option value="WHOLESALE ISLAMIC CALL ACCOUNTS">WHOLESALE
+										ISLAMIC CALL ACCOUNTS</option>
+									<option value="WHOLESALE ISLAMIC CURRENT ACCOUNTS">WHOLESALE
+										ISLAMIC CURRENT ACCOUNTS</option>
+									<option
+										value="WHOLESALE ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS">WHOLESALE
+										ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="WHOLESALE ISLAMIC TERM DEPOSITS FIXED RATE">WHOLESALE
+										ISLAMIC TERM DEPOSITS FIXED RATE</option>
+									<option value="WHOLESALE ISLAMIC TERM DEPOSITS FLOATING RATE">WHOLESALE
+										ISLAMIC TERM DEPOSITS FLOATING RATE</option>
+									<option value="NBFI CALL ACCOUNTS">NBFI CALL ACCOUNTS</option>
+									<option value="NBFI CURRENT ACCOUNTS">NBFI CURRENT
+										ACCOUNTS</option>
+									<option value="NBFI MARGIN COLLATERAL/MARGIN DEPOSITS">NBFI
+										MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="NBFI TERM DEPOSITS FIXED RATE">NBFI
+										TERM DEPOSITS FIXED RATE</option>
+									<option value="NBFI TERM DEPOSITS FLOATING RATE">NBFI
+										TERM DEPOSITS FLOATING RATE</option>
+									<option value="NBFI ISLAMIC CALL ACCOUNTS">NBFI
+										ISLAMIC CALL ACCOUNTS</option>
+									<option value="NBFI ISLAMIC CURRENT ACCOUNTS">NBFI
+										ISLAMIC CURRENT ACCOUNTS</option>
+									<option value="NBFI ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS">NBFI
+										ISLAMIC MARGIN COLLATERAL/MARGIN DEPOSITS</option>
+									<option value="NBFI ISLAMIC TERM DEPOSITS FIXED RATE">NBFI
+										ISLAMIC TERM DEPOSITS FIXED RATE</option>
+									<option value="NBFI ISLAMIC TERM DEPOSITS FLOATING RATE">NBFI
+										ISLAMIC TERM DEPOSITS FLOATING RATE</option>
+									<option value="OTHER LIABILITIES">OTHER LIABILITIES</option>
+									<option value="ISSUED AND PAID UP SHARE CAPITAL ">ISSUED
+										AND PAID UP SHARE CAPITAL</option>
+									<option value="HYBRID CAPITAL INSTRUMENTS">HYBRID
+										CAPITAL INSTRUMENTS</option>
+									<option value="STATUTORY RESERVE">STATUTORY RESERVE</option>
+									<option value="GENERAL RESERVE">GENERAL RESERVE</option>
+									<option value="FOREIGN CURRENCY TRANSLATION RESERVE">FOREIGN
+										CURRENCY TRANSLATION RESERVE</option>
+									<option value="FAIR VALUE RESERVE">FAIR VALUE RESERVE</option>
+									<option value="RETAINED EARNINGS">RETAINED EARNINGS</option>
+									<option value="FX DERIVATIVES - RECEIVING LEG (BS HEDGE)">FX
+										DERIVATIVES - RECEIVING LEG (BS HEDGE)</option>
+									<option value="FX DERIVATIVES - PAYING LEG (BS HEDGE)">FX
+										DERIVATIVES - PAYING LEG (BS HEDGE)</option>
+									<option value="LOANS COMMITMENTS">LOANS COMMITMENTS</option>
+									<option value="LETTERS OF CREDIT AND FINANCIAL GUARANTEES">LETTERS
+										OF CREDIT AND FINANCIAL GUARANTEES</option>
+									<option value="OTHER OFF-BS ITEMS">OTHER OFF-BS ITEMS</option>
+
+								</select>
 								</div>
 							</div>
 
@@ -1710,14 +2142,14 @@ left
 							    </div>
 							</div>
 
-						
+						 <input type="hidden" th:field="*{reportDate}" />
 					
 
 
 					<div class="card-footer text-center">
 						<button type="submit" class="role-btn" onclick="updateform(event)">Update</button>
 						<!--<a th:href="@{/Liquidity_Risk_Data}" class="custom-tab-btn">Cancel</a>-->
-						<a th:href="@{/Liquidity_Risk_Data(formmode='list')}" class="role-btn" style="text-decoration: none;">Cancel</a>
+						<a onclick="list()" class="role-btn" style="text-decoration: none;color:white">Cancel</a>
 </div>
 					</div>
 			</div>

@@ -54,10 +54,11 @@ public class RT_Liquidity_Risk_Data_Service {
     // Update existing record
     public boolean updateLiquidityRisk(RT_Liquidity_Risk_Data_Template updatedEntity) {
         //Optional<RT_Liquidity_Risk_Data_Template> existingOpt = LiquidityRiskDataRepository.findById(updatedEntity.getSlno());
-        Optional<RT_Liquidity_Risk_Data_Template> existingOpt =null;
-
-        if (existingOpt.isPresent()) {
-            RT_Liquidity_Risk_Data_Template existing = existingOpt.get();
+        RT_Liquidity_Risk_Data_Template existingOpt = LiquidityRiskDataRepository
+				.getbyGlLevelsReportDateIC(updatedEntity.getReportDate(), updatedEntity.getGlLevel1(),updatedEntity.getGlLevel2(),updatedEntity.getGlLevel3(),updatedEntity.getInstrumentCurrency());
+		
+        if (!existingOpt.equals(null)) {
+            RT_Liquidity_Risk_Data_Template existing = existingOpt;
 
             RT_Liquidity_Risk_Data_Template dbUser = new RT_Liquidity_Risk_Data_Template();
 			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
