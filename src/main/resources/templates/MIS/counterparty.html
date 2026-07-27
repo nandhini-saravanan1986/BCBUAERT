@@ -860,28 +860,195 @@
 			margin-left: auto;
 		}
 	</style>
-	<script>
-		$(document).ready(function () {
-			if (!$('#usertable').length) {
-				return;
-			}
-			let tableHeight = $(window).height() - 330; // subtract header/footer space
-			if (tableHeight < 200) tableHeight = 200;   // minimum height
+	<style>
+		.column-filter-box{
 
-			$('#usertable').DataTable({
-				destroy: true,
-				scrollY: tableHeight + "px", // dynamic height
-				scrollCollapse: false,
-				paging: true,
-				autoWidth: false,
-				ordering: false,
-				searching: true,
-				scrollX: true,
-				pageLength: 100,
-				lengthChange: false,
-				responsive: true
+		    position:absolute;
+		    background:#fff;
+		    width:230px;
+		    border:1px solid #ddd;
+		    border-radius:4px;
+		    box-shadow:0 3px 10px rgba(0,0,0,.25);
+		    padding:10px;
+		    z-index:9999;
+
+		}
+
+		.filter-values{
+
+		    max-height:180px;
+		    overflow-y:auto;
+		    margin-top:8px;
+
+		}
+
+		.filter-values label{
+
+		    display:block;
+		    cursor:pointer;
+		    font-size:13px;
+
+		}
+	</style>
+	<script>
+	$(document).ready(function () {
+
+	    if (!$('#usertable').length) {
+	        return;
+	    }
+
+	    let tableHeight = $(window).height() - 330;
+	    if (tableHeight < 200) tableHeight = 200;
+
+	    var table = $('#usertable').DataTable({
+	        destroy: true,
+	        scrollY: tableHeight + "px",
+	        scrollCollapse: false,
+	        paging: true,
+	        autoWidth: false,
+	        ordering: false,
+	        searching: true,
+	        scrollX: true,
+	        pageLength: 100,
+	        lengthChange: false,
+	        responsive: true
+	    });
+
+	    $(".filter-icon").click(function (e) {
+
+	        e.stopPropagation();
+
+	        $(".column-filter-box").remove();
+
+	        var columnIndex = $(this).data("column");
+
+	        // Get unique values from selected column
+	        var values = [];
+
+	        table.column(columnIndex).data().each(function (value) {
+
+	            value = $("<div>").html(value).text().trim();
+
+	            if (value != "" && values.indexOf(value) == -1) {
+	                values.push(value);
+	            }
+
+	        });
+
+	        values.sort();
+
+	        var box = $('<div class="column-filter-box">' +
+	            '<input type="text" class="filter-search form-control form-control-sm" placeholder="Search value">' +
+
+	            '<div class="filter-values" style="max-height:180px;overflow-y:auto;margin-top:8px;"></div>' +
+
+	            '<div class="mt-2 text-right">' +
+	            '<button class="btn btn-warning btn-sm apply-filter">Apply</button> ' +
+	            '<button class="btn btn-secondary btn-sm clear-filter">Clear</button>' +
+	            '</div>' +
+	            '</div>');
+
+	        values.forEach(function (v) {
+
+	            box.find(".filter-values").append(
+
+	                '<label style="display:block;">' +
+	                '<input type="checkbox" value="' + v + '"> ' +
+	                v +
+	                '</label>'
+
+	            );
+
+	        });
+
+	        $("body").append(box);
+
+	        box.css({
+	            top: $(this).offset().top + 20,
+	            left: $(this).offset().left - 170
+	        });
+			box.on("click", function (e) {
+			    e.stopPropagation();
 			});
+	        // Search inside popup
+	        box.find(".filter-search").on("keyup", function () {
+
+	            var txt = $(this).val().toLowerCase();
+
+	            box.find("label").each(function () {
+
+	                $(this).toggle(
+	                    $(this).text().toLowerCase().indexOf(txt) > -1
+	                );
+
+	            });
+
+	        });
+
+	        // Apply filter
+			box.find(".apply-filter").click(function () {
+
+			    var typedText = box.find(".filter-search").val().trim();
+
+			    var selected = [];
+
+			    box.find("input[type=checkbox]:checked").each(function () {
+
+			        selected.push($.fn.dataTable.util.escapeRegex($(this).val()));
+
+			    });
+
+			    if (selected.length > 0) {
+
+			        table.column(columnIndex)
+			            .search("^(" + selected.join("|") + ")$", true, false)
+			            .draw();
+
+			    }
+			    else if (typedText != "") {
+
+			        table.column(columnIndex)
+			            .search(typedText, false, true)
+			            .draw();
+
+			    }
+			    else {
+
+			        table.column(columnIndex)
+			            .search("")
+			            .draw();
+
+			    }
+
+			    box.remove();
+
+			});
+
+	        // Clear filter
+	        box.find(".clear-filter").click(function () {
+
+	            table.column(columnIndex)
+	                .search("")
+	                .draw();
+
+	            box.remove();
+
+	        });
+
+	    });
+
+		$(document).on("click", function (e) {
+
+		    if (
+		        !$(e.target).closest(".column-filter-box").length &&
+		        !$(e.target).hasClass("filter-icon")
+		    ) {
+		        $(".column-filter-box").remove();
+		    }
+
 		});
+
+	});
 	</script>
 
 
@@ -1233,24 +1400,37 @@
 												<!--<th style="text-align: left; white-space: nowrap;">CounterParty Bank
 													Code</th>-->
 												<th style="text-align: left; white-space: nowrap;">CounterParty Bank
+													<i class="fa fa-filter filter-icon" data-column="2"></i>
 												</th>
-												<th style="text-align: left; white-space: nowrap;">External Rating</th>
-												<th style="text-align: left; white-space: nowrap;">Country</th>
-												<th style=" text-align: right;white-space: nowrap;">Regular Limit</th>
-												<th style=" text-align: right;white-space: nowrap;">Adhoc Limit</th>
+												<th style="text-align: left; white-space: nowrap;">External Rating
+													<i class="fa fa-filter filter-icon" data-column="3"></i>
+												</th>
+												<th style="text-align: left; white-space: nowrap;">Country
+													<i class="fa fa-filter filter-icon" data-column="4"></i>
+												</th>
+												<th style=" text-align: right;white-space: nowrap;">Regular Limit
+													<i class="fa fa-filter filter-icon" data-column="5"></i>
+												</th>
+												<th style=" text-align: right;white-space: nowrap;">Adhoc Limit
+													<i class="fa fa-filter filter-icon" data-column="5"></i>
+												</th>
 												<th style=" text-align: right;white-space: nowrap;">Settlement
-													Limit</th>
-												<th style="text-align: right;white-space: nowrap;">Credit Limit</th>
+													Limit<i class="fa fa-filter filter-icon" data-column="5"></i></th>
+												<th style="text-align: right;white-space: nowrap;">Credit Limit
+													<i class="fa fa-filter filter-icon" data-column="5"></i>
+												</th>
 												<th style="text-align: right;white-space: nowrap;">Money Market
-													Limit</th>
+													Limit<i class="fa fa-filter filter-icon" data-column="5"></i></th>
 												<th style=" text-align: right;white-space: nowrap;">Trade Finance
-													Limit</th>
+													Limit<i class="fa fa-filter filter-icon" data-column="5"></i></th>
 												<th style=" text-align: center;white-space: nowrap;">Adhoc Limit
-													Expiry Date</th>
+													Expiry Date<i class="fa fa-filter filter-icon" data-column="5"></i></th>
 
 												<th style=" text-align: center;white-space: nowrap;">EAR Marking Limit
+													<i class="fa fa-filter filter-icon" data-column="5"></i>
 												</th>
 												<th style=" text-align: center;white-space: nowrap;">Ear Marking Date
+													<i class="fa fa-filter filter-icon" data-column="5"></i>
 												</th>
 												<!--<th style=" text-align: center;white-space: nowrap;">Status</th>
 												<th style=" width:5%; text-align: center;white-space: nowrap;">Expiry
