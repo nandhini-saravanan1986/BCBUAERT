@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -3508,7 +3509,7 @@ public class XBRLNavigationController {
 		        formattedDate = sdf.format(Report_date);
 		    }
 
-
+		    try {
 		if ("edit".equalsIgnoreCase(formmode) || "editear".equalsIgnoreCase(formmode)) {
 			//RT_IRRBB_Data_EAR data = IRRBB_EAR_Repository.getParticularDataBySI_NO(SI_NO);
 			
@@ -3571,12 +3572,25 @@ public class XBRLNavigationController {
 		 * model.addAttribute("securityData", new
 		 * RT_Investment_Securities_Data_Template()); }
 		 */else {
-			 	Timestamp lastdatetimestamp = IRRB_EVE_Repo.findLastReportDate();
-			 	Timestamp secondlastdatetimestamp = IRRB_EVE_Repo.findSecondLastReportDate();			
+			 	Timestamp lastdatetimestampeve = IRRB_EVE_Repo.findLastReportDate();
+			 	Timestamp lastdatetimestampear = IRRBB_EAR_Repository.findLastReportDate();
+			 	Timestamp lastdatetimestampdr = IRRBB_Data_Template_DiscountRate_repo.findLastReportDate();
+			 	Timestamp secondlastdatetimestampeve = IRRB_EVE_Repo.findSecondLastReportDate();
+			 	Timestamp secondlastdatetimestampear = IRRBB_EAR_Repository.findSecondLastReportDate();
+			 	Timestamp secondlastdatetimestampdr = IRRBB_Data_Template_DiscountRate_repo.findSecondLastReportDate();
 				
+				Timestamp lastdatetimestamp = Stream
+						.of(lastdatetimestampeve, lastdatetimestampear, lastdatetimestampdr).filter(Objects::nonNull)
+						.max(Timestamp::compareTo).orElse(null);
+				
+				Timestamp secondlastdatetimestamp = Stream
+						.of(secondlastdatetimestampeve, secondlastdatetimestampear, secondlastdatetimestampdr).filter(Objects::nonNull)
+						.max(Timestamp::compareTo).orElse(null);
+			 	
 			 	String lastDateString = null;
 		        String secondLastDateString = null;
 		        LocalDate lastDate = null;
+		        
 		        if (lastdatetimestamp != null) {
 		            lastDate = lastdatetimestamp.toLocalDateTime().toLocalDate();
 		            lastDateString = lastdatetimestamp.toLocalDateTime().format(formatter);
@@ -3610,10 +3624,9 @@ public class XBRLNavigationController {
 				else if(secondlastdata != null && !secondlastdata.equals(null)){
 					md.addAttribute("data", secondlastdata);
 					md.addAttribute("formmode", "exist");
-				}else {					
-					
-					md.addAttribute("formmode", "add");
+				}else {
 					md.addAttribute("formmode", "null");
+					md.addAttribute("formmode", "add");
 				}
 				md.addAttribute("lastDate", lastDate);
 				md.addAttribute("bankname", "Bank of Baroda");			 
@@ -3624,6 +3637,9 @@ public class XBRLNavigationController {
 
 		md.addAttribute("bankList", bankList);
 		md.addAttribute("countryList", countryList);
+		    } catch (Exception e) {
+		    	logger.error("Error fetching data for report date: {}", reportDate, e);
+			}
 		return "RT/IRRBB_data_Template";
 	}
 
