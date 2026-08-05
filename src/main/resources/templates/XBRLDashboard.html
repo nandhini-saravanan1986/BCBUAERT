@@ -1844,7 +1844,8 @@
 
 			showMatrixChartRangePanel();
 
-			const reportDateParam = encodeURIComponent(reportDate || "");
+			const reportDateIso = parseMatrixReportDateToIso(reportDate) || String(reportDate || "").split("T")[0];
+			const reportDateParam = encodeURIComponent(reportDateIso);
 			const monthlyOnly = opts.monthlyOnly === true;
 			const monthlyUrl = "./Getbarchart?Matrix_Srl_no=" + encodeURIComponent(srlNo) + "&Report_date=" + reportDateParam;
 			const dailyUrl = "./Getprogresschart?Matrix_Srl_no=" + encodeURIComponent(srlNo) + "&Report_date=" + reportDateParam;
@@ -3284,7 +3285,7 @@
 
 
 
-				fetch('./Limitdetaildata?Report_date=' + labelReport_date + '&Data_Type_Used=' + 'NetOvernight_noop', {
+				fetch('./Limitdetaildata?Report_date=' + encodeURIComponent(normalizeReportDateForLimitApi(labelReport_date)) + '&Data_Type_Used=' + 'NetOvernight_noop', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -3320,7 +3321,7 @@
 						alert("Error fetching exposure data: " + error.message);
 						$("#invalidfile").modal("toggle");
 					});
-				document.getElementById("NoopreportBtn").dataset.reportDate = labelReport_date;
+				document.getElementById("NoopreportBtn").dataset.reportDate = normalizeReportDateForLimitApi(labelReport_date);
 				document.getElementById("NoopreportBtn").dataset.matrixSrl = labelsrlno;
 				document.getElementById("Netovernight_noop_table_name").innerHTML = 'Net Overnight Position Limit (NOOP)';
 				document.querySelector(".Netovernight_noop").style.display = "block";

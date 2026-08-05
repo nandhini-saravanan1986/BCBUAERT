@@ -1557,9 +1557,9 @@ public class MIS_Rest_Controller {
 		} catch (Exception ignore) {
 		}
 
-		// try other known formats
+		// try other known formats (dd-MM-yyyy before MM-dd-yyyy — dashboard uses day-first dates)
 		DateTimeFormatter[] formats = { DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-				DateTimeFormatter.ofPattern("MM-dd-yyyy"), DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+				DateTimeFormatter.ofPattern("dd-MM-yyyy"), DateTimeFormatter.ofPattern("MM-dd-yyyy"),
 				DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH) // Tue Sep 30 00:00:00 GST
 																							// 2025
 		};
