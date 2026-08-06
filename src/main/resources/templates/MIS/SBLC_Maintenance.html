@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Risk Insights — SBLC Maintenance</title>
+	<title>Risk Insights — SBL/Guarantee Maintenance</title>
 
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}" />
@@ -335,7 +335,7 @@
 						<button class="static-back-btn" type="button" onclick="goBack()" title="Go Back">
 							<i class="fa fa-arrow-left"></i>
 						</button>
-						<h4 class="page-title">SBLC Maintenance</h4>
+						<h4 class="page-title">SBL/Guarantee Maintenance</h4>
 					</div>
 					<button type="button" class="role-btn" onclick="addForm()">Add New</button>
 				</div>
@@ -349,7 +349,8 @@
 								<th>GL Subhead</th>
 								<th>Customer Name</th>
 								<th>Bank Name</th>
-								<th>Report Date</th>
+								<th>Open Date</th>
+								<th>Expire Date</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -361,7 +362,8 @@
 								<td th:text="${sblc.gl_subhead}"></td>
 								<td th:text="${sblc.customer_name}"></td>
 								<td th:text="${sblc.bank_name}"></td>
-								<td th:text="${#dates.format(sblc.report_date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${#dates.format(sblc.open_date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${#dates.format(sblc.expire_date, 'dd-MM-yyyy')}"></td>
 								<td class="action-cell">
 									<i class="fa fa-eye text-info mr-3" style="cursor:pointer" title="View"
 										th:attr="data-id=${sblc.id}" onclick="viewForm(this.getAttribute('data-id'))"></i>
@@ -384,8 +386,8 @@
 							<i class="fa fa-arrow-left"></i>
 						</button>
 						<h4 class="page-title"
-							th:text="${formmode == 'add' ? 'SBLC Maintenance - Add' : (formmode == 'edit' ? 'SBLC Maintenance - Modify' : 'SBLC Maintenance - View')}">
-							SBLC Maintenance
+							th:text="${formmode == 'add' ? 'SBL/Guarantee Maintenance - Add' : (formmode == 'edit' ? 'SBL/Guarantee Maintenance - Modify' : 'SBL/Guarantee Maintenance - View')}">
+							SBL/Guarantee Maintenance
 						</h4>
 					</div>
 					<button type="button" class="role-btn" onclick="list()">List</button>
@@ -439,10 +441,19 @@
 								<input type="text" name="branch_name" class="form-control form-control-sm"
 									th:value="${list?.branch_name}" th:readonly="${formmode == 'view'}" />
 							</div>
-							<label class="col-sm-2 col-form-label">Report Date</label>
+							<label class="col-sm-2 col-form-label">Open Date</label>
 							<div class="col-sm-4">
-								<input type="date" id="report_date" name="report_date" class="form-control form-control-sm"
-									th:value="${#dates.format(list?.report_date, 'yyyy-MM-dd')}"
+								<input type="date" id="open_date" name="open_date" class="form-control form-control-sm"
+									th:value="${#dates.format(list?.open_date, 'yyyy-MM-dd')}"
+									th:readonly="${formmode == 'view'}" />
+							</div>
+						</div>
+
+						<div class="row formline">
+							<label class="col-sm-2 col-form-label">Expire Date</label>
+							<div class="col-sm-4">
+								<input type="date" id="expire_date" name="expire_date" class="form-control form-control-sm"
+									th:value="${#dates.format(list?.expire_date, 'yyyy-MM-dd')}"
 									th:readonly="${formmode == 'view'}" />
 							</div>
 						</div>

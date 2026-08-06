@@ -70,6 +70,14 @@ public class MIS_SBLC_Maintenance_Entity {
 	@Column(name = "REPORT_DATE")
 	private Date report_date;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Column(name = "OPEN_DATE")
+	private Date open_date;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Column(name = "EXPIRE_DATE")
+	private Date expire_date;
+
 	@Column(name = "BRANCH_CODE")
 	private String branch_code;
 
@@ -220,6 +228,22 @@ public class MIS_SBLC_Maintenance_Entity {
 		this.report_date = report_date;
 	}
 
+	public Date getOpen_date() {
+		return open_date;
+	}
+
+	public void setOpen_date(Date open_date) {
+		this.open_date = open_date;
+	}
+
+	public Date getExpire_date() {
+		return expire_date;
+	}
+
+	public void setExpire_date(Date expire_date) {
+		this.expire_date = expire_date;
+	}
+
 	public String getBranch_code() {
 		return branch_code;
 	}
@@ -239,8 +263,8 @@ public class MIS_SBLC_Maintenance_Entity {
 	public MIS_SBLC_Maintenance_Entity(BigDecimal id, String srl_no, String sol_id, String account_no,
 			String gl_subhead, String customer_name, String bank_name, BigDecimal amount, String create_user,
 			Date create_time, String modify_user, Date modify_time, String verify_user, Date verify_time,
-			String entity_flg, String modify_flg, String del_flg, Date report_date, String branch_code,
-			String branch_name) {
+			String entity_flg, String modify_flg, String del_flg, Date report_date, Date open_date, Date expire_date,
+			String branch_code, String branch_name) {
 		super();
 		this.id = id;
 		this.srl_no = srl_no;
@@ -260,6 +284,8 @@ public class MIS_SBLC_Maintenance_Entity {
 		this.modify_flg = modify_flg;
 		this.del_flg = del_flg;
 		this.report_date = report_date;
+		this.open_date = open_date;
+		this.expire_date = expire_date;
 		this.branch_code = branch_code;
 		this.branch_name = branch_name;
 	}

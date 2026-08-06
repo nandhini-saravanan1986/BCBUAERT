@@ -41,7 +41,7 @@
 		"Interbank Placements": "fa-landmark",
 		"Swap Settlement": "fa-sync-alt",
 		"Final Risk View": "fa-binoculars",
-		"SBLC Maintenance": "fa-file-contract",
+		"SBL/Guarantee Maintenance": "fa-file-contract",
 		"Bank Limit Check": "fa-check-double",
 		"ASL Limit Request": "fa-file-signature",
 		"Treasury Placement": "fa-piggy-bank",
