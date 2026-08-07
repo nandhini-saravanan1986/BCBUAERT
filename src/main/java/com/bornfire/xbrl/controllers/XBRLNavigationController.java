@@ -8335,4 +8335,67 @@ System.out.println("sixe==="+excelData.length);
 
 		return missingQuarters;
 	}
+	@Autowired
+	RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO;
+	
+	@RequestMapping(value = "BulkRun", method = { RequestMethod.GET, RequestMethod.POST })
+	public String bulk_run(Model md, HttpServletRequest req) {
+		
+		List<RT_Matrix_monitoring_entity> Matrixdata = RT_Matrix_monitoring_rep.Getcurrentdatematrixcal();
+		md.addAttribute("dbRecords", Matrixdata);
+		
+		List<RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY> groupRecords = RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO.findAllActiveGroups();
+        md.addAttribute("dbGroupRecords", groupRecords);
+		
+		return "BulkRun";
+	}
+	@PostMapping("/saveBulkGroup")
+    @ResponseBody
+    public ResponseEntity<String> saveBulkGroup(@RequestBody GroupSaveRequest request) {
+        try {
+            RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO.softDeleteByGroupName(request.getGroupName());
+            
+            Long currentMaxId = RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO.getMaxId();
+            if(currentMaxId == null) currentMaxId = 0L;
+            
+            List<RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY> recordsToSave = new ArrayList<>();
+            
+            if (request.getSnos() == null || request.getSnos().isEmpty()) {
+                currentMaxId++; 
+                recordsToSave.add(new RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY(currentMaxId, request.getGroupName(), "EMPTY", "N"));
+            } else {
+                for (String sno : request.getSnos()) {
+                    currentMaxId++; 
+                    recordsToSave.add(new RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY(currentMaxId, request.getGroupName(), sno, "N"));
+                }
+            }
+            
+            RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO.saveAll(recordsToSave);
+            return ResponseEntity.ok("{\"status\":\"success\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("{\"status\":\"error\", \"message\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @PostMapping("/deleteBulkGroup")
+    @ResponseBody
+    public ResponseEntity<String> deleteBulkGroup(@RequestParam String groupName) {
+        try {
+            RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO.softDeleteByGroupName(groupName);
+            return ResponseEntity.ok("{\"status\":\"success\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("{\"status\":\"error\", \"message\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    public static class GroupSaveRequest {
+        private String groupName;
+        private List<String> snos;
+        
+        public String getGroupName() { return groupName; }
+        public void setGroupName(String groupName) { this.groupName = groupName; }
+        public List<String> getSnos() { return snos; }
+        public void setSnos(List<String> snos) { this.snos = snos; }
+    }
 }

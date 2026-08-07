@@ -41,6 +41,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -186,6 +187,9 @@ public class MIS_Rest_Controller {
 	
 	@Autowired
 	RT_VAR_PORTFOLIO_Repo RT_VAR_PORTFOLIO_Repo;
+	
+	@Autowired
+    JdbcTemplate jdbcTemplate;	
 
 	@GetMapping("/api/report-control/reports/{reportId}/steps")
 	public ResponseEntity<ReportControlStepsResponseDto> reportControlGetSteps(@PathVariable String reportId,
@@ -1655,6 +1659,76 @@ public class MIS_Rest_Controller {
 	    response.put("totalAssets", totalAssets);
 	    response.put("rows", rows);
 	    return response;
+	}
+
+	@GetMapping(value = "/dashboardvalidation/{sno}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getValidationTree(@PathVariable("sno") String sno,
+			@RequestParam("date") String date) {
+		String sql = "SELECT GET_DYNAMIC_VALIDATION_TREE(?,?) FROM DUAL";
+		String jsonTree = jdbcTemplate.queryForObject(sql, String.class, sno, date);
+		return ResponseEntity.ok(jsonTree);
+	}
+
+	@PostMapping("/dashboardrunnode")
+	public ResponseEntity<String> runNode(@RequestParam String nodeId, @RequestParam String reportDate,
+			@RequestParam(defaultValue = "false") boolean isForceRun, HttpServletRequest request) {
+
+		try {
+			String forceFlag = isForceRun ? "Y" : "N";
+
+			System.out.println("nodeId : " + nodeId +" and date : "+reportDate);
+			
+			String sql = "SELECT EXECUTE_INTERLINKED_TREE(?, ?, ?) FROM DUAL";
+			String jsonTree = jdbcTemplate.queryForObject(sql, String.class, nodeId, reportDate, forceFlag);
+
+			String sno = nodeId.substring(nodeId.lastIndexOf("_") + 1);
+
+			if (jsonTree != null && !jsonTree.contains("\"status\":\"invalid\"")) {
+//				String sql1 = "SELECT RT_MATRIX_MONITOR_CALCULATION_FUNCTION(?, ?) FROM DUAL";
+//				String output = jdbcTemplate.queryForObject(sql, String.class, reportDate, sno);
+				Map<String, Object> response = new java.util.HashMap<String, Object>();
+				String normalized = normalizeDate(reportDate);
+				Date selectedDate = java.sql.Date.valueOf(normalized);
+				String user = (String) request.getSession().getAttribute("USERID");
+				if (user == null || user.trim().isEmpty()) {
+					user = "SYSTEM";
+				}
+				System.out.println("Calculation initiated for Serial no : " + sno + " Report Date : " + selectedDate);
+				response = matrixRunService.queueRun(selectedDate, user, sno);
+				String runStatus = "valid";
+	            String runMsg = "Calculation queued successfully.";
+	            
+	            if (response != null) {
+	                if (response.get("status") != null && response.get("status").toString().toLowerCase().contains("error")) {
+	                    runStatus = "invalid";
+	                }
+	                if (response.get("message") != null) {
+	                    runMsg = response.get("message").toString().replace("\"", "'").replace("\n", " ");
+	                }
+	            }
+	            
+	            jsonTree = "{\"nodeId\":\"JAVA_EXEC_" + sno + "\", \"nodeName\":\"Java Matrix Calculation\", \"status\":\"" + runStatus + "\", \"message\":\"" + runMsg + "\", \"children\":[" + jsonTree + "]}";
+	            
+			} else {
+				System.out.println("Execution for S.No " + sno + " returned invalid nodes. Skipping next function.");
+			}
+			return ResponseEntity.ok(jsonTree);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Throwable rootCause = e;
+			while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+				rootCause = rootCause.getCause();
+			}
+			String realError = rootCause.getMessage();
+			if (realError == null) {
+				realError = rootCause.toString();
+			}
+			realError = realError.replace("\"", "'").replace("\n", " ").replace("\r", "");
+			String errorJson = "{\"nodeId\":\"ERR\", \"nodeName\":\"Database/Connection Error\", \"status\":\"invalid\", \"message\":\""
+					+ realError + "\", \"children\":[]}";
+					
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorJson);
+		}
 	}
 
 }
