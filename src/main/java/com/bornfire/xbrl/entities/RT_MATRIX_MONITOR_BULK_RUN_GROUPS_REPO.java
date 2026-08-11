@@ -13,14 +13,14 @@ import org.springframework.stereotype.Repository;
 public interface RT_MATRIX_MONITOR_BULK_RUN_GROUPS_REPO
 		extends JpaRepository<RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY, Long> {
 
-	@Query("SELECT COALESCE(MAX(b.id), 0) FROM RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY b")
+	@Query(value = "SELECT COALESCE(MAX(id), 0) FROM RT_MATRIX_MONITOR_BULK_RUN_GROUPS", nativeQuery = true)
 	Long getMaxId();
 
-	@Query("SELECT e FROM RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY e WHERE e.delFlg = 'N'")
+	@Query(value = "SELECT * FROM RT_MATRIX_MONITOR_BULK_RUN_GROUPS WHERE DEL_FLG = 'N'", nativeQuery = true)
 	List<RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY> findAllActiveGroups();
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE RT_MATRIX_MONITOR_BULK_RUN_GROUPS_ENTITY e SET e.delFlg = 'Y' WHERE e.groupName = ?1")
+	@Query(value = "UPDATE RT_MATRIX_MONITOR_BULK_RUN_GROUPS SET DEL_FLG = 'Y' WHERE GROUP_NAME = ?1", nativeQuery = true)
 	void softDeleteByGroupName(String groupName);
 }
