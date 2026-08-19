@@ -17998,15 +17998,25 @@ to {
 
 									<div
 										style="display: flex; flex-direction: column; width: 100%; max-width: 260px;">
+
 										<div style="display: flex; width: 100%;">
 											<input type="text" id="modal-input-val"
-												style="flex: 1; padding: 6px 10px; font-size: 13px; text-align: right; border: 1px solid #ced4da; border-right: none; border-radius: 4px 0 0 4px; outline: none;"
+												style="flex: 1; min-width: 0; padding: 6px 10px; font-size: 13px; text-align: right; border: 1px solid #ced4da; border-right: none; border-radius: 4px 0 0 4px; outline: none;"
 												placeholder="0.00" />
+
 											<button type="button" id="modal-na-btn"
-												style="padding: 6px 14px; background-color: #e9ecef; color: #495057; border: 1px solid #ced4da; border-radius: 0 4px 4px 0; font-weight: 600; font-size: 12px; cursor: pointer; transition: background-color 0.2s;"
+												title="Not Applicable"
+												style="padding: 6px 10px; background-color: #e9ecef; color: #495057; border: 1px solid #ced4da; border-right: none; border-radius: 0; font-weight: 600; font-size: 12px; cursor: pointer; transition: background-color 0.2s;"
 												onmouseover="this.style.backgroundColor='#dde0e3'"
 												onmouseout="this.style.backgroundColor='#e9ecef'">
-												NA</button>
+												NAP</button>
+
+											<button type="button" id="modal-nav-btn"
+												title="Not Available"
+												style="padding: 6px 10px; background-color: #e9ecef; color: #495057; border: 1px solid #ced4da; border-radius: 0 4px 4px 0; font-weight: 600; font-size: 12px; cursor: pointer; transition: background-color 0.2s;"
+												onmouseover="this.style.backgroundColor='#dde0e3'"
+												onmouseout="this.style.backgroundColor='#e9ecef'">
+												NAV</button>
 										</div>
 
 										<div
@@ -18015,6 +18025,7 @@ to {
 												with recent value :</span> <span id="variance-display"
 												style="font-weight: bold; color: #6c757d;">--</span>
 										</div>
+
 									</div>
 
 									<label style="margin: 0; font-size: 13px; font-weight: 600;">Maker Justification</label> <input type="text" id="modal-justification-val"
@@ -18489,9 +18500,10 @@ function navigateTodatamgrsumpage(){
 	function navigateToTab(tabId) {
 		const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
 		const timeperiod = /*[[${timeperiod}]]*/ '';
+		const dept = /*[[${DEPARTMENT}]]*/ '';
 		
 		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod; 
+		 window.location.href = 'RT_MC_Reports?formmode='+tabId+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod+'&dept='+dept; 
 		
 	}
 	function navigateToTabdept(tabId) {
@@ -20638,6 +20650,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         if(justInput) justInput.readOnly = true;
                         if(srcInput) srcInput.readOnly = true;
                         if(naBtn) naBtn.style.display = 'none';
+                        if(navBtn) navBtn.style.display = 'none';
                         if(remarksInput) remarksInput.value = ''; 
 
                         const addFileBtnElem = document.getElementById('add-file-btn');
@@ -21370,6 +21383,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         } else if (actionType === 'N') {
                             currentEditingInput.title = "Reverted by Checker";
                             applyInstantStyle('#d9534f', '#d43f3a', '#ffffff');
+                        } else if (modifyFlagVal === 'C') {
+                            currentEditingInput.title = "Sent to Checker";
+                            applyInstantStyle('#ffc107', '#ffc107', '#212529'); 
                         } else {
                             currentEditingInput.title = "Pending Verification";
                             currentEditingInput.style.color = '#495057';
@@ -21430,7 +21446,7 @@ document.addEventListener("DOMContentLoaded", function() {
         valueInput.addEventListener('input', function(e) {
             let currentVal = this.value;
 
-            if (currentVal !== "Not Applicable") {
+            if (currentVal !== "Not Applicable" && currentVal !== "Not Available") {
                 const numericRegex = /^-?\d*\.?\d*$/;
                 if (numericRegex.test(currentVal)) {
                     lastValidValue = currentVal; 
@@ -21442,16 +21458,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const varianceDisplay = document.getElementById('variance-display');
             if (varianceDisplay) {
-                if (currentVal === "Not Applicable" || currentVal === "" || currentVal === "-" || lastMonthValueForVariance === null) {
+                if (currentVal === "Not Applicable" || currentVal === "Not Available" || currentVal === "" || currentVal === "-" || lastMonthValueForVariance === null) {
                     varianceDisplay.innerHTML = '<span style="color: #6c757d;">--</span>';
                 } else {
                     let currentNum = parseFloat(currentVal);
                     if (!isNaN(currentNum)) {
                         let diff = currentNum - lastMonthValueForVariance;
-                        
                         let sign = diff > 0 ? '+' : '';
                         let color = diff > 0 ? '#28a745' : (diff < 0 ? '#dc3545' : '#6c757d');
-                        
                         varianceDisplay.innerHTML = `<span style="color: ${color};">${sign}${diff.toFixed(2)}</span>`;
                     }
                 }
@@ -21462,6 +21476,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if (naBtn && valueInput) {
         naBtn.addEventListener('click', function() {
             valueInput.value = "Not Applicable";
+            valueInput.dispatchEvent(new Event('input')); 
+        });
+    }
+    const navBtn = document.getElementById('modal-nav-btn');
+    if (navBtn && valueInput) {
+        navBtn.addEventListener('click', function() {
+            valueInput.value = "Not Available";
             valueInput.dispatchEvent(new Event('input')); 
         });
     }
@@ -21562,6 +21583,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else if (flag === 'N') {
                     input.title = "Reverted by Checker";
                     applyStyle('#d9534f', '#d43f3a', '#ffffff'); 
+                } else if (flag === 'C') {
+                    input.title = "Sent to Checker";
+                    applyStyle('#ffc107', '#ffc107', '#212529'); 
                 } else {
                     input.style.color = '#495057';
                     if (wrapper) {
@@ -21999,6 +22023,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else if (actionType === 'N') {
                     currentEditingInput.title = "Reverted by Checker";
                     applyInstantStyle('#d9534f', '#d43f3a', '#ffffff');
+                } else if (mFlg === 'C' && actionType !== 'Y' && actionType !== 'N') {
+                    currentEditingInput.title = "Sent to Checker";
+                    applyInstantStyle('#ffc107', '#ffc107', '#212529'); 
                 } else {
                     currentEditingInput.title = "Pending Verification";
                     currentEditingInput.style.color = '#495057';
@@ -22452,7 +22479,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         document.getElementById('modal-input-val').readOnly = true;
         
-        const elementsToHide = ['modal-na-btn', 'add-file-btn', 'max-file-txt', 'modal-save-btn', 'modal-proceed-btn', 'modal-verify-btn', 'modal-revert-btn', 'modal-revoke-btn', 'checker-status-msg'];
+        const elementsToHide = ['modal-na-btn', 'modal-nav-btn', 'add-file-btn', 'max-file-txt', 'modal-save-btn', 'modal-proceed-btn', 'modal-verify-btn', 'modal-revert-btn', 'modal-revoke-btn', 'checker-status-msg'];
         elementsToHide.forEach(id => {
             let el = document.getElementById(id);
             if (el) el.style.display = 'none';

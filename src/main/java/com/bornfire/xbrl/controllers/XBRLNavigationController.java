@@ -7785,18 +7785,28 @@ System.out.println("sixe==="+excelData.length);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date reportDate = dateFormat.parse(reportDateStr);
 
-			String jpql = "SELECT r.cellName, r.verifyFlg FROM RT_MC_DATA_RECORD_ENTITY r " + "WHERE r.id IN ("
-					+ "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 " + "   WHERE r2.formMode = :formMode "
-					+ "   AND r2.reportDate = :reportDate " + "   AND r2.timeperiod = :timeperiod "
-					+ "   GROUP BY r2.cellName" + ") AND r.verifyFlg IS NOT NULL";
+			String jpql = "SELECT r.cellName, r.verifyFlg, r.modifyFlg FROM RT_MC_DATA_RECORD_ENTITY r "
+					+ "WHERE r.id IN (" + "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 "
+					+ "   WHERE r2.formMode = :formMode " + "   AND r2.reportDate = :reportDate "
+					+ "   AND r2.timeperiod = :timeperiod " + "   GROUP BY r2.cellName" + ")";
 
 			@SuppressWarnings("unchecked")
 			List<Object[]> results = entityManager.createQuery(jpql).setParameter("formMode", formMode)
 					.setParameter("reportDate", reportDate).setParameter("timeperiod", timeperiod).getResultList();
+
 			Map<String, String> flags = new HashMap<>();
+
 			for (Object[] row : results) {
-				if (row[0] != null && row[1] != null) {
-					flags.put(row[0].toString(), row[1].toString());
+				if (row[0] != null) {
+					String cellName = row[0].toString();
+					String verifyFlg = row[1] != null ? row[1].toString().trim() : "";
+					String modifyFlg = row[2] != null ? row[2].toString().trim() : "";
+
+					if (!verifyFlg.isEmpty()) {
+						flags.put(cellName, verifyFlg);
+					} else if ("C".equalsIgnoreCase(modifyFlg)) {
+						flags.put(cellName, "C");
+					}
 				}
 			}
 
