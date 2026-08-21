@@ -815,6 +815,34 @@ PURPOSE		: IRRBB DATA TEMPLATE
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+.static-back-btn {
+	background-color: rgb(255, 255, 255);
+	border: none;
+	color: var(--bank-primary, #FF7B00);
+	font-size: 16px;
+	border-radius: 50%;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 10px;
+	transition: background-color 0.25s ease, transform 0.15s ease;
+	cursor: pointer;
+}
+
+/* Hover effect */
+.static-back-btn:hover {
+	background-color: var(--bank-primary, #FF7B00); /* darker orange */
+	color: rgb(255, 255, 255);
+	transform: scale(1.08);
+}
+
+/* Optional click effect */
+.static-back-btn:active {
+	transform: scale(0.95);
+}
 </style>
 <script>
 		$(document).ready(function () {
@@ -1336,10 +1364,17 @@ PURPOSE		: IRRBB DATA TEMPLATE
 		
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
 				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'  or formmode == 'exist' or formmode =='Detaillist'}">
-				<div class="text-left flex-grow-1">
+				<!-- <div class="text-left flex-grow-1">
 					<h4 id="IRRBBheader">IRRBB DATA TEMPLATE</h4>
 					
-				</div>
+				</div> -->
+				<div class="d-flex align-items-center">
+				<button class="static-back-btn" onclick="goBack()" title="Go Back">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<h4 title="IRRBB DATA TEMPLATE">RBS
+					IRRBB DATA TEMPLATE</h4>
+			</div>
 				
 				            <!-- Tabs -->
 				<div  th:if="${lastDate != null}" class="d-flex align-items-center gap-2">
@@ -2446,7 +2481,7 @@ PURPOSE		: IRRBB DATA TEMPLATE
 				th:value="${lastDate}" class="form-control form-control-sm"
 				required Style="display:none" />
 					<div class="table-responsive" style=" max-height: 400px; overflow: auto; border:none;">
-						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%;min-width: 2000px;">
+						<table id="usertable" class="table refund-table align-middle mb-0" style="width:100%;min-width: 98.5vw;">
 
 							<thead class="thead-light">
 								 

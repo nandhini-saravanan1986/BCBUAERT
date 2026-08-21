@@ -52,6 +52,7 @@ Tested by   : Rajalakshmi R
 		body {
 			font-family: 'Segoe UI', Arial, sans-serif;
 			font-size: 14px;
+			align-items: stretch ! important;
 		}
 
 		.table .thead-light th {
@@ -1039,10 +1040,10 @@ Tested by   : Rajalakshmi R
 
 
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px; padding-top: 20px;"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist'  }">
 
-			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode} =='null'">
+			<div class="tab-content" id="myTabContent" style="margin-top: 0px;" th:if="${formmode =='null' or formmode == 'add' }">
 				<div class="tab-pane fade show active scrollable-exist-viewport" id="datacontrols" role="tabpanel">
 					<div class="row">
 						<div class="col-sm-12">
@@ -1392,50 +1393,50 @@ Tested by   : Rajalakshmi R
 
 							<!-- Loop to render data dynamically -->
 							<tr th:each="data : ${branchList}">
-								<td style="text-align: center;min-width: 100px;"><a
-										th:href="@{'/Mm_Data?formmode=edit&deal_no=' + ${data.deal_no}+ '&Report_date='+${#dates.format(data.report_date, 'yyyy-MM-dd')}}">
+								<td style="text-align: center; min-width: 100px;"><a
+										th:href="@{'/Mm_Data?formmode=edit&deal_no=' + ${data?.deal_no} + '&Report_date=' + ${#dates.format(data?.report_date, 'yyyy-MM-dd')}}">
 										<i class="fa fa-edit" style="color: #f7a47c;"></i>
-									</a></td>
+								</a></td>
 
-								<td th:text="${#dates.format(data.bank_date, 'dd-MM-yyyy')}"></td>
-								<td th:text="${data.bank_name}"></td>
-								<td th:text="${data.head_office_subsidiary}"></td>
-								<td th:text="${data.subsidiary}"></td>
-								<td th:text="${data.bank_symbol}"></td>
-								<td th:text="${data.conventional_islamic}"></td>
-								<td th:text="${data.local_foreign}"></td>
-								<td th:text="${data.cbuae_tiering}"></td>
-								<td style="text-align: left;" th:text="${data.deal_no}"></td>
-								<td style="text-align: right;" th:text="${data.customer_id}"></td>
-								<td th:text="${data.counterparty_name}"></td>
-								<td th:text="${data.final_rating_banks}"></td>
-								<td th:text="${data.final_rating_cbuae}"></td>
-								<td th:text="${data.country_of_risk}"></td>
-								<td th:text="${data.cbuae_geographical_zone}"></td>
-								<td th:text="${data.deal_type}"></td>
-								<td th:text="${#dates.format(data.value_date, 'dd-MM-yyyy')}"></td>
-								<td th:text="${#dates.format(data.maturity_date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${#dates.format(data?.bank_date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${data?.bank_name}"></td>
+								<td th:text="${data?.head_office_subsidiary}"></td>
+								<td th:text="${data?.subsidiary}"></td>
+								<td th:text="${data?.bank_symbol}"></td>
+								<td th:text="${data?.conventional_islamic}"></td>
+								<td th:text="${data?.local_foreign}"></td>
+								<td th:text="${data?.cbuae_tiering}"></td>
+								<td style="text-align: left;" th:text="${data?.deal_no}"></td>
+								<td style="text-align: right;" th:text="${data?.customer_id}"></td>
+								<td th:text="${data?.counterparty_name}"></td>
+								<td th:text="${data?.final_rating_banks}"></td>
+								<td th:text="${data?.final_rating_cbuae}"></td>
+								<td th:text="${data?.country_of_risk}"></td>
+								<td th:text="${data?.cbuae_geographical_zone}"></td>
+								<td th:text="${data?.deal_type}"></td>
+								<td th:text="${#dates.format(data?.value_date, 'dd-MM-yyyy')}"></td>
+								<td th:text="${#dates.format(data?.maturity_date, 'dd-MM-yyyy')}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.initial_maturity , 1, 'COMMA', 2, 'POINT')}">
+									th:text="${#numbers.formatDecimal(data?.initial_maturity , 1, 'COMMA', 2, 'POINT')}">
 								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.initial_maturity_rounded , 1, 'COMMA', 2, 'POINT')}">
+									th:text="${#numbers.formatDecimal(data?.initial_maturity_rounded , 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: left;" th:text="${data.initial_maturity_period}"></td>
+								<td style="text-align: left;" th:text="${data?.initial_maturity_period}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.residual_maturity , 1, 'COMMA', 2, 'POINT')}">
+									th:text="${#numbers.formatDecimal(data?.residual_maturity , 1, 'COMMA', 2, 'POINT')}">
 								</td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.residual_maturity_rounded , 1, 'COMMA', 2, 'POINT')}">
+									th:text="${#numbers.formatDecimal(data?.residual_maturity_rounded , 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: left;" th:text="${data.maturity_period}"></td>
-								<td th:text="${data.currency}"></td>
+								<td style="text-align: left;" th:text="${data?.maturity_period}"></td>
+								<td th:text="${data?.currency}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.principal , 1, 'COMMA', 2, 'POINT')}"></td>
+									th:text="${#numbers.formatDecimal(data?.principal , 1, 'COMMA', 2, 'POINT')}"></td>
 								<td style="text-align: right;"
-									th:text="${#numbers.formatDecimal(data.principal_aed , 1, 'COMMA', 2, 'POINT')}">
+									th:text="${#numbers.formatDecimal(data?.principal_aed , 1, 'COMMA', 2, 'POINT')}">
 								</td>
-								<td style="text-align: right;" th:text="${data.interest_profit_rate}"></td>
+								<td style="text-align: right;" th:text="${data?.interest_profit_rate}"></td>
 							</tr>
 
 						</tbody>
