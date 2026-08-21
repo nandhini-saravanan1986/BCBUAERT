@@ -477,7 +477,7 @@
 			var permissions = ($("#permissions").val() || "").trim();
 			var moduleAccess = ($("#domain_id").val() || "").trim();
 			var userId = ($("#userid").val() || "").trim();
-			var department = ($("#department").val() || "").trim();
+			var department = ($("#departmentHidden").val() || "").trim();
 			var userIdRegex = /^[A-Za-z]{2}[0-9]{6}$/;
 
 			if (formmode === "add" && userId && !userIdRegex.test(userId)) {
@@ -581,6 +581,69 @@
 			});
 		/*]]>*/
 	</script>
+	<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const hiddenInput = document.getElementById('departmentHidden');
+    const checkboxes = document.querySelectorAll('.dept-checkbox');
+    const btnText = document.getElementById('deptDropdownText');
+    const searchInput = document.getElementById('deptSearch');
+    const dropdownMenu = document.getElementById('deptDropdownMenu');
+
+    // 1. Prevent dropdown from closing when clicking inside (typing or ticking boxes)
+    dropdownMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    // 2. Update hidden input and button text when a checkbox is clicked
+    function updateSelection() {
+        const selectedValues = [];
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                selectedValues.push(cb.value);
+            }
+        });
+        
+        // Save as comma-separated string
+        hiddenInput.value = selectedValues.join(',');
+        
+        // Update the button text to show selected items
+        btnText.textContent = selectedValues.length > 0 ? selectedValues.join(', ') : 'Select Departments';
+        
+        // Trigger your existing onchange function
+        if (typeof departmentVal === "function") {
+            departmentVal();
+        }
+    }
+
+    // Attach change event to all checkboxes
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelection);
+    });
+
+    // 3. Search Filter Logic
+    searchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const items = document.querySelectorAll('#deptCheckboxList .form-check');
+        
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            // Show or hide based on search text
+            item.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+
+    // 4. Pre-check boxes on page load (if editing an existing record)
+    if (hiddenInput.value) {
+        const existingValues = hiddenInput.value.split(',');
+        checkboxes.forEach(cb => {
+            if (existingValues.includes(cb.value)) {
+                cb.checked = true;
+            }
+        });
+        updateSelection();
+    }
+});
+</script>
 </head>
 
 <body>
@@ -678,7 +741,7 @@
 					<button type="button" class="role-btn" onclick="list()">List</button>
 											
 					</div>
-					<div class="card-body user-form-card-body">
+					<div class="card-body user-form-card-body" style="padding:15px">
 						<!-- Row 1 -->
 						<div class="row formline">
 							<label class="col-sm-2">User ID <span class="text-danger">*</span></label>
@@ -825,16 +888,42 @@
 						<div class="row formline">
 							<label class="col-sm-2">Department</label>
 							<div class="col-sm-3">
-								<select th:field="*{department}" id="department"
-									class="form-control form-control-sm"
-									th:disabled="${formmode == 'view' || formmode == 'verify'}"
-									onchange="departmentVal()">
-									<option value="">Select</option>
 
-									<option th:each="dept : ${md}" th:value="${dept}"
-										th:text="${dept}"></option>
+								<input type="hidden" th:field="*{department}"
+									id="departmentHidden" />
 
-								</select>
+								<div class="dropdown">
+									<button
+										class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center"
+										style="background-color: white; color: #495057; border-color: #ced4da;"
+										type="button" id="deptDropdownBtn" data-toggle="dropdown"
+										aria-haspopup="true" aria-expanded="false"
+										th:disabled="${formmode == 'view' || formmode == 'verify'}">
+										<span id="deptDropdownText" class="text-truncate">Select
+											Departments</span>
+									</button>
+
+									<div class="dropdown-menu w-100 p-2 shadow"
+										id="deptDropdownMenu"
+										style="max-height: 250px; overflow-y: auto;">
+
+										<input type="text" id="deptSearch"
+											class="form-control form-control-sm mb-2"
+											placeholder="Search departments..." autocomplete="off">
+
+										<div id="deptCheckboxList">
+											<div class="form-check mb-1" th:each="dept : ${md}">
+												<input class="form-check-input dept-checkbox"
+													type="checkbox" th:value="${dept}"
+													th:id="${'dept_' + dept}"> <label
+													class="form-check-label" th:for="${'dept_' + dept}"
+													th:text="${dept}" style="cursor: pointer;"></label>
+											</div>
+										</div>
+
+									</div>
+								</div>
+
 							</div>
 						</div>
 						<hr>

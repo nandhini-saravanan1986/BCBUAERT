@@ -801,6 +801,24 @@ label.error {
 body {
 	overflow: hidden;
 }
+
+#filterDeptCheckboxList::-webkit-scrollbar {
+	width: 6px;
+}
+
+#filterDeptCheckboxList::-webkit-scrollbar-track {
+	background: #f8f9fa;
+	border-radius: 4px;
+}
+
+#filterDeptCheckboxList::-webkit-scrollbar-thumb {
+	background: #cdcdcd;
+	border-radius: 4px;
+}
+
+#filterDeptCheckboxList::-webkit-scrollbar-thumb:hover {
+	background: #a8a8a8;
+}
 </style>
 <script th:inline="javascript">
 
@@ -2118,6 +2136,7 @@ to {
 .clickable-cell{
 	cursor: pointer;
 }
+
 </style>
     
 </head>
@@ -2281,15 +2300,56 @@ to {
 				</div> -->
 				<div class="form-group mb-0"
 					th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C')}">
-					<select name="selecteddept" id="selecteddept"
-						onchange="filtertabledept()"
-						style="background-color: transparent; color: white ! important; border: 1px solid #ff7b00; border-radius: 5px;">
-						<!-- <option style="background-color:#8a5a35; color:white;" value="" disabled>-- Select --</option> -->
-						<option style="background-color: #FF7B00; color: white;"
-							th:each="option : ${md}" th:value="${option}" th:text="${option}"
-							th:selected="${option == DEPARTMENT}"></option>
-					</select> <label class="form-legend"
-						style="margin-bottom: 0px; background-color: transparent; color: white ! important;">Department
+
+					<input type="hidden" name="selecteddept" id="selecteddeptHidden"
+						th:value="${DEPARTMENT}" />
+
+					<div class="dropdown" style="display: inline-block; width: 200px;">
+						<button
+							class="btn btn-sm dropdown-toggle d-flex justify-content-between align-items-center w-100"
+							type="button" id="filterDeptDropdownBtn" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false"
+							style="background-color: transparent; color: white !important; border: 1px solid #ff7b00; border-radius: 5px;">
+							<span id="filterDeptDropdownText" class="text-truncate">Select</span>
+						</button>
+
+						<div class="dropdown-menu shadow" id="filterDeptDropdownMenu"
+							style="width: 250px; background-color: rgb(255, 147, 46); padding: 0; margin-left: -45px; z-index: 9999;">
+
+							<div class="p-2">
+								<input type="text" id="filterDeptSearch"
+									class="form-control form-control-sm mb-2"
+									placeholder="Search..." autocomplete="off">
+
+								<div id="filterDeptCheckboxList"
+									style="max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">
+									<div class="form-check mb-1" th:each="option : ${md}">
+										<input class="form-check-input filter-dept-checkbox"
+											type="checkbox" th:value="${option}"
+											th:id="${'filter_dept_' + option}"> <label
+											class="form-check-label" th:for="${'filter_dept_' + option}"
+											th:text="${option}"
+											style="cursor: pointer; color: #212529; width: 100%;"></label>
+									</div>
+								</div>
+							</div>
+
+							<div class="dropdown-divider m-0"></div>
+
+							<div class="d-flex justify-content-between p-2"
+								style="background-color: rgba(0, 0, 0, 0.03); border-radius: 0 0 5px 5px;">
+								<button type="button" id="filterDeptCancelBtn"
+									class="btn btn-sm btn-primary">Cancel</button>
+								<button type="button" id="filterDeptOkBtn"
+									class="btn btn-sm btn-primary"
+									style="background-color: #ff7b00; border-color: #ff7b00; color: white;">OK</button>
+							</div>
+
+						</div>
+					</div>
+
+					<label class="form-legend"
+						style="margin-bottom: 0px; background-color: transparent; color: white !important;">Department
 						:</label>
 				</div>
 			</div>
@@ -18554,21 +18614,6 @@ function navigateTodatamgrsumpage(){
 		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&branch='+branchvalue;		
 	}
 	
-	function filtertabledept(){		
-		const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
-		const timeperiod = /*[[${timeperiod}]]*/ '';
-		const params = new URLSearchParams(window.location.search);
-		let formmode = params.get('formmode');		
-		if(formmode===null){
-			formmode = 'bankinformation';
-		}
-		let selecteddept = document.getElementById("selecteddept");
-		let selecteddeptvalue= selecteddept.value;
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		console.log("formmode : "+ formmode +" selecteddeptvalue : "+selecteddeptvalue);		
-		 window.location.href = 'RT_MC_Reports?formmode='+formmode+'&dept='+selecteddeptvalue+'&reportDate='+contextReportDate+'&timeperiod='+timeperiod;;		
-	}
-		
 </script>
 	<script th:inline="javascript">
 let enableEdit;
@@ -19320,7 +19365,7 @@ if (department === 'YES') {
         let ptReportData2 = /*[[${deptreportlist2}]]*/ null; 
 
         if (ptValue) {
-            const ptLower = ptValue.toLowerCase();
+            const userDepts = ptValue.toLowerCase().split(',').map(d => d.trim());
             
             if (Array.isArray(ptReportData1) && ptReportData1.length > 0) ptReportData1 = ptReportData1[0]; 
             if (Array.isArray(ptReportData2) && ptReportData2.length > 0) ptReportData2 = ptReportData2[0]; 
@@ -19330,7 +19375,7 @@ if (department === 'YES') {
                     const fieldConfig = configData[fieldName]; 
                     if (fieldConfig) {
                         const allowedValues = String(fieldConfig).toLowerCase().split(',').map(v => v.trim());
-                        return allowedValues.includes(ptLower);
+                        return userDepts.some(dept => allowedValues.includes(dept));
                     }
                 }
                 return false;
@@ -20010,20 +20055,19 @@ document.addEventListener("DOMContentLoaded", function() {
         if (Array.isArray(ptReportData1) && ptReportData1.length > 0) ptReportData1 = ptReportData1[0]; 
         if (Array.isArray(ptReportData2) && ptReportData2.length > 0) ptReportData2 = ptReportData2[0]; 
 
-        const ptLower = (currentDepartment || '').toLowerCase();
+        const userDepts = (currentDepartment || '').toLowerCase().split(',').map(d => d.trim());
 
         const isAllowed = (configData, fieldName) => {
-			if (!configData || !fieldName) return false;
+            if (!configData || !fieldName) return false;
             const actualKey = Object.keys(configData).find(key => key.toLowerCase() === fieldName.toLowerCase());
             if (actualKey && configData[actualKey]) {
                 const allowedValues = String(configData[actualKey]).toLowerCase().split(',').map(v => v.trim());
                 if (allowedValues.includes('all')) return true; 
                 
-                return allowedValues.includes(ptLower);
+                return userDepts.some(dept => allowedValues.includes(dept));
             }
             return false;
         };
-
         if (formMode === 'conductcultureassessment') {
         	document.querySelectorAll('input[type="text"].input-and-select').forEach(input => {
                 const textarea = document.createElement('textarea');
@@ -22891,6 +22935,106 @@ function toggleTable() {
                 }
             });
         }
+    }
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const filterHiddenInput = document.getElementById('selecteddeptHidden');
+    const filterCheckboxes = document.querySelectorAll('.filter-dept-checkbox');
+    const filterBtnText = document.getElementById('filterDeptDropdownText');
+    const filterSearchInput = document.getElementById('filterDeptSearch');
+    const filterDropdownMenu = document.getElementById('filterDeptDropdownMenu');
+    
+    const btnOk = document.getElementById('filterDeptOkBtn');
+    const btnCancel = document.getElementById('filterDeptCancelBtn');
+    const toggleBtn = document.getElementById('filterDeptDropdownBtn');
+
+    if (!filterHiddenInput) return;
+
+    filterDropdownMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    function syncCheckboxesWithSavedData() {
+        const existingValues = filterHiddenInput.value ? filterHiddenInput.value.split(',') : [];
+        filterCheckboxes.forEach(cb => {
+            cb.checked = existingValues.includes(cb.value);
+        });
+        
+        filterBtnText.textContent = existingValues.length > 0 ? existingValues.join(', ') : 'Select';
+    }
+
+    btnOk.addEventListener('click', function() {
+        const selectedValues = [];
+        filterCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                selectedValues.push(cb.value);
+            }
+        });
+        
+        filterHiddenInput.value = selectedValues.join(',');
+        
+        filterBtnText.textContent = selectedValues.length > 0 ? selectedValues.join(', ') : 'Select';
+        
+        if (typeof filtertabledept === "function") {
+            filtertabledept();
+        }
+        
+        $(toggleBtn).dropdown('toggle'); 
+    });
+
+    btnCancel.addEventListener('click', function() {
+        syncCheckboxesWithSavedData();
+        
+        filterSearchInput.value = '';
+        const items = document.querySelectorAll('#filterDeptCheckboxList .form-check');
+        items.forEach(item => item.style.display = '');
+
+        $(toggleBtn).dropdown('toggle');
+    });
+
+    filterSearchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const items = document.querySelectorAll('#filterDeptCheckboxList .form-check');
+        
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+
+    $(toggleBtn).on('show.bs.dropdown', function () {
+        syncCheckboxesWithSavedData();
+        filterSearchInput.value = ''; 
+        const items = document.querySelectorAll('#filterDeptCheckboxList .form-check');
+        items.forEach(item => item.style.display = '');
+    });
+
+    syncCheckboxesWithSavedData();
+});
+</script>
+<script th:inline="javascript">
+    function filtertabledept() {		
+        const contextReportDate = /*[[${REPORT_DATE}]]*/ '';
+        const timeperiod = /*[[${timeperiod}]]*/ '';
+        const params = new URLSearchParams(window.location.search);
+        
+        let formmode = params.get('formmode');		
+        if (formmode === null) {
+            formmode = 'bankinformation';
+        }
+        
+        let selecteddept = document.getElementById("selecteddeptHidden");
+        let selecteddeptvalue = selecteddept ? selecteddept.value : '';
+        
+        let loader = document.getElementById("bob-loader");
+        if(loader) {
+            loader.setAttribute("aria-hidden", "false");
+        }
+        
+        console.log("formmode : " + formmode + " selecteddeptvalue : " + selecteddeptvalue);		
+        
+        window.location.href = 'RT_MC_Reports?formmode=' + formmode + '&dept=' + encodeURIComponent(selecteddeptvalue) + '&reportDate=' + contextReportDate + '&timeperiod=' + timeperiod;		
     }
 </script>
 </body>
