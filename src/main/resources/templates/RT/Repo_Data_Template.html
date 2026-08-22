@@ -2460,14 +2460,22 @@ input[type=number] {
       $("#loader").css("display", "flex");
       window.history.back();
   }
-
+/* 
   function hideLoader() {
       document.getElementById("loader").setAttribute("aria-hidden", "true");
   }
 
   window.addEventListener("pageshow", function () {
       hideLoader();
-  });
+  }); */
+  
+  $(window).on('pageshow', function(event) {
+	    if (event.originalEvent.persisted) {
+	        $("#loader").css("display", "none");
+	    }
+	});
+  
+  
 </script>
 <style>
 	#usertable {
