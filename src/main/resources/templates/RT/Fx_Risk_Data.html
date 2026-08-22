@@ -953,7 +953,7 @@ TESTED BY   : RAJALAKSHMI R
 			window.location.href = 'Fx_Risk_Data?formmode=list&Report_date='+Report_date;;
 
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'Fx_Risk_Data?formmode=add+'+'&Report_date='+Report_date;;
+			window.location.href = 'Fx_Risk_Data?formmode=add'+'&Report_date='+Report_date;;
 
 		}
 	}
@@ -1098,8 +1098,9 @@ TESTED BY   : RAJALAKSHMI R
 
 		<div th:insert="XBRLHeaderMenu :: header"></div>
 
-		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center w-100 "
-			th:if="${formmode != 'edit'}">
+		<div id="pageHeader"
+			class="role-page-header d-flex justify-content-between align-items-center w-100 "
+			style="padding-top: 5px;" th:if="${formmode != 'edit'}">
 
 			<div class="d-flex align-items-center">
 
@@ -1111,21 +1112,23 @@ TESTED BY   : RAJALAKSHMI R
 					<h4 class="m-0">FX RISK DATA</h4>
 				</div>
 			</div>
-			<div class="role-page-header d-flex justify-content-between align-items-center">
-	<div class="float-left">
-				<!-- Data Controls Button -->
-				<button class="role-btn" id="datacontrols-btn" onclick="navigateToTab('datacontrols')">
-					Data Controls</button>
+			<div
+				class="role-page-header d-flex justify-content-between align-items-center" style="background: transparent ! important;">
+				<div class="float-left">
+					<!-- Data Controls Button -->
+					<button class="role-btn" id="datacontrols-btn"
+						onclick="navigateToTab('datacontrols')">Data Controls</button>
 
-				<!-- Template Instructions Button -->
-				<button class="role-btn" id="template-btn" onclick="handleClick('template')">
-					Template Instructions</button>
+					<!-- Template Instructions Button -->
+					<button class="role-btn" id="template-btn"
+						onclick="handleClick('template')">Template Instructions</button>
 
-				<!-- Data Button -->
-				<button class="role-btn" id="data-btn" onclick="navigateToTab('data')">
-					Data</button>
-</div>
-				<button th:if="${formmode} == 'list'" Style="margin-left:5px;" type="button" class="role-btn" id="downloadbut"
+					<!-- Data Button -->
+					<button class="role-btn" id="data-btn"
+						onclick="navigateToTab('data')">Data</button>
+				</div>
+				<button th:if="${formmode} == 'list'" Style="margin-left: 5px;"
+					type="button" class="role-btn" id="downloadbut"
 					onclick="downloadFxrisk();">
 					<i class="fa fa-download"></i> Download
 				</button>
@@ -1133,7 +1136,7 @@ TESTED BY   : RAJALAKSHMI R
 
 		</div>
 		<!-- -------------------User List Starts----------------------------------------------------- -->
-		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;"
+		<div id="tabHeader" style="padding-right: 10px; padding-left: 20px;padding-top:15px"
 			th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode == 'exist' }">
 
 
