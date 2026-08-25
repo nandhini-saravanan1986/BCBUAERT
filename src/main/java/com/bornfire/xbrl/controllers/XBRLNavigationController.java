@@ -868,10 +868,20 @@ public class XBRLNavigationController {
 			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", nostroAccBalRepo.getlist(Report_date));
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_NostroAccBalData> list = nostroAccBalRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
 		} else {
 			Timestamp lastdatetimestamp = nostroAccBalRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
@@ -973,10 +983,26 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getReportDate()), formatter));
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("repoList", repoRepo.getlist(Report_date));
+//			md.addAttribute("repoList", repoRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//			
+			if (Report_date == null) {
+			    md.addAttribute("repoList", Collections.emptyList());
+			} else {
+			    List<RT_RepoDataTemplate> list = repoRepo.getlist(Report_date);
+			    md.addAttribute("repoList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
 		} else {
 			Timestamp lastdatetimestamp = repoRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = repoRepo.findSecondLastReportDate();	
@@ -1098,9 +1124,25 @@ public class XBRLNavigationController {
 			model.addAttribute("creditData", treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()));
 			model.addAttribute("lastDate",LocalDate.parse(sdf.format(treasuryCreditRepo.findById(slNo).orElse(new RT_TreasuryCreditEntity()).getReportDate()), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
+//			model.addAttribute("formmode", "list");
+//			model.addAttribute("TClist", treasuryCreditRepo.getTClist(Report_date));
+//			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//			
+			
+			if (Report_date == null) {
+				model.addAttribute("TClist", Collections.emptyList());
+			} else {
+			    List<RT_TreasuryCreditEntity> list = treasuryCreditRepo.getTClist(Report_date);
+			    model.addAttribute("TClist", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
 			model.addAttribute("formmode", "list");
-			model.addAttribute("TClist", treasuryCreditRepo.getTClist(Report_date));
-			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+				model.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    model.addAttribute("lastDate", endDateFallback);
+			}
 			
 		} else {
 			Timestamp lastdatetimestamp = treasuryCreditRepo.findLastReportDate();
@@ -1262,11 +1304,28 @@ public class XBRLNavigationController {
 			model.addAttribute("InvestmentData", investmentSecuritiesDataTemplateRepo.findById(siNo));
 			model.addAttribute("lastDate",LocalDate.parse(sdf.format(investmentSecuritiesDataTemplateRepo.findById(siNo).get().getReportDate()), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist(Report_date);
-
+//			List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist(Report_date);
+//
+//			model.addAttribute("formmode", "list");
+//			model.addAttribute("ISList", list); // Used in HTML table
+//			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
+			if (Report_date == null) {
+				model.addAttribute("ISList", Collections.emptyList());
+			} else {
+			    List<RT_Investment_Securities_Data_Template> list = investmentSecuritiesDataTemplateRepo.getsecDatalist(Report_date);
+			    model.addAttribute("ISList", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
 			model.addAttribute("formmode", "list");
-			model.addAttribute("ISList", list); // Used in HTML table
-			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+				model.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    model.addAttribute("lastDate", endDateFallback);
+			}
+			
+			
 		} /*
 			 * else { model.addAttribute("formmode", "add");
 			 * model.addAttribute("securityData", new
@@ -1369,10 +1428,26 @@ public class XBRLNavigationController {
 				model.addAttribute("liquidityData", data);
 				model.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getReportDate()), formatter));
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			model.addAttribute("formmode", "list");
-			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist(Report_date));
-			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//			model.addAttribute("formmode", "list");
+//			model.addAttribute("liquidityList", LiquidityRiskDataRepository.getLiquiditylist(Report_date));
+//			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 
+			if (Report_date == null) {
+				model.addAttribute("liquidityList", Collections.emptyList());
+			} else {
+			    List<RT_Liquidity_Risk_Data_Template> list = LiquidityRiskDataRepository.getLiquiditylist(Report_date);
+			    model.addAttribute("liquidityList", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
+			model.addAttribute("formmode", "list");
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+				model.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    model.addAttribute("lastDate", endDateFallback);
+			}
+			
+			
 		} else {
 			Timestamp lastdatetimestamp = LiquidityRiskDataRepository.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
@@ -1556,9 +1631,24 @@ public class XBRLNavigationController {
 			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate()), formatter) );
 			md.addAttribute("formmode", "edit");
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist(Report_date));
+//			md.addAttribute("InvestmentRiskDatalist", RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist(Report_date));
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//			
+			if (Report_date == null) {
+			    md.addAttribute("InvestmentRiskDatalist", Collections.emptyList());
+			} else {
+			    List<RT_Investment_Risk_Data_Dashboard_Template> list = RT_Investment_Risk_Data_Dashboard_TemplateRepositoryS.getlist(Report_date);
+			    md.addAttribute("InvestmentRiskDatalist", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
 		}
 		
 		else if ("limits".equalsIgnoreCase(formmode)) {
@@ -1771,10 +1861,27 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", friskdataRepo.getlist(Report_date));
+//			md.addAttribute("branchList", friskdataRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_Fxriskdata> list = friskdataRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
+			
 		} else {
 			Timestamp lastdatetimestamp = friskdataRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
@@ -1925,11 +2032,26 @@ public class XBRLNavigationController {
 			System.out.println("Edit mode activated");
 			model.addAttribute("lastDate",LocalDate.parse(sdf.format(reportDate), formatter) );
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.getlist(Report_date);
-			model.addAttribute("dataList", list);
+//			List<RT_TradeMarketRiskData> list = trade_market_risk_repo.getlist(Report_date);
+//			model.addAttribute("dataList", list);
+//			model.addAttribute("formmode", "list");
+//			System.out.println("List mode activated");
+//			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//			
+			if (Report_date == null) {
+				model.addAttribute("dataList", Collections.emptyList());
+			} else {
+			    List<RT_TradeMarketRiskData> list = trade_market_risk_repo.getlist(Report_date);
+			    model.addAttribute("dataList", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
 			model.addAttribute("formmode", "list");
-			System.out.println("List mode activated");
-			model.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+				model.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    model.addAttribute("lastDate", endDateFallback);
+			}
 		} else {
 			
 			  
@@ -2157,10 +2279,26 @@ public class XBRLNavigationController {
 	    // ================= LIST =================
 	    else if ("list".equalsIgnoreCase(formmode)) {
 
-	        md.addAttribute("branchList", mmdataRepo.getlist(Report_date));
-	        md.addAttribute("formmode", "list");
-	        md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+//	        md.addAttribute("branchList", mmdataRepo.getlist(Report_date));
+//	        md.addAttribute("formmode", "list");
+//	        md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 
+	        if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_MmData> list = mmdataRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
+			md.addAttribute("formmode", "list");
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+	        
+	        
 	    }
 
 	    // ================= DEFAULT =================
@@ -3085,11 +3223,27 @@ public class XBRLNavigationController {
 			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", tradeleveldataderivativesRepo.getlist(Report_date));
+//			md.addAttribute("branchList", tradeleveldataderivativesRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_TradeLevelDataDerivatives> list = tradeleveldataderivativesRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
-
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
+			
 		} else {
 			Timestamp lastdatetimestamp = tradeleveldataderivativesRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
@@ -3200,13 +3354,30 @@ public class XBRLNavigationController {
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
 
-			List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist(Report_date);
-			System.out.println("testing count" + ccr_data_template_repository.getlist(Report_date).size());
-			;
-			md.addAttribute("repoList1", repoList);
+//			List<RT_CCR_DATA_TEMPLATE> repoList = ccr_data_template_repository.getlist(Report_date);
+//			System.out.println("testing count" + ccr_data_template_repository.getlist(Report_date).size());
+//			;
+//			md.addAttribute("repoList1", repoList);
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//		    md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+		    
+		    if (Report_date == null) {
+			    md.addAttribute("repoList1", Collections.emptyList());
+			} else {
+			    List<RT_CCR_DATA_TEMPLATE> list = ccr_data_template_repository.getlist(Report_date);
+			    md.addAttribute("repoList1", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-		    md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
+			
 		} else {
 			/*
 			 * md.addAttribute("formmode", "add");
@@ -3363,10 +3534,26 @@ public class XBRLNavigationController {
 			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getDate()), formatter));
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", foreigncurrencydepositRepo.getlist(Report_date));
+//			md.addAttribute("branchList", foreigncurrencydepositRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_ForeignCurrencyDeposit> list = foreigncurrencydepositRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
 
 		} else {
 			Timestamp lastdatetimestamp = foreigncurrencydepositRepo.findLastReportDate();
@@ -3461,10 +3648,26 @@ public class XBRLNavigationController {
 			md.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getDate()), formatter));
 
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", impactanalysisRepo.getlist(Report_date));
+//			md.addAttribute("branchList", impactanalysisRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_ImpactAnalysis> list = impactanalysisRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
 
 		} else {
 			md.addAttribute("formmode", "add");
@@ -3737,11 +3940,28 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "edit");
 			md.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReport_date()), formatter) );
 
+			
 		} else if ("list".equalsIgnoreCase(formmode)) {
-			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist(Report_date));
+//			md.addAttribute("branchList", tradeleveldataderivativessimplifiedRepo.getlist(Report_date));
+//			System.out.println("list is formmode");
+//			md.addAttribute("formmode", "list");
+//			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			
+			if (Report_date == null) {
+			    md.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_TradeLevelDataDerivativesSimplified> list = tradeleveldataderivativessimplifiedRepo.getlist(Report_date);
+			    md.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
 			System.out.println("list is formmode");
 			md.addAttribute("formmode", "list");
-			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+			    md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    md.addAttribute("lastDate", endDateFallback);
+			}
+			
 		} else {
 			Timestamp lastdatetimestamp = tradeleveldataderivativessimplifiedRepo.findLastReportDate();
 			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
@@ -3905,8 +4125,16 @@ System.out.println("sixe==="+excelData.length);
 	        @RequestParam(required = false) String report_date,
 	        @RequestParam(required = false) String rowid, @RequestParam(required = false) String tablename,
 	        Model model) {
-		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");		
 
+		   String formattedDate = null;
+		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		   
+		   // ✅ Convert Report_date → String safely
+		   if (report_date != null) {
+		       formattedDate = sdf.format(report_date);
+		   }
+		   
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
 		if ("detail".equalsIgnoreCase(formmode)) {
 	    	System.out.println("rowid : "+rowid);
@@ -3942,9 +4170,25 @@ System.out.println("sixe==="+excelData.length);
 	    }
 	    // 2. LIST MODE (Main Dashboard Table)
 	    else if ("list".equalsIgnoreCase(formmode)) {
-	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails(report_date));
-	        model.addAttribute("formmode", "list");
-	        model.addAttribute("lastDate",LocalDate.parse(report_date, formatter) );
+//	        model.addAttribute("branchList", LiquidityRiskDashboardRepo.getAlldetails(report_date));
+//	        model.addAttribute("formmode", "list");
+//	        model.addAttribute("lastDate",LocalDate.parse(report_date, formatter) );
+	        
+	        if (report_date == null) {
+	        	model.addAttribute("branchList", Collections.emptyList());
+			} else {
+			    List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails(report_date);
+			    model.addAttribute("branchList", list != null ? list : Collections.emptyList());
+			}
+			System.out.println("list is formmode");
+			model.addAttribute("formmode", "list");
+			if (formattedDate != null && !formattedDate.trim().isEmpty()) {
+				model.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+			    LocalDate endDateFallback = null; 
+			    model.addAttribute("lastDate", endDateFallback);
+			}
+			
 	        
 	    } 
 	    // 3. EDIT MODE
@@ -3952,7 +4196,7 @@ System.out.println("sixe==="+excelData.length);
 	        RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
 	        model.addAttribute("liquidityriskdashboard", data);
 	        model.addAttribute("formmode", "edit");
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	        model.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate())) );
 	    }
 	    // 4. ADD MODE (Default Data Controls)
