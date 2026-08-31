@@ -2323,13 +2323,13 @@ public class XBRLNavigationController {
 	            secondLastDateString = secondlastdatetimestamp.toLocalDateTime().format(formatter);
 	        }
 
-	        RT_DataControl data = RT_DatacontrolRepository.getdata(lastDateString, "CBUAE_Mm_Data_Template");
-	        RT_DataControl secondlastdata = RT_DatacontrolRepository.getdata(secondLastDateString, "CBUAE_Mm_Data_Template");
+	        RT_DataControl data = RT_DatacontrolRepository.getdata(lastDateString, "CBUAE_MM_DATA_TEMPLATE");
+	        RT_DataControl secondlastdata = RT_DatacontrolRepository.getdata(secondLastDateString, "CBUAE_MM_DATA_TEMPLATE");
 
 	        RT_DataControl report_datedata = null;
 
 	        if (formattedDate != null) {
-	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Mm_Data_Template");
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_MM_DATA_TEMPLATE");
 	        }
 	        
 	        System.out.println(formattedDate);
@@ -5866,8 +5866,11 @@ System.out.println("sixe==="+excelData.length);
 			model.addAttribute("nextId", sblcRepo.getNextId());
 			// Add an empty entity to the model for form binding
 			model.addAttribute("list", new MIS_SBLC_Maintenance_Entity());
+			model.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
+
 		} else if (mode.equals("edit") || mode.equals("view")) {
 			model.addAttribute("list", sblcRepo.findById(id).orElse(new MIS_SBLC_Maintenance_Entity()));
+			model.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		}
 		return "MIS/SBLC_Maintenance";
 	}

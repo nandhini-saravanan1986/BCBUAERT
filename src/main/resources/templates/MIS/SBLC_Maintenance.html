@@ -430,8 +430,23 @@
 							</div>
 							<label class="col-sm-2 col-form-label">Bank Name</label>
 							<div class="col-sm-4">
-								<input type="text" name="bank_name" class="form-control form-control-sm"
-									th:value="${list?.bank_name}" th:readonly="${formmode == 'view'}" />
+
+							    <select id="bank_name"
+							            name="bank_name"
+							            required
+							            class="form-control form-control-sm"
+							            th:disabled="${formmode == 'view'}">
+
+							        <option value="" >Select Bank</option>
+
+							        <option th:each="counterpartyname : ${Counterpartynamelist}"
+							                th:value="${counterpartyname}"
+							                th:text="${counterpartyname}"
+							                th:selected="${counterpartyname == list?.bank_name}">
+							        </option>
+
+							    </select>
+
 							</div>
 						</div>
 
