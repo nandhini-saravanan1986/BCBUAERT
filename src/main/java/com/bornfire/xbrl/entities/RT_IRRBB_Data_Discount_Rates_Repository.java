@@ -25,7 +25,7 @@ public interface RT_IRRBB_Data_Discount_Rates_Repository extends JpaRepository<R
 	RT_IRRBB_Data_Discount_Rates getParticularDataBySI_NO(BigDecimal SI_NO);
 	
 	
-	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DISCOUNT_RATES ", nativeQuery = true)
-	List<Object[]> getirrbbdiscountratesdatalistdata1();
+	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DISCOUNT_RATES where REPORT_DATE=?1", nativeQuery = true)
+	List<Object[]> getirrbbdiscountratesdatalistdata1(Date REPORT_DATE);
 
 }

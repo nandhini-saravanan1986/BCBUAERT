@@ -108,10 +108,10 @@ public class RT_Irrbb_Ear_Service {
 	}
 	
 	
-	 public byte[] generateIrrbbearExcel() throws Exception {
-	        logger.info("Service: Starting IRRBB EAR Excel generation process in memory.");
+	 public byte[] generateIrrbbearExcel(Date Report_date) throws Exception {
+	        logger.info("Service: Starting IRRBB EAR Excel generation process in memory for report date {}.", Report_date);
 
-	        List<Object[]> irrbbearList = IRRBB_EAR_Repository.getirrbbeardatalistdata1();
+	        List<Object[]> irrbbearList = IRRBB_EAR_Repository.getirrbbeardatalistdata1(Report_date);
 
 	        if (irrbbearList.isEmpty()) {
 	            logger.warn("Service: No data found for IRRBB DATA EAR report. Returning empty result.");

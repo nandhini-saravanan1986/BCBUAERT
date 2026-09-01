@@ -22,8 +22,8 @@ public interface RT_IRRBB_Data_EVE_Template_Repository  extends JpaRepository <R
 	 */
 	
 	
-	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DATA_TEMPLATE ", nativeQuery = true)
-	List<Object[]> getirrbbevedatalistdata1();
+	@Query(value = "SELECT * FROM BCBUAE_IRRBB_DATA_TEMPLATE where REPORT_DATE=?1", nativeQuery = true)
+	List<Object[]> getirrbbevedatalistdata1(Date REPORT_DATE);
 	
 
 	@Query(value = "SELECT TRUNC(MAX(REPORT_DATE)) FROM BCBUAE_IRRBB_DATA_TEMPLATE", nativeQuery = true)

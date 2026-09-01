@@ -95,10 +95,10 @@ public class RT_Irrbb_Discount_Rates_Service {
 	
 	
 	
-	public byte[] generateIrrbbdiscountrateExcel() throws Exception {
-        logger.info("Service: Starting IRRBB Discount Rate Excel generation process in memory.");
+	public byte[] generateIrrbbdiscountrateExcel(Date Report_date) throws Exception {
+        logger.info("Service: Starting IRRBB Discount Rate Excel generation process in memory for report date {}.", Report_date);
 
-        List<Object[]> irrbbdiscountList = IRRBB_Data_Template_DiscountRate_repo.getirrbbdiscountratesdatalistdata1();
+        List<Object[]> irrbbdiscountList = IRRBB_Data_Template_DiscountRate_repo.getirrbbdiscountratesdatalistdata1(Report_date);
 
         if (irrbbdiscountList.isEmpty()) {
             logger.warn("Service: No data found for IRRBB Discount Rate  report. Returning empty result.");

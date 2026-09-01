@@ -4451,11 +4451,12 @@ System.out.println("sixe==="+excelData.length);
 	}
 
 	@RequestMapping(value = "/downloadIrrbbeveExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel(HttpServletRequest req) {
-		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+	public ResponseEntity<ByteArrayResource> downloadIrrbbeveExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		logger.info("Controller: Received request for IRRBB Data EVE Excel download for report date {}.", Report_date);
 
 		try {
-			byte[] excelData = irrbbeveService.generateIrrbbeveExcel();
+			byte[] excelData = irrbbeveService.generateIrrbbeveExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
@@ -4487,11 +4488,12 @@ System.out.println("sixe==="+excelData.length);
 	}
 	
 	@RequestMapping(value = "/downloadIrrbbExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbExcel(HttpServletRequest req) {
-		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+	public ResponseEntity<ByteArrayResource> downloadIrrbbExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		logger.info("Controller: Received request for IRRBB Consolidated Excel download for report date {}.", Report_date);
 
 		try {
-			byte[] excelData = irrbbeveService.generateIrrbbExcel();
+			byte[] excelData = irrbbeveService.generateIrrbbExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: No data found for IRRBB Data EVE report. Responding with 204 No Content.");
@@ -4524,11 +4526,12 @@ System.out.println("sixe==="+excelData.length);
 	
 
 	@RequestMapping(value = "/downloadIrrbbearExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel(HttpServletRequest req) {
-		logger.info("Controller: Received request for IRRBB Data EAR Excel download.");
+	public ResponseEntity<ByteArrayResource> downloadIrrbbearExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		logger.info("Controller: Received request for IRRBB Data EAR Excel download for report date {}.", Report_date);
 
 		try {
-			byte[] excelData = irrbbearService.generateIrrbbearExcel();
+			byte[] excelData = irrbbearService.generateIrrbbearExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn("Controller: No data found for IRRBB Data EAR report. Responding with 204 No Content.");
@@ -4560,11 +4563,12 @@ System.out.println("sixe==="+excelData.length);
 	}
 
 	@RequestMapping(value = "/downloadIrrbbdiscountrateExcel", method = RequestMethod.GET)
-	public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel(HttpServletRequest req) {
-		logger.info("Controller: Received request for IRRBB Data EVE Excel download.");
+	public ResponseEntity<ByteArrayResource> downloadIrrbbdiscountrateExcel(HttpServletRequest req,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Report_date) {
+		logger.info("Controller: Received request for IRRBB Discount Rate Excel download for report date {}.", Report_date);
 
 		try {
-			byte[] excelData = discountratesService.generateIrrbbdiscountrateExcel();
+			byte[] excelData = discountratesService.generateIrrbbdiscountrateExcel(Report_date);
 
 			if (excelData.length == 0) {
 				logger.warn(

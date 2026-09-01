@@ -26,7 +26,7 @@ public interface RT_IRRBB_Data_EAR_Repository extends JpaRepository <RT_IRRBB_Da
 	 */
 	
 	
-	 @Query(value = "SELECT * FROM BCBUAE_IRRBB_EAR ", nativeQuery = true)
-	 List<Object[]> getirrbbeardatalistdata1();
+	 @Query(value = "SELECT * FROM BCBUAE_IRRBB_EAR where REPORT_DATE=?1", nativeQuery = true)
+	 List<Object[]> getirrbbeardatalistdata1(Date REPORT_DATE);
 	
 }

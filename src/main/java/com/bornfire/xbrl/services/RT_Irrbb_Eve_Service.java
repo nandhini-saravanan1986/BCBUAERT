@@ -117,10 +117,10 @@ public class RT_Irrbb_Eve_Service {
 	}
 	
 	
-	 public byte[] generateIrrbbeveExcel() throws Exception {
-	        logger.info("Service: Starting IRRBB EVE Excel generation process in memory.");
+	 public byte[] generateIrrbbeveExcel(Date Report_date) throws Exception {
+	        logger.info("Service: Starting IRRBB EVE Excel generation process in memory for report date {}.", Report_date);
 
-	        List<Object[]> irrbbeveList = IRRB_EVE_Repo.getirrbbevedatalistdata1();
+	        List<Object[]> irrbbeveList = IRRB_EVE_Repo.getirrbbevedatalistdata1(Report_date);
 
 	        if (irrbbeveList.isEmpty()) {
 	            logger.warn("Service: No data found for IRRBB EVE report. Returning empty result.");
@@ -470,14 +470,14 @@ public class RT_Irrbb_Eve_Service {
 	}
 	 
 	 
-	 public byte[] generateIrrbbExcel() throws Exception {
-	        logger.info("Service: Starting IRRBB Excel generation process in memory.");
+	 public byte[] generateIrrbbExcel(Date Report_date) throws Exception {
+	        logger.info("Service: Starting IRRBB Excel generation process in memory for report date {}.", Report_date);
 
-	        List<Object[]> irrbbeveList = IRRB_EVE_Repo.getirrbbevedatalistdata1();
-	        List<Object[]> irrbbearList = IRRBB_EAR_Repository.getirrbbeardatalistdata1();
+	        List<Object[]> irrbbeveList = IRRB_EVE_Repo.getirrbbevedatalistdata1(Report_date);
+	        List<Object[]> irrbbearList = IRRBB_EAR_Repository.getirrbbeardatalistdata1(Report_date);
 
-	        if (irrbbeveList.isEmpty()) {
-	            logger.warn("Service: No data found for IRRBB report. Returning empty result.");
+	        if (irrbbeveList.isEmpty() && irrbbearList.isEmpty()) {
+	            logger.warn("Service: No data found for IRRBB report on {}. Returning empty result.", Report_date);
 	            return new byte[0];
 	        }
 
