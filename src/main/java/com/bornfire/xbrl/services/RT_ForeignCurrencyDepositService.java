@@ -213,7 +213,7 @@ public class RT_ForeignCurrencyDepositService {
             numberStyle.setBorderLeft(BorderStyle.THIN);
             numberStyle.setBorderRight(BorderStyle.THIN);
 
-            int startRow = 2; // Excel row 3
+            int startRow = 1; // Excel row 2
 
             for (int i = 0; i < foreigncurrencyList.size(); i++) {
                 RT_ForeignCurrencyDeposit fx = foreigncurrencyList.get(i);
