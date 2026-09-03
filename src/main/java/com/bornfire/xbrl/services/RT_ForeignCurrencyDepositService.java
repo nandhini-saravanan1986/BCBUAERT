@@ -167,14 +167,14 @@ public class RT_ForeignCurrencyDepositService {
     public byte[] generateForeignCurrencyDepositExcel(Date Report_date) throws Exception {
         logger.info("Service: Starting Foreign Currency Deposit Excel generation process in memory.");
 
-        List<Object[]> foreigncurrencyList = foreigncurrencydepositRepo.getforeigncurrencylistdata1(Report_date);
+        List<RT_ForeignCurrencyDeposit> foreigncurrencyList = foreigncurrencydepositRepo.getlist(Report_date);
 
-        if (foreigncurrencyList.isEmpty()) {
+        if (foreigncurrencyList == null || foreigncurrencyList.isEmpty()) {
             logger.warn("Service: No data found for Foreign Currency report. Returning empty result.");
             return new byte[0];
         }
 
-        String templateDir = env.getProperty("output.exportpathtemp"); // Config property key
+        String templateDir = env.getProperty("output.exportpathtemp");
         String templateFileName = "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx";
         Path templatePath = Paths.get(templateDir, templateFileName);
 
@@ -187,29 +187,24 @@ public class RT_ForeignCurrencyDepositService {
         if (!Files.isReadable(templatePath)) {
             throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
         }
-        
-     // This has been commented out because of the large file size and nill report 
-/*
+
         try (InputStream templateInputStream = Files.newInputStream(templatePath);
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = findSheet(workbook, "Foreign Curr Deposits");
+            if (sheet == null) {
+                throw new FileNotFoundException("Sheet 'Foreign Curr Deposits' not found in template: " + templatePath.toAbsolutePath());
+            }
+
             CreationHelper createHelper = workbook.getCreationHelper();
 
-            // Define cell styles
             CellStyle dateStyle = workbook.createCellStyle();
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
             dateStyle.setBorderBottom(BorderStyle.THIN);
             dateStyle.setBorderTop(BorderStyle.THIN);
             dateStyle.setBorderLeft(BorderStyle.THIN);
             dateStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle textStyle = workbook.createCellStyle();
-            textStyle.setBorderBottom(BorderStyle.THIN);
-            textStyle.setBorderTop(BorderStyle.THIN);
-            textStyle.setBorderLeft(BorderStyle.THIN);
-            textStyle.setBorderRight(BorderStyle.THIN);
 
             CellStyle numberStyle = workbook.createCellStyle();
             numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
@@ -218,204 +213,114 @@ public class RT_ForeignCurrencyDepositService {
             numberStyle.setBorderLeft(BorderStyle.THIN);
             numberStyle.setBorderRight(BorderStyle.THIN);
 
-			int startRow = 2; // assuming data starts from row 3 (index 2)
+            int startRow = 2; // Excel row 3
 
-			if (!foreigncurrencyList.isEmpty()) {
-				for (int i = 0; i < foreigncurrencyList.size(); i++) {
-					Object[] fx = foreigncurrencyList.get(i);
-					Row row = sheet.getRow(startRow + i);
-					if (row == null)
-						row = sheet.createRow(startRow + i);
-					
-					// 0 - Date column
-					Cell cell0 = row.getCell(0);
-					if (cell0 == null)
-						cell0 = row.createCell(0);
-					if (fx[0] instanceof Date) {
-						cell0.setCellValue((Date) fx[0]);
-						cell0.setCellStyle(dateStyle);
-					} else {
-						cell0.setCellValue("");
-						
-					}
-					
-					// 1 - String
-					Cell cell1 = row.getCell(1);
-					if (cell1 == null)
-						cell1 = row.createCell(1);
-					cell1.setCellValue(fx[1] == null ? "" : fx[1].toString());
-					
-				
-					// 2 – HEAD_OFFICE_SUBSIDIARY (String)
-					Cell cell2 = row.getCell(2);
-					if (cell2 == null) cell2 = row.createCell(2);
-					cell2.setCellValue(fx[2] == null ? "" : fx[2].toString());
+            for (int i = 0; i < foreigncurrencyList.size(); i++) {
+                RT_ForeignCurrencyDeposit fx = foreigncurrencyList.get(i);
+                Row row = sheet.getRow(startRow + i);
+                if (row == null) {
+                    row = sheet.createRow(startRow + i);
+                }
 
-					// 3 – SUBSIDIARY (String)
-					Cell cell3 = row.getCell(3);
-					if (cell3 == null) cell3 = row.createCell(3);
-					cell3.setCellValue(fx[3] == null ? "" : fx[3].toString());
-
-					// 4 – BANK_SYMBOL (String)
-					Cell cell4 = row.getCell(4);
-					if (cell4 == null) cell4 = row.createCell(4);
-					cell4.setCellValue(fx[4] == null ? "" : fx[4].toString());
-
-					// 5 – CONVENTIONAL_OR_ISLAMIC (String)
-					Cell cell5 = row.getCell(5);
-					if (cell5 == null) cell5 = row.createCell(5);
-					cell5.setCellValue(fx[5] == null ? "" : fx[5].toString());
-
-					// 6 – LOCAL_OR_FOREIGN (String)
-					Cell cell6 = row.getCell(6);
-					if (cell6 == null) cell6 = row.createCell(6);
-					cell6.setCellValue(fx[6] == null ? "" : fx[6].toString());
-
-					// 7 – CBUAE_TIERING (String)
-					Cell cell7 = row.getCell(7);
-					if (cell7 == null) cell7 = row.createCell(7);
-					cell7.setCellValue(fx[7] == null ? "" : fx[7].toString());
-
-					// 8 – DEPOSIT_INTERNAL_REFERENCE (String)
-					Cell cell8 = row.getCell(8);
-					if (cell8 == null) cell8 = row.createCell(8);
-					cell8.setCellValue(fx[8] == null ? "" : fx[8].toString());
-
-					// 9 – ON_BALANCE_SHEET_DEP_TYPE (String)
-					Cell cell9 = row.getCell(9);
-					if (cell9 == null) cell9 = row.createCell(9);
-					cell9.setCellValue(fx[9] == null ? "" : fx[9].toString());
-
-					// 10 – FUNDING_COUNTERPARTY (String)
-					Cell cell10 = row.getCell(10);
-					if (cell10 == null) cell10 = row.createCell(10);
-					cell10.setCellValue(fx[10] == null ? "" : fx[10].toString());
-
-					// 11 – COUNTERPARTY_TYPE (String)
-					Cell cell11 = row.getCell(11);
-					if (cell11 == null) cell11 = row.createCell(11);
-					cell11.setCellValue(fx[11] == null ? "" : fx[11].toString());
-
-					// 12 – INDUSTRY_GCIS (String)
-					Cell cell12 = row.getCell(12);
-					if (cell12 == null) cell12 = row.createCell(12);
-					cell12.setCellValue(fx[12] == null ? "" : fx[12].toString());
-
-					// 13 – COUNTERPARTY_COUNTRY_RISK (String)
-					Cell cell13 = row.getCell(13);
-					if (cell13 == null) cell13 = row.createCell(13);
-					cell13.setCellValue(fx[13] == null ? "" : fx[13].toString());
-
-					// 14 – CBUAE_REGIONAL_ZONE (String)
-					Cell cell14 = row.getCell(14);
-					if (cell14 == null) cell14 = row.createCell(14);
-					cell14.setCellValue(fx[14] == null ? "" : fx[14].toString());
-
-					// 15 – NOMINAL (BigDecimal → numeric)
-					Cell cell15 = row.getCell(15);
-					if (cell15 == null) cell15 = row.createCell(15);
-					if (fx[15] instanceof BigDecimal)
-					    cell15.setCellValue(((BigDecimal) fx[15]).doubleValue());
-					else
-					    cell15.setCellValue("");
-
-					// 16 – NOMINAL_IN_AED (BigDecimal)
-					Cell cell16 = row.getCell(16);
-					if (cell16 == null) cell16 = row.createCell(16);
-					if (fx[16] instanceof BigDecimal)
-					    cell16.setCellValue(((BigDecimal) fx[16]).doubleValue());
-					else
-					    cell16.setCellValue("");
-
-					// 17 – CURRENCY (String)
-					Cell cell17 = row.getCell(17);
-					if (cell17 == null) cell17 = row.createCell(17);
-					cell17.setCellValue(fx[17] == null ? "" : fx[17].toString());
-
-					// 18 – RATE_TYPE (String)
-					Cell cell18 = row.getCell(18);
-					if (cell18 == null) cell18 = row.createCell(18);
-					cell18.setCellValue(fx[18] == null ? "" : fx[18].toString());
-
-					// 19 – DEP_FIXED_RATE_OR_ADMINIS_RATE (BigDecimal)
-					Cell cell19 = row.getCell(19);
-					if (cell19 == null) cell19 = row.createCell(19);
-					if (fx[19] instanceof BigDecimal)
-					    cell19.setCellValue(((BigDecimal) fx[19]).doubleValue());
-					else
-					    cell19.setCellValue("");
-
-					// 20 – BENCHMARK_FLOATING_RATE (String)
-					Cell cell20 = row.getCell(20);
-					if (cell20 == null) cell20 = row.createCell(20);
-					cell20.setCellValue(fx[20] == null ? "" : fx[20].toString());
-
-					// 21 – TENOR_FLOATING_RATE (String)
-					Cell cell21 = row.getCell(21);
-					if (cell21 == null) cell21 = row.createCell(21);
-					cell21.setCellValue(fx[21] == null ? "" : fx[21].toString());
-
-					// 22 – SPREAD_OVER_BENCHMARK_RATE (BigDecimal)
-					Cell cell22 = row.getCell(22);
-					if (cell22 == null) cell22 = row.createCell(22);
-					if (fx[22] instanceof BigDecimal)
-					    cell22.setCellValue(((BigDecimal) fx[22]).doubleValue());
-					else
-					    cell22.setCellValue("");
-
-					// 23 – MATURITY_DATE (Date)
-					Cell cell23 = row.getCell(23);
-					if (cell23 == null) cell23 = row.createCell(23);
-					if (fx[23] instanceof Date) {
-					    cell23.setCellValue((Date) fx[23]);
-					    cell23.setCellStyle(dateStyle);
-					} else {
-					    cell23.setCellValue("");
-					}
-
-					// 24 – TENOR_MTHS (BigDecimal)
-					Cell cell24 = row.getCell(24);
-					if (cell24 == null) cell24 = row.createCell(24);
-					if (fx[24] instanceof BigDecimal)
-					    cell24.setCellValue(((BigDecimal) fx[24]).doubleValue());
-					else
-					    cell24.setCellValue("");
-
-					// 25 – MATURITY_PERIOD (BigDecimal)
-					Cell cell25 = row.getCell(25);
-					if (cell25 == null) cell25 = row.createCell(25);
-					if (fx[25] instanceof BigDecimal)
-					    cell25.setCellValue(((BigDecimal) fx[25]).doubleValue());
-					else
-					    cell25.setCellValue("");
-				}
-				// Auto-size all 31 columns
-				for (int i = 0; i <= 30; i++) {
-				    sheet.autoSizeColumn(i);
-				}
-
-				//workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-				workbook.setForceFormulaRecalculation(true);
-			} else {
-				System.out.println("No Fx Risk data found to generate the Excel file.");
-			}
-
-			// Write the final workbook content to the in-memory stream.
-			workbook.write(out);
-
-			String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-            File outputFile = new File(finalPath + "CBUAE_Cross_Currency_Funding_Spread_Template.xlsx");
-            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                fos.write(out.toByteArray());
-                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
+                // Same column order as the on-screen table
+                setDateCell(row, 0, fx.getDate(), dateStyle);
+                setStringCell(row, 1, fx.getBankName());
+                setStringCell(row, 2, fx.getHeadOfficeSubsidiary());
+                setStringCell(row, 3, fx.getSubsidiary());
+                setStringCell(row, 4, fx.getBankSymbol());
+                setStringCell(row, 5, fx.getConventionalOrIslamic());
+                setStringCell(row, 6, fx.getLocalOrForeign());
+                setStringCell(row, 7, fx.getCbuaeTiering());
+                setStringCell(row, 8, fx.getDepositInternalReference());
+                setStringCell(row, 9, fx.getOnBalanceSheetDepType());
+                setStringCell(row, 10, fx.getFundingCounterParty());
+                setStringCell(row, 11, fx.getCounterpartyType());
+                setStringCell(row, 12, fx.getIndustryGcis());
+                setStringCell(row, 13, fx.getCounterpartyCountryRisk());
+                setStringCell(row, 14, fx.getCbuaeRegionalZone());
+                setNumericCell(row, 15, fx.getNominal(), numberStyle);
+                setNumericCell(row, 16, fx.getNominalInAed(), numberStyle);
+                setStringCell(row, 17, fx.getCurrency());
+                setStringCell(row, 18, fx.getRateType());
+                setNumericCell(row, 19, fx.getDepositFixedRateOrAdministrativeRate(), numberStyle);
+                setStringCell(row, 20, fx.getBenchmarkFloatingRate());
+                setNumericCell(row, 21, fx.getTenorFloatingRate(), numberStyle);
+                setNumericCell(row, 22, fx.getSpreadOverBenchmarkRate(), numberStyle);
+                setDateCell(row, 23, fx.getMaturityDate(), dateStyle);
+                setNumericCell(row, 24, fx.getTenorMths(), numberStyle);
+                setNumericCell(row, 25, fx.getMaturityPeriod(), numberStyle);
             }
 
-            logger.info("Service: Foreign Currency Deposit Excel data successfully written to memory buffer ({} bytes).", out.size());
-            return out.toByteArray();           
-		}*/
-        return Files.readAllBytes(templatePath);// comment this out if its not a nill report
-	}
-    
+            workbook.setForceFormulaRecalculation(true);
+            workbook.write(out);
 
-    
+            logger.info("Service: Foreign Currency Deposit Excel data successfully written to memory buffer ({} bytes).", out.size());
+            return out.toByteArray();
+        }
+    }
+
+    private Sheet findSheet(Workbook workbook, String expectedName) {
+        Sheet sheet = workbook.getSheet(expectedName);
+        if (sheet != null) {
+            return sheet;
+        }
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            String name = workbook.getSheetName(i);
+            if (name != null && name.trim().equalsIgnoreCase(expectedName)) {
+                return workbook.getSheetAt(i);
+            }
+        }
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            String name = workbook.getSheetName(i);
+            if (name != null && name.toLowerCase().contains("foreign curr")) {
+                return workbook.getSheetAt(i);
+            }
+        }
+
+        return null;
+    }
+
+    private Cell getOrCreateCell(Row row, int col) {
+        Cell cell = row.getCell(col);
+        if (cell == null) {
+            cell = row.createCell(col);
+        }
+        return cell;
+    }
+
+    private void setStringCell(Row row, int col, String value) {
+        getOrCreateCell(row, col).setCellValue(value == null ? "" : value);
+    }
+
+    private void setDateCell(Row row, int col, Date value, CellStyle dateStyle) {
+        Cell cell = getOrCreateCell(row, col);
+        if (value != null) {
+            cell.setCellValue(value);
+            cell.setCellStyle(dateStyle);
+        } else {
+            cell.setCellValue("");
+        }
+    }
+
+    private void setNumericCell(Row row, int col, Object value, CellStyle numberStyle) {
+        Cell cell = getOrCreateCell(row, col);
+        if (value instanceof Number) {
+            cell.setCellValue(((Number) value).doubleValue());
+            cell.setCellStyle(numberStyle);
+            return;
+        }
+        if (value != null && !value.toString().trim().isEmpty()) {
+            try {
+                cell.setCellValue(Double.parseDouble(value.toString().trim()));
+                cell.setCellStyle(numberStyle);
+                return;
+            } catch (NumberFormatException e) {
+                cell.setCellValue(value.toString());
+                return;
+            }
+        }
+        cell.setCellValue("");
+    }
 }

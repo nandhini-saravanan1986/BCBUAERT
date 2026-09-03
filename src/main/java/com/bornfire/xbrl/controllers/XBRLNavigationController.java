@@ -4130,9 +4130,14 @@ System.out.println("sixe==="+excelData.length);
 		   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		   SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		   
-		   // ✅ Convert Report_date → String safely
-		   if (report_date != null) {
-		       formattedDate = sdf.format(report_date);
+		   // report_date is a request String (dd-MM-yyyy or yyyy-MM-dd), not a Date.
+		   // SimpleDateFormat.format() only accepts Date and throws IllegalArgumentException on String.
+		   if (report_date != null && !report_date.trim().isEmpty()) {
+		       try {
+		           formattedDate = LocalDate.parse(normalizeDate(report_date.trim())).format(formatter);
+		       } catch (Exception e) {
+		           formattedDate = report_date.trim();
+		       }
 		   }
 		   
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
@@ -4158,12 +4163,14 @@ System.out.println("sixe==="+excelData.length);
 			String[] rowidarray = rowid.replace(" ", "").split(",");
 
 			for (String singlerowid : rowidarray) {
-				Object[] args = new Object[] { report_date, singlerowid.trim() };
+				Object[] args = new Object[] { formattedDate != null ? formattedDate : report_date, singlerowid.trim() };
 				List<Map<String, Object>> data = jdbcTemplate.queryForList(sql, args);
 
 				allData.addAll(data);
 			}
-		    model.addAttribute("lastDate",report_date);
+		    model.addAttribute("lastDate", formattedDate != null
+		            ? LocalDate.parse(formattedDate, formatter)
+		            : null);
 	        model.addAttribute("reportdetails", allData);
 	        model.addAttribute("formmode", "detail");
 	        model.addAttribute("rowid", rowid);
@@ -4174,10 +4181,10 @@ System.out.println("sixe==="+excelData.length);
 //	        model.addAttribute("formmode", "list");
 //	        model.addAttribute("lastDate",LocalDate.parse(report_date, formatter) );
 	        
-	        if (report_date == null) {
+	        if (formattedDate == null) {
 	        	model.addAttribute("branchList", Collections.emptyList());
 			} else {
-			    List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails(report_date);
+			    List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails(formattedDate);
 			    model.addAttribute("branchList", list != null ? list : Collections.emptyList());
 			}
 			System.out.println("list is formmode");
@@ -4196,8 +4203,9 @@ System.out.println("sixe==="+excelData.length);
 	        RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
 	        model.addAttribute("liquidityriskdashboard", data);
 	        model.addAttribute("formmode", "edit");
-	        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	        model.addAttribute("lastDate",LocalDate.parse(sdf.format(data.getReportDate())) );
+	        if (data != null && data.getReportDate() != null) {
+	            model.addAttribute("lastDate", LocalDate.parse(sdf.format(data.getReportDate()), formatter));
+	        }
 	    }
 	    // 4. ADD MODE (Default Data Controls)
 	    else {
@@ -4220,15 +4228,15 @@ System.out.println("sixe==="+excelData.length);
 			RT_DataControl secondlastdata= RT_DatacontrolRepository.getdata(secondLastDateString,"CBUAE_Liquidity_Risk_Dashboard_Template");
 			RT_DataControl report_datedata = null;
 
-	        if (report_date != null) {
-	            report_datedata = RT_DatacontrolRepository.getdata(report_date, "CBUAE_Liquidity_Risk_Dashboard_Template");
+	        if (formattedDate != null) {
+	            report_datedata = RT_DatacontrolRepository.getdata(formattedDate, "CBUAE_Liquidity_Risk_Dashboard_Template");
 	        }
 	        
-	        System.out.println(report_date);
+	        System.out.println(formattedDate);
 	       
 	        if (report_datedata != null) {
-	        	System.out.println(report_date);
-	        	lastDate = LocalDate.parse(report_date, formatter);
+	        	System.out.println(formattedDate);
+	        	lastDate = LocalDate.parse(formattedDate, formatter);
 	        	model.addAttribute("data", report_datedata);
 	        	model.addAttribute("formmode", "exist");
 	        }
