@@ -434,17 +434,8 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                         cell21.setCellValue("");
                     }
 
-                    // 22 - residual_maturity
-                    Cell cell22 = row.getCell(22); if (cell22 == null) cell22 = row.createCell(22);
-                    cell22.setCellValue(mm[22] == null ? "" : mm[22].toString());
-
-                    // 23 - residual_maturity_rounded
-                    Cell cell23 = row.getCell(23); if (cell23 == null) cell23 = row.createCell(23);
-                    cell23.setCellValue(mm[23] == null ? "" : mm[23].toString());
-
-                    // 24 - maturity_period
-                    Cell cell24 = row.getCell(24); if (cell24 == null) cell24 = row.createCell(24);
-                    cell24.setCellValue(mm[24] == null ? "" : mm[24].toString());
+                    // 22-24 Residual Maturity / Rounded / Maturity Period are Excel formulas
+                    // (YEARFRAC/ROUND/VLOOKUP). Do not overwrite them with DB values.
 
                     // 25 - position
                     Cell cell25 = row.getCell(25); if (cell25 == null) cell25 = row.createCell(25);
@@ -527,9 +518,9 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell43 = row.getCell(43); if (cell43 == null) cell43 = row.createCell(43);
                     cell43.setCellValue(mm[43] == null ? "" : mm[43].toString());
 
-                    // 44 - clean_value_aed
+                    // 44 - clean_value_aed (feeds Overall MTM formula)
                     Cell cell44 = row.getCell(44); if (cell44 == null) cell44 = row.createCell(44);
-                    cell44.setCellValue(mm[44] == null ? "" : mm[44].toString());
+                    setNumericCell(cell44, mm[44], numberStyle);
 
                     // 45 - accrued_interest_aed
                     Cell cell45 = row.getCell(45); if (cell45 == null) cell45 = row.createCell(45);
@@ -631,9 +622,9 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell69 = row.getCell(69); if (cell69 == null) cell69 = row.createCell(69);
                     cell69.setCellValue(mm[69] == null ? "" : mm[69].toString());
 
-                    // 70 - uleg2_clean_value_aed
+                    // 70 - uleg2_clean_value_aed (feeds Overall MTM formula)
                     Cell cell70 = row.getCell(70); if (cell70 == null) cell70 = row.createCell(70);
-                    cell70.setCellValue(mm[70] == null ? "" : mm[70].toString());
+                    setNumericCell(cell70, mm[70], numberStyle);
 
                     // 71 - uleg2_accrued_interest_aed
                     Cell cell71 = row.getCell(71); if (cell71 == null) cell71 = row.createCell(71);
@@ -659,9 +650,9 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell76 = row.getCell(76); if (cell76 == null) cell76 = row.createCell(76);
                     cell76.setCellValue(mm[76] == null ? "" : mm[76].toString());
                     
-                 // 77 - cleanvalue_aed
+                 // 77 - cleanvalue_aed (feeds Overall MTM formula)
                     Cell cell77 = row.getCell(77); if (cell77 == null) cell77 = row.createCell(77);
-                    cell77.setCellValue(mm[77] == null ? "" : mm[77].toString());
+                    setNumericCell(cell77, mm[77], numberStyle);
 
                     // 78 - ir_dv01_aed
                     Cell cell78 = row.getCell(78); if (cell78 == null) cell78 = row.createCell(78);
@@ -695,9 +686,9 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell85 = row.getCell(85); if (cell85 == null) cell85 = row.createCell(85);
                     cell85.setCellValue(mm[85] == null ? "" : mm[85].toString());
 
-                    // 86 - future_contract_valuation
+                    // 86 - future_contract_valuation (feeds Overall MTM formula)
                     Cell cell86 = row.getCell(86); if (cell86 == null) cell86 = row.createCell(86);
-                    cell86.setCellValue(mm[86] == null ? "" : mm[86].toString());
+                    setNumericCell(cell86, mm[86], numberStyle);
 
                     // 87 - future_sensitivity_aed
                     Cell cell87 = row.getCell(87); if (cell87 == null) cell87 = row.createCell(87);
@@ -739,9 +730,9 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell96 = row.getCell(96); if (cell96 == null) cell96 = row.createCell(96);
                     cell96.setCellValue(mm[96] == null ? "" : mm[96].toString());
 
-                    // 97 - option_fair_value_aed
+                    // 97 - option_fair_value_aed (feeds Overall MTM formula)
                     Cell cell97 = row.getCell(97); if (cell97 == null) cell97 = row.createCell(97);
-                    cell97.setCellValue(mm[97] == null ? "" : mm[97].toString());
+                    setNumericCell(cell97, mm[97], numberStyle);
 
                     // 98 - option_dollar_delta
                     Cell cell98 = row.getCell(98); if (cell98 == null) cell98 = row.createCell(98);
@@ -763,66 +754,8 @@ public class RT_TradeLevelDerivativesSimplifiedService {
                     Cell cell102 = row.getCell(102); if (cell102 == null) cell102 = row.createCell(102);
                     cell102.setCellValue(mm[102] == null ? "" : mm[102].toString());
 
-                    // 103 - overall_mtm_aed
-                    Cell cell103 = row.getCell(103); if (cell103 == null) cell103 = row.createCell(103);
-                    cell103.setCellValue(mm[103] == null ? "" : mm[103].toString());
-
-                    // 104 - irs_positive_mtm
-                    Cell cell104 = row.getCell(104); if (cell104 == null) cell104 = row.createCell(104);
-                    cell104.setCellValue(mm[104] == null ? "" : mm[104].toString());
-
-                    // 105 - asset_swap_positive_mtm
-                    Cell cell105 = row.getCell(105); if (cell105 == null) cell105 = row.createCell(105);
-                    cell105.setCellValue(mm[105] == null ? "" : mm[105].toString());
-
-                    // 106 - cds_positive_mtm
-                    Cell cell106 = row.getCell(106); if (cell106 == null) cell106 = row.createCell(106);
-                    cell106.setCellValue(mm[106] == null ? "" : mm[106].toString());
-
-                    // 107 - future_contract_positive_mtm
-                    Cell cell107 = row.getCell(107); if (cell107 == null) cell107 = row.createCell(107);
-                    cell107.setCellValue(mm[107] == null ? "" : mm[107].toString());
-
-                    // 108 - option_positive_mtm
-                    Cell cell108 = row.getCell(108); if (cell108 == null) cell108 = row.createCell(108);
-                    cell108.setCellValue(mm[108] == null ? "" : mm[108].toString());
-
-                    // 109 - overall_positive_mtm
-                    Cell cell109 = row.getCell(109); if (cell109 == null) cell109 = row.createCell(109);
-                    cell109.setCellValue(mm[109] == null ? "" : mm[109].toString());
-
-                    // 110 - individual_positive_contribution
-                    Cell cell110 = row.getCell(110); if (cell110 == null) cell110 = row.createCell(110);
-                    cell110.setCellValue(mm[110] == null ? "" : mm[110].toString());
-
-                    // 111 - irs_negative_mtm
-                    Cell cell111 = row.getCell(111); if (cell111 == null) cell111 = row.createCell(111);
-                    cell111.setCellValue(mm[111] == null ? "" : mm[111].toString());
-
-                    // 112 - asset_swap_negative_mtm
-                    Cell cell112 = row.getCell(112); if (cell112 == null) cell112 = row.createCell(112);
-                    cell112.setCellValue(mm[112] == null ? "" : mm[112].toString());
-
-                    // 113 - cds_negative_mtm
-                    Cell cell113 = row.getCell(113); if (cell113 == null) cell113 = row.createCell(113);
-                    cell113.setCellValue(mm[113] == null ? "" : mm[113].toString());
-
-                    // 114 - future_contract_negative_mtm
-                    Cell cell114 = row.getCell(114); if (cell114 == null) cell114 = row.createCell(114);
-                    cell114.setCellValue(mm[114] == null ? "" : mm[114].toString());
-
-                    // 115 - option_negative_mtm
-                    Cell cell115 = row.getCell(115); if (cell115 == null) cell115 = row.createCell(115);
-                    cell115.setCellValue(mm[115] == null ? "" : mm[115].toString());
-
-                    // 116 - overall_negative_mtm
-                    Cell cell116 = row.getCell(116); if (cell116 == null) cell116 = row.createCell(116);
-                    cell116.setCellValue(mm[116] == null ? "" : mm[116].toString());
-
-                    // 117 - individual_negative_contribution
-                    Cell cell117 = row.getCell(117); if (cell117 == null) cell117 = row.createCell(117);
-                    cell117.setCellValue(mm[117] == null ? "" : mm[117].toString());
-                   
+                    // 103-117 Overall MTM / positive / negative contribution columns are Excel
+                    // formulas in the CBUAE template. Leave them in place so they recalculate.
                 }
 
                 workbook.setForceFormulaRecalculation(true);
@@ -837,5 +770,28 @@ public class RT_TradeLevelDerivativesSimplifiedService {
             Files.deleteIfExists(tempWorkingPath);
             logger.info("Service: Temporary working file deleted.");
         }
+    }
+
+    private void setNumericCell(Cell cell, Object value, CellStyle numberStyle) {
+        if (value instanceof Number) {
+            cell.setCellValue(((Number) value).doubleValue());
+            cell.setCellStyle(numberStyle);
+            return;
+        }
+        if (value != null) {
+            String text = value.toString().trim().replace(",", "");
+            if (!text.isEmpty()) {
+                try {
+                    cell.setCellValue(Double.parseDouble(text));
+                    cell.setCellStyle(numberStyle);
+                    return;
+                } catch (NumberFormatException ignored) {
+                    cell.setCellValue(value.toString());
+                    return;
+                }
+            }
+        }
+        cell.setCellType(CellType.BLANK);
+        cell.setCellStyle(numberStyle);
     }
 }
