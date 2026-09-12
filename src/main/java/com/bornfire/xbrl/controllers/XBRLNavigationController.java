@@ -2460,7 +2460,11 @@ public class XBRLNavigationController {
 		logger.info("Enter controller of counterparty");
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		String loginUserId = (String) req.getSession().getAttribute("USERID");
 		md.addAttribute("roleId", roleId);
+		md.addAttribute("loginUserId", loginUserId);
+		md.addAttribute("canRequestDelete", counter_servicess.isDeleteRequester(roleId));
+		md.addAttribute("canApproveDelete", counter_servicess.isDeleteApprover(roleId));
 
 		md.addAttribute("menu", "List Of Counterparty Bank"); // To highlight the menu
 		String domIds = ((String) req.getSession().getAttribute("DOMAINID")).trim();
@@ -2517,12 +2521,20 @@ public class XBRLNavigationController {
 	@RequestMapping(value = "Addcounter", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public String Addcounter(@ModelAttribute Counterparty_Entity Counterparty_Entity,
-			@RequestParam(required = false) String formmode, Model md, HttpServletRequest rq) {
+			@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String remarks, Model md, HttpServletRequest rq) {
 		logger.info("Add counter party...");
 		String userid = (String) rq.getSession().getAttribute("USERID");
-		String msg = counter_servicess.addcunter(Counterparty_Entity, userid, formmode);
+		String roleId = (String) rq.getSession().getAttribute("ROLEID");
+		String msg = counter_servicess.addcunter(Counterparty_Entity, userid, formmode, roleId, remarks);
 		return msg;
 
+	}
+
+	@RequestMapping(value = "counterpartyDeleteDetails", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> counterpartyDeleteDetails(@RequestParam Long id) {
+		return counter_servicess.getDeleteRequestDetails(id);
 	}
 
 	@Autowired

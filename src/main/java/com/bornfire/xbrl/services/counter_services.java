@@ -89,20 +89,33 @@ public class counter_services {
 	@Autowired
 	AuditServicesRep auditServicesRep;
 
-	public String addcunter(Counterparty_Entity as, String userid, String formmode) {
+	public String addcunter(Counterparty_Entity as, String userid, String formmode, String roleId, String remarks) {
 		String msg = "";
 
 		try {
 			Session hs = sessionFactory.getCurrentSession();
 
-			if ("edit".equalsIgnoreCase(formmode)) {
+			if ("deleterequest".equalsIgnoreCase(formmode)) {
+				msg = requestCounterpartyDelete(as, userid, roleId, remarks, hs);
+			} else if ("approvedelete".equalsIgnoreCase(formmode)) {
+				msg = approveCounterpartyDelete(as, userid, roleId, hs);
+			} else if ("rejectdelete".equalsIgnoreCase(formmode)) {
+				msg = rejectCounterpartyDelete(as, userid, roleId, remarks, hs);
+			} else if ("delete".equalsIgnoreCase(formmode)) {
+				msg = deleteCounterpartyDirect(as, userid, roleId, hs);
+			} else if ("edit".equalsIgnoreCase(formmode)) {
 				Counterparty_Entity dbUser = Counterparty_Reps.getBYID(as.getId());
 				System.out.println("old" + dbUser.getRating());
 				Counterparty_Entity old = Counterparty_Reps.getBYID(as.getId());
 
 				if (old != null) {
+					if (isDeletePending(old)) {
+						msg = "Cannot modify. A delete request is pending for this CounterParty Bank";
+					} else {
 
-					List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
+					List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg",
+							"deleteRequestStatus", "deleteRemarks", "deleteRequestedBy", "deleteRequestedAt",
+							"deleteApprovedBy", "deleteApprovedAt");
 
 					Map<String, String> changes = new LinkedHashMap<>();
 
@@ -171,6 +184,7 @@ public class counter_services {
 
 					hs.update(old);
 					msg = "CounterParty Bank Updated Successfully";
+					}
 				} else {
 					msg = "Record not found for update";
 				}
@@ -237,6 +251,205 @@ public class counter_services {
 		}
 
 		return msg;
+	}
+
+	public boolean isDeleteRequester(String roleId) {
+		return "USR-C".equalsIgnoreCase(roleId) || "USR-M".equalsIgnoreCase(roleId);
+	}
+
+	public boolean isDeleteApprover(String roleId) {
+		return "ADM-C".equalsIgnoreCase(roleId) || "ADM-M".equalsIgnoreCase(roleId)
+				|| "MGR".equalsIgnoreCase(roleId);
+	}
+
+	public Map<String, Object> getDeleteRequestDetails(Long id) {
+		Map<String, Object> details = new LinkedHashMap<>();
+		if (id == null) {
+			details.put("error", "ID is required");
+			return details;
+		}
+		Counterparty_Entity existing = Counterparty_Reps.getBYID(id);
+		if (existing == null) {
+			details.put("error", "Record not found");
+			return details;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+		details.put("id", existing.getId());
+		details.put("srlNo", existing.getSrlNo());
+		details.put("counterPartyBank", existing.getCounterPartyBank());
+		details.put("counterPartyBankCode", existing.getCounterPartyBankCode());
+		details.put("location", existing.getLocation());
+		details.put("rating", existing.getRating());
+		details.put("deleteRequestStatus", existing.getDeleteRequestStatus());
+		details.put("deleteRemarks", existing.getDeleteRemarks());
+		details.put("deleteRequestedBy", existing.getDeleteRequestedBy());
+		details.put("deleteRequestedAt",
+				existing.getDeleteRequestedAt() != null ? sdf.format(existing.getDeleteRequestedAt()) : "");
+		details.put("deleteApprovedBy", existing.getDeleteApprovedBy());
+		details.put("deleteApprovedAt",
+				existing.getDeleteApprovedAt() != null ? sdf.format(existing.getDeleteApprovedAt()) : "");
+		return details;
+	}
+
+	private boolean isDeletePending(Counterparty_Entity existing) {
+		return existing != null && "PENDING".equalsIgnoreCase(existing.getDeleteRequestStatus());
+	}
+
+	private String requestCounterpartyDelete(Counterparty_Entity as, String userid, String roleId, String remarks,
+			Session hs) {
+		if (!isDeleteRequester(roleId)) {
+			return "Only USR-C / USR-M can raise a delete request";
+		}
+		if (as.getId() == null) {
+			return "ID is required for deletion";
+		}
+		Counterparty_Entity existing = Counterparty_Reps.getBYID(as.getId());
+		if (existing == null) {
+			return "Record not found for delete request";
+		}
+		if (isDeletePending(existing)) {
+			return "A delete request is already pending for this CounterParty Bank";
+		}
+		if (remarks == null || remarks.trim().isEmpty()) {
+			return "Delete remarks are required";
+		}
+		if (remarks.trim().length() < 10) {
+			return "Delete remarks must be at least 10 characters";
+		}
+
+		Map<String, String> changes = new LinkedHashMap<>();
+		changes.put("deleteRequestStatus", "OldValue: " + existing.getDeleteRequestStatus() + ", NewValue: PENDING");
+		changes.put("id", String.valueOf(existing.getId()));
+		changes.put("counterPartyBank", existing.getCounterPartyBank());
+		changes.put("deleteRequestedBy", userid);
+		changes.put("deleteRemarks", remarks.trim());
+		auditservice.createBusinessAudit(userid, "DELETE_REQUEST", "CounterParty Bank-Delete Request", changes,
+				"MIS_COUNTER_PARTY_TABLE");
+
+		existing.setDeleteRequestStatus("PENDING");
+		existing.setDeleteRemarks(remarks.trim());
+		existing.setDeleteRequestedBy(userid);
+		existing.setDeleteRequestedAt(new Date());
+		existing.setDeleteApprovedBy(null);
+		existing.setDeleteApprovedAt(null);
+		existing.setModifyUser(userid);
+		hs.update(existing);
+		return "Delete request submitted successfully. Waiting for approver confirmation.";
+	}
+
+	private String approveCounterpartyDelete(Counterparty_Entity as, String userid, String roleId, Session hs) {
+		if (!isDeleteApprover(roleId)) {
+			return "Only ADM-C / ADM-M / MGR can approve a delete request";
+		}
+		if (as.getId() == null) {
+			return "ID is required for deletion";
+		}
+		Counterparty_Entity existing = Counterparty_Reps.getBYID(as.getId());
+		if (existing == null) {
+			return "Record not found for delete approval";
+		}
+		if (!isDeletePending(existing)) {
+			return "No pending delete request found for this CounterParty Bank";
+		}
+
+		Map<String, String> changes = new LinkedHashMap<>();
+		changes.put("delFlg", "OldValue: " + existing.getDelFlg() + ", NewValue: Y");
+		changes.put("deleteRequestStatus", "OldValue: PENDING, NewValue: DELETED");
+		changes.put("id", String.valueOf(existing.getId()));
+		changes.put("counterPartyBank", existing.getCounterPartyBank());
+		changes.put("deleteRequestedBy", existing.getDeleteRequestedBy());
+		changes.put("deleteApprovedBy", userid);
+		auditservice.createBusinessAudit(userid, "DELETE_APPROVE", "CounterParty Bank-Delete Approve", changes,
+				"MIS_COUNTER_PARTY_TABLE");
+
+		existing.setDelFlg("Y");
+		existing.setDeleteRequestStatus("DELETED");
+		existing.setDeleteApprovedBy(userid);
+		existing.setDeleteApprovedAt(new Date());
+		existing.setModifyUser(userid);
+		hs.update(existing);
+		return "Delete request approved. CounterParty Bank Deleted Successfully";
+	}
+
+	private String rejectCounterpartyDelete(Counterparty_Entity as, String userid, String roleId, String remarks,
+			Session hs) {
+		if (!isDeleteApprover(roleId)) {
+			return "Only ADM-C / ADM-M / MGR can reject a delete request";
+		}
+		if (as.getId() == null) {
+			return "ID is required for rejection";
+		}
+		Counterparty_Entity existing = Counterparty_Reps.getBYID(as.getId());
+		if (existing == null) {
+			return "Record not found for delete rejection";
+		}
+		if (!isDeletePending(existing)) {
+			return "No pending delete request found for this CounterParty Bank";
+		}
+		if (remarks == null || remarks.trim().isEmpty()) {
+			return "Reject remarks are required";
+		}
+		if (remarks.trim().length() < 10) {
+			return "Reject remarks must be at least 10 characters";
+		}
+
+		String originalRemarks = existing.getDeleteRemarks() != null ? existing.getDeleteRemarks() : "";
+		String combinedRemarks = originalRemarks;
+		if (!combinedRemarks.isEmpty()) {
+			combinedRemarks = combinedRemarks + " | Rejected: " + remarks.trim();
+		} else {
+			combinedRemarks = "Rejected: " + remarks.trim();
+		}
+
+		Map<String, String> changes = new LinkedHashMap<>();
+		changes.put("deleteRequestStatus", "OldValue: PENDING, NewValue: REJECTED");
+		changes.put("id", String.valueOf(existing.getId()));
+		changes.put("counterPartyBank", existing.getCounterPartyBank());
+		changes.put("deleteRequestedBy", existing.getDeleteRequestedBy());
+		changes.put("rejectedBy", userid);
+		changes.put("rejectRemarks", remarks.trim());
+		auditservice.createBusinessAudit(userid, "DELETE_REJECT", "CounterParty Bank-Delete Reject", changes,
+				"MIS_COUNTER_PARTY_TABLE");
+
+		existing.setDelFlg("N");
+		existing.setDeleteRequestStatus("REJECTED");
+		existing.setDeleteRemarks(combinedRemarks);
+		existing.setDeleteApprovedBy(userid);
+		existing.setDeleteApprovedAt(new Date());
+		existing.setModifyUser(userid);
+		hs.update(existing);
+		return "Delete request rejected successfully";
+	}
+
+	private String deleteCounterpartyDirect(Counterparty_Entity as, String userid, String roleId, Session hs) {
+		if (!isDeleteApprover(roleId)) {
+			return "Only ADM-C / ADM-M / MGR can delete. USR-C / USR-M must raise a delete request";
+		}
+		if (as.getId() == null) {
+			return "ID is required for deletion";
+		}
+		Counterparty_Entity existing = Counterparty_Reps.getBYID(as.getId());
+		if (existing == null) {
+			return "Record not found for delete";
+		}
+		if (isDeletePending(existing)) {
+			return approveCounterpartyDelete(as, userid, roleId, hs);
+		}
+
+		Map<String, String> changes = new LinkedHashMap<>();
+		changes.put("delFlg", "OldValue: " + existing.getDelFlg() + ", NewValue: Y");
+		changes.put("id", String.valueOf(existing.getId()));
+		changes.put("counterPartyBank", existing.getCounterPartyBank());
+		auditservice.createBusinessAudit(userid, "DELETE", "CounterParty Bank-Delete", changes,
+				"MIS_COUNTER_PARTY_TABLE");
+
+		existing.setDelFlg("Y");
+		existing.setDeleteRequestStatus("DELETED");
+		existing.setDeleteApprovedBy(userid);
+		existing.setDeleteApprovedAt(new Date());
+		existing.setModifyUser(userid);
+		hs.update(existing);
+		return "CounterParty Bank Deleted Successfully";
 	}
 
 	public List<Map<String, Object>> getSwap() {

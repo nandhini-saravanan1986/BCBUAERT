@@ -73,18 +73,20 @@ public class RT_CCR_DATA_Service {
 	        existing.setBankName(updatedEntity.getBankName());
 	        existing.setHeadOfficeSubsidiary(updatedEntity.getHeadOfficeSubsidiary());
 	        existing.setSubsidiary(updatedEntity.getSubsidiary());
-	        existing.setBankSymbol(updatedEntity.getBankSymbol());
+	        /*existing.setBankSymbol(updatedEntity.getBankSymbol());
 	        existing.setConventionalIslamic(updatedEntity.getConventionalIslamic());
 	        existing.setCbuaeTiering(updatedEntity.getCbuaeTiering());
 	        existing.setLocalForeign(updatedEntity.getLocalForeign());
-
+*/
+	        
 	        // Counterparty Info
 	        existing.setCounterpartyName(updatedEntity.getCounterpartyName());
 	        existing.setInternalCounterpartyRef(updatedEntity.getInternalCounterpartyRef());
 	        existing.setInternalCounterpartyRating(updatedEntity.getInternalCounterpartyRating());
-	        existing.setFinalRatingCbuae(updatedEntity.getFinalRatingCbuae());
+	        
+	        //existing.setFinalRatingCbuae(updatedEntity.getFinalRatingCbuae());
 	        existing.setCountryOfRisk(updatedEntity.getCountryOfRisk());
-	        existing.setCbuaeGeographicalZone(updatedEntity.getCbuaeGeographicalZone());
+	        //existing.setCbuaeGeographicalZone(updatedEntity.getCbuaeGeographicalZone());
 	        existing.setCounterpartyType(updatedEntity.getCounterpartyType());
 	        existing.setSector(updatedEntity.getSector());
 
@@ -105,9 +107,9 @@ public class RT_CCR_DATA_Service {
 	        // Adjustments Info
 	        existing.setCvaAed(updatedEntity.getCvaAed());
 	        existing.setDvaAed(updatedEntity.getDvaAed());
-	        existing.setBilateralCvaAed(updatedEntity.getBilateralCvaAed());
+	        //existing.setBilateralCvaAed(updatedEntity.getBilateralCvaAed());
 	        existing.setFvaAed(updatedEntity.getFvaAed());
-	        existing.setIncrementalPfe(updatedEntity.getIncrementalPfe());
+	        //existing.setIncrementalPfe(updatedEntity.getIncrementalPfe());
 
 	        // Update time
 
@@ -278,7 +280,7 @@ public class RT_CCR_DATA_Service {
 					cell3.setCellStyle(textStyle);
 
 					// Column 4: Bank Symbol
-					Cell cell4 = row.createCell(4);
+					/*Cell cell4 = row.createCell(4);
 					cell4.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
 					cell4.setCellStyle(textStyle);
 
@@ -297,7 +299,7 @@ public class RT_CCR_DATA_Service {
 					cell7.setCellValue(
 							record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
 					cell7.setCellStyle(textStyle);
-
+*/
 					// Column 8: Cpty Name
 					Cell cell8 = row.createCell(8);
 					cell8.setCellValue(record.getCounterpartyName() != null ? record.getCounterpartyName() : "");
@@ -315,23 +317,23 @@ public class RT_CCR_DATA_Service {
 							record.getInternalCounterpartyRating() != null ? record.getInternalCounterpartyRating()
 									: "");
 					cell10.setCellStyle(textStyle);
-
+/*
 					// Column 11: Final Rating CBUAE
 					Cell cell11 = row.createCell(11);
 					cell11.setCellValue(record.getFinalRatingCbuae() != null ? record.getFinalRatingCbuae() : "");
 					cell11.setCellStyle(textStyle);
-
+*/
 					// Column 12: Country of Risk
 					Cell cell12 = row.createCell(12);
 					cell12.setCellValue(record.getCountryOfRisk() != null ? record.getCountryOfRisk() : "");
 					cell12.setCellStyle(textStyle);
-
+/*
 					// Column 13: CBUAE Geographical zone
 					Cell cell13 = row.createCell(13);
 					cell13.setCellValue(
 							record.getCbuaeGeographicalZone() != null ? record.getCbuaeGeographicalZone() : "");
 					cell13.setCellStyle(textStyle);
-
+*/
 					// Column 14: Counterparty Type
 					Cell cell14 = row.createCell(14);
 					cell14.setCellValue(record.getCounterpartyType() != null ? record.getCounterpartyType() : "");
@@ -411,23 +413,23 @@ public class RT_CCR_DATA_Service {
 					Cell cell27 = row.createCell(27);
 					cell27.setCellValue(record.getDvaAed() != null ? record.getDvaAed().doubleValue() : 0.0);
 					cell27.setCellStyle(numberStyle);
-
+/*
 					// Column 28: Bilateral CVA (AED equivalent)
 					Cell cell28 = row.createCell(28);
 					cell28.setCellValue(
 							record.getBilateralCvaAed() != null ? record.getBilateralCvaAed().doubleValue() : 0.0);
 					cell28.setCellStyle(numberStyle);
-
+*/
 					// Column 29: FVA (AED equivalent)
 					Cell cell29 = row.createCell(29);
 					cell29.setCellValue(record.getFvaAed() != null ? record.getFvaAed().doubleValue() : 0.0);
 					cell29.setCellStyle(numberStyle);
-
+/*
 					// Column 30: Incremental PFE
 					Cell cell30 = row.createCell(30);
 					cell30.setCellValue(
 							record.getIncrementalPfe() != null ? record.getIncrementalPfe().doubleValue() : 0.0);
-					cell30.setCellStyle(numberStyle);
+					cell30.setCellStyle(numberStyle);*/
 				}
 				// Auto-size all 31 columns
 				for (int i = 0; i <= 30; i++) {

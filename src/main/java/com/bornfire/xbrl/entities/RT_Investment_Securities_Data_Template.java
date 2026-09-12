@@ -146,8 +146,8 @@ public class RT_Investment_Securities_Data_Template {
     @Column(name = "RESIDUAL_MATURITY")
     private BigDecimal residualMaturity;
 
-    @Column(name = "MATURITY_PERIOD")
-    private BigDecimal maturityPeriod;
+    @Column(name = "MATURITY_PERIOD", length = 50)
+    private String maturityPeriod;
 
     @Column(name = "PERCENT_HOLDINGS_FI")
     private BigDecimal percentHoldingsFi;
@@ -632,11 +632,11 @@ public class RT_Investment_Securities_Data_Template {
 		this.residualMaturity = residualMaturity;
 	}
 
-	public BigDecimal getMaturityPeriod() {
+	public String getMaturityPeriod() {
 		return maturityPeriod;
 	}
 
-	public void setMaturityPeriod(BigDecimal maturityPeriod) {
+	public void setMaturityPeriod(String maturityPeriod) {
 		this.maturityPeriod = maturityPeriod;
 	}
 
@@ -1004,7 +1004,7 @@ public class RT_Investment_Securities_Data_Template {
 			BigDecimal cleanPrice, BigDecimal cleanMarketValueAed, BigDecimal currentYieldToMaturity,
 			BigDecimal unrealizedGainLossAed, String subordinatedDebtSukuk, String finalRatingBanks,
 			String finalRatingCbuae, String creditQuality, Date maturityDate, BigDecimal residualMaturity,
-			BigDecimal maturityPeriod, BigDecimal percentHoldingsFi, BigDecimal qtyEquityFunds,
+			String maturityPeriod, BigDecimal percentHoldingsFi, BigDecimal qtyEquityFunds,
 			BigDecimal equityFloatingFundAssets, BigDecimal totalFloatingShareFundAum, BigDecimal specificProvision,
 			BigDecimal netBookValue, BigDecimal otherSecInfoNetBookPrice, BigDecimal marketPrice,
 			BigDecimal fairValueAmountAed, BigDecimal unrealizedGainLossAgain, BigDecimal percentHoldingsOther,

@@ -620,31 +620,167 @@
 		/*]]>*/
 	</script>
 
-	<script>
-		function deleteuser() {
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var canRequestDelete = /*[[${canRequestDelete}]]*/ false;
+		var canApproveDelete = /*[[${canApproveDelete}]]*/ false;
 
-			var entryuser = document.querySelector('[data-entry_user]');
-			var modifyuser = document.querySelector('[data-modify_user]');
-
-			if (confirm('Are you sure you want to delete this User?')) {
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-				var userid = document.getElementById("userId").value;
-				$.ajax({
-					type: 'post',
-					url: './deleteuser?formmode=' + userid,
-					success: function (response) {
-						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-						$("#alertmsg").text('User Deleted');
-						$('#alert').modal("toggle");
-					},
-					error: function (xhr, status, error) {
-						document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-						alert('Not able to delete contact administrator');
-					}
-				});
+		function openDeleteRequestModal(id) {
+			if (!id) {
+				alert("Record id is missing.");
+				return;
 			}
-
+			$("#deleteRequestId").val(id);
+			$("#deleteRequestRemarks").val("");
+			$("#deleteRequestModal").modal("show");
 		}
+
+		function submitDeleteRequest() {
+			var id = $("#deleteRequestId").val();
+			var remarks = ($("#deleteRequestRemarks").val() || "").trim();
+			if (!remarks) {
+				alert("Please enter delete remarks before submitting the request.");
+				return;
+			}
+			if (remarks.length < 10) {
+				alert("Delete remarks must be at least 10 characters.");
+				return;
+			}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$.ajax({
+				type: "POST",
+				url: "./Addcounter?formmode=deleterequest",
+				data: { id: id, remarks: remarks },
+				success: function (response) {
+					$("#deleteRequestModal").modal("hide");
+					alert(response);
+					location.href = "counterparty?formmode=list";
+				},
+				error: function () {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					alert("Not able to submit delete request. Please contact administrator");
+				}
+			});
+		}
+
+		function openApproveDeleteModal(id) {
+			if (!id) {
+				alert("Record id is missing.");
+				return;
+			}
+			$("#approveDeleteId").val(id);
+			$("#approveDeleteDetails").text("Loading...");
+			$("#rejectDeleteRemarks").val("");
+			$("#approveDeleteModal").modal("show");
+			$.ajax({
+				url: "./counterpartyDeleteDetails",
+				type: "GET",
+				data: { id: id },
+				success: function (row) {
+					if (row.error) {
+						$("#approveDeleteDetails").text(row.error);
+						return;
+					}
+					var lines = [
+						"CounterParty Bank: " + (row.counterPartyBank || "-"),
+						"Bank Code: " + (row.counterPartyBankCode || "-"),
+						"Serial No: " + (row.srlNo || "-"),
+						"Country / Location: " + (row.location || "-"),
+						"Rating: " + (row.rating || "-"),
+						"Delete Status: " + (row.deleteRequestStatus || "-"),
+						"Requested By: " + (row.deleteRequestedBy || "-"),
+						"Requested At: " + (row.deleteRequestedAt || "-"),
+						"Remarks: " + (row.deleteRemarks || "-")
+					];
+					$("#approveDeleteDetails").text(lines.join("\n"));
+				},
+				error: function () {
+					$("#approveDeleteDetails").text("Unable to load delete request details.");
+				}
+			});
+		}
+
+		function submitApproveDelete() {
+			var id = $("#approveDeleteId").val();
+			if (!confirm("Approve this delete request? The CounterParty Bank will be deleted.")) {
+				return;
+			}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$.ajax({
+				type: "POST",
+				url: "./Addcounter?formmode=approvedelete",
+				data: { id: id },
+				success: function (response) {
+					$("#approveDeleteModal").modal("hide");
+					alert(response);
+					location.href = "counterparty?formmode=list";
+				},
+				error: function () {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					alert("Not able to approve delete. Please contact administrator");
+				}
+			});
+		}
+
+		function submitRejectDelete() {
+			var id = $("#approveDeleteId").val();
+			var remarks = ($("#rejectDeleteRemarks").val() || "").trim();
+			if (!remarks) {
+				alert("Please enter reject remarks.");
+				return;
+			}
+			if (remarks.length < 10) {
+				alert("Reject remarks must be at least 10 characters.");
+				return;
+			}
+			if (!confirm("Reject this delete request? The CounterParty Bank will not be deleted.")) {
+				return;
+			}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$.ajax({
+				type: "POST",
+				url: "./Addcounter?formmode=rejectdelete",
+				data: { id: id, remarks: remarks },
+				success: function (response) {
+					$("#approveDeleteModal").modal("hide");
+					alert(response);
+					location.href = "counterparty?formmode=list";
+				},
+				error: function () {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					alert("Not able to reject delete request. Please contact administrator");
+				}
+			});
+		}
+
+		function deleteCounterparty(id) {
+			if (!id) {
+				alert("Record id is missing.");
+				return;
+			}
+			if (canRequestDelete && !canApproveDelete) {
+				openDeleteRequestModal(id);
+				return;
+			}
+			if (!confirm("Are you sure you want to delete this CounterParty Bank?")) {
+				return;
+			}
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+			$.ajax({
+				type: "POST",
+				url: "./Addcounter?formmode=delete",
+				data: { id: id },
+				success: function (response) {
+					alert(response);
+					location.href = "counterparty?formmode=list";
+				},
+				error: function () {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					alert("Not able to delete. Please contact administrator");
+				}
+			});
+		}
+		/*]]>*/
 	</script>
 	<script>
 		function roledesc1() {
@@ -889,6 +1025,43 @@
 		    font-size:13px;
 
 		}
+
+		#usertable th.cp-action-cell,
+		#usertable td.cp-action-cell {
+			min-width: 110px !important;
+			width: 110px !important;
+			white-space: nowrap !important;
+			text-align: center !important;
+		}
+
+		#usertable td.cp-action-cell i {
+			font-size: 15px;
+			margin: 0 6px;
+			cursor: pointer;
+			display: inline-block;
+			visibility: visible !important;
+		}
+
+		.status-pill {
+			display: inline-block;
+			padding: 2px 8px;
+			border-radius: 10px;
+			font-size: 11px;
+			font-weight: 600;
+			white-space: nowrap;
+		}
+
+		.status-delete-pending {
+			background: #fff3cd;
+			color: #856404;
+			border: 1px solid #ffeeba;
+		}
+
+		.status-delete-rejected {
+			background: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+		}
 	</style>
 	<script>
 	$(document).ready(function () {
@@ -911,7 +1084,10 @@
 	        scrollX: true,
 	        pageLength: 100,
 	        lengthChange: false,
-	        responsive: true
+	        responsive: false,
+	        columnDefs: [
+	            { targets: 0, width: "110px", className: "cp-action-cell", orderable: false }
+	        ]
 	    });
 
 	    $(".filter-icon").click(function (e) {
@@ -1394,8 +1570,10 @@
 									<table class="table refund-table align-middle mb-0" id="usertable" style="width:100%">
 										<thead class="thead-light">
 											<tr>
-												<th style=" text-align: center;white-space: nowrap;"></th>
-												<th style=" text-align: center;white-space: nowrap;"></th>
+												<th class="cp-action-cell">Action</th>
+												<th style="text-align: left; white-space: nowrap;">Delete Status
+													<i class="fa fa-filter filter-icon" data-column="1"></i>
+												</th>
 												<!--<th style="white-space: nowrap;">S. No.</th>-->
 												<!--<th style="text-align: left; white-space: nowrap;">CounterParty Bank
 													Code</th>-->
@@ -1439,17 +1617,47 @@
 										</thead>
 										<tbody>
 											<tr th:each="lists : ${listall}" style="cursor: pointer;font-size:0.75rem;">
-												<td style="text-align: center;">
-													<i class="fa fa-edit" title="Modify" th:if="${roleId}=='ADM-M'"
+												<td class="cp-action-cell">
+													<i class="fa fas fa-edit" title="Modify"
+														th:if="${lists.deleteRequestStatus != 'PENDING'}"
 														th:attr="onclick=|modifyCounterparty('${lists.id}')|"
-														style="cursor: pointer; color: #E77400; margin-right: 12px;">
-													</i>
-												</td>
-												<td style="text-align: center;">
-													<i class="fa fa-eye" title="View"
+														style="color: #E77400;"></i>
+													<i class="fa fas fa-eye" title="View"
 														th:attr="onclick=|viewCounterparty('${lists.id}')|"
-														style="cursor: pointer; color: #E77400;">
-													</i>
+														style="color: #E77400;"></i>
+													<i class="fa fas fa-trash" title="Delete Request"
+														th:if="${canRequestDelete and lists.deleteRequestStatus != 'PENDING'}"
+														th:attr="onclick=|openDeleteRequestModal('${lists.id}')|"
+														style="color: #dc3545;"></i>
+													<i class="fa fas fa-check-circle" title="Approve Delete"
+														th:if="${canApproveDelete and lists.deleteRequestStatus == 'PENDING'}"
+														th:attr="onclick=|openApproveDeleteModal('${lists.id}')|"
+														style="color: #28a745;"></i>
+													<i class="fa fas fa-times-circle" title="Reject Delete"
+														th:if="${canApproveDelete and lists.deleteRequestStatus == 'PENDING'}"
+														th:attr="onclick=|openApproveDeleteModal('${lists.id}')|"
+														style="color: #dc3545;"></i>
+													<i class="fa fas fa-info-circle" title="Delete Request Details"
+														th:if="${canApproveDelete and lists.deleteRequestStatus == 'PENDING'}"
+														th:attr="onclick=|openApproveDeleteModal('${lists.id}')|"
+														style="color: #17a2b8;"></i>
+													<i class="fa fas fa-trash" title="Delete"
+														th:if="${canApproveDelete and lists.deleteRequestStatus != 'PENDING'}"
+														th:attr="onclick=|deleteCounterparty('${lists.id}')|"
+														style="color: #dc3545;"></i>
+												</td>
+												<td>
+													<span th:if="${lists.deleteRequestStatus == 'PENDING'}"
+														class="status-pill status-delete-pending">Delete Requested</span>
+													<div th:if="${lists.deleteRequestStatus == 'PENDING'}" class="small text-muted mt-1">
+														By: <span th:text="${lists.deleteRequestedBy}">-</span>
+													</div>
+													<span th:if="${lists.deleteRequestStatus == 'REJECTED'}"
+														class="status-pill status-delete-rejected">Delete Request Rejected</span>
+													<div th:if="${lists.deleteRequestStatus == 'REJECTED'}" class="small text-muted mt-1">
+														By: <span th:text="${lists.deleteApprovedBy}">-</span>
+													</div>
+													<span th:if="${lists.deleteRequestStatus != 'PENDING' and lists.deleteRequestStatus != 'REJECTED'}">-</span>
 												</td>
 												<!--<td th:text="${lists.srlNo}"></td>-->
 												<!--<td style="text-align:left" th:text="${lists.counterPartyBankCode}">
@@ -1784,6 +1992,15 @@
 																								    box-shadow: 0 4px 12px rgba(255, 123, 0, 0.6);"></div>-->
 										</div>
 										<div class="btn-group nav-buttons float-right">
+											<button type="button" class="role-add-btn"
+												th:if="${canRequestDelete and list.deleteRequestStatus != 'PENDING'}"
+												th:attr="onclick=|openDeleteRequestModal('${list.id}')|">Delete Request</button>
+											<button type="button" class="role-add-btn"
+												th:if="${canApproveDelete and list.deleteRequestStatus == 'PENDING'}"
+												th:attr="onclick=|openApproveDeleteModal('${list.id}')|">Approve / Reject</button>
+											<button type="button" class="role-add-btn"
+												th:if="${canApproveDelete and list.deleteRequestStatus != 'PENDING'}"
+												th:attr="onclick=|deleteCounterparty('${list.id}')|">Delete</button>
 											<button type="button" class="role-add-btn" id="btnInq"
 												onclick="list();">List</button>
 										</div>
@@ -2068,6 +2285,21 @@
 
 										<!-- Right: Add Button -->
 										<div>
+											<button type="button" class="role-add-btn"
+												th:if="${canRequestDelete and list.deleteRequestStatus != 'PENDING'}"
+												th:attr="onclick=|openDeleteRequestModal('${list.id}')|">
+												Delete Request
+											</button>
+											<button type="button" class="role-add-btn"
+												th:if="${canApproveDelete and list.deleteRequestStatus == 'PENDING'}"
+												th:attr="onclick=|openApproveDeleteModal('${list.id}')|">
+												Approve / Reject
+											</button>
+											<button type="button" class="role-add-btn"
+												th:if="${canApproveDelete and list.deleteRequestStatus != 'PENDING'}"
+												th:attr="onclick=|deleteCounterparty('${list.id}')|">
+												Delete
+											</button>
 											<button type="button" class="role-add-btn" onclick="list();">
 												List
 											</button>
@@ -2080,6 +2312,24 @@
 
 
 									<div class="card-body">
+
+										<div th:if="${list.deleteRequestStatus == 'PENDING'}" class="alert alert-warning">
+											<strong>Delete request raised for this CounterParty Bank</strong>
+											<div>Requested By: <span th:text="${list.deleteRequestedBy}">-</span></div>
+											<div>Requested At:
+												<span th:text="${list.deleteRequestedAt != null ? #dates.format(list.deleteRequestedAt, 'dd-MM-yyyy HH:mm') : '-'}"></span>
+											</div>
+											<div>Remarks: <span th:text="${list.deleteRemarks}">-</span></div>
+										</div>
+										<div th:if="${list.deleteRequestStatus == 'REJECTED'}" class="alert alert-danger">
+											<strong>Delete request rejected</strong>
+											<div>Requested By: <span th:text="${list.deleteRequestedBy}">-</span></div>
+											<div>Rejected By: <span th:text="${list.deleteApprovedBy}">-</span></div>
+											<div>Rejected At:
+												<span th:text="${list.deleteApprovedAt != null ? #dates.format(list.deleteApprovedAt, 'dd-MM-yyyy HH:mm') : '-'}"></span>
+											</div>
+											<div>Remarks: <span th:text="${list.deleteRemarks}">-</span></div>
+										</div>
 
 										<input autocomplete="false" name="hidden" type="text" style="display: none;">
 										<div class="form-group">
@@ -2387,6 +2637,54 @@
 									data-dismiss="modal">Close</button>
 								<button type="button" class="btn btn-primary btn-sm" id="adhocApplyBtn"
 									onclick="confirmAdhocDetails()">Apply to Form</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="deleteRequestModal" tabindex="-1" role="dialog">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="menu-title-header">
+								<div class="modal-title" style="text-align: center; color: white;">Request Delete</div>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="deleteRequestId" />
+								<label for="deleteRequestRemarks">Delete Remarks <span class="text-danger">*</span></label>
+								<textarea id="deleteRequestRemarks" class="form-control" rows="4" minlength="10" maxlength="1000"
+									placeholder="Enter reason for deleting this CounterParty Bank (minimum 10 characters)..."></textarea>
+								<small class="form-text text-muted">USR-C / USR-M can raise a request. ADM-C / ADM-M / MGR will approve it.</small>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-warning btn-sm" onclick="submitDeleteRequest()">Submit Request</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="approveDeleteModal" tabindex="-1" role="dialog">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="menu-title-header">
+								<div class="modal-title" style="text-align: center; color: white;">Approve / Reject Delete Request</div>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="approveDeleteId" />
+								<p class="mb-2">A delete request was raised for this CounterParty Bank. Review the details below, then Approve or Reject.</p>
+								<div class="border rounded p-2 bg-light">
+									<pre id="approveDeleteDetails" style="white-space: pre-wrap; margin-bottom: 0;"></pre>
+								</div>
+								<div class="mt-3">
+									<label for="rejectDeleteRemarks">Reject Remarks <span class="text-danger">*</span> (required only for Reject)</label>
+									<textarea id="rejectDeleteRemarks" class="form-control" rows="3" maxlength="1000"
+										placeholder="Enter reason for rejecting this delete request (minimum 10 characters)..."></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-outline-danger btn-sm" onclick="submitRejectDelete()">Reject</button>
+								<button type="button" class="btn btn-danger btn-sm" onclick="submitApproveDelete()">Approve Delete</button>
 							</div>
 						</div>
 					</div>

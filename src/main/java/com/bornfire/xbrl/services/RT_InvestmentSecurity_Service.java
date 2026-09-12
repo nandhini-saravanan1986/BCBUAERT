@@ -235,7 +235,7 @@ public class RT_InvestmentSecurity_Service {
 				Workbook workbook = WorkbookFactory.create(templateInputStream);
 				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-			Sheet sheet = workbook.getSheetAt(0);
+			Sheet sheet = workbook.getSheet("Securities");
 
 			CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -435,7 +435,7 @@ public class RT_InvestmentSecurity_Service {
 				cell41.setCellValue(record.getResidualMaturity() != null ? record.getResidualMaturity().doubleValue() : 0.00);
 				cell41.setCellStyle(textStyle);
 				Cell cell42 = row.createCell(42);
-				cell42.setCellValue(record.getMaturityPeriod() != null ? record.getMaturityPeriod().doubleValue() : 0.00);
+				cell42.setCellValue(record.getMaturityPeriod() != null ? record.getMaturityPeriod() : "");
 				cell42.setCellStyle(textStyle);
 				Cell cell43 = row.createCell(43);
 				cell43.setCellValue(
