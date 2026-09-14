@@ -1,95 +1,122 @@
 package com.bornfire.xbrl.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.io.ByteArrayOutputStream;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.io.FileNotFoundException;
-
-import org.apache.poi.ss.usermodel.*;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.bornfire.xbrl.entities.RT_Fxriskdata;
 import com.bornfire.xbrl.entities.RT_MmData;
 import com.bornfire.xbrl.entities.RT_MmDataRepository;
 
 @Service
 public class RT_MmdataService {
 
-    @Autowired
-    private Environment env;
-    
-    private static final Logger logger = LoggerFactory.getLogger(RT_MmdataService.class);
+	@Autowired
+	private Environment env;
 
+	private static final Logger logger = LoggerFactory.getLogger(RT_MmdataService.class);
 
-    @Autowired
-    private RT_MmDataRepository mmdataRepo;
+	@Autowired
+	private RT_MmDataRepository mmdataRepo;
 
-    @Autowired
-    private SessionFactory sessionFactory;    
+	@Autowired
+	private SessionFactory sessionFactory;
 
 	@Autowired
 	AuditService auditservice;
-    
-    public boolean updateMmdata(RT_MmData updatedData) {
-	    System.out.println("Looking for record with SI_NO: " + updatedData.getDeal_no()+" and Report Date : "+ updatedData.getReport_date());
-	    System.out.println("cust id : "+updatedData.getCustomer_id());
-	    RT_MmData existing = mmdataRepo.getParticularDataBySI_NOReportdDate(updatedData.getReport_date(),updatedData.getDeal_no());
-	    
-	    RT_MmData dbUser = new RT_MmData();
 
+	/** New CBUAE MM template "Data" sheet column indexes (0-based). Formula columns are skipped. */
+	private static final int COL_DATE = 0;
+	private static final int COL_BANK_NAME = 1;
+	private static final int COL_HEAD_OFFICE_SUBSIDIARY = 2;
+	private static final int COL_SUBSIDIARY = 3;
+	// 4-7 formula: Bank Symbol, Conventional/Islamic, Local/Foreign, CBUAE Tiering
+	private static final int COL_DEAL_NO = 8;
+	private static final int COL_CUSTOMER_ID = 9;
+	private static final int COL_COUNTERPARTY_NAME = 10;
+	private static final int COL_FINAL_RATING_BANKS = 11;
+	// 12 formula: Final Rating CBUAE
+	private static final int COL_COUNTRY_OF_RISK = 13;
+	// 14 formula: CBUAE Geographical Zone
+	private static final int COL_DEAL_TYPE = 15;
+	private static final int COL_VALUE_DATE = 16;
+	private static final int COL_MATURITY_DATE = 17;
+	// 18-23 formula: Initial/Residual maturity fields
+	private static final int COL_CURRENCY = 24;
+	private static final int COL_PRINCIPAL = 25;
+	private static final int COL_PRINCIPAL_AED = 26;
+	private static final int COL_INTEREST_PROFIT_RATE_TYPE = 27;
+	private static final int COL_FIXED_RATE = 28;
+	private static final int COL_FLOATING_RATE_TYPE = 29;
+	private static final int COL_FLOATING_RATE_MARGIN = 30;
 
-	    if (existing != null) {
-	        // Update fields
+	public boolean updateMmdata(RT_MmData updatedData) {
+		System.out.println("Looking for record with SI_NO: " + updatedData.getDeal_no() + " and Report Date : "
+				+ updatedData.getReport_date());
+		System.out.println("cust id : " + updatedData.getCustomer_id());
+		RT_MmData existing = mmdataRepo.getParticularDataBySI_NOReportdDate(updatedData.getReport_date(),
+				updatedData.getDeal_no());
+
+		RT_MmData dbUser = new RT_MmData();
+
+		if (existing != null) {
 			org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
-	    	existing.setBank_name(updatedData.getBank_name());
-	    	existing.setHead_office_subsidiary(updatedData.getHead_office_subsidiary());
-	    	existing.setSubsidiary(updatedData.getSubsidiary());
-	    	existing.setBank_symbol(updatedData.getBank_symbol());
-	    	existing.setConventional_islamic(updatedData.getConventional_islamic());
-	    	existing.setLocal_foreign(updatedData.getLocal_foreign());
-	    	existing.setCbuae_tiering(updatedData.getCbuae_tiering());
-	    	
-	    	existing.setCustomer_id(updatedData.getCustomer_id());
-	    	existing.setCounterparty_name(updatedData.getCounterparty_name());
-	    	existing.setFinal_rating_banks(updatedData.getFinal_rating_banks());
-	    	existing.setFinal_rating_cbuae(updatedData.getFinal_rating_cbuae());
-	    	existing.setCountry_of_risk(updatedData.getCountry_of_risk());
-	    	existing.setCbuae_geographical_zone(updatedData.getCbuae_geographical_zone());
-	    	existing.setDeal_type(updatedData.getDeal_type());
-	    	existing.setValue_date(updatedData.getValue_date());
-	    	existing.setMaturity_date(updatedData.getMaturity_date());
-	    	existing.setInitial_maturity(updatedData.getInitial_maturity());
-	    	existing.setInitial_maturity_rounded(updatedData.getInitial_maturity_rounded());
-	    	existing.setInitial_maturity_period(updatedData.getInitial_maturity_period());
-	    	existing.setResidual_maturity(updatedData.getResidual_maturity());
-	    	existing.setResidual_maturity_rounded(updatedData.getResidual_maturity_rounded());
-	    	existing.setMaturity_period(updatedData.getMaturity_period());
-	    	existing.setCurrency(updatedData.getCurrency());
-	    	existing.setPrincipal(updatedData.getPrincipal());
-	    	existing.setPrincipal_aed(updatedData.getPrincipal_aed());
-	    	existing.setInterest_profit_rate(updatedData.getInterest_profit_rate());
+			existing.setBank_name(updatedData.getBank_name());
+			existing.setHead_office_subsidiary(updatedData.getHead_office_subsidiary());
+			existing.setSubsidiary(updatedData.getSubsidiary());
+			existing.setBank_symbol(updatedData.getBank_symbol());
+			existing.setConventional_islamic(updatedData.getConventional_islamic());
+			existing.setLocal_foreign(updatedData.getLocal_foreign());
+			existing.setCbuae_tiering(updatedData.getCbuae_tiering());
 
-
+			existing.setCustomer_id(updatedData.getCustomer_id());
+			existing.setCounterparty_name(updatedData.getCounterparty_name());
+			existing.setFinal_rating_banks(updatedData.getFinal_rating_banks());
+			existing.setFinal_rating_cbuae(updatedData.getFinal_rating_cbuae());
+			existing.setCountry_of_risk(updatedData.getCountry_of_risk());
+			existing.setCbuae_geographical_zone(updatedData.getCbuae_geographical_zone());
+			existing.setDeal_type(updatedData.getDeal_type());
+			existing.setValue_date(updatedData.getValue_date());
+			existing.setMaturity_date(updatedData.getMaturity_date());
+			existing.setInitial_maturity(updatedData.getInitial_maturity());
+			existing.setInitial_maturity_rounded(updatedData.getInitial_maturity_rounded());
+			existing.setInitial_maturity_period(updatedData.getInitial_maturity_period());
+			existing.setResidual_maturity(updatedData.getResidual_maturity());
+			existing.setResidual_maturity_rounded(updatedData.getResidual_maturity_rounded());
+			existing.setMaturity_period(updatedData.getMaturity_period());
+			existing.setCurrency(updatedData.getCurrency());
+			existing.setPrincipal(updatedData.getPrincipal());
+			existing.setPrincipal_aed(updatedData.getPrincipal_aed());
+			existing.setInterest_profit_rate(updatedData.getInterest_profit_rate());
+			existing.setFixed_rate(updatedData.getFixed_rate());
+			existing.setFloating_rate(updatedData.getFloating_rate());
+			existing.setFloating_rate_basis(updatedData.getFloating_rate_basis());
 
 			List<String> ignoreFields = Arrays.asList("createUser", "modifyUser", "delFlg");
 
@@ -137,266 +164,206 @@ public class RT_MmdataService {
 					System.err.println("Access error for field: " + field.getName() + " - " + e.getMessage());
 				}
 			}
-			
-	        mmdataRepo.save(existing);
-	        
 
-	        System.out.println("changes : "+changes);
+			mmdataRepo.save(existing);
 
-	        // Audit only if any field was changed
-	        if (!changes.isEmpty()) {
-	            auditservice.createBusinessAudit(
-	                updatedData.getDeal_no(),           // Unique ID
-	                "MODIFY",                             // Action
-	                "MM_DATA_EDIT_SCREEN",                  // Screen name
-	                changes,                              // Changed fields map
-	                "BCBUAE_MM_DATA"              // Table name
-	            );
-	        }
-	        
-	        
-	        return true;
-	    } else {
-	        System.out.println("No record found for SI_NO: " + updatedData.getDeal_no());
-	        return false;
-	    }
-	}
-    
-    
+			System.out.println("changes : " + changes);
 
-    public byte[] generateMmExcel(Date Report_date) throws Exception {
-        logger.info("Service: Starting MM Excel generation process in memory.");
+			if (!changes.isEmpty()) {
+				auditservice.createBusinessAudit(updatedData.getDeal_no(), "MODIFY", "MM_DATA_EDIT_SCREEN", changes,
+						"BCBUAE_MM_DATA");
+			}
 
-        List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1(Report_date);
-
-        if (mmDataList.isEmpty()) {
-            logger.warn("Service: No data found for MM report. Returning empty result.");
-            return new byte[0];
-        }
-
-        String templateDir = env.getProperty("output.exportpathtemp");  // Corrected property key
-        String templateFileName = "CBUAE_Mm_Data_Template.xlsx";
-        Path templatePath = Paths.get(templateDir, templateFileName);
-
-        logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
-
-        if (!Files.exists(templatePath)) {
-            throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
-        }
-
-        if (!Files.isReadable(templatePath)) {
-            throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
-        }
-
-        try (InputStream templateInputStream = Files.newInputStream(templatePath);
-             Workbook workbook = WorkbookFactory.create(templateInputStream);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-
-            Sheet sheet = workbook.getSheetAt(2);
-            CreationHelper createHelper = workbook.getCreationHelper();
-
-            // Define cell styles
-            CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("MM-dd-yyyy"));
-            dateStyle.setBorderBottom(BorderStyle.THIN);
-            dateStyle.setBorderTop(BorderStyle.THIN);
-            dateStyle.setBorderLeft(BorderStyle.THIN);
-            dateStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle textStyle = workbook.createCellStyle();
-            textStyle.setBorderBottom(BorderStyle.THIN);
-            textStyle.setBorderTop(BorderStyle.THIN);
-            textStyle.setBorderLeft(BorderStyle.THIN);
-            textStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle numberStyle = workbook.createCellStyle();
-            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-            numberStyle.setBorderBottom(BorderStyle.THIN);
-            numberStyle.setBorderTop(BorderStyle.THIN);
-            numberStyle.setBorderLeft(BorderStyle.THIN);
-            numberStyle.setBorderRight(BorderStyle.THIN);
-            
-         
-
-            int startRow = 3; // Assuming data starts from row index 3 (4rd row)
-
-            if (!mmDataList.isEmpty()) {
-                for (int i = 0; i < mmDataList.size(); i++) {
-                    Object[] mm = mmDataList.get(i);
-                    Row row = sheet.getRow(startRow + i);
-                    if (row == null) row = sheet.createRow(startRow + i);
-
-                    // 0 - Date
-                    Cell cell0 = row.getCell(0);
-                    if (cell0 == null) cell0 = row.createCell(0);
-                    if (mm[0] instanceof Date) {
-                        cell0.setCellValue((Date) mm[0]);
-                        cell0.setCellStyle(dateStyle);
-                    } else {
-                        cell0.setCellValue("");
-                    }
-
-                    // 1 - VARCHAR2
-                    Cell cell1 = row.getCell(1);
-                    if (cell1 == null) cell1 = row.createCell(1);
-                    cell1.setCellValue(mm[1] == null ? "" : mm[1].toString());
-
-                    // 2 - VARCHAR2
-                    Cell cell2 = row.getCell(2);
-                    if (cell2 == null) cell2 = row.createCell(2);
-                    cell2.setCellValue(mm[2] == null ? "" : mm[2].toString());
-
-                    // 3 - VARCHAR2
-                    Cell cell3 = row.getCell(3);
-                    if (cell3 == null) cell3 = row.createCell(3);
-                    cell3.setCellValue(mm[3] == null ? "" : mm[3].toString());
-
-                    // 4 - VARCHAR2
-                    Cell cell4 = row.getCell(4);
-                    if (cell4 == null) cell4 = row.createCell(4);
-                    cell4.setCellValue(mm[4] == null ? "" : mm[4].toString());
-
-                    // 5 - VARCHAR2
-                    Cell cell5 = row.getCell(5);
-                    if (cell5 == null) cell5 = row.createCell(5);
-                    cell5.setCellValue(mm[5] == null ? "" : mm[5].toString());
-
-                    // 6 - VARCHAR2
-                    Cell cell6 = row.getCell(6);
-                    if (cell6 == null) cell6 = row.createCell(6);
-                    cell6.setCellValue(mm[6] == null ? "" : mm[6].toString());
-
-                    // 7 - VARCHAR2
-                    Cell cell7 = row.getCell(7);
-                    if (cell7 == null) cell7 = row.createCell(7);
-                    cell7.setCellValue(mm[7] == null ? "" : mm[7].toString());
-
-                    // 8 - NUMBER(20,4) BigDecimal
-                    Cell cell8 = row.getCell(8);
-                    if (cell8 == null) cell8 = row.createCell(8);
-                    cell8.setCellValue(mm[8] == null ? "" : mm[8].toString());
-
-                    // 9 - VARCHAR2
-                    Cell cell9 = row.getCell(9);
-                    if (cell9 == null) cell9 = row.createCell(9);
-                    cell9.setCellValue(mm[9] == null ? "" : mm[9].toString());
-
-                    // 10 - VARCHAR2
-                    Cell cell10 = row.getCell(10);
-                    if (cell10 == null) cell10 = row.createCell(10);
-                    cell10.setCellValue(mm[10] == null ? "" : mm[10].toString());
-
-                    // 11 - VARCHAR2
-                    Cell cell11 = row.getCell(11);
-                    if (cell11 == null) cell11 = row.createCell(11);
-                    cell11.setCellValue(mm[11] == null ? "" : mm[11].toString());
-
-                    // 12 - VARCHAR2
-                    Cell cell12 = row.getCell(12);
-                    if (cell12 == null) cell12 = row.createCell(12);
-                    cell12.setCellValue(mm[12] == null ? "" : mm[12].toString());
-
-                    // 13 - VARCHAR2
-                    Cell cell13 = row.getCell(13);
-                    if (cell13 == null) cell13 = row.createCell(13);
-                    cell13.setCellValue(mm[13] == null ? "" : mm[13].toString());
-
-                    // 14 - VARCHAR2
-                    Cell cell14 = row.getCell(14);
-                    if (cell14 == null) cell14 = row.createCell(14);
-                    cell14.setCellValue(mm[14] == null ? "" : mm[14].toString());
-
-                    // 15 - VARCHAR2
-                    Cell cell15 = row.getCell(15);
-                    if (cell15 == null) cell15 = row.createCell(15);
-                    cell15.setCellValue(mm[15] == null ? "" : mm[15].toString());
-
-                    // 16 - DATE
-                    Cell cell16 = row.getCell(16);
-                    if (cell16 == null) cell16 = row.createCell(16);
-                    if (mm[16] instanceof Date) {
-                        cell16.setCellValue((Date) mm[16]);
-                        cell16.setCellStyle(dateStyle);
-                    } else {
-                        cell16.setCellValue("");
-                    }
-
-                    // 17 - DATE
-                    Cell cell17 = row.getCell(17);
-                    if (cell17 == null) cell17 = row.createCell(17);
-                    if (mm[17] instanceof Date) {
-                        cell17.setCellValue((Date) mm[17]);
-                        cell17.setCellStyle(dateStyle);
-                    } else {
-                        cell17.setCellValue("");
-                    }
-
-                    // 18 - VARCHAR2
-                    Cell cell18 = row.getCell(18);
-                    if (cell18 == null) cell18 = row.createCell(18);
-                    cell18.setCellValue(mm[18] == null ? "" : mm[18].toString());
-
-                    // 19 - VARCHAR2
-                    Cell cell19 = row.getCell(19);
-                    if (cell19 == null) cell19 = row.createCell(19);
-                    cell19.setCellValue(mm[19] == null ? "" : mm[19].toString());
-
-                    // 20 - VARCHAR2
-                    Cell cell20 = row.getCell(20);
-                    if (cell20 == null) cell20 = row.createCell(20);
-                    cell20.setCellValue(mm[20] == null ? "" : mm[20].toString());
-
-                    // 21 - VARCHAR2
-                    Cell cell21 = row.getCell(21);
-                    if (cell21 == null) cell21 = row.createCell(21);
-                    cell21.setCellValue(mm[21] == null ? "" : mm[21].toString());
-
-                    // 22 - VARCHAR2
-                    Cell cell22 = row.getCell(22);
-                    if (cell22 == null) cell22 = row.createCell(22);
-                    cell22.setCellValue(mm[22] == null ? "" : mm[22].toString());
-
-                    // 23 - VARCHAR2
-                    Cell cell23 = row.getCell(23);
-                    if (cell23 == null) cell23 = row.createCell(23);
-                    cell23.setCellValue(mm[23] == null ? "" : mm[23].toString());
-
-                    // 24 - VARCHAR2
-                    Cell cell24 = row.getCell(24);
-                    if (cell24 == null) cell24 = row.createCell(24);
-                    cell24.setCellValue(mm[24] == null ? "" : mm[24].toString());
-
-                    // 25 - VARCHAR2
-                    Cell cell25 = row.getCell(25);
-                    if (cell25 == null) cell25 = row.createCell(25);
-                    cell25.setCellValue(mm[25] == null ? "" : mm[25].toString());
-
-                    // 26 - VARCHAR2
-                    Cell cell26 = row.getCell(26);
-                    if (cell26 == null) cell26 = row.createCell(26);
-                    cell26.setCellValue(mm[26] == null ? "" : mm[26].toString());
-
-                    // 27 - VARCHAR2
-                    Cell cell27 = row.getCell(27);
-                    if (cell27 == null) cell27 = row.createCell(27);
-                    cell27.setCellValue(mm[27] == null ? "" : mm[27].toString());
-                }
-            	// Auto-size all 31 columns
-				for (int i = 0; i <= 27; i++) {
-				    sheet.autoSizeColumn(i);
-				}
-            
-				workbook.setForceFormulaRecalculation(true);
+			return true;
 		} else {
-			System.out.println("No Mm data found to generate the Excel file.");
+			System.out.println("No record found for SI_NO: " + updatedData.getDeal_no());
+			return false;
+		}
+	}
+
+	public byte[] generateMmExcel(Date Report_date) throws Exception {
+		logger.info("Service: Starting MM Excel generation process in memory. Report_date={}", Report_date);
+
+		List<Object[]> mmDataList = mmdataRepo.getmmdatalistdata1(Report_date);
+
+		if (mmDataList == null || mmDataList.isEmpty()) {
+			logger.warn("Service: No data found for MM report. Returning empty result.");
+			return new byte[0];
 		}
 
-		// Write the final workbook content to the in-memory stream.
-		workbook.write(out);
+		String templateDir = env.getProperty("output.exportpathtemp");
+		String templateFileName = "CBUAE_Mm_Data_Template.xlsx";
+		Path templatePath = Paths.get(templateDir, templateFileName);
 
-		logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
 
-		return out.toByteArray();
+		if (!Files.exists(templatePath)) {
+			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
+		}
+
+		if (!Files.isReadable(templatePath)) {
+			throw new SecurityException("Template file exists but is not readable: " + templatePath.toAbsolutePath());
+		}
+
+		try (InputStream templateInputStream = Files.newInputStream(templatePath);
+				Workbook workbook = WorkbookFactory.create(templateInputStream);
+				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			Sheet sheet = resolveDataSheet(workbook);
+			CreationHelper createHelper = workbook.getCreationHelper();
+
+			CellStyle dateStyle = workbook.createCellStyle();
+			dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("MM-dd-yyyy"));
+			applyThinBorder(dateStyle);
+
+			CellStyle textStyle = workbook.createCellStyle();
+			applyThinBorder(textStyle);
+
+			CellStyle numberStyle = workbook.createCellStyle();
+			numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+			applyThinBorder(numberStyle);
+
+			int startRow = 3; // data starts from Excel row 4 (0-based index 3)
+
+			for (int i = 0; i < mmDataList.size(); i++) {
+				Object[] mm = mmDataList.get(i);
+				if (mm == null) {
+					continue;
+				}
+
+				Row row = sheet.getRow(startRow + i);
+				if (row == null) {
+					row = sheet.createRow(startRow + i);
+				}
+
+				// Write only non-formula columns; Date = BANK_DATE (fallback REPORT_DATE via SQL NVL)
+				setDateCell(row, COL_DATE, toDate(mm, 0), dateStyle);
+				setTextCell(row, COL_BANK_NAME, toText(mm, 1), textStyle);
+				setTextCell(row, COL_HEAD_OFFICE_SUBSIDIARY, toText(mm, 2), textStyle);
+				setTextCell(row, COL_SUBSIDIARY, toText(mm, 3), textStyle);
+				setTextCell(row, COL_DEAL_NO, toText(mm, 4), textStyle);
+				setTextCell(row, COL_CUSTOMER_ID, toText(mm, 5), textStyle);
+				setTextCell(row, COL_COUNTERPARTY_NAME, toText(mm, 6), textStyle);
+				setTextCell(row, COL_FINAL_RATING_BANKS, toText(mm, 7), textStyle);
+				setTextCell(row, COL_COUNTRY_OF_RISK, toText(mm, 8), textStyle);
+				setTextCell(row, COL_DEAL_TYPE, toText(mm, 9), textStyle);
+				setDateCell(row, COL_VALUE_DATE, toDate(mm, 10), dateStyle);
+				setDateCell(row, COL_MATURITY_DATE, toDate(mm, 11), dateStyle);
+				setTextCell(row, COL_CURRENCY, toText(mm, 12), textStyle);
+				setNumberCell(row, COL_PRINCIPAL, toBigDecimal(mm, 13), numberStyle);
+				setNumberCell(row, COL_PRINCIPAL_AED, toBigDecimal(mm, 14), numberStyle);
+				setTextCell(row, COL_INTEREST_PROFIT_RATE_TYPE, toText(mm, 15), textStyle);
+				setTextCell(row, COL_FIXED_RATE, toText(mm, 16), textStyle);
+				setTextCell(row, COL_FLOATING_RATE_TYPE, toText(mm, 17), textStyle);
+				setTextCell(row, COL_FLOATING_RATE_MARGIN, toText(mm, 18), textStyle);
+			}
+
+			workbook.setForceFormulaRecalculation(true);
+			workbook.write(out);
+
+			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+			return out.toByteArray();
+		}
 	}
-}
+
+	private Sheet resolveDataSheet(Workbook workbook) {
+		Sheet sheet = workbook.getSheet("Data");
+		if (sheet != null) {
+			return sheet;
+		}
+		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			String name = workbook.getSheetName(i);
+			if (name != null && "data".equalsIgnoreCase(name.trim())) {
+				return workbook.getSheetAt(i);
+			}
+		}
+		if (workbook.getNumberOfSheets() > 2) {
+			logger.warn("Sheet 'Data' not found; falling back to sheet index 2 ({})", workbook.getSheetName(2));
+			return workbook.getSheetAt(2);
+		}
+		throw new IllegalStateException("Sheet named 'Data' not found in CBUAE_Mm_Data_Template.xlsx");
+	}
+
+	private void applyThinBorder(CellStyle style) {
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+	}
+
+	private Cell getOrCreateCell(Row row, int col) {
+		Cell cell = row.getCell(col);
+		if (cell == null) {
+			cell = row.createCell(col);
+		}
+		return cell;
+	}
+
+	private void setTextCell(Row row, int col, String value, CellStyle style) {
+		Cell cell = getOrCreateCell(row, col);
+		cell.setCellValue(value == null ? "" : value);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+	}
+
+	private void setDateCell(Row row, int col, Date value, CellStyle dateStyle) {
+		Cell cell = getOrCreateCell(row, col);
+		if (value != null) {
+			cell.setCellValue(value);
+		} else {
+			cell.setCellValue("");
+		}
+		if (dateStyle != null) {
+			cell.setCellStyle(dateStyle);
+		}
+	}
+
+	private void setNumberCell(Row row, int col, BigDecimal value, CellStyle numberStyle) {
+		Cell cell = getOrCreateCell(row, col);
+		if (value != null) {
+			cell.setCellValue(value.doubleValue());
+		} else {
+			cell.setCellValue("");
+		}
+		if (numberStyle != null) {
+			cell.setCellStyle(numberStyle);
+		}
+	}
+
+	private String toText(Object[] row, int idx) {
+		if (row == null || idx >= row.length || row[idx] == null) {
+			return "";
+		}
+		return String.valueOf(row[idx]);
+	}
+
+	private Date toDate(Object[] row, int idx) {
+		if (row == null || idx >= row.length || row[idx] == null) {
+			return null;
+		}
+		Object val = row[idx];
+		if (val instanceof Date) {
+			return (Date) val;
+		}
+		return null;
+	}
+
+	private BigDecimal toBigDecimal(Object[] row, int idx) {
+		if (row == null || idx >= row.length || row[idx] == null) {
+			return null;
+		}
+		Object val = row[idx];
+		if (val instanceof BigDecimal) {
+			return (BigDecimal) val;
+		}
+		if (val instanceof Number) {
+			return BigDecimal.valueOf(((Number) val).doubleValue());
+		}
+		try {
+			return new BigDecimal(val.toString().trim());
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

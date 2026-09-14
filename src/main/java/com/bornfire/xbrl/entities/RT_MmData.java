@@ -18,8 +18,7 @@ public class RT_MmData {
 	
 	private String SI_NO;
 	
-	@DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date bank_date;
+	private Date bank_date;
 
     private String bank_name;
     private String head_office_subsidiary;
@@ -52,6 +51,9 @@ public class RT_MmData {
     private BigDecimal principal;
     private BigDecimal principal_aed;
     private String interest_profit_rate;
+    private String fixed_rate;
+    private String floating_rate;
+    private String floating_rate_basis;
     private Date	report_submit_date;
     @Id
     private Date	report_date;
@@ -240,6 +242,24 @@ public class RT_MmData {
 	public void setInterest_profit_rate(String interest_profit_rate) {
 		this.interest_profit_rate = interest_profit_rate;
 	}
+	public String getFixed_rate() {
+		return fixed_rate;
+	}
+	public void setFixed_rate(String fixed_rate) {
+		this.fixed_rate = fixed_rate;
+	}
+	public String getFloating_rate() {
+		return floating_rate;
+	}
+	public void setFloating_rate(String floating_rate) {
+		this.floating_rate = floating_rate;
+	}
+	public String getFloating_rate_basis() {
+		return floating_rate_basis;
+	}
+	public void setFloating_rate_basis(String floating_rate_basis) {
+		this.floating_rate_basis = floating_rate_basis;
+	}
 	public Date getReport_submit_date() {
 		return report_submit_date;
 	}
@@ -325,7 +345,8 @@ public class RT_MmData {
 			Date value_date, Date maturity_date, BigDecimal initial_maturity, BigDecimal initial_maturity_rounded,
 			String initial_maturity_period, BigDecimal residual_maturity, BigDecimal residual_maturity_rounded,
 			String maturity_period, String currency, BigDecimal principal, BigDecimal principal_aed,
-			String interest_profit_rate, Date report_submit_date, Date report_date, String entity_flg,
+			String interest_profit_rate, String fixed_rate, String floating_rate, String floating_rate_basis,
+			Date report_submit_date, Date report_date, String entity_flg,
 			String modify_flg, String del_flg, Date report_from_date, Date report_to_date, String report_code,
 			String entry_user, String modify_user, String verify_user, Date entry_time, Date modify_time) {
 		super();
@@ -358,6 +379,9 @@ public class RT_MmData {
 		this.principal = principal;
 		this.principal_aed = principal_aed;
 		this.interest_profit_rate = interest_profit_rate;
+		this.fixed_rate = fixed_rate;
+		this.floating_rate = floating_rate;
+		this.floating_rate_basis = floating_rate_basis;
 		this.report_submit_date = report_submit_date;
 		this.report_date = report_date;
 		this.entity_flg = entity_flg;

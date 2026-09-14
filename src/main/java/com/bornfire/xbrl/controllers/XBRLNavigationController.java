@@ -2385,7 +2385,7 @@ public class XBRLNavigationController {
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 			HttpHeaders headers = new HttpHeaders();
-			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Mmdata.xls");
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=MmData.xlsx");
 			
 			String userid = (String) req.getSession().getAttribute("USERID");
 
@@ -2393,7 +2393,9 @@ public class XBRLNavigationController {
 
 			
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
-					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
+					.contentType(MediaType.parseMediaType(
+							"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(resource);
 
 		} catch (FileNotFoundException e) {
 			logger.error("Controller ERROR: MM template file not found.", e);
