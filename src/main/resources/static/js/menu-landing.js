@@ -21,6 +21,7 @@
 		"EAB Exceptions": "fa-exclamation-circle",
 		"Customer Groups": "fa-users",
 		"Bill Details": "fa-file-invoice-dollar",
+		"Counterparty Maintenance": "fa-address-book",
 		"Nostro Account Balance": "fa-university",
 		"FX Risk Data": "fa-exchange-alt",
 		"Trade Market Risk": "fa-chart-area",
