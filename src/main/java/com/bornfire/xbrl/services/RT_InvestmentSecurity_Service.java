@@ -266,6 +266,15 @@ public class RT_InvestmentSecurity_Service {
 			percentStyle.setBorderLeft(BorderStyle.THIN);
 			percentStyle.setBorderRight(BorderStyle.THIN);
 
+			// YTM values are stored as 3.88 (already a percent), not 0.0388.
+			// Excel 0.00% would display 3.88 as 388.00%; keep the stored number and append %.
+			CellStyle ytmPercentStyle = workbook.createCellStyle();
+			ytmPercentStyle.setDataFormat(createHelper.createDataFormat().getFormat("0.00\"%\""));
+			ytmPercentStyle.setBorderBottom(BorderStyle.THIN);
+			ytmPercentStyle.setBorderTop(BorderStyle.THIN);
+			ytmPercentStyle.setBorderLeft(BorderStyle.THIN);
+			ytmPercentStyle.setBorderRight(BorderStyle.THIN);
+
 			int startRow = 4;
 
 			for (int i = 0; i < dataList.size(); i++) {
@@ -393,7 +402,7 @@ public class RT_InvestmentSecurity_Service {
 				cell31.setCellValue(
 						record.getPurchaseYieldToMaturity() != null ? record.getPurchaseYieldToMaturity().doubleValue()
 								: 0.0);
-				cell31.setCellStyle(percentStyle);
+				cell31.setCellStyle(ytmPercentStyle);
 				Cell cell32 = row.createCell(32);
 				cell32.setCellValue(record.getCleanPrice() != null ? record.getCleanPrice().doubleValue() : 0.0);
 				cell32.setCellStyle(numberStyle);
@@ -405,7 +414,7 @@ public class RT_InvestmentSecurity_Service {
 				cell34.setCellValue(
 						record.getCurrentYieldToMaturity() != null ? record.getCurrentYieldToMaturity().doubleValue()
 								: 0.0);
-				cell34.setCellStyle(percentStyle);
+				cell34.setCellStyle(ytmPercentStyle);
 				Cell cell35 = row.createCell(35);
 				cell35.setCellValue(
 						record.getUnrealizedGainLossAed() != null ? record.getUnrealizedGainLossAed().doubleValue()
