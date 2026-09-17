@@ -2416,6 +2416,12 @@ to {
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES' }"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
+							</button>
 						</div>
 					</div>
 				</div>
@@ -3035,6 +3041,12 @@ to {
 								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist1[0].ENTITY_FLG == 'Y'}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
+							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
 							</button>
 						</div>
 					</div>
@@ -7066,6 +7078,13 @@ to {
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
+							</button>
+							
 						</div>
 					</div>
 				</div>
@@ -9669,6 +9688,12 @@ to {
 								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
+							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
 							</button>
 						</div>
 					</div>
@@ -13040,6 +13065,12 @@ to {
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
+							</button>
 						</div>
 					</div>
 				</div>
@@ -13487,6 +13518,12 @@ to {
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
+							</button>
 						</div>
 					</div>
 				</div>
@@ -13854,6 +13891,12 @@ to {
 								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist1[0].ENTITY_FLG == 'Y'}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
+							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
 							</button>
 						</div>
 					</div>
@@ -16396,6 +16439,12 @@ to {
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
+							</button>
 						</div>
 					</div>
 				</div>
@@ -17413,6 +17462,12 @@ to {
 								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
+							</button>
+							<button type="button" class="role-btn"
+								style="padding-right: 12px;"
+								th:if="${DEPARTMENTVALIDATION == 'YES'}"
+								onclick="departmentDownloadConsolidatedData()">
+								<i class="fa fa-download"></i> Download 
 							</button>
 						</div>
 					</div>
@@ -19219,6 +19274,26 @@ document.addEventListener("DOMContentLoaded", function() {
         triggerGlobalDownload(
             './startMcReportJob', 
             { branch: timeperiod , formmode: formmode, reportDate: ReportDate, isConsolidated: 'YES' }, 
+            fileName
+        );
+        
+    }
+    
+    function departmentDownloadConsolidatedData() {
+    	const ReportDate = /*[[${REPORT_DATE}]]*/ '';
+    	//const timeperiod = /*[[${timeperiod}]]*/ '';
+    	//alert(ReportDate)
+        const fileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
+        const params = new URLSearchParams(window.location.search);
+        let formmode = params.get('formmode');	
+        if(formmode===null){
+			formmode = 'bankinformation';
+		}
+        
+        //triggerGlobalDownload(startUrl, params, fileName)
+        triggerGlobalDownload(
+            './startMcReportJob', 
+            { branch: 'DEPT' , formmode: formmode, reportDate: ReportDate, isConsolidated: 'YES' }, 
             fileName
         );
         

@@ -160,8 +160,14 @@ public class RT_MC_TABLE_ALL_Service {
 	public void GenerateTable_1_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
-
-		List<RT_MC_TABLE1_ENTITY> dataList = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE1_ENTITY> dataList ;
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList= RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+			
+		}
 
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -259,8 +265,17 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE2_1_ENTITY> dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		List<RT_MC_TABLE2_2_ENTITY> dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE2_1_ENTITY> dataList1 ;
+		List<RT_MC_TABLE2_2_ENTITY> dataList2 ;
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
+			dataList2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+		}
+		else {
+			 dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+			dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
+
 
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
@@ -1381,8 +1396,14 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE3_ENTITY> dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE3_ENTITY> dataList;
 
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -2175,9 +2196,17 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE4_1_ENTITY> dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		List<RT_MC_TABLE4_2_ENTITY> dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE4_1_ENTITY> dataList1 ;
+		List<RT_MC_TABLE4_2_ENTITY> dataList2 ;
 
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList1 = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
+			dataList2 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+			dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -3402,8 +3431,14 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE5_ENTITY> dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE5_ENTITY> dataList;
 
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -3550,8 +3585,13 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE6_ENTITY> dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
-
+		List<RT_MC_TABLE6_ENTITY> dataList ;
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -3692,9 +3732,17 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE7_1_ENTITY> dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		List<RT_MC_TABLE7_2_ENTITY> dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE7_1_ENTITY> dataList1;
+		List<RT_MC_TABLE7_2_ENTITY> dataList2 ;
 
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+			dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+			dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList1.isEmpty() || dataList2.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -4429,8 +4477,14 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE8_ENTITY> dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
-
+		List<RT_MC_TABLE8_ENTITY> dataList ;
+		
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;
@@ -4727,8 +4781,14 @@ public class RT_MC_TABLE_ALL_Service {
 			String reportDate) throws Exception {
 		logger.info("Service: Starting Excel generation process in memory.");
 
-		List<RT_MC_TABLE9_ENTITY> dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		List<RT_MC_TABLE9_ENTITY> dataList ;
 
+		if (branch =="DEPT" || branch.equals("DEPT")) {
+			dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+		}
+		else {
+			dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
+		}
 		if (dataList.isEmpty()) {
 			logger.warn("Service: No data found for MC report. Returning empty result.");
 			return;

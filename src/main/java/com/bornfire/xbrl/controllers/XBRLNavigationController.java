@@ -6315,6 +6315,13 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE1_ENTITY> reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
 
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE1_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+				}
+				
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6356,6 +6363,14 @@ System.out.println("sixe==="+excelData.length);
 				List<RT_MC_TABLE2_1_ENTITY> reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
 				List<RT_MC_TABLE2_2_ENTITY> reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
 
+				if (reportlist1 == null || reportlist1.isEmpty()) {
+					System.out.println("Report Date :" + formatDate(reportlist1.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE2_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
+					reportlist1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
+					reportlist2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+				}
+				
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6400,6 +6415,13 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE3_ENTITY> reportlist = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
 
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE3_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+				}
+				
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6440,6 +6462,14 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE4_1_ENTITY> reportlist1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
 				List<RT_MC_TABLE4_2_ENTITY> reportlist2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+
+				if (reportlist1 == null || reportlist1.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist1.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE4_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
+					reportlist1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
+					reportlist2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+				}
 
 				md.addAttribute("reportlist", reportlist1);
 				md.addAttribute("reportlist1", reportlist2);
@@ -6483,6 +6513,13 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE5_ENTITY> reportlist = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
 
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE5_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+				}
+
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6520,7 +6557,12 @@ System.out.println("sixe==="+excelData.length);
 		} else if ("trainings".equalsIgnoreCase(formmode)) {
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE6_ENTITY> reportlist = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
-
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE6_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+				}
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6561,6 +6603,14 @@ System.out.println("sixe==="+excelData.length);
 				List<RT_MC_TABLE7_1_ENTITY> reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
 				List<RT_MC_TABLE7_2_ENTITY> reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
 
+				if (reportlist1 == null || reportlist1.isEmpty()) {
+					System.out.println("Report Date :	 " + formatDate(reportlist1.get(0).getREPORT_DATE()));
+					executeprocedure("RT_MC_TABLE7_PROCEDURE('" + formatDate(reportlist1.get(0).getREPORT_DATE())
+							+ "', 'DEPT')");
+					reportlist1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
+					reportlist2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+				}
+				
 				md.addAttribute("reportlist1", reportlist1);
 				md.addAttribute("reportlist2", reportlist2);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6602,6 +6652,13 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE8_ENTITY> reportlist = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
 
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE8_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+				}
+
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
@@ -6639,6 +6696,13 @@ System.out.println("sixe==="+excelData.length);
 			if (deptvalid == "YES" || deptvalid.equals("YES")) {
 				List<RT_MC_TABLE9_ENTITY> reportlist = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
 
+				if (reportlist == null || reportlist.isEmpty()) {
+					System.out.println("Report Date : " + formatDate(reportlist.get(0).getREPORT_DATE()));
+					executeprocedure(
+							"RT_MC_TABLE9_PROCEDURE('" + formatDate(reportlist.get(0).getREPORT_DATE()) + "', 'DEPT')");
+					reportlist = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
+				}
+				
 				System.out.println("size : " + reportlist.size());
 				md.addAttribute("reportlist", reportlist);
 				md.addAttribute("DEPARTMENTVALIDATION", "YES");
