@@ -316,6 +316,25 @@
 			});
 		}
 
+		function handleCountryChange(select) {
+			var selectedCountry = select.value;
+			if (!selectedCountry) {
+				$('#cbuaeGeographicalZone').val('');
+				return;
+			}
+			$.ajax({
+				url: 'getCountryDetails',
+				type: 'GET',
+				data: { countryName: selectedCountry },
+				success: function (data) {
+					$('#cbuaeGeographicalZone').val(data.cbuaeGeographicalZone || '');
+				},
+				error: function () {
+					alert('Failed to fetch geographical zone.');
+				}
+			});
+		}
+
 		$(document).ready(function () {
 			if ($('#usertable').length) {
 				$('#usertable').DataTable({
@@ -371,6 +390,10 @@
 								<th>Alias Counter Code</th>
 								<th>Counterparty Name</th>
 								<th>ASL Bank Name</th>
+								<th>Rating</th>
+								<th>Country of Risk</th>
+								<th>CBUAE Geographical Zone</th>
+								<th>Counterparty Type</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -380,10 +403,17 @@
 								<td th:text="${row.aliasCounterCode}"></td>
 								<td th:text="${row.counterpartyName}"></td>
 								<td th:text="${row.aslBankName}"></td>
+								<td th:text="${row.counterpartyRating}"></td>
+								<td th:text="${row.countryRisk}"></td>
+								<td th:text="${row.cbuaeGeographicalZone}"></td>
+								<td th:text="${row.counterpartyType}"></td>
 								<td class="action-cell">
-									<i class="fa fa-eye text-info" style="cursor:pointer" title="View"
+									<i class="fa fa-eye text-info" style="cursor:pointer;margin-right:10px" title="View"
 										th:attr="data-code=${row.counterpartyCode}"
 										onclick="viewForm(this.getAttribute('data-code'))"></i>
+									<i class="fa fa-edit" style="cursor:pointer;color:var(--bank-primary, #FF7B00)" title="Modify"
+										th:attr="data-code=${row.counterpartyCode}"
+										onclick="modifyForm(this.getAttribute('data-code'))"></i>
 								</td>
 							</tr>
 						</tbody>
@@ -418,6 +448,10 @@
 								<th>Alias Counter Code</th>
 								<th>Counterparty Name</th>
 								<th>ASL Bank Name</th>
+								<th>Rating</th>
+								<th>Country of Risk</th>
+								<th>CBUAE Geographical Zone</th>
+								<th>Counterparty Type</th>
 								<th>In Maintenance</th>
 								<th>Action</th>
 							</tr>
@@ -428,6 +462,10 @@
 								<td th:text="${row.aliasCounterCode}"></td>
 								<td th:text="${row.counterpartyName}"></td>
 								<td th:text="${row.aslBankName}"></td>
+								<td th:text="${row.counterpartyRating}"></td>
+								<td th:text="${row.countryRisk}"></td>
+								<td th:text="${row.cbuaeGeographicalZone}"></td>
+								<td th:text="${row.counterpartyType}"></td>
 								<td>
 									<span class="status-pill"
 										th:classappend="${row.presentInMaintenance} ? ' status-yes' : ' status-no'"
@@ -492,8 +530,59 @@
 							</div>
 							<label class="col-sm-2 col-form-label">ASL Bank Name</label>
 							<div class="col-sm-4">
-								<input type="text" id="aslBankName" name="aslBankName"
-									class="form-control form-control-sm" th:value="${record?.aslBankName}"
+								<select id="aslBankName" name="aslBankName" required
+									class="form-control form-control-sm"
+									th:disabled="${formmode == 'view'}">
+									<option value="">Select Bank</option>
+									<option th:if="${record?.aslBankName != null and !#lists.contains(Counterpartynamelist, record.aslBankName)}"
+										th:value="${record.aslBankName}" th:text="${record.aslBankName}"
+										selected="selected"></option>
+									<option th:each="counterpartyname : ${Counterpartynamelist}"
+										th:value="${counterpartyname}"
+										th:text="${counterpartyname}"
+										th:selected="${counterpartyname == record?.aslBankName}">
+									</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="row formline">
+							<label class="col-sm-2 col-form-label">Counterparty Rating</label>
+							<div class="col-sm-4">
+								<input type="text" id="counterpartyRating" name="counterpartyRating"
+									class="form-control form-control-sm" th:value="${record?.counterpartyRating}"
+									th:readonly="${formmode == 'view'}" />
+							</div>
+							<label class="col-sm-2 col-form-label">Country of Risk</label>
+							<div class="col-sm-4">
+								<select id="countryRisk" name="countryRisk"
+									class="form-control form-control-sm"
+									th:disabled="${formmode == 'view'}"
+									onchange="handleCountryChange(this)">
+									<option value="">-- Select Country --</option>
+									<option th:if="${record?.countryRisk != null and countryList != null and !#lists.contains(countryList.![countryOfRisk], record.countryRisk)}"
+										th:value="${record.countryRisk}" th:text="${record.countryRisk}"
+										selected="selected"></option>
+									<option th:each="country : ${countryList}"
+										th:value="${country.countryOfRisk}"
+										th:text="${country.countryOfRisk}"
+										th:selected="${country.countryOfRisk == record?.countryRisk}">
+									</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="row formline">
+							<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
+							<div class="col-sm-4">
+								<input type="text" id="cbuaeGeographicalZone" name="cbuaeGeographicalZone"
+									class="form-control form-control-sm" th:value="${record?.cbuaeGeographicalZone}"
+									readonly />
+							</div>
+							<label class="col-sm-2 col-form-label">Counterparty Type</label>
+							<div class="col-sm-4">
+								<input type="text" id="counterpartyType" name="counterpartyType"
+									class="form-control form-control-sm" th:value="${record?.counterpartyType}"
 									th:readonly="${formmode == 'view'}" />
 							</div>
 						</div>

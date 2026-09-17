@@ -1,75 +1,71 @@
 package com.bornfire.xbrl.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bornfire.xbrl.dto.CounterpartyMaintenanceDto;
+import com.bornfire.xbrl.entities.CounterpartyMaintenanceEntity;
+import com.bornfire.xbrl.entities.CounterpartyMaintenanceRepository;
 
 @Service
 public class CounterpartyMaintenanceService {
 
-	private final ConcurrentHashMap<String, CounterpartyMaintenanceDto> maintained = new ConcurrentHashMap<String, CounterpartyMaintenanceDto>();
-	private final List<CounterpartyMaintenanceDto> outstandingSource = new ArrayList<CounterpartyMaintenanceDto>();
+	private static final Logger logger = LoggerFactory.getLogger(CounterpartyMaintenanceService.class);
 
-	public CounterpartyMaintenanceService() {
-		seedMaintained();
-		seedOutstanding();
-	}
-
-	private void seedMaintained() {
-		saveInternal(new CounterpartyMaintenanceDto("CP001", "HSBC-DXB", "HSBC Bank Middle East", "HSBC Dubai"),
-				"SYSTEM");
-		saveInternal(new CounterpartyMaintenanceDto("CP002", "SCB-UAE", "Standard Chartered Bank", "SCB UAE"),
-				"SYSTEM");
-	}
-
-	private void seedOutstanding() {
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP001", "HSBC-DXB", "HSBC Bank Middle East", "HSBC Dubai"));
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP002", "SCB-UAE", "Standard Chartered Bank", "SCB UAE"));
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP003", "", "Deutsche Bank AG", "Deutsche Bank"));
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP004", "", "BNP Paribas", "BNP Paribas UAE"));
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP005", "", "First Abu Dhabi Bank", "FAB"));
-		outstandingSource.add(new CounterpartyMaintenanceDto("CP006", "", "Mashreq Bank PSC", "Mashreq"));
-	}
-
-	private void saveInternal(CounterpartyMaintenanceDto dto, String userid) {
-		CounterpartyMaintenanceDto stored = dto.copy();
-		stored.setCreateUser(userid);
-		stored.setCreateTime(new Date());
-		stored.setPresentInMaintenance(true);
-		maintained.put(normalize(stored.getCounterpartyCode()), stored);
-	}
+	@Autowired
+	private CounterpartyMaintenanceRepository counterpartyMaintenanceRepository;
 
 	public List<CounterpartyMaintenanceDto> getAllMaintained() {
 		List<CounterpartyMaintenanceDto> list = new ArrayList<CounterpartyMaintenanceDto>();
-		for (CounterpartyMaintenanceDto dto : maintained.values()) {
-			list.add(dto.copy());
+		List<CounterpartyMaintenanceEntity> rows = counterpartyMaintenanceRepository.getAllMaintained();
+		if (rows == null) {
+			return list;
 		}
-		list.sort(Comparator.comparing(CounterpartyMaintenanceDto::getCounterpartyCode,
-				Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+		for (CounterpartyMaintenanceEntity entity : rows) {
+			CounterpartyMaintenanceDto dto = toDto(entity);
+			dto.setPresentInMaintenance(true);
+			list.add(dto);
+		}
 		return list;
 	}
 
 	public List<CounterpartyMaintenanceDto> getOutstanding(String reportDate) {
 		List<CounterpartyMaintenanceDto> list = new ArrayList<CounterpartyMaintenanceDto>();
-		for (CounterpartyMaintenanceDto source : outstandingSource) {
-			CounterpartyMaintenanceDto row = source.copy();
+		Date parsedDate = parseReportDate(reportDate);
+		if (parsedDate == null) {
+			return list;
+		}
+
+		List<String> codes = counterpartyMaintenanceRepository.findOutstandingCounterparties(parsedDate);
+		Map<String, CounterpartyMaintenanceEntity> maintained = loadMaintainedMap();
+
+		if (codes == null) {
+			return list;
+		}
+
+		for (String code : codes) {
+			if (isBlank(code)) {
+				continue;
+			}
+			CounterpartyMaintenanceDto row = new CounterpartyMaintenanceDto();
+			row.setCounterpartyCode(code.trim());
 			row.setReportDate(reportDate);
-			boolean inList = isMaintained(row.getCounterpartyCode());
+			CounterpartyMaintenanceEntity saved = maintained.get(normalize(code));
+			boolean inList = saved != null;
 			row.setPresentInMaintenance(inList);
 			if (inList) {
-				CounterpartyMaintenanceDto saved = getByCode(row.getCounterpartyCode());
-				if (saved != null) {
-					row.setAliasCounterCode(saved.getAliasCounterCode());
-					row.setCounterpartyName(saved.getCounterpartyName());
-					row.setAslBankName(saved.getAslBankName());
-				}
+				applyEntity(row, saved);
 			}
 			list.add(row);
 		}
@@ -77,28 +73,36 @@ public class CounterpartyMaintenanceService {
 	}
 
 	public CounterpartyMaintenanceDto getByCode(String counterpartyCode) {
-		CounterpartyMaintenanceDto dto = maintained.get(normalize(counterpartyCode));
-		return dto == null ? null : dto.copy();
+		CounterpartyMaintenanceEntity entity = counterpartyMaintenanceRepository.getByCounterpartyCode(counterpartyCode);
+		if (entity == null) {
+			return null;
+		}
+		CounterpartyMaintenanceDto dto = toDto(entity);
+		dto.setPresentInMaintenance(true);
+		return dto;
 	}
 
 	public CounterpartyMaintenanceDto getOutstandingByCode(String counterpartyCode, String reportDate) {
-		if (counterpartyCode == null) {
+		if (isBlank(counterpartyCode)) {
 			return null;
 		}
-		String key = normalize(counterpartyCode);
-		for (CounterpartyMaintenanceDto source : outstandingSource) {
-			if (key.equals(normalize(source.getCounterpartyCode()))) {
-				CounterpartyMaintenanceDto row = source.copy();
-				row.setReportDate(reportDate);
-				row.setPresentInMaintenance(isMaintained(counterpartyCode));
-				return row;
+		CounterpartyMaintenanceDto saved = getByCode(counterpartyCode);
+		if (saved != null) {
+			if (!isBlank(reportDate)) {
+				saved.setReportDate(reportDate);
 			}
+			return saved;
 		}
-		return null;
+
+		CounterpartyMaintenanceDto row = new CounterpartyMaintenanceDto();
+		row.setCounterpartyCode(counterpartyCode.trim());
+		row.setReportDate(reportDate);
+		row.setPresentInMaintenance(false);
+		return row;
 	}
 
 	public boolean isMaintained(String counterpartyCode) {
-		return maintained.containsKey(normalize(counterpartyCode));
+		return counterpartyMaintenanceRepository.getByCounterpartyCode(counterpartyCode) != null;
 	}
 
 	public String save(CounterpartyMaintenanceDto dto, String userid) {
@@ -115,28 +119,94 @@ public class CounterpartyMaintenanceService {
 			return "ASL Bank Name is required";
 		}
 
-		String key = normalize(dto.getCounterpartyCode());
-		CounterpartyMaintenanceDto existing = maintained.get(key);
-		CounterpartyMaintenanceDto stored = dto.copy();
+		Date now = new Date();
+		CounterpartyMaintenanceEntity existing = counterpartyMaintenanceRepository
+				.getByCounterpartyCode(dto.getCounterpartyCode());
+		CounterpartyMaintenanceEntity stored = existing == null ? new CounterpartyMaintenanceEntity() : existing;
+
 		stored.setCounterpartyCode(dto.getCounterpartyCode().trim());
-		stored.setAliasCounterCode(dto.getAliasCounterCode().trim());
-		stored.setCounterpartyName(dto.getCounterpartyName().trim());
-		stored.setAslBankName(dto.getAslBankName().trim());
-		stored.setPresentInMaintenance(true);
+		stored.setAliasCounterCode(trimToNull(dto.getAliasCounterCode()));
+		stored.setCounterpartyName(trimToNull(dto.getCounterpartyName()));
+		stored.setAslBankName(trimToNull(dto.getAslBankName()));
+		stored.setCounterpartyRating(trimToNull(dto.getCounterpartyRating()));
+		stored.setCountryRisk(trimToNull(dto.getCountryRisk()));
+		stored.setCbuaeGeographicalZone(trimToNull(dto.getCbuaeGeographicalZone()));
+		stored.setCounterpartyType(trimToNull(dto.getCounterpartyType()));
+
+		Date reportToDate = parseReportDate(dto.getReportDate());
+		if (reportToDate != null) {
+			stored.setReportToDate(reportToDate);
+		}
 
 		if (existing == null) {
 			stored.setCreateUser(userid);
-			stored.setCreateTime(new Date());
-			maintained.put(key, stored);
+			stored.setCreateTime(now);
+			stored.setEntityFlg("Y");
+			stored.setModifyFlg("N");
+			counterpartyMaintenanceRepository.save(stored);
 			return "Counterparty saved successfully";
 		}
 
-		stored.setCreateUser(existing.getCreateUser());
-		stored.setCreateTime(existing.getCreateTime());
 		stored.setModifyUser(userid);
-		stored.setModifyTime(new Date());
-		maintained.put(key, stored);
+		stored.setModifyTime(now);
+		stored.setModifyFlg("Y");
+		counterpartyMaintenanceRepository.save(stored);
 		return "Counterparty updated successfully";
+	}
+
+	private Map<String, CounterpartyMaintenanceEntity> loadMaintainedMap() {
+		Map<String, CounterpartyMaintenanceEntity> map = new HashMap<String, CounterpartyMaintenanceEntity>();
+		List<CounterpartyMaintenanceEntity> rows = counterpartyMaintenanceRepository.getAllMaintained();
+		if (rows == null) {
+			return map;
+		}
+		for (CounterpartyMaintenanceEntity entity : rows) {
+			if (entity != null && !isBlank(entity.getCounterpartyCode())) {
+				map.put(normalize(entity.getCounterpartyCode()), entity);
+			}
+		}
+		return map;
+	}
+
+	private CounterpartyMaintenanceDto toDto(CounterpartyMaintenanceEntity entity) {
+		CounterpartyMaintenanceDto dto = new CounterpartyMaintenanceDto();
+		applyEntity(dto, entity);
+		if (entity.getReportToDate() != null) {
+			dto.setReportDate(new SimpleDateFormat("yyyy-MM-dd").format(entity.getReportToDate()));
+		}
+		return dto;
+	}
+
+	private void applyEntity(CounterpartyMaintenanceDto dto, CounterpartyMaintenanceEntity entity) {
+		dto.setCounterpartyCode(entity.getCounterpartyCode());
+		dto.setAliasCounterCode(entity.getAliasCounterCode());
+		dto.setCounterpartyName(entity.getCounterpartyName());
+		dto.setAslBankName(entity.getAslBankName());
+		dto.setCounterpartyRating(entity.getCounterpartyRating());
+		dto.setCountryRisk(entity.getCountryRisk());
+		dto.setCbuaeGeographicalZone(entity.getCbuaeGeographicalZone());
+		dto.setCounterpartyType(entity.getCounterpartyType());
+		dto.setCreateUser(entity.getCreateUser());
+		dto.setCreateTime(entity.getCreateTime());
+		dto.setModifyUser(entity.getModifyUser());
+		dto.setModifyTime(entity.getModifyTime());
+	}
+
+	private Date parseReportDate(String reportDate) {
+		if (isBlank(reportDate)) {
+			return null;
+		}
+		String[] patterns = { "yyyy-MM-dd", "dd-MM-yyyy", "dd/MM/yyyy" };
+		for (String pattern : patterns) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+				sdf.setLenient(false);
+				return sdf.parse(reportDate.trim());
+			} catch (ParseException ignored) {
+			}
+		}
+		logger.warn("Unable to parse report date: {}", reportDate);
+		return null;
 	}
 
 	private String normalize(String value) {
@@ -145,5 +215,12 @@ public class CounterpartyMaintenanceService {
 
 	private boolean isBlank(String value) {
 		return value == null || value.trim().isEmpty();
+	}
+
+	private String trimToNull(String value) {
+		if (isBlank(value)) {
+			return null;
+		}
+		return value.trim();
 	}
 }

@@ -1,53 +1,70 @@
-package com.bornfire.xbrl.dto;
+package com.bornfire.xbrl.entities;
 
 import java.util.Date;
 
-public class CounterpartyMaintenanceDto {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+@Table(name = "COUNTERPARTY_MAINTENANCE")
+public class CounterpartyMaintenanceEntity {
+
+	@Id
+	@Column(name = "COUNTERPARTY_CODE", length = 100)
 	private String counterpartyCode;
+
+	@Column(name = "ALIAS_COUNTER_CODE", length = 100)
 	private String aliasCounterCode;
+
+	@Column(name = "COUNTERPARTY_NAME", length = 100)
 	private String counterpartyName;
+
+	@Column(name = "ASL_BANK_NAME", length = 100)
 	private String aslBankName;
+
+	@Column(name = "COUNTERPARTY_RATING", length = 100)
 	private String counterpartyRating;
+
+	@Column(name = "COUNTRY_RISK", length = 100)
 	private String countryRisk;
+
+	@Column(name = "CBUAE_GEOGRAPHICAL_ZONE", length = 100)
 	private String cbuaeGeographicalZone;
+
+	@Column(name = "COUNTERPARTY_TYPE", length = 100)
 	private String counterpartyType;
-	private String reportDate;
-	private boolean presentInMaintenance;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Column(name = "REPORT_TO_DATE")
+	private Date reportToDate;
+
+	@Column(name = "CREATE_USER", length = 100)
 	private String createUser;
-	private String modifyUser;
+
+	@Column(name = "CREATE_TIME")
 	private Date createTime;
+
+	@Column(name = "MODIFY_USER", length = 50)
+	private String modifyUser;
+
+	@Column(name = "MODIFY_TIME")
 	private Date modifyTime;
 
-	public CounterpartyMaintenanceDto() {
-	}
+	@Column(name = "VERIFY_USER", length = 50)
+	private String verifyUser;
 
-	public CounterpartyMaintenanceDto(String counterpartyCode, String aliasCounterCode, String counterpartyName,
-			String aslBankName) {
-		this.counterpartyCode = counterpartyCode;
-		this.aliasCounterCode = aliasCounterCode;
-		this.counterpartyName = counterpartyName;
-		this.aslBankName = aslBankName;
-	}
+	@Column(name = "VERIFY_TIME")
+	private Date verifyTime;
 
-	public CounterpartyMaintenanceDto copy() {
-		CounterpartyMaintenanceDto copy = new CounterpartyMaintenanceDto();
-		copy.counterpartyCode = this.counterpartyCode;
-		copy.aliasCounterCode = this.aliasCounterCode;
-		copy.counterpartyName = this.counterpartyName;
-		copy.aslBankName = this.aslBankName;
-		copy.counterpartyRating = this.counterpartyRating;
-		copy.countryRisk = this.countryRisk;
-		copy.cbuaeGeographicalZone = this.cbuaeGeographicalZone;
-		copy.counterpartyType = this.counterpartyType;
-		copy.reportDate = this.reportDate;
-		copy.presentInMaintenance = this.presentInMaintenance;
-		copy.createUser = this.createUser;
-		copy.modifyUser = this.modifyUser;
-		copy.createTime = this.createTime;
-		copy.modifyTime = this.modifyTime;
-		return copy;
-	}
+	@Column(name = "ENTITY_FLG", length = 10)
+	private String entityFlg;
+
+	@Column(name = "MODIFY_FLG", length = 10)
+	private String modifyFlg;
 
 	public String getCounterpartyCode() {
 		return counterpartyCode;
@@ -113,20 +130,12 @@ public class CounterpartyMaintenanceDto {
 		this.counterpartyType = counterpartyType;
 	}
 
-	public String getReportDate() {
-		return reportDate;
+	public Date getReportToDate() {
+		return reportToDate;
 	}
 
-	public void setReportDate(String reportDate) {
-		this.reportDate = reportDate;
-	}
-
-	public boolean isPresentInMaintenance() {
-		return presentInMaintenance;
-	}
-
-	public void setPresentInMaintenance(boolean presentInMaintenance) {
-		this.presentInMaintenance = presentInMaintenance;
+	public void setReportToDate(Date reportToDate) {
+		this.reportToDate = reportToDate;
 	}
 
 	public String getCreateUser() {
@@ -137,14 +146,6 @@ public class CounterpartyMaintenanceDto {
 		this.createUser = createUser;
 	}
 
-	public String getModifyUser() {
-		return modifyUser;
-	}
-
-	public void setModifyUser(String modifyUser) {
-		this.modifyUser = modifyUser;
-	}
-
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -153,11 +154,51 @@ public class CounterpartyMaintenanceDto {
 		this.createTime = createTime;
 	}
 
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
 	public Date getModifyTime() {
 		return modifyTime;
 	}
 
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public String getVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(String verifyUser) {
+		this.verifyUser = verifyUser;
+	}
+
+	public Date getVerifyTime() {
+		return verifyTime;
+	}
+
+	public void setVerifyTime(Date verifyTime) {
+		this.verifyTime = verifyTime;
+	}
+
+	public String getEntityFlg() {
+		return entityFlg;
+	}
+
+	public void setEntityFlg(String entityFlg) {
+		this.entityFlg = entityFlg;
+	}
+
+	public String getModifyFlg() {
+		return modifyFlg;
+	}
+
+	public void setModifyFlg(String modifyFlg) {
+		this.modifyFlg = modifyFlg;
 	}
 }

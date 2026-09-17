@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bornfire.xbrl.dto.CounterpartyMaintenanceDto;
+import com.bornfire.xbrl.entities.Counterparty_Rep;
+import com.bornfire.xbrl.entities.RT_CountryRiskDropdownRepo;
 import com.bornfire.xbrl.services.CounterpartyMaintenanceService;
 
 @Controller
@@ -20,6 +22,12 @@ public class CounterpartyMaintenanceController {
 
 	@Autowired
 	CounterpartyMaintenanceService counterpartyMaintenanceService;
+
+	@Autowired
+	Counterparty_Rep counterpartyRep;
+
+	@Autowired
+	RT_CountryRiskDropdownRepo countryRepo;
 
 	@RequestMapping(value = "/Counterparty_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
 	public String counterpartyMaintenance(@RequestParam(required = false) String formmode,
@@ -60,6 +68,8 @@ public class CounterpartyMaintenanceController {
 			md.addAttribute("formmode", mode.toLowerCase());
 			md.addAttribute("reportDate", reportDate);
 			md.addAttribute("record", record);
+			md.addAttribute("Counterpartynamelist", counterpartyRep.Getcounterpartyname());
+			md.addAttribute("countryList", countryRepo.findAllByOrderByCountryOfRiskAsc());
 			return "Counterparty_Maintenance";
 		}
 
