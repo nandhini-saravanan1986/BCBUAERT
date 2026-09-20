@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -42,6 +43,11 @@ import com.bornfire.xbrl.entities.RT_RepoDataTemplate;
 public class RT_Liquidity_Risk_Data_Service {
 
 	private static final Logger logger = LoggerFactory.getLogger(RT_Liquidity_Risk_Data_Service.class);
+
+	private static final String LIQUIDITY_GAP_SHEET_NAME = "Liquidity Gap";
+	private static final int AED_HEADER_ROW = 0; // Excel row 1
+	private static final int AED_DATA_START_ROW = 1; // Excel row 2
+	private static final int USD_HEADER_ROW = 4; // Excel row 5 in source template
 	
     @Autowired
     RT_Liquidity_Risk_Data_Template_Repository LiquidityRiskDataRepository;
@@ -192,7 +198,16 @@ public class RT_Liquidity_Risk_Data_Service {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(5);
+            Sheet sheet = findSheet(workbook, LIQUIDITY_GAP_SHEET_NAME);
+            if (sheet == null) {
+                throw new FileNotFoundException("Sheet '" + LIQUIDITY_GAP_SHEET_NAME
+                        + "' was not found in template: " + templatePath.toAbsolutePath());
+            }
+            int liquidityGapIndex = workbook.getSheetIndex(sheet);
+            workbook.setActiveSheet(liquidityGapIndex);
+            workbook.setSelectedTab(liquidityGapIndex);
+            logger.info("Service: Writing Liquidity Risk data to sheet '{}' (index {}).", sheet.getSheetName(),
+                    liquidityGapIndex);
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Style definitions
@@ -217,193 +232,28 @@ public class RT_Liquidity_Risk_Data_Service {
             numberStyle.setBorderRight(BorderStyle.THIN);
 
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-            
-            int startRow = 1;
 
-            for (int i = 0; i < dataList.size(); i++) {
-                RT_Liquidity_Risk_Data_Template record = dataList.get(i);
-                Row row = sheet.getRow(startRow + i);
-                if (row == null) row = sheet.createRow(startRow + i);
+            List<RT_Liquidity_Risk_Data_Template> aedList = new ArrayList<>();
+            List<RT_Liquidity_Risk_Data_Template> usdList = new ArrayList<>();
+            partitionByInstrumentCurrency(dataList, aedList, usdList);
+            logger.info("Service: Liquidity Gap split - AED rows {}, USD rows {} (header stays at row {}).",
+                    aedList.size(), usdList.size(), AED_HEADER_ROW + 1);
 
-                int col = 0;
+            int usdHeaderBackupRow = Math.max(sheet.getLastRowNum() + 5, 20000);
+            copyRow(sheet, USD_HEADER_ROW, usdHeaderBackupRow);
 
-                // Date
-               
-                Cell cell0 = row.createCell(col++);
-                if (record.getDataDate() != null) {
-                    cell0.setCellValue(record.getDataDate());
-                    cell0.setCellStyle(dateStyle);
-                } else {
-                    cell0.setCellValue("");
-                    cell0.setCellStyle(textStyle);
-                }
-                // Auto-size the last column (col - 1)
-                sheet.autoSizeColumn(col - 1);
+            int nextRow = AED_DATA_START_ROW;
+            nextRow = writeLiquidityRecords(sheet, nextRow, aedList, dateStyle, textStyle, numberStyle, evaluator);
 
-
-             // String fields with textStyle
-             Cell cell1 = row.createCell(col++);
-             cell1.setCellValue(record.getBankName() != null ? record.getBankName() : "");
-             cell1.setCellStyle(textStyle);
-
-             Cell cell2 = row.createCell(col++);
-             cell2.setCellValue(record.getHeadOfficeSubsidiary() != null ? record.getHeadOfficeSubsidiary() : "");
-             cell2.setCellStyle(textStyle);
-
-             Cell cell3 = row.createCell(col++);
-             cell3.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
-             cell3.setCellStyle(textStyle);
-
-             Cell cell4 = row.createCell(col++);
-             cell4.setCellValue(record.getConventionalIslamic() != null ? record.getConventionalIslamic() : "");
-             cell4.setCellStyle(textStyle);
-
-             Cell cell5 = row.createCell(col++);
-             cell5.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
-             cell5.setCellStyle(textStyle);
-
-             Cell cell6 = row.createCell(col++);
-             cell6.setCellValue(record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
-             cell6.setCellStyle(textStyle);
-
-             Cell cell7 = row.createCell(col++);
-             cell7.setCellValue(record.getGlLevel1() != null ? record.getGlLevel1() : "");
-             cell7.setCellStyle(textStyle);
-
-             Cell cell8 = row.createCell(col++);
-             cell8.setCellValue(record.getGlLevel2() != null ? record.getGlLevel2() : "");
-             cell8.setCellStyle(textStyle);
-
-             Cell cell9 = row.createCell(col++);
-             cell9.setCellValue(record.getGlLevel3() != null ? record.getGlLevel3() : "");
-             cell9.setCellStyle(textStyle);
-
-             Cell cell10 = row.createCell(col++);
-             cell10.setCellValue(record.getOptionType() != null ? record.getOptionType() : "");
-             cell10.setCellStyle(textStyle);
-
-             Cell cell11 = row.createCell(col++);
-             cell11.setCellValue(record.getRateType() != null ? record.getRateType() : "");
-             cell11.setCellStyle(textStyle);
-
-             Cell cell12 = row.createCell(col++);
-             cell12.setCellValue(record.getReferenceRate() != null ? record.getReferenceRate() : "");
-             cell12.setCellStyle(textStyle);
-
-             Cell cell13 = row.createCell(col++);
-             cell13.setCellValue(record.getInstrumentCurrency() != null ? record.getInstrumentCurrency() : "");
-             cell13.setCellStyle(textStyle);
-
-             // BigDecimal fields with numberStyle
-             Cell cell14 = row.createCell(col++);
-             cell14.setCellValue(record.getOutstandingBalance() != null ? record.getOutstandingBalance().doubleValue() : 0.0);
-             cell14.setCellStyle(numberStyle);
-
-             Cell cell15 = row.createCell(col++);
-             cell15.setCellValue(record.getOvernight() != null ? record.getOvernight().doubleValue() : 0.0);
-             cell15.setCellStyle(numberStyle);
-
-             Cell cell16 = row.createCell(col++);
-             cell16.setCellValue(record.getOnTo1m() != null ? record.getOnTo1m().doubleValue() : 0.0);
-             cell16.setCellStyle(numberStyle);
-
-             Cell cell17 = row.createCell(col++);
-             cell17.setCellValue(record.getOneMTo3m() != null ? record.getOneMTo3m().doubleValue() : 0.0);
-             cell17.setCellStyle(numberStyle);
-
-             Cell cell18 = row.createCell(col++);
-             cell18.setCellValue(record.getThreeMTo6m() != null ? record.getThreeMTo6m().doubleValue() : 0.0);
-             cell18.setCellStyle(numberStyle);
-
-             Cell cell19 = row.createCell(col++);
-             cell19.setCellValue(record.getSixMTo9m() != null ? record.getSixMTo9m().doubleValue() : 0.0);
-             cell19.setCellStyle(numberStyle);
-
-             Cell cell20 = row.createCell(col++);
-             cell20.setCellValue(record.getNineMTo1y() != null ? record.getNineMTo1y().doubleValue() : 0.0);
-             cell20.setCellStyle(numberStyle);
-
-             Cell cell21 = row.createCell(col++);
-             cell21.setCellValue(record.getOneYTo1_5y() != null ? record.getOneYTo1_5y().doubleValue() : 0.0);
-             cell21.setCellStyle(numberStyle);
-
-             Cell cell22 = row.createCell(col++);
-             cell22.setCellValue(record.getOne5yTo2y() != null ? record.getOne5yTo2y().doubleValue() : 0.0);
-             cell22.setCellStyle(numberStyle);
-
-             Cell cell23 = row.createCell(col++);
-             cell23.setCellValue(record.getTwoYTo3y() != null ? record.getTwoYTo3y().doubleValue() : 0.0);
-             cell23.setCellStyle(numberStyle);
-
-             Cell cell24 = row.createCell(col++);
-             cell24.setCellValue(record.getThreeYTo4y() != null ? record.getThreeYTo4y().doubleValue() : 0.0);
-             cell24.setCellStyle(numberStyle);
-
-             Cell cell25 = row.createCell(col++);
-             cell25.setCellValue(record.getFourYTo5y() != null ? record.getFourYTo5y().doubleValue() : 0.0);
-             cell25.setCellStyle(numberStyle);
-
-             Cell cell26 = row.createCell(col++);
-             cell26.setCellValue(record.getFiveYTo6y() != null ? record.getFiveYTo6y().doubleValue() : 0.0);
-             cell26.setCellStyle(numberStyle);
-
-             Cell cell27 = row.createCell(col++);
-             cell27.setCellValue(record.getSixYTo7y() != null ? record.getSixYTo7y().doubleValue() : 0.0);
-             cell27.setCellStyle(numberStyle);
-
-             Cell cell28 = row.createCell(col++);
-             cell28.setCellValue(record.getSevenYTo8y() != null ? record.getSevenYTo8y().doubleValue() : 0.0);
-             cell28.setCellStyle(numberStyle);
-
-             Cell cell29 = row.createCell(col++);
-             cell29.setCellValue(record.getEightYTo9y() != null ? record.getEightYTo9y().doubleValue() : 0.0);
-             cell29.setCellStyle(numberStyle);
-
-             Cell cell30 = row.createCell(col++);
-             cell30.setCellValue(record.getNineYTo10y() != null ? record.getNineYTo10y().doubleValue() : 0.0);
-             cell30.setCellStyle(numberStyle);
-
-             Cell cell31 = row.createCell(col++);
-             cell31.setCellValue(record.getTenYTo15y() != null ? record.getTenYTo15y().doubleValue() : 0.0);
-             cell31.setCellStyle(numberStyle);
-
-             Cell cell32 = row.createCell(col++);
-             cell32.setCellValue(record.getFifteenYTo20y() != null ? record.getFifteenYTo20y().doubleValue() : 0.0);
-             cell32.setCellStyle(numberStyle);
-
-             Cell cell33 = row.createCell(col++);
-             cell33.setCellValue(record.getTwentyYAbove() != null ? record.getTwentyYAbove().doubleValue() : 0.0);
-             cell33.setCellStyle(numberStyle);
-
-             Cell cell34 = row.createCell(col++);
-             cell34.setCellValue(record.getNonMaturing() != null ? record.getNonMaturing().doubleValue() : 0.0);
-             cell34.setCellStyle(numberStyle);
-
-                // Report Submit Date
-				/*
-				 * Cell finalCell = row.createCell(col++); if (record.getReportSubmitDate() !=
-				 * null) { finalCell.setCellValue(record.getReportSubmitDate());
-				 * finalCell.setCellStyle(dateStyle); } else { finalCell.setCellValue("");
-				 * finalCell.setCellStyle(textStyle); }
-				 */
-                // Apply styles for each cell
-                for (int j = 0; j < col; j++) {
-                    Cell c = row.getCell(j);
-                    if (c != null && c.getCellStyle() == null) {
-                        c.setCellStyle(numberStyle); // fallback
-                        
-                    }
-                }
-                
-                if (row == null) continue;
-
-                for (Cell cell : row) {
-                	if (cell.getCellTypeEnum() == CellType.FORMULA) {
-                        evaluator.evaluateFormulaCell(cell);
-                    }
-                }
-                
+            copyRow(sheet, usdHeaderBackupRow, nextRow);
+            Row backupRow = sheet.getRow(usdHeaderBackupRow);
+            if (backupRow != null) {
+                sheet.removeRow(backupRow);
             }
+            nextRow++;
+
+            nextRow = writeLiquidityRecords(sheet, nextRow, usdList, dateStyle, textStyle, numberStyle, evaluator);
+            logger.info("Service: Liquidity Gap written through Excel row {}.", nextRow);
             //workbook.setForceFormulaRecalculation(true);
             //workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             workbook.write(out);
@@ -420,6 +270,283 @@ public class RT_Liquidity_Risk_Data_Service {
         }
     }
 
+	private void partitionByInstrumentCurrency(List<RT_Liquidity_Risk_Data_Template> dataList,
+			List<RT_Liquidity_Risk_Data_Template> aedList, List<RT_Liquidity_Risk_Data_Template> usdList) {
+		List<RT_Liquidity_Risk_Data_Template> otherList = new ArrayList<>();
+		for (RT_Liquidity_Risk_Data_Template record : dataList) {
+			if (isCurrency(record, "AED")) {
+				aedList.add(record);
+			} else if (isCurrency(record, "USD")) {
+				usdList.add(record);
+			} else {
+				otherList.add(record);
+			}
+		}
+		usdList.addAll(otherList);
+	}
 
+	private boolean isCurrency(RT_Liquidity_Risk_Data_Template record, String currency) {
+		String instrumentCurrency = record.getInstrumentCurrency();
+		return instrumentCurrency != null && instrumentCurrency.trim().equalsIgnoreCase(currency);
+	}
+
+	private Sheet findSheet(Workbook workbook, String expectedName) {
+		Sheet sheet = workbook.getSheet(expectedName);
+		if (sheet != null) {
+			return sheet;
+		}
+		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			String name = workbook.getSheetName(i);
+			if (name != null && name.trim().equalsIgnoreCase(expectedName)) {
+				return workbook.getSheetAt(i);
+			}
+		}
+		logger.warn("Service: Sheet '{}' not found. Available sheets: {}", expectedName, listSheetNames(workbook));
+		return null;
+	}
+
+	private String listSheetNames(Workbook workbook) {
+		StringBuilder names = new StringBuilder();
+		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			if (i > 0) {
+				names.append(", ");
+			}
+			names.append(i).append(":").append(workbook.getSheetName(i));
+		}
+		return names.toString();
+	}
+
+	private int writeLiquidityRecords(Sheet sheet, int startRow, List<RT_Liquidity_Risk_Data_Template> records,
+			CellStyle dateStyle, CellStyle textStyle, CellStyle numberStyle, FormulaEvaluator evaluator) {
+		int rowIndex = startRow;
+		for (RT_Liquidity_Risk_Data_Template record : records) {
+			Row row = getOrCreateRow(sheet, rowIndex);
+			writeLiquidityRecord(sheet, row, record, dateStyle, textStyle, numberStyle, evaluator);
+			rowIndex++;
+		}
+		return rowIndex;
+	}
+
+	private Row getOrCreateRow(Sheet sheet, int rowIndex) {
+		Row row = sheet.getRow(rowIndex);
+		if (row == null) {
+			row = sheet.createRow(rowIndex);
+		}
+		return row;
+	}
+
+	private void copyRow(Sheet sheet, int sourceRowNum, int destRowNum) {
+		Row sourceRow = sheet.getRow(sourceRowNum);
+		if (sourceRow == null) {
+			return;
+		}
+		if (sourceRowNum == destRowNum) {
+			return;
+		}
+		Row destRow = sheet.getRow(destRowNum);
+		if (destRow != null) {
+			sheet.removeRow(destRow);
+		}
+		destRow = sheet.createRow(destRowNum);
+		destRow.setHeight(sourceRow.getHeight());
+		short lastCellNum = sourceRow.getLastCellNum();
+		if (lastCellNum < 0) {
+			return;
+		}
+		for (int i = 0; i < lastCellNum; i++) {
+			Cell oldCell = sourceRow.getCell(i);
+			if (oldCell == null) {
+				continue;
+			}
+			Cell newCell = destRow.createCell(i);
+			newCell.setCellStyle(oldCell.getCellStyle());
+			switch (oldCell.getCellTypeEnum()) {
+			case STRING:
+				newCell.setCellValue(oldCell.getStringCellValue());
+				break;
+			case NUMERIC:
+				newCell.setCellValue(oldCell.getNumericCellValue());
+				break;
+			case BOOLEAN:
+				newCell.setCellValue(oldCell.getBooleanCellValue());
+				break;
+			case FORMULA:
+				newCell.setCellFormula(oldCell.getCellFormula());
+				break;
+			case BLANK:
+				newCell.setCellType(CellType.BLANK);
+				break;
+			case ERROR:
+				newCell.setCellErrorValue(oldCell.getErrorCellValue());
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private void writeLiquidityRecord(Sheet sheet, Row row, RT_Liquidity_Risk_Data_Template record,
+			CellStyle dateStyle, CellStyle textStyle, CellStyle numberStyle, FormulaEvaluator evaluator) {
+		int col = 0;
+
+		Cell cell0 = row.createCell(col++);
+		if (record.getDataDate() != null) {
+			cell0.setCellValue(record.getDataDate());
+			cell0.setCellStyle(dateStyle);
+		} else {
+			cell0.setCellValue("");
+			cell0.setCellStyle(textStyle);
+		}
+		sheet.autoSizeColumn(col - 1);
+
+		Cell cell1 = row.createCell(col++);
+		cell1.setCellValue(record.getBankName() != null ? record.getBankName() : "");
+		cell1.setCellStyle(textStyle);
+
+		Cell cell2 = row.createCell(col++);
+		cell2.setCellValue(record.getHeadOfficeSubsidiary() != null ? record.getHeadOfficeSubsidiary() : "");
+		cell2.setCellStyle(textStyle);
+
+		Cell cell3 = row.createCell(col++);
+		cell3.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
+		cell3.setCellStyle(textStyle);
+
+		Cell cell4 = row.createCell(col++);
+		cell4.setCellValue(record.getConventionalIslamic() != null ? record.getConventionalIslamic() : "");
+		cell4.setCellStyle(textStyle);
+
+		Cell cell5 = row.createCell(col++);
+		cell5.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
+		cell5.setCellStyle(textStyle);
+
+		Cell cell6 = row.createCell(col++);
+		cell6.setCellValue(record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
+		cell6.setCellStyle(textStyle);
+
+		Cell cell7 = row.createCell(col++);
+		cell7.setCellValue(record.getGlLevel1() != null ? record.getGlLevel1() : "");
+		cell7.setCellStyle(textStyle);
+
+		Cell cell8 = row.createCell(col++);
+		cell8.setCellValue(record.getGlLevel2() != null ? record.getGlLevel2() : "");
+		cell8.setCellStyle(textStyle);
+
+		Cell cell9 = row.createCell(col++);
+		cell9.setCellValue(record.getGlLevel3() != null ? record.getGlLevel3() : "");
+		cell9.setCellStyle(textStyle);
+
+		Cell cell10 = row.createCell(col++);
+		cell10.setCellValue(record.getOptionType() != null ? record.getOptionType() : "");
+		cell10.setCellStyle(textStyle);
+
+		Cell cell11 = row.createCell(col++);
+		cell11.setCellValue(record.getRateType() != null ? record.getRateType() : "");
+		cell11.setCellStyle(textStyle);
+
+		Cell cell12 = row.createCell(col++);
+		cell12.setCellValue(record.getReferenceRate() != null ? record.getReferenceRate() : "");
+		cell12.setCellStyle(textStyle);
+
+		Cell cell13 = row.createCell(col++);
+		cell13.setCellValue(record.getInstrumentCurrency() != null ? record.getInstrumentCurrency() : "");
+		cell13.setCellStyle(textStyle);
+
+		Cell cell14 = row.createCell(col++);
+		cell14.setCellValue(record.getOutstandingBalance() != null ? record.getOutstandingBalance().doubleValue() : 0.0);
+		cell14.setCellStyle(numberStyle);
+
+		Cell cell15 = row.createCell(col++);
+		cell15.setCellValue(record.getOvernight() != null ? record.getOvernight().doubleValue() : 0.0);
+		cell15.setCellStyle(numberStyle);
+
+		Cell cell16 = row.createCell(col++);
+		cell16.setCellValue(record.getOnTo1m() != null ? record.getOnTo1m().doubleValue() : 0.0);
+		cell16.setCellStyle(numberStyle);
+
+		Cell cell17 = row.createCell(col++);
+		cell17.setCellValue(record.getOneMTo3m() != null ? record.getOneMTo3m().doubleValue() : 0.0);
+		cell17.setCellStyle(numberStyle);
+
+		Cell cell18 = row.createCell(col++);
+		cell18.setCellValue(record.getThreeMTo6m() != null ? record.getThreeMTo6m().doubleValue() : 0.0);
+		cell18.setCellStyle(numberStyle);
+
+		Cell cell19 = row.createCell(col++);
+		cell19.setCellValue(record.getSixMTo9m() != null ? record.getSixMTo9m().doubleValue() : 0.0);
+		cell19.setCellStyle(numberStyle);
+
+		Cell cell20 = row.createCell(col++);
+		cell20.setCellValue(record.getNineMTo1y() != null ? record.getNineMTo1y().doubleValue() : 0.0);
+		cell20.setCellStyle(numberStyle);
+
+		Cell cell21 = row.createCell(col++);
+		cell21.setCellValue(record.getOneYTo1_5y() != null ? record.getOneYTo1_5y().doubleValue() : 0.0);
+		cell21.setCellStyle(numberStyle);
+
+		Cell cell22 = row.createCell(col++);
+		cell22.setCellValue(record.getOne5yTo2y() != null ? record.getOne5yTo2y().doubleValue() : 0.0);
+		cell22.setCellStyle(numberStyle);
+
+		Cell cell23 = row.createCell(col++);
+		cell23.setCellValue(record.getTwoYTo3y() != null ? record.getTwoYTo3y().doubleValue() : 0.0);
+		cell23.setCellStyle(numberStyle);
+
+		Cell cell24 = row.createCell(col++);
+		cell24.setCellValue(record.getThreeYTo4y() != null ? record.getThreeYTo4y().doubleValue() : 0.0);
+		cell24.setCellStyle(numberStyle);
+
+		Cell cell25 = row.createCell(col++);
+		cell25.setCellValue(record.getFourYTo5y() != null ? record.getFourYTo5y().doubleValue() : 0.0);
+		cell25.setCellStyle(numberStyle);
+
+		Cell cell26 = row.createCell(col++);
+		cell26.setCellValue(record.getFiveYTo6y() != null ? record.getFiveYTo6y().doubleValue() : 0.0);
+		cell26.setCellStyle(numberStyle);
+
+		Cell cell27 = row.createCell(col++);
+		cell27.setCellValue(record.getSixYTo7y() != null ? record.getSixYTo7y().doubleValue() : 0.0);
+		cell27.setCellStyle(numberStyle);
+
+		Cell cell28 = row.createCell(col++);
+		cell28.setCellValue(record.getSevenYTo8y() != null ? record.getSevenYTo8y().doubleValue() : 0.0);
+		cell28.setCellStyle(numberStyle);
+
+		Cell cell29 = row.createCell(col++);
+		cell29.setCellValue(record.getEightYTo9y() != null ? record.getEightYTo9y().doubleValue() : 0.0);
+		cell29.setCellStyle(numberStyle);
+
+		Cell cell30 = row.createCell(col++);
+		cell30.setCellValue(record.getNineYTo10y() != null ? record.getNineYTo10y().doubleValue() : 0.0);
+		cell30.setCellStyle(numberStyle);
+
+		Cell cell31 = row.createCell(col++);
+		cell31.setCellValue(record.getTenYTo15y() != null ? record.getTenYTo15y().doubleValue() : 0.0);
+		cell31.setCellStyle(numberStyle);
+
+		Cell cell32 = row.createCell(col++);
+		cell32.setCellValue(record.getFifteenYTo20y() != null ? record.getFifteenYTo20y().doubleValue() : 0.0);
+		cell32.setCellStyle(numberStyle);
+
+		Cell cell33 = row.createCell(col++);
+		cell33.setCellValue(record.getTwentyYAbove() != null ? record.getTwentyYAbove().doubleValue() : 0.0);
+		cell33.setCellStyle(numberStyle);
+
+		Cell cell34 = row.createCell(col++);
+		cell34.setCellValue(record.getNonMaturing() != null ? record.getNonMaturing().doubleValue() : 0.0);
+		cell34.setCellStyle(numberStyle);
+
+		for (int j = 0; j < col; j++) {
+			Cell c = row.getCell(j);
+			if (c != null && c.getCellStyle() == null) {
+				c.setCellStyle(numberStyle);
+			}
+		}
+
+		for (Cell cell : row) {
+			if (cell.getCellTypeEnum() == CellType.FORMULA) {
+				evaluator.evaluateFormulaCell(cell);
+			}
+		}
+	}
 
 }
