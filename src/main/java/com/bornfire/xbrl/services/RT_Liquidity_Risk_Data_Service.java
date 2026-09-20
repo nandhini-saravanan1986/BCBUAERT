@@ -1,9 +1,7 @@
 package com.bornfire.xbrl.services;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -19,12 +17,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,8 +41,9 @@ public class RT_Liquidity_Risk_Data_Service {
 
 	private static final String LIQUIDITY_GAP_SHEET_NAME = "Liquidity Gap";
 	private static final int AED_HEADER_ROW = 0; // Excel row 1
-	private static final int AED_DATA_START_ROW = 1; // Excel row 2
-	private static final int USD_HEADER_ROW = 4; // Excel row 5 in source template
+	private static final int TEMPLATE_DATA_ROW = 1; // Excel row 2 — empty row with formulas
+	private static final int TEMPLATE_EMPTY_ROW = 2; // Excel row 3
+	private static final int EMPTY_ROWS_AFTER_AED = 2;
 	
     @Autowired
     RT_Liquidity_Risk_Data_Template_Repository LiquidityRiskDataRepository;
@@ -208,81 +204,49 @@ public class RT_Liquidity_Risk_Data_Service {
             workbook.setSelectedTab(liquidityGapIndex);
             logger.info("Service: Writing Liquidity Risk data to sheet '{}' (index {}).", sheet.getSheetName(),
                     liquidityGapIndex);
-            CreationHelper createHelper = workbook.getCreationHelper();
-
-            // Style definitions
-            CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
-            dateStyle.setBorderBottom(BorderStyle.THIN);
-            dateStyle.setBorderTop(BorderStyle.THIN);
-            dateStyle.setBorderLeft(BorderStyle.THIN);
-            dateStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle textStyle = workbook.createCellStyle();
-            textStyle.setBorderBottom(BorderStyle.THIN);
-            textStyle.setBorderTop(BorderStyle.THIN);
-            textStyle.setBorderLeft(BorderStyle.THIN);
-            textStyle.setBorderRight(BorderStyle.THIN);
-
-            CellStyle numberStyle = workbook.createCellStyle();
-            numberStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-            numberStyle.setBorderBottom(BorderStyle.THIN);
-            numberStyle.setBorderTop(BorderStyle.THIN);
-            numberStyle.setBorderLeft(BorderStyle.THIN);
-            numberStyle.setBorderRight(BorderStyle.THIN);
-
-            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
             List<RT_Liquidity_Risk_Data_Template> aedList = new ArrayList<>();
             List<RT_Liquidity_Risk_Data_Template> usdList = new ArrayList<>();
             partitionByInstrumentCurrency(dataList, aedList, usdList);
-            logger.info("Service: Liquidity Gap split - AED rows {}, USD rows {} (header stays at row {}).",
-                    aedList.size(), usdList.size(), AED_HEADER_ROW + 1);
+            logger.info("Service: Liquidity Gap split - AED rows {}, USD rows {}.", aedList.size(), usdList.size());
 
-            int usdHeaderBackupRow = Math.max(sheet.getLastRowNum() + 5, 20000);
-            copyRow(sheet, USD_HEADER_ROW, usdHeaderBackupRow);
+            RowSnapshot headerSnapshot = snapshotRow(sheet, AED_HEADER_ROW);
+            RowSnapshot dataTemplateSnapshot = snapshotRow(sheet, TEMPLATE_DATA_ROW);
+            RowSnapshot emptyRowSnapshot = snapshotRow(sheet, TEMPLATE_EMPTY_ROW);
+            int eurHeaderRow = findNextSectionHeaderRow(sheet);
+            RowSnapshot eurHeaderSnapshot = snapshotRow(sheet, eurHeaderRow);
+            int templateExcelRow = TEMPLATE_DATA_ROW + 1;
 
-            int nextRow = AED_DATA_START_ROW;
-            nextRow = writeLiquidityRecords(sheet, nextRow, aedList, dateStyle, textStyle, numberStyle, evaluator);
+            int nextRow = TEMPLATE_DATA_ROW;
+            nextRow = writeRecordsFromTemplate(sheet, nextRow, aedList, dataTemplateSnapshot, templateExcelRow);
+            nextRow = pasteEmptyRows(sheet, emptyRowSnapshot, nextRow, EMPTY_ROWS_AFTER_AED);
 
-            copyRow(sheet, usdHeaderBackupRow, nextRow);
-            Row backupRow = sheet.getRow(usdHeaderBackupRow);
-            if (backupRow != null) {
-                sheet.removeRow(backupRow);
+            if (!usdList.isEmpty()) {
+                pasteRow(sheet, headerSnapshot, nextRow, AED_HEADER_ROW + 1);
+                nextRow++;
+                nextRow = writeRecordsFromTemplate(sheet, nextRow, usdList, dataTemplateSnapshot, templateExcelRow);
+                nextRow = pasteEmptyRows(sheet, emptyRowSnapshot, nextRow, EMPTY_ROWS_AFTER_AED);
             }
-            nextRow++;
 
-            nextRow = writeLiquidityRecords(sheet, nextRow, usdList, dateStyle, textStyle, numberStyle, evaluator);
-            logger.info("Service: Liquidity Gap written through Excel row {}.", nextRow);
-            //workbook.setForceFormulaRecalculation(true);
-            //workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            pasteRow(sheet, eurHeaderSnapshot, nextRow, eurHeaderRow + 1);
+            workbook.setForceFormulaRecalculation(true);
+            logger.info("Service: Liquidity Gap written through Excel row {} with separate AED/USD/EUR headers.",
+                    nextRow + 1);
             workbook.write(out);
-
-            String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
-            File outputFile = new File(finalPath + "CBUAE_Liquidity Risk_Data_Template.xlsx");
-            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                fos.write(out.toByteArray());
-                logger.info("Service: Excel also saved to file: {}", outputFile.getAbsolutePath());
-            }
-
-            logger.info("Service: CCR DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
+            logger.info("Service: Liquidity Risk Excel written to memory buffer ({} bytes).", out.size());
             return out.toByteArray();
         }
     }
 
 	private void partitionByInstrumentCurrency(List<RT_Liquidity_Risk_Data_Template> dataList,
 			List<RT_Liquidity_Risk_Data_Template> aedList, List<RT_Liquidity_Risk_Data_Template> usdList) {
-		List<RT_Liquidity_Risk_Data_Template> otherList = new ArrayList<>();
 		for (RT_Liquidity_Risk_Data_Template record : dataList) {
 			if (isCurrency(record, "AED")) {
 				aedList.add(record);
 			} else if (isCurrency(record, "USD")) {
 				usdList.add(record);
-			} else {
-				otherList.add(record);
 			}
 		}
-		usdList.addAll(otherList);
 	}
 
 	private boolean isCurrency(RT_Liquidity_Risk_Data_Template record, String currency) {
@@ -316,68 +280,132 @@ public class RT_Liquidity_Risk_Data_Service {
 		return names.toString();
 	}
 
-	private int writeLiquidityRecords(Sheet sheet, int startRow, List<RT_Liquidity_Risk_Data_Template> records,
-			CellStyle dateStyle, CellStyle textStyle, CellStyle numberStyle, FormulaEvaluator evaluator) {
+	private int findNextSectionHeaderRow(Sheet sheet) {
+		int headerCount = 0;
+		int maxScan = Math.min(sheet.getLastRowNum(), 20);
+		for (int r = 0; r <= maxScan; r++) {
+			Row row = sheet.getRow(r);
+			if (row == null) {
+				continue;
+			}
+			Cell cell = row.getCell(0);
+			if (cell == null || cell.getCellTypeEnum() != CellType.STRING) {
+				continue;
+			}
+			String value = cell.getStringCellValue();
+			if (value != null && "Date".equalsIgnoreCase(value.trim())) {
+				headerCount++;
+				if (headerCount == 3) {
+					return r;
+				}
+			}
+		}
+		return 8;
+	}
+
+	private int writeRecordsFromTemplate(Sheet sheet, int startRow, List<RT_Liquidity_Risk_Data_Template> records,
+			RowSnapshot dataTemplate, int templateExcelRow) {
 		int rowIndex = startRow;
 		for (RT_Liquidity_Risk_Data_Template record : records) {
-			Row row = getOrCreateRow(sheet, rowIndex);
-			writeLiquidityRecord(sheet, row, record, dateStyle, textStyle, numberStyle, evaluator);
+			pasteRow(sheet, dataTemplate, rowIndex, templateExcelRow);
+			fillTemplateInputColumns(sheet.getRow(rowIndex), record);
 			rowIndex++;
 		}
 		return rowIndex;
 	}
 
-	private Row getOrCreateRow(Sheet sheet, int rowIndex) {
-		Row row = sheet.getRow(rowIndex);
-		if (row == null) {
-			row = sheet.createRow(rowIndex);
+	private int pasteEmptyRows(Sheet sheet, RowSnapshot emptyRowSnapshot, int startRow, int count) {
+		int rowIndex = startRow;
+		for (int i = 0; i < count; i++) {
+			clearRowValues(sheet, rowIndex);
+			pasteRow(sheet, emptyRowSnapshot, rowIndex, TEMPLATE_EMPTY_ROW + 1);
+			rowIndex++;
 		}
-		return row;
+		return rowIndex;
 	}
 
-	private void copyRow(Sheet sheet, int sourceRowNum, int destRowNum) {
-		Row sourceRow = sheet.getRow(sourceRowNum);
-		if (sourceRow == null) {
-			return;
+	private RowSnapshot snapshotRow(Sheet sheet, int rowIndex) {
+		RowSnapshot snapshot = new RowSnapshot();
+		Row row = sheet.getRow(rowIndex);
+		if (row == null) {
+			return snapshot;
 		}
-		if (sourceRowNum == destRowNum) {
-			return;
-		}
-		Row destRow = sheet.getRow(destRowNum);
-		if (destRow != null) {
-			sheet.removeRow(destRow);
-		}
-		destRow = sheet.createRow(destRowNum);
-		destRow.setHeight(sourceRow.getHeight());
-		short lastCellNum = sourceRow.getLastCellNum();
+		snapshot.height = row.getHeight();
+		short lastCellNum = row.getLastCellNum();
 		if (lastCellNum < 0) {
-			return;
+			return snapshot;
 		}
 		for (int i = 0; i < lastCellNum; i++) {
-			Cell oldCell = sourceRow.getCell(i);
-			if (oldCell == null) {
+			Cell cell = row.getCell(i);
+			if (cell == null) {
 				continue;
 			}
-			Cell newCell = destRow.createCell(i);
-			newCell.setCellStyle(oldCell.getCellStyle());
-			switch (oldCell.getCellTypeEnum()) {
+			CellSnapshot copied = new CellSnapshot();
+			copied.column = i;
+			copied.type = cell.getCellTypeEnum();
+			copied.style = cell.getCellStyle();
+			switch (copied.type) {
 			case STRING:
-				newCell.setCellValue(oldCell.getStringCellValue());
+				copied.stringValue = cell.getStringCellValue();
 				break;
 			case NUMERIC:
-				newCell.setCellValue(oldCell.getNumericCellValue());
+				copied.numericValue = cell.getNumericCellValue();
 				break;
 			case BOOLEAN:
-				newCell.setCellValue(oldCell.getBooleanCellValue());
+				copied.booleanValue = cell.getBooleanCellValue();
 				break;
 			case FORMULA:
-				newCell.setCellFormula(oldCell.getCellFormula());
+				copied.formula = cell.getCellFormula();
+				break;
+			case ERROR:
+				copied.errorValue = cell.getErrorCellValue();
+				break;
+			default:
+				break;
+			}
+			snapshot.cells.add(copied);
+		}
+		return snapshot;
+	}
+
+	private void pasteRow(Sheet sheet, RowSnapshot snapshot, int destRowNum, int sourceExcelRow) {
+		Row destRow = sheet.getRow(destRowNum);
+		if (destRow == null) {
+			destRow = sheet.createRow(destRowNum);
+		} else {
+			clearRowValues(sheet, destRowNum);
+			destRow = sheet.getRow(destRowNum);
+			if (destRow == null) {
+				destRow = sheet.createRow(destRowNum);
+			}
+		}
+		destRow.setHeight(snapshot.height);
+		int destExcelRow = destRowNum + 1;
+		for (CellSnapshot copied : snapshot.cells) {
+			Cell newCell = destRow.createCell(copied.column);
+			if (copied.style != null) {
+				newCell.setCellStyle(copied.style);
+			}
+			switch (copied.type) {
+			case STRING:
+				newCell.setCellValue(copied.stringValue == null ? "" : copied.stringValue);
+				break;
+			case NUMERIC:
+				newCell.setCellValue(copied.numericValue);
+				break;
+			case BOOLEAN:
+				newCell.setCellValue(copied.booleanValue);
+				break;
+			case FORMULA:
+				if (copied.formula != null && !copied.formula.isEmpty()) {
+					newCell.setCellFormula(adjustFormulaRow(copied.formula, sourceExcelRow, destExcelRow));
+				}
 				break;
 			case BLANK:
 				newCell.setCellType(CellType.BLANK);
 				break;
 			case ERROR:
-				newCell.setCellErrorValue(oldCell.getErrorCellValue());
+				newCell.setCellErrorValue(copied.errorValue);
 				break;
 			default:
 				break;
@@ -385,168 +413,102 @@ public class RT_Liquidity_Risk_Data_Service {
 		}
 	}
 
-	private void writeLiquidityRecord(Sheet sheet, Row row, RT_Liquidity_Risk_Data_Template record,
-			CellStyle dateStyle, CellStyle textStyle, CellStyle numberStyle, FormulaEvaluator evaluator) {
-		int col = 0;
+	private void clearRowValues(Sheet sheet, int rowIndex) {
+		Row row = sheet.getRow(rowIndex);
+		if (row == null) {
+			return;
+		}
+		short lastCellNum = row.getLastCellNum();
+		if (lastCellNum < 0) {
+			return;
+		}
+		for (int i = lastCellNum - 1; i >= 0; i--) {
+			Cell cell = row.getCell(i);
+			if (cell != null) {
+				row.removeCell(cell);
+			}
+		}
+	}
 
-		Cell cell0 = row.createCell(col++);
-		if (record.getDataDate() != null) {
-			cell0.setCellValue(record.getDataDate());
-			cell0.setCellStyle(dateStyle);
+	private String adjustFormulaRow(String formula, int fromExcelRow, int toExcelRow) {
+		if (formula == null || fromExcelRow == toExcelRow) {
+			return formula;
+		}
+		return formula.replaceAll("(\\$?[A-Z]{1,3})(\\$?)" + fromExcelRow + "(?!\\d)", "$1$2" + toExcelRow);
+	}
+
+	private void fillTemplateInputColumns(Row row, RT_Liquidity_Risk_Data_Template record) {
+		setDateValue(row, 0, record.getDataDate());
+		setStringValue(row, 1, record.getBankName());
+		setStringValue(row, 2, record.getHeadOfficeSubsidiary());
+		setStringValue(row, 7, record.getGlLevel1());
+		setStringValue(row, 8, record.getGlLevel2());
+		setStringValue(row, 9, record.getGlLevel3());
+		setStringValue(row, 10, record.getOptionType());
+		setStringValue(row, 11, record.getRateType());
+		setStringValue(row, 12, record.getReferenceRate());
+		setStringValue(row, 13, record.getInstrumentCurrency());
+		setNumberValue(row, 15, record.getOvernight());
+		setNumberValue(row, 16, record.getOnTo1m());
+		setNumberValue(row, 17, record.getOneMTo3m());
+		setNumberValue(row, 18, record.getThreeMTo6m());
+		setNumberValue(row, 19, record.getSixMTo9m());
+		setNumberValue(row, 20, record.getNineMTo1y());
+		setNumberValue(row, 21, record.getOneYTo1_5y());
+		setNumberValue(row, 22, record.getOne5yTo2y());
+		setNumberValue(row, 23, record.getTwoYTo3y());
+		setNumberValue(row, 24, record.getThreeYTo4y());
+		setNumberValue(row, 25, record.getFourYTo5y());
+		setNumberValue(row, 26, record.getFiveYTo6y());
+		setNumberValue(row, 27, record.getSixYTo7y());
+		setNumberValue(row, 28, record.getSevenYTo8y());
+		setNumberValue(row, 29, record.getEightYTo9y());
+		setNumberValue(row, 30, record.getNineYTo10y());
+		setNumberValue(row, 31, record.getTenYTo15y());
+		setNumberValue(row, 32, record.getFifteenYTo20y());
+		setNumberValue(row, 33, record.getTwentyYAbove());
+		setNumberValue(row, 34, record.getNonMaturing());
+	}
+
+	private Cell ensureCell(Row row, int column) {
+		Cell cell = row.getCell(column);
+		if (cell == null) {
+			cell = row.createCell(column);
+		}
+		return cell;
+	}
+
+	private void setStringValue(Row row, int column, String value) {
+		ensureCell(row, column).setCellValue(value != null ? value : "");
+	}
+
+	private void setDateValue(Row row, int column, Date value) {
+		Cell cell = ensureCell(row, column);
+		if (value != null) {
+			cell.setCellValue(value);
 		} else {
-			cell0.setCellValue("");
-			cell0.setCellStyle(textStyle);
+			cell.setCellValue("");
 		}
-		sheet.autoSizeColumn(col - 1);
+	}
 
-		Cell cell1 = row.createCell(col++);
-		cell1.setCellValue(record.getBankName() != null ? record.getBankName() : "");
-		cell1.setCellStyle(textStyle);
+	private void setNumberValue(Row row, int column, java.math.BigDecimal value) {
+		ensureCell(row, column).setCellValue(value != null ? value.doubleValue() : 0.0);
+	}
 
-		Cell cell2 = row.createCell(col++);
-		cell2.setCellValue(record.getHeadOfficeSubsidiary() != null ? record.getHeadOfficeSubsidiary() : "");
-		cell2.setCellStyle(textStyle);
+	private static final class RowSnapshot {
+		private short height;
+		private final List<CellSnapshot> cells = new ArrayList<CellSnapshot>();
+	}
 
-		Cell cell3 = row.createCell(col++);
-		cell3.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
-		cell3.setCellStyle(textStyle);
-
-		Cell cell4 = row.createCell(col++);
-		cell4.setCellValue(record.getConventionalIslamic() != null ? record.getConventionalIslamic() : "");
-		cell4.setCellStyle(textStyle);
-
-		Cell cell5 = row.createCell(col++);
-		cell5.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
-		cell5.setCellStyle(textStyle);
-
-		Cell cell6 = row.createCell(col++);
-		cell6.setCellValue(record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
-		cell6.setCellStyle(textStyle);
-
-		Cell cell7 = row.createCell(col++);
-		cell7.setCellValue(record.getGlLevel1() != null ? record.getGlLevel1() : "");
-		cell7.setCellStyle(textStyle);
-
-		Cell cell8 = row.createCell(col++);
-		cell8.setCellValue(record.getGlLevel2() != null ? record.getGlLevel2() : "");
-		cell8.setCellStyle(textStyle);
-
-		Cell cell9 = row.createCell(col++);
-		cell9.setCellValue(record.getGlLevel3() != null ? record.getGlLevel3() : "");
-		cell9.setCellStyle(textStyle);
-
-		Cell cell10 = row.createCell(col++);
-		cell10.setCellValue(record.getOptionType() != null ? record.getOptionType() : "");
-		cell10.setCellStyle(textStyle);
-
-		Cell cell11 = row.createCell(col++);
-		cell11.setCellValue(record.getRateType() != null ? record.getRateType() : "");
-		cell11.setCellStyle(textStyle);
-
-		Cell cell12 = row.createCell(col++);
-		cell12.setCellValue(record.getReferenceRate() != null ? record.getReferenceRate() : "");
-		cell12.setCellStyle(textStyle);
-
-		Cell cell13 = row.createCell(col++);
-		cell13.setCellValue(record.getInstrumentCurrency() != null ? record.getInstrumentCurrency() : "");
-		cell13.setCellStyle(textStyle);
-
-		Cell cell14 = row.createCell(col++);
-		cell14.setCellValue(record.getOutstandingBalance() != null ? record.getOutstandingBalance().doubleValue() : 0.0);
-		cell14.setCellStyle(numberStyle);
-
-		Cell cell15 = row.createCell(col++);
-		cell15.setCellValue(record.getOvernight() != null ? record.getOvernight().doubleValue() : 0.0);
-		cell15.setCellStyle(numberStyle);
-
-		Cell cell16 = row.createCell(col++);
-		cell16.setCellValue(record.getOnTo1m() != null ? record.getOnTo1m().doubleValue() : 0.0);
-		cell16.setCellStyle(numberStyle);
-
-		Cell cell17 = row.createCell(col++);
-		cell17.setCellValue(record.getOneMTo3m() != null ? record.getOneMTo3m().doubleValue() : 0.0);
-		cell17.setCellStyle(numberStyle);
-
-		Cell cell18 = row.createCell(col++);
-		cell18.setCellValue(record.getThreeMTo6m() != null ? record.getThreeMTo6m().doubleValue() : 0.0);
-		cell18.setCellStyle(numberStyle);
-
-		Cell cell19 = row.createCell(col++);
-		cell19.setCellValue(record.getSixMTo9m() != null ? record.getSixMTo9m().doubleValue() : 0.0);
-		cell19.setCellStyle(numberStyle);
-
-		Cell cell20 = row.createCell(col++);
-		cell20.setCellValue(record.getNineMTo1y() != null ? record.getNineMTo1y().doubleValue() : 0.0);
-		cell20.setCellStyle(numberStyle);
-
-		Cell cell21 = row.createCell(col++);
-		cell21.setCellValue(record.getOneYTo1_5y() != null ? record.getOneYTo1_5y().doubleValue() : 0.0);
-		cell21.setCellStyle(numberStyle);
-
-		Cell cell22 = row.createCell(col++);
-		cell22.setCellValue(record.getOne5yTo2y() != null ? record.getOne5yTo2y().doubleValue() : 0.0);
-		cell22.setCellStyle(numberStyle);
-
-		Cell cell23 = row.createCell(col++);
-		cell23.setCellValue(record.getTwoYTo3y() != null ? record.getTwoYTo3y().doubleValue() : 0.0);
-		cell23.setCellStyle(numberStyle);
-
-		Cell cell24 = row.createCell(col++);
-		cell24.setCellValue(record.getThreeYTo4y() != null ? record.getThreeYTo4y().doubleValue() : 0.0);
-		cell24.setCellStyle(numberStyle);
-
-		Cell cell25 = row.createCell(col++);
-		cell25.setCellValue(record.getFourYTo5y() != null ? record.getFourYTo5y().doubleValue() : 0.0);
-		cell25.setCellStyle(numberStyle);
-
-		Cell cell26 = row.createCell(col++);
-		cell26.setCellValue(record.getFiveYTo6y() != null ? record.getFiveYTo6y().doubleValue() : 0.0);
-		cell26.setCellStyle(numberStyle);
-
-		Cell cell27 = row.createCell(col++);
-		cell27.setCellValue(record.getSixYTo7y() != null ? record.getSixYTo7y().doubleValue() : 0.0);
-		cell27.setCellStyle(numberStyle);
-
-		Cell cell28 = row.createCell(col++);
-		cell28.setCellValue(record.getSevenYTo8y() != null ? record.getSevenYTo8y().doubleValue() : 0.0);
-		cell28.setCellStyle(numberStyle);
-
-		Cell cell29 = row.createCell(col++);
-		cell29.setCellValue(record.getEightYTo9y() != null ? record.getEightYTo9y().doubleValue() : 0.0);
-		cell29.setCellStyle(numberStyle);
-
-		Cell cell30 = row.createCell(col++);
-		cell30.setCellValue(record.getNineYTo10y() != null ? record.getNineYTo10y().doubleValue() : 0.0);
-		cell30.setCellStyle(numberStyle);
-
-		Cell cell31 = row.createCell(col++);
-		cell31.setCellValue(record.getTenYTo15y() != null ? record.getTenYTo15y().doubleValue() : 0.0);
-		cell31.setCellStyle(numberStyle);
-
-		Cell cell32 = row.createCell(col++);
-		cell32.setCellValue(record.getFifteenYTo20y() != null ? record.getFifteenYTo20y().doubleValue() : 0.0);
-		cell32.setCellStyle(numberStyle);
-
-		Cell cell33 = row.createCell(col++);
-		cell33.setCellValue(record.getTwentyYAbove() != null ? record.getTwentyYAbove().doubleValue() : 0.0);
-		cell33.setCellStyle(numberStyle);
-
-		Cell cell34 = row.createCell(col++);
-		cell34.setCellValue(record.getNonMaturing() != null ? record.getNonMaturing().doubleValue() : 0.0);
-		cell34.setCellStyle(numberStyle);
-
-		for (int j = 0; j < col; j++) {
-			Cell c = row.getCell(j);
-			if (c != null && c.getCellStyle() == null) {
-				c.setCellStyle(numberStyle);
-			}
-		}
-
-		for (Cell cell : row) {
-			if (cell.getCellTypeEnum() == CellType.FORMULA) {
-				evaluator.evaluateFormulaCell(cell);
-			}
-		}
+	private static final class CellSnapshot {
+		private int column;
+		private CellType type;
+		private CellStyle style;
+		private String stringValue;
+		private double numericValue;
+		private boolean booleanValue;
+		private String formula;
+		private byte errorValue;
 	}
 
 }
