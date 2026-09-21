@@ -14,10 +14,12 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.SessionFactory;
@@ -44,6 +46,15 @@ import java.io.FileNotFoundException;
 public class RT_InvestmentRiskDataDashboard_Service {
 	
     private static final Logger logger = LoggerFactory.getLogger(RT_InvestmentRiskDataDashboard_Service.class);
+
+    /**
+     * Grey (automatic) columns on the CBUAE Investment Risk Data sheet.
+     * These cells already contain Excel formulas (VLOOKUP / ratios / OK-BREACH / CHECK),
+     * so download must not overwrite them with database values.
+     */
+    private static final Set<Integer> AUTOMATIC_FORMULA_COLUMNS = new HashSet<Integer>(Arrays.asList(
+            4, 5, 6, 7, 10, 14, 17, 23, 24, 27, 30, 31, 37, 38, 44, 45, 51, 52,
+            57, 58, 61, 62, 66, 69, 72, 76, 80, 84, 86, 88, 90, 92, 94, 96, 98));
 
     @Autowired
     private Environment env;
@@ -290,7 +301,10 @@ public class RT_InvestmentRiskDataDashboard_Service {
              Workbook workbook = WorkbookFactory.create(templateInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.getSheetAt(2);
+            Sheet sheet = workbook.getSheet("Data");
+            if (sheet == null) {
+                sheet = workbook.getSheetAt(2);
+            }
             CreationHelper createHelper = workbook.getCreationHelper();
 
             // Define cell styles
@@ -321,509 +335,21 @@ public class RT_InvestmentRiskDataDashboard_Service {
                 Row row = sheet.getRow(startRow + i);
                 if (row == null) row = sheet.createRow(startRow + i);
 
-                int colIndex = 0;
-
-                // 0 - dataDate (Date)
-                Cell cell0 = row.getCell(colIndex++);
-                cell0.setCellStyle(dateStyle);
-                cell0.setCellValue(mm[0] instanceof Date ? (Date) mm[0] : null);
-
-                // 1 - bankName (String)
-                Cell cell1 = row.getCell(colIndex++);
-                cell1.setCellStyle(textStyle);
-                cell1.setCellValue(mm[1] == null ? "" : mm[1].toString());
-
-                // 2 - groupHeadOfficeSubsidiary (String)
-                Cell cell2 = row.getCell(colIndex++);
-                cell2.setCellStyle(textStyle);
-                cell2.setCellValue(mm[2] == null ? "" : mm[2].toString());
-
-                // 3 - subsidiary (String)
-                Cell cell3 = row.getCell(colIndex++);
-                cell3.setCellStyle(textStyle);
-                cell3.setCellValue(mm[3] == null ? "" : mm[3].toString());
-
-                // 4 - bankSymbol (String)
-                Cell cell4 = row.getCell(colIndex++);
-                cell4.setCellStyle(textStyle);
-                cell4.setCellValue(mm[4] == null ? "" : mm[4].toString());
-
-                // 5 - conventionalIslamic (String)
-                Cell cell5 = row.getCell(colIndex++);
-                cell5.setCellStyle(textStyle);
-                cell5.setCellValue(mm[5] == null ? "" : mm[5].toString());
-
-                // 6 - localForeign (String)
-                Cell cell6 = row.getCell(colIndex++);
-                cell6.setCellStyle(textStyle);
-                cell6.setCellValue(mm[6] == null ? "" : mm[6].toString());
-
-                // 7 - cbuAeTiering (String)
-                Cell cell7 = row.getCell(colIndex++);
-                cell7.setCellStyle(textStyle);
-                cell7.setCellValue(mm[7] == null ? "" : mm[7].toString());
-
-                // 8 - assetBalanceSheetSizeAed (Long)
-                Cell cell8 = row.getCell(colIndex++);
-                cell8.setCellStyle(numberStyle);
-                cell8.setCellValue(mm[8] instanceof Number ? ((Number) mm[8]).doubleValue() : 0);
-
-                // 9 - investmentBookSizeAed (Long)
-                Cell cell9 = row.getCell(colIndex++);
-                cell9.setCellStyle(numberStyle);
-                cell9.setCellValue(mm[9] instanceof Number ? ((Number) mm[9]).doubleValue() : 0);
-
-                // 10 - bookSizeTotalAssetsPct (Long)
-                Cell cell10 = row.getCell(colIndex++);
-                cell10.setCellStyle(numberStyle);
-                cell10.setCellValue(mm[10] instanceof Number ? ((Number) mm[10]).doubleValue() : 0);
-
-                // 11 - ytdNetPnlAed (Long)
-                Cell cell11 = row.getCell(colIndex++);
-                cell11.setCellStyle(numberStyle);
-                cell11.setCellValue(mm[11] instanceof Number ? ((Number) mm[11]).doubleValue() : 0);
-
-                // 12 - ytdFvtociUnrealizedLossAed (Long)
-                Cell cell12 = row.getCell(colIndex++);
-                cell12.setCellStyle(numberStyle);
-                cell12.setCellValue(mm[12] instanceof Number ? ((Number) mm[12]).doubleValue() : 0);
-
-                // 13 - cet1Aed (Long)
-                Cell cell13 = row.getCell(colIndex++);
-                cell13.setCellStyle(numberStyle);
-                cell13.setCellValue(mm[13] instanceof Number ? ((Number) mm[13]).doubleValue() : 0);
-
-                // 14 - uglCoreTier1RelativeImpactPct (Long)
-                Cell cell14 = row.getCell(colIndex++);
-                cell14.setCellStyle(numberStyle);
-                cell14.setCellValue(mm[14] instanceof Number ? ((Number) mm[14]).doubleValue() : 0);
-                
-             // 15 - ytdAmortizedUnrealizedLossAed (Long)
-                Cell cell15 = row.getCell(colIndex++);
-                cell15.setCellStyle(numberStyle);
-                cell15.setCellValue(mm[15] instanceof Number ? ((Number) mm[15]).doubleValue() : 0);
-
-                // 16 - ytdHqlaAcUnrealizedLossAed (Long)
-                Cell cell16 = row.getCell(colIndex++);
-                cell16.setCellStyle(numberStyle);
-                cell16.setCellValue(mm[16] instanceof Number ? ((Number) mm[16]).doubleValue() : 0);
-
-                // 17 - hqlaAcCoreTier1ImpactPct (Long)
-                Cell cell17 = row.getCell(colIndex++);
-                cell17.setCellStyle(numberStyle);
-                cell17.setCellValue(mm[17] instanceof Number ? ((Number) mm[17]).doubleValue() : 0);
-
-                // 18 - irVarConfidenceInterval (String)
-                Cell cell18 = row.getCell(colIndex++);
-                cell18.setCellStyle(textStyle);
-                cell18.setCellValue(mm[18] == null ? "" : mm[18].toString());
-
-                // 19 - irVarHoldingPeriod (String)
-                Cell cell19 = row.getCell(colIndex++);
-                cell19.setCellStyle(textStyle);
-                cell19.setCellValue(mm[19] == null ? "" : mm[19].toString());
-
-                // 20 - irFixedIncomeExposureAed (Long)
-                Cell cell20 = row.getCell(colIndex++);
-                cell20.setCellStyle(numberStyle);
-                cell20.setCellValue(mm[20] instanceof Number ? ((Number) mm[20]).doubleValue() : 0);
-
-                // 21 - irVarExposureAed (Long)
-                Cell cell21 = row.getCell(colIndex++);
-                cell21.setCellStyle(numberStyle);
-                cell21.setCellValue(mm[21] instanceof Number ? ((Number) mm[21]).doubleValue() : 0);
-
-                // 22 - irVarLimitAed (Long)
-                Cell cell22 = row.getCell(colIndex++);
-                cell22.setCellStyle(numberStyle);
-                cell22.setCellValue(mm[22] instanceof Number ? ((Number) mm[22]).doubleValue() : 0);
-
-                // 23 - irStatus (String)
-                Cell cell23 = row.getCell(colIndex++);
-                cell23.setCellStyle(textStyle);
-                cell23.setCellValue(mm[23] == null ? "" : mm[23].toString());
-
-                // 24 - irVarImpactPct (Long)
-                Cell cell24 = row.getCell(colIndex++);
-                cell24.setCellStyle(numberStyle);
-                cell24.setCellValue(mm[24] instanceof Number ? ((Number) mm[24]).doubleValue() : 0);
-
-                // 25 - csVarConfidenceInterval (String)
-                Cell cell25 = row.getCell(colIndex++);
-                cell25.setCellStyle(textStyle);
-                cell25.setCellValue(mm[25] == null ? "" : mm[25].toString());
-
-                // 26 - csVarHoldingPeriod (String)
-                Cell cell26 = row.getCell(colIndex++);
-                cell26.setCellStyle(textStyle);
-                cell26.setCellValue(mm[26] == null ? "" : mm[26].toString());
-
-                // 27 - csFixedIncomeExposureAed (Long)
-                Cell cell27 = row.getCell(colIndex++);
-                cell27.setCellStyle(numberStyle);
-                cell27.setCellValue(mm[27] instanceof Number ? ((Number) mm[27]).doubleValue() : 0);
-
-                // 28 - csVarExposureAed (Long)
-                Cell cell28 = row.getCell(colIndex++);
-                cell28.setCellStyle(numberStyle);
-                cell28.setCellValue(mm[28] instanceof Number ? ((Number) mm[28]).doubleValue() : 0);
-
-                // 29 - csVarLimitAed (Long)
-                Cell cell29 = row.getCell(colIndex++);
-                cell29.setCellStyle(numberStyle);
-                cell29.setCellValue(mm[29] instanceof Number ? ((Number) mm[29]).doubleValue() : 0);
-
-                // 30 - csStatus (String)
-                Cell cell30 = row.getCell(colIndex++);
-                cell30.setCellStyle(textStyle);
-                cell30.setCellValue(mm[30] == null ? "" : mm[30].toString());
-
-                // 31 - csVarImpactPct (Long)
-                Cell cell31 = row.getCell(colIndex++);
-                cell31.setCellStyle(numberStyle);
-                cell31.setCellValue(mm[31] instanceof Number ? ((Number) mm[31]).doubleValue() : 0);
-
-                // 32 - fxVarConfidenceInterval (String)
-                Cell cell32 = row.getCell(colIndex++);
-                cell32.setCellStyle(textStyle);
-                cell32.setCellValue(mm[32] == null ? "" : mm[32].toString());
-
-                // 33 - fxVarHoldingPeriod (String)
-                Cell cell33 = row.getCell(colIndex++);
-                cell33.setCellStyle(textStyle);
-                cell33.setCellValue(mm[33] == null ? "" : mm[33].toString());
-
-                // 34 - fxExposureAed (Long)
-                Cell cell34 = row.getCell(colIndex++);
-                cell34.setCellStyle(numberStyle);
-                cell34.setCellValue(mm[34] instanceof Number ? ((Number) mm[34]).doubleValue() : 0);
-
-                // 35 - fxVarExposureAed (Long)
-                Cell cell35 = row.getCell(colIndex++);
-                cell35.setCellStyle(numberStyle);
-                cell35.setCellValue(mm[35] instanceof Number ? ((Number) mm[35]).doubleValue() : 0);
-
-                // 36 - fxVarLimitAed (Long)
-                Cell cell36 = row.getCell(colIndex++);
-                cell36.setCellStyle(numberStyle);
-                cell36.setCellValue(mm[36] instanceof Number ? ((Number) mm[36]).doubleValue() : 0);
-
-                // 37 - fxStatus (String)
-                Cell cell37 = row.getCell(colIndex++);
-                cell37.setCellStyle(textStyle);
-                cell37.setCellValue(mm[37] == null ? "" : mm[37].toString());
-
-                // 38 - fxVarImpactPct (Long)
-                Cell cell38 = row.getCell(colIndex++);
-                cell38.setCellStyle(numberStyle);
-                cell38.setCellValue(mm[38] instanceof Number ? ((Number) mm[38]).doubleValue() : 0);
-
-                // 39 - eqVarConfidenceInterval (String)
-                Cell cell39 = row.getCell(colIndex++);
-                cell39.setCellStyle(textStyle);
-                cell39.setCellValue(mm[39] == null ? "" : mm[39].toString());
-
-                // 40 - eqVarHoldingPeriod (String)
-                Cell cell40 = row.getCell(colIndex++);
-                cell40.setCellStyle(textStyle);
-                cell40.setCellValue(mm[40] == null ? "" : mm[40].toString());
-
-                // 41 - eqExposureAed (Long)
-                Cell cell41 = row.getCell(colIndex++);
-                cell41.setCellStyle(numberStyle);
-                cell41.setCellValue(mm[41] instanceof Number ? ((Number) mm[41]).doubleValue() : 0);
-
-                // 42 - eqVarExposureAed (Long)
-                Cell cell42 = row.getCell(colIndex++);
-                cell42.setCellStyle(numberStyle);
-                cell42.setCellValue(mm[42] instanceof Number ? ((Number) mm[42]).doubleValue() : 0);
-
-                // 43 - eqVarLimitAed (Long)
-                Cell cell43 = row.getCell(colIndex++);
-                cell43.setCellStyle(numberStyle);
-                cell43.setCellValue(mm[43] instanceof Number ? ((Number) mm[43]).doubleValue() : 0);
-
-                // 44 - eqStatus (String)
-                Cell cell44 = row.getCell(colIndex++);
-                cell44.setCellStyle(textStyle);
-                cell44.setCellValue(mm[44] == null ? "" : mm[44].toString());
-                
-             // 45 - eqVarImpactPct (Long)
-                Cell cell45 = row.getCell(colIndex++);
-                cell45.setCellStyle(numberStyle);
-                cell45.setCellValue(mm[45] instanceof Number ? ((Number) mm[45]).doubleValue() : 0);
-
-                // 46 - commVarConfidenceInterval (String)
-                Cell cell46 = row.getCell(colIndex++);
-                cell46.setCellStyle(textStyle);
-                cell46.setCellValue(mm[46] == null ? "" : mm[46].toString());
-
-                // 47 - commVarHoldingPeriod (String)
-                Cell cell47 = row.getCell(colIndex++);
-                cell47.setCellStyle(textStyle);
-                cell47.setCellValue(mm[47] == null ? "" : mm[47].toString());
-
-                // 48 - commExposureAed (Long)
-                Cell cell48 = row.getCell(colIndex++);
-                cell48.setCellStyle(numberStyle);
-                cell48.setCellValue(mm[48] instanceof Number ? ((Number) mm[48]).doubleValue() : 0);
-
-                // 49 - commVarExposureAed (Long)
-                Cell cell49 = row.getCell(colIndex++);
-                cell49.setCellStyle(numberStyle);
-                cell49.setCellValue(mm[49] instanceof Number ? ((Number) mm[49]).doubleValue() : 0);
-
-                // 50 - commVarLimitAed (Long)
-                Cell cell50 = row.getCell(colIndex++);
-                cell50.setCellStyle(numberStyle);
-                cell50.setCellValue(mm[50] instanceof Number ? ((Number) mm[50]).doubleValue() : 0);
-
-                // 51 - commStatus (String)
-                Cell cell51 = row.getCell(colIndex++);
-                cell51.setCellStyle(textStyle);
-                cell51.setCellValue(mm[51] == null ? "" : mm[51].toString());
-
-                // 52 - commVarImpactPct (Long)
-                Cell cell52 = row.getCell(colIndex++);
-                cell52.setCellStyle(numberStyle);
-                cell52.setCellValue(mm[52] instanceof Number ? ((Number) mm[52]).doubleValue() : 0);
-
-                // 53 - overallVarConfidenceInterval (String)
-                Cell cell53 = row.getCell(colIndex++);
-                cell53.setCellStyle(textStyle);
-                cell53.setCellValue(mm[53] == null ? "" : mm[53].toString());
-
-                // 54 - overallVarHoldingPeriod (String)
-                Cell cell54 = row.getCell(colIndex++);
-                cell54.setCellStyle(textStyle);
-                cell54.setCellValue(mm[54] == null ? "" : mm[54].toString());
-
-                // 55 - varExposureAed (Long)
-                Cell cell55 = row.getCell(colIndex++);
-                cell55.setCellStyle(numberStyle);
-                cell55.setCellValue(mm[55] instanceof Number ? ((Number) mm[55]).doubleValue() : 0);
-
-                // 56 - varLimitAed (Long)
-                Cell cell56 = row.getCell(colIndex++);
-                cell56.setCellStyle(numberStyle);
-                cell56.setCellValue(mm[56] instanceof Number ? ((Number) mm[56]).doubleValue() : 0);
-
-                // 57 - overallVarStatus (String)
-                Cell cell57 = row.getCell(colIndex++);
-                cell57.setCellStyle(textStyle);
-                cell57.setCellValue(mm[57] == null ? "" : mm[57].toString());
-
-                // 58 - portfolioRelativeImpactPct (Long)
-                Cell cell58 = row.getCell(colIndex++);
-                cell58.setCellStyle(numberStyle);
-                cell58.setCellValue(mm[58] instanceof Number ? ((Number) mm[58]).doubleValue() : 0);
-
-                // 59 - expectedShortfallExposureAed (Long)
-                Cell cell59 = row.getCell(colIndex++);
-                cell59.setCellStyle(numberStyle);
-                cell59.setCellValue(mm[59] instanceof Number ? ((Number) mm[59]).doubleValue() : 0);
-
-                // 60 - expectedShortfallLimitAed (Long)
-                Cell cell60 = row.getCell(colIndex++);
-                cell60.setCellStyle(numberStyle);
-                cell60.setCellValue(mm[60] instanceof Number ? ((Number) mm[60]).doubleValue() : 0);
-
-                // 61 - expectedShortfallStatus (String)
-                Cell cell61 = row.getCell(colIndex++);
-                cell61.setCellStyle(textStyle);
-                cell61.setCellValue(mm[61] == null ? "" : mm[61].toString());
-
-                // 62 - expectedShortfallImpactPct (Long)
-                Cell cell62 = row.getCell(colIndex++);
-                cell62.setCellStyle(numberStyle);
-                cell62.setCellValue(mm[62] instanceof Number ? ((Number) mm[62]).doubleValue() : 0);
-
-                // 63 - modifiedDuration (Long)
-                Cell cell63 = row.getCell(colIndex++);
-                cell63.setCellStyle(numberStyle);
-                cell63.setCellValue(mm[63] instanceof Number ? ((Number) mm[63]).doubleValue() : 0);
-
-                // 64 - interestRateShockBps (Integer)
-                Cell cell64 = row.getCell(colIndex++);
-                cell64.setCellStyle(numberStyle);
-                cell64.setCellValue(mm[64] instanceof Number ? ((Number) mm[64]).doubleValue() : 0);
-
-                // 65 - interestRateLimit (Long)
-                Cell cell65 = row.getCell(colIndex++);
-                cell65.setCellStyle(numberStyle);
-                cell65.setCellValue(mm[65] instanceof Number ? ((Number) mm[65]).doubleValue() : 0);
-
-                // 66 - interestRateStatus (String)
-                Cell cell66 = row.getCell(colIndex++);
-                cell66.setCellStyle(textStyle);
-                cell66.setCellValue(mm[66] == null ? "" : mm[66].toString());
-
-                // 67 - dv01Aed (Long)
-                Cell cell67 = row.getCell(colIndex++);
-                cell67.setCellStyle(numberStyle);
-                cell67.setCellValue(mm[67] instanceof Number ? ((Number) mm[67]).doubleValue() : 0);
-
-                // 68 - dv01LimitAed (Long)
-                Cell cell68 = row.getCell(colIndex++);
-                cell68.setCellStyle(numberStyle);
-                cell68.setCellValue(mm[68] instanceof Number ? ((Number) mm[68]).doubleValue() : 0);
-
-                // 69 - dv01Status (String)
-                Cell cell69 = row.getCell(colIndex++);
-                cell69.setCellStyle(textStyle);
-                cell69.setCellValue(mm[69] == null ? "" : mm[69].toString());
-
-                // 70 - dv01TenorGapLt3Aed (Long)
-                Cell cell70 = row.getCell(colIndex++);
-                cell70.setCellStyle(numberStyle);
-                cell70.setCellValue(mm[70] instanceof Number ? ((Number) mm[70]).doubleValue() : 0);
-
-                // 71 - dv01TenorGapGt3Aed (Long)
-                Cell cell71 = row.getCell(colIndex++);
-                cell71.setCellStyle(numberStyle);
-                cell71.setCellValue(mm[71] instanceof Number ? ((Number) mm[71]).doubleValue() : 0);
-
-                // 72 - dv01Check (String)
-                Cell cell72 = row.getCell(colIndex++);
-                cell72.setCellStyle(textStyle);
-                cell72.setCellValue(mm[72] == null ? "" : mm[72].toString());
-                
-             // 73 - cs01Aed (Long)
-                Cell cell73 = row.getCell(colIndex++);
-                cell73.setCellStyle(numberStyle);
-                cell73.setCellValue(mm[73] instanceof Number ? ((Number) mm[73]).doubleValue() : 0);
-
-                // 74 - cs01ShockBps (Integer)
-                Cell cell74 = row.getCell(colIndex++);
-                cell74.setCellStyle(numberStyle);
-                cell74.setCellValue(mm[74] instanceof Number ? ((Number) mm[74]).doubleValue() : 0);
-
-                // 75 - cs01Limit (Long)
-                Cell cell75 = row.getCell(colIndex++);
-                cell75.setCellStyle(numberStyle);
-                cell75.setCellValue(mm[75] instanceof Number ? ((Number) mm[75]).doubleValue() : 0);
-
-                // 76 - cs01Status (String)
-                Cell cell76 = row.getCell(colIndex++);
-                cell76.setCellStyle(textStyle);
-                cell76.setCellValue(mm[76] == null ? "" : mm[76].toString());
-
-                // 77 - cs01InvestmentGradeAed (Long)
-                Cell cell77 = row.getCell(colIndex++);
-                cell77.setCellStyle(numberStyle);
-                cell77.setCellValue(mm[77] instanceof Number ? ((Number) mm[77]).doubleValue() : 0);
-
-                // 78 - cs01SubInvestmentAed (Long)
-                Cell cell78 = row.getCell(colIndex++);
-                cell78.setCellStyle(numberStyle);
-                cell78.setCellValue(mm[78] instanceof Number ? ((Number) mm[78]).doubleValue() : 0);
-
-                // 79 - cs01UnratedAed (Long)
-                Cell cell79 = row.getCell(colIndex++);
-                cell79.setCellStyle(numberStyle);
-                cell79.setCellValue(mm[79] instanceof Number ? ((Number) mm[79]).doubleValue() : 0);
-
-                // 80 - cs01Check (String)
-                Cell cell80 = row.getCell(colIndex++);
-                cell80.setCellStyle(textStyle);
-                cell80.setCellValue(mm[80] == null ? "" : mm[80].toString());
-
-                // 81 - betaEquity (Long)
-                Cell cell81 = row.getCell(colIndex++);
-                cell81.setCellStyle(numberStyle);
-                cell81.setCellValue(mm[81] instanceof Number ? ((Number) mm[81]).doubleValue() : 0);
-
-                // 82 - equityShockBps (Integer)
-                Cell cell82 = row.getCell(colIndex++);
-                cell82.setCellStyle(numberStyle);
-                cell82.setCellValue(mm[82] instanceof Number ? ((Number) mm[82]).doubleValue() : 0);
-
-                // 83 - equityLimit (Long)
-                Cell cell83 = row.getCell(colIndex++);
-                cell83.setCellStyle(numberStyle);
-                cell83.setCellValue(mm[83] instanceof Number ? ((Number) mm[83]).doubleValue() : 0);
-
-                // 84 - equityStatus (String)
-                Cell cell84 = row.getCell(colIndex++);
-                cell84.setCellStyle(textStyle);
-                cell84.setCellValue(mm[84] == null ? "" : mm[84].toString());
-
-                // 85 - creditSpreadImpactAed (Long)
-                Cell cell85 = row.getCell(colIndex++);
-                cell85.setCellStyle(numberStyle);
-                cell85.setCellValue(mm[85] instanceof Number ? ((Number) mm[85]).doubleValue() : 0);
-
-                // 86 - creditSensitiveImpactPct (Long)
-                Cell cell86 = row.getCell(colIndex++);
-                cell86.setCellStyle(numberStyle);
-                cell86.setCellValue(mm[86] instanceof Number ? ((Number) mm[86]).doubleValue() : 0);
-
-                // 87 - interestRateImpactAed (Long)
-                Cell cell87 = row.getCell(colIndex++);
-                cell87.setCellStyle(numberStyle);
-                cell87.setCellValue(mm[87] instanceof Number ? ((Number) mm[87]).doubleValue() : 0);
-
-                // 88 - rateSensitiveImpactPct (Long)
-                Cell cell88 = row.getCell(colIndex++);
-                cell88.setCellStyle(numberStyle);
-                cell88.setCellValue(mm[88] instanceof Number ? ((Number) mm[88]).doubleValue() : 0);
-
-                // 89 - fxImpactAed (Long)
-                Cell cell89 = row.getCell(colIndex++);
-                cell89.setCellStyle(numberStyle);
-                cell89.setCellValue(mm[89] instanceof Number ? ((Number) mm[89]).doubleValue() : 0);
-
-                // 90 - fxSensitiveImpactPct (Long)
-                Cell cell90 = row.getCell(colIndex++);
-                cell90.setCellStyle(numberStyle);
-                cell90.setCellValue(mm[90] instanceof Number ? ((Number) mm[90]).doubleValue() : 0);
-
-                // 91 - equityImpactAed (Long)
-                Cell cell91 = row.getCell(colIndex++);
-                cell91.setCellStyle(numberStyle);
-                cell91.setCellValue(mm[91] instanceof Number ? ((Number) mm[91]).doubleValue() : 0);
-
-                // 92 - equitySensitiveImpactPct (Long)
-                Cell cell92 = row.getCell(colIndex++);
-                cell92.setCellStyle(numberStyle);
-                cell92.setCellValue(mm[92] instanceof Number ? ((Number) mm[92]).doubleValue() : 0);
-
-                // 93 - commoditiesImpactAed (Long)
-                Cell cell93 = row.getCell(colIndex++);
-                cell93.setCellStyle(numberStyle);
-                cell93.setCellValue(mm[93] instanceof Number ? ((Number) mm[93]).doubleValue() : 0);
-
-                // 94 - commoditySensitiveImpactPct (Long)
-                Cell cell94 = row.getCell(colIndex++);
-                cell94.setCellStyle(numberStyle);
-                cell94.setCellValue(mm[94] instanceof Number ? ((Number) mm[94]).doubleValue() : 0);
-
-                // 95 - jtdLossImpactAed (Long)
-                Cell cell95 = row.getCell(colIndex++);
-                cell95.setCellStyle(numberStyle);
-                cell95.setCellValue(mm[95] instanceof Number ? ((Number) mm[95]).doubleValue() : 0);
-
-                // 96 - jtdRelativeImpactPct (Long)
-                Cell cell96 = row.getCell(colIndex++);
-                cell96.setCellStyle(numberStyle);
-                cell96.setCellValue(mm[96] instanceof Number ? ((Number) mm[96]).doubleValue() : 0);
-
-                // 97 - overallImpactAed (Long)
-                Cell cell97 = row.getCell(colIndex++);
-                cell97.setCellStyle(numberStyle);
-                cell97.setCellValue(mm[97] instanceof Number ? ((Number) mm[97]).doubleValue() : 0);
-
-                // 98 - coreTier1RelativeImpactPct (Long)
-                Cell cell98 = row.getCell(colIndex++);
-                cell98.setCellStyle(numberStyle);
-                cell98.setCellValue(mm[98] instanceof Number ? ((Number) mm[98]).doubleValue() : 0);
+                writeInvestmentRiskInputCells(row, mm, dateStyle, textStyle, numberStyle);
             }
-         // Auto-size all columns
+         // Auto-size input columns only; leave grey/formula columns at template width
 			for (int i = 0; i <= 98; i++) {
-			    sheet.autoSizeColumn(i);
+			    if (!AUTOMATIC_FORMULA_COLUMNS.contains(i)) {
+			        sheet.autoSizeColumn(i);
+			    }
 			}
 
-            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            workbook.setForceFormulaRecalculation(true);
+            try {
+                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            } catch (Exception e) {
+                logger.warn("Service: Formula evaluation could not complete; Excel will recalculate on open. {}", e.getMessage());
+            }
             workbook.write(out);
 
             String finalPath = env.getProperty("output.exportpathfinal"); // e.g. finaltemp path
@@ -838,7 +364,131 @@ public class RT_InvestmentRiskDataDashboard_Service {
         }
     }
 
-    
+    /**
+     * Write only user-input (non-grey) cells. Grey cells keep the template formulas:
+     * Bank Symbol/Islamic/Local-Foreign/Tiering (VLOOKUP), book-size and impact %,
+     * Status OK/BREACH, Check, and CS Fixed Income (= IR Fixed Income).
+     */
+    private void writeInvestmentRiskInputCells(Row row, Object[] mm, CellStyle dateStyle,
+            CellStyle textStyle, CellStyle numberStyle) {
+        setDateCell(row, 0, mm, dateStyle);
+        setTextCell(row, 1, mm, textStyle);
+        setTextCell(row, 2, mm, textStyle);
+        setTextCell(row, 3, mm, textStyle);
+        setNumberCell(row, 8, mm, numberStyle);
+        setNumberCell(row, 9, mm, numberStyle);
+        setNumberCell(row, 11, mm, numberStyle);
+        setNumberCell(row, 12, mm, numberStyle);
+        setNumberCell(row, 13, mm, numberStyle);
+        setNumberCell(row, 15, mm, numberStyle);
+        setNumberCell(row, 16, mm, numberStyle);
+        setTextCell(row, 18, mm, textStyle);
+        setTextCell(row, 19, mm, textStyle);
+        setNumberCell(row, 20, mm, numberStyle);
+        setNumberCell(row, 21, mm, numberStyle);
+        setNumberCell(row, 22, mm, numberStyle);
+        setTextCell(row, 25, mm, textStyle);
+        setTextCell(row, 26, mm, textStyle);
+        setNumberCell(row, 28, mm, numberStyle);
+        setNumberCell(row, 29, mm, numberStyle);
+        setTextCell(row, 32, mm, textStyle);
+        setTextCell(row, 33, mm, textStyle);
+        setNumberCell(row, 34, mm, numberStyle);
+        setNumberCell(row, 35, mm, numberStyle);
+        setNumberCell(row, 36, mm, numberStyle);
+        setTextCell(row, 39, mm, textStyle);
+        setTextCell(row, 40, mm, textStyle);
+        setNumberCell(row, 41, mm, numberStyle);
+        setNumberCell(row, 42, mm, numberStyle);
+        setNumberCell(row, 43, mm, numberStyle);
+        setTextCell(row, 46, mm, textStyle);
+        setTextCell(row, 47, mm, textStyle);
+        setNumberCell(row, 48, mm, numberStyle);
+        setNumberCell(row, 49, mm, numberStyle);
+        setNumberCell(row, 50, mm, numberStyle);
+        setTextCell(row, 53, mm, textStyle);
+        setTextCell(row, 54, mm, textStyle);
+        setNumberCell(row, 55, mm, numberStyle);
+        setNumberCell(row, 56, mm, numberStyle);
+        setNumberCell(row, 59, mm, numberStyle);
+        setNumberCell(row, 60, mm, numberStyle);
+        setNumberCell(row, 63, mm, numberStyle);
+        setNumberCell(row, 64, mm, numberStyle);
+        setNumberCell(row, 65, mm, numberStyle);
+        setNumberCell(row, 67, mm, numberStyle);
+        setNumberCell(row, 68, mm, numberStyle);
+        setNumberCell(row, 70, mm, numberStyle);
+        setNumberCell(row, 71, mm, numberStyle);
+        setNumberCell(row, 73, mm, numberStyle);
+        setNumberCell(row, 74, mm, numberStyle);
+        setNumberCell(row, 75, mm, numberStyle);
+        setNumberCell(row, 77, mm, numberStyle);
+        setNumberCell(row, 78, mm, numberStyle);
+        setNumberCell(row, 79, mm, numberStyle);
+        setNumberCell(row, 81, mm, numberStyle);
+        setNumberCell(row, 82, mm, numberStyle);
+        setNumberCell(row, 83, mm, numberStyle);
+        setNumberCell(row, 85, mm, numberStyle);
+        setNumberCell(row, 87, mm, numberStyle);
+        setNumberCell(row, 89, mm, numberStyle);
+        setNumberCell(row, 91, mm, numberStyle);
+        setNumberCell(row, 93, mm, numberStyle);
+        setNumberCell(row, 95, mm, numberStyle);
+        setNumberCell(row, 97, mm, numberStyle);
+    }
 
-    
+    private boolean skipAutomaticCell(Row row, int col) {
+        if (AUTOMATIC_FORMULA_COLUMNS.contains(col)) {
+            return true;
+        }
+        Cell existing = row.getCell(col);
+        return existing != null && existing.getCellTypeEnum() == CellType.FORMULA;
+    }
+
+    private Cell writableCell(Row row, int col) {
+        if (skipAutomaticCell(row, col)) {
+            return null;
+        }
+        Cell cell = row.getCell(col);
+        if (cell == null) {
+            cell = row.createCell(col);
+        }
+        return cell;
+    }
+
+    private void setDateCell(Row row, int col, Object[] mm, CellStyle dateStyle) {
+        Cell cell = writableCell(row, col);
+        if (cell == null) {
+            return;
+        }
+        cell.setCellStyle(dateStyle);
+        cell.setCellValue(valueAt(mm, col) instanceof Date ? (Date) valueAt(mm, col) : null);
+    }
+
+    private void setTextCell(Row row, int col, Object[] mm, CellStyle textStyle) {
+        Cell cell = writableCell(row, col);
+        if (cell == null) {
+            return;
+        }
+        cell.setCellStyle(textStyle);
+        Object value = valueAt(mm, col);
+        cell.setCellValue(value == null ? "" : value.toString());
+    }
+
+    private void setNumberCell(Row row, int col, Object[] mm, CellStyle numberStyle) {
+        Cell cell = writableCell(row, col);
+        if (cell == null) {
+            return;
+        }
+        cell.setCellStyle(numberStyle);
+        Object value = valueAt(mm, col);
+        cell.setCellValue(value instanceof Number ? ((Number) value).doubleValue() : 0);
+    }
+
+    private Object valueAt(Object[] mm, int col) {
+        if (mm == null || col < 0 || col >= mm.length) {
+            return null;
+        }
+        return mm[col];
+    }
 }
