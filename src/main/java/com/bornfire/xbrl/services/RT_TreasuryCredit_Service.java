@@ -12,16 +12,19 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -39,6 +42,17 @@ import com.bornfire.xbrl.entities.RT_TreasuryCreditRepo;
 public class RT_TreasuryCredit_Service {
 
 	private static final Logger logger = LoggerFactory.getLogger(RT_TreasuryCredit_Service.class);
+
+	/**
+	 * Grey / formula columns on CBUAE Treasury Credit "Data" sheet (0-based).
+	 * E-H: Bank Symbol / Islamic / Local-Foreign / Tiering (VLOOKUP)
+	 * L: Final Rating CBUAE (IFNA/VLOOKUP) — Data!L4
+	 * N: CBUAE Geographical Zone (VLOOKUP)
+	 * R,U,X,AA,AD,AG,AJ,AM,AP,AS: utilization %
+	 * AT-AW: Treasury limit / exposure totals
+	 */
+	private static final Set<Integer> AUTOMATIC_FORMULA_COLUMNS = new HashSet<Integer>(
+			Arrays.asList(4, 5, 6, 7, 11, 13, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 45, 46, 47, 48));
 	
     @Autowired
     RT_TreasuryCreditRepo treasuryRepo;
@@ -238,7 +252,10 @@ public class RT_TreasuryCredit_Service {
     				Workbook workbook = WorkbookFactory.create(templateInputStream);
     				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-    			Sheet sheet = workbook.getSheetAt(2);
+    			Sheet sheet = workbook.getSheet("Data");
+    			if (sheet == null) {
+    				sheet = workbook.getSheetAt(2);
+    			}
 
     			CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -262,245 +279,55 @@ public class RT_TreasuryCredit_Service {
     			numberStyle.setBorderLeft(BorderStyle.THIN);
     			numberStyle.setBorderRight(BorderStyle.THIN);
 
-    			CellStyle percentStyle = workbook.createCellStyle();
-    			percentStyle.setDataFormat(createHelper.createDataFormat().getFormat("0.00%"));
-    			percentStyle.setBorderBottom(BorderStyle.THIN);
-    			percentStyle.setBorderTop(BorderStyle.THIN);
-    			percentStyle.setBorderLeft(BorderStyle.THIN);
-    			percentStyle.setBorderRight(BorderStyle.THIN);
-
     			int startRow = 3;
+    			Row templateRow = sheet.getRow(startRow);
+    			Set<Integer> automaticColumns = detectAutomaticColumns(templateRow);
+    			Map<Integer, String> templateFormulas = snapshotFormulas(templateRow, automaticColumns);
+    			int templateExcelRow = startRow + 1;
 
     			for (int i = 0; i < dataList.size(); i++) {
     			    RT_TreasuryCreditEntity record = dataList.get(i);
-    			    Row row = sheet.getRow(startRow + i);
-    			    if (row == null) row = sheet.createRow(startRow + i);
-
-    			    int col = 0;
-
-    			    // 0 - REPORT_DATE
-    			    Cell cell0 = row.createCell(col++);
-    			    if (record.getReportDate() != null) {
-    			        cell0.setCellValue(record.getReportDate());
-    			        cell0.setCellStyle(dateStyle);
-    			    } else {
-    			        cell0.setCellValue("");
-    			        cell0.setCellStyle(textStyle);
+    			    int rowIndex = startRow + i;
+    			    Row row = sheet.getRow(rowIndex);
+    			    if (row == null) {
+    			        row = sheet.createRow(rowIndex);
     			    }
 
-    			    // 1 - BANK_NAME
-    			    Cell cell1 = row.createCell(col++);
-    			    cell1.setCellValue(record.getBankName() != null ? record.getBankName() : "");
-    			    cell1.setCellStyle(textStyle);
+    			    copyAutomaticFormulaCells(templateRow, row, automaticColumns, templateFormulas, templateExcelRow,
+    			            rowIndex + 1);
 
-    			    // 2 - HEAD_OFFICE_SUBSIDIARY
-    			    Cell cell2 = row.createCell(col++);
-    			    cell2.setCellValue(record.getHeadOfficeSubsidiary() != null ? record.getHeadOfficeSubsidiary() : "");
-    			    cell2.setCellStyle(textStyle);
-
-    			    // 3 - SUBSIDIARY
-    			    Cell cell3 = row.createCell(col++);
-    			    cell3.setCellValue(record.getSubsidiary() != null ? record.getSubsidiary() : "");
-    			    cell3.setCellStyle(textStyle);
-
-    			    // 4 - BANK_SYMBOL
-    			    Cell cell4 = row.createCell(col++);
-    			    cell4.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
-    			    cell4.setCellStyle(textStyle);
-
-    			    // 5 - CONVENTIONAL_ISLAMIC
-    			    Cell cell5 = row.createCell(col++);
-    			    cell5.setCellValue(record.getConventionalIslamic() != null ? record.getConventionalIslamic() : "");
-    			    cell5.setCellStyle(textStyle);
-
-    			    // 6 - LOCAL_FOREIGN
-    			    Cell cell6 = row.createCell(col++);
-    			    cell6.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
-    			    cell6.setCellStyle(textStyle);
-
-    			    // 7 - CBUAE_TIERING
-    			    Cell cell7 = row.createCell(col++);
-    			    cell7.setCellValue(record.getCbuaeTiering() != null ? record.getCbuaeTiering() : "");
-    			    cell7.setCellStyle(textStyle);
-
-    			    // 8 - COUNTERPARTY_NAME
-    			    Cell cell8 = row.createCell(col++);
-    			    cell8.setCellValue(record.getCounterpartyName() != null ? record.getCounterpartyName() : "");
-    			    cell8.setCellStyle(textStyle);
-
-    			    // 9 - COUNTERPARTY_INT_REF
-    			    Cell cell9 = row.createCell(col++);
-    			    cell9.setCellValue(record.getCounterpartyIntRef() != null ? record.getCounterpartyIntRef() : "");
-    			    cell9.setCellStyle(textStyle);
-
-    			    // 10 - COUNTERPARTY_RISK_RATING
-    			    Cell cell10 = row.createCell(col++);
-    			    cell10.setCellValue(record.getCounterpartyRiskRating() != null ? record.getCounterpartyRiskRating() : "");
-    			    cell10.setCellStyle(textStyle);
-
-    			    // 11 - FINAL_RATING_CBUAE
-    			    Cell cell11 = row.createCell(col++);
-    			    cell11.setCellValue(record.getFinalRatingCbuae() != null ? record.getFinalRatingCbuae() : "");
-    			    cell11.setCellStyle(textStyle);
-
-    			    // 12 - COUNTRY_OF_RISK
-    			    Cell cell12 = row.createCell(col++);
-    			    cell12.setCellValue(record.getCountryOfRisk() != null ? record.getCountryOfRisk() : "");
-    			    cell12.setCellStyle(textStyle);
-
-    			    // 13 - CBUAE_GEOGRAPHICAL_ZONE
-    			    Cell cell13 = row.createCell(col++);
-    			    cell13.setCellValue(record.getCbuaeGeographicalZone() != null ? record.getCbuaeGeographicalZone() : "");
-    			    cell13.setCellStyle(textStyle);
-
-    			    // 14 - COUNTERPARTY_TYPE
-    			    Cell cell14 = row.createCell(col++);
-    			    cell14.setCellValue(record.getCounterpartyType() != null ? record.getCounterpartyType() : "");
-    			    cell14.setCellStyle(textStyle);
-
-    			    // 15 onwards - BigDecimal columns (style: numberStyle or percentStyle as needed)
-    			    Cell cell15 = row.createCell(col++);
-    			    cell15.setCellValue(record.getLimitAedMoneymarket() != null ? record.getLimitAedMoneymarket().doubleValue() : 0.0);
-    			    cell15.setCellStyle(numberStyle);
-
-    			    Cell cell16 = row.createCell(col++);
-    			    cell16.setCellValue(record.getUtilizationAedMoneymarket() != null ? record.getUtilizationAedMoneymarket().doubleValue() : 0.0);
-    			    cell16.setCellStyle(numberStyle);
-
-    			    Cell cell17 = row.createCell(col++);
-    			    cell17.setCellValue(record.getMoneymarketPercent() != null ? record.getMoneymarketPercent().doubleValue() : 0.0);
-    			    cell17.setCellStyle(percentStyle);
-
-    			    Cell cell18 = row.createCell(col++);
-    			    cell18.setCellValue(record.getLimitAedRepo() != null ? record.getLimitAedRepo().doubleValue() : 0.0);
-    			    cell18.setCellStyle(numberStyle);
-
-    			    Cell cell19 = row.createCell(col++);
-    			    cell19.setCellValue(record.getUtilizationAedRepo() != null ? record.getUtilizationAedRepo().doubleValue() : 0.0);
-    			    cell19.setCellStyle(numberStyle);
-
-    			    Cell cell20 = row.createCell(col++);
-    			    cell20.setCellValue(record.getRepoPercent() != null ? record.getRepoPercent().doubleValue() : 0.0);
-    			    cell20.setCellStyle(percentStyle);
-
-    			    Cell cell21 = row.createCell(col++);
-    			    cell21.setCellValue(record.getLimitAedBonds() != null ? record.getLimitAedBonds().doubleValue() : 0.0);
-    			    cell21.setCellStyle(numberStyle);
-
-    			    Cell cell22 = row.createCell(col++);
-    			    cell22.setCellValue(record.getUtilizationAedBonds() != null ? record.getUtilizationAedBonds().doubleValue() : 0.0);
-    			    cell22.setCellStyle(numberStyle);
-
-    			    Cell cell23 = row.createCell(col++);
-    			    cell23.setCellValue(record.getBondsPercent() != null ? record.getBondsPercent().doubleValue() : 0.0);
-    			    cell23.setCellStyle(percentStyle);
-
-    			    Cell cell24 = row.createCell(col++);
-    			    cell24.setCellValue(record.getLimitAedEquity() != null ? record.getLimitAedEquity().doubleValue() : 0.0);
-    			    cell24.setCellStyle(numberStyle);
-
-    			    Cell cell25 = row.createCell(col++);
-    			    cell25.setCellValue(record.getUtilizationAedEquity() != null ? record.getUtilizationAedEquity().doubleValue() : 0.0);
-    			    cell25.setCellStyle(numberStyle);
-
-    			    Cell cell26 = row.createCell(col++);
-    			    cell26.setCellValue(record.getEquityPercent() != null ? record.getEquityPercent().doubleValue() : 0.0);
-    			    cell26.setCellStyle(percentStyle);
-
-    			    Cell cell27 = row.createCell(col++);
-    			    cell27.setCellValue(record.getLimitAedCredit() != null ? record.getLimitAedCredit().doubleValue() : 0.0);
-    			    cell27.setCellStyle(numberStyle);
-
-    			    Cell cell28 = row.createCell(col++);
-    			    cell28.setCellValue(record.getUtilizationAedCredit() != null ? record.getUtilizationAedCredit().doubleValue() : 0.0);
-    			    cell28.setCellStyle(numberStyle);
-
-    			    Cell cell29 = row.createCell(col++);
-    			    cell29.setCellValue(record.getCreditPercent() != null ? record.getCreditPercent().doubleValue() : 0.0);
-    			    cell29.setCellStyle(percentStyle);
-
-    			    Cell cell30 = row.createCell(col++);
-    			    cell30.setCellValue(record.getLimitAedOther() != null ? record.getLimitAedOther().doubleValue() : 0.0);
-    			    cell30.setCellStyle(numberStyle);
-
-    			    Cell cell31 = row.createCell(col++);
-    			    cell31.setCellValue(record.getUtilizationAedOther() != null ? record.getUtilizationAedOther().doubleValue() : 0.0);
-    			    cell31.setCellStyle(numberStyle);
-
-    			    Cell cell32 = row.createCell(col++);
-    			    cell32.setCellValue(record.getOtherPercent() != null ? record.getOtherPercent().doubleValue() : 0.0);
-    			    cell32.setCellStyle(percentStyle);
-
-    			    Cell cell33 = row.createCell(col++);
-    			    cell33.setCellValue(record.getLimitAedNostro() != null ? record.getLimitAedNostro().doubleValue() : 0.0);
-    			    cell33.setCellStyle(numberStyle);
-
-    			    Cell cell34 = row.createCell(col++);
-    			    cell34.setCellValue(record.getUtilizationAedNostro() != null ? record.getUtilizationAedNostro().doubleValue() : 0.0);
-    			    cell34.setCellStyle(numberStyle);
-
-    			    Cell cell35 = row.createCell(col++);
-    			    cell35.setCellValue(record.getNostroPercent() != null ? record.getNostroPercent().doubleValue() : 0.0);
-    			    cell35.setCellStyle(percentStyle);
-
-    			    Cell cell36 = row.createCell(col++);
-    			    cell36.setCellValue(record.getLimitAedDerivatives() != null ? record.getLimitAedDerivatives().doubleValue() : 0.0);
-    			    cell36.setCellStyle(numberStyle);
-
-    			    Cell cell37 = row.createCell(col++);
-    			    cell37.setCellValue(record.getUtilizationAedDerivatives() != null ? record.getUtilizationAedDerivatives().doubleValue() : 0.0);
-    			    cell37.setCellStyle(numberStyle);
-
-    			    Cell cell38 = row.createCell(col++);
-    			    cell38.setCellValue(record.getDerivativesPercent() != null ? record.getDerivativesPercent().doubleValue() : 0.0);
-    			    cell38.setCellStyle(percentStyle);
-
-    			    Cell cell39 = row.createCell(col++);
-    			    cell39.setCellValue(record.getLimitAedFxsettlement() != null ? record.getLimitAedFxsettlement().doubleValue() : 0.0);
-    			    cell39.setCellStyle(numberStyle);
-
-    			    Cell cell40 = row.createCell(col++);
-    			    cell40.setCellValue(record.getUtilizationAedFxsettlement() != null ? record.getUtilizationAedFxsettlement().doubleValue() : 0.0);
-    			    cell40.setCellStyle(numberStyle);
-
-    			    Cell cell41 = row.createCell(col++);
-    			    cell41.setCellValue(record.getFxsettlementPercent() != null ? record.getFxsettlementPercent().doubleValue() : 0.0);
-    			    cell41.setCellStyle(percentStyle);
-
-    			    Cell cell42 = row.createCell(col++);
-    			    cell42.setCellValue(record.getLimitAedBondsettlement() != null ? record.getLimitAedBondsettlement().doubleValue() : 0.0);
-    			    cell42.setCellStyle(numberStyle);
-
-    			    Cell cell43 = row.createCell(col++);
-    			    cell43.setCellValue(record.getUtilizationAedBondsettlement() != null ? record.getUtilizationAedBondsettlement().doubleValue() : 0.0);
-    			    cell43.setCellStyle(numberStyle);
-
-    			    Cell cell44 = row.createCell(col++);
-    			    cell44.setCellValue(record.getBondsettlementPercent() != null ? record.getBondsettlementPercent().doubleValue() : 0.0);
-    			    cell44.setCellStyle(percentStyle);
-
-    			    Cell cell45 = row.createCell(col++);
-    			    cell45.setCellValue(record.getTreasuryLmtAed() != null ? record.getTreasuryLmtAed().doubleValue() : 0.0);
-    			    cell45.setCellStyle(numberStyle);
-
-    			    Cell cell46 = row.createCell(col++);
-    			    cell46.setCellValue(record.getTreasuryLmt() != null ? record.getTreasuryLmt().doubleValue() : 0.0);
-    			    cell46.setCellStyle(numberStyle);
-
-    			    Cell cell47 = row.createCell(col++);
-    			    cell47.setCellValue(record.getExposureAed() != null ? record.getExposureAed().doubleValue() : 0.0);
-    			    cell47.setCellStyle(numberStyle);
-
-    			    Cell cell48 = row.createCell(col++);
-    			    cell48.setCellValue(record.getExposure() != null ? record.getExposure().doubleValue() : 0.0);
-    			    cell48.setCellStyle(percentStyle);
+    			    setDateValue(row, 0, record.getReportDate(), dateStyle, automaticColumns);
+    			    setTextValue(row, 1, record.getBankName(), textStyle, automaticColumns);
+    			    setTextValue(row, 2, record.getHeadOfficeSubsidiary(), textStyle, automaticColumns);
+    			    setTextValue(row, 3, record.getSubsidiary(), textStyle, automaticColumns);
+    			    setTextValue(row, 8, record.getCounterpartyName(), textStyle, automaticColumns);
+    			    setTextValue(row, 9, record.getCounterpartyIntRef(), textStyle, automaticColumns);
+    			    setTextValue(row, 10, record.getCounterpartyRiskRating(), textStyle, automaticColumns);
+    			    setTextValue(row, 12, record.getCountryOfRisk(), textStyle, automaticColumns);
+    			    setTextValue(row, 14, record.getCounterpartyType(), textStyle, automaticColumns);
+    			    setNumberValue(row, 15, record.getLimitAedMoneymarket(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 16, record.getUtilizationAedMoneymarket(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 18, record.getLimitAedRepo(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 19, record.getUtilizationAedRepo(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 21, record.getLimitAedBonds(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 22, record.getUtilizationAedBonds(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 24, record.getLimitAedEquity(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 25, record.getUtilizationAedEquity(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 27, record.getLimitAedCredit(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 28, record.getUtilizationAedCredit(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 30, record.getLimitAedOther(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 31, record.getUtilizationAedOther(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 33, record.getLimitAedNostro(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 34, record.getUtilizationAedNostro(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 36, record.getLimitAedDerivatives(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 37, record.getUtilizationAedDerivatives(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 39, record.getLimitAedFxsettlement(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 40, record.getUtilizationAedFxsettlement(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 42, record.getLimitAedBondsettlement(), numberStyle, automaticColumns);
+    			    setNumberValue(row, 43, record.getUtilizationAedBondsettlement(), numberStyle, automaticColumns);
     			}
 
-    			int[] percentCols = {17, 20, 23, 26, 29, 32, 35, 38, 41, 44 ,48};
-    			for (int col : percentCols) {
-    			    sheet.autoSizeColumn(col);
-    			}
-                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+    			workbook.setForceFormulaRecalculation(true);
                 workbook.write(out);
 
 				/*
@@ -521,5 +348,119 @@ public class RT_TreasuryCredit_Service {
             }
         }
 
+    private Set<Integer> detectAutomaticColumns(Row templateRow) {
+        Set<Integer> automatic = new HashSet<Integer>(AUTOMATIC_FORMULA_COLUMNS);
+        if (templateRow == null) {
+            return automatic;
+        }
+        short lastCellNum = templateRow.getLastCellNum();
+        if (lastCellNum < 0) {
+            return automatic;
+        }
+        for (int col = 0; col < lastCellNum; col++) {
+            Cell cell = templateRow.getCell(col);
+            if (cell != null && cell.getCellTypeEnum() == CellType.FORMULA) {
+                automatic.add(col);
+            }
+        }
+        return automatic;
+    }
+
+    private Map<Integer, String> snapshotFormulas(Row templateRow, Set<Integer> automaticColumns) {
+        Map<Integer, String> formulas = new LinkedHashMap<Integer, String>();
+        if (templateRow == null) {
+            return formulas;
+        }
+        for (Integer col : automaticColumns) {
+            Cell cell = templateRow.getCell(col);
+            if (cell != null && cell.getCellTypeEnum() == CellType.FORMULA) {
+                formulas.put(col, cell.getCellFormula());
+            }
+        }
+        return formulas;
+    }
+
+    private void copyAutomaticFormulaCells(Row templateRow, Row destRow, Set<Integer> automaticColumns,
+            Map<Integer, String> templateFormulas, int templateExcelRow, int destExcelRow) {
+        for (Integer col : automaticColumns) {
+            Cell destCell = destRow.getCell(col);
+            if (destCell == null) {
+                destCell = destRow.createCell(col);
+            } else if (destCell.getCellTypeEnum() == CellType.FORMULA && templateExcelRow == destExcelRow) {
+                continue;
+            }
+            Cell templateCell = templateRow == null ? null : templateRow.getCell(col);
+            if (templateCell != null && templateCell.getCellStyle() != null) {
+                destCell.setCellStyle(templateCell.getCellStyle());
+            }
+            String formula = templateFormulas.get(col);
+            if (formula != null && !formula.trim().isEmpty()) {
+                destCell.setCellFormula(adjustFormulaRow(formula, templateExcelRow, destExcelRow));
+            }
+        }
+    }
+
+    private String adjustFormulaRow(String formula, int fromExcelRow, int toExcelRow) {
+        if (formula == null || fromExcelRow == toExcelRow) {
+            return formula;
+        }
+        return formula.replaceAll("(\\$?[A-Z]{1,3})(\\$?)" + fromExcelRow + "(?!\\d)", "$1$2" + toExcelRow);
+    }
+
+    private boolean skipAutomaticCell(Set<Integer> automaticColumns, Row row, int col) {
+        if (automaticColumns != null && automaticColumns.contains(col)) {
+            return true;
+        }
+        Cell existing = row.getCell(col);
+        return existing != null && existing.getCellTypeEnum() == CellType.FORMULA;
+    }
+
+    private Cell writableCell(Row row, int col, Set<Integer> automaticColumns) {
+        if (skipAutomaticCell(automaticColumns, row, col)) {
+            return null;
+        }
+        Cell cell = row.getCell(col);
+        if (cell == null) {
+            cell = row.createCell(col);
+        }
+        return cell;
+    }
+
+    private void setDateValue(Row row, int col, Date value, CellStyle dateStyle, Set<Integer> automaticColumns) {
+        Cell cell = writableCell(row, col, automaticColumns);
+        if (cell == null) {
+            return;
+        }
+        if (dateStyle != null) {
+            cell.setCellStyle(dateStyle);
+        }
+        if (value != null) {
+            cell.setCellValue(value);
+        } else {
+            cell.setCellValue("");
+        }
+    }
+
+    private void setTextValue(Row row, int col, String value, CellStyle textStyle, Set<Integer> automaticColumns) {
+        Cell cell = writableCell(row, col, automaticColumns);
+        if (cell == null) {
+            return;
+        }
+        if (textStyle != null) {
+            cell.setCellStyle(textStyle);
+        }
+        cell.setCellValue(value == null ? "" : value);
+    }
+
+    private void setNumberValue(Row row, int col, Number value, CellStyle numberStyle, Set<Integer> automaticColumns) {
+        Cell cell = writableCell(row, col, automaticColumns);
+        if (cell == null) {
+            return;
+        }
+        if (numberStyle != null) {
+            cell.setCellStyle(numberStyle);
+        }
+        cell.setCellValue(value == null ? 0 : value.doubleValue());
+    }
 
 }
