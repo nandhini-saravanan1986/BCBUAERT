@@ -1,26 +1,22 @@
 package com.bornfire.xbrl.controllers;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-
-import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.web.bind.annotation.ResponseBody;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,9 +41,13 @@ import com.bornfire.xbrl.entities.MC_Service_audit_entity;
 import com.bornfire.xbrl.entities.Service_audit_table_Rep;
 import com.bornfire.xbrl.entities.Service_audit_table_entity;
 import com.bornfire.xbrl.services.AuditService;
+import com.bornfire.xbrl.services.McServiceAuditDateHelper;
+import com.bornfire.xbrl.services.McServiceAuditDateHelper.ResolvedDates;
 
 @Controller
 public class AuditController {
+
+	private static final Logger logger = LoggerFactory.getLogger(AuditController.class);
 	
 	@Autowired
 	AuditService auditService;
@@ -207,51 +207,66 @@ public class AuditController {
 			@RequestParam(value = "sortDir", required = false) String sortDir,
 			@RequestParam Map<String, String> allParams, Model model) {
 
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-
-		CriteriaQuery<MC_Service_audit_entity> query = cb.createQuery(MC_Service_audit_entity.class);
-		Root<MC_Service_audit_entity> root = query.from(MC_Service_audit_entity.class);
-
-		List<Predicate> predicates = buildPredicates(cb, root, keyword, allParams);
-		if (!predicates.isEmpty()) {
-			query.where(cb.and(predicates.toArray(new Predicate[0])));
-		}
-
-		if (sortCol != null && !sortCol.trim().isEmpty()) {
-			if ("desc".equalsIgnoreCase(sortDir)) {
-				query.orderBy(cb.desc(root.get(sortCol)));
-			} else {
-				query.orderBy(cb.asc(root.get(sortCol)));
-			}
-		} else {
-			query.orderBy(cb.desc(root.get("entry_time")));
-		}
-
-		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-		Root<MC_Service_audit_entity> countRoot = countQuery.from(MC_Service_audit_entity.class);
-
-		List<Predicate> countPredicates = buildPredicates(cb, countRoot, keyword, allParams);
-		countQuery.select(cb.count(countRoot));
-		if (!countPredicates.isEmpty()) {
-			countQuery.where(cb.and(countPredicates.toArray(new Predicate[0])));
-		}
-
-		Long totalRows = entityManager.createQuery(countQuery).getSingleResult();
-
-		List<MC_Service_audit_entity> results = entityManager.createQuery(query).setFirstResult(page * size)
-				.setMaxResults(size).getResultList();
-
-		Pageable pageable = PageRequest.of(page, size);
-		Page<MC_Service_audit_entity> auditPage = new PageImpl<>(results, pageable, totalRows);
-
-		model.addAttribute("page", auditPage);
 		model.addAttribute("keyword", keyword);
+		Pageable pageable = PageRequest.of(page, size);
+
+		ResolvedDates dateFilter = McServiceAuditDateHelper.resolveForView(allParams.get("searchType"),
+				allParams.get("entry_date"), allParams.get("fromDate"), allParams.get("toDate"));
+
+		if (dateFilter.hasError()) {
+			model.addAttribute("errorMessage", dateFilter.getErrorMessage());
+			model.addAttribute("page", emptyAuditPage(pageable));
+			return "MC_Service_Audit";
+		}
+
+		try {
+			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+			CriteriaQuery<MC_Service_audit_entity> query = cb.createQuery(MC_Service_audit_entity.class);
+			Root<MC_Service_audit_entity> root = query.from(MC_Service_audit_entity.class);
+
+			List<Predicate> predicates = buildPredicates(cb, root, keyword, allParams, dateFilter);
+			if (!predicates.isEmpty()) {
+				query.where(cb.and(predicates.toArray(new Predicate[0])));
+			}
+
+			if (sortCol != null && !sortCol.trim().isEmpty()) {
+				if ("desc".equalsIgnoreCase(sortDir)) {
+					query.orderBy(cb.desc(root.get(sortCol)));
+				} else {
+					query.orderBy(cb.asc(root.get(sortCol)));
+				}
+			} else {
+				query.orderBy(cb.desc(root.get("entry_time")));
+			}
+
+			CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+			Root<MC_Service_audit_entity> countRoot = countQuery.from(MC_Service_audit_entity.class);
+
+			List<Predicate> countPredicates = buildPredicates(cb, countRoot, keyword, allParams, dateFilter);
+			countQuery.select(cb.count(countRoot));
+			if (!countPredicates.isEmpty()) {
+				countQuery.where(cb.and(countPredicates.toArray(new Predicate[0])));
+			}
+
+			Long totalRows = entityManager.createQuery(countQuery).getSingleResult();
+
+			List<MC_Service_audit_entity> results = entityManager.createQuery(query).setFirstResult(page * size)
+					.setMaxResults(size).getResultList();
+
+			Page<MC_Service_audit_entity> auditPage = new PageImpl<>(results, pageable, totalRows);
+			model.addAttribute("page", auditPage);
+		} catch (Exception e) {
+			logger.error("Unable to retrieve Market Conduct Service Audit records", e);
+			model.addAttribute("errorMessage", "Unable to retrieve audit records. Please try again.");
+			model.addAttribute("page", emptyAuditPage(pageable));
+		}
 
 		return "MC_Service_Audit";
 	}
 
 	private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<MC_Service_audit_entity> root, String keyword,
-			Map<String, String> allParams) {
+			Map<String, String> allParams, ResolvedDates dateFilter) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (keyword != null && !keyword.trim().isEmpty()) {
@@ -274,118 +289,75 @@ public class AuditController {
 			predicates.add(cb.or(pScreen, pFunc, pUser, pSession, pModi, pHeader));
 		}
 
-		List<String> ignoredParams = Arrays.asList("page", "size", "keyword", "sortCol", "sortDir", "groupBy", "_");
+		List<String> ignoredParams = Arrays.asList("page", "size", "keyword", "sortCol", "sortDir", "groupBy", "_",
+				"searchType", "fromDate", "toDate", "entry_date", "entry_time", "targetColumn");
 		for (Map.Entry<String, String> param : allParams.entrySet()) {
 			String key = param.getKey();
 			String val = param.getValue();
 
 			if (!ignoredParams.contains(key) && val != null && !val.trim().isEmpty()) {
-
-				if ("entry_date".equals(key)) {
-					try {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-						Date parsedDate = sdf.parse(val);
-
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(parsedDate);
-						cal.set(Calendar.HOUR_OF_DAY, 0);
-						cal.set(Calendar.MINUTE, 0);
-						cal.set(Calendar.SECOND, 0);
-						Date startOfDay = cal.getTime();
-
-						cal.set(Calendar.HOUR_OF_DAY, 23);
-						cal.set(Calendar.MINUTE, 59);
-						cal.set(Calendar.SECOND, 59);
-						Date endOfDay = cal.getTime();
-
-						predicates.add(cb.between(root.get("entry_time"), startOfDay, endOfDay));
-
-					} catch (Exception e) {
-						System.out.println("Invalid date format received from UI: " + val);
+				if (val.contains(",")) {
+					String[] valuesArray = val.split(",");
+					CriteriaBuilder.In<String> inClause = cb.in(root.get(key));
+					for (String v : valuesArray) {
+						inClause.value(v.trim());
 					}
-				} else if ("entry_time".equals(key)) {
-
+					predicates.add(inClause);
 				} else {
-					if (val.contains(",")) {
-						String[] valuesArray = val.split(",");
-						CriteriaBuilder.In<String> inClause = cb.in(root.get(key));
-						for (String v : valuesArray) {
-							inClause.value(v.trim());
-						}
-						predicates.add(inClause);
-					} else {
-						predicates.add(cb.equal(root.get(key), val));
-					}
+					predicates.add(cb.equal(root.get(key), val));
 				}
 			}
 		}
+
+		addDatePredicates(cb, root, predicates, dateFilter);
 		return predicates;
 	}
+
+	private void addDatePredicates(CriteriaBuilder cb, Root<MC_Service_audit_entity> root, List<Predicate> predicates,
+			ResolvedDates dateFilter) {
+		if (dateFilter == null || !dateFilter.hasBounds()) {
+			return;
+		}
+		if (dateFilter.isExclusiveEnd()) {
+			predicates.add(cb.greaterThanOrEqualTo(root.<Date>get("entry_time"), dateFilter.getStartInclusive()));
+			predicates.add(cb.lessThan(root.<Date>get("entry_time"), dateFilter.getEndBound()));
+		} else {
+			predicates.add(cb.between(root.get("entry_time"), dateFilter.getStartInclusive(), dateFilter.getEndBound()));
+		}
+	}
+
+	private Page<MC_Service_audit_entity> emptyAuditPage(Pageable pageable) {
+		return new PageImpl<MC_Service_audit_entity>(new ArrayList<MC_Service_audit_entity>(), pageable, 0);
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/MC_Service_Audit/distinct", method = RequestMethod.GET)
 	public List<String> getDistinctValues(@RequestParam("targetColumn") String targetColumn,
 			@RequestParam Map<String, String> allParams) {
 
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<String> query = cb.createQuery(String.class);
-		Root<MC_Service_audit_entity> root = query.from(MC_Service_audit_entity.class);
-
-		query.select(root.get(targetColumn)).distinct(true);
-
-		List<Predicate> predicates = new ArrayList<>();
-
-		List<String> ignoredParams = Arrays.asList("targetColumn", "page", "size", "keyword", "sortCol", "sortDir",
-				"groupBy", "_");
-
-		for (Map.Entry<String, String> param : allParams.entrySet()) {
-			String key = param.getKey();
-			String val = param.getValue();
-
-			if (!ignoredParams.contains(key) && val != null && !val.trim().isEmpty()) {
-
-				if ("entry_date".equals(key)) {
-					try {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-						Date parsedDate = sdf.parse(val);
-
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(parsedDate);
-						cal.set(Calendar.HOUR_OF_DAY, 0);
-						cal.set(Calendar.MINUTE, 0);
-						cal.set(Calendar.SECOND, 0);
-						Date startOfDay = cal.getTime();
-
-						cal.set(Calendar.HOUR_OF_DAY, 23);
-						cal.set(Calendar.MINUTE, 59);
-						cal.set(Calendar.SECOND, 59);
-						Date endOfDay = cal.getTime();
-
-						predicates.add(cb.between(root.get("entry_time"), startOfDay, endOfDay));
-					} catch (Exception e) {
-						System.out.println("Invalid date format in distinct API: " + val);
-					}
-				} else if ("entry_time".equals(key)) {
-				} else {
-					if (val.contains(",")) {
-						String[] valuesArray = val.split(",");
-						CriteriaBuilder.In<String> inClause = cb.in(root.get(key));
-						for (String v : valuesArray) {
-							inClause.value(v.trim());
-						}
-						predicates.add(inClause);
-					} else {
-						predicates.add(cb.equal(root.get(key), val));
-					}
-				}
+		try {
+			ResolvedDates dateFilter = McServiceAuditDateHelper.resolveForView(allParams.get("searchType"),
+					allParams.get("entry_date"), allParams.get("fromDate"), allParams.get("toDate"));
+			if (dateFilter.hasError()) {
+				return new ArrayList<String>();
 			}
+
+			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+			CriteriaQuery<String> query = cb.createQuery(String.class);
+			Root<MC_Service_audit_entity> root = query.from(MC_Service_audit_entity.class);
+
+			query.select(root.get(targetColumn)).distinct(true);
+
+			List<Predicate> predicates = buildPredicates(cb, root, null, allParams, dateFilter);
+			if (!predicates.isEmpty()) {
+				query.where(cb.and(predicates.toArray(new Predicate[0])));
+			}
+
+			query.orderBy(cb.asc(root.get(targetColumn)));
+			return entityManager.createQuery(query).getResultList();
+		} catch (Exception e) {
+			logger.error("Unable to retrieve distinct Market Conduct Service Audit values", e);
+			return new ArrayList<String>();
 		}
-
-		if (!predicates.isEmpty()) {
-			query.where(cb.and(predicates.toArray(new Predicate[0])));
-		}
-
-		query.orderBy(cb.asc(root.get(targetColumn)));
-
-		return entityManager.createQuery(query).getResultList();
 	}
 }

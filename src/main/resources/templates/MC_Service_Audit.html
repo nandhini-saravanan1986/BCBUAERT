@@ -394,6 +394,73 @@ rotate(
 .hidden {
 	display: none !important;
 }
+
+.audit-date-controls {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.audit-mode-toggle {
+	display: inline-flex;
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	border-radius: 20px;
+	overflow: hidden;
+	background: #ffffff;
+}
+
+.audit-mode-toggle label {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	background: #ffffff;
+	color: #1e293b !important;
+}
+
+.audit-mode-toggle label span {
+	display: inline-block;
+	padding: 6px 14px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #1e293b !important;
+	background: #ffffff;
+}
+
+.audit-mode-toggle input {
+	display: none;
+}
+
+.audit-mode-toggle input:checked + span {
+	background: #FF7B00 !important;
+	color: #ffffff !important;
+}
+
+.audit-date-fields {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.audit-date-fields label {
+	margin: 0;
+	font-weight: bold;
+	color: var(--bank-primary-dark);
+}
+
+.audit-error-banner {
+	margin: 10px 20px 0;
+	padding: 8px 14px;
+	border-radius: 6px;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	color: #b91c1c;
+	font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -412,26 +479,53 @@ rotate(
 					<h4>SERVICE AUDIT</h4>
 				</div>
 
-				<div class="d-flex align-items-center" style="gap: 15px;">
-					<div class="d-flex align-items-center" style="gap: 8px;">
-						<label for="globalDateFilter"
-							style="margin: 0; font-weight: bold; color: var(--bank-primary-dark);">Date:</label>
+				<div class="d-flex align-items-center audit-date-controls">
+					<div class="audit-mode-toggle" role="radiogroup" aria-label="Date search type">
+						<label>
+							<input type="radio" name="searchType" id="searchTypeSingle" value="SINGLE" checked>
+							<span>Particular Date</span>
+						</label>
+						<label>
+							<input type="radio" name="searchType" id="searchTypeRange" value="RANGE">
+							<span>Date Range</span>
+						</label>
+					</div>
+
+					<div id="singleDatePanel" class="audit-date-fields">
+						<label for="globalDateFilter">Date:</label>
 						<input type="date" id="globalDateFilter"
 							class="audit-search-input"
 							style="width: 140px; padding: 6px 12px;">
+						<button type="button" id="viewSingleBtn" class="role-btn">View</button>
+						<button type="button" id="downloadSingleBtn" class="role-btn">
+							<i class="fa fa-download" style="margin-right: 6px;"></i> Download
+						</button>
+					</div>
+
+					<div id="rangeDatePanel" class="audit-date-fields hidden">
+						<label for="rangeFromDate">From Date:</label>
+						<input type="date" id="rangeFromDate"
+							class="audit-search-input"
+							style="width: 140px; padding: 6px 12px;">
+						<label for="rangeToDate">To Date:</label>
+						<input type="date" id="rangeToDate"
+							class="audit-search-input"
+							style="width: 140px; padding: 6px 12px;">
+						<button type="button" id="viewRangeBtn" class="role-btn">View</button>
+						<button type="button" id="downloadRangeBtn" class="role-btn">
+							<i class="fa fa-download" style="margin-right: 6px;"></i> Download
+						</button>
 					</div>
 
 					<button id="groupByBtn" class="role-btn" style="display: none;">
 						<i class="fa fa-layer-group" style="margin-right: 6px;"></i> Group
 						By: Default
 					</button>
-
-					<button type="button" class="role-btn" data-toggle="modal"
-						data-target="#downloadModal">
-						<i class="fa fa-download" style="margin-right: 6px;"></i> Download
-					</button>
 				</div>
 			</div>
+
+			<div th:if="${errorMessage != null and !#strings.isEmpty(errorMessage)}"
+				class="audit-error-banner" th:text="${errorMessage}"></div>
 
 			<div
 				class="d-flex justify-content-between align-items-center px-4 py-2"
@@ -538,39 +632,6 @@ rotate(
 
 			<div id="filterDropdown" class="dropdown-menu"></div>
 		</div>
-		<!-- Download Excel Modal -->
-<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 450px;">
-        <div class="modal-content" style="border-radius: 8px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-            
-            <div class="modal-header" style="border-bottom: none; padding: 20px 24px 10px;background-color:#FF7B00">
-                <h5 class="modal-title" id="downloadModalLabel" style="font-weight: 600; color: #1e293b; font-size: 18px;">Download Excel</h5>
-            </div>
-            
-            <div class="modal-body" style="padding: 10px 24px 20px;">
-                <div class="row">
-                    <div class="col-6">
-                        <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; font-size: 13px;">From Date</label>
-                        <input type="date" id="dlFromDate" class="form-control" style="border-radius: 4px; border: 1px solid #cbd5e1; font-size: 13px; color: #64748b;">
-                    </div>
-                    <div class="col-6">
-                        <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; font-size: 13px;">To Date</label>
-                        <input type="date" id="dlToDate" class="form-control" style="border-radius: 4px; border: 1px solid #cbd5e1; font-size: 13px; color: #64748b;">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="modal-footer" style="border-top: 1px solid #f1f5f9; padding: 16px 24px;">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #007bff; border-color: #007bff; font-weight: 500; font-size: 13px; padding: 8px 16px;">
-                    Cancel
-                </button>
-                <button type="button" class="btn btn-primary" onclick="executeDownload()" style="background-color: #007bff; border-color: #007bff; font-weight: 500; font-size: 13px; padding: 8px 16px;">
-                    <i class="fa fa-download" style="margin-right: 4px;"></i> Download Excel
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 	</div>
 
 	<script>
@@ -591,17 +652,40 @@ rotate(
     function triggerServerRequest(params) {
         showLoader();
         const url = new URL(window.location.href);
+        const dateParams = getVisibleDateParams();
+        const merged = Object.assign({}, dateParams, params);
         
-        Object.keys(params).forEach(key => {
-            if (params[key] === null || params[key] === '') {
+        Object.keys(merged).forEach(key => {
+            if (merged[key] === null || merged[key] === '') {
                 url.searchParams.delete(key);
             } else {
-                url.searchParams.set(key, params[key]);
+                url.searchParams.set(key, merged[key]);
             }
         });
 
         url.searchParams.delete('page'); 
         window.location.replace(url.toString());
+    }
+
+    function getVisibleDateParams() {
+        const rangeRadio = document.getElementById('searchTypeRange');
+        const singleDate = document.getElementById('globalDateFilter');
+        const fromDate = document.getElementById('rangeFromDate');
+        const toDate = document.getElementById('rangeToDate');
+        if (rangeRadio && rangeRadio.checked) {
+            return {
+                searchType: 'RANGE',
+                fromDate: formatToBackendDate(fromDate && fromDate.value),
+                toDate: formatToBackendDate(toDate && toDate.value),
+                entry_date: null
+            };
+        }
+        return {
+            searchType: 'SINGLE',
+            entry_date: formatToBackendDate(singleDate && singleDate.value),
+            fromDate: null,
+            toDate: null
+        };
     }
 
     searchForm.addEventListener('submit', function(e) {
@@ -816,6 +900,12 @@ rotate(
     };
 
     const dateFilterInput = document.getElementById('globalDateFilter');
+    const rangeFromDateInput = document.getElementById('rangeFromDate');
+    const rangeToDateInput = document.getElementById('rangeToDate');
+    const singleDatePanel = document.getElementById('singleDatePanel');
+    const rangeDatePanel = document.getElementById('rangeDatePanel');
+    const searchTypeSingle = document.getElementById('searchTypeSingle');
+    const searchTypeRange = document.getElementById('searchTypeRange');
 
     function parseToHtmlDate(ddmmyyyy) {
         if(!ddmmyyyy) return '';
@@ -831,15 +921,165 @@ rotate(
         return '';
     }
 
-    let currentUrlDate = urlParams.get('entry_date');
-    if (currentUrlDate) {
-        dateFilterInput.value = parseToHtmlDate(currentUrlDate);
+    function isValidHtmlDate(value) {
+        if (!value) return false;
+        const parts = value.split('-');
+        if (parts.length !== 3) return false;
+        const year = Number(parts[0]);
+        const month = Number(parts[1]);
+        const day = Number(parts[2]);
+        if (!year || !month || !day) return false;
+        const parsed = new Date(year, month - 1, day);
+        return parsed.getFullYear() === year && parsed.getMonth() === month - 1 && parsed.getDate() === day;
+    }
+
+    function applySearchMode(mode, clearHiddenValues) {
+        const isRange = mode === 'RANGE';
+        searchTypeRange.checked = isRange;
+        searchTypeSingle.checked = !isRange;
+        singleDatePanel.classList.toggle('hidden', isRange);
+        rangeDatePanel.classList.toggle('hidden', !isRange);
+        if (clearHiddenValues) {
+            if (isRange) {
+                dateFilterInput.value = '';
+            } else {
+                rangeFromDateInput.value = '';
+                rangeToDateInput.value = '';
+            }
+        }
+    }
+
+    function viewParticularDate() {
+        triggerServerRequest({
+            searchType: 'SINGLE',
+            entry_date: formatToBackendDate(dateFilterInput.value),
+            fromDate: null,
+            toDate: null
+        });
+    }
+
+    function validateRangeSelection() {
+        const fromRaw = rangeFromDateInput.value;
+        const toRaw = rangeToDateInput.value;
+        if (!fromRaw && !toRaw) {
+            alert('Please select From Date and To Date.');
+            return null;
+        }
+        if (!fromRaw) {
+            alert('Please select From Date.');
+            return null;
+        }
+        if (!toRaw) {
+            alert('Please select To Date.');
+            return null;
+        }
+        if (!isValidHtmlDate(fromRaw) || !isValidHtmlDate(toRaw)) {
+            alert('Invalid date. Please enter a valid date in DD-MM-YYYY format.');
+            return null;
+        }
+        if (new Date(fromRaw) > new Date(toRaw)) {
+            alert('From Date cannot be greater than To Date.');
+            return null;
+        }
+        return {
+            fromDate: formatToBackendDate(fromRaw),
+            toDate: formatToBackendDate(toRaw)
+        };
+    }
+
+    function viewDateRange() {
+        const range = validateRangeSelection();
+        if (!range) return;
+        triggerServerRequest({
+            searchType: 'RANGE',
+            fromDate: range.fromDate,
+            toDate: range.toDate,
+            entry_date: null
+        });
+    }
+
+    async function downloadAudit(searchType) {
+        let downloadUrl = new URL('/Riskinsights/MC_Service_Audit/downloadExcel', window.location.origin);
+        downloadUrl.searchParams.set('searchType', searchType);
+
+        if (searchType === 'SINGLE') {
+            if (!dateFilterInput.value) {
+                alert('Please select a date.');
+                return;
+            }
+            if (!isValidHtmlDate(dateFilterInput.value)) {
+                alert('Invalid date. Please enter a valid date in DD-MM-YYYY format.');
+                return;
+            }
+            const selectedDate = formatToBackendDate(dateFilterInput.value);
+            downloadUrl.searchParams.set('entry_date', selectedDate);
+            downloadUrl.searchParams.set('fromDate', selectedDate);
+            downloadUrl.searchParams.set('toDate', selectedDate);
+        } else {
+            const range = validateRangeSelection();
+            if (!range) return;
+            downloadUrl.searchParams.set('fromDate', range.fromDate);
+            downloadUrl.searchParams.set('toDate', range.toDate);
+        }
+
+        try {
+            const response = await fetch(downloadUrl.toString(), { credentials: 'same-origin' });
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.indexOf('application/json') !== -1) {
+                const data = await response.json();
+                alert(data.message || 'No records found');
+                return;
+            }
+            if (!response.ok) {
+                alert('Unable to download the audit report. Please try again.');
+                return;
+            }
+            const blob = await response.blob();
+            if (!blob || blob.size === 0) {
+                alert('No records found');
+                return;
+            }
+            const objectUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = 'Service_Audit_Report.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(objectUrl);
+        } catch (e) {
+            alert('Unable to download the audit report. Please try again.');
+        }
+    }
+
+    const currentSearchType = (urlParams.get('searchType') || 'SINGLE').toUpperCase();
+    applySearchMode(currentSearchType === 'RANGE' ? 'RANGE' : 'SINGLE', false);
+
+    if (urlParams.get('entry_date')) {
+        dateFilterInput.value = parseToHtmlDate(urlParams.get('entry_date'));
     } else {
         dateFilterInput.value = '';
     }
+    rangeFromDateInput.value = parseToHtmlDate(urlParams.get('fromDate'));
+    rangeToDateInput.value = parseToHtmlDate(urlParams.get('toDate'));
+
+    searchTypeSingle.addEventListener('change', function() {
+        if (this.checked) applySearchMode('SINGLE', true);
+    });
+    searchTypeRange.addEventListener('change', function() {
+        if (this.checked) applySearchMode('RANGE', true);
+    });
 
     dateFilterInput.addEventListener('change', function() {
-        triggerServerRequest({ 'entry_date': formatToBackendDate(this.value) });
+        viewParticularDate();
+    });
+    document.getElementById('viewSingleBtn').addEventListener('click', viewParticularDate);
+    document.getElementById('downloadSingleBtn').addEventListener('click', function() {
+        downloadAudit('SINGLE');
+    });
+    document.getElementById('viewRangeBtn').addEventListener('click', viewDateRange);
+    document.getElementById('downloadRangeBtn').addEventListener('click', function() {
+        downloadAudit('RANGE');
     });
 
 
@@ -1053,32 +1293,6 @@ rotate(
     renderGroupedData();
 
 })();
-
-function executeDownload() {
-    const fromDateRaw = document.getElementById('dlFromDate').value;
-    const toDateRaw = document.getElementById('dlToDate').value;
-
-    if (!fromDateRaw || !toDateRaw) {
-        alert("Please select both From Date and To Date.");
-        return;
-    }
-
-    if (new Date(fromDateRaw) > new Date(toDateRaw)) {
-        alert("From Date cannot be greater than To Date.");
-        return;
-    }
-
-    $('#downloadModal').modal('hide');
-
-    const fParts = fromDateRaw.split('-');
-    const fromDate = `${fParts[2]}-${fParts[1]}-${fParts[0]}`;
-    
-    const tParts = toDateRaw.split('-');
-    const toDate = `${tParts[2]}-${tParts[1]}-${tParts[0]}`;
-
-    const downloadUrl = `/Riskinsights/MC_Service_Audit/downloadExcel?fromDate=${fromDate}&toDate=${toDate}`;
-    window.location.href = downloadUrl;
-}
 </script>
 </body>
 </html>

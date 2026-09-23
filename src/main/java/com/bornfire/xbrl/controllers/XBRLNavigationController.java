@@ -112,6 +112,8 @@ import com.bornfire.xbrl.dto.EodAcctBalExcepUpdateDto;
 import com.bornfire.xbrl.services.ASL_Excel_Services;
 import com.bornfire.xbrl.services.AccessAndRolesServices;
 import com.bornfire.xbrl.services.AuditService;
+import com.bornfire.xbrl.services.McServiceAuditDateHelper;
+import com.bornfire.xbrl.services.McServiceAuditDateHelper.ResolvedDates;
 import com.bornfire.xbrl.services.Bloomberg_services;
 import com.bornfire.xbrl.services.BankingBookBillDataService;
 import com.bornfire.xbrl.services.ECLDataUploadService;
@@ -8248,25 +8250,37 @@ System.out.println("sixe==="+excelData.length);
 	MC_Service_audit_Repo MC_Service_audit_Repo;
 
 	@GetMapping("/MC_Service_Audit/downloadExcel")
-	public ResponseEntity<byte[]> downloadExcel(@RequestParam("fromDate") String fromDateStr,
-			@RequestParam("toDate") String toDateStr) {
+	public ResponseEntity<?> downloadExcel(@RequestParam(value = "searchType", required = false) String searchType,
+			@RequestParam(value = "entry_date", required = false) String entryDate,
+			@RequestParam(value = "fromDate", required = false) String fromDateStr,
+			@RequestParam(value = "toDate", required = false) String toDateStr) {
+
+		ResolvedDates dateFilter = McServiceAuditDateHelper.resolveForDownload(searchType, entryDate, fromDateStr,
+				toDateStr);
+		if (dateFilter.hasError()) {
+			return mcAuditDownloadMessage(HttpStatus.BAD_REQUEST, dateFilter.getErrorMessage());
+		}
+		if (!dateFilter.hasBounds()) {
+			return mcAuditDownloadMessage(HttpStatus.BAD_REQUEST, "Please select a date.");
+		}
 
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			Date fromDate = sdf.parse(fromDateStr);
-			Date toDateParsed = sdf.parse(toDateStr);
-
 			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
 			Pattern pattern = Pattern.compile("(.*?):\\s*OldValue:\\s*(.*?),\\s*NewValue:\\s*(.*)");
 
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(toDateParsed);
-			calendar.set(Calendar.HOUR_OF_DAY, 23);
-			calendar.set(Calendar.MINUTE, 59);
-			calendar.set(Calendar.SECOND, 59);
-			Date toDate = calendar.getTime();
+			List<MC_Service_audit_entity> logs;
+			if (dateFilter.isExclusiveEnd()) {
+				logs = MC_Service_audit_Repo.findByEntryTimeRange(dateFilter.getStartInclusive(),
+						dateFilter.getEndBound());
+			} else {
+				logs = MC_Service_audit_Repo.findByEntryTimeBetween(dateFilter.getStartInclusive(),
+						dateFilter.getEndBound());
+			}
 
-			List<MC_Service_audit_entity> logs = MC_Service_audit_Repo.findByEntryTimeBetween(fromDate, toDate);
+			if (logs == null || logs.isEmpty()) {
+				return mcAuditDownloadMessage(HttpStatus.OK, "No records found");
+			}
 
 			Workbook workbook = new XSSFWorkbook();
 			Sheet sheet = workbook.createSheet("Service Audit");
@@ -8460,9 +8474,16 @@ System.out.println("sixe==="+excelData.length);
 			return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Market Conduct Service Audit download failed", e);
+			return mcAuditDownloadMessage(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Unable to download the audit report. Please try again.");
 		}
+	}
+
+	private ResponseEntity<Map<String, String>> mcAuditDownloadMessage(HttpStatus status, String message) {
+		Map<String, String> body = new HashMap<String, String>();
+		body.put("message", message);
+		return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body);
 	}
 	@GetMapping("/signofftablestatus")
 	public ResponseEntity<Map<String, Object>> getSystemStatus(

@@ -31,5 +31,9 @@ public interface MC_Service_audit_Repo extends JpaRepository<MC_Service_audit_en
 	@Query(value = "SELECT * FROM RT_MC_SERVICE_AUDIT_TABLE WHERE entry_time BETWEEN :fromDate AND :toDate", nativeQuery = true)
 	List<MC_Service_audit_entity> findByEntryTimeBetween(@Param("fromDate") Date fromDate,
 			@Param("toDate") Date toDate);
-	
+
+	@Query(value = "SELECT * FROM RT_MC_SERVICE_AUDIT_TABLE WHERE entry_time >= :fromDate AND entry_time < :toDateExclusive ORDER BY entry_time DESC", nativeQuery = true)
+	List<MC_Service_audit_entity> findByEntryTimeRange(@Param("fromDate") Date fromDate,
+			@Param("toDateExclusive") Date toDateExclusive);
+
 }
