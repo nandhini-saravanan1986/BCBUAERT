@@ -286,14 +286,14 @@
 		}
 
 		function submitCounterparty() {
-			if ($('#aliasCounterCode').val().trim() === '') {
+			/* if ($('#aliasCounterCode').val().trim() === '') {
 				alert('Enter Alias Counter Code');
 				return;
 			}
 			if ($('#counterpartyName').val().trim() === '') {
 				alert('Enter Counterparty Name');
 				return;
-			}
+			} */
 			if ($('#aslBankName').val().trim() === '') {
 				alert('Enter ASL Bank Name');
 				return;
@@ -387,26 +387,26 @@
 						<thead>
 							<tr>
 								<th>Counterparty Code</th>
-								<th>Alias Counter Code</th>
-								<th>Counterparty Name</th>
+								<!-- <th>Alias Counter Code</th>
+								<th>Counterparty Name</th>-->
 								<th>ASL Bank Name</th>
-								<th>Rating</th>
+								<!-- <th>Rating</th>
 								<th>Country of Risk</th>
 								<th>CBUAE Geographical Zone</th>
-								<th>Counterparty Type</th>
+								<th>Counterparty Type</th> -->
 								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="row : ${listall}">
 								<td th:text="${row.counterpartyCode}"></td>
-								<td th:text="${row.aliasCounterCode}"></td>
-								<td th:text="${row.counterpartyName}"></td>
+								<!-- <td th:text="${row.aliasCounterCode}"></td>
+								<td th:text="${row.counterpartyName}"></td> -->
 								<td th:text="${row.aslBankName}"></td>
-								<td th:text="${row.counterpartyRating}"></td>
+								<!-- <td th:text="${row.counterpartyRating}"></td>
 								<td th:text="${row.countryRisk}"></td>
 								<td th:text="${row.cbuaeGeographicalZone}"></td>
-								<td th:text="${row.counterpartyType}"></td>
+								<td th:text="${row.counterpartyType}"></td> -->
 								<td class="action-cell">
 									<i class="fa fa-eye text-info" style="cursor:pointer;margin-right:10px" title="View"
 										th:attr="data-code=${row.counterpartyCode}"
@@ -445,13 +445,13 @@
 						<thead>
 							<tr>
 								<th>Counterparty Code</th>
-								<th>Alias Counter Code</th>
-								<th>Counterparty Name</th>
+								<!-- <th>Alias Counter Code</th>
+								<th>Counterparty Name</th> -->
 								<th>ASL Bank Name</th>
-								<th>Rating</th>
+								<!-- <th>Rating</th>
 								<th>Country of Risk</th>
 								<th>CBUAE Geographical Zone</th>
-								<th>Counterparty Type</th>
+								<th>Counterparty Type</th> -->
 								<th>In Maintenance</th>
 								<th>Action</th>
 							</tr>
@@ -459,13 +459,13 @@
 						<tbody>
 							<tr th:each="row : ${outstandingList}">
 								<td th:text="${row.counterpartyCode}"></td>
-								<td th:text="${row.aliasCounterCode}"></td>
-								<td th:text="${row.counterpartyName}"></td>
+								<!-- <td th:text="${row.aliasCounterCode}"></td>
+								<td th:text="${row.counterpartyName}"></td> -->
 								<td th:text="${row.aslBankName}"></td>
-								<td th:text="${row.counterpartyRating}"></td>
+								<!-- <td th:text="${row.counterpartyRating}"></td>
 								<td th:text="${row.countryRisk}"></td>
 								<td th:text="${row.cbuaeGeographicalZone}"></td>
-								<td th:text="${row.counterpartyType}"></td>
+								<td th:text="${row.counterpartyType}"></td> -->
 								<td>
 									<span class="status-pill"
 										th:classappend="${row.presentInMaintenance} ? ' status-yes' : ' status-no'"
@@ -513,22 +513,13 @@
 								<input type="text" name="counterpartyCode" class="form-control form-control-sm" readonly
 									th:value="${record?.counterpartyCode}" />
 							</div>
-							<label class="col-sm-2 col-form-label">Alias Counter Code</label>
+							<!-- <label class="col-sm-2 col-form-label">Alias Counter Code</label>
 							<div class="col-sm-4">
 								<input type="text" id="aliasCounterCode" name="aliasCounterCode"
 									class="form-control form-control-sm" th:value="${record?.aliasCounterCode}"
 									th:readonly="${formmode == 'view'}" />
-							</div>
-						</div>
-
-						<div class="row formline">
-							<label class="col-sm-2 col-form-label">Counterparty Name</label>
-							<div class="col-sm-4">
-								<input type="text" id="counterpartyName" name="counterpartyName"
-									class="form-control form-control-sm" th:value="${record?.counterpartyName}"
-									th:readonly="${formmode == 'view'}" />
-							</div>
-							<label class="col-sm-2 col-form-label">ASL Bank Name</label>
+							</div> -->
+							<label class="col-sm-2 col-form-label">Bank Name</label>
 							<div class="col-sm-4">
 								<select id="aslBankName" name="aslBankName" required
 									class="form-control form-control-sm"
@@ -543,10 +534,20 @@
 										th:selected="${counterpartyname == record?.aslBankName}">
 									</option>
 								</select>
-							</div>
 						</div>
 
-						<div class="row formline">
+						<!-- <div class="row formline">
+							<label class="col-sm-2 col-form-label">Counterparty Name</label>
+							<div class="col-sm-4">
+								<input type="text" id="counterpartyName" name="counterpartyName"
+									class="form-control form-control-sm" th:value="${record?.counterpartyName}"
+									th:readonly="${formmode == 'view'}" />
+							</div>
+							
+							</div> -->
+						</div>
+
+						<!-- <div class="row formline">
 							<label class="col-sm-2 col-form-label">Counterparty Rating</label>
 							<div class="col-sm-4">
 								<input type="text" id="counterpartyRating" name="counterpartyRating"
@@ -570,9 +571,9 @@
 									</option>
 								</select>
 							</div>
-						</div>
+						</div> -->
 
-						<div class="row formline">
+						<!-- <div class="row formline">
 							<label class="col-sm-2 col-form-label">CBUAE Geographical Zone</label>
 							<div class="col-sm-4">
 								<input type="text" id="cbuaeGeographicalZone" name="cbuaeGeographicalZone"
@@ -585,7 +586,7 @@
 									class="form-control form-control-sm" th:value="${record?.counterpartyType}"
 									th:readonly="${formmode == 'view'}" />
 							</div>
-						</div>
+						</div> -->
 
 						<div class="text-center mt-3" th:if="${formmode != 'view'}">
 							<button type="button" class="role-btn px-5" onclick="submitCounterparty()">Save</button>

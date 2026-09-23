@@ -92,8 +92,9 @@ public class MatrixRunService {
     			cs.execute();
             	
             }catch (Exception e) {
-            	
+            	 e.printStackTrace();
             	throw new RuntimeException("Not able to Proceed : " + e.getMessage().split(":")[1], e);
+            	
             	
 			}finally {
 			    try {

@@ -109,12 +109,11 @@ public class CounterpartyMaintenanceService {
 		if (dto == null || isBlank(dto.getCounterpartyCode())) {
 			return "Counterparty Code is required";
 		}
-		if (isBlank(dto.getAliasCounterCode())) {
-			return "Alias Counter Code is required";
-		}
-		if (isBlank(dto.getCounterpartyName())) {
-			return "Counterparty Name is required";
-		}
+		/*
+		 * if (isBlank(dto.getAliasCounterCode())) { return
+		 * "Alias Counter Code is required"; } if (isBlank(dto.getCounterpartyName())) {
+		 * return "Counterparty Name is required"; }
+		 */
 		if (isBlank(dto.getAslBankName())) {
 			return "ASL Bank Name is required";
 		}
