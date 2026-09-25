@@ -2320,6 +2320,14 @@ to {
 								<input type="text" id="filterDeptSearch"
 									class="form-control form-control-sm mb-2"
 									placeholder="Search..." autocomplete="off">
+								<div class="form-check mb-2"
+									style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding-bottom: 5px;">
+									<input class="form-check-input" type="checkbox"
+										id="filterDeptSelectAll"> <label
+										class="form-check-label font-weight-bold"
+										for="filterDeptSelectAll"
+										style="cursor: pointer; color: #212529;">Select All</label>
+								</div>
 
 								<div id="filterDeptCheckboxList"
 									style="max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">
@@ -2403,7 +2411,7 @@ to {
 							<button type="button" class="role-btn" id="cancelBtn"
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								style="padding-right: 12px;" onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -2412,7 +2420,7 @@ to {
 								data-target="#tableStatusModal">SignOff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -3029,7 +3037,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -3038,7 +3046,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist1[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -7065,7 +7073,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -7074,7 +7082,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -9676,7 +9684,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -9685,7 +9693,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -13052,7 +13060,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -13061,7 +13069,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -13505,7 +13513,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -13514,7 +13522,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -13879,7 +13887,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist1[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -13888,7 +13896,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist1[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'MGR' or ROLEID == 'SUP-ADM')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -16426,7 +16434,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -16435,7 +16443,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -17450,7 +17458,7 @@ to {
 								style="display: none;" onclick="cancelEdit()">Cancel</button>
 							<button type="button" class="role-btn" id="downloadBtn"
 								style="padding-right: 12px;"
-								th:if="${reportlist[0].VERIFY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES'}"
 								onclick="downloadData()">
 								<i class="fa fa-download"></i>
 							</button>
@@ -17459,7 +17467,7 @@ to {
 								data-target="#tableStatusModal">Signoff</button>
 							<button type="button" class="role-btn"
 								style="padding-right: 12px;"
-								th:if="${DEPARTMENTVALIDATION != 'YES' and reportlist[0].ENTITY_FLG == 'Y'}"
+								th:if="${DEPARTMENTVALIDATION != 'YES' and (ROLEID == 'ADM-M' or ROLEID == 'ADM-C' or ROLEID == 'SUP-ADM' or ROLEID == 'MGR')}"
 								onclick="downloadConsolidatedData()">
 								<i class="fa fa-download"></i> Consolidated
 							</button>
@@ -23300,7 +23308,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const btnOk = document.getElementById('filterDeptOkBtn');
     const btnCancel = document.getElementById('filterDeptCancelBtn');
     const toggleBtn = document.getElementById('filterDeptDropdownBtn');
+    const selectAllCb = document.getElementById('filterDeptSelectAll');
+    
+    selectAllCb.addEventListener('change', function() {
+        filterCheckboxes.forEach(cb => cb.checked = selectAllCb.checked);
+    });
 
+    filterCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const allChecked = Array.from(filterCheckboxes).every(box => box.checked);
+            selectAllCb.checked = allChecked;
+        });
+    });
+    
     if (!filterHiddenInput) return;
 
     filterDropdownMenu.addEventListener('click', function(e) {
