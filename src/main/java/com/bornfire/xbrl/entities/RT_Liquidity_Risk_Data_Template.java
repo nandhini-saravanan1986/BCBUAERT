@@ -53,9 +53,11 @@ public class RT_Liquidity_Risk_Data_Template {
     @Column(name = "OPTION_TYPE")
     private String optionType;
 
+    @Id
     @Column(name = "RATE_TYPE")
     private String rateType;
 
+    @Id
     @Column(name = "REFERENCE_RATE")
     private String referenceRate;
     

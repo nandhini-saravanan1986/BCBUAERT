@@ -283,9 +283,10 @@ public class RT_InvestmentSecurity_Service {
 				if (row == null)
 					row = sheet.createRow(startRow + i);
 
-				// The following block is exactly the pattern you wanted.
+				// Write every stored column. Grey template cells are overwritten with
+				// database values; they are not left blank for a formula.
 
-				Cell cell0 = row.createCell(0);
+				Cell cell0 = valueCell(row, 0);
 				if (record.getDataDate() != null) {
 					cell0.setCellValue(record.getDataDate());
 					cell0.setCellStyle(dateStyle);
@@ -293,146 +294,146 @@ public class RT_InvestmentSecurity_Service {
 					cell0.setCellValue("");
 					cell0.setCellStyle(textStyle);
 				}
-				Cell cell1 = row.createCell(1);
+				Cell cell1 = valueCell(row, 1);
 				cell1.setCellValue(record.getBankName() != null ? record.getBankName() : "");
 				cell1.setCellStyle(textStyle);
-				Cell cell2 = row.createCell(2);
+				Cell cell2 = valueCell(row, 2);
 				cell2.setCellValue(record.getHeadOfficeSubsidiary() != null ? record.getHeadOfficeSubsidiary() : "");
 				cell2.setCellStyle(textStyle);
-				Cell cell3 = row.createCell(3);
+				Cell cell3 = valueCell(row, 3);
 				cell3.setCellValue(record.getSubsidiary() != null ? record.getSubsidiary() : "");
 				cell3.setCellStyle(textStyle);
-				Cell cell4 = row.createCell(4);
+				Cell cell4 = valueCell(row, 4);
 				cell4.setCellValue(record.getBankSymbol() != null ? record.getBankSymbol() : "");
 				cell4.setCellStyle(textStyle);
-				Cell cell5 = row.createCell(5);
+				Cell cell5 = valueCell(row, 5);
 				cell5.setCellValue(record.getConventionalIslamic() != null ? record.getConventionalIslamic() : "");
 				cell5.setCellStyle(textStyle);
-				Cell cell6 = row.createCell(6);
+				Cell cell6 = valueCell(row, 6);
 				cell6.setCellValue(record.getLocalForeign() != null ? record.getLocalForeign() : "");
 				cell6.setCellStyle(textStyle);
-				Cell cell7 = row.createCell(7);
+				Cell cell7 = valueCell(row, 7);
 				cell7.setCellValue(record.getCbuAeTiering() != null ? record.getCbuAeTiering() : "");
 				cell7.setCellStyle(textStyle);
-				Cell cell8 = row.createCell(8);
+				Cell cell8 = valueCell(row, 8);
 				cell8.setCellValue(
 						record.getAccountingClassification() != null ? record.getAccountingClassification() : "");
 				cell8.setCellStyle(textStyle);
-				Cell cell9 = row.createCell(9);
+				Cell cell9 = valueCell(row, 9);
 				cell9.setCellValue(record.getInstrumentType() != null ? record.getInstrumentType() : "");
 				cell9.setCellStyle(textStyle);
-				Cell cell10 = row.createCell(10);
+				Cell cell10 = valueCell(row, 10);
 				cell10.setCellValue(
 						record.getInstrumentSubcategoryType() != null ? record.getInstrumentSubcategoryType() : "");
 				cell10.setCellStyle(textStyle);
-				Cell cell11 = row.createCell(11);
+				Cell cell11 = valueCell(row, 11);
 				cell11.setCellValue(record.getIsinCode() != null ? record.getIsinCode() : "");
 				cell11.setCellStyle(textStyle);
-				Cell cell12 = row.createCell(12);
+				Cell cell12 = valueCell(row, 12);
 				cell12.setCellValue(
 						record.getBankInternalPortfolioCode() != null ? record.getBankInternalPortfolioCode() : "");
 				cell12.setCellStyle(textStyle);
-				Cell cell13 = row.createCell(13);
+				Cell cell13 = valueCell(row, 13);
 				cell13.setCellValue(record.getCbuAeSecurityId() != null ? record.getCbuAeSecurityId() : "");
 				cell13.setCellStyle(textStyle);
-				Cell cell14 = row.createCell(14);
+				Cell cell14 = valueCell(row, 14);
 				cell14.setCellValue(record.getCbuAeAccessPrimaryKey() != null ? record.getCbuAeAccessPrimaryKey() : "");
 				cell14.setCellStyle(textStyle);
-				Cell cell15 = row.createCell(15);
+				Cell cell15 = valueCell(row, 15);
 				cell15.setCellValue(record.getSecurityDescription() != null ? record.getSecurityDescription() : "");
 				cell15.setCellStyle(textStyle);
-				Cell cell16 = row.createCell(16);
+				Cell cell16 = valueCell(row, 16);
 				cell16.setCellValue(record.getAssetCurrency() != null ? record.getAssetCurrency() : "");
 				cell16.setCellStyle(textStyle);
-				Cell cell17 = row.createCell(17);
+				Cell cell17 = valueCell(row, 17);
 				cell17.setCellValue(record.getObligor() != null ? record.getObligor() : "");
 				cell17.setCellStyle(textStyle);
-				Cell cell18 = row.createCell(18);
+				Cell cell18 = valueCell(row, 18);
 				cell18.setCellValue(record.getCountryOfRisk() != null ? record.getCountryOfRisk() : "");
 				cell18.setCellStyle(textStyle);
-				Cell cell19 = row.createCell(19);
+				Cell cell19 = valueCell(row, 19);
 				cell19.setCellValue(record.getCbuAeGeographicalZone() != null ? record.getCbuAeGeographicalZone() : "");
 				cell19.setCellStyle(textStyle);
-				Cell cell20 = row.createCell(20);
+				Cell cell20 = valueCell(row, 20);
 				cell20.setCellValue(record.getIndustry() != null ? record.getIndustry() : "");
 				cell20.setCellStyle(textStyle);
-				Cell cell21 = row.createCell(21);
+				Cell cell21 = valueCell(row, 21);
 				cell21.setCellValue(record.getSector() != null ? record.getSector() : "");
 				cell21.setCellStyle(textStyle);
-				Cell cell22 = row.createCell(22);
+				Cell cell22 = valueCell(row, 22);
 				cell22.setCellValue(record.getIssuerType() != null ? record.getIssuerType() : "");
 				cell22.setCellStyle(textStyle);
-				Cell cell23 = row.createCell(23);
+				Cell cell23 = valueCell(row, 23);
 				cell23.setCellValue(record.getIssueSize() != null ? record.getIssueSize().doubleValue() : 0.0);
 				cell23.setCellStyle(numberStyle);
-				Cell cell24 = row.createCell(24);
+				Cell cell24 = valueCell(row, 24);
 				cell24.setCellValue(
 						record.getPercentIssueSize() != null ? record.getPercentIssueSize().doubleValue() : 0.0);
 				cell24.setCellStyle(percentStyle);
-				Cell cell25 = row.createCell(25);
+				Cell cell25 = valueCell(row, 25);
 				cell25.setCellValue(
 						record.getNominalTradeCurrency() != null ? record.getNominalTradeCurrency().doubleValue()
 								: 0.0);
 				cell25.setCellStyle(numberStyle);
-				Cell cell26 = row.createCell(26);
+				Cell cell26 = valueCell(row, 26);
 				cell26.setCellValue(
 						record.getNominalAedEquivalent() != null ? record.getNominalAedEquivalent().doubleValue()
 								: 0.0);
 				cell26.setCellStyle(numberStyle);
-				Cell cell27 = row.createCell(27);
+				Cell cell27 = valueCell(row, 27);
 				cell27.setCellValue(
 						record.getPremDiscAedEquivalent() != null ? record.getPremDiscAedEquivalent().doubleValue()
 								: 0.0);
 				cell27.setCellStyle(numberStyle);
-				Cell cell28 = row.createCell(28);
+				Cell cell28 = valueCell(row, 28);
 				cell28.setCellValue(
 						record.getSpecificProvisionAed() != null ? record.getSpecificProvisionAed().doubleValue()
 								: 0.0);
 				cell28.setCellStyle(numberStyle);
-				Cell cell29 = row.createCell(29);
+				Cell cell29 = valueCell(row, 29);
 				cell29.setCellValue(record.getFixedIncomeInfoNetBookPrice() != null
 						? record.getFixedIncomeInfoNetBookPrice().doubleValue()
 						: 0.0);
 				cell29.setCellStyle(numberStyle);
-				Cell cell30 = row.createCell(30);
+				Cell cell30 = valueCell(row, 30);
 				cell30.setCellValue(
 						record.getNetBookValueAed() != null ? record.getNetBookValueAed().doubleValue() : 0.0);
 				cell30.setCellStyle(numberStyle);
-				Cell cell31 = row.createCell(31);
+				Cell cell31 = valueCell(row, 31);
 				cell31.setCellValue(
 						record.getPurchaseYieldToMaturity() != null ? record.getPurchaseYieldToMaturity().doubleValue()
 								: 0.0);
 				cell31.setCellStyle(ytmPercentStyle);
-				Cell cell32 = row.createCell(32);
+				Cell cell32 = valueCell(row, 32);
 				cell32.setCellValue(record.getCleanPrice() != null ? record.getCleanPrice().doubleValue() : 0.0);
 				cell32.setCellStyle(numberStyle);
-				Cell cell33 = row.createCell(33);
+				Cell cell33 = valueCell(row, 33);
 				cell33.setCellValue(
 						record.getCleanMarketValueAed() != null ? record.getCleanMarketValueAed().doubleValue() : 0.0);
 				cell33.setCellStyle(numberStyle);
-				Cell cell34 = row.createCell(34);
+				Cell cell34 = valueCell(row, 34);
 				cell34.setCellValue(
 						record.getCurrentYieldToMaturity() != null ? record.getCurrentYieldToMaturity().doubleValue()
 								: 0.0);
 				cell34.setCellStyle(ytmPercentStyle);
-				Cell cell35 = row.createCell(35);
+				Cell cell35 = valueCell(row, 35);
 				cell35.setCellValue(
 						record.getUnrealizedGainLossAed() != null ? record.getUnrealizedGainLossAed().doubleValue()
 								: 0.0);
 				cell35.setCellStyle(numberStyle);
-				Cell cell36 = row.createCell(36);
+				Cell cell36 = valueCell(row, 36);
 				cell36.setCellValue(record.getSubordinatedDebtSukuk() != null ? record.getSubordinatedDebtSukuk() : "");
 				cell36.setCellStyle(textStyle);
-				Cell cell37 = row.createCell(37);
+				Cell cell37 = valueCell(row, 37);
 				cell37.setCellValue(record.getFinalRatingBanks() != null ? record.getFinalRatingBanks() : "");
 				cell37.setCellStyle(textStyle);
-				Cell cell38 = row.createCell(38);
+				Cell cell38 = valueCell(row, 38);
 				cell38.setCellValue(record.getFinalRatingCbuae() != null ? record.getFinalRatingCbuae() : "");
 				cell38.setCellStyle(textStyle);
-				Cell cell39 = row.createCell(39);
+				Cell cell39 = valueCell(row, 39);
 				cell39.setCellValue(record.getCreditQuality() != null ? record.getCreditQuality() : "");
 				cell39.setCellStyle(textStyle);
-				Cell cell40 = row.createCell(40);
+				Cell cell40 = valueCell(row, 40);
 				if (record.getMaturityDate() != null) {
 					cell40.setCellValue(record.getMaturityDate());
 					cell40.setCellStyle(dateStyle);
@@ -440,128 +441,128 @@ public class RT_InvestmentSecurity_Service {
 					cell40.setCellValue("");
 					cell40.setCellStyle(textStyle);
 				}
-				Cell cell41 = row.createCell(41);
+				Cell cell41 = valueCell(row, 41);
 				cell41.setCellValue(record.getResidualMaturity() != null ? record.getResidualMaturity().doubleValue() : 0.00);
 				cell41.setCellStyle(textStyle);
-				Cell cell42 = row.createCell(42);
+				Cell cell42 = valueCell(row, 42);
 				cell42.setCellValue(record.getMaturityPeriod() != null ? record.getMaturityPeriod() : "");
 				cell42.setCellStyle(textStyle);
-				Cell cell43 = row.createCell(43);
+				Cell cell43 = valueCell(row, 43);
 				cell43.setCellValue(
 						record.getPercentHoldingsFi() != null ? record.getPercentHoldingsFi().doubleValue() : 0.0);
 				cell43.setCellStyle(percentStyle);
-				Cell cell44 = row.createCell(44);
+				Cell cell44 = valueCell(row, 44);
 				cell44.setCellValue(
 						record.getQtyEquityFunds() != null ? record.getQtyEquityFunds().doubleValue() : 0.0);
 				cell44.setCellStyle(numberStyle);
-				Cell cell45 = row.createCell(45);
+				Cell cell45 = valueCell(row, 45);
 				cell45.setCellValue(record.getEquityFloatingFundAssets() != null
 						? record.getEquityFloatingFundAssets().doubleValue()
 						: 0.0);
 				cell45.setCellStyle(numberStyle);
-				Cell cell46 = row.createCell(46);
+				Cell cell46 = valueCell(row, 46);
 				cell46.setCellValue(record.getTotalFloatingShareFundAum() != null
 						? record.getTotalFloatingShareFundAum().doubleValue()
 						: 0.0);
 				cell46.setCellStyle(percentStyle);
-				Cell cell47 = row.createCell(47);
+				Cell cell47 = valueCell(row, 47);
 				cell47.setCellValue(
 						record.getSpecificProvision() != null ? record.getSpecificProvision().doubleValue() : 0.0);
 				cell47.setCellStyle(numberStyle);
-				Cell cell48 = row.createCell(48);
+				Cell cell48 = valueCell(row, 48);
 				cell48.setCellValue(record.getNetBookValue() != null ? record.getNetBookValue().doubleValue() : 0.0);
 				cell48.setCellStyle(numberStyle);
-				Cell cell49 = row.createCell(49);
+				Cell cell49 = valueCell(row, 49);
 				cell49.setCellValue(record.getOtherSecInfoNetBookPrice() != null
 						? record.getOtherSecInfoNetBookPrice().doubleValue()
 						: 0.0);
 				cell49.setCellStyle(numberStyle);
-				Cell cell50 = row.createCell(50);
+				Cell cell50 = valueCell(row, 50);
 				cell50.setCellValue(record.getMarketPrice() != null ? record.getMarketPrice().doubleValue() : 0.0);
 				cell50.setCellStyle(numberStyle);
-				Cell cell51 = row.createCell(51);
+				Cell cell51 = valueCell(row, 51);
 				cell51.setCellValue(
 						record.getFairValueAmountAed() != null ? record.getFairValueAmountAed().doubleValue() : 0.0);
 				cell51.setCellStyle(numberStyle);
-				Cell cell52 = row.createCell(52);
+				Cell cell52 = valueCell(row, 52);
 				cell52.setCellValue(
 						record.getUnrealizedGainLossAgain() != null ? record.getUnrealizedGainLossAgain().doubleValue()
 								: 0.0);
 				cell52.setCellStyle(numberStyle);
-				Cell cell53 = row.createCell(53);
+				Cell cell53 = valueCell(row, 53);
 				cell53.setCellValue(
 						record.getPercentHoldingsOther() != null ? record.getPercentHoldingsOther().doubleValue()
 								: 0.0);
 				cell53.setCellStyle(percentStyle);
-				Cell cell54 = row.createCell(54);
+				Cell cell54 = valueCell(row, 54);
 				cell54.setCellValue(
 						record.getTotalNetBookValueAed() != null ? record.getTotalNetBookValueAed().doubleValue()
 								: 0.0);
 				cell54.setCellStyle(numberStyle);
-				Cell cell55 = row.createCell(55);
+				Cell cell55 = valueCell(row, 55);
 				cell55.setCellValue(
 						record.getTotalMarketValueAed() != null ? record.getTotalMarketValueAed().doubleValue() : 0.0);
 				cell55.setCellStyle(numberStyle);
-				Cell cell56 = row.createCell(56);
+				Cell cell56 = valueCell(row, 56);
 				cell56.setCellValue(
 						record.getTotalUnrealizedGainLoss() != null ? record.getTotalUnrealizedGainLoss().doubleValue()
 								: 0.0);
 				cell56.setCellStyle(numberStyle);
-				Cell cell57 = row.createCell(57);
+				Cell cell57 = valueCell(row, 57);
 				cell57.setCellValue(record.getUnrealizedGainLossContrib() != null
 						? record.getUnrealizedGainLossContrib().doubleValue()
 						: 0.0);
 				cell57.setCellStyle(percentStyle);
-				Cell cell58 = row.createCell(58);
+				Cell cell58 = valueCell(row, 58);
 				cell58.setCellValue(
 						record.getPercentHoldings() != null ? record.getPercentHoldings().doubleValue() : 0.0);
 				cell58.setCellStyle(percentStyle);
-				Cell cell59 = row.createCell(59);
+				Cell cell59 = valueCell(row, 59);
 				cell59.setCellValue(record.getExistingPledgeStatus() != null ? record.getExistingPledgeStatus() : "");
 				cell59.setCellStyle(textStyle);
-				Cell cell60 = row.createCell(60);
+				Cell cell60 = valueCell(row, 60);
 				cell60.setCellValue(
 						record.getPledgedAmountAed() != null ? record.getPledgedAmountAed().doubleValue() : 0.0);
 				cell60.setCellStyle(numberStyle);
-				Cell cell61 = row.createCell(61);
+				Cell cell61 = valueCell(row, 61);
 				cell61.setCellValue(
 						record.getUnencumberedAmountAed() != null ? record.getUnencumberedAmountAed().doubleValue()
 								: 0.0);
 				cell61.setCellStyle(numberStyle);
-				Cell cell62 = row.createCell(62);
+				Cell cell62 = valueCell(row, 62);
 				cell62.setCellValue(
 						record.getProportionUnencumbered() != null ? record.getProportionUnencumbered().doubleValue()
 								: 0.0);
 				cell62.setCellStyle(percentStyle);
-				Cell cell63 = row.createCell(63);
+				Cell cell63 = valueCell(row, 63);
 				cell63.setCellValue(record.getHqlaElarEligibility() != null ? record.getHqlaElarEligibility() : "");
 				cell63.setCellStyle(textStyle);
-				Cell cell64 = row.createCell(64);
+				Cell cell64 = valueCell(row, 64);
 				cell64.setCellValue(record.getLiquidityType() != null ? record.getLiquidityType() : "");
 				cell64.setCellStyle(textStyle);
-				Cell cell65 = row.createCell(65);
+				Cell cell65 = valueCell(row, 65);
 				cell65.setCellValue(record.getSukukType() != null ? record.getSukukType() : "");
 				cell65.setCellStyle(textStyle);
-				Cell cell66 = row.createCell(66);
+				Cell cell66 = valueCell(row, 66);
 				cell66.setCellValue(record.getTtcPd() != null ? record.getTtcPd().doubleValue() : 0.0);
 				cell66.setCellStyle(numberStyle);
-				Cell cell67 = row.createCell(67);
+				Cell cell67 = valueCell(row, 67);
 				cell67.setCellValue(record.getPitPd() != null ? record.getPitPd().doubleValue() : 0.0);
 				cell67.setCellStyle(numberStyle);
-				Cell cell68 = row.createCell(68);
+				Cell cell68 = valueCell(row, 68);
 				cell68.setCellValue(record.getEcl1y() != null ? record.getEcl1y().doubleValue() : 0.0);
 				cell68.setCellStyle(numberStyle);
-				Cell cell69 = row.createCell(69);
+				Cell cell69 = valueCell(row, 69);
 				cell69.setCellValue(record.getEclLifetime() != null ? record.getEclLifetime().doubleValue() : 0.0);
 				cell69.setCellStyle(numberStyle);
-				Cell cell70 = row.createCell(70);
+				Cell cell70 = valueCell(row, 70);
 				cell70.setCellValue(record.getEclFinal() != null ? record.getEclFinal().doubleValue() : 0.0);
 				cell70.setCellStyle(numberStyle);
-				Cell cell71 = row.createCell(71);
+				Cell cell71 = valueCell(row, 71);
 				cell71.setCellValue(record.getIfrs9Staging() != null ? record.getIfrs9Staging() : "");
 				cell71.setCellStyle(textStyle);
 
-				Cell cell73 = row.createCell(73); // Use 73, not 72
+				Cell cell73 = valueCell(row, 73);
 				cell73.setCellValue(
 				    record.getBankCoreTier1CapitalAed() != null ? record.getBankCoreTier1CapitalAed().doubleValue() : 0.0);
 				cell73.setCellStyle(numberStyle);
@@ -585,5 +586,14 @@ public class RT_InvestmentSecurity_Service {
             logger.info("Service: INVESTMENT SECURITIES DATA DATA Excel data successfully written to memory buffer ({} bytes).", out.size());
             return out.toByteArray();
 		}
+	}
+
+	/** Replace any template cell, including a grey formula cell, with a writable cell. */
+	private Cell valueCell(Row row, int col) {
+		Cell existing = row.getCell(col);
+		if (existing != null) {
+			row.removeCell(existing);
+		}
+		return row.createCell(col);
 	}
 }

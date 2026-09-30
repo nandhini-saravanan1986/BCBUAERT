@@ -11,6 +11,8 @@ public class RT_Liquidity_Risk_Data_Template_class implements Serializable{
 	private String glLevel2;
 	private String glLevel3;
 	private String optionType;
+	private String rateType;
+	private String referenceRate;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date reportDate;
 	private String instrumentCurrency;
@@ -38,6 +40,18 @@ public class RT_Liquidity_Risk_Data_Template_class implements Serializable{
 	public void setOptionType(String optionType) {
 		this.optionType = optionType;
 	}
+	public String getRateType() {
+		return rateType;
+	}
+	public void setRateType(String rateType) {
+		this.rateType = rateType;
+	}
+	public String getReferenceRate() {
+		return referenceRate;
+	}
+	public void setReferenceRate(String referenceRate) {
+		this.referenceRate = referenceRate;
+	}
 	public Date getReportDate() {
 		return reportDate;
 	}
@@ -51,12 +65,14 @@ public class RT_Liquidity_Risk_Data_Template_class implements Serializable{
 		this.instrumentCurrency = instrumentCurrency;
 	}
 	public RT_Liquidity_Risk_Data_Template_class(String glLevel1, String glLevel2, String glLevel3, String optionType,
-			Date reportDate, String instrumentCurrency) {
+			String rateType, String referenceRate, Date reportDate, String instrumentCurrency) {
 		super();
 		this.glLevel1 = glLevel1;
 		this.glLevel2 = glLevel2;
 		this.glLevel3 = glLevel3;
 		this.optionType = optionType;
+		this.rateType = rateType;
+		this.referenceRate = referenceRate;
 		this.reportDate = reportDate;
 		this.instrumentCurrency = instrumentCurrency;
 	}
@@ -64,6 +80,7 @@ public class RT_Liquidity_Risk_Data_Template_class implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 	
 	

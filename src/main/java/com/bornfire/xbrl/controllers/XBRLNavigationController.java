@@ -1422,6 +1422,9 @@ public class XBRLNavigationController {
 		       formattedDate = sdf.format(Report_date);
 		   }
 		   
+		   System.out.println("formattedDate="+formattedDate);
+
+		   
 			if ("edit".equalsIgnoreCase(formmode) && glLevel1 != null && glLevel2 != null && glLevel3 != null
 					&& Report_date != null && instrumentCurrency != null) {
 				model.addAttribute("formmode", "edit");
@@ -1452,7 +1455,7 @@ public class XBRLNavigationController {
 			
 		} else {
 			Timestamp lastdatetimestamp = LiquidityRiskDataRepository.findLastReportDate();
-			Timestamp secondlastdatetimestamp = nostroAccBalRepo.findSecondLastReportDate();
+			Timestamp secondlastdatetimestamp = LiquidityRiskDataRepository.findSecondLastReportDate();
 			 String lastDateString = null;
 		     String secondLastDateString = null;
 		     LocalDate lastDate = null;
@@ -4155,6 +4158,7 @@ System.out.println("sixe==="+excelData.length);
 		           formattedDate = report_date.trim();
 		       }
 		   }
+		   
 		   
 	    // 1. DETAIL SCREEN (Cash -> ROW101 / Due from Banks -> ROW102)
 		if ("detail".equalsIgnoreCase(formmode)) {
