@@ -8869,10 +8869,15 @@ public class RT_MC_TABLE_ALL_Service {
 
 		case "diff_all":
 		case "diff_dept":
-			if (nVal.isEmpty())
+			if (nVal.isEmpty()) {
+				if ("Not Applicable".equalsIgnoreCase(dVal)) {
+					return dVal;
+				}
 				return "- " + dVal;
-			if (dVal.isEmpty())
+			}
+			if (dVal.isEmpty()) {
 				return nVal;
+			}
 			return nVal + " - " + dVal;
 
 		default:
