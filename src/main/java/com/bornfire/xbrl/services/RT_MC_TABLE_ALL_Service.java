@@ -81,7 +81,8 @@ public class RT_MC_TABLE_ALL_Service {
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
 	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated) throws Exception {
+			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated, String reportOption,
+			String selectedDepartments) throws Exception {
 		String templateDir = env.getProperty("output.exportpathtemp");
 		Path templatePath = Paths.get(templateDir, templateFileName);
 		System.out.println("Report Date : "+reportDate);
@@ -102,53 +103,71 @@ public class RT_MC_TABLE_ALL_Service {
 				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
 			if ("YES".equalsIgnoreCase(isConsolidated)) {				
-				GenerateTable_1_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
-				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_1_Excel(workbook, branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
+				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("CONSOLIDATED DOWNLOAD", reportDate, screenName(formmode), "ALL_RBS_MC_TABLES", "",
 						"Downloaded successfully", null);
 			} else if ("bankinformation".equalsIgnoreCase(formmode)) {
-				GenerateTable_1_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_1_Excel(workbook, branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE1", "",
 						"Downloaded successfully", null);
 
 			} else if ("bankconsumers".equalsIgnoreCase(formmode)) {
-				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_2_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
 						"RT_MC_TABLE2_1 AND RT_MC_TABLE2_2", "", "Downloaded successfully", null);
 
 			} else if ("complaints".equalsIgnoreCase(formmode)) {
-				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_3_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE3", "",
 						"Downloaded successfully", null);
 			} else if ("retailproducts".equalsIgnoreCase(formmode)) {
-				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_4_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
 						"RT_MC_TABLE4_1 AND RT_MC_TABLE4_2", "", "Downloaded successfully", null);
 			} else if ("bankemployee".equalsIgnoreCase(formmode)) {
-				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_5_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE5", "",
 						"Downloaded successfully", null);
 			} else if ("trainings".equalsIgnoreCase(formmode)) {
-				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_6_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE6", "",
 						"Downloaded successfully", null);
 			} else if ("additionalinformation".equalsIgnoreCase(formmode)) {
-				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_7_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode),
 						"RT_MC_TABLE7_1 AND RT_MC_TABLE7_2", "", "Downloaded successfully", null);
 			} else if ("islamicbanking".equalsIgnoreCase(formmode)) {
-				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_8_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE8", "",
 						"Downloaded successfully", null);
 			} else if ("conductcultureassessment".equalsIgnoreCase(formmode)) {
-				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate);
+				GenerateTable_9_Excel(workbook,branch, jobId, progressMap, formmode, reportDate, isConsolidated,
+						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE9", "",
 						"Downloaded successfully", null);
 			}
@@ -157,22 +176,40 @@ public class RT_MC_TABLE_ALL_Service {
 		}
 	}
 
-	public void GenerateTable_1_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
-		logger.info("Service: Starting Excel generation process in memory.");
-		List<RT_MC_TABLE1_ENTITY> dataList ;
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList= RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-			
-		}
+	public void GenerateTable_1_Excel(Workbook workbook, String branch, String jobId, Map<String, Integer> progressMap, 
+	        String formmode, String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//		List<RT_MC_TABLE1_ENTITY> dataList ;
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList= RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//			
+//		}
 
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE1_ENTITY> dataList = new ArrayList<>();
+
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE1_ENTITY> numData = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE1_ENTITY> deptData = RT_MC_TABLE1_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE1_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
 		
 		try {
 
@@ -262,25 +299,48 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_2_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE2_1_ENTITY> dataList1 ;
+//		List<RT_MC_TABLE2_2_ENTITY> dataList2 ;
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
+//			dataList2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			 dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//			dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+
 		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE2_1_ENTITY> dataList1 = new ArrayList<>();
+	    List<RT_MC_TABLE2_2_ENTITY> dataList2 = new ArrayList<>();
 
-		List<RT_MC_TABLE2_1_ENTITY> dataList1 ;
-		List<RT_MC_TABLE2_2_ENTITY> dataList2 ;
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
-			dataList2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
-		}
-		else {
-			 dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-			dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE2_1_ENTITY> numData1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE2_1_ENTITY> deptData1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
+	        List<RT_MC_TABLE2_2_ENTITY> numData2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE2_2_ENTITY> deptData2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE2_1_ENTITY.class);
+	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE2_2_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	        	dataList1 = RT_MC_TABLE2_1_REPO.findBybranchcode(branch);
+    			dataList2 = RT_MC_TABLE2_2_REPO.findBybranchcode(branch);
+	        } else {
+	        	dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+				dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
 
-
-		if (dataList1.isEmpty() || dataList2.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
+	    
 		
 		try{
 
@@ -1393,22 +1453,44 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_3_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE3_ENTITY> dataList;
+//
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+//		if (dataList.isEmpty()) {
+//			logger.warn("Service: No data found for MC report. Returning empty result.");
+//			return;
+//		}
+
 		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE3_ENTITY> dataList = new ArrayList<>();
 
-		List<RT_MC_TABLE3_ENTITY> dataList;
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE3_ENTITY> numData = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE3_ENTITY> deptData = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE3_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
 
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
-		
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
 
 		try  {
 
@@ -2193,24 +2275,49 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_4_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE4_1_ENTITY> dataList1 ;
+//		List<RT_MC_TABLE4_2_ENTITY> dataList2 ;
+//
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList1 = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
+//			dataList2 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//			dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+
 		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE4_1_ENTITY> dataList1 = new ArrayList<>();
+	    List<RT_MC_TABLE4_2_ENTITY> dataList2 = new ArrayList<>();
 
-		List<RT_MC_TABLE4_1_ENTITY> dataList1 ;
-		List<RT_MC_TABLE4_2_ENTITY> dataList2 ;
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE4_1_ENTITY> numData1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE4_1_ENTITY> deptData1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
+	        List<RT_MC_TABLE4_2_ENTITY> numData2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE4_2_ENTITY> deptData2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE4_1_ENTITY.class);
+	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE4_2_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	        	dataList1 = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
+    			dataList2 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
+	        } else {
+	        	dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+				dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
 
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList1 = RT_MC_TABLE4_1_REPO.findBybranchcode(branch);
-			dataList2 = RT_MC_TABLE4_2_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-			dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList1.isEmpty() || dataList2.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
+	    
 		
 		try {
 
@@ -3428,22 +3535,46 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_5_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
-		logger.info("Service: Starting Excel generation process in memory.");
-
-		List<RT_MC_TABLE5_ENTITY> dataList;
-
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE5_ENTITY> dataList;
+//
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+//		if (dataList.isEmpty()) {
+//			logger.warn("Service: No data found for MC report. Returning empty result.");
+//			return;
+//		}
 		
+
+		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE5_ENTITY> dataList = new ArrayList<>();
+
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE5_ENTITY> numData = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE5_ENTITY> deptData = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE5_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
+	    
 		try  {
 
 			Sheet sheet = workbook.getSheetAt(7);
@@ -3582,20 +3713,43 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_6_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
-		logger.info("Service: Starting Excel generation process in memory.");
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE6_ENTITY> dataList ;
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+//		if (dataList.isEmpty()) {
+//			logger.warn("Service: No data found for MC report. Returning empty result.");
+//			return;
+//		}
 
-		List<RT_MC_TABLE6_ENTITY> dataList ;
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE6_ENTITY> dataList = new ArrayList<>();
+
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE6_ENTITY> numData = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE6_ENTITY> deptData = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE6_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
 		
 		try {
 
@@ -3729,24 +3883,49 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_7_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE7_1_ENTITY> dataList1;
+//		List<RT_MC_TABLE7_2_ENTITY> dataList2 ;
+//
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+//			dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//			dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+
 		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE7_1_ENTITY> dataList1 = new ArrayList<>();
+	    List<RT_MC_TABLE7_2_ENTITY> dataList2 = new ArrayList<>();
 
-		List<RT_MC_TABLE7_1_ENTITY> dataList1;
-		List<RT_MC_TABLE7_2_ENTITY> dataList2 ;
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE7_1_ENTITY> numData1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE7_1_ENTITY> deptData1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
+	        List<RT_MC_TABLE7_2_ENTITY> numData2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE7_2_ENTITY> deptData2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE7_1_ENTITY.class);
+	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE7_2_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	        	dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
+    			dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
+	        } else {
+	        	dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
+				dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
 
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList1 = RT_MC_TABLE7_1_REPO.findBybranchcode(branch);
-			dataList2 = RT_MC_TABLE7_2_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
-			dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList1.isEmpty() || dataList2.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
+	    
 		
 		try {
 
@@ -4474,21 +4653,44 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_8_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
-		logger.info("Service: Starting Excel generation process in memory.");
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE8_ENTITY> dataList ;
+//		
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+//		if (dataList.isEmpty()) {
+//			logger.warn("Service: No data found for MC report. Returning empty result.");
+//			return;
+//		}
 
-		List<RT_MC_TABLE8_ENTITY> dataList ;
-		
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE8_ENTITY> dataList = new ArrayList<>();
+
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE8_ENTITY> numData = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE8_ENTITY> deptData = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE8_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
 		
 
 		try{
@@ -4778,21 +4980,44 @@ public class RT_MC_TABLE_ALL_Service {
 	}
 
 	public void GenerateTable_9_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
-			String reportDate) throws Exception {
+			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
+//		logger.info("Service: Starting Excel generation process in memory.");
+//
+//		List<RT_MC_TABLE9_ENTITY> dataList ;
+//
+//		if (branch =="DEPT" || branch.equals("DEPT")) {
+//			dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+//		}
+//		else {
+//			dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
+//		}
+//		if (dataList.isEmpty()) {
+//			logger.warn("Service: No data found for MC report. Returning empty result.");
+//			return;
+//		}
+
 		logger.info("Service: Starting Excel generation process in memory.");
+	    List<RT_MC_TABLE9_ENTITY> dataList = new ArrayList<>();
 
-		List<RT_MC_TABLE9_ENTITY> dataList ;
+	    if ("YES".equalsIgnoreCase(isConsolidated)) {
+	        
+	        List<RT_MC_TABLE9_ENTITY> numData = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        List<RT_MC_TABLE9_ENTITY> deptData = RT_MC_TABLE9_REPO.findBybranchcode("DEPT");
+	        
+	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE9_ENTITY.class);
+	        
+	    } else {
+	        if ("DEPT".equals(branch)) {
+	            dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
+	        } else {
+	            dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
 
-		if (branch =="DEPT" || branch.equals("DEPT")) {
-			dataList = RT_MC_TABLE9_REPO.findBybranchcode(branch);
-		}
-		else {
-			dataList = RT_MC_TABLE9_REPO.findByReportDateAndBranchCode(reportDate, branch);
-		}
-		if (dataList.isEmpty()) {
-			logger.warn("Service: No data found for MC report. Returning empty result.");
-			return;
-		}
+	    if (dataList == null || dataList.isEmpty()) {
+	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        return;
+	    }
 		
 		try {
 
@@ -8568,4 +8793,90 @@ public class RT_MC_TABLE_ALL_Service {
 		System.out.println("No of row Updated in Sign Of : "+rows_updated);
 	}
 
+	private <T> List<T> mergeReportData(List<T> numList, List<T> deptList, String reportOption,
+			String selectedDepartments, Class<T> clazz) {
+		List<T> mergedList = new ArrayList<>();
+
+		List<String> targetDepts = new ArrayList<>();
+		if (selectedDepartments != null && !selectedDepartments.isEmpty()
+				&& !"ALL".equalsIgnoreCase(selectedDepartments)) {
+			targetDepts = Arrays.asList(selectedDepartments.split("\\s*,\\s*"));
+		}
+
+		int maxRows = Math.min(numList.size(), deptList.size());
+
+		for (int i = 0; i < maxRows; i++) {
+			try {
+				T numRec = numList.get(i);
+				T deptRec = deptList.get(i);
+
+				T mergedRec = clazz.getDeclaredConstructor().newInstance();
+
+				for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+					field.setAccessible(true);
+
+					Object numVal = field.get(numRec);
+					Object deptVal = field.get(deptRec);
+
+					if (field.getType().equals(String.class)) {
+						String finalVal = calculateCellData(reportOption, targetDepts, numVal, deptVal);
+						field.set(mergedRec, finalVal);
+					} else {
+						field.set(mergedRec, numVal);
+					}
+				}
+				mergedList.add(mergedRec);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return mergedList;
+	}
+
+	private String calculateCellData(String reportOption, List<String> targetDepts, Object numValue, Object deptValue) {
+		String nVal = (numValue != null) ? numValue.toString().trim() : "";
+		String dVal = (deptValue != null) ? deptValue.toString().trim() : "";
+
+		if (nVal.isEmpty() && dVal.isEmpty())
+			return null;
+
+		boolean isDeptMatch = true;
+		if (reportOption != null && reportOption.endsWith("_dept")) {
+			isDeptMatch = false;
+			if (!targetDepts.isEmpty() && !dVal.isEmpty()) {
+				for (String target : targetDepts) {
+					if (dVal.contains(target)) {
+						isDeptMatch = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!isDeptMatch)
+			return null;
+		if (reportOption == null)
+			return nVal.isEmpty() ? null : nVal;
+
+		switch (reportOption) {
+		case "values_all":
+		case "values_dept":
+			return nVal.isEmpty() ? null : nVal;
+
+		case "dept_values_all":
+		case "dept_values_dept":
+			return dVal.isEmpty() ? null : dVal;
+
+		case "diff_all":
+		case "diff_dept":
+			if (nVal.isEmpty())
+				return "- " + dVal;
+			if (dVal.isEmpty())
+				return nVal;
+			return nVal + " - " + dVal;
+
+		default:
+			return nVal.isEmpty() ? null : nVal;
+		}
+	}
 }

@@ -7127,16 +7127,21 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/startMcReportJob")
 	@ResponseBody
-	public String startMcReportJob(@RequestParam("branch") String branch,@RequestParam("formmode") String formmode,@RequestParam("reportDate") String reportDate,@RequestParam("isConsolidated") String isConsolidated,HttpServletRequest req) {
+	public String startMcReportJob(@RequestParam("branch") String branch, @RequestParam("formmode") String formmode,
+			@RequestParam("reportDate") String reportDate, @RequestParam("isConsolidated") String isConsolidated,
+			@RequestParam(value = "reportOption", required = false) String reportOption,
+			@RequestParam(value = "selectedDepartments", required = false) String selectedDepartments,
+			HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
-			try {				
+			try {
 				String userid = (String) req.getSession().getAttribute("USERID");
-				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress,formmode,reportDate,userid,attr,isConsolidated);
-				System.out.println("File : "+((fileData==null)?"fail":"pass"));
-				System.out.println("Formmode : "+formmode);
+				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress, formmode,
+						reportDate, userid, attr, isConsolidated, reportOption, selectedDepartments);
+				System.out.println("File : " + ((fileData == null) ? "fail" : "pass"));
+				System.out.println("Formmode : " + formmode);
 				newTaskFileStore.put(jobId, fileData);
 				newTaskProgress.put(jobId, 100);
 			} catch (Exception e) {
