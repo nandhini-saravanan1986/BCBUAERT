@@ -168,7 +168,7 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 	    private BigDecimal capitalReservesPercent;
 
 	    @Column(name = "SHORT_TERM_REG_RATIO_REQ")
-	    private BigDecimal shortTermRegRatioReq;
+	    private String shortTermRegRatioReq;
 	    
 	    
 	    @Column(name = "HQ_ASSETS_CONVERTED_AED")
@@ -943,11 +943,11 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 			this.capitalReservesPercent = capitalReservesPercent;
 		}
 
-		public BigDecimal getShortTermRegRatioReq() {
+		public String getShortTermRegRatioReq() {
 			return shortTermRegRatioReq;
 		}
 
-		public void setShortTermRegRatioReq(BigDecimal shortTermRegRatioReq) {
+		public void setShortTermRegRatioReq(String shortTermRegRatioReq) {
 			this.shortTermRegRatioReq = shortTermRegRatioReq;
 		}
 
@@ -1921,7 +1921,7 @@ public class RT_Liquidity_Risk_Dashboard_Template {
 				BigDecimal longTermFundingAed, BigDecimal longTermFundingPercent, BigDecimal otherLiabilitiesAed,
 				BigDecimal otherLiabilitiesPercent, BigDecimal negativeFvDerivativesAed,
 				BigDecimal negativeFvDerivativesPercent, BigDecimal capitalReservesAed,
-				BigDecimal capitalReservesPercent, BigDecimal shortTermRegRatioReq, BigDecimal hqAssetsConvertedAed,
+				BigDecimal capitalReservesPercent, String shortTermRegRatioReq, BigDecimal hqAssetsConvertedAed,
 				BigDecimal outflows30dAed, BigDecimal inflows30dAed, BigDecimal lcr, BigDecimal aedHqAssets,
 				BigDecimal aedOutflows30d, BigDecimal aedInflows30d, BigDecimal aedLcr, BigDecimal usdHqAssets,
 				BigDecimal usdOutflows30d, BigDecimal usdInflows30d, BigDecimal usdLcr,

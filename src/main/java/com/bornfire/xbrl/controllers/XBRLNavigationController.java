@@ -4204,7 +4204,7 @@ System.out.println("sixe==="+excelData.length);
 	        if (formattedDate == null) {
 	        	model.addAttribute("branchList", Collections.emptyList());
 			} else {
-			    List<RT_Liquidity_Risk_Dashboard_Template> list = LiquidityRiskDashboardRepo.getAlldetails(formattedDate);
+			    List<RT_Liquidity_Risk_Dashboard_Template> list = liquidityriskdashboardService.findByReportDate(formattedDate);
 			    model.addAttribute("branchList", list != null ? list : Collections.emptyList());
 			}
 			System.out.println("list is formmode");
@@ -4220,7 +4220,7 @@ System.out.println("sixe==="+excelData.length);
 	    } 
 	    // 3. EDIT MODE
 	    else if ("edit".equalsIgnoreCase(formmode) && SI_NO != null) {
-	        RT_Liquidity_Risk_Dashboard_Template data = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(SI_NO);
+	        RT_Liquidity_Risk_Dashboard_Template data = liquidityriskdashboardService.findBySiNo(SI_NO);
 	        model.addAttribute("liquidityriskdashboard", data);
 	        model.addAttribute("formmode", "edit");
 	        if (data != null && data.getReportDate() != null) {

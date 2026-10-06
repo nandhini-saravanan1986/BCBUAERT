@@ -8,13 +8,20 @@ import java.nio.file.Files;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import javax.persistence.Column;
 import java.io.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +71,12 @@ public class RT_LiquidityriskdashboardService {
     RT_Liquidity_Risk_Dashboard_Template_repository LiquidityRiskDashboardRepo;
 
 	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
 	private SessionFactory sessionFactory;
+
+	private static final Map<String, Field> LIQUIDITY_COLUMNS = liquidityColumns();
 	
 	@Autowired
 	AuditService auditservice;    
@@ -71,7 +84,7 @@ public class RT_LiquidityriskdashboardService {
 	public boolean updateliquidityriskdashboard(RT_Liquidity_Risk_Dashboard_Template updatedData) {
 	    System.out.println("Looking for record with SI_NO: " + updatedData.getSI_NO());
 
-	    RT_Liquidity_Risk_Dashboard_Template existing = LiquidityRiskDashboardRepo.getParticularDataBySI_NO(updatedData.getSI_NO());
+	    RT_Liquidity_Risk_Dashboard_Template existing = findBySiNo(updatedData.getSI_NO());
 	    
 	    RT_Liquidity_Risk_Dashboard_Template dbUser = new RT_Liquidity_Risk_Dashboard_Template();
 		org.springframework.beans.BeanUtils.copyProperties(existing, dbUser);
@@ -463,10 +476,94 @@ public class RT_LiquidityriskdashboardService {
 			return;
 		}
 		cell.setCellStyle(numberStyle);
-		if (value instanceof BigDecimal) {
-			cell.setCellValue(((BigDecimal) value).doubleValue());
-		} else {
-			cell.setCellValue(0);
+		BigDecimal number = toBigDecimal(value);
+		cell.setCellValue(number == null ? 0 : number.doubleValue());
+	}
+
+	public List<RT_Liquidity_Risk_Dashboard_Template> findByReportDate(String reportDate) {
+		if (reportDate == null || reportDate.trim().isEmpty()) {
+			return new ArrayList<RT_Liquidity_Risk_Dashboard_Template>();
+		}
+		String sql = "SELECT * FROM BCBUAE_LIQUIDITY_RISK_DASHBOARD_TEMPLATE WHERE REPORT_DATE = TO_DATE(?, 'DD-MM-YYYY')";
+		List<RT_Liquidity_Risk_Dashboard_Template> rows = jdbcTemplate.query(sql, new Object[] { reportDate.trim() },
+				(rs, rowNum) -> mapLiquidityRow(rs));
+		return rows == null ? new ArrayList<RT_Liquidity_Risk_Dashboard_Template>() : rows;
+	}
+
+	public RT_Liquidity_Risk_Dashboard_Template findBySiNo(String siNo) {
+		if (siNo == null || siNo.trim().isEmpty()) {
+			return null;
+		}
+		String sql = "SELECT * FROM BCBUAE_LIQUIDITY_RISK_DASHBOARD_TEMPLATE WHERE SI_NO = ?";
+		List<RT_Liquidity_Risk_Dashboard_Template> rows = jdbcTemplate.query(sql, new Object[] { siNo.trim() },
+				(rs, rowNum) -> mapLiquidityRow(rs));
+		return rows == null || rows.isEmpty() ? null : rows.get(0);
+	}
+
+	private static Map<String, Field> liquidityColumns() {
+		Map<String, Field> columns = new LinkedHashMap<String, Field>();
+		for (Field field : RT_Liquidity_Risk_Dashboard_Template.class.getDeclaredFields()) {
+			field.setAccessible(true);
+			Column column = field.getAnnotation(Column.class);
+			String name = column != null && column.name() != null && !column.name().isEmpty()
+					? column.name()
+					: field.getName();
+			columns.put(name.toUpperCase(Locale.ENGLISH), field);
+		}
+		return Collections.unmodifiableMap(columns);
+	}
+
+	private RT_Liquidity_Risk_Dashboard_Template mapLiquidityRow(ResultSet rs) throws SQLException {
+		RT_Liquidity_Risk_Dashboard_Template row = new RT_Liquidity_Risk_Dashboard_Template();
+		ResultSetMetaData meta = rs.getMetaData();
+		for (int i = 1; i <= meta.getColumnCount(); i++) {
+			String label = meta.getColumnLabel(i);
+			if (label == null) {
+				continue;
+			}
+			Field field = LIQUIDITY_COLUMNS.get(label.toUpperCase(Locale.ENGLISH));
+			if (field == null) {
+				continue;
+			}
+			try {
+				field.set(row, readLiquidityValue(rs, i, field.getType(), label));
+			} catch (IllegalAccessException ex) {
+				throw new SQLException("Unable to read column " + label, ex);
+			}
+		}
+		return row;
+	}
+
+	private Object readLiquidityValue(ResultSet rs, int index, Class<?> type, String column) throws SQLException {
+		if (BigDecimal.class.equals(type)) {
+			return toBigDecimal(rs.getString(index), column);
+		}
+		if (String.class.equals(type)) {
+			return rs.getString(index);
+		}
+		if (Date.class.isAssignableFrom(type)) {
+			return rs.getTimestamp(index);
+		}
+		return rs.getObject(index);
+	}
+
+	private BigDecimal toBigDecimal(Object raw) {
+		return toBigDecimal(raw == null ? null : raw.toString(), null);
+	}
+
+	private BigDecimal toBigDecimal(String raw, String column) {
+		if (raw == null) {
+			return null;
+		}
+		String text = raw.trim().replace(",", "");
+		if (text.isEmpty()) {
+			return null;
+		}
+		try {
+			return new BigDecimal(text);
+		} catch (NumberFormatException ex) {
+			logger.warn("Liquidity column {} contains non-numeric value [{}]; leaving it blank.", column, text);
+			return null;
 		}
 	}
 
