@@ -6302,7 +6302,7 @@ System.out.println("sixe==="+excelData.length);
 		String sessionId = req.getSession().getId();
 		//System.out.println("Session ID : "+sessionId);
 		
-		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))) {
+		if((ROLEID=="MGR"|| ROLEID.equals("MGR")||ROLEID=="SUP-ADM"||ROLEID.equals("SUP-ADM")||ROLEID=="ADM-M"||ROLEID.equals("ADM-M")||ROLEID=="ADM-C"||ROLEID.equals("ADM-C") )&& !(deptvalid == "YES" || deptvalid.equals("YES"))) {
 			mgrsummary = "YES";
 //			if ("bankinformation".equalsIgnoreCase(formmode) || formmode == null || "null".equalsIgnoreCase(formmode)) {
 //				
