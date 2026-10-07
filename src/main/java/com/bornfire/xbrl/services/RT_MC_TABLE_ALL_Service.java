@@ -5250,8 +5250,17 @@ public class RT_MC_TABLE_ALL_Service {
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cell.setCellValue(((Number) value).doubleValue());
 		} else {
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			cell.setCellValue(value.toString());
+			String strValue = value.toString().trim();
+			try {
+				double numericValue = Double.parseDouble(strValue);
+
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				cell.setCellValue(numericValue);
+
+			} catch (NumberFormatException e) {
+				cell.setCellType(Cell.CELL_TYPE_STRING);
+				cell.setCellValue(strValue);
+			}
 		}
 	}
 
