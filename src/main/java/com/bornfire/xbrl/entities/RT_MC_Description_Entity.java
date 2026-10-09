@@ -23,9 +23,12 @@ public class RT_MC_Description_Entity {
 
 	@Column(name = "DESCRIPTION")
 	private String description;
-	
+
 	@Column(name = "CELL_NAME")
-	private String cellName;	
+	private String cellName;
+
+	@Column(name = "COLUMN_ID")
+	private String ColumnId;
 
 	public String getCellName() {
 		return cellName;
@@ -66,4 +69,13 @@ public class RT_MC_Description_Entity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getColumnId() {
+		return ColumnId;
+	}
+
+	public void setColumnId(String columnId) {
+		ColumnId = columnId;
+	}
+
 }

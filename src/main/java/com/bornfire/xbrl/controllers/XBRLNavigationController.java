@@ -7131,6 +7131,7 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam("reportDate") String reportDate, @RequestParam("isConsolidated") String isConsolidated,
 			@RequestParam(value = "reportOption", required = false) String reportOption,
 			@RequestParam(value = "selectedDepartments", required = false) String selectedDepartments,
+			@RequestParam(value = "specialValues", required = false) String specialValues,
 			HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
@@ -7139,7 +7140,7 @@ System.out.println("sixe==="+excelData.length);
 			try {
 				String userid = (String) req.getSession().getAttribute("USERID");
 				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress, formmode,
-						reportDate, userid, attr, isConsolidated, reportOption, selectedDepartments);
+						reportDate, userid, attr, isConsolidated, reportOption, selectedDepartments,specialValues);
 				System.out.println("File : " + ((fileData == null) ? "fail" : "pass"));
 				System.out.println("Formmode : " + formmode);
 				newTaskFileStore.put(jobId, fileData);

@@ -859,7 +859,7 @@ public class AuditService {
 			MC_Service_audit_Repo.save(audit);
 		}
 	}
-	private String getFieldName(String formmode, String prefix) {
+	public String getFieldName(String formmode, String prefix) {
 		if (prefix == null || prefix.trim().isEmpty()) {
 			return prefix;
 		}

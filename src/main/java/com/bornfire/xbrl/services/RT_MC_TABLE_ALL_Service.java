@@ -25,15 +25,22 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -50,7 +57,8 @@ public class RT_MC_TABLE_ALL_Service {
 
 	@Autowired
 	AuditService auditservice;
-
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 	@Autowired
 	RT_MC_TABLE1_REPO RT_MC_TABLE1_REPO;
 	@Autowired
@@ -77,12 +85,20 @@ public class RT_MC_TABLE_ALL_Service {
 	RT_MC_TABLE9_REPO RT_MC_TABLE9_REPO;
 	@Autowired
 	RT_MC_DATA_RECORD_REPO RT_MC_DATA_RECORD_REPO;
+	@Autowired
+	RT_MC_Description_Repo RT_MC_Description_Repo;
 
 	String templateFileName = "1.Main_RBS_MC_Bank of Baroda_Annual_Data Submission.xlsx";
 
 	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated, String reportOption,
-			String selectedDepartments) throws Exception {
+			String selectedDepartments, String specialValues) throws Exception {
+		if (specialValues != null && !specialValues.trim().isEmpty()) {
+			progressMap.put(jobId, 10);
+			byte[] fileData = generateNotApplicabilityExcel(reportDate, branch, progressMap, jobId, specialValues);
+			progressMap.put(jobId, 100);
+			return fileData;
+		}
 		String templateDir = env.getProperty("output.exportpathtemp");
 		Path templatePath = Paths.get(templateDir, templateFileName);
 		System.out.println("Report Date : "+reportDate);
@@ -8836,6 +8852,208 @@ public class RT_MC_TABLE_ALL_Service {
 
 		default:
 			return nVal.isEmpty() ? null : nVal;
+		}
+	}
+
+	private byte[] generateNotApplicabilityExcel(String reportDate, String timeperiod, Map<String, Integer> progressMap,
+			String jobId, String specialValues) throws Exception {
+
+		List<RT_MC_DATA_RECORD_ENTITY> allRecords = RT_MC_DATA_RECORD_REPO.findByReportDateAndBranchCode(reportDate,
+				timeperiod);
+		progressMap.put(jobId, 30);
+
+		List<String> targetSpecialValues = new ArrayList<>();
+		if (specialValues != null && !specialValues.isEmpty()) {
+			targetSpecialValues = Arrays.asList(specialValues.split("\\s*,\\s*"));
+		}
+
+		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			Sheet sheet = workbook.createSheet("Special Values Report");
+
+			CellStyle headerStyle = workbook.createCellStyle();
+			headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setAlignment(HorizontalAlignment.CENTER);
+			headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			headerStyle.setBorderBottom(BorderStyle.THIN);
+			headerStyle.setBorderTop(BorderStyle.THIN);
+			headerStyle.setBorderLeft(BorderStyle.THIN);
+			headerStyle.setBorderRight(BorderStyle.THIN);
+
+			Font headerFont = workbook.createFont();
+			headerFont.setBold(true);
+			headerFont.setColor(IndexedColors.BLACK.getIndex());
+			headerFont.setFontHeightInPoints((short) 11);
+			headerStyle.setFont(headerFont);
+
+			CellStyle cellStyle = workbook.createCellStyle();
+			cellStyle.setBorderBottom(BorderStyle.THIN);
+			cellStyle.setBorderTop(BorderStyle.THIN);
+			cellStyle.setBorderLeft(BorderStyle.THIN);
+			cellStyle.setBorderRight(BorderStyle.THIN);
+			cellStyle.setWrapText(true);
+			cellStyle.setAlignment(HorizontalAlignment.CENTER);
+			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			Row headerRow = sheet.createRow(0);
+			String[] headers = { "Column ID", "Table Reference", "Data Element - Row", "Data Element - Column",
+					"Description", "Reason for Not Applicability", "Responsibility" };
+
+			for (int i = 0; i < headers.length; i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(headers[i]);
+				cell.setCellStyle(headerStyle);
+			}
+			progressMap.put(jobId, 40);
+
+			int rowNum = 1;
+			if (allRecords != null && !allRecords.isEmpty()) {
+				for (RT_MC_DATA_RECORD_ENTITY record : allRecords) {
+
+					String cellDataVal = (record.getDataValue() != null) ? record.getDataValue().trim() : "";
+					boolean matchesSpecialValue = false;
+
+					for (String sv : targetSpecialValues) {
+						if ("0".equals(sv)) {
+							if ("0".equals(cellDataVal) || "0.0".equals(cellDataVal) || "0.00".equals(cellDataVal)) {
+								matchesSpecialValue = true;
+								break;
+							}
+						} else if (sv.equalsIgnoreCase(cellDataVal)) {
+							matchesSpecialValue = true;
+							break;
+						}
+					}
+
+					if (matchesSpecialValue) {
+						Row row = sheet.createRow(rowNum++);
+
+						String columnId = "";
+						String description = "";
+
+						if (record.getColumnHeader() != null && record.getFormMode() != null) {
+							RT_MC_Description_Entity descEntity = RT_MC_Description_Repo
+									.findTopBySectionAndElementNative(record.getFormMode(), record.getColumnHeader());
+							if (descEntity != null) {
+								columnId = descEntity.getColumnId();
+								description = descEntity.getDescription();
+							}
+						}
+
+						createStyledCell(row, 0, getTableId(columnId), cellStyle);
+
+						createStyledCell(row, 1, record.getFormMode(), cellStyle);
+						String rowElement = getRowDataElementHelper(record.getCellName(), record.getFormMode());
+						createStyledCell(row, 2, rowElement, cellStyle);
+
+						createStyledCell(row, 3, record.getColumnHeader(), cellStyle);
+
+						createStyledCell(row, 4, description, cellStyle);
+
+						createStyledCell(row, 5, record.getCheckerJustification(), cellStyle);
+
+						String responsibilityVal = fetchResponsibilityValue(record.getFormMode(), record.getCellName());
+						createStyledCell(row, 6, responsibilityVal, cellStyle);
+					}
+				}
+			}
+
+			progressMap.put(jobId, 85);
+
+			sheet.autoSizeColumn(0);
+			sheet.autoSizeColumn(1);
+			sheet.autoSizeColumn(2);
+			sheet.autoSizeColumn(6);
+			sheet.setColumnWidth(3, 60 * 256);
+			sheet.setColumnWidth(4, 60 * 256);
+			sheet.setColumnWidth(5, 40 * 256);
+			workbook.write(baos);
+			return baos.toByteArray();
+		}
+	}
+
+	private void createStyledCell(Row row, int colIndex, String value, CellStyle style) {
+		Cell cell = row.createCell(colIndex);
+		cell.setCellValue(value != null ? value : "");
+		cell.setCellStyle(style);
+	}
+
+	private String getRowDataElementHelper(String cellName, String formMode) {
+		if (cellName == null || formMode == null) {
+			return "";
+		}
+
+		String prefix = cellName;
+		String[] nameParts = cellName.split("_", 2);
+		if (nameParts.length == 2) {
+			prefix = nameParts[0];
+		}
+
+		try {
+			String resolvedFieldName = auditservice.getFieldName(formMode, prefix);
+
+			if (resolvedFieldName != null && !resolvedFieldName.trim().isEmpty()) {
+				return resolvedFieldName;
+			}
+		} catch (Exception e) {
+			System.err.println("Could not resolve field name for prefix: " + prefix);
+		}
+
+		return cellName;
+	}
+	public String getTableId(String formMode) {
+		String tableid = null;
+		switch (formMode) {
+		case "bankinformation":
+			tableid = "Table_1";
+			return tableid;
+		case "bankconsumers":
+			tableid = "Table_2";
+			return tableid;
+		case "complaints":
+			tableid = "Table_3";
+			return tableid;
+		case "retailproducts":
+			tableid = "Table_4";
+			return tableid;
+		case "bankemployee":
+			tableid = "Table_5";
+			return tableid;
+		case "trainings":
+			tableid = "Table_6";
+			return tableid;
+		case "additionalinformation":
+			tableid = "Table_7";
+			return tableid;
+		case "islamicbanking":
+			tableid = "Table_8";
+			return tableid;
+		case "conductcultureassessment":
+			tableid = "Table_9";
+			return tableid;
+		default:
+			return formMode;
+		}
+	}
+
+	private String fetchResponsibilityValue(String formMode, String cellName) {
+		if (formMode == null || cellName == null || cellName.trim().isEmpty()) {
+			return "";
+		}
+		try {
+			String tableName = getMainTableName(formMode, cellName);
+
+			if (tableName == null || tableName.trim().isEmpty()) {
+				return "";
+			}
+			String sql = "SELECT " + cellName + " FROM " + tableName + " WHERE BRANCH_CODE = 'DEPT'";
+			String value = jdbcTemplate.queryForObject(sql, String.class);
+			return value != null ? value : "";
+
+		} catch (EmptyResultDataAccessException e) {
+			return "";
+		} catch (Exception e) {
+			System.err.println("Failed to fetch responsibility for cell: " + cellName + " - " + e.getMessage());
+			return "";
 		}
 	}
 }

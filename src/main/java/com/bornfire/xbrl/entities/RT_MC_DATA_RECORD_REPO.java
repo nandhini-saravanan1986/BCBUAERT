@@ -16,6 +16,9 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 	@Query("SELECT COALESCE(MAX(r.id), 0) FROM RT_MC_DATA_RECORD_ENTITY r")
 	BigDecimal findMaxId();
 
+	@Query(value = "SELECT * FROM RT_MC_DATA_RECORD WHERE REPORT_DATE = :reportDate AND TIMEPERIOD = :timeperiod AND VERIFY_FLG = 'Y' ", nativeQuery = true)
+	List<RT_MC_DATA_RECORD_ENTITY> findByReportDateAndBranchCode(@Param("reportDate") String reportDate, @Param("timeperiod") String timeperiod);
+	
 	RT_MC_DATA_RECORD_ENTITY findTopByFormModeAndReportDateAndCellNameAndTimeperiodOrderByIdDesc(String formMode,
 			Date reportDate, String cellName, String timeperiod);
 
