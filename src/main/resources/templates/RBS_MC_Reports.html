@@ -2956,30 +2956,42 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
+										<th style="min-width: 400px ! important;">Bank
+											Information</th>
 
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -2987,7 +2999,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -3007,6 +3020,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -3015,8 +3033,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -3025,11 +3048,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -3038,7 +3060,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -3048,12 +3071,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
@@ -6995,30 +7019,40 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
-
-										<th
+										<th style="min-width: 400px ! important;">Bank Consumers</th>
+<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -7026,7 +7060,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -7046,6 +7081,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -7054,8 +7094,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -7064,11 +7109,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -7077,7 +7121,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -7087,12 +7132,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
@@ -9607,30 +9653,40 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
-
-										<th
+										<th style="min-width: 400px ! important;">Complaints</th>
+<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -9638,7 +9694,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -9658,6 +9715,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -9666,8 +9728,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -9676,11 +9743,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -9689,7 +9755,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -9699,12 +9766,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
@@ -12982,30 +13050,40 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
-
-										<th
+										<th style="min-width: 400px ! important;">Retail Products</th>
+<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -13013,7 +13091,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -13033,6 +13112,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13041,8 +13125,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13051,11 +13140,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13064,7 +13152,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13074,12 +13163,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
@@ -13435,38 +13525,49 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
+										<th style="min-width: 400px ! important;">Bank Employee</th>
 
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
 								</thead>
-								<tbody>
-									<tr th:each="row : ${reportRows}">
+								<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -13486,6 +13587,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13494,8 +13600,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13504,11 +13615,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13517,7 +13627,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13527,17 +13638,17 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
 									</tr>
-								</tbody>
 							</table>
 						</div>
 					</div>
@@ -13809,30 +13920,40 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
-
+										<th style="min-width: 400px ! important;">Trainings</th>
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -13840,7 +13961,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -13860,6 +13982,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13868,8 +13995,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13878,11 +14010,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -13891,7 +14022,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -13901,12 +14033,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 
@@ -16356,30 +16489,41 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
-
+										<th style="min-width: 400px ! important;">Additional
+											Information</th>
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -17381,30 +17525,41 @@ to {
 								<thead class="table-light">
 
 									<tr>
-										<th style="min-width: 400px ! important;">Bank Information</th>
+										<th style="min-width: 400px ! important;">Islamic Banking</th>
 
 										<th
 											th:text="${quarterDates.size() > 3 ? quarterDates[3] : 'Q1'}">Date
 											1</th>
+
 										<th
 											th:text="${quarterDates.size() > 2 ? quarterDates[2] : 'Q2'}">Date
 											2</th>
+
+										<th>Variation (Q2 vs Q1)</th>
+
 										<th
 											th:text="${quarterDates.size() > 1 ? quarterDates[1] : 'Q3'}">Date
 											3</th>
+
+										<th>Variation (Q3 vs Q2)</th>
+
 										<th
 											th:text="${quarterDates.size() > 0 ? quarterDates[0] : 'Q4'}">Date
 											4</th>
+
 										<th>Variation over Previous Qtr</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 1 ? yearDates[1] : 'Last Year'}">Last
 											Year</th>
+
 										<th th:if="${timeperiod =='YEARLY'}"
 											th:text="${yearDates.size() > 0 ? yearDates[0] : 'Current Year'}">Current
 											Year</th>
 
 										<th th:if="${timeperiod =='YEARLY'}">Variation over
 											Annual Data</th>
+
 										<th>Maker Remarks</th>
 										<th>Checker Remarks</th>
 									</tr>
@@ -17412,7 +17567,8 @@ to {
 								<tbody>
 									<tr th:each="row : ${reportRows}">
 
-										<td th:text="${row.description}" style="min-width: 400px ! important;" >Metric Name</td>
+										<td th:text="${row.description}"
+											style="min-width: 400px ! important;">Metric Name</td>
 
 										<td class="clickable-cell"
 											th:text="${row.q1Value != null ? row.q1Value : ' - '}"
@@ -17432,6 +17588,11 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
+										<td><span th:if="${row.q2VsQ1 != null}"
+											th:text="${#numbers.formatPercent(row.q2VsQ1, 1, 2)}">0.00%</span>
+											<span th:if="${row.q2VsQ1 == null}" class="text-muted">
+												N/A </span></td>
+
 										<td class="clickable-cell"
 											th:text="${row.q3Value != null ? row.q3Value : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -17440,8 +17601,13 @@ to {
 											th:data-reportdate="${reportDate}"
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
+										<td><span th:if="${row.q3VsQ2 != null}"
+											th:text="${#numbers.formatPercent(row.q3VsQ2, 1, 2)}">0.00%</span>
+											<span th:if="${row.q3VsQ2 == null}" class="text-muted">
+												N/A </span></td>
 
-										<td class="clickable-cell" th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
+										<td class="clickable-cell"
+											th:classappend="${timeperiod != 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.q4Value != null ? row.q4Value : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -17450,11 +17616,10 @@ to {
 											data-periodtype="QUARTERLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td><span th:if="${row.quarterlyComparison != null}" 
-											th:text="${#numbers.formatPercent(row.quarterlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.quarterlyComparison == null}"
-											class="text-muted"> N/A </span></td>
-
+										<td><span th:if="${row.q4VsQ3 != null}"
+											th:text="${#numbers.formatPercent(row.q4VsQ3, 1, 2)}">0.00%</span>
+											<span th:if="${row.q4VsQ3 == null}" class="text-muted">
+												N/A </span></td>
 										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
 											th:text="${row.lastYearValue != null ? row.lastYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
@@ -17463,7 +17628,8 @@ to {
 											th:data-reportdate="${reportDate}" data-periodtype="YEARLY"
 											onclick="generateReport(this.getAttribute('data-cellname'), this.getAttribute('data-fieldname'), this.getAttribute('data-columndate'), this.getAttribute('data-reportdate'), this.getAttribute('data-periodtype'))">0</td>
 
-										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell" th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
+										<td th:if="${timeperiod =='YEARLY'}" class="clickable-cell"
+											th:classappend="${timeperiod == 'YEARLY'} ? ' manager-verify-cell'"
 											th:text="${row.currentYearValue != null ? row.currentYearValue : ' - '}"
 											th:data-cellname="${row.cellName}"
 											th:data-fieldname="${row.description}"
@@ -17473,12 +17639,13 @@ to {
 
 										<td th:if="${timeperiod =='YEARLY'}"><span
 											th:if="${row.yearlyComparison != null}"
-											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">
-												0.00% </span> <span th:if="${row.yearlyComparison == null}"
+											th:text="${#numbers.formatPercent(row.yearlyComparison, 1, 2)}">0.00%</span>
+											<span th:if="${row.yearlyComparison == null}"
 											class="text-muted"> N/A </span></td>
 
 										<td
 											th:text="${row.makerRemarks != null && !row.makerRemarks.isEmpty() ? row.makerRemarks : '-'}">Maker</td>
+
 										<td
 											th:text="${row.checkerRemarks != null && !row.checkerRemarks.isEmpty() ? row.checkerRemarks : '-'}">Checker</td>
 

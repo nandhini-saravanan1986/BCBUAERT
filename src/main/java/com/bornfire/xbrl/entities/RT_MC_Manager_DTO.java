@@ -17,7 +17,10 @@ public class RT_MC_Manager_DTO {
 	private String makerRemarks;
 	private String checkerRemarks;
 	private String cellName;
-
+	private Double q2VsQ1;
+	private Double q3VsQ2;
+	private Double q4VsQ3;
+	
 	public RT_MC_Manager_DTO(String description, Object q1, Object q2, Object q3, Object q4, Object currentYear,
 			Object lastYear, Object makerRemarks, Object checkerRemarks, String cellName) {
 
@@ -29,6 +32,14 @@ public class RT_MC_Manager_DTO {
 		this.q4Value = parseFlexibleNumber(q4);
 		this.currentYearValue = parseFlexibleNumber(currentYear);
 		this.lastYearValue = parseFlexibleNumber(lastYear);
+		double valQ1 = (this.q1Value != null) ? this.q1Value : 0.0;
+		double valQ2 = (this.q2Value != null) ? this.q2Value : 0.0;
+		double valQ3 = (this.q3Value != null) ? this.q3Value : 0.0;
+		double valQ4 = (this.q4Value != null) ? this.q4Value : 0.0;
+
+		this.q2VsQ1 = calculateVariation(valQ2, valQ1);
+		this.q3VsQ2 = calculateVariation(valQ3, valQ2);
+		this.q4VsQ3 = calculateVariation(valQ4, valQ3);
 
 		double latestQuarter = (this.q4Value != null) ? this.q4Value : 0.0;
 		double previousQuarter = (this.q3Value != null) ? this.q3Value : 0.0;
@@ -167,4 +178,26 @@ public class RT_MC_Manager_DTO {
     public void setCellName(String cellName) {
         this.cellName = cellName;
     }
+    public Double getQ2VsQ1() {
+        return q2VsQ1;
+    }
+
+    public void setQ2VsQ1(Double q2VsQ1) {
+        this.q2VsQ1 = q2VsQ1;
+    }
+    public Double getQ3VsQ2() {
+        return q3VsQ2;
+    }
+
+    public void setQ3VsQ2(Double q3VsQ2) {
+        this.q3VsQ2 = q3VsQ2;
+    }
+    public Double getQ4VsQ3() {
+        return q4VsQ3;
+    }
+
+    public void setQ4VsQ3(Double q4VsQ3) {
+        this.q4VsQ3 = q4VsQ3;
+    }
+    
 }
