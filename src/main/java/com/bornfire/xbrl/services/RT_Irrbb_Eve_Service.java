@@ -33,6 +33,9 @@ import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EAR_Repository;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template;
 import com.bornfire.xbrl.entities.RT_IRRBB_Data_EVE_Template_Repository;
+import com.bornfire.xbrl.entities.RT_IRRBB_RECON;
+import com.bornfire.xbrl.entities.RT_IRRBB_RECON_Repository;
+import org.apache.poi.ss.usermodel.CellType;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,6 +58,9 @@ public class RT_Irrbb_Eve_Service {
 	
     @Autowired
     RT_IRRBB_Data_EVE_Template_Repository IRRB_EVE_Repo;
+
+    @Autowired
+    RT_IRRBB_RECON_Repository rt_irrbb_recon_repository;
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -476,7 +482,18 @@ public class RT_Irrbb_Eve_Service {
 	        List<Object[]> irrbbeveList = IRRB_EVE_Repo.getirrbbevedatalistdata1(Report_date);
 	        List<Object[]> irrbbearList = IRRBB_EAR_Repository.getirrbbeardatalistdata1(Report_date);
 
-	        if (irrbbeveList.isEmpty() && irrbbearList.isEmpty()) {
+	        List<RT_IRRBB_RECON> reconList = null;
+	        if (Report_date != null) {
+	            reconList = rt_irrbb_recon_repository.getAlldetails(Report_date);
+	            if (reconList == null || reconList.isEmpty()) {
+	                reconList = rt_irrbb_recon_repository.getDetailsByReportDate(Report_date);
+	            }
+	        }
+	        if (reconList == null || reconList.isEmpty()) {
+	            reconList = rt_irrbb_recon_repository.getAllRecords();
+	        }
+
+	        if (irrbbeveList.isEmpty() && irrbbearList.isEmpty() && (reconList == null || reconList.isEmpty())) {
 	            logger.warn("Service: No data found for IRRBB report on {}. Returning empty result.", Report_date);
 	            return new byte[0];
 	        }
@@ -501,6 +518,16 @@ public class RT_Irrbb_Eve_Service {
 
 	            Sheet sheet = workbook.getSheetAt(3);
 	            Sheet sheet4 = workbook.getSheetAt(4);
+	            
+	            Sheet reconSheet = null;
+	            try {
+	                reconSheet = workbook.getSheet("Reconciliation");
+	            } catch (Exception e) {
+	                logger.warn("Could not find sheet named 'Reconciliation'", e);
+	            }
+	            if (reconSheet == null && workbook.getNumberOfSheets() > 6) {
+	                reconSheet = workbook.getSheetAt(6);
+	            }
 	            
 	            CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -1043,32 +1070,144 @@ public class RT_Irrbb_Eve_Service {
 	                    }
 
 	                }
+	            }    
+	            
+	            if (reconSheet != null && reconList != null && !reconList.isEmpty()) {
+	                logger.info("Service: Populating Reconciliation sheet (sheet 7) with {} records.", reconList.size());
+	                int reconStartRow = 4; // Excel row 5 (0-based index 4)
 
-	            
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-			}    
-	            
-	            
-	            
-	            else {
-				System.out.println("No Irrbb data EVE found to generate the Excel file.");
+	                for (int i = 0; i < reconList.size() && (reconStartRow + i) < 13; i++) {
+	                    RT_IRRBB_RECON recon = reconList.get(i);
+	                    Row row = reconSheet.getRow(reconStartRow + i);
+	                    if (row == null) row = reconSheet.createRow(reconStartRow + i);
+
+	                    // Left Table: EVE reconciliation
+	                    // Col 1 (B) - FX**
+	                    setCellString(row, 1, recon.getFxCode());
+
+	                    // Col 2 (C) - Conversion rate to AED
+	                    setCellNumeric(row, 2, recon.getConversionRateToAed(), numberStyle);
+
+	                    // Col 3 (D) - O/S Ccy
+	                    setCellNumeric(row, 3, recon.getOsCcy(), numberStyle);
+
+	                    // Col 4 (E) - O/S AED
+	                    setCellNumeric(row, 4, recon.getOsAed(), numberStyle);
+
+	                    // Right Table: Repricing gap reconciliation over the next 12 months
+	                    // Col 7 (H) - FX**
+	                    String assetFx = recon.getAssetFxCode() != null && !recon.getAssetFxCode().trim().isEmpty()
+	                            ? recon.getAssetFxCode() : recon.getFxCode();
+	                    setCellString(row, 7, assetFx);
+
+	                    // Col 8 (I) - Value
+	                    BigDecimal assetVal = recon.getAssetValue() != null ? recon.getAssetValue() : recon.getConversionRateToAed();
+	                    setCellNumeric(row, 8, assetVal, numberStyle);
+
+	                    // Col 9 (J) - CF from Assets: CF in foreign Ccy
+	                    setCellNumeric(row, 9, recon.getAssetCfForeignCcy(), numberStyle);
+
+	                    // Col 10 (K) - CF from Assets: CF in AED
+	                    setCellNumeric(row, 10, recon.getAssetCfAed(), numberStyle);
+
+	                    // Col 11 (L) - CF from Liabilities: CF in foreign Ccy
+	                    setCellNumeric(row, 11, recon.getLiabilityCfForeignCcy(), numberStyle);
+
+	                    // Col 12 (M) - CF from Liabilities: CF in AED
+	                    setCellNumeric(row, 12, recon.getLiabilityCfAed(), numberStyle);
+
+	                    // Col 13 (N) - Earning At Risk (EAR): CF in foreign Ccy -> Formula cell (=Jn-Ln), NEVER overwrite!
+	                    // Col 14 (O) - Earning At Risk (EAR): CF in AED -> Formula cell (=Kn-Mn), NEVER overwrite!
+	                }
+
+	                // Find summary values across reconList
+	                BigDecimal assetsLiabilitiesPortfolioDate = null;
+	                BigDecimal reportedBehaviouralRepricingGap = null;
+
+	                for (RT_IRRBB_RECON r : reconList) {
+	                    if (assetsLiabilitiesPortfolioDate == null && r.getAssetsLiabilitiesPortfolioDate() != null) {
+	                        assetsLiabilitiesPortfolioDate = r.getAssetsLiabilitiesPortfolioDate();
+	                    }
+	                    if (reportedBehaviouralRepricingGap == null && r.getReportedBehaviouralRepricingGap() != null) {
+	                        reportedBehaviouralRepricingGap = r.getReportedBehaviouralRepricingGap();
+	                    }
+	                    if (assetsLiabilitiesPortfolioDate != null && reportedBehaviouralRepricingGap != null) {
+	                        break;
+	                    }
+	                }
+	                if (assetsLiabilitiesPortfolioDate == null && !reconList.isEmpty()) {
+	                    assetsLiabilitiesPortfolioDate = reconList.get(0).getAssetsLiabilitiesPortfolioDate();
+	                }
+	                if (reportedBehaviouralRepricingGap == null && !reconList.isEmpty()) {
+	                    reportedBehaviouralRepricingGap = reconList.get(0).getReportedBehaviouralRepricingGap();
+	                }
+
+	                // Excel row 16 (0-based index 15): Assets and Liabilities as of portfolio date in published financials
+	                // Col 2 (C) - Value
+	                Row row16 = reconSheet.getRow(15);
+	                if (row16 == null) row16 = reconSheet.createRow(15);
+	                if (assetsLiabilitiesPortfolioDate != null) {
+	                    setCellNumeric(row16, 2, assetsLiabilitiesPortfolioDate, numberStyle);
+	                }
+
+	                // Excel row 17 (0-based index 16):
+	                // Col 2 (C) - Absolute difference -> Formula cell (=E14-C16), NEVER overwrite!
+	                // Col 14 (O) - Reported behavioural REPRICING GAP as of portfolio date in the ALCO presentation -> Value
+	                Row row17 = reconSheet.getRow(16);
+	                if (row17 == null) row17 = reconSheet.createRow(16);
+	                if (reportedBehaviouralRepricingGap != null) {
+	                    setCellNumeric(row17, 14, reportedBehaviouralRepricingGap, numberStyle);
+	                }
+
+	                // Excel row 18 (0-based index 17):
+	                // Col 2 (C) - % difference -> Formula cell (=IFERROR((E14/C16)-1,0)), NEVER overwrite!
+	                // Col 14 (O) - Relative difference -> Formula cell (=IFERROR((O14/O17)-1,0)), NEVER overwrite!
+	            }
+
+	            workbook.setForceFormulaRecalculation(true);
+	            try {
+	                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+	            } catch (Exception e) {
+	                logger.warn("Could not evaluate all formulas via POI: {}", e.getMessage());
+	            }
+
+	            // Write the final workbook content to the in-memory stream.
+	            workbook.write(out);
+
+	            logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
+
+	            return out.toByteArray();
+	        }
+	    }
+
+	private void setCellNumeric(Row row, int colIndex, BigDecimal value, CellStyle defaultStyle) {
+		if (row == null) return;
+		Cell cell = row.getCell(colIndex);
+		if (cell == null) {
+			cell = row.createCell(colIndex);
+			if (defaultStyle != null) {
+				cell.setCellStyle(defaultStyle);
 			}
-
-			// Write the final workbook content to the in-memory stream.
-			workbook.write(out);
-
-			logger.info("Service: Excel data successfully written to memory buffer ({} bytes).", out.size());
-
-			return out.toByteArray();
+		}
+		// DO NOT overwrite formula cells
+		if (cell.getCellTypeEnum() == CellType.FORMULA) {
+			return;
+		}
+		if (value != null) {
+			cell.setCellValue(value.doubleValue());
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+	private void setCellString(Row row, int colIndex, String value) {
+		if (row == null || value == null || value.trim().isEmpty()) return;
+		Cell cell = row.getCell(colIndex);
+		if (cell == null) {
+			cell = row.createCell(colIndex);
+		}
+		// DO NOT overwrite formula cells
+		if (cell.getCellTypeEnum() == CellType.FORMULA) {
+			return;
+		}
+		cell.setCellValue(value);
+	}
 }

@@ -382,6 +382,9 @@ public class XBRLNavigationController {
 	RT_IRRBB_Data_Discount_Rates_Repository IRRBB_Data_Template_DiscountRate_repo;
 
 	@Autowired
+	RT_IRRBB_RECON_Repository rt_irrbb_recon_repository;
+
+	@Autowired
 	RT_LiquidityriskdashboardService liquidityriskdashboardService;
 
 	@Autowired
@@ -3781,6 +3784,56 @@ public class XBRLNavigationController {
 			System.out.println("Formmode" + formmode);
 			md.addAttribute("lastDate",LocalDate.parse(formattedDate, formatter) );
 		}
+		else if ("Reconciliation".equalsIgnoreCase(formmode)) {
+			System.out.println("---- Reconciliation Report Start ----");
+			if (Report_date == null) {
+				Timestamp lastDateTs = Stream.of(
+						rt_irrbb_recon_repository.findLastReportDate(),
+						IRRB_EVE_Repo.findLastReportDate(),
+						IRRBB_EAR_Repository.findLastReportDate(),
+						IRRBB_Data_Template_DiscountRate_repo.findLastReportDate()
+				).filter(Objects::nonNull).max(Timestamp::compareTo).orElse(null);
+				if (lastDateTs != null) {
+					Report_date = new Date(lastDateTs.getTime());
+					formattedDate = sdf.format(Report_date);
+				}
+			}
+			List<RT_IRRBB_RECON> list = null;
+			if (Report_date != null) {
+				list = rt_irrbb_recon_repository.getAlldetails(Report_date);
+				if (list == null || list.isEmpty()) {
+					list = rt_irrbb_recon_repository.getDetailsByReportDate(Report_date);
+				}
+			}
+			if (list == null || list.isEmpty()) {
+				list = rt_irrbb_recon_repository.getAllRecords();
+			}
+			RT_IRRBB_RECON reconSummary = null;
+			if (list != null && !list.isEmpty()) {
+				for (RT_IRRBB_RECON r : list) {
+					if (r.getAssetsLiabilitiesPortfolioDate() != null
+							|| r.getAbsoluteDifference() != null
+							|| r.getPercentageDifference() != null
+							|| r.getReportedBehaviouralRepricingGap() != null
+							|| r.getRelativeDifference() != null) {
+						reconSummary = r;
+						break;
+					}
+				}
+				if (reconSummary == null) {
+					reconSummary = list.get(0);
+				}
+			}
+			md.addAttribute("reconSummary", reconSummary);
+			md.addAttribute("formmode", "Reconciliation");
+			md.addAttribute("ISListRecon", list != null ? list : Collections.emptyList());
+			if (formattedDate != null) {
+				md.addAttribute("lastDate", LocalDate.parse(formattedDate, formatter));
+			} else {
+				md.addAttribute("lastDate", LocalDate.now());
+			}
+			System.out.println("Formmode " + formmode);
+		}
 		else if ("Detaillist".equalsIgnoreCase(formmode)) {
 			List<RT_IRRBB_Data_EVE_Template_Detail> list =rt_irrbb_data_eve_template_detail_rep.getAlldetails(reportDate,scenario,glLevel1,glLevel2,glLevel3,optionType,rateType,referenceRate,instrumentCurrency);
 			System.out.println("IRRBB EVE " + list.size());
@@ -3797,16 +3850,18 @@ public class XBRLNavigationController {
 			 	Timestamp lastdatetimestampeve = IRRB_EVE_Repo.findLastReportDate();
 			 	Timestamp lastdatetimestampear = IRRBB_EAR_Repository.findLastReportDate();
 			 	Timestamp lastdatetimestampdr = IRRBB_Data_Template_DiscountRate_repo.findLastReportDate();
+			 	Timestamp lastdatetimestamprecon = rt_irrbb_recon_repository.findLastReportDate();
 			 	Timestamp secondlastdatetimestampeve = IRRB_EVE_Repo.findSecondLastReportDate();
 			 	Timestamp secondlastdatetimestampear = IRRBB_EAR_Repository.findSecondLastReportDate();
 			 	Timestamp secondlastdatetimestampdr = IRRBB_Data_Template_DiscountRate_repo.findSecondLastReportDate();
+			 	Timestamp secondlastdatetimestamprecon = rt_irrbb_recon_repository.findSecondLastReportDate();
 				
 				Timestamp lastdatetimestamp = Stream
-						.of(lastdatetimestampeve, lastdatetimestampear, lastdatetimestampdr).filter(Objects::nonNull)
+						.of(lastdatetimestampeve, lastdatetimestampear, lastdatetimestampdr, lastdatetimestamprecon).filter(Objects::nonNull)
 						.max(Timestamp::compareTo).orElse(null);
 				
 				Timestamp secondlastdatetimestamp = Stream
-						.of(secondlastdatetimestampeve, secondlastdatetimestampear, secondlastdatetimestampdr).filter(Objects::nonNull)
+						.of(secondlastdatetimestampeve, secondlastdatetimestampear, secondlastdatetimestampdr, secondlastdatetimestamprecon).filter(Objects::nonNull)
 						.max(Timestamp::compareTo).orElse(null);
 			 	
 			 	String lastDateString = null;
@@ -4530,7 +4585,7 @@ System.out.println("sixe==="+excelData.length);
 
 			ByteArrayResource resource = new ByteArrayResource(excelData);
 
-			String filename = "IrrbbDataEVE.xlsx";
+			String filename = "CBUAE_IRRBB_Data_template.xlsx";
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
@@ -4538,7 +4593,7 @@ System.out.println("sixe==="+excelData.length);
 			
 			String userid = (String) req.getSession().getAttribute("USERID");
 
-			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_DATA_TEMPLATE_EVE_EXCEL", null, "BCBUAE_IRRBB_DATA_TEMPLATE");
+			auditService.createBusinessAudit(userid, "DOWNLOAD", "IRRBB_CONSOLIDATED_DATA_TEMPLATE_EXCEL", null, "BCBUAE_IRRBB_DATA_TEMPLATE");
 
 			return ResponseEntity.ok().headers(headers).contentLength(excelData.length)
 					.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);

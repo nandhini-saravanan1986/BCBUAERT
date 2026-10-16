@@ -1009,19 +1009,25 @@ min-width: 98.5vw;
 
 <script>
 	function navigateToTab(tabId) {
-
-		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-		var Report_date=Report_date=document.getElementById("portfolioDate").value;
+		if (document.getElementById("bob-loader")) {
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+		}
+		var dateElem = document.getElementById("portfolioDate");
+		var Report_date = (dateElem && dateElem.value) ? dateElem.value : '';
+		
 		if (tabId === 'data') {
-			window.location.href = 'IRRBB_data_Template?formmode=list&Report_date='+Report_date;
+			window.location.href = 'IRRBB_data_Template?formmode=list' + (Report_date ? '&Report_date=' + Report_date : '');
 		} else if (tabId === 'datacontrols') {
-			window.location.href = 'IRRBB_data_Template?formmode=add&Report_date='+Report_date;
+			window.location.href = 'IRRBB_data_Template?formmode=add' + (Report_date ? '&Report_date=' + Report_date : '');
 		}
 		else if(tabId == 'EAR'){
-			window.location.href = 'IRRBB_data_Template?formmode=EAR&Report_date='+Report_date;
+			window.location.href = 'IRRBB_data_Template?formmode=EAR' + (Report_date ? '&Report_date=' + Report_date : '');
 		}
 		else if(tabId == 'DiscountRate'){
-			window.location.href = 'IRRBB_data_Template?formmode=DiscountRate&Report_date='+Report_date;
+			window.location.href = 'IRRBB_data_Template?formmode=DiscountRate' + (Report_date ? '&Report_date=' + Report_date : '');
+		}
+		else if(tabId == 'Reconciliation'){
+			window.location.href = 'IRRBB_data_Template?formmode=Reconciliation' + (Report_date ? '&Report_date=' + Report_date : '');
 		}
 	}
 	
@@ -1078,7 +1084,12 @@ min-width: 98.5vw;
 		else if(formmode==='DiscountRate'){
 			handleClick('DiscountRate');
 		}
-		
+		else if(formmode==='Reconciliation'){
+			if (document.getElementById('IRRBBheader')) {
+				document.getElementById('IRRBBheader').innerText = 'IRRBB RECONCILIATION';
+			}
+			handleClick('reconciliation');
+		}
 		else {
 			handleClick('datacontrols'); // default or formmode=add
 		}
@@ -1372,7 +1383,7 @@ min-width: 98.5vw;
 			<div  id="mainHeader"  th:insert="XBRLHeaderMenu :: header"></div>
 		
 			<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
-				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate'  or formmode == 'exist' or formmode =='Detaillist'}">
+				th:if="${formmode == 'list' or formmode == 'add' or formmode =='null' or formmode=='EAR' or formmode=='DiscountRate' or formmode=='Reconciliation' or formmode == 'exist' or formmode =='Detaillist'}">
 				<!-- <div class="text-left flex-grow-1">
 					<h4 id="IRRBBheader">IRRBB DATA TEMPLATE</h4>
 					
@@ -1397,6 +1408,7 @@ min-width: 98.5vw;
 					
 					<button class="role-btn" id="ear-btn" onclick="navigateToTab('EAR')">EAR</button>
 					<button style="white-space:nowrap" class="role-btn" id="DiscountRate-btn" onclick="navigateToTab('DiscountRate')">Discount Rate</button>
+					<button style="white-space:nowrap" class="role-btn" th:classappend="${formmode == 'Reconciliation'} ? ' active' : ''" id="reconciliation-btn" onclick="navigateToTab('Reconciliation')">Reconciliation</button>
 					</div>
 					<div class="float-right" >
 					
@@ -1419,6 +1431,9 @@ min-width: 98.5vw;
 					        <a class="dropdown-item" th:if="${formmode} =='DiscountRate'" href="#" onclick="downloadIrrbbdiscount();">
 					            DiscountRate Download
 					        </a>
+					        <a class="dropdown-item" th:if="${formmode} =='Reconciliation'" href="#" onclick="downloadIrrbbrecon();">
+					            Reconciliation Download
+					        </a>
 					    </div>
 					</div>
 											
@@ -1431,7 +1446,7 @@ min-width: 98.5vw;
 		
 			<!-- -------------------User List Starts----------------------------------------------------- -->
 			<div id="tabHeader" style="padding-right: 10px;padding-left: 20px;"
-				th:if="${formmode == 'list' or formmode =='Detaillist' or  formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or  formmode=='editeve' or  formmode=='editear' or formmode == 'exist' }">
+				th:if="${formmode == 'list' or formmode =='Detaillist' or  formmode == 'add' or formmode =='null' or formmode =='EAR' or formmode=='DiscountRate' or formmode=='Reconciliation' or formmode=='editeve' or  formmode=='editear' or formmode == 'exist' }">
 
 
 				<div class="tab-content" id="myTabContent" style="margin-top: 15px;"
@@ -3142,6 +3157,531 @@ min-width: 98.5vw;
 
 					</div>
 
+				</div>
+				
+				<!-- -----------------------------------RECONCILIATION LIST STARTS -------------------------------------------- -->
+				<div class="tab-pane fade show active" id="reconciliation" role="tabpanel" th:if="${formmode=='Reconciliation'}">
+					<input type="date" id="portfolioDate" name="portfolioDate"
+						th:value="${lastDate}" class="form-control form-control-sm"
+						required style="display:none" />
+
+					<style>
+						/* Reconciliation Table Styling */
+						.recon-container {
+							background: #ffffff;
+							padding: 12px 16px;
+							border-radius: 4px;
+							box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+							overflow-x: auto;
+						}
+						.recon-section-title {
+							font-family: "Segoe UI", Arial, sans-serif;
+							font-size: 14.5px;
+							font-weight: 700;
+							color: #000000;
+							margin-bottom: 2px;
+						}
+						.recon-section-subtitle {
+							font-family: "Segoe UI", Arial, sans-serif;
+							font-size: 13px;
+							font-weight: 600;
+							color: #000000;
+							margin-bottom: 10px;
+						}
+						.recon-table-main {
+							border-collapse: collapse;
+							width: 100%;
+							font-size: 12.5px;
+							font-family: "Segoe UI", Arial, sans-serif;
+						}
+						.recon-table-main th, .recon-table-main td {
+							border: 1px solid #7f7f7f !important;
+							padding: 3px 6px;
+							height: 25px;
+							box-sizing: border-box;
+						}
+						.recon-header-top {
+							background-color: #d9d9d9 !important;
+							font-weight: 700;
+							color: #000000;
+							text-align: center;
+							vertical-align: middle;
+						}
+						.recon-header-sub {
+							background-color: #f2f2f2 !important;
+							font-weight: 600;
+							font-size: 11.5px;
+							color: #000000;
+							text-align: right;
+							vertical-align: middle;
+						}
+						.recon-fx-cell {
+							background-color: #e2efda !important;
+							color: #000000;
+							font-weight: 500;
+							text-align: left;
+							padding-left: 6px;
+						}
+						.recon-data-cell {
+							background-color: #f2f2f2 !important;
+							color: #000000;
+							text-align: right;
+							padding-right: 6px;
+							white-space: nowrap;
+						}
+						.recon-total-row td {
+							background-color: #ffffff !important;
+							font-weight: 700;
+							color: #000000;
+							border-top: 1px solid #000000 !important;
+							border-bottom: 3px double #000000 !important;
+							padding: 4px 6px;
+						}
+						.recon-bottom-box {
+							border-collapse: collapse;
+							font-size: 12.5px;
+							font-family: "Segoe UI", Arial, sans-serif;
+							margin-top: 15px;
+						}
+						.recon-bottom-box td {
+							padding: 3px 6px;
+							height: 24px;
+							box-sizing: border-box;
+						}
+						.recon-label-cell {
+							font-weight: 700;
+							color: #000000;
+							border: 1px solid #7f7f7f !important;
+							background-color: #ffffff;
+							white-space: nowrap;
+						}
+						.recon-value-cell {
+							font-weight: 600;
+							text-align: right;
+							border: 1px solid #7f7f7f !important;
+							background-color: #d9e1f2 !important;
+							color: #000000;
+							padding-right: 6px;
+							min-width: 140px;
+							white-space: nowrap;
+						}
+						.recon-note-cell {
+							font-size: 12px;
+							color: #000000;
+							font-weight: 500;
+							padding-left: 10px;
+							border: none !important;
+							white-space: nowrap;
+						}
+					</style>
+
+					<div class="recon-container">
+						<div class="d-flex flex-row flex-nowrap" style="overflow-x: auto; gap: 30px; padding-bottom: 15px;">
+							
+							<!-- LEFT SIDE: EVE reconciliation -->
+							<div id="reconLeftTableContainer" style="flex: 0 0 auto; min-width: 520px; max-width: 580px;">
+								<div class="recon-section-title">EVE reconciliation</div>
+								<div class="recon-section-subtitle">Check against reported financials</div>
+								
+								<table class="recon-table-main" id="eveReconTable">
+									<thead>
+										<tr>
+											<th class="recon-header-top" style="text-align: left; width: 18%;">FX**</th>
+											<th class="recon-header-top" style="text-align: right; width: 27%;">Conversion rate to AED</th>
+											<th class="recon-header-top" style="text-align: right; width: 27%;">O/S Ccy</th>
+											<th class="recon-header-top" style="text-align: right; width: 28%;">O/S AED</th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Database records if available -->
+										<tr th:if="${not #lists.isEmpty(ISListRecon)}" th:each="row : ${ISListRecon}">
+											<td class="recon-fx-cell" th:text="${row.fxCode}">AED</td>
+											<td class="recon-data-cell" th:text="${row.conversionRateToAed != null ? #numbers.formatDecimal(row.conversionRateToAed, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.osCcy != null ? #numbers.formatDecimal(row.osCcy, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val" th:text="${row.osAed != null ? #numbers.formatDecimal(row.osAed, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+										</tr>
+										<!-- Default rows when DB has no data: show FX currency codes and 0.00 for all numeric values -->
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">AED</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">USD</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">Others</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">GCC</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">GBP</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">JPY</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">TRY</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">...</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">Others</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell eve-os-aed-val">0.00</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr class="recon-total-row">
+											<td>Total</td>
+											<td></td>
+											<td></td>
+											<td class="text-right" id="eveTotalOsAedCell">0.00</td>
+										</tr>
+									</tfoot>
+								</table>
+
+								<!-- Bottom Summary Box: EVE -->
+								<table class="recon-bottom-box" id="eveSummaryBox">
+									<tr>
+										<td class="recon-label-cell">Assets and Liabilities as of portfolio date in published fina...</td>
+										<td class="recon-value-cell" id="evePublishedFinaCell"
+											th:text="${reconSummary != null && reconSummary.assetsLiabilitiesPortfolioDate != null ? #numbers.formatDecimal(reconSummary.assetsLiabilitiesPortfolioDate, 1, 'COMMA', 2, 'POINT') : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].assetsLiabilitiesPortfolioDate != null ? #numbers.formatDecimal(ISListRecon[0].assetsLiabilitiesPortfolioDate, 1, 'COMMA', 2, 'POINT') : '0.00')}">0.00</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td class="recon-label-cell">Absolute difference</td>
+										<td class="recon-value-cell" id="eveAbsoluteDiffCell"
+											th:data-db-val="${reconSummary != null && reconSummary.absoluteDifference != null ? reconSummary.absoluteDifference : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].absoluteDifference != null ? ISListRecon[0].absoluteDifference : '')}"
+											th:text="${reconSummary != null && reconSummary.absoluteDifference != null ? (reconSummary.absoluteDifference < 0 ? '(' + #numbers.formatDecimal(-reconSummary.absoluteDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(reconSummary.absoluteDifference, 1, 'COMMA', 2, 'POINT')) : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].absoluteDifference != null ? (ISListRecon[0].absoluteDifference < 0 ? '(' + #numbers.formatDecimal(-ISListRecon[0].absoluteDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(ISListRecon[0].absoluteDifference, 1, 'COMMA', 2, 'POINT')) : '0.00')}">0.00</td>
+										<td class="recon-note-cell"></td>
+									</tr>
+									<tr>
+										<td class="recon-label-cell">% difference</td>
+										<td class="recon-value-cell" id="evePercentDiffCell"
+											th:data-db-val="${reconSummary != null && reconSummary.percentageDifference != null ? reconSummary.percentageDifference : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].percentageDifference != null ? ISListRecon[0].percentageDifference : '')}"
+											th:text="${reconSummary != null && reconSummary.percentageDifference != null ? (reconSummary.percentageDifference < 0 ? '(' + #numbers.formatDecimal(-reconSummary.percentageDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(reconSummary.percentageDifference, 1, 'COMMA', 2, 'POINT')) : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].percentageDifference != null ? (ISListRecon[0].percentageDifference < 0 ? '(' + #numbers.formatDecimal(-ISListRecon[0].percentageDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(ISListRecon[0].percentageDifference, 1, 'COMMA', 2, 'POINT')) : '0.00')}">0.00</td>
+										<td></td>
+									</tr>
+								</table>
+							</div>
+
+							<!-- RIGHT SIDE: Repricing gap reconciliation over the next 12 months -->
+							<div id="reconRightTableContainer" style="flex: 0 0 auto; min-width: 950px;">
+								<div class="recon-section-title">Repricing gap reconciliation over the next 12 months</div>
+								<div class="recon-section-subtitle" style="visibility: hidden;">&nbsp;</div>
+								
+								<table class="recon-table-main" id="repricingGapTable">
+									<thead>
+										<tr>
+											<th rowspan="2" class="recon-header-top" style="text-align: left; width: 8%;">FX**</th>
+											<th rowspan="2" class="recon-header-top" style="text-align: right; width: 7%;">Value</th>
+											<th colspan="2" class="recon-header-top" style="border-bottom: 1px solid #7f7f7f !important;">CF from Assets</th>
+											<th colspan="2" class="recon-header-top" style="border-bottom: 1px solid #7f7f7f !important;">CF from Liabilities</th>
+											<th colspan="2" class="recon-header-top" style="border-bottom: 1px solid #7f7f7f !important;">Earning At Risk [EAR]</th>
+										</tr>
+										<tr>
+											<th class="recon-header-sub" style="width: 14%;">CF in foreign Ccy</th>
+											<th class="recon-header-sub" style="width: 14%;">CF in AED</th>
+											<th class="recon-header-sub" style="width: 14%;">CF in foreign Ccy</th>
+											<th class="recon-header-sub" style="width: 14%;">CF in AED</th>
+											<th class="recon-header-sub" style="width: 14%;">CF in foreign Ccy</th>
+											<th class="recon-header-sub" style="width: 15%;">CF in AED</th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Database records if available -->
+										<tr th:if="${not #lists.isEmpty(ISListRecon)}" th:each="row : ${ISListRecon}">
+											<td class="recon-fx-cell" th:text="${row.assetFxCode != null ? row.assetFxCode : (row.fxCode != null ? row.fxCode : 'AED')}">AED</td>
+											<td class="recon-data-cell" th:text="${row.assetValue != null ? #numbers.formatDecimal(row.assetValue, 1, 'COMMA', 2, 'POINT') : (row.conversionRateToAed != null ? #numbers.formatDecimal(row.conversionRateToAed, 1, 'COMMA', 2, 'POINT') : '0.00')}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.assetCfForeignCcy != null ? #numbers.formatDecimal(row.assetCfForeignCcy, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.assetCfAed != null ? #numbers.formatDecimal(row.assetCfAed, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.liabilityCfForeignCcy != null ? #numbers.formatDecimal(row.liabilityCfForeignCcy, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.liabilityCfAed != null ? #numbers.formatDecimal(row.liabilityCfAed, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell" th:text="${row.earCfForeignCcy != null ? #numbers.formatDecimal(row.earCfForeignCcy, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val" th:text="${row.earCfAed != null ? #numbers.formatDecimal(row.earCfAed, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+										</tr>
+										<!-- Default rows when DB has no data: show FX currency codes and 0.00 for all numeric values -->
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">AED</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">USD</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">Others</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">GCC</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">GBP</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">JPY</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">TRY</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">...</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(ISListRecon)}">
+											<td class="recon-fx-cell">Others</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell">0.00</td>
+											<td class="recon-data-cell ear-cf-aed-val">0.00</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr class="recon-total-row">
+											<td>Total</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td class="text-right" id="repricingTotalEarCell">0.00</td>
+										</tr>
+									</tfoot>
+								</table>
+
+								<!-- Bottom Summary Box: Repricing Gap -->
+								<table class="recon-bottom-box" id="repricingSummaryBox">
+									<tr>
+										<td class="recon-label-cell">Reported behavioural REPRICING GAP as of portfolio date in the ALCO presentation</td>
+										<td class="recon-value-cell" id="alcoPresentationCell"
+											th:text="${reconSummary != null && reconSummary.reportedBehaviouralRepricingGap != null ? #numbers.formatDecimal(reconSummary.reportedBehaviouralRepricingGap, 1, 'COMMA', 2, 'POINT') : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].reportedBehaviouralRepricingGap != null ? #numbers.formatDecimal(ISListRecon[0].reportedBehaviouralRepricingGap, 1, 'COMMA', 2, 'POINT') : '0.00')}">0.00</td>
+									</tr>
+									<tr>
+										<td class="recon-label-cell">Relative difference</td>
+										<td class="recon-value-cell" id="relativeDiffCell"
+											th:data-db-val="${reconSummary != null && reconSummary.relativeDifference != null ? reconSummary.relativeDifference : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].relativeDifference != null ? ISListRecon[0].relativeDifference : '')}"
+											th:text="${reconSummary != null && reconSummary.relativeDifference != null ? (reconSummary.relativeDifference < 0 ? '(' + #numbers.formatDecimal(-reconSummary.relativeDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(reconSummary.relativeDifference, 1, 'COMMA', 2, 'POINT')) : (not #lists.isEmpty(ISListRecon) and ISListRecon[0].relativeDifference != null ? (ISListRecon[0].relativeDifference < 0 ? '(' + #numbers.formatDecimal(-ISListRecon[0].relativeDifference, 1, 'COMMA', 2, 'POINT') + ')' : #numbers.formatDecimal(ISListRecon[0].relativeDifference, 1, 'COMMA', 2, 'POINT')) : '0.00')}">0.00</td>
+									</tr>
+								</table>
+							</div>
+
+						</div>
+					</div>
+
+					<script>
+						// Reconciliation Calculation and Excel Download
+						function formatAccounting(num) {
+							if (isNaN(num)) return "0.00";
+							var isNeg = num < 0;
+							var absVal = Math.abs(num);
+							var parts = absVal.toFixed(2).split(".");
+							parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+							var formatted = parts.join(".");
+							return isNeg ? "(" + formatted + ")" : formatted;
+						}
+
+						function calculateReconSummaries() {
+							try {
+								// Calculate EVE Total O/S AED
+								var eveOsAedCells = document.querySelectorAll(".eve-os-aed-val");
+								var totalEveOsAed = 0;
+								var hasEveValues = false;
+								eveOsAedCells.forEach(function(cell) {
+									var text = cell.innerText.replace(/,/g, '').trim();
+									if (text !== "" && !isNaN(text)) {
+										totalEveOsAed += parseFloat(text);
+										hasEveValues = true;
+									}
+								});
+
+								if (hasEveValues) {
+									var eveTotalElem = document.getElementById("eveTotalOsAedCell");
+									if (eveTotalElem) {
+										eveTotalElem.innerText = formatAccounting(totalEveOsAed);
+									}
+									var publishedElem = document.getElementById("evePublishedFinaCell");
+									var publishedText = publishedElem ? publishedElem.innerText.replace(/,/g, '').trim() : "0.00";
+									var publishedVal = (!isNaN(parseFloat(publishedText))) ? parseFloat(publishedText) : 0.00;
+									var absDiff = totalEveOsAed - publishedVal;
+									var pctDiff = publishedVal !== 0 ? (absDiff / publishedVal) : 0;
+
+									var absElem = document.getElementById("eveAbsoluteDiffCell");
+									if (absElem && (!absElem.getAttribute("data-db-val") || absElem.getAttribute("data-db-val").trim() === "")) {
+										absElem.innerText = formatAccounting(absDiff);
+									}
+									var pctElem = document.getElementById("evePercentDiffCell");
+									if (pctElem && (!pctElem.getAttribute("data-db-val") || pctElem.getAttribute("data-db-val").trim() === "")) {
+										var pctVal = (pctDiff).toFixed(2);
+										pctElem.innerText = pctVal < 0 ? "(" + Math.abs(pctVal) + ")" : pctVal;
+									}
+								}
+
+								// Calculate EAR Total CF in AED
+								var earCfAedCells = document.querySelectorAll(".ear-cf-aed-val");
+								var totalEarCfAed = 0;
+								var hasEarValues = false;
+								earCfAedCells.forEach(function(cell) {
+									var text = cell.innerText.replace(/,/g, '').trim();
+									if (text !== "" && !isNaN(text)) {
+										totalEarCfAed += parseFloat(text);
+										hasEarValues = true;
+									}
+								});
+
+								if (hasEarValues) {
+									var earTotalElem = document.getElementById("repricingTotalEarCell");
+									if (earTotalElem) {
+										earTotalElem.innerText = formatAccounting(totalEarCfAed);
+									}
+									var alcoElem = document.getElementById("alcoPresentationCell");
+									var alcoText = alcoElem ? alcoElem.innerText.replace(/,/g, '').trim() : "0.00";
+									var alcoVal = (!isNaN(parseFloat(alcoText))) ? parseFloat(alcoText) : 0.00;
+									var relDiff = alcoVal !== 0 ? ((totalEarCfAed - alcoVal) / alcoVal) : 0;
+									var relElem = document.getElementById("relativeDiffCell");
+									if (relElem && (!relElem.getAttribute("data-db-val") || relElem.getAttribute("data-db-val").trim() === "")) {
+										var relFormatted = Math.abs(relDiff).toFixed(2);
+										relElem.innerText = relDiff < 0 ? "(" + relFormatted + ")" : relFormatted;
+									}
+								}
+							} catch (e) {
+								console.error("Error calculating reconciliation summaries:", e);
+							}
+						}
+
+						function downloadIrrbbrecon() {
+							try {
+								var Report_date = document.getElementById("portfolioDate") ? document.getElementById("portfolioDate").value : 'Reconciliation';
+								var leftHtml = document.getElementById("reconLeftTableContainer").innerHTML;
+								var rightHtml = document.getElementById("reconRightTableContainer").innerHTML;
+
+								var excelHtml = `
+									<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+									<head>
+										<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+										<style>
+											table { border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 11pt; }
+											th, td { border: 1px solid #7f7f7f; padding: 4px 6px; }
+											.recon-header-top { background-color: #d9d9d9; font-weight: bold; text-align: center; }
+											.recon-header-sub { background-color: #f2f2f2; font-weight: bold; text-align: right; }
+											.recon-fx-cell { background-color: #e2efda; font-weight: bold; }
+											.recon-data-cell { background-color: #f2f2f2; text-align: right; }
+											.recon-total-row td { font-weight: bold; border-top: 1px solid #000; border-bottom: 3px double #000; }
+											.recon-label-cell { font-weight: bold; }
+											.recon-value-cell { background-color: #d9e1f2; font-weight: bold; text-align: right; }
+										</style>
+									</head>
+									<body>
+										<table>
+											<tr>
+												<td style="border:none; vertical-align:top;">${leftHtml}</td>
+												<td style="border:none; width:30px;"></td>
+												<td style="border:none; vertical-align:top;">${rightHtml}</td>
+											</tr>
+										</table>
+									</body>
+									</html>
+								`;
+								var blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+								var link = document.createElement("a");
+								link.href = URL.createObjectURL(blob);
+								link.download = "CBUAE_IRRBB_Reconciliation_" + (Report_date || "Export") + ".xls";
+								document.body.appendChild(link);
+								link.click();
+								document.body.removeChild(link);
+							} catch (err) {
+								console.error("Reconciliation download error:", err);
+								alert("Unable to export reconciliation data.");
+							}
+						}
+
+						// Run calculation on load if Reconciliation tab is active
+						document.addEventListener("DOMContentLoaded", function() {
+							setTimeout(calculateReconSummaries, 300);
+						});
+					</script>
 				</div>
 				
 					</div>
