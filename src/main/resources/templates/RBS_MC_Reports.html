@@ -23226,7 +23226,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
 });
 </script>
-<script>
+<script th:inline="javascript">
+    const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
     let currentYear = new Date().getFullYear();
     let pendingDisplayString = null;
     let reportDateParam = null;
@@ -23344,7 +23345,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (!response.ok) throw new Error("Server error during availability check.");
                 const data = await response.json();
                 if (data.exists) {
-                    window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}`;
+                	window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}&dept=${encodeURIComponent(currentDepartment)}`;
                 } else {
                     showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
                 }
@@ -23419,7 +23420,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 setTimeout(() => {
                     $('#generateReportModal').modal('hide');
-                    window.location.href = `${baseUrl}?reportDate=${reportDate}&timeperiod=${timeperiod}`;
+                    window.location.href = `${baseUrl}?reportDate=${reportDate}&timeperiod=${timeperiod}&dept=${encodeURIComponent(currentDepartment)}`;
                 }, 1500);
             } else {
                 throw new Error(result.errorMessage || "A database error occurred during generation.");
@@ -23766,23 +23767,26 @@ document.addEventListener("DOMContentLoaded", function () {
         const mgrTable = document.getElementById("mgrReportTable");
         const toggleBtn = document.getElementById("toggleTableBtn");
 
-        let isManagerViewDefault = (mgrscreen === "YES");
+        let savedTable = localStorage.getItem('preferredTableView');
+        let isManagerView = false;
 
-        if (roleId === 'ADM-M' || roleId === 'ADM-C') {
-            isManagerViewDefault = false; 
+        if (savedTable) {
+            isManagerView = (savedTable === 'manager');
+        } else {
+            isManagerView = (mgrscreen === "YES");
+            if (roleId === 'ADM-M' || roleId === 'ADM-C') {
+                isManagerView = false; 
+            }
         }
 
-        if (isManagerViewDefault) {
+        if (isManagerView) {
             if (mgrTable) mgrTable.style.display = "block";
             if (regularTable) regularTable.style.display = "none";
-
             currentTable = 'manager';
             if (toggleBtn) toggleBtn.innerText = 'M/C View';
-
         } else {
             if (regularTable) regularTable.style.display = "block";
             if (mgrTable) mgrTable.style.display = "none";
-
             currentTable = 'regular';
             if (toggleBtn) toggleBtn.innerText = 'Manager View';
         }
@@ -23813,6 +23817,8 @@ function toggleTable() {
         currentTable = 'manager';
         if (toggleBtn) toggleBtn.innerText = 'M/C View';
     }
+
+    localStorage.setItem('preferredTableView', currentTable);
 }
 </script>
 <script th:inline="javascript">
