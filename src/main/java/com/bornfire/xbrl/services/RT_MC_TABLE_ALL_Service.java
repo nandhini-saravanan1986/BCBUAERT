@@ -2,6 +2,7 @@ package com.bornfire.xbrl.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -34,6 +35,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +94,16 @@ public class RT_MC_TABLE_ALL_Service {
 
 	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated, String reportOption,
-			String selectedDepartments, String specialValues) throws Exception {
+			String selectedDepartments, String specialValues, String tableNames) throws Exception {
 		if (specialValues != null && !specialValues.trim().isEmpty()) {
 			progressMap.put(jobId, 10);
 			byte[] fileData = generateNotApplicabilityExcel(reportDate, branch, progressMap, jobId, specialValues);
+			progressMap.put(jobId, 100);
+			return fileData;
+		}
+		if ("manager_all".equalsIgnoreCase(reportOption) || "manager_specific".equalsIgnoreCase(reportOption)) {
+			progressMap.put(jobId, 10);
+			byte[] fileData = generateManagerReportsExcel(reportDate, branch, tableNames, progressMap, jobId); 
 			progressMap.put(jobId, 100);
 			return fileData;
 		}
@@ -8854,7 +8862,6 @@ public class RT_MC_TABLE_ALL_Service {
 			return nVal.isEmpty() ? null : nVal;
 		}
 	}
-
 	private byte[] generateNotApplicabilityExcel(String reportDate, String timeperiod, Map<String, Integer> progressMap,
 			String jobId, String specialValues) throws Exception {
 
@@ -8894,6 +8901,22 @@ public class RT_MC_TABLE_ALL_Service {
 			cellStyle.setWrapText(true);
 			cellStyle.setAlignment(HorizontalAlignment.CENTER);
 			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+			CellStyle groupHeaderStyle = workbook.createCellStyle();
+			groupHeaderStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			groupHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			groupHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
+			groupHeaderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			groupHeaderStyle.setBorderBottom(BorderStyle.THIN);
+			groupHeaderStyle.setBorderTop(BorderStyle.THIN);
+			groupHeaderStyle.setBorderLeft(BorderStyle.THIN);
+			groupHeaderStyle.setBorderRight(BorderStyle.THIN);
+
+			Font groupFont = workbook.createFont();
+			groupFont.setBold(true);
+			groupFont.setColor(IndexedColors.BLACK.getIndex());
+			groupHeaderStyle.setFont(groupFont);
+
 			Row headerRow = sheet.createRow(0);
 			String[] headers = { "Column ID", "Table Reference", "Data Element - Row", "Data Element - Column",
 					"Description", "Reason for Not Applicability", "Responsibility" };
@@ -8907,52 +8930,64 @@ public class RT_MC_TABLE_ALL_Service {
 
 			int rowNum = 1;
 			if (allRecords != null && !allRecords.isEmpty()) {
-				for (RT_MC_DATA_RECORD_ENTITY record : allRecords) {
-
-					String cellDataVal = (record.getDataValue() != null) ? record.getDataValue().trim() : "";
-					boolean matchesSpecialValue = false;
-
-					for (String sv : targetSpecialValues) {
-						if ("0".equals(sv)) {
+				
+				for (String currentSpecialValue : targetSpecialValues) {
+					
+					List<RT_MC_DATA_RECORD_ENTITY> groupRecords = new ArrayList<>();
+					for (RT_MC_DATA_RECORD_ENTITY record : allRecords) {
+						String cellDataVal = (record.getDataValue() != null) ? record.getDataValue().trim() : "";
+						
+						if ("0".equals(currentSpecialValue)) {
 							if ("0".equals(cellDataVal) || "0.0".equals(cellDataVal) || "0.00".equals(cellDataVal)) {
-								matchesSpecialValue = true;
-								break;
+								groupRecords.add(record);
 							}
-						} else if (sv.equalsIgnoreCase(cellDataVal)) {
-							matchesSpecialValue = true;
-							break;
+						} else if (currentSpecialValue.equalsIgnoreCase(cellDataVal)) {
+							groupRecords.add(record);
 						}
 					}
 
-					if (matchesSpecialValue) {
-						Row row = sheet.createRow(rowNum++);
-
-						String columnId = "";
-						String description = "";
-
-						if (record.getColumnHeader() != null && record.getFormMode() != null) {
-							RT_MC_Description_Entity descEntity = RT_MC_Description_Repo
-									.findTopBySectionAndElementNative(record.getFormMode(), record.getColumnHeader());
-							if (descEntity != null) {
-								columnId = descEntity.getColumnId();
-								description = descEntity.getDescription();
-							}
+					if (!groupRecords.isEmpty()) {
+						
+						Row groupRow = sheet.createRow(rowNum++);
+						Cell groupCell = groupRow.createCell(0);
+						groupCell.setCellValue(currentSpecialValue);
+						groupCell.setCellStyle(groupHeaderStyle);
+						
+						for (int i = 1; i < headers.length; i++) {
+							Cell emptyCell = groupRow.createCell(i);
+							emptyCell.setCellStyle(groupHeaderStyle);
 						}
+						sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, 0, headers.length - 1));
 
-						createStyledCell(row, 0, getTableId(columnId), cellStyle);
+						for (RT_MC_DATA_RECORD_ENTITY record : groupRecords) {
+							Row row = sheet.createRow(rowNum++);
 
-						createStyledCell(row, 1, record.getFormMode(), cellStyle);
-						String rowElement = getRowDataElementHelper(record.getCellName(), record.getFormMode());
-						createStyledCell(row, 2, rowElement, cellStyle);
+							String columnId = "";
+							String description = "";
 
-						createStyledCell(row, 3, record.getColumnHeader(), cellStyle);
+							if (record.getColumnHeader() != null && record.getFormMode() != null) {
+								RT_MC_Description_Entity descEntity = RT_MC_Description_Repo
+										.findTopBySectionAndElementNative(record.getFormMode(), record.getColumnHeader());
+								if (descEntity != null) {
+									columnId = descEntity.getColumnId();
+									description = descEntity.getDescription();
+								}
+							}
 
-						createStyledCell(row, 4, description, cellStyle);
+							createStyledCell(row, 0, getTableId(columnId), cellStyle);
 
-						createStyledCell(row, 5, record.getCheckerJustification(), cellStyle);
+							createStyledCell(row, 1, record.getFormMode(), cellStyle);
+							
+							String rowElement = getRowDataElementHelper(record.getCellName(), record.getFormMode());
+							createStyledCell(row, 2, rowElement, cellStyle);
 
-						String responsibilityVal = fetchResponsibilityValue(record.getFormMode(), record.getCellName());
-						createStyledCell(row, 6, responsibilityVal, cellStyle);
+							createStyledCell(row, 3, record.getColumnHeader(), cellStyle);
+							createStyledCell(row, 4, description, cellStyle);
+							createStyledCell(row, 5, record.getCheckerJustification(), cellStyle);
+
+							String responsibilityVal = fetchResponsibilityValue(record.getFormMode(), record.getCellName());
+							createStyledCell(row, 6, responsibilityVal, cellStyle);
+						}
 					}
 				}
 			}
@@ -8970,7 +9005,6 @@ public class RT_MC_TABLE_ALL_Service {
 			return baos.toByteArray();
 		}
 	}
-
 	private void createStyledCell(Row row, int colIndex, String value, CellStyle style) {
 		Cell cell = row.createCell(colIndex);
 		cell.setCellValue(value != null ? value : "");
@@ -9055,5 +9089,193 @@ public class RT_MC_TABLE_ALL_Service {
 			System.err.println("Failed to fetch responsibility for cell: " + cellName + " - " + e.getMessage());
 			return "";
 		}
+	}
+
+	private static final Map<String, String> SHEET_MAP = new LinkedHashMap<>();
+	static {
+		SHEET_MAP.put("bankinformation", "Bank Information");
+		SHEET_MAP.put("bankconsumers", "Bank Consumers");
+		SHEET_MAP.put("complaints", "Complaints");
+		SHEET_MAP.put("retailproducts", "Retail Products");
+		SHEET_MAP.put("bankemployee", "Bank Employee");
+		SHEET_MAP.put("trainings", "Trainings");
+		SHEET_MAP.put("additionalinformation", "Additional Info");
+		SHEET_MAP.put("islamicbanking", "Islamic Banking");
+	}
+
+	public byte[] generateManagerReportsExcel(String date, String timeperiod, String tableNames,
+			Map<String, Integer> progressMap, String jobId) throws Exception {
+
+		List<String> targetModes = new ArrayList<>();
+		if (tableNames == null || tableNames.trim().isEmpty() || tableNames.equalsIgnoreCase("all")) {
+			targetModes.addAll(SHEET_MAP.keySet());
+		} else {
+			String[] requestedTables = tableNames.split(",");
+			for (String req : requestedTables) {
+				String mode = req.trim().toLowerCase();
+				if (SHEET_MAP.containsKey(mode)) {
+					targetModes.add(mode);
+				}
+			}
+		}
+
+		if (targetModes.isEmpty()) {
+			targetModes.addAll(SHEET_MAP.keySet());
+		}
+
+		progressMap.put(jobId, 20);
+
+		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+			CellStyle headerStyle = workbook.createCellStyle();
+			headerStyle.setFillForegroundColor(IndexedColors.BROWN.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setAlignment(HorizontalAlignment.CENTER);
+			headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			headerStyle.setBorderBottom(BorderStyle.THIN);
+			headerStyle.setBorderTop(BorderStyle.THIN);
+			headerStyle.setBorderLeft(BorderStyle.THIN);
+			headerStyle.setBorderRight(BorderStyle.THIN);
+
+			Font headerFont = workbook.createFont();
+			headerFont.setBold(true);
+			headerFont.setColor(IndexedColors.WHITE.getIndex());
+			headerFont.setFontHeightInPoints((short) 11);
+			headerStyle.setFont(headerFont);
+
+			CellStyle cellStyle = workbook.createCellStyle();
+			cellStyle.setBorderBottom(BorderStyle.THIN);
+			cellStyle.setBorderTop(BorderStyle.THIN);
+			cellStyle.setBorderLeft(BorderStyle.THIN);
+			cellStyle.setBorderRight(BorderStyle.THIN);
+			cellStyle.setWrapText(true);
+			cellStyle.setAlignment(HorizontalAlignment.CENTER);
+			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+			CellStyle percentageStyle = workbook.createCellStyle();
+			percentageStyle.cloneStyleFrom(cellStyle);
+			percentageStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+
+			int progressStep = 60 / Math.max(1, targetModes.size());
+			int currentProgress = 20;
+
+			for (String mode : targetModes) {
+				Map<String, Object> managerData = getManagerViewData(mode, date, timeperiod);
+
+				if (managerData == null || !managerData.containsKey("reportRows"))
+					continue;
+
+				@SuppressWarnings("unchecked")
+				List<RT_MC_Manager_DTO> rows = (List<RT_MC_Manager_DTO>) managerData.get("reportRows");
+
+				@SuppressWarnings("unchecked")
+				List<String> headerDates = (List<String>) managerData.get("headerDates");
+				@SuppressWarnings("unchecked")
+				List<String> yearDates = (List<String>) managerData.get("yearDates");
+
+				String friendlyTableName = SHEET_MAP.get(mode);
+				Sheet sheet = workbook.createSheet(friendlyTableName);
+
+				createManagerHeaderRow(sheet, timeperiod, headerStyle, friendlyTableName, headerDates, yearDates);
+
+				int rowIdx = 1;
+				for (RT_MC_Manager_DTO dto : rows) {
+					Row row = sheet.createRow(rowIdx++);
+
+					createStyledCell(row, 0, dto.getDescription() != null ? dto.getDescription() : "-", cellStyle);
+
+					createStyledNumericCell(row, 1, dto.getQ1Value(), cellStyle);
+					createStyledNumericCell(row, 2, dto.getQ2Value(), cellStyle);
+					createStyledNumericCell(row, 3, dto.getQ2VsQ1(), percentageStyle);
+
+					createStyledNumericCell(row, 4, dto.getQ3Value(), cellStyle);
+					createStyledNumericCell(row, 5, dto.getQ3VsQ2(), percentageStyle);
+
+					createStyledNumericCell(row, 6, dto.getQ4Value(), cellStyle);
+					createStyledNumericCell(row, 7, dto.getQuarterlyComparison(), percentageStyle);
+
+					int cellOffset = 8;
+					if ("YEARLY".equalsIgnoreCase(timeperiod)) {
+						createStyledNumericCell(row, cellOffset, dto.getLastYearValue(), cellStyle);
+						createStyledNumericCell(row, cellOffset + 1, dto.getCurrentYearValue(), cellStyle);
+						createStyledNumericCell(row, cellOffset + 2, dto.getYearlyComparison(), percentageStyle);
+						cellOffset += 3;
+					}
+
+					createStyledCell(row, cellOffset, dto.getMakerRemarks() != null ? dto.getMakerRemarks() : "-",
+							cellStyle);
+					createStyledCell(row, cellOffset + 1,
+							dto.getCheckerRemarks() != null ? dto.getCheckerRemarks() : "-", cellStyle);
+				}
+
+				sheet.setColumnWidth(0, 50 * 256);
+				for (int i = 1; i < 15; i++) {
+					sheet.autoSizeColumn(i);
+				}
+
+				currentProgress += progressStep;
+				progressMap.put(jobId, Math.min(85, currentProgress));
+			}
+
+			if (workbook.getNumberOfSheets() == 0) {
+				workbook.createSheet("No Data Available");
+			}
+
+			progressMap.put(jobId, 90);
+			workbook.write(baos);
+			return baos.toByteArray();
+		}
+	}
+
+	private void createManagerHeaderRow(Sheet sheet, String timeperiod, CellStyle headerStyle, String tableName,
+			List<String> headerDates, List<String> yearDates) {
+		Row headerRow = sheet.createRow(0);
+
+		String d1 = (headerDates != null && headerDates.size() > 3) ? headerDates.get(3) : "Date 1 (Q1)";
+		String d2 = (headerDates != null && headerDates.size() > 2) ? headerDates.get(2) : "Date 2 (Q2)";
+		String d3 = (headerDates != null && headerDates.size() > 1) ? headerDates.get(1) : "Date 3 (Q3)";
+		String d4 = (headerDates != null && headerDates.size() > 0) ? headerDates.get(0) : "Date 4 (Q4)";
+
+		String[] dynamicHeaders = { tableName, d1, d2, "Variation (Q2 vs Q1)", d3, "Variation (Q3 vs Q2)", d4,
+				"Variation over Previous Qtr" };
+
+		int colIdx = 0;
+		for (String header : dynamicHeaders) {
+			Cell cell = headerRow.createCell(colIdx++);
+			cell.setCellValue(header);
+			cell.setCellStyle(headerStyle);
+		}
+
+		if ("YEARLY".equalsIgnoreCase(timeperiod)) {
+			String y1 = (yearDates != null && yearDates.size() > 1) ? yearDates.get(1) : "Last Year";
+			String y2 = (yearDates != null && yearDates.size() > 0) ? yearDates.get(0) : "Current Year";
+
+			Cell c1 = headerRow.createCell(colIdx++);
+			c1.setCellValue(y1);
+			c1.setCellStyle(headerStyle);
+			Cell c2 = headerRow.createCell(colIdx++);
+			c2.setCellValue(y2);
+			c2.setCellStyle(headerStyle);
+			Cell c3 = headerRow.createCell(colIdx++);
+			c3.setCellValue("Variation over Annual Data");
+			c3.setCellStyle(headerStyle);
+		}
+
+		Cell cm = headerRow.createCell(colIdx++);
+		cm.setCellValue("Maker Remarks");
+		cm.setCellStyle(headerStyle);
+		Cell cc = headerRow.createCell(colIdx);
+		cc.setCellValue("Checker Remarks");
+		cc.setCellStyle(headerStyle);
+	}
+
+	private void createStyledNumericCell(Row row, int colIndex, Double value, CellStyle style) {
+		Cell cell = row.createCell(colIndex);
+		if (value != null) {
+			cell.setCellValue(value);
+		} else {
+			cell.setCellValue("");
+		}
+		cell.setCellStyle(style);
 	}
 }
