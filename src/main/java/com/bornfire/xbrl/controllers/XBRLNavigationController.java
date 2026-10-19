@@ -8135,20 +8135,33 @@ System.out.println("sixe==="+excelData.length);
 		}
 	}
 	@GetMapping("/download-file")
-	public ResponseEntity<byte[]> downloadFile(@RequestParam("id") BigDecimal id,
-			@RequestParam("fileIndex") int fileIndex) {
+	public ResponseEntity<byte[]> downloadFile(@RequestParam("formMode") String formMode,
+	        @RequestParam("cellName") String cellName,
+	        @RequestParam("timeperiod") String timeperiod,
+	        @RequestParam("reportDate") String reportDateStr,
+	        @RequestParam("fileIndex") int fileIndex) {
 
 		try {
 			if (fileIndex < 1 || fileIndex > 10) {
 				return ResponseEntity.badRequest().build();
 			}
-
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			java.util.Date parsedReportDate = sdf.parse(reportDateStr);
 			String hql = "SELECT r.fileName" + fileIndex + ", r.fileData" + fileIndex
-					+ " FROM RT_MC_DATA_RECORD_ENTITY r WHERE r.id = :id";
+					+ " FROM RT_MC_DATA_RECORD_ENTITY r "
+					+ "WHERE r.formMode = :formMode "
+					+ "AND r.cellName = :cellName "
+					+ "AND r.timeperiod = :timeperiod "
+					+ "AND r.reportDate = :reportDate";
 
 			Object[] result;
 			try {
-				result = (Object[]) entityManager.createQuery(hql).setParameter("id", id).getSingleResult();
+				result = (Object[]) entityManager.createQuery(hql)
+						.setParameter("formMode", formMode)
+						.setParameter("cellName", cellName)
+						.setParameter("timeperiod", timeperiod)
+						.setParameter("reportDate", parsedReportDate)
+						.getSingleResult();
 			} catch (NoResultException e) {
 				return ResponseEntity.notFound().build();
 			}

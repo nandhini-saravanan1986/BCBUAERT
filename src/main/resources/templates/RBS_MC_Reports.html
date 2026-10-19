@@ -21542,7 +21542,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 ccaPreviewWindow.style.justifyContent = 'center';
                                                 ccaPreviewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem; margin-bottom: 10px;"></div><h6 style="color: #333; margin: 0;">Generating Preview...</h6></div>`;
 
-                                                fetch(`./download-file?id=${fileSource.id}&fileIndex=${fileMeta.index}`)
+                                                fetch(`./download-file?formMode=${encodeURIComponent(formMode)}&cellName=${encodeURIComponent(cellName)}&timeperiod=${encodeURIComponent(timeperiod)}&reportDate=${encodeURIComponent(contextReportDate)}&fileIndex=${fileMeta.index}`)
                                                 .then(res => {
                                                     if (!res.ok) throw new Error("Could not download file");
                                                     const contentType = res.headers.get('content-type');
@@ -22064,7 +22064,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             previewWindow.style.justifyContent = 'center';
                                             previewWindow.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem; margin-bottom: 10px;"></div><h6 style="color: #333; margin: 0;">Generating Preview...</h6></div>`;
 
-                                            fetch(`./download-file?id=${fileSource.id}&fileIndex=${fileMeta.index}`)
+                                            fetch(`./download-file?formMode=${encodeURIComponent(formMode)}&cellName=${encodeURIComponent(cellName)}&timeperiod=${encodeURIComponent(timeperiod)}&reportDate=${encodeURIComponent(contextReportDate)}&fileIndex=${fileMeta.index}`)
                                             .then(res => {
                                                 if (!res.ok) throw new Error("Could not download file");
                                                 const contentType = res.headers.get('content-type');
