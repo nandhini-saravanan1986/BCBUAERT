@@ -21276,8 +21276,27 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             });
+            const mgrTable = document.getElementById('mgrReportTable');
+            const regTable = document.getElementById('regularReportTable') || document.querySelector('#usertable');
+            
+            if (mgrTable && regTable) {
+                mgrTable.querySelectorAll('.input-and-select:not(.remarks-input), .manager-verify-cell').forEach(mgrInp => {
+                    mgrInp.dataset.isTotalCell = "true"; 
+                    
+                    const cellIdentifier = mgrInp.getAttribute('data-cellname') || mgrInp.name || mgrInp.id;
+                    if (cellIdentifier) {
+                        const counterpart = regTable.querySelector(`[name="${cellIdentifier}"], [id="${cellIdentifier}"], [data-cellname="${cellIdentifier}"]`);
+                        if (counterpart) {
+                            if (counterpart.dataset.autoTotal === "true") {
+                                mgrInp.dataset.autoTotal = "true";
+                            }
+                            mgrInp._childInputs = counterpart._childInputs; 
+                        }
+                    }
+                });
+            }
         }
-        const inputs = document.querySelectorAll('.input-and-select, .remarks-input');
+        const inputs = document.querySelectorAll('.input-and-select, .remarks-input, .manager-verify-cell');
 
         inputs.forEach(input => {
             input.setAttribute('readonly', true);
@@ -22766,10 +22785,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const execRemarks = execRemarksEl ? execRemarksEl.value.trim() : "";
 
             let childInputs = currentEditingInput._childInputs || [];
-            const cellIdentifier = currentEditingInput.name || currentEditingInput.id;
+            const cellIdentifier = currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id;
             
             if (childInputs.length === 0) {
-                const counterpart = document.querySelector(`#regularReportTable .input-and-select[name="${cellIdentifier}"], #regularReportTable .input-and-select[id="${cellIdentifier}"]`);
+                const counterpart = document.querySelector(`#regularReportTable [name="${cellIdentifier}"], #regularReportTable [id="${cellIdentifier}"], #regularReportTable [data-cellname="${cellIdentifier}"], #usertable [name="${cellIdentifier}"], #usertable [id="${cellIdentifier}"], #usertable [data-cellname="${cellIdentifier}"]`);
                 if (counterpart && counterpart._childInputs) {
                     childInputs = counterpart._childInputs;
                 }
@@ -22869,7 +22888,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     setTimeout(() => {
                         $('#editRecordModal').modal('hide');
                         
-                        const counterpart = document.querySelector(`#regularReportTable .input-and-select[name="${cellIdentifier}"], #mgrReportTable .input-and-select[name="${cellIdentifier}"]`);
+                        const counterpart = document.querySelector(`#regularReportTable [name="${cellIdentifier}"], #regularReportTable [data-cellname="${cellIdentifier}"], #mgrReportTable [name="${cellIdentifier}"], #mgrReportTable [data-cellname="${cellIdentifier}"]`);
 
                         if (execAction === 'N') {
                             paintCell(currentEditingInput, '#d9534f', '#d43f3a', '#ffffff', `Reverted by ${execRole}`);
