@@ -1878,7 +1878,7 @@ body.mgr-selecting .input-and-select.mr-deselected:focus {
     outline: none !important;
 }
 #editRecordModal .modal-body {
-	max-height: 74vh;
+	max-height: 64vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -18587,7 +18587,8 @@ to {
 
 									<label style="margin: 0; font-size: 13px; font-weight: 600;">Source</label>
 									<input type="text" id="modal-source-val"
-										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" />
+										style="width: 100%; max-width: 260px; padding: 6px 10px; font-size: 13px; border: 1px solid #ced4da; border-radius: 4px; outline: none;" /> 
+									
 								</div>
 
 								<div
@@ -20346,6 +20347,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const timeperiod = /*[[${timeperiod}]]*/ '';
     const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
     const roleId = /*[[${ROLEID}]]*/ '';
+    const designation = (/*[[${DESIGNATION}]]*/ '') || '';
+    const isCRO = designation.trim().toUpperCase() === 'CRO';
+    const isCCO = designation.trim().toUpperCase() === 'CCO';
     const isChecker = (roleId && (roleId.toUpperCase() === 'ADM-C' || roleId.toUpperCase() === 'USR-C'));
     const isManager = (roleId && (roleId.toUpperCase() === 'MGR' || roleId.toUpperCase() === 'SUP-ADM'));
     const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : (reportlist1 != null && !reportlist1.isEmpty() ? reportlist1[0].VERIFY_FLG : '')}]]*/ '';
@@ -21187,7 +21191,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const fd = new FormData();
             fd.append("formMode", formMode);
             fd.append("reportDate", contextReportDate);
-            fd.append("source", "Auto-Calculated");
+            fd.append("source", "");
             fd.append("columnHeader", totalInput.getAttribute('data-fieldname') || "Total");
             fd.append("rowCol2Value", "Total");
             fd.append("cellName", totalCellName);
@@ -21249,6 +21253,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         seenInputs.add(inp);
 
                         if (r === rows.length - 1) { 
+                            inp.dataset.isTotalCell = "true";
                             if (childInputsInCol.length > 0 && !processedTotals.has(inp)) {
                                 processedTotals.add(inp);
                                 inp.dataset.autoTotal = "true";
@@ -21286,18 +21291,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 return isAllowed(ptReportData1, ciName) || isAllowed(ptReportData2, ciName);
             });
 
-            const isAuthorized = isManager || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || hasAuthorizedChild;
+            const isTotalCell = input.dataset.isTotalCell === "true";
+            const isAuthorized = isManager || (isTotalCell && (isCRO || isCCO)) || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || hasAuthorizedChild;
 
             if (isAuthorized) {
                 if (isAutoTotal) {
                     input.style.fontWeight = '700';
-                    input.style.backgroundColor = '#e9ecef';
-                    input.style.border = '1px solid #ced4da';
-                    input.style.borderRadius = '4px';
-                    input.style.color = '#212529';
-                    input.style.cursor = 'default';
-                    input.title = 'Auto-calculated Column Total';
-                    return;
+                    if (!isCRO && !isCCO && !isChecker && !isManager) {
+                        input.style.backgroundColor = '#e9ecef';
+                        input.style.border = '1px solid #ced4da';
+                        input.style.borderRadius = '4px';
+                        input.style.color = '#212529';
+                        input.style.cursor = 'default';
+                        input.title = '';
+                        return;
+                    }
                 }
 
                 const wrapper = document.createElement('div');
@@ -21365,7 +21373,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
                 else {
-                    if (isChecker || isManager) {
+                	if (isChecker || isManager || isCRO || isCCO || isAutoTotal) {
                         iconBtn.innerHTML = eyeSVG;
                         iconBtn.title = isManager ? "View Record" : "Verify Record";
                     } else {
@@ -22074,6 +22082,182 @@ document.addEventListener("DOMContentLoaded", function() {
                                     }
                                 }
                             }
+                      
+
+                            const isCurrentTotalCell = input.dataset.isTotalCell === "true";
+                            const isCurrentAutoTotal = input.dataset.autoTotal === "true";
+
+                            let execRemarksContainer = document.getElementById('exec-remarks-container');
+                            if (!execRemarksContainer) {
+                                execRemarksContainer = document.createElement('div');
+                                execRemarksContainer.id = 'exec-remarks-container';
+                                execRemarksContainer.style.marginTop = '15px';
+                                execRemarksContainer.style.paddingTop = '10px';
+                                execRemarksContainer.style.borderTop = '1px dashed #dee2e6';
+
+                                const sourceInput = document.getElementById('modal-source-val');
+                                const anchor = sourceInput ? (sourceInput.closest('.form-group') || sourceInput.parentElement) : null;
+                                if (anchor) {
+                                    anchor.insertAdjacentElement('afterend', execRemarksContainer);
+                                } else {
+                                    const modalBody = document.querySelector('#editRecordModal .modal-body');
+                                    if (modalBody) modalBody.appendChild(execRemarksContainer);
+                                }
+                            }
+
+                            let execActionButtons = document.getElementById('exec-action-buttons');
+                            if (!execActionButtons) {
+                                execActionButtons = document.createElement('span');
+                                execActionButtons.id = 'exec-action-buttons';
+                                execActionButtons.style.display = 'inline-flex';
+                                execActionButtons.style.gap = '8px';
+                                const nativeVerifyBtn = document.getElementById('modal-verify-btn');
+                                if (nativeVerifyBtn && nativeVerifyBtn.parentNode) {
+                                    nativeVerifyBtn.parentNode.insertBefore(execActionButtons, nativeVerifyBtn.nextSibling);
+                                }
+                            }
+
+                            if (isCurrentAutoTotal || (isCurrentTotalCell && (isCRO || isCCO))) {
+                                document.getElementById('modal-input-val').readOnly = true;
+                                if (document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').readOnly = true;
+                                if (document.getElementById('modal-source-val')) document.getElementById('modal-source-val').readOnly = true;
+                                if (document.getElementById('modal-na-btn')) document.getElementById('modal-na-btn').style.display = 'none';
+                                if (document.getElementById('modal-nav-btn')) document.getElementById('modal-nav-btn').style.display = 'none';
+                                if (document.getElementById('modal-save-btn')) document.getElementById('modal-save-btn').style.display = 'none';
+                                if (document.getElementById('modal-proceed-btn')) document.getElementById('modal-proceed-btn').style.display = 'none';
+                            }
+
+                            if (isCurrentAutoTotal && isChecker) {
+                                if (document.getElementById('modal-verify-btn')) document.getElementById('modal-verify-btn').style.display = 'none';
+                                if (document.getElementById('modal-revert-btn')) document.getElementById('modal-revert-btn').style.display = 'none';
+                                if (document.getElementById('modal-revoke-btn')) document.getElementById('modal-revoke-btn').style.display = 'none';
+                                
+                                const defaultStatusMsg = document.getElementById('checker-status-msg');
+                                if (defaultStatusMsg) {
+                                    defaultStatusMsg.style.display = 'inline-block';
+                                    if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = 'Auto-calculated. Verify above rows instead.';
+                                    else defaultStatusMsg.innerText = 'Auto-calculated. Verify the rows instead.';
+                                    defaultStatusMsg.style.color = '#6c757d';
+                                }
+                            }
+
+                            if (isCurrentTotalCell) {
+                                const croFlg = cur ? (cur.croVerifyFlg || '') : '';
+                                const ccoFlg = cur ? (cur.ccoVerifyFlg || '') : '';
+                                const croRem = cur ? (cur.croRemarks || '') : '';
+                                const ccoRem = cur ? (cur.ccoRemarks || '') : '';
+
+                                const badgeStyle = (flg) => flg === 'Y' ? 'color:#28a745;font-weight:700;' : (flg === 'N' ? 'color:#dc3545;font-weight:700;' : 'color:#ffc107;font-weight:700;');
+                                const badgeText = (flg) => flg === 'Y' ? 'Verified (Y)' : (flg === 'N' ? 'Reverted (N)' : 'Pending');
+
+                                execRemarksContainer.style.display = 'block';
+                                execRemarksContainer.innerHTML = `
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                                        <span><strong>CRO Status:</strong> <span style="${badgeStyle(croFlg)}">${badgeText(croFlg)}</span></span>
+                                        <span><strong>CCO Status:</strong> <span style="${badgeStyle(ccoFlg)}">${badgeText(ccoFlg)}</span></span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                        <label style="flex: 0 0 35%; max-width: 35%; font-size: 14px; font-weight: 700; color: #4a3c31; margin-bottom: 0;">CRO Remarks</label>
+                                        <div style="flex: 1;">
+                                            <input type="text" id="modal-cro-remarks-val" class="form-control form-control-sm" 
+                                                   value="${croRem.replace(/"/g, '&quot;')}" 
+                                                   ${isCRO && croFlg !== 'Y' ? '' : 'readonly'} 
+                                                   placeholder="CRO remarks..." />
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <label style="flex: 0 0 35%; max-width: 35%; font-size: 14px; font-weight: 700; color: #4a3c31; margin-bottom: 0;">CCO Remarks</label>
+                                        <div style="flex: 1;">
+                                            <input type="text" id="modal-cco-remarks-val" class="form-control form-control-sm" 
+                                                   value="${ccoRem.replace(/"/g, '&quot;')}" 
+                                                   ${isCCO && ccoFlg !== 'Y' ? '' : 'readonly'} 
+                                                   placeholder="CCO remarks..." />
+                                        </div>
+                                    </div>
+                                `;
+
+                                execActionButtons.style.display = 'inline-flex';
+                                execActionButtons.innerHTML = '';
+                                const defaultStatusMsg = document.getElementById('checker-status-msg');
+
+                                if (isCRO || isCCO) {
+                                    const activeRole = isCRO ? 'CRO' : 'CCO';
+                                    const myFlg = isCRO ? croFlg : ccoFlg;
+
+                                    let readyForExec = true;
+                                    if (isCurrentAutoTotal) {
+                                        if (currentEditingInput._childInputs && currentEditingInput._childInputs.length > 0) {
+                                            const allVerified = currentEditingInput._childInputs.every(ci => {
+                                                const titleStr = ci.title || "";
+                                                return titleStr.includes("Verified by Checker") || titleStr.includes("Not Applicable") || titleStr.includes("Not Available");
+                                            });
+                                            if (!allVerified) readyForExec = false;
+                                        } else {
+                                            readyForExec = false;
+                                        }
+                                    } else {
+                                        if (!cur || cur.verifyFlg !== 'Y') readyForExec = false;
+                                    }
+
+                                    if (defaultStatusMsg) {
+                                        if (!readyForExec) {
+                                            defaultStatusMsg.style.display = 'inline-block';
+                                            if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = `Checker must fully verify this column before ${activeRole} review.`;
+                                            else defaultStatusMsg.innerText = `Checker must fully verify this column before ${activeRole} review.`;
+                                            defaultStatusMsg.style.color = '#dc3545';
+                                        } else {
+                                            defaultStatusMsg.style.display = 'none';
+                                        }
+                                    }
+
+                                    if (readyForExec) {
+                                        if (myFlg === 'Y') {
+                                            if (globalVerifyFlg !== 'Y') {
+                                                if (defaultStatusMsg) {
+                                                    defaultStatusMsg.style.display = 'inline-block';
+                                                    if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = 'You have Verified this record.';
+                                                    else defaultStatusMsg.innerText = 'You have Verified this record.';
+                                                    defaultStatusMsg.style.color = '#28a745';
+                                                }
+                                                execActionButtons.innerHTML = `<button type="button" id="btn-exec-revoke" class="btn btn-secondary">${activeRole} Revoke</button>`;
+                                            } else {
+                                                if (defaultStatusMsg) {
+                                                    defaultStatusMsg.style.display = 'inline-block';
+                                                    if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = 'Manager Approved. Locked.';
+                                                    else defaultStatusMsg.innerText = 'Manager Approved. Locked.';
+                                                    defaultStatusMsg.style.color = '#28a745';
+                                                }
+                                            }
+                                        } else {
+                                            execActionButtons.innerHTML = `
+                                                <button type="button" id="btn-exec-revert" class="btn btn-danger">${activeRole} Revert</button>
+                                                <button type="button" id="btn-exec-verify" class="btn btn-success">${activeRole} Verify</button>
+                                            `;
+                                        }
+                                    }
+                                } else {
+                                    if (defaultStatusMsg && isCurrentAutoTotal && !isChecker) defaultStatusMsg.style.display = 'none';
+                                }
+
+                                const bindExecBtn = (btnId, execAction) => {
+                                    const b = document.getElementById(btnId);
+                                    if (b) {
+                                        b.onclick = function() {
+                                            executeExecutiveAction(isCRO ? 'CRO' : 'CCO', execAction, this, cur);
+                                        };
+                                    }
+                                };
+                                bindExecBtn('btn-exec-verify', 'Y');
+                                bindExecBtn('btn-exec-revert', 'N');
+                                bindExecBtn('btn-exec-revoke', 'REVOKE');
+                            } else {
+                                execRemarksContainer.style.display = 'none';
+                                execActionButtons.style.display = 'none';
+                                execActionButtons.innerHTML = '';
+                            }
+                            
+                            
+                            
                             
                             const deptSpan = document.getElementById('modal-dept-val');
                             if (deptSpan) {
@@ -22574,6 +22758,148 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
+        function executeExecutiveAction(execRole, execAction, btnClicked, currentRecordData) {
+            if (!currentEditingInput) return;
+
+            const activeRemarksId = execRole === 'CRO' ? 'modal-cro-remarks-val' : 'modal-cco-remarks-val';
+            const execRemarksEl = document.getElementById(activeRemarksId);
+            const execRemarks = execRemarksEl ? execRemarksEl.value.trim() : "";
+
+            let childInputs = currentEditingInput._childInputs || [];
+            const cellIdentifier = currentEditingInput.name || currentEditingInput.id;
+            
+            if (childInputs.length === 0) {
+                const counterpart = document.querySelector(`#regularReportTable .input-and-select[name="${cellIdentifier}"], #regularReportTable .input-and-select[id="${cellIdentifier}"]`);
+                if (counterpart && counterpart._childInputs) {
+                    childInputs = counterpart._childInputs;
+                }
+            }
+
+            const columnCellNames = childInputs.map(ci => ci.name || ci.id).filter(Boolean);
+
+            const formData = new FormData();
+            formData.append("formMode", formMode);
+            formData.append("reportDate", contextReportDate);
+            formData.append("cellName", cellIdentifier || "UnknownCell");
+            formData.append("cellId", currentEditingInput.id || "UnknownId");
+            formData.append("dataValue", document.getElementById('modal-input-val').value.trim() || "0");
+            formData.append("timeperiod", timeperiod);
+            
+            formData.append("columnHeader", document.getElementById('modal-header-val').innerText);
+            formData.append("rowCol2Value", document.getElementById('modal-col2-val').innerText);
+            formData.append("productValue", currentRowCol2Value);
+            formData.append("source", document.getElementById('modal-source-val') ? document.getElementById('modal-source-val').value : "");
+
+            formData.append("execRole", execRole); 
+            formData.append("execAction", execAction); 
+            formData.append("execRemarks", execRemarks);
+            formData.append("columnCells", JSON.stringify(columnCellNames));
+
+            const otherRoleFlg = execRole === 'CRO'
+                ? (currentRecordData ? (currentRecordData.ccoVerifyFlg || '') : '')
+                : (currentRecordData ? (currentRecordData.croVerifyFlg || '') : '');
+
+            let combinedVerifyFlg = '';
+            if (execAction === 'N') {
+                combinedVerifyFlg = 'N';
+            } else if (execAction === 'Y' && otherRoleFlg === 'Y') {
+                combinedVerifyFlg = 'Y'; 
+            }
+
+            formData.append("verifyFlg", combinedVerifyFlg);
+            formData.append("modifyFlg", "C");
+            formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
+            formData.append("checkerJustification", document.getElementById('modal-checker-justification-val') ? document.getElementById('modal-checker-justification-val').value : "");
+            formData.append("remarks", execRemarks);
+
+            const origText = btnClicked.innerText;
+            btnClicked.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+            btnClicked.disabled = true;
+
+            fetch('./savedatarecord', { method: 'POST', body: formData })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to save CRO/CCO action");
+                    return res.text();
+                })
+                .then(() => {
+                    if (execAction === 'N' && childInputs.length > 0) {
+                        childInputs.forEach(ci => {
+                            const cfd = new FormData();
+                            cfd.append("formMode", formMode);
+                            cfd.append("reportDate", contextReportDate);
+                            cfd.append("cellName", ci.name || ci.id);
+                            cfd.append("cellId", ci.id || ci.name);
+                            cfd.append("dataValue", ci.value || "0");
+                            
+                            cfd.append("columnHeader", ci.getAttribute('data-fieldname') || document.getElementById('modal-header-val').innerText);
+                            cfd.append("rowCol2Value", "Reverted Column"); 
+                            cfd.append("productValue", "Reverted Column");
+                            cfd.append("source", "System Auto-Revert");
+
+                            cfd.append("verifyFlg", "N");
+                            cfd.append("modifyFlg", "C");
+                            cfd.append("remarks", `Reverted by ${execRole}: ${execRemarks}`);
+                            cfd.append("timeperiod", timeperiod);
+                            fetch('./savedatarecord', { method: 'POST', body: cfd });
+                        });
+                    }
+
+                    const paintCell = (inpEl, bgColor, borderColor, textColor, titleTxt) => {
+                        if (!inpEl) return;
+                        inpEl.title = titleTxt;
+                        inpEl.style.color = textColor;
+                        const wrap = inpEl.closest('.dynamic-input-wrapper');
+                        const icn = wrap ? wrap.querySelector('.dynamic-edit-icon') : null;
+                        if (wrap) {
+                            wrap.style.backgroundColor = bgColor;
+                            wrap.style.border = `1px solid ${borderColor}`;
+                            wrap.style.borderRadius = '4px';
+                            inpEl.style.backgroundColor = 'transparent';
+                            inpEl.style.border = 'none';
+                        } else {
+                            inpEl.style.backgroundColor = bgColor;
+                            inpEl.style.border = `1px solid ${borderColor}`;
+                        }
+                        if (icn) {
+                            icn.style.color = textColor;
+                            icn.style.opacity = '1';
+                        }
+                    };
+
+                    setTimeout(() => {
+                        $('#editRecordModal').modal('hide');
+                        
+                        const counterpart = document.querySelector(`#regularReportTable .input-and-select[name="${cellIdentifier}"], #mgrReportTable .input-and-select[name="${cellIdentifier}"]`);
+
+                        if (execAction === 'N') {
+                            paintCell(currentEditingInput, '#d9534f', '#d43f3a', '#ffffff', `Reverted by ${execRole}`);
+                            if (counterpart && counterpart !== currentEditingInput) {
+                                paintCell(counterpart, '#d9534f', '#d43f3a', '#ffffff', `Reverted by ${execRole}`);
+                            }
+                            childInputs.forEach(ci => {
+                                paintCell(ci, '#d9534f', '#d43f3a', '#ffffff', `Column Reverted by ${execRole}`);
+                            });
+                        } else if (combinedVerifyFlg === 'Y') {
+                            paintCell(currentEditingInput, '#5cb85c', '#4cae4c', '#ffffff', 'Verified by CRO & CCO');
+                            if (counterpart && counterpart !== currentEditingInput) {
+                                paintCell(counterpart, '#5cb85c', '#4cae4c', '#ffffff', 'Verified by CRO & CCO');
+                            }
+                        } else {
+                            paintCell(currentEditingInput, '#ffc107', '#ffc107', '#212529', 'Pending CRO/CCO Dual Verification');
+                            if (counterpart && counterpart !== currentEditingInput) {
+                                paintCell(counterpart, '#ffc107', '#ffc107', '#212529', 'Pending CRO/CCO Dual Verification');
+                            }
+                        }
+                    }, 800);
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Failed to process CRO/CCO action.");
+                    btnClicked.innerText = origText;
+                    btnClicked.disabled = false;
+                });
+        }
+        
 		document.getElementById('modal-save-btn').addEventListener('click', function() { executeDatabaseAction('', '', this); });
         
         document.getElementById('modal-proceed-btn').addEventListener('click', function() { executeDatabaseAction('', 'C', this); });
@@ -22694,7 +23020,6 @@ document.addEventListener("DOMContentLoaded", function() {
             };
 
             stylingInputs.forEach(input => {
-                if (input.dataset.autoTotal === "true") return;
                 const cellName = input.getAttribute('data-cellname') || input.name || input.id;
                 if (!cellName) return;
                 
@@ -22759,7 +23084,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
             validationInputs.forEach(input => {
-                if (input.dataset.autoTotal === "true") return;
                 const cellName = input.getAttribute('data-cellname') || input.name || input.id;
                 const isNA = isCellNotApplicable(input);
 

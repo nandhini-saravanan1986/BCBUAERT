@@ -133,6 +133,18 @@ public class RT_MC_DATA_RECORD_ENTITY {
 	@Column(name = "FILE_DATA_10")
 	private byte[] fileData10;
 
+	@Column(name = "CRO_VERIFY_FLG")
+	private String croVerifyFlg;
+
+	@Column(name = "CRO_REMARKS")
+	private String croRemarks;
+
+	@Column(name = "CCO_VERIFY_FLG")
+	private String ccoVerifyFlg;
+
+	@Column(name = "CCO_REMARKS")
+	private String ccoRemarks;
+
 	public BigDecimal getId() {
 		return id;
 	}
@@ -419,6 +431,38 @@ public class RT_MC_DATA_RECORD_ENTITY {
 
 	public void setCheckerJustification(String checkerJustification) {
 		this.checkerJustification = checkerJustification;
+	}
+
+	public String getCroVerifyFlg() {
+		return croVerifyFlg;
+	}
+
+	public void setCroVerifyFlg(String croVerifyFlg) {
+		this.croVerifyFlg = croVerifyFlg;
+	}
+
+	public String getCroRemarks() {
+		return croRemarks;
+	}
+
+	public void setCroRemarks(String croRemarks) {
+		this.croRemarks = croRemarks;
+	}
+
+	public String getCcoVerifyFlg() {
+		return ccoVerifyFlg;
+	}
+
+	public void setCcoVerifyFlg(String ccoVerifyFlg) {
+		this.ccoVerifyFlg = ccoVerifyFlg;
+	}
+
+	public String getCcoRemarks() {
+		return ccoRemarks;
+	}
+
+	public void setCcoRemarks(String ccoRemarks) {
+		this.ccoRemarks = ccoRemarks;
 	}
 
 }

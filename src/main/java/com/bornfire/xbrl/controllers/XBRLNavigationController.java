@@ -6306,7 +6306,9 @@ System.out.println("sixe==="+excelData.length);
 
 		String BRANCHCODE = (String) req.getSession().getAttribute("BRANCHCODE");
 		String ROLEID = (String) req.getSession().getAttribute("ROLEID");
+		String DESIGNATION = (String) req.getSession().getAttribute("DESIGNATION");
 		md.addAttribute("ROLEID", ROLEID);
+		md.addAttribute("DESIGNATION", DESIGNATION);
 		System.out.println("ROLEID : " + ROLEID);
 		if (deptvalid == null) {
 			deptvalid = "NO";
@@ -7803,10 +7805,17 @@ System.out.println("sixe==="+excelData.length);
 			@RequestParam(value = "source", required = false) String source,
 			@RequestParam("columnHeader") String columnHeader, @RequestParam("rowCol2Value") String rowCol2Value,
 			@RequestParam("cellName") String cellName, @RequestParam("cellId") String cellId,
-			@RequestParam("dataValue") String dataValue, @RequestParam(value = "justification", required = false) String justification,
+			@RequestParam("dataValue") String dataValue,
+			@RequestParam(value = "justification", required = false) String justification,
 			@RequestParam(value = "verifyFlg", required = false) String verifyFlg,
 			@RequestParam(value = "modifyFlg", required = false) String modifyFlg,
-			@RequestParam(value = "remarks", required = false) String remarks,@RequestParam(value = "timeperiod", required = false) String timeperiod,@RequestParam(value = "productValue", required = false) String productValue,@RequestParam(value = "checkerJustification", required = false) String checkerJustification,
+			@RequestParam(value = "remarks", required = false) String remarks,
+			@RequestParam(value = "timeperiod", required = false) String timeperiod,
+			@RequestParam(value = "productValue", required = false) String productValue,
+			@RequestParam(value = "checkerJustification", required = false) String checkerJustification,
+			@RequestParam(value = "execRole", required = false) String execRole,
+			@RequestParam(value = "execAction", required = false) String execAction,
+			@RequestParam(value = "execRemarks", required = false) String execRemarks,
 			@RequestParam(value = "retainedFiles", required = false) List<Integer> retainedFiles,
 			@RequestParam(value = "files", required = false) MultipartFile[] files) {
 
@@ -7818,8 +7827,11 @@ System.out.println("sixe==="+excelData.length);
 			}
 			String auditType;
 			String audittext;
-			
-			if ("Y".equals(verifyFlg)) {
+
+			if (execRole != null && !execRole.trim().isEmpty()) {
+				auditType = execRole.toUpperCase() + " " + (execAction != null ? execAction : "ACTION");
+				audittext = execRole.toUpperCase() + " Action Processed Successfully";
+			} else if ("Y".equals(verifyFlg)) {
 				auditType = "VERIFY APPROVE";
 				audittext = "Checker Verified Successfully";
 			} else if ("N".equals(verifyFlg)) {
@@ -7841,14 +7853,18 @@ System.out.println("sixe==="+excelData.length);
 				auditType = "MODIFY";
 				audittext = "Maker Modified Successfully";
 			}
-			
-			if ("Y".equals(verifyFlg) || "N".equals(verifyFlg) || "MR".equals(verifyFlg)
-					|| "REVOKE_CHECKER".equals(verifyFlg)) {
+
+			if (execRole == null && ("Y".equals(verifyFlg) || "N".equals(verifyFlg) || "MR".equals(verifyFlg)
+					|| "REVOKE_CHECKER".equals(verifyFlg))) {
 
 				String flagToSave = "REVOKE_CHECKER".equals(verifyFlg) ? null : verifyFlg;
 
-				String existingRemarks = rT_MC_DATA_RECORD_REPO.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, contextDate, cellName, timeperiod);
-				String existingCheckerJustification = rT_MC_DATA_RECORD_REPO.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, reportDateStr, cellName, timeperiod);
+				String existingRemarks = rT_MC_DATA_RECORD_REPO
+						.findRemarksByFormModeAndReportDateAndCellNameAndTimeperiod(formMode, contextDate, cellName,
+								timeperiod);
+				String existingCheckerJustification = rT_MC_DATA_RECORD_REPO
+						.findCheckerJustificationByFormModeAndReportDateAndCellNameAndTimeperiod(formMode,
+								reportDateStr, cellName, timeperiod);
 
 				String compOldRemarks = (existingRemarks != null && !" - ".equals(existingRemarks)) ? existingRemarks
 						: "";
@@ -7875,24 +7891,24 @@ System.out.println("sixe==="+excelData.length);
 
 					changesJoiner.add("Checker Justification : OldValue: " + displayOld + ", NewValue: " + displayNew);
 				}
-				
-				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode,
-						contextDate, cellName,remarks,timeperiod,checkerJustification);
+
+				int rowsUpdated = rT_MC_DATA_RECORD_REPO.updateVerifyFlg(flagToSave, formMode, contextDate, cellName,
+						remarks, timeperiod, checkerJustification);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
 				String changedDetails = changesJoiner.toString();
-				System.out.println("Changed Details : "+changedDetails);
-				auditService.auditMCEntitymanual(auditType, reportDateStr,
-						rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext,changedDetails);
+				System.out.println("Changed Details : " + changedDetails);
+				auditService.auditMCEntitymanual(auditType, reportDateStr, rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
+						productValue + " - " + columnHeader, audittext, changedDetails);
 				return ResponseEntity.ok("Verification status updated.");
 			}
 
 			RT_MC_DATA_RECORD_ENTITY record = null;
 			RT_MC_DATA_RECORD_ENTITY oldcopy = new RT_MC_DATA_RECORD_ENTITY();
 			if (contextDate != null) {
-				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameAndTimeperiodOrderByIdDesc(formMode,
-						contextDate, cellName,timeperiod);
+				record = rT_MC_DATA_RECORD_REPO.findTopByFormModeAndReportDateAndCellNameAndTimeperiodOrderByIdDesc(
+						formMode, contextDate, cellName, timeperiod);
 			}
 
 			if (record == null) {
@@ -7903,8 +7919,7 @@ System.out.println("sixe==="+excelData.length);
 					BigDecimal currentMaxId = rT_MC_DATA_RECORD_REPO.findMaxId();
 					record.setId(currentMaxId.add(BigDecimal.ONE));
 				}
-			}
-			else {
+			} else {
 				BeanUtils.copyProperties(record, oldcopy);
 			}
 
@@ -7919,23 +7934,43 @@ System.out.println("sixe==="+excelData.length);
 			record.setJustification(justification);
 			record.setCheckerJustification(checkerJustification);
 			record.setTimeperiod(timeperiod);
-			if ("REVOKE_CHECKER".equals(verifyFlg)) {
-				record.setVerifyFlg(null);
+
+			if (execRole != null && !execRole.trim().isEmpty()) {
+				String processedAction = "REVOKE".equals(execAction) ? null : execAction;
+				if ("CRO".equalsIgnoreCase(execRole)) {
+					record.setCroVerifyFlg(processedAction);
+					record.setCroRemarks(execRemarks);
+				} else if ("CCO".equalsIgnoreCase(execRole)) {
+					record.setCcoVerifyFlg(processedAction);
+					record.setCcoRemarks(execRemarks);
+				}
+
+				record.setVerifyFlg((verifyFlg != null && !verifyFlg.trim().isEmpty()) ? verifyFlg : null);
 				record.setModifyFlg(modifyFlg);
-			} else if ("REVOKE_MAKER".equals(verifyFlg)) {
-				record.setVerifyFlg(null);
-				record.setModifyFlg(null);
-				record.setRemarks(null);
-			} else if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
-				record.setVerifyFlg(verifyFlg);
-				record.setModifyFlg(modifyFlg);
+				record.setRemarks(execRemarks);
+
 			} else {
-				record.setVerifyFlg(null);
-				record.setRemarks(null);
-				if (modifyFlg != null && !modifyFlg.trim().isEmpty()) {
+				if ("REVOKE_CHECKER".equals(verifyFlg)) {
+					record.setVerifyFlg(null);
+					record.setModifyFlg(modifyFlg);
+				} else if ("REVOKE_MAKER".equals(verifyFlg)) {
+					record.setVerifyFlg(null);
+					record.setModifyFlg(null);
+					record.setRemarks(null);
+				} else if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
+					record.setVerifyFlg(verifyFlg);
 					record.setModifyFlg(modifyFlg);
 				} else {
-					record.setModifyFlg(null);
+					record.setVerifyFlg(null);
+					record.setRemarks(null);
+					if (modifyFlg != null && !modifyFlg.trim().isEmpty()) {
+						record.setModifyFlg(modifyFlg);
+					} else {
+						record.setModifyFlg(null);
+					}
+				}
+				if (remarks != null && !remarks.trim().isEmpty()) {
+					record.setRemarks(remarks);
 				}
 			}
 			if (remarks != null && !remarks.trim().isEmpty()) {
@@ -7975,10 +8010,10 @@ System.out.println("sixe==="+excelData.length);
 					}
 				}
 			}
-			System.out.println("productValue : "+productValue);
+			System.out.println("productValue : " + productValue);
 			rT_MC_DATA_RECORD_REPO.save(record);
 
-			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode,cellName);
+			String mainTable = rT_MC_TABLE_Service.getMainTableName(formMode, cellName);
 			if (mainTable != null && !mainTable.isEmpty() && cellName != null && !cellName.isEmpty()
 					&& contextDate != null) {
 				String updateSql = "UPDATE " + mainTable + " SET " + cellName
@@ -7990,31 +8025,32 @@ System.out.println("sixe==="+excelData.length);
 							.setParameter("timeperiod", timeperiod).executeUpdate();
 
 					System.out.println("DEBUG: Main table update complete. Rows affected: " + rowsAffected);
-					
+
 					if (rowsAffected == 0) {
-						System.out.println("WARNING: 0 rows were updated. The REPORT_DATE was not found in the main table!");
+						System.out.println(
+								"WARNING: 0 rows were updated. The REPORT_DATE was not found in the main table!");
 					}
 				} catch (Exception e) {
 					System.out.println("ERROR updating main table: " + e.getMessage());
 					e.printStackTrace();
 				}
 			}
-			if (auditType == "MODIFY" || auditType.equals("MODIFY")  || auditType == "SAVE AND PROCEED TO VERIFY" || auditType.equals("SAVE AND PROCEED TO VERIFY")) {
-				auditService.compareMCEntitiesmanual(oldcopy, record, reportDateStr,auditType,
+			if (auditType == "MODIFY" || auditType.equals("MODIFY") || auditType == "SAVE AND PROCEED TO VERIFY"
+					|| auditType.equals("SAVE AND PROCEED TO VERIFY")) {
+				auditService.compareMCEntitiesmanual(oldcopy, record, reportDateStr, auditType,
 						rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext);
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
+						productValue + " - " + columnHeader, audittext);
 
-			} 
-			else if (auditType == "ADD" || auditType.equals("ADD")) {
-				auditService.auditAddMCEntitymanual(record, reportDateStr,
-						rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext);
+			} else if (auditType == "ADD" || auditType.equals("ADD")) {
+				auditService.auditAddMCEntitymanual(record, reportDateStr, rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
+						productValue + " - " + columnHeader, audittext);
 
-			} 
-			else {
-				auditService.auditMCEntitymanual(auditType, reportDateStr,
-						rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",productValue +" - "+columnHeader,audittext,null);
+			} else {
+				auditService.auditMCEntitymanual(auditType, reportDateStr, rT_MC_TABLE_Service.screenName(formMode),
+						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
+						productValue + " - " + columnHeader, audittext, null);
 			}
 
 			return ResponseEntity.ok("Record Saved Successfully!");
@@ -8197,12 +8233,12 @@ System.out.println("sixe==="+excelData.length);
 
 	@GetMapping("/fetchallverifyflags")
 	public ResponseEntity<Map<String, String>> fetchAllVerifyFlags(@RequestParam("formMode") String formMode,
-			@RequestParam("reportDate") String reportDateStr,@RequestParam("timeperiod") String timeperiod) {
+			@RequestParam("reportDate") String reportDateStr, @RequestParam("timeperiod") String timeperiod) {
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date reportDate = dateFormat.parse(reportDateStr);
 
-			String jpql = "SELECT r.cellName, r.verifyFlg, r.modifyFlg FROM RT_MC_DATA_RECORD_ENTITY r "
+			String jpql = "SELECT r.cellName, r.verifyFlg, r.modifyFlg, r.croVerifyFlg, r.ccoVerifyFlg FROM RT_MC_DATA_RECORD_ENTITY r "
 					+ "WHERE r.id IN (" + "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 "
 					+ "   WHERE r2.formMode = :formMode " + "   AND r2.reportDate = :reportDate "
 					+ "   AND r2.timeperiod = :timeperiod " + "   GROUP BY r2.cellName" + ")";
@@ -8218,11 +8254,25 @@ System.out.println("sixe==="+excelData.length);
 					String cellName = row[0].toString();
 					String verifyFlg = row[1] != null ? row[1].toString().trim() : "";
 					String modifyFlg = row[2] != null ? row[2].toString().trim() : "";
+					String croFlg = row[3] != null ? row[3].toString().trim() : "";
+					String ccoFlg = row[4] != null ? row[4].toString().trim() : "";
 
-					if (!verifyFlg.isEmpty()) {
-						flags.put(cellName, verifyFlg);
-					} else if ("C".equalsIgnoreCase(modifyFlg)) {
-						flags.put(cellName, "C");
+					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*");
+
+					if (isTotalCell) {
+						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {
+							flags.put(cellName, "N");
+						} else if ("Y".equals(croFlg) && "Y".equals(ccoFlg)) {
+							flags.put(cellName, "Y");
+						} else if (!verifyFlg.isEmpty() || "C".equalsIgnoreCase(modifyFlg)) {
+							flags.put(cellName, "C");
+						}
+					} else {
+						if (!verifyFlg.isEmpty()) {
+							flags.put(cellName, verifyFlg);
+						} else if ("C".equalsIgnoreCase(modifyFlg)) {
+							flags.put(cellName, "C");
+						}
 					}
 				}
 			}
