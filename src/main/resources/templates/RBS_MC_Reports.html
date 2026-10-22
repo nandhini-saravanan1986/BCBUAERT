@@ -21082,7 +21082,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const ccaCells = document.querySelectorAll('.input-and-select:not(.remarks-input)');
 
                 ccaCells.forEach(cell => {
-                    const cellName = cell.name || cell.id;
+                    const cellName = cell.getAttribute('data-cellname') || cell.name || cell.id;
                     if (!cellName) return;
 
                     const isDemo = cellName.endsWith('_LFI_RESP');
@@ -21185,7 +21185,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         function syncAutoTotalToBackend(totalInput, actionType, modifyFlagVal) {
             if (!totalInput || isChecker || isManager) return;
-            const totalCellName = totalInput.name || totalInput.id;
+            const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
             if (!totalCellName) return;
 
             const fd = new FormData();
@@ -21301,12 +21301,12 @@ document.addEventListener("DOMContentLoaded", function() {
         inputs.forEach(input => {
             input.setAttribute('readonly', true);
             
-            const fieldName = input.name || input.id;
+            const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
             const isRemarksField = input.classList.contains('remarks-input');
             const isAutoTotal = input.dataset.autoTotal === "true";
 
             const hasAuthorizedChild = isAutoTotal && input._childInputs && input._childInputs.some(ci => {
-                const ciName = ci.name || ci.id;
+                const ciName = ci.getAttribute('data-cellname') || ci.name || ci.id;
                 return isAllowed(ptReportData1, ciName) || isAllowed(ptReportData2, ciName);
             });
 
@@ -21461,7 +21461,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         currentRowCol2Value = col2Input ? col2Input.value : col2Cell.innerText.trim();
                     }
                     
-                    const cellName = input.name || input.id || "UnknownCell";
+                    const cellName = input.getAttribute('data-cellname') || input.name || input.id || "UnknownCell";
                     if (input.classList.contains('remarks-input')) {
                         document.getElementById('cca-extra-header').innerText = headerText;
                         document.getElementById('cca-extra-col2').innerText = currentRowCol2Value;
@@ -21805,7 +21805,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
                     
                     document.getElementById('modal-header-val').innerText = headerText;
-                    document.getElementById('modal-input-val').value = input.value;
+                    document.getElementById('modal-input-val').value = (input.value !== undefined) ? input.value : (input.innerText ? input.innerText.trim() : "");
                     document.getElementById('modal-current-dept-val').innerText = currentDepartment;
                     if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
                     if(document.getElementById('report-date-input')) document.getElementById('report-date-input').value = '';
@@ -21874,6 +21874,15 @@ document.addEventListener("DOMContentLoaded", function() {
                         if(statusMsg) statusMsg.style.display = 'none';
                         if(revokeBtn) revokeBtn.style.display = 'none';
                     }
+
+                    const oldExecRemarks = document.getElementById('exec-remarks-container');
+                    if (oldExecRemarks) oldExecRemarks.style.display = 'none';
+                    const oldExecButtons = document.getElementById('exec-action-buttons');
+                    if (oldExecButtons) {
+                        oldExecButtons.style.display = 'none';
+                        oldExecButtons.innerHTML = '';
+                    }
+
                     $('#editRecordModal').modal('show');
 
 
@@ -21912,7 +21921,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
 
                             if (cur) {
-                            	document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : input.value;
+                            	document.getElementById('modal-input-val').value = cur.dataValue !== null ? cur.dataValue : ((input.value !== undefined) ? input.value : (input.innerText ? input.innerText.trim() : ""));
                                 document.getElementById('modal-justification-val').value = cur.justification || '';
                                 document.getElementById('modal-checker-justification-val').value = cur.checkerJustification || ''; // Ensure this ID matches your HTML
                                 
@@ -22066,7 +22075,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             	if (data.fallbackValue && data.fallbackValue.toString().trim() !== '') {
                                     document.getElementById('modal-input-val').value = data.fallbackValue;
                                 } else {
-                                    document.getElementById('modal-input-val').value = input.value;
+                                    document.getElementById('modal-input-val').value = (input.value !== undefined) ? input.value : (input.innerText ? input.innerText.trim() : "");
                                 }
                                 
                                 if(document.getElementById('modal-justification-val')) document.getElementById('modal-justification-val').value = '';
@@ -22485,10 +22494,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (inputsInCell.length > 0) {
                     let cellHasAuth = false;
                     inputsInCell.forEach(input => {
-                        const fieldName = input.name || input.id;
+                        const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
                         const isAutoTotal = input.dataset.autoTotal === "true";
                         const isAuthorized = isManager || (isAutoTotal
-                            ? (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.name || ci.id) || isAllowed(ptReportData2, ci.name || ci.id)))
+                            ? (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.getAttribute('data-cellname') || ci.name || ci.id) || isAllowed(ptReportData2, ci.getAttribute('data-cellname') || ci.name || ci.id)))
                             : (isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName)));
                         if (isAuthorized) {
                             cellHasAuth = true;
@@ -22643,8 +22652,8 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("source", document.getElementById('modal-source-val') ? document.getElementById('modal-source-val').value : "");
             formData.append("columnHeader", document.getElementById('modal-header-val').innerText);
             formData.append("rowCol2Value", document.getElementById('modal-col2-val').innerText);
-            formData.append("cellName", currentEditingInput.name || currentEditingInput.id || "UnknownCell");
-            formData.append("cellId", currentEditingInput.id || "UnknownId");
+            formData.append("cellName", currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id || "UnknownCell");
+            formData.append("cellId", currentEditingInput.id || currentEditingInput.getAttribute('data-cellname') || "UnknownId");
             formData.append("dataValue", finalDataValue);
             formData.append("justification", document.getElementById('modal-justification-val') ? document.getElementById('modal-justification-val').value : "");
             formData.append("checkerJustification", document.getElementById('modal-checker-justification-val').value);
@@ -22902,6 +22911,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             paintCell(currentEditingInput, '#5cb85c', '#4cae4c', '#ffffff', 'Verified by CRO & CCO');
                             if (counterpart && counterpart !== currentEditingInput) {
                                 paintCell(counterpart, '#5cb85c', '#4cae4c', '#ffffff', 'Verified by CRO & CCO');
+                            }
+                        } else if (execAction === 'REVOKE') {
+                            paintCell(currentEditingInput, '#ffc107', '#ffc107', '#212529', 'Pending CRO/CCO Review');
+                            if (counterpart && counterpart !== currentEditingInput) {
+                                paintCell(counterpart, '#ffc107', '#ffc107', '#212529', 'Pending CRO/CCO Review');
                             }
                         } else {
                             paintCell(currentEditingInput, '#ffc107', '#ffc107', '#212529', 'Pending CRO/CCO Dual Verification');
@@ -23403,8 +23417,8 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append("formMode", formMode); 
         formData.append("reportDate", contextReportDate);
         formData.append("columnHeader", columnHeader);
-        formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
-        formData.append("cellId", currentEditingInput.id || "");
+        formData.append("cellName", currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id);
+        formData.append("cellId", currentEditingInput.id || currentEditingInput.getAttribute('data-cellname') || "");
         formData.append("dataValue", finalDataValue);
         formData.append("rowCol2Value", productValue);
         formData.append("productValue", productValue);
@@ -23569,8 +23583,8 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("formMode", formMode); 
             formData.append("reportDate", contextReportDate);
             formData.append("columnHeader", columnHeader);
-            formData.append("cellName", currentEditingInput.name || currentEditingInput.id);
-            formData.append("cellId", currentEditingInput.id || "");
+            formData.append("cellName", currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id);
+            formData.append("cellId", currentEditingInput.id || currentEditingInput.getAttribute('data-cellname') || "");
             formData.append("timeperiod", timeperiod);
             
             formData.append("dataValue", finalDataValue);

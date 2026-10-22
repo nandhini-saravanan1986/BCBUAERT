@@ -8989,7 +8989,7 @@ public class RT_MC_TABLE_ALL_Service {
 			Sheet sheet = workbook.createSheet("Special Values Report");
 
 			CellStyle headerStyle = workbook.createCellStyle();
-			headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+			headerStyle.setFillForegroundColor(IndexedColors.BROWN.getIndex());
 			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			headerStyle.setAlignment(HorizontalAlignment.CENTER);
 			headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -9000,7 +9000,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 			Font headerFont = workbook.createFont();
 			headerFont.setBold(true);
-			headerFont.setColor(IndexedColors.BLACK.getIndex());
+			headerFont.setColor(IndexedColors.WHITE.getIndex());
 			headerFont.setFontHeightInPoints((short) 11);
 			headerStyle.setFont(headerFont);
 

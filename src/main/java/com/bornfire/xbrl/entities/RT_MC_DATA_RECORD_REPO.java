@@ -119,6 +119,14 @@ public interface RT_MC_DATA_RECORD_REPO extends JpaRepository<RT_MC_DATA_RECORD_
 		String getFileName9();
 
 		String getFileName10();
+
+		String getCroVerifyFlg();
+
+		String getCroRemarks();
+
+		String getCcoVerifyFlg();
+
+		String getCcoRemarks();
 	}
 
 }
