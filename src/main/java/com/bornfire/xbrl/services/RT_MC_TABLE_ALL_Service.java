@@ -95,16 +95,28 @@ public class RT_MC_TABLE_ALL_Service {
 	public byte[] generateReportFile(String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String userid, ServletRequestAttributes attr, String isConsolidated, String reportOption,
 			String selectedDepartments, String specialValues, String tableNames) throws Exception {
+		long downloadStarted = System.currentTimeMillis();
+		logger.info(
+				"MC download START jobId={} formmode={} reportDate={} branch={} consolidated={} reportOption={} departments={} specialValues={} tables={}",
+				jobId, formmode, reportDate, branch, isConsolidated, reportOption, selectedDepartments, specialValues,
+				tableNames);
+		try {
 		if (specialValues != null && !specialValues.trim().isEmpty()) {
-			progressMap.put(jobId, 10);
+			logger.info("MC download jobId={} path=not-applicability specialValues={}", jobId, specialValues);
+			setMcProgress(progressMap, jobId, 10);
 			byte[] fileData = generateNotApplicabilityExcel(reportDate, branch, progressMap, jobId, specialValues);
-			progressMap.put(jobId, 100);
+			setMcProgress(progressMap, jobId, 100);
+			logger.info("MC download END jobId={} path=not-applicability bytes={} elapsedMs={}", jobId,
+					fileData == null ? 0 : fileData.length, System.currentTimeMillis() - downloadStarted);
 			return fileData;
 		}
 		if ("manager_all".equalsIgnoreCase(reportOption) || "manager_specific".equalsIgnoreCase(reportOption)) {
-			progressMap.put(jobId, 10);
+			logger.info("MC download jobId={} path=manager tables={}", jobId, tableNames);
+			setMcProgress(progressMap, jobId, 10);
 			byte[] fileData = generateManagerReportsExcel(reportDate, branch, tableNames, progressMap, jobId); 
-			progressMap.put(jobId, 100);
+			setMcProgress(progressMap, jobId, 100);
+			logger.info("MC download END jobId={} path=manager bytes={} elapsedMs={}", jobId,
+					fileData == null ? 0 : fileData.length, System.currentTimeMillis() - downloadStarted);
 			return fileData;
 		}
 		String templateDir = env.getProperty("output.exportpathtemp");
@@ -112,7 +124,7 @@ public class RT_MC_TABLE_ALL_Service {
 		System.out.println("Report Date : "+reportDate);
 		System.out.println("Branch : "+branch);
 		System.out.println("Consolidated : "+isConsolidated);
-		logger.info("Service: Attempting to load template from path: {}", templatePath.toAbsolutePath());
+		logger.info("MC download jobId={} opening template {}", jobId, templatePath.toAbsolutePath());
 
 		if (!Files.exists(templatePath)) {
 			throw new FileNotFoundException("Template file not found at: " + templatePath.toAbsolutePath());
@@ -122,9 +134,12 @@ public class RT_MC_TABLE_ALL_Service {
 					"Template file exists but is not readable (check permissions): " + templatePath.toAbsolutePath());
 		}
 
+		long templateStarted = System.currentTimeMillis();
 		try (InputStream templateInputStream = Files.newInputStream(templatePath);
 				Workbook workbook = WorkbookFactory.create(templateInputStream);
 				ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			logger.info("MC download jobId={} template opened sheets={} elapsedMs={}", jobId,
+					workbook.getNumberOfSheets(), System.currentTimeMillis() - templateStarted);
 
 			if ("YES".equalsIgnoreCase(isConsolidated)) {				
 				GenerateTable_1_Excel(workbook, branch, jobId, progressMap, formmode, reportDate, isConsolidated,
@@ -194,15 +209,29 @@ public class RT_MC_TABLE_ALL_Service {
 						reportOption, selectedDepartments);
 				auditservice.auditMCEntitymanual("DOWNLOAD", reportDate, screenName(formmode), "RBS_MC_TABLE9", "",
 						"Downloaded successfully", null);
+			} else {
+				logger.warn("MC download jobId={} no table matched formmode={} consolidated={}", jobId, formmode,
+						isConsolidated);
 			}
+			logger.info("MC download jobId={} writing workbook to memory", jobId);
+			long writeStarted = System.currentTimeMillis();
 			workbook.write(out);
-			return out.toByteArray();
+			byte[] fileData = out.toByteArray();
+			logger.info("MC download END jobId={} formmode={} bytes={} writeElapsedMs={} totalElapsedMs={}", jobId,
+					formmode, fileData.length, System.currentTimeMillis() - writeStarted,
+					System.currentTimeMillis() - downloadStarted);
+			return fileData;
+		}
+		} catch (Exception e) {
+			logger.error("MC download FAILED jobId={} formmode={} reportDate={} branch={} elapsedMs={}", jobId,
+					formmode, reportDate, branch, System.currentTimeMillis() - downloadStarted, e);
+			throw e;
 		}
 	}
 
 	public void GenerateTable_1_Excel(Workbook workbook, String branch, String jobId, Map<String, Integer> progressMap, 
 	        String formmode, String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //		List<RT_MC_TABLE1_ENTITY> dataList ;
 //		if (branch =="DEPT" || branch.equals("DEPT")) {
 //			dataList = RT_MC_TABLE1_REPO.findBybranchcode(branch);
@@ -212,7 +241,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE1_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -231,13 +260,15 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 		
 		try {
 
-			Sheet sheet = workbook.getSheetAt(3);
+			Sheet sheet = openMcSheet(workbook, jobId, 3);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -279,52 +310,53 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 					updateCellPreserveStyle(row, 5, record.getR22_NO_EMP_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR22_NO_CON_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR22_AVG_NO_EMP_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 8, record.getR22_NO_BRN_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record.getR22_TOT_NO_BRN_POD(), null, createHelper);
-					progressMap.put(jobId, 15);
+					setMcProgress(progressMap, jobId, 15);
 					updateCellPreserveStyle(row, 10, record.getR22_NO_ATM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 11, record.getR22_NO_ATM_DET_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 12, record.getR22_NO_AUT_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 13, record.getR22_NO_INS_BNK_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 14, record.getR22_NO_INS_DWN_SPC_TP(), null, createHelper);
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 					updateCellPreserveStyle(row, 15, record.getR22_NO_EMP_RSK_SPC_DTE(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR22_NO_EXT_FRD_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 17, record.getR22_NO_INT_FRD_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 18, record.getR22_NO_FRD_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 19, record.getR22_NO_FRD_PP(), null, createHelper);
 					updateCellPreserveStyle(row, 20, record.getR22_TOT_REV_SPC_TP(), null, createHelper);
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					updateCellPreserveStyle(row, 21, record.getR22_TOT_INS_UNP_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 22, record.getR22_TOT_NO_HRS_BNK(), null, createHelper);
 					updateCellPreserveStyle(row, 23, record.getR22_TOT_NO_INC_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 24, record.getR22_TOT_NO_PEN_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 25, record.getR22_TOT_NO_AUT_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 26, record.getR22_TOT_NO_SAL_SPC_TP(), null, createHelper);
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 					updateCellPreserveStyle(row, 27, record.getR22_TOT_NO_MER_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 28, record.getR22_NO_INQ_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 29, record.getR22_NO_SER_SPC_TP(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_2_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE2_1_ENTITY> dataList1 ;
 //		List<RT_MC_TABLE2_2_ENTITY> dataList2 ;
@@ -337,7 +369,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE2_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE2_2_ENTITY> dataList2 = new ArrayList<>();
 
@@ -361,14 +393,19 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn(
+	        		"MC download jobId={} no rows after fetch. list1={} list2={} reportDate={} branch={} formmode={}",
+	        		jobId, dataList1 == null ? 0 : dataList1.size(), dataList2 == null ? 0 : dataList2.size(),
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched list1={} list2={} rows. Sheet write starts next.", jobId,
+	    		dataList1.size(), dataList2.size());
 	    
 		
 		try{
 
-			Sheet sheet = workbook.getSheetAt(4);
+			Sheet sheet = openMcSheet(workbook, jobId, 4);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -411,7 +448,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 					updateCellPreserveStyle(row, 5, record1.getR6_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR6_NO_CON_POD_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record1.getR6_NO_CON_UNAU_SP_TP(), null, createHelper);
@@ -527,7 +564,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record1.getR7_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record1.getR7_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 15);
+					setMcProgress(progressMap, jobId, 15);
 					row = sheet.getRow(7);
 					updateCellPreserveStyle(row, 5, record1.getR8_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR8_NO_CON_POD_SD(), null, createHelper);
@@ -644,7 +681,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record1.getR9_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record1.getR9_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 25);
+					setMcProgress(progressMap, jobId, 25);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record1.getR10_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR10_NO_CON_POD_SD(), null, createHelper);
@@ -761,7 +798,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record1.getR11_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record1.getR11_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 					row = sheet.getRow(11);
 					updateCellPreserveStyle(row, 5, record1.getR12_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR12_NO_CON_POD_SD(), null, createHelper);
@@ -878,7 +915,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record1.getR13_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record1.getR13_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 45);
+					setMcProgress(progressMap, jobId, 45);
 					row = sheet.getRow(13);
 					updateCellPreserveStyle(row, 5, record1.getR14_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR14_NO_CON_POD_SD(), null, createHelper);
@@ -995,7 +1032,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record2.getR15_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record2.getR15_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 55);
+					setMcProgress(progressMap, jobId, 55);
 					row = sheet.getRow(15);
 					updateCellPreserveStyle(row, 5, record2.getR16_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR16_NO_CON_POD_SD(), null, createHelper);
@@ -1112,7 +1149,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record2.getR17_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record2.getR17_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					row = sheet.getRow(17);
 					updateCellPreserveStyle(row, 5, record2.getR18_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR18_NO_CON_POD_SD(), null, createHelper);
@@ -1229,7 +1266,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record2.getR19_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record2.getR19_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 75);
+					setMcProgress(progressMap, jobId, 75);
 					row = sheet.getRow(19);
 					updateCellPreserveStyle(row, 5, record2.getR20_NO_WO_SD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR20_NO_CON_POD_SD(), null, createHelper);
@@ -1346,7 +1383,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 59, record2.getR21_NO_NEW_CON_ONB_GNP(), null, createHelper);
 					updateCellPreserveStyle(row, 60, record2.getR21_NO_CON_END(), null, createHelper);
 
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 //					row = sheet.getRow(21);
 //					updateCellPreserveStyle(row, 5, record2.getR22_NO_WO_SD(), null, createHelper);
 //					updateCellPreserveStyle(row, 6, record2.getR22_NO_CON_POD_SD(), null, createHelper);
@@ -1407,21 +1444,22 @@ public class RT_MC_TABLE_ALL_Service {
 
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_3_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE3_ENTITY> dataList;
 //
@@ -1436,7 +1474,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			return;
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE3_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -1455,13 +1493,15 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 
 		try  {
 
-			Sheet sheet = workbook.getSheetAt(5);
+			Sheet sheet = openMcSheet(workbook, jobId, 5);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -1503,7 +1543,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					row = sheet.getRow(5);
 					updateCellPreserveStyle(row, 5, record.getR6_NO_COM_SPC_TP(), null, createHelper);
@@ -1589,7 +1629,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 43, record.getR7_NO_CON_DELAY(), null, createHelper);
 					updateCellPreserveStyle(row, 44, record.getR7_NO_COM_REP_DTE(), null, createHelper);
 
-					progressMap.put(jobId, 15);
+					setMcProgress(progressMap, jobId, 15);
 					row = sheet.getRow(7);
 					updateCellPreserveStyle(row, 5, record.getR8_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR8_NO_COM_PEN(), null, createHelper);
@@ -1674,7 +1714,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 43, record.getR9_NO_CON_DELAY(), null, createHelper);
 					updateCellPreserveStyle(row, 44, record.getR9_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(9);
-					progressMap.put(jobId, 25);
+					setMcProgress(progressMap, jobId, 25);
 
 					updateCellPreserveStyle(row, 5, record.getR10_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR10_NO_COM_PEN(), null, createHelper);
@@ -1760,7 +1800,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 44, record.getR11_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(11);
 
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 
 					updateCellPreserveStyle(row, 5, record.getR12_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR12_NO_COM_PEN(), null, createHelper);
@@ -1846,7 +1886,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 44, record.getR13_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(13);
 
-					progressMap.put(jobId, 45);
+					setMcProgress(progressMap, jobId, 45);
 					updateCellPreserveStyle(row, 5, record.getR14_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR14_NO_COM_PEN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR14_AMT_FIN_AED(), null, createHelper);
@@ -1931,7 +1971,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 44, record.getR15_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(15);
 
-					progressMap.put(jobId, 55);
+					setMcProgress(progressMap, jobId, 55);
 					updateCellPreserveStyle(row, 5, record.getR16_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR16_NO_COM_PEN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR16_AMT_FIN_AED(), null, createHelper);
@@ -2016,7 +2056,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 44, record.getR17_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(17);
 
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					updateCellPreserveStyle(row, 5, record.getR18_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR18_NO_COM_PEN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR18_AMT_FIN_AED(), null, createHelper);
@@ -2101,7 +2141,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 44, record.getR19_NO_COM_REP_DTE(), null, createHelper);
 					row = sheet.getRow(19);
 
-					progressMap.put(jobId, 75);
+					setMcProgress(progressMap, jobId, 75);
 					updateCellPreserveStyle(row, 5, record.getR20_NO_COM_SPC_TP(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR20_NO_COM_PEN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record.getR20_AMT_FIN_AED(), null, createHelper);
@@ -2186,7 +2226,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 43, record.getR21_NO_CON_DELAY(), null, createHelper);
 					updateCellPreserveStyle(row, 44, record.getR21_NO_COM_REP_DTE(), null, createHelper);
 
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 					
 //					row = sheet.getRow(21);
 //					updateCellPreserveStyle(row, 5, record.getR22_NO_COM_SPC_TP(), null, createHelper);
@@ -2231,20 +2271,21 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 44, record.getR22_NO_COM_REP_DTE(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_4_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE4_1_ENTITY> dataList1 ;
 //		List<RT_MC_TABLE4_2_ENTITY> dataList2 ;
@@ -2258,7 +2299,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE4_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE4_2_ENTITY> dataList2 = new ArrayList<>();
 
@@ -2282,14 +2323,19 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn(
+	        		"MC download jobId={} no rows after fetch. list1={} list2={} reportDate={} branch={} formmode={}",
+	        		jobId, dataList1 == null ? 0 : dataList1.size(), dataList2 == null ? 0 : dataList2.size(),
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched list1={} list2={} rows. Sheet write starts next.", jobId,
+	    		dataList1.size(), dataList2.size());
 	    
 		
 		try {
 
-			Sheet sheet = workbook.getSheetAt(6);
+			Sheet sheet = openMcSheet(workbook, jobId, 6);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -2332,7 +2378,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					row = sheet.getRow(5);
 					updateCellPreserveStyle(row, 5, record1.getR6_AVG_TME_LWRSK(), null, createHelper);
@@ -2469,7 +2515,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record1.getR7_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 15);
+					setMcProgress(progressMap, jobId, 15);
 					row = sheet.getRow(7);
 					updateCellPreserveStyle(row, 5, record1.getR8_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR8_AVG_NO_LOAN(), null, createHelper);
@@ -2606,7 +2652,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record1.getR9_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 25);
+					setMcProgress(progressMap, jobId, 25);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record1.getR10_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR10_AVG_NO_LOAN(), null, createHelper);
@@ -2743,7 +2789,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record1.getR11_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 					row = sheet.getRow(11);
 					updateCellPreserveStyle(row, 5, record1.getR12_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR12_AVG_NO_LOAN(), null, createHelper);
@@ -2880,7 +2926,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// createHelper);
 					row = sheet.getRow(13);
 
-					progressMap.put(jobId, 45);
+					setMcProgress(progressMap, jobId, 45);
 					updateCellPreserveStyle(row, 5, record1.getR14_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record1.getR14_AVG_NO_LOAN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record1.getR14_AVG_NO_LWRSK_SME(), null, createHelper);
@@ -3016,7 +3062,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record2.getR15_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 55);
+					setMcProgress(progressMap, jobId, 55);
 					row = sheet.getRow(15);
 					updateCellPreserveStyle(row, 5, record2.getR16_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR16_AVG_NO_LOAN(), null, createHelper);
@@ -3153,7 +3199,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record2.getR17_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					row = sheet.getRow(17);
 					updateCellPreserveStyle(row, 5, record2.getR18_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR18_AVG_NO_LOAN(), null, createHelper);
@@ -3289,7 +3335,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record2.getR19_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 75);
+					setMcProgress(progressMap, jobId, 75);
 					row = sheet.getRow(19);
 					updateCellPreserveStyle(row, 5, record2.getR20_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR20_AVG_NO_LOAN(), null, createHelper);
@@ -3425,7 +3471,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 65, record2.getR21_NO_INS_CRRATE_CON(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(21);
 //					updateCellPreserveStyle(row, 5, record2.getR22_AVG_TME_LWRSK(), null, createHelper);
 //					updateCellPreserveStyle(row, 6, record2.getR22_AVG_NO_LOAN(), null, createHelper);
@@ -3490,21 +3536,22 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 65, record2.getR22_NO_INS_CRRATE_CON(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_5_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE5_ENTITY> dataList;
 //
@@ -3520,7 +3567,7 @@ public class RT_MC_TABLE_ALL_Service {
 //		}
 		
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE5_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -3539,13 +3586,15 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 	    
 		try  {
 
-			Sheet sheet = workbook.getSheetAt(7);
+			Sheet sheet = openMcSheet(workbook, jobId, 7);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -3587,7 +3636,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					updateCellPreserveStyle(row, 5, record.getR8_NO_CON_EMP_SPCD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR8_NO_EMP_LFI(), null, createHelper);
@@ -3601,7 +3650,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR8_NO_COM_SPC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR8_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR8_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 25);
+					setMcProgress(progressMap, jobId, 25);
 					row = sheet.getRow(8);
 					updateCellPreserveStyle(row, 5, record.getR9_NO_CON_EMP_SPCD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR9_NO_EMP_LFI(), null, createHelper);
@@ -3615,7 +3664,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR9_NO_COM_SPC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR9_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR9_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 45);
+					setMcProgress(progressMap, jobId, 45);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record.getR10_NO_CON_EMP_SPCD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR10_NO_EMP_LFI(), null, createHelper);
@@ -3629,7 +3678,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR10_NO_COM_SPC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR10_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR10_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					row = sheet.getRow(10);
 					// updateCellPreserveStyle(row, 5, record.getR11_NO_CON_EMP_SPCD(), null,
 					// createHelper);
@@ -3653,7 +3702,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// createHelper);
 					updateCellPreserveStyle(row, 15, record.getR11_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR11_NO_WSTLE_RSK(), null, createHelper);
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 //					row = sheet.getRow(11);
 //					updateCellPreserveStyle(row, 5, record.getR12_NO_CON_EMP_SPCD(), null, createHelper);
 //					updateCellPreserveStyle(row, 6, record.getR12_NO_EMP_LFI(), null, createHelper);
@@ -3669,20 +3718,21 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 16, record.getR12_NO_WSTLE_RSK(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_6_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE6_ENTITY> dataList ;
 //		if (branch =="DEPT" || branch.equals("DEPT")) {
@@ -3696,7 +3746,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			return;
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE6_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -3715,13 +3765,15 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 		
 		try {
 
-			Sheet sheet = workbook.getSheetAt(8);
+			Sheet sheet = openMcSheet(workbook, jobId, 8);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -3763,7 +3815,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					updateCellPreserveStyle(row, 5, record.getR7_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR7_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3775,7 +3827,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 10, record.getR7_TOT_CON_PRO_CBUAE(), null, createHelper);
 					// updateCellPreserveStyle(row, 11, record.getR7_TOT_TRA_CBUAE(), null,
 					// createHelper);
-					progressMap.put(jobId, 20);
+					setMcProgress(progressMap, jobId, 20);
 					row = sheet.getRow(7);
 					updateCellPreserveStyle(row, 5, record.getR8_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR8_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3787,7 +3839,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// createHelper);
 					// updateCellPreserveStyle(row, 11, record.getR8_TOT_TRA_CBUAE(), null,
 					// createHelper);
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 					row = sheet.getRow(8);
 					updateCellPreserveStyle(row, 5, record.getR9_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR9_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3800,7 +3852,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// createHelper);
 					// updateCellPreserveStyle(row, 11, record.getR9_TOT_TRA_CBUAE(), null,
 					// createHelper);
-					progressMap.put(jobId, 50);
+					setMcProgress(progressMap, jobId, 50);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record.getR10_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR10_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3813,7 +3865,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// createHelper);
 					// updateCellPreserveStyle(row, 11, record.getR10_TOT_TRA_CBUAE(), null,
 					// createHelper);
-					progressMap.put(jobId, 65);
+					setMcProgress(progressMap, jobId, 65);
 					row = sheet.getRow(10);
 					updateCellPreserveStyle(row, 5, record.getR11_NO_PRO_SNR(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR11_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3827,7 +3879,7 @@ public class RT_MC_TABLE_ALL_Service {
 					// updateCellPreserveStyle(row, 11, record.getR11_TOT_TRA_CBUAE(), null,
 					// createHelper);
 
-					progressMap.put(jobId, 85);
+					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(11);
 //					updateCellPreserveStyle(row, 5, record.getR12_NO_PRO_SNR(), null, createHelper);
 //					updateCellPreserveStyle(row, 6, record.getR12_NO_TRA_SNR_SPT(), null, createHelper);
@@ -3838,21 +3890,22 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 11, record.getR12_TOT_TRA_CBUAE(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_7_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE7_1_ENTITY> dataList1;
 //		List<RT_MC_TABLE7_2_ENTITY> dataList2 ;
@@ -3866,7 +3919,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE7_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE7_2_ENTITY> dataList2 = new ArrayList<>();
 
@@ -3890,14 +3943,19 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList1 == null || dataList1.isEmpty() || dataList2 == null || dataList2.isEmpty() ) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn(
+	        		"MC download jobId={} no rows after fetch. list1={} list2={} reportDate={} branch={} formmode={}",
+	        		jobId, dataList1 == null ? 0 : dataList1.size(), dataList2 == null ? 0 : dataList2.size(),
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched list1={} list2={} rows. Sheet write starts next.", jobId,
+	    		dataList1.size(), dataList2.size());
 	    
 		
 		try {
 
-			Sheet sheet = workbook.getSheetAt(9);
+			Sheet sheet = openMcSheet(workbook, jobId, 9);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -3940,7 +3998,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					updateCellPreserveStyle(row, 9, record1.getR7_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record1.getR7_PER_LOAN_WEB(), null, createHelper);
@@ -4014,7 +4072,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record1.getR8_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(8);
 
-					progressMap.put(jobId, 12);
+					setMcProgress(progressMap, jobId, 12);
 					updateCellPreserveStyle(row, 8, record1.getR9_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record1.getR9_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record1.getR9_PER_LOAN_WEB(), null, createHelper);
@@ -4089,7 +4147,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record1.getR10_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(10);
 
-					progressMap.put(jobId, 24);
+					setMcProgress(progressMap, jobId, 24);
 					updateCellPreserveStyle(row, 8, record1.getR11_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record1.getR11_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record1.getR11_PER_LOAN_WEB(), null, createHelper);
@@ -4162,7 +4220,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record1.getR12_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(12);
 
-					progressMap.put(jobId, 36);
+					setMcProgress(progressMap, jobId, 36);
 					updateCellPreserveStyle(row, 8, record1.getR13_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record1.getR13_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record1.getR13_PER_LOAN_WEB(), null, createHelper);
@@ -4199,7 +4257,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record1.getR13_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(13);
 
-					progressMap.put(jobId, 48);
+					setMcProgress(progressMap, jobId, 48);
 					updateCellPreserveStyle(row, 8, record1.getR14_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record1.getR14_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record1.getR14_PER_LOAN_WEB(), null, createHelper);
@@ -4273,7 +4331,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					row = sheet.getRow(15);
 
-					progressMap.put(jobId, 60);
+					setMcProgress(progressMap, jobId, 60);
 					updateCellPreserveStyle(row, 8, record2.getR16_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record2.getR16_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record2.getR16_PER_LOAN_WEB(), null, createHelper);
@@ -4350,7 +4408,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record2.getR17_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(17);
 
-					progressMap.put(jobId, 72);
+					setMcProgress(progressMap, jobId, 72);
 					updateCellPreserveStyle(row, 8, record2.getR18_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record2.getR18_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record2.getR18_PER_LOAN_WEB(), null, createHelper);
@@ -4427,7 +4485,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record2.getR19_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(19);
 
-					progressMap.put(jobId, 84);
+					setMcProgress(progressMap, jobId, 84);
 					updateCellPreserveStyle(row, 8, record2.getR20_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record2.getR20_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record2.getR20_PER_LOAN_WEB(), null, createHelper);
@@ -4504,7 +4562,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 67, record2.getR21_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(21);
 
-					progressMap.put(jobId, 90);
+					setMcProgress(progressMap, jobId, 90);
 					updateCellPreserveStyle(row, 8, record2.getR22_RET_LOAN_DIS(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record2.getR22_RET_ASET_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 10, record2.getR22_PER_LOAN_WEB(), null, createHelper);
@@ -4608,21 +4666,22 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 67, record2.getR23_NO_CON_HIGH_RSK(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_8_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE8_ENTITY> dataList ;
 //		
@@ -4637,7 +4696,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			return;
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE8_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -4656,14 +4715,16 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 		
 
 		try{
 
-			Sheet sheet = workbook.getSheetAt(10);
+			Sheet sheet = openMcSheet(workbook, jobId, 10);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -4705,7 +4766,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 
 					updateCellPreserveStyle(row, 5, record.getR8_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR8_NO_ISC_SPD(), null, createHelper);
@@ -4732,7 +4793,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR9_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR9_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 12);
+					setMcProgress(progressMap, jobId, 12);
 					row = sheet.getRow(9);
 					updateCellPreserveStyle(row, 5, record.getR10_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR10_NO_ISC_SPD(), null, createHelper);
@@ -4759,7 +4820,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR11_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR11_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 24);
+					setMcProgress(progressMap, jobId, 24);
 					row = sheet.getRow(11);
 					updateCellPreserveStyle(row, 5, record.getR12_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR12_NO_ISC_SPD(), null, createHelper);
@@ -4785,7 +4846,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR13_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR13_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 36);
+					setMcProgress(progressMap, jobId, 36);
 					row = sheet.getRow(13);
 					updateCellPreserveStyle(row, 5, record.getR14_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR14_NO_ISC_SPD(), null, createHelper);
@@ -4812,7 +4873,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR15_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR15_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 48);
+					setMcProgress(progressMap, jobId, 48);
 					row = sheet.getRow(15);
 					updateCellPreserveStyle(row, 5, record.getR16_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR16_NO_ISC_SPD(), null, createHelper);
@@ -4839,7 +4900,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR17_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR17_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 60);
+					setMcProgress(progressMap, jobId, 60);
 					row = sheet.getRow(17);
 					updateCellPreserveStyle(row, 5, record.getR18_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR18_NO_ISC_SPD(), null, createHelper);
@@ -4866,7 +4927,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR19_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR19_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 72);
+					setMcProgress(progressMap, jobId, 72);
 					row = sheet.getRow(19);
 					updateCellPreserveStyle(row, 5, record.getR20_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR20_NO_ISC_SPD(), null, createHelper);
@@ -4893,7 +4954,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR21_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR21_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 84);
+					setMcProgress(progressMap, jobId, 84);
 					row = sheet.getRow(21);
 					updateCellPreserveStyle(row, 5, record.getR22_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR22_NO_ISC_SPD(), null, createHelper);
@@ -4920,7 +4981,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 14, record.getR23_RET_ASSE_LOAN_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record.getR23_NO_COMP_ISLAMIC(), null, createHelper);
 
-					progressMap.put(jobId, 96);
+					setMcProgress(progressMap, jobId, 96);
 					row = sheet.getRow(23);
 					updateCellPreserveStyle(row, 5, record.getR24_NO_RET_CON_SPD(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR24_NO_ISC_SPD(), null, createHelper);
@@ -4935,21 +4996,22 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 15, record.getR24_NO_COMP_ISLAMIC(), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
 
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
 
 	public void GenerateTable_9_Excel(Workbook workbook,String branch, String jobId, Map<String, Integer> progressMap, String formmode,
 			String reportDate, String isConsolidated, String reportOption, String selectedDepartments) throws Exception {
-//		logger.info("Service: Starting Excel generation process in memory.");
+//		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 //
 //		List<RT_MC_TABLE9_ENTITY> dataList ;
 //
@@ -4964,7 +5026,7 @@ public class RT_MC_TABLE_ALL_Service {
 //			return;
 //		}
 
-		logger.info("Service: Starting Excel generation process in memory.");
+		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE9_ENTITY> dataList = new ArrayList<>();
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
@@ -4983,13 +5045,15 @@ public class RT_MC_TABLE_ALL_Service {
 	    }
 
 	    if (dataList == null || dataList.isEmpty()) {
-	        logger.warn("Service: No data found for MC report. Returning empty result.");
+	        logger.warn("MC download jobId={} no rows after fetch. reportDate={} branch={} formmode={}", jobId,
+	        		reportDate, branch, formmode);
 	        return;
 	    }
+	    logger.info("MC download jobId={} fetched {} rows. Sheet write starts next.", jobId, dataList.size());
 		
 		try {
 
-			Sheet sheet = workbook.getSheetAt(11);
+			Sheet sheet = openMcSheet(workbook, jobId, 11);
 
 			// --- Style Definitions ---
 			CreationHelper createHelper = workbook.getCreationHelper();
@@ -5022,9 +5086,14 @@ public class RT_MC_TABLE_ALL_Service {
 			// --- End of Style Definitions ---
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date reportDatedf = dateFormat.parse(reportDate);
+			logger.info("MC download jobId={} table 9 loading past records formmode={} branch={} reportDate={}", jobId,
+					formmode, branch, reportDate);
+			long pastStarted = System.currentTimeMillis();
 			List<RecordMetadataProjection> pastRecord = RT_MC_DATA_RECORD_REPO
 					.findByFormModeAndTimeperiodAndReportDateOrderByReportDateDesc(
 							formmode, branch, reportDatedf);
+			logger.info("MC download jobId={} table 9 past records={} elapsedMs={}", jobId,
+					pastRecord == null ? 0 : pastRecord.size(), System.currentTimeMillis() - pastStarted);
 			int startRow = 8;
 
 			if (!dataList.isEmpty() && !pastRecord.isEmpty()) {
@@ -5035,7 +5104,7 @@ public class RT_MC_TABLE_ALL_Service {
 					if (row == null) {
 						row = sheet.createRow(startRow + i);
 					}
-					progressMap.put(jobId, 5);
+					setMcProgress(progressMap, jobId, 5, "writing row " + (i + 1) + " excelRow " + (startRow + i));
 					
 					updateCellPreserveStyle(row, 4, record.getR9_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R9_EVID_PRO_LFI"), null, createHelper);
@@ -5061,7 +5130,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R14_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(14);
 
-					progressMap.put(jobId, 10);
+					setMcProgress(progressMap, jobId, 10);
 					updateCellPreserveStyle(row, 4, record.getR15_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R15_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(15);
@@ -5075,7 +5144,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					row = sheet.getRow(19);
 
-					progressMap.put(jobId, 15);
+					setMcProgress(progressMap, jobId, 15);
 					updateCellPreserveStyle(row, 4, record.getR20_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R20_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(20);
@@ -5109,7 +5178,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R29_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(29);
 
-					progressMap.put(jobId, 35);
+					setMcProgress(progressMap, jobId, 35);
 					updateCellPreserveStyle(row, 4, record.getR30_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R30_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(30);
@@ -5155,7 +5224,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					row = sheet.getRow(49);
 
-					progressMap.put(jobId, 70);
+					setMcProgress(progressMap, jobId, 70);
 					updateCellPreserveStyle(row, 4, record.getR50_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R50_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(50);
@@ -5196,7 +5265,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R59_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(59);
 
-					progressMap.put(jobId, 90);
+					setMcProgress(progressMap, jobId, 90);
 					updateCellPreserveStyle(row, 4, record.getR60_LFI_RESP(), null, createHelper);
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R60_EVID_PRO_LFI"), null, createHelper);
 					row = sheet.getRow(60);
@@ -5205,7 +5274,7 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 5, buildDisplayValueWithFiles(pastRecord,"R61_EVID_PRO_LFI"), null, createHelper);
 
 				}
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				evaluateMcFormulas(workbook, jobId);
 			} else {
 
 			}
@@ -5213,7 +5282,8 @@ public class RT_MC_TABLE_ALL_Service {
 			
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
+					reportDate, branch, formmode, e);
 		}
 
 	}
@@ -5243,6 +5313,42 @@ public class RT_MC_TABLE_ALL_Service {
 	private String stripExtension(String fileName) {
 		int lastDot = fileName.lastIndexOf('.');
 		return (lastDot > 0) ? fileName.substring(0, lastDot) : fileName;
+	}
+
+	private void logMcDownload(String jobId, String step, String reportDate, String branch, String isConsolidated,
+			String formmode) {
+		logger.info("MC download jobId={} {} reportDate={} branch={} consolidated={} formmode={}", jobId, step,
+				reportDate, branch, isConsolidated, formmode);
+	}
+
+	private void setMcProgress(Map<String, Integer> progressMap, String jobId, int percent) {
+		setMcProgress(progressMap, jobId, percent, null);
+	}
+
+	private void setMcProgress(Map<String, Integer> progressMap, String jobId, int percent, String detail) {
+		progressMap.put(jobId, percent);
+		if (detail == null || detail.isEmpty()) {
+			logger.info("MC download jobId={} progress={}%", jobId, percent);
+		} else {
+			logger.info("MC download jobId={} progress={}% {}", jobId, percent, detail);
+		}
+	}
+
+	private Sheet openMcSheet(Workbook workbook, String jobId, int index) {
+		long started = System.currentTimeMillis();
+		logger.info("MC download jobId={} opening sheet index {}", jobId, index);
+		Sheet sheet = workbook.getSheetAt(index);
+		logger.info("MC download jobId={} sheet index {} name='{}' opened elapsedMs={}", jobId, index,
+				sheet == null ? "" : sheet.getSheetName(), System.currentTimeMillis() - started);
+		return sheet;
+	}
+
+	private void evaluateMcFormulas(Workbook workbook, String jobId) {
+		long started = System.currentTimeMillis();
+		logger.info("MC download jobId={} formula evaluation START", jobId);
+		workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+		logger.info("MC download jobId={} formula evaluation END elapsedMs={}", jobId,
+				System.currentTimeMillis() - started);
 	}
 
 	private void updateCellPreserveStyle(Row row, int colIndex, Object value, String formatStr, CreationHelper helper) {
@@ -8865,9 +8971,14 @@ public class RT_MC_TABLE_ALL_Service {
 	private byte[] generateNotApplicabilityExcel(String reportDate, String timeperiod, Map<String, Integer> progressMap,
 			String jobId, String specialValues) throws Exception {
 
+		logger.info("MC download jobId={} not-applicability query reportDate={} timeperiod={}", jobId, reportDate,
+				timeperiod);
+		long queryStarted = System.currentTimeMillis();
 		List<RT_MC_DATA_RECORD_ENTITY> allRecords = RT_MC_DATA_RECORD_REPO.findByReportDateAndBranchCode(reportDate,
 				timeperiod);
-		progressMap.put(jobId, 30);
+		logger.info("MC download jobId={} not-applicability rows={} elapsedMs={}", jobId,
+				allRecords == null ? 0 : allRecords.size(), System.currentTimeMillis() - queryStarted);
+		setMcProgress(progressMap, jobId, 30);
 
 		List<String> targetSpecialValues = new ArrayList<>();
 		if (specialValues != null && !specialValues.isEmpty()) {
@@ -8926,7 +9037,7 @@ public class RT_MC_TABLE_ALL_Service {
 				cell.setCellValue(headers[i]);
 				cell.setCellStyle(headerStyle);
 			}
-			progressMap.put(jobId, 40);
+			setMcProgress(progressMap, jobId, 40);
 
 			int rowNum = 1;
 			if (allRecords != null && !allRecords.isEmpty()) {
@@ -8992,8 +9103,9 @@ public class RT_MC_TABLE_ALL_Service {
 				}
 			}
 
-			progressMap.put(jobId, 85);
+			setMcProgress(progressMap, jobId, 85);
 
+			logger.info("MC download jobId={} not-applicability autosize and write", jobId);
 			sheet.autoSizeColumn(0);
 			sheet.autoSizeColumn(1);
 			sheet.autoSizeColumn(2);
@@ -9123,7 +9235,7 @@ public class RT_MC_TABLE_ALL_Service {
 			targetModes.addAll(SHEET_MAP.keySet());
 		}
 
-		progressMap.put(jobId, 20);
+		setMcProgress(progressMap, jobId, 20);
 
 		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
@@ -9160,10 +9272,16 @@ public class RT_MC_TABLE_ALL_Service {
 			int currentProgress = 20;
 
 			for (String mode : targetModes) {
+				logger.info("MC download jobId={} manager sheet START mode={} date={} timeperiod={}", jobId, mode, date,
+						timeperiod);
+				long modeStarted = System.currentTimeMillis();
 				Map<String, Object> managerData = getManagerViewData(mode, date, timeperiod);
 
-				if (managerData == null || !managerData.containsKey("reportRows"))
+				if (managerData == null || !managerData.containsKey("reportRows")) {
+					logger.warn("MC download jobId={} manager sheet SKIP mode={} elapsedMs={}", jobId, mode,
+							System.currentTimeMillis() - modeStarted);
 					continue;
+				}
 
 				@SuppressWarnings("unchecked")
 				List<RT_MC_Manager_DTO> rows = (List<RT_MC_Manager_DTO>) managerData.get("reportRows");
@@ -9208,20 +9326,24 @@ public class RT_MC_TABLE_ALL_Service {
 							dto.getCheckerRemarks() != null ? dto.getCheckerRemarks() : "-", cellStyle);
 				}
 
+				logger.info("MC download jobId={} manager autosize mode={} rows={}", jobId, mode, rows.size());
 				sheet.setColumnWidth(0, 50 * 256);
 				for (int i = 1; i < 15; i++) {
 					sheet.autoSizeColumn(i);
 				}
+				logger.info("MC download jobId={} manager sheet END mode={} elapsedMs={}", jobId, mode,
+						System.currentTimeMillis() - modeStarted);
 
 				currentProgress += progressStep;
-				progressMap.put(jobId, Math.min(85, currentProgress));
+				setMcProgress(progressMap, jobId, Math.min(85, currentProgress));
 			}
 
 			if (workbook.getNumberOfSheets() == 0) {
 				workbook.createSheet("No Data Available");
 			}
 
-			progressMap.put(jobId, 90);
+			setMcProgress(progressMap, jobId, 90);
+			logger.info("MC download jobId={} manager writing workbook", jobId);
 			workbook.write(baos);
 			return baos.toByteArray();
 		}

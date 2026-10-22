@@ -78,7 +78,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -116,7 +115,6 @@ import com.bornfire.xbrl.services.McServiceAuditDateHelper;
 import com.bornfire.xbrl.services.McServiceAuditDateHelper.ResolvedDates;
 import com.bornfire.xbrl.services.Bloomberg_services;
 import com.bornfire.xbrl.services.BankingBookBillDataService;
-import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.bornfire.xbrl.services.Excel_Services;
 import com.bornfire.xbrl.services.LoginServices;
 import com.bornfire.xbrl.services.ProvisioningFileUploadService;
@@ -155,6 +153,7 @@ import com.bornfire.xbrl.services.RtInvestmentDealDataDump_Service;
 import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.DaylightDataUploadService;
+import com.bornfire.xbrl.services.ECLDataUploadService;
 import com.bornfire.xbrl.services.OvernightForeignCcyUploadService;
 import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
@@ -5683,7 +5682,7 @@ System.out.println("sixe==="+excelData.length);
 	        }
 	        
 	        else if("ECL".equals(reportType)) {
-	        	resultMsg =ecldatauploadservice.uploadECLdata(file, toDate,forceUpload);
+	        	resultMsg = ecldatauploadservice.uploadECLdata(file, toDate,forceUpload);
 	        }
 	        
 	        else if("SMA".equals(reportType)) {
@@ -7192,18 +7191,24 @@ System.out.println("sixe==="+excelData.length);
 			HttpServletRequest req) {
 		String jobId = UUID.randomUUID().toString();
 		newTaskProgress.put(jobId, 0);
+		logger.info(
+				"MC download accepted jobId={} formmode={} reportDate={} branch={} consolidated={} reportOption={} departments={} specialValues={} tables={}",
+				jobId, formmode, reportDate, branch, isConsolidated, reportOption, selectedDepartments, specialValues,
+				tableNames);
+		String userid = (String) req.getSession().getAttribute("USERID");
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
 			try {
-				String userid = (String) req.getSession().getAttribute("USERID");
+				logger.info("MC download thread started jobId={}", jobId);
 				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress, formmode,
 						reportDate, userid, attr, isConsolidated, reportOption, selectedDepartments, specialValues, tableNames);
-				System.out.println("File : " + ((fileData == null) ? "fail" : "pass"));
-				System.out.println("Formmode : " + formmode);
+				logger.info("MC download thread finished jobId={} formmode={} bytes={}", jobId, formmode,
+						fileData == null ? 0 : fileData.length);
 				newTaskFileStore.put(jobId, fileData);
 				newTaskProgress.put(jobId, 100);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("MC download thread failed jobId={} formmode={} reportDate={} branch={}", jobId, formmode,
+						reportDate, branch, e);
 				newTaskProgress.put(jobId, -1);
 			}
 		}).start();
