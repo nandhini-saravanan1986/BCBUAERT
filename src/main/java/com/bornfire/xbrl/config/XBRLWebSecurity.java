@@ -255,6 +255,7 @@ public class XBRLWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("DEPARTMENT",  user.getDepartment());
 				request.getSession().setAttribute("FORCE_PASSWORD_CHANGE", firstLogin);
 				request.getSession().setAttribute("PASSWORD_EXPIRED", passwordExpired);
+				request.getSession().setAttribute("DESIGNATION",  user.getDesignation());
 
 				auditService.createLoginAudit(user.getUserid() , "Login",null , null, "XBRL_USER_PROFILE_TABLE",user);				
 				if (firstLogin || passwordExpired) {
