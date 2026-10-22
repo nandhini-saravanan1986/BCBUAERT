@@ -24181,11 +24181,20 @@ document.addEventListener("DOMContentLoaded", function () {
     let mgrscreen = /*[[${mgrscreen}]]*/ 'NO';
     let formmode = /*[[${formmode}]]*/ null;
     let roleId = /*[[${ROLEID}]]*/ 'UNKNOWN';
+    let deptValidation = /*[[${DEPARTMENTVALIDATION}]]*/ 'NO';
 
     if (formmode !== 'conductcultureassessment') {
         const regularTable = document.getElementById("regularReportTable");
         const mgrTable = document.getElementById("mgrReportTable");
         const toggleBtn = document.getElementById("toggleTableBtn");
+
+        if (deptValidation === 'YES') {
+            if (toggleBtn) toggleBtn.style.display = 'none';
+            if (regularTable) regularTable.style.display = "block"; 
+            if (mgrTable) mgrTable.style.display = "none";
+            currentTable = 'regular';
+            return;
+        }
 
         let savedTable = localStorage.getItem('preferredTableView');
         let isManagerView = false;
@@ -24218,6 +24227,9 @@ function toggleTable() {
     const mgrTable = document.getElementById("mgrReportTable");
     const toggleBtn = document.getElementById("toggleTableBtn");
     
+    const deptValidation = /*[[${DEPARTMENTVALIDATION}]]*/ 'NO';
+    if (deptValidation === 'YES') return;
+
     if (window.isMgrSelecting) {
         let cancelBtn = document.getElementById('btn-cancel-selection');
         if (cancelBtn) cancelBtn.click();
