@@ -350,6 +350,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -1453,6 +1454,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -2279,6 +2281,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -3573,6 +3576,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -3754,6 +3758,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -3927,6 +3932,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -4703,6 +4709,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -5033,6 +5040,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}
@@ -5312,6 +5320,7 @@ public class RT_MC_TABLE_ALL_Service {
 		} catch (Exception e) {
 			logger.error("MC download jobId={} excel write failed reportDate={} branch={} formmode={}", jobId,
 					reportDate, branch, formmode, e);
+			throw e;
 		}
 
 	}

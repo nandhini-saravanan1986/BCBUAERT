@@ -21498,6 +21498,18 @@
 						return response.json();
 					})
 					.then(flagData => {
+						const flagLookup = {};
+						Object.keys(flagData).forEach(function (key) {
+							flagLookup[String(key).trim().toLowerCase()] = flagData[key];
+						});
+						const readFlag = function (name) {
+							if (!name) {
+								return "";
+							}
+							const found = flagLookup[String(name).trim().toLowerCase()];
+							return found ? found : "";
+						};
+
 						const stylingInputs = document.querySelectorAll('.input-and-select:not(.remarks-input), .manager-verify-cell');
 
 						const mgrTable = document.getElementById('usertable') || document.body;
@@ -21527,7 +21539,7 @@
 							const cellName = input.getAttribute('data-cellname') || input.name || input.id;
 							if (!cellName) return;
 
-							const flag = flagData[cellName];
+							const flag = readFlag(cellName);
 
 							const isNA = isCellNotApplicable(input);
 
@@ -21592,7 +21604,7 @@
 							const isNA = isCellNotApplicable(input);
 
 							if (!isNA) {
-								const flag = flagData[cellName];
+								const flag = readFlag(cellName);
 
 								if (flag !== 'Y' && flag !== 'MR') {
 									isReadyForManager = false;
@@ -22131,154 +22143,154 @@
 
 		});
 	</script>
-	<script th:inline="javascript">
-		const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
-		let currentYear = new Date().getFullYear();
-		let pendingDisplayString = null;
-		let reportDateParam = null;
-		let timeperiodParam = null;
+<script th:inline="javascript">
+    const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
+    var currentYear = new Date().getFullYear();
+    let pendingDisplayString = null;
+    let reportDateParam = null;
+    let timeperiodParam = null;
 
-		const monthNames = [
-			'January', 'February', 'March', 'April', 'May', 'June',
-			'July', 'August', 'September', 'October', 'November', 'December'
-		];
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
 
-		const pickerWrapper = document.getElementById('pickerWrapper');
-		const dateInput = document.getElementById('dateInput');
-		const dropdownContent = document.getElementById('dropdownContent');
-		const yearDisplay = document.getElementById('yearDisplay');
-		const prevYearBtn = document.getElementById('prevYear');
-		const nextYearBtn = document.getElementById('nextYear');
-		const quarterBtns = document.querySelectorAll('.quarter-btn');
-		const yearlyBtn = document.getElementById('yearlyBtn');
-		const confirmBtn = document.getElementById('confirmBtn');
+    const pickerWrapper = document.getElementById('pickerWrapper');
+    const dateInput = document.getElementById('dateInput');
+    const dropdownContent = document.getElementById('dropdownContent');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const prevYearBtn = document.getElementById('prevYear');
+    const nextYearBtn = document.getElementById('nextYear');
+    const quarterBtns = document.querySelectorAll('.quarter-btn');
+    const yearlyBtn = document.getElementById('yearlyBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
 
-		const padNum = (num) => String(num).padStart(2, '0');
+    const padNum = (num) => String(num).padStart(2, '0');
 
-		const getLastDayOfMonth = (year, monthIndex) => {
-			return new Date(year, monthIndex + 1, 0).getDate();
-		};
+    const getLastDayOfMonth = (year, monthIndex) => {
+        return new Date(year, monthIndex + 1, 0).getDate();
+    };
 
-		dateInput.addEventListener('click', () => {
-			dropdownContent.classList.toggle('active');
-			if (dropdownContent.classList.contains('active')) {
-				syncPickerToInput();
-				updateYearDisplay();
-			}
-		});
+    dateInput.addEventListener('click', () => {
+        dropdownContent.classList.toggle('active');
+        if(dropdownContent.classList.contains('active')) {
+        	syncPickerToInput();
+            updateYearDisplay();
+        }
+    });
 
-		document.addEventListener('click', (e) => {
-			if (!pickerWrapper.contains(e.target)) {
-				dropdownContent.classList.remove('active');
-			}
-		});
+    document.addEventListener('click', (e) => {
+        if (!pickerWrapper.contains(e.target)) {
+            dropdownContent.classList.remove('active');
+        }
+    });
 
-		function updateYearDisplay() {
-			yearDisplay.textContent = currentYear;
-		}
+    function updateYearDisplay() {
+        yearDisplay.textContent = currentYear;
+    }
 
-		function clearSelection() {
-			quarterBtns.forEach(b => b.classList.remove('active'));
-			yearlyBtn.classList.remove('active');
-			pendingDisplayString = null;
-			reportDateParam = null;
-			timeperiodParam = null;
-			confirmBtn.disabled = true;
-		}
+    function clearSelection() {
+        quarterBtns.forEach(b => b.classList.remove('active'));
+        yearlyBtn.classList.remove('active');
+        pendingDisplayString = null;
+        reportDateParam = null;
+        timeperiodParam = null;
+        confirmBtn.disabled = true;
+    }
 
-		[prevYearBtn, nextYearBtn].forEach(btn => {
-			btn.addEventListener('click', (e) => {
-				e.preventDefault();
-				currentYear = (btn.id === 'prevYear') ? currentYear - 1 : currentYear + 1;
-				updateYearDisplay();
-				clearSelection();
-			});
-		});
+    [prevYearBtn, nextYearBtn].forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentYear = (btn.id === 'prevYear') ? currentYear - 1 : currentYear + 1;
+            updateYearDisplay();
+            clearSelection();
+        });
+    });
 
-		quarterBtns.forEach((btn, index) => {
-			btn.addEventListener('click', (e) => {
-				e.preventDefault();
-				clearSelection();
-				btn.classList.add('active');
+    quarterBtns.forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearSelection();
+            btn.classList.add('active');
+            
+            const monthMap = [2, 5, 8, 11]; 
+            const targetMonthIndex = monthMap[index];
+            
+            pendingDisplayString = `${monthNames[targetMonthIndex]} ${currentYear} - Q${index + 1}`;
+            timeperiodParam = 'QUARTERLY';
+            
+            const lastDay = getLastDayOfMonth(currentYear, targetMonthIndex);
+            reportDateParam = `${padNum(lastDay)}-${padNum(targetMonthIndex + 1)}-${currentYear}`;
+            
+            confirmBtn.disabled = false;
+        });
+    });
 
-				const monthMap = [2, 5, 8, 11];
-				const targetMonthIndex = monthMap[index];
+    yearlyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearSelection();
+        yearlyBtn.classList.add('active');
+        
+        pendingDisplayString = `December ${currentYear} - Yearly`;
+        timeperiodParam = 'YEARLY';
+        reportDateParam = `31-12-${currentYear}`; 
+        
+        confirmBtn.disabled = false;
+    });
 
-				pendingDisplayString = `${monthNames[targetMonthIndex]} ${currentYear} - Q${index + 1}`;
-				timeperiodParam = 'QUARTERLY';
+    
+	var originalDateValue = "";
+	confirmBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        if (reportDateParam && timeperiodParam) {
+            originalDateValue = dateInput.value; 
+            dateInput.value = pendingDisplayString;
+            dropdownContent.classList.remove('active');
 
-				const lastDay = getLastDayOfMonth(currentYear, targetMonthIndex);
-				reportDateParam = `${padNum(lastDay)}-${padNum(targetMonthIndex + 1)}-${currentYear}`;
+            const baseUrl = "/Riskinsights/RT_MC_Reports";
+            const originalText = confirmBtn.innerHTML;
+            
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
+            confirmBtn.disabled = true;
 
-				confirmBtn.disabled = false;
-			});
-		});
+    		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+            try {
+                const checkUrl = `./checkDataAvailability?reportDate=${encodeURIComponent(reportDateParam)}&timeperiod=${encodeURIComponent(timeperiodParam)}`;
+                const response = await fetch(checkUrl);
+                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                if (!response.ok) throw new Error("Server error during availability check.");
+                const data = await response.json();
+                if (data.exists) {
+                	window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}&dept=${encodeURIComponent(currentDepartment)}`;
+                } else {
+                    showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
+                }
 
-		yearlyBtn.addEventListener('click', (e) => {
-			e.preventDefault();
-			clearSelection();
-			yearlyBtn.classList.add('active');
+            } catch (error) {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                console.error(error);
+                alert("Failed to connect to the server to verify report availability.");
+            } finally {
+            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                confirmBtn.innerHTML = originalText;
+                confirmBtn.disabled = false;
+            }
+        }
+    });
 
-			pendingDisplayString = `December ${currentYear} - Yearly`;
-			timeperiodParam = 'YEARLY';
-			reportDateParam = `31-12-${currentYear}`;
+    function showGenerationModal(canGenerate, missingMessage, reportDate, timeperiod, baseUrl) {
+        const modalBody = document.getElementById('gen-modal-body');
+        const generateBtn = document.getElementById('btn-gen-report');
+        const errorMsg = document.getElementById('gen-error-msg');
 
-			confirmBtn.disabled = false;
-		});
+        errorMsg.style.display = 'none';
+        generateBtn.disabled = false;
+        generateBtn.className = 'btn btn-primary';
+        generateBtn.innerText = 'Generate Report';
 
-
-		let originalDateValue = "";
-		confirmBtn.addEventListener('click', async (e) => {
-			e.preventDefault();
-
-			if (reportDateParam && timeperiodParam) {
-				originalDateValue = dateInput.value;
-				dateInput.value = pendingDisplayString;
-				dropdownContent.classList.remove('active');
-
-				const baseUrl = "/Riskinsights/RT_MC_Reports";
-				const originalText = confirmBtn.innerHTML;
-
-				confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
-				confirmBtn.disabled = true;
-
-				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-				try {
-					const checkUrl = `./checkDataAvailability?reportDate=${encodeURIComponent(reportDateParam)}&timeperiod=${encodeURIComponent(timeperiodParam)}`;
-					const response = await fetch(checkUrl);
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-					if (!response.ok) throw new Error("Server error during availability check.");
-					const data = await response.json();
-					if (data.exists) {
-						window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}&dept=${encodeURIComponent(currentDepartment)}`;
-					} else {
-						showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
-					}
-
-				} catch (error) {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-					console.error(error);
-					alert("Failed to connect to the server to verify report availability.");
-				} finally {
-					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-					confirmBtn.innerHTML = originalText;
-					confirmBtn.disabled = false;
-				}
-			}
-		});
-
-		function showGenerationModal(canGenerate, missingMessage, reportDate, timeperiod, baseUrl) {
-			const modalBody = document.getElementById('gen-modal-body');
-			const generateBtn = document.getElementById('btn-gen-report');
-			const errorMsg = document.getElementById('gen-error-msg');
-
-			errorMsg.style.display = 'none';
-			generateBtn.disabled = false;
-			generateBtn.className = 'btn btn-primary';
-			generateBtn.innerText = 'Generate Report';
-
-			if (canGenerate) {
-				modalBody.innerHTML = `
+        if (canGenerate) {
+            modalBody.innerHTML = `
                 <p style="color: #333; margin-bottom: 0;">
                     Data for ${timeperiod} (${reportDate}) does not exist yet.<br><br>
                     All prerequisite data is available. Would you like to generate this report now?
@@ -22879,7 +22891,7 @@
 			if (currentValue.trim() === "") return;
 			const yearMatch = currentValue.match(/\d{4}/);
 			if (yearMatch) {
-				currentDisplayedYear = parseInt(yearMatch[0], 10);
+				currentYear = parseInt(yearMatch[0], 10);
 				if (typeof updateYearDisplay === "function") {
 					updateYearDisplay();
 				}

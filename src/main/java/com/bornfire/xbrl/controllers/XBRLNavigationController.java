@@ -7180,6 +7180,7 @@ System.out.println("sixe==="+excelData.length);
 	
 	private final Map<String, byte[]> newTaskFileStore = new ConcurrentHashMap<>();
 	private final Map<String, Integer> newTaskProgress = new ConcurrentHashMap<>();
+	private final Map<String, String> newTaskError = new ConcurrentHashMap<>();
 
 	@GetMapping("/startMcReportJob")
 	@ResponseBody
@@ -7209,6 +7210,19 @@ System.out.println("sixe==="+excelData.length);
 			} catch (Exception e) {
 				logger.error("MC download thread failed jobId={} formmode={} reportDate={} branch={}", jobId, formmode,
 						reportDate, branch, e);
+				String reason = e.getMessage();
+				if (reason == null || reason.trim().length() == 0) {
+					if (e.getCause() != null && e.getCause().getMessage() != null
+							&& e.getCause().getMessage().trim().length() > 0) {
+						reason = e.getCause().getMessage();
+					} else {
+						reason = "Unexpected error while creating the file.";
+					}
+				}
+				if (reason.length() > 300) {
+					reason = reason.substring(0, 300);
+				}
+				newTaskError.put(jobId, reason);
 				newTaskProgress.put(jobId, -1);
 			}
 		}).start();
@@ -7222,6 +7236,11 @@ System.out.println("sixe==="+excelData.length);
 	public Map<String, Object> checkNewTaskStatus(@RequestParam String jobId) {
 		Map<String, Object> response = new HashMap<>();
 		response.put("percent", newTaskProgress.getOrDefault(jobId, 0));
+		String errorMessage = newTaskError.get(jobId);
+		if (errorMessage == null) {
+			errorMessage = "";
+		}
+		response.put("message", errorMessage);
 		return response;
 	}
 
@@ -8240,27 +8259,27 @@ System.out.println("sixe==="+excelData.length);
 	public ResponseEntity<Map<String, String>> fetchAllVerifyFlags(@RequestParam("formMode") String formMode,
 			@RequestParam("reportDate") String reportDateStr, @RequestParam("timeperiod") String timeperiod) {
 		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			Date reportDate = dateFormat.parse(reportDateStr);
-
-			String jpql = "SELECT r.cellName, r.verifyFlg, r.modifyFlg, r.croVerifyFlg, r.ccoVerifyFlg FROM RT_MC_DATA_RECORD_ENTITY r "
-					+ "WHERE r.id IN (" + "   SELECT MAX(r2.id) FROM RT_MC_DATA_RECORD_ENTITY r2 "
-					+ "   WHERE r2.formMode = :formMode " + "   AND r2.reportDate = :reportDate "
-					+ "   AND r2.timeperiod = :timeperiod " + "   GROUP BY r2.cellName" + ")";
+			String sql = "SELECT CELL_NAME, VERIFY_FLG, MODIFY_FLG, CRO_VERIFY_FLG, CCO_VERIFY_FLG "
+					+ "FROM RT_MC_DATA_RECORD r WHERE r.ID IN ("
+					+ " SELECT MAX(r2.ID) FROM RT_MC_DATA_RECORD r2 "
+					+ " WHERE UPPER(TRIM(r2.FORM_MODE)) = UPPER(TRIM(:formMode)) "
+					+ " AND TRUNC(r2.REPORT_DATE) = TO_DATE(:reportDate, 'DD-MM-YYYY') "
+					+ " AND NVL(UPPER(TRIM(r2.TIMEPERIOD)), ' ') = NVL(UPPER(TRIM(:timeperiod)), ' ') "
+					+ " GROUP BY r2.CELL_NAME)";
 
 			@SuppressWarnings("unchecked")
-			List<Object[]> results = entityManager.createQuery(jpql).setParameter("formMode", formMode)
-					.setParameter("reportDate", reportDate).setParameter("timeperiod", timeperiod).getResultList();
+			List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("formMode", formMode)
+					.setParameter("reportDate", reportDateStr).setParameter("timeperiod", timeperiod).getResultList();
 
 			Map<String, String> flags = new HashMap<>();
 
 			for (Object[] row : results) {
 				if (row[0] != null) {
-					String cellName = row[0].toString();
-					String verifyFlg = row[1] != null ? row[1].toString().trim() : "";
-					String modifyFlg = row[2] != null ? row[2].toString().trim() : "";
-					String croFlg = row[3] != null ? row[3].toString().trim() : "";
-					String ccoFlg = row[4] != null ? row[4].toString().trim() : "";
+					String cellName = row[0].toString().trim();
+					String verifyFlg = row[1] != null ? row[1].toString().trim().toUpperCase() : "";
+					String modifyFlg = row[2] != null ? row[2].toString().trim().toUpperCase() : "";
+					String croFlg = row[3] != null ? row[3].toString().trim().toUpperCase() : "";
+					String ccoFlg = row[4] != null ? row[4].toString().trim().toUpperCase() : "";
 
 					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*");
 

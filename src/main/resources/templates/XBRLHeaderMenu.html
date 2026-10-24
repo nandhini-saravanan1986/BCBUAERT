@@ -1183,6 +1183,7 @@
 	<script>
 		let newTaskInterval;
 		let isFinishing = false;
+		let downloadStopped = false;
 		let targetPct = 5;
 		let currentDisplayPct = 5;
 		let animationFrame;
@@ -1198,6 +1199,7 @@
 		function cancelCurrentTask() {
 			if (confirm("Are you sure you want to cancel this download?")) {
 				isFinishing = true;
+				downloadStopped = true;
 				clearInterval(newTaskInterval);
 				cancelAnimationFrame(animationFrame);
 
@@ -1259,6 +1261,7 @@
 				clearInterval(newTaskInterval);
 				cancelAnimationFrame(animationFrame);
 				isFinishing = true;
+				downloadStopped = true;
 
 				clearNewTaskStorage();
 
@@ -1277,11 +1280,15 @@
 			cancelAnimationFrame(animationFrame);
 
 			isFinishing = false;
+			downloadStopped = false;
 			targetPct = 5;
 			currentDisplayPct = 5;
 			pollStartTime = Date.now();
 
 			function animateBar() {
+				if (downloadStopped) {
+					return;
+				}
 				if (currentDisplayPct < targetPct) {
 					currentDisplayPct += 3.0;
 					if (currentDisplayPct > targetPct) currentDisplayPct = targetPct;
@@ -1321,7 +1328,11 @@
 							}
 						}, 50);
 					} else if (serverPct === -1) {
-						handleTaskError("Server reported an error.");
+						let reason = res.message;
+						if (!reason) {
+							reason = "Unexpected error while creating the file.";
+						}
+						handleTaskError(reason);
 					}
 				}).fail(function () {
 					console.log("Polling attempt failed...");
@@ -1330,6 +1341,9 @@
 		}
 
 		function renderTaskUI(name, pct, time, id) {
+			if (downloadStopped) {
+				return;
+			}
 			let html = `
             <div style="width: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 15px; margin-bottom: 8px;">
@@ -1368,6 +1382,32 @@
 
 			$("#alertMessage").html(successHtml);
 			setTimeout(() => {closeDlAlert();}, 5000);
+		}
+
+		function handleTaskError(reason) {
+			downloadStopped = true;
+			isFinishing = true;
+			clearInterval(newTaskInterval);
+			cancelAnimationFrame(animationFrame);
+			clearNewTaskStorage();
+
+			if (!reason) {
+				reason = "Unexpected error while creating the file.";
+			}
+			reason = String(reason).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+			let errorHtml = `
+                <div style="text-align:center; padding: 5px;">
+                    <strong style="color:#dc3545; font-size:13px;">Download stopped</strong>
+                    <p style="font-size:11px; color:#666; margin: 5px 0;">Because of this reason your download is stopped.</p>
+                    <p style="font-size:11px; color:#333; margin: 5px 0; word-break: break-all;">${reason}</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                        <button onclick="closeDlAlert()" style="padding:4px 12px; font-size:11px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Close</button>
+                    </div>
+                </div>`;
+
+			$("#alertMessage").html(errorHtml);
+			$("#autoHideAlert").fadeIn();
 		}
 
 		function closeDlAlert() {$("#autoHideAlert").fadeOut(); cancelAnimationFrame(animationFrame);}
