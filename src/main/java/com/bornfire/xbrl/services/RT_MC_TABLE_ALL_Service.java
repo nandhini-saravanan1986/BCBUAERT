@@ -2228,7 +2228,7 @@ public class RT_MC_TABLE_ALL_Service {
 
 					setMcProgress(progressMap, jobId, 85);
 					
-//					row = sheet.getRow(21);
+					row = sheet.getRow(21);
 //					updateCellPreserveStyle(row, 5, record.getR22_NO_COM_SPC_TP(), null, createHelper);
 //					updateCellPreserveStyle(row, 6, record.getR22_NO_COM_PEN(), null, createHelper);
 //					updateCellPreserveStyle(row, 7, record.getR22_AMT_FIN_AED(), null, createHelper);
@@ -2246,7 +2246,7 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 19, record.getR22_NO_OUT_UNRES(), null, createHelper);
 //					updateCellPreserveStyle(row, 20, record.getR22_NO_COM_RES_CON(), null, createHelper);
 //					updateCellPreserveStyle(row, 21, record.getR22_NO_RES_30_COM(), null, createHelper);
-//					updateCellPreserveStyle(row, 22, record.getR22_AVG_TME_RES_COM(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record.getR22_AVG_TME_RES_COM(), null, createHelper);
 //					updateCellPreserveStyle(row, 23, record.getR22_NO_COM_STF_MIS(), null, createHelper);
 //					updateCellPreserveStyle(row, 24, record.getR22_NO_COM_ATM_WEB(), null, createHelper);
 //					updateCellPreserveStyle(row, 25, record.getR22_NO_COM_FIN_LOS(), null, createHelper);
@@ -3473,15 +3473,15 @@ public class RT_MC_TABLE_ALL_Service {
 
 					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(21);
-//					updateCellPreserveStyle(row, 5, record2.getR22_AVG_TME_LWRSK(), null, createHelper);
-//					updateCellPreserveStyle(row, 6, record2.getR22_AVG_NO_LOAN(), null, createHelper);
-//					updateCellPreserveStyle(row, 7, record2.getR22_AVG_NO_LWRSK_SME(), null, createHelper);
-//					updateCellPreserveStyle(row, 8, record2.getR22_AVG_NO_DYS_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 5, record2.getR22_AVG_TME_LWRSK(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record2.getR22_AVG_NO_LOAN(), null, createHelper);
+					updateCellPreserveStyle(row, 7, record2.getR22_AVG_NO_LWRSK_SME(), null, createHelper);
+					updateCellPreserveStyle(row, 8, record2.getR22_AVG_NO_DYS_SME(), null, createHelper);
 //					updateCellPreserveStyle(row, 9, record2.getR22_NO_REQ_CLO(), null, createHelper);
 //					updateCellPreserveStyle(row, 10, record2.getR22_NO_PRD_VAR_SPC_TP(), null, createHelper);
 //					updateCellPreserveStyle(row, 11, record2.getR22_NO_REQ_RES_SPT(), null, createHelper);
 //					updateCellPreserveStyle(row, 12, record2.getR22_NO_REQ_PAYDEF(), null, createHelper);
-//					updateCellPreserveStyle(row, 13, record2.getR22_AVG_TME_REPAY(), null, createHelper);
+					updateCellPreserveStyle(row, 13, record2.getR22_AVG_TME_REPAY(), null, createHelper);
 //					updateCellPreserveStyle(row, 14, record2.getR22_NO_INST_BAL(), null, createHelper);
 //					updateCellPreserveStyle(row, 15, record2.getR22_NET_FEE_AED(), null, createHelper);
 //					updateCellPreserveStyle(row, 16, record2.getR22_NET_PROF_AED(), null, createHelper);
@@ -3493,19 +3493,47 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 22, record2.getR22_TOT_REQ_OTBNK(), null, createHelper);
 //					updateCellPreserveStyle(row, 23, record2.getR22_TOT_LOAN_OTBNK(), null, createHelper);
 //					updateCellPreserveStyle(row, 24, record2.getR22_NO_CRACC_MIN(), null, createHelper);
-//					updateCellPreserveStyle(row, 25, record2.getR22_AVG_TME_CLSACC(), null, createHelper);
+					updateCellPreserveStyle(row, 25, record2.getR22_AVG_TME_CLSACC(), null, createHelper);
 //					updateCellPreserveStyle(row, 26, record2.getR22_N0_CON_MORE1_LOAN(), null, createHelper);
 //					updateCellPreserveStyle(row, 27, record2.getR22_NO_INST_WITH90(), null, createHelper);
 //					updateCellPreserveStyle(row, 28, record2.getR22_TOT_GROSS_ASET(), null, createHelper);
 //					updateCellPreserveStyle(row, 29, record2.getR22_RET_LIAB_AED(), null, createHelper);
-					updateCellPreserveStyle(row, 30, record2.getR22_HIG_PER_PROD_CAT(), null, createHelper);
+					String maxRate = record2.getR22_HIG_PER_PROD_CAT();
+					if (maxRate == null || maxRate.trim().isEmpty() || "0".equals(maxRate.trim())) {
+						String[] childRates = {
+							record1.getR6_HIG_PER_PROD_CAT(), record1.getR7_HIG_PER_PROD_CAT(), record1.getR8_HIG_PER_PROD_CAT(),
+							record1.getR9_HIG_PER_PROD_CAT(), record1.getR10_HIG_PER_PROD_CAT(), record1.getR11_HIG_PER_PROD_CAT(),
+							record1.getR12_HIG_PER_PROD_CAT(), record1.getR13_HIG_PER_PROD_CAT(), record1.getR14_HIG_PER_PROD_CAT(),
+							record2.getR15_HIG_PER_PROD_CAT(), record2.getR16_HIG_PER_PROD_CAT(), record2.getR17_HIG_PER_PROD_CAT(),
+							record2.getR18_HIG_PER_PROD_CAT(), record2.getR19_HIG_PER_PROD_CAT(), record2.getR20_HIG_PER_PROD_CAT(),
+							record2.getR21_HIG_PER_PROD_CAT()
+						};
+						Double calculatedMax = null;
+						boolean hasPercent = false;
+						for (String cr : childRates) {
+							if (cr != null && !cr.trim().isEmpty() && !"-".equals(cr.trim()) && !"null".equalsIgnoreCase(cr.trim())) {
+								String tr = cr.trim();
+								if (tr.contains("%")) hasPercent = true;
+								try {
+									double d = Double.parseDouble(tr.replace("%", "").replace(",", "").trim());
+									if (calculatedMax == null || d > calculatedMax) calculatedMax = d;
+								} catch (Exception ignored) {}
+							}
+						}
+						if (calculatedMax != null) {
+							maxRate = (calculatedMax == Math.floor(calculatedMax) ? String.format("%.0f", calculatedMax) : String.valueOf(calculatedMax)) + (hasPercent ? "%" : "");
+						} else {
+							maxRate = "0";
+						}
+					}
+					updateCellPreserveStyle(row, 30, maxRate, null, createHelper);
 //					updateCellPreserveStyle(row, 31, record2.getR22_NO_ACCS_TAG_NPA(), null, createHelper);
 //					updateCellPreserveStyle(row, 32, record2.getR22_NO_CHG_FEE_GRT5(), null, createHelper);
 //					updateCellPreserveStyle(row, 33, record2.getR22_NO_CON_FLEX_INT(), null, createHelper);
 //					updateCellPreserveStyle(row, 34, record2.getR22_NO_CON_FIXED_INT(), null, createHelper);
 //					updateCellPreserveStyle(row, 35, record2.getR22_NO_LOAN_MAY_2011(), null, createHelper);
 //					updateCellPreserveStyle(row, 36, record2.getR22_VAL_LEGA_MAY_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 37, record2.getR22_AVG_DAY_NLL(), null, createHelper);
+					updateCellPreserveStyle(row, 37, record2.getR22_AVG_DAY_NLL(), null, createHelper);
 //					updateCellPreserveStyle(row, 38, record2.getR22_PER_DOR_ACCS(), null, createHelper);
 //					updateCellPreserveStyle(row, 39, record2.getR22_INT_RET_PROF(), null, createHelper);
 //					updateCellPreserveStyle(row, 40, record2.getR22_FEE_COMM_PROF(), null, createHelper);
@@ -3530,8 +3558,8 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 59, record2.getR22_TOT_PRE_POS_EXP(), null, createHelper);
 //					updateCellPreserveStyle(row, 60, record2.getR22_TOT_PRE_CARD_SPD(), null, createHelper);
 //					updateCellPreserveStyle(row, 61, record2.getR22_TOT_ACCS_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 62, record2.getR22_NO_LANG_VOICE(), null, createHelper);
-//					updateCellPreserveStyle(row, 63, record2.getR22_AVG_NOD_LOWRSK(), null, createHelper);
+					updateCellPreserveStyle(row, 62, record2.getR22_NO_LANG_VOICE(), null, createHelper);
+					updateCellPreserveStyle(row, 63, record2.getR22_AVG_NOD_LOWRSK(), null, createHelper);
 //					updateCellPreserveStyle(row, 64, record2.getR22_NO_CUST_REISS_LIA(), null, createHelper);
 //					updateCellPreserveStyle(row, 65, record2.getR22_NO_INS_CRRATE_CON(), null, createHelper);
 
@@ -3882,10 +3910,10 @@ public class RT_MC_TABLE_ALL_Service {
 					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(11);
 //					updateCellPreserveStyle(row, 5, record.getR12_NO_PRO_SNR(), null, createHelper);
-//					updateCellPreserveStyle(row, 6, record.getR12_NO_TRA_SNR_SPT(), null, createHelper);
+					updateCellPreserveStyle(row, 6, record.getR12_NO_TRA_SNR_SPT(), null, createHelper);
 //					updateCellPreserveStyle(row, 7, record.getR12_NO_CONS_VC(), null, createHelper);
 					updateCellPreserveStyle(row, 8, record.getR12_NO_CON_FRA(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record.getR12_NO_CON_MRK_FRD(), null, createHelper);
+					updateCellPreserveStyle(row, 9, record.getR12_NO_CON_MRK_FRD(), null, createHelper);
 //					updateCellPreserveStyle(row, 10, record.getR12_TOT_CON_PRO_CBUAE(), null, createHelper);
 					updateCellPreserveStyle(row, 11, record.getR12_TOT_TRA_CBUAE(), null, createHelper);
 
@@ -4610,15 +4638,15 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 11, record2.getR23_LOAN_SME_WEB_MOB(), null, createHelper);
 //					updateCellPreserveStyle(row, 12, record2.getR23_NO_COMPDIGI_MOB(), null, createHelper);
 //					updateCellPreserveStyle(row, 13, record2.getR23_NO_COMP_TRADCALL(), null, createHelper);
-//					updateCellPreserveStyle(row, 14, record2.getR23_PER_COMPDIGI_WEB(), null, createHelper);
-//					updateCellPreserveStyle(row, 15, record2.getR23_PER_COM_TRADCALL(), null, createHelper);
+					updateCellPreserveStyle(row, 14, record2.getR23_PER_COMPDIGI_WEB(), null, createHelper);
+					updateCellPreserveStyle(row, 15, record2.getR23_PER_COM_TRADCALL(), null, createHelper);
 //					updateCellPreserveStyle(row, 16, record2.getR23_TOT_REV_PREV(), null, createHelper);
 //					updateCellPreserveStyle(row, 17, record2.getR23_PROF_LOSS_PREV(), null, createHelper);
-//					updateCellPreserveStyle(row, 18, record2.getR23_PROF_MARG_PORTFOLIO(), null, createHelper);
-//					updateCellPreserveStyle(row, 19, record2.getR23_TOT_RET_ASET_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 18, record2.getR23_PROF_MARG_PORTFOLIO(), null, createHelper);
+					updateCellPreserveStyle(row, 19, record2.getR23_TOT_RET_ASET_PREV(), null, createHelper);
 //					updateCellPreserveStyle(row, 20, record2.getR23_NP_LOAN_PREV(), null, createHelper);
 //					updateCellPreserveStyle(row, 21, record2.getR23_NON_CON_ONLAST_PREV(), null, createHelper);
-//					updateCellPreserveStyle(row, 22, record2.getR23_TOT_BRAN_PREV(), null, createHelper);
+					updateCellPreserveStyle(row, 22, record2.getR23_TOT_BRAN_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 23, record2.getR23_TOT_REV_RET_CUR(), null, createHelper);
 					updateCellPreserveStyle(row, 24, record2.getR23_PROF_LOS_PORT_CUR(), null, createHelper);
 					updateCellPreserveStyle(row, 25, record2.getR23_PROF_MARG_PERC_CUR(), null, createHelper);
@@ -4660,7 +4688,7 @@ public class RT_MC_TABLE_ALL_Service {
 //					updateCellPreserveStyle(row, 61, record2.getR23_AMT_POS_GATE(), null, createHelper);
 //					updateCellPreserveStyle(row, 62, record2.getR23_NO_TRAN_SVF_BNK(), null, createHelper);
 //					updateCellPreserveStyle(row, 63, record2.getR23_AMT_RET_SVF_BNK(), null, createHelper);
-//					updateCellPreserveStyle(row, 64, record2.getR23_TOT_WEB_MOB_VIRT(), null, createHelper);
+					updateCellPreserveStyle(row, 64, record2.getR23_TOT_WEB_MOB_VIRT(), null, createHelper);
 //					updateCellPreserveStyle(row, 65, record2.getR23_VAL_UNCL_SVF(), null, createHelper);
 //					updateCellPreserveStyle(row, 66, record2.getR23_NO_CON_LOW_RSK(), null, createHelper);
 //					updateCellPreserveStyle(row, 67, record2.getR23_NO_CON_HIGH_RSK(), null, createHelper);

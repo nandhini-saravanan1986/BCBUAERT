@@ -19492,26 +19492,128 @@
 					return checkCfg(ptReportData1) || checkCfg(ptReportData2);
 				};
 
+				function isNoCalcColumn(cellName, mode) {
+					if (!cellName) return false;
+					const name = cellName.toUpperCase();
+					if (mode === 'complaints') {
+						return name === 'R22_AVG_TME_RES_COM' || name.endsWith('AVG_TME_RES_COM') || name.includes('AVG_TME_RES_COM');
+					}
+					if (mode === 'retailproducts') {
+						const disabledSuffixes = [
+							'AVG_TME_LWRSK',
+							'AVG_NO_LOAN',
+							'AVG_NO_LWRSK_SME',
+							'AVG_NO_DYS_SME',
+							'AVG_TME_REPAY',
+							'AVG_TME_CLSACC',
+							'AVG_DAY_NLL',
+							'AVG_NOD_LOWRSK',
+							'NO_LANG_VOICE'
+						];
+						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
+					}
+					if (mode === 'trainings') {
+						const disabledSuffixes = [
+							'NO_TRA_SNR_SPT',
+							'NO_CON_MRK_FRD'
+						];
+						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
+					}
+					if (mode === 'additionalinformation') {
+						const disabledSuffixes = [
+							'PER_COMPDIGI_WEB',
+							'PER_COM_TRADCALL',
+							'PROF_MARG_PORTFOLIO',
+							'TOT_RET_ASET_PREV',
+							'TOT_BRAN_PREV',
+							'TOT_WEB_MOB_VIRT'
+						];
+						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
+					}
+					return false;
+				}
 
+				function isMaxCalcColumn(cellName, mode) {
+					if (!cellName) return false;
+					const name = cellName.toUpperCase();
+					if (mode === 'retailproducts') {
+						return name === 'R22_HIG_PER_PROD_CAT' || name.endsWith('HIG_PER_PROD_CAT') || name.includes('HIG_PER_PROD_CAT');
+					}
+					return false;
+				}
 
 				function calculateColumnTotal(totalInput) {
 					if (!totalInput || !totalInput._childInputs) return;
 
+					const totalCellName = (totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id || '').toUpperCase();
+
 					/*
 					 * =========================================================================================
-					 * Column Total Calculation Check:
-					 * For the Complaints table, the column "Average time taken to resolve complaints during
-					 * the specified time period" (R23_AVG_TME_RES_COM) does not require a total calculation.
-					 * 
-					 * TO RE-ENABLE: Comment out or remove the return statement below.
+					 * 1. DISABLED TOTAL CALCULATION COLUMNS:
+					 * For specific tables/columns, total calculation is disabled and forced to show "0".
+					 * - Table 3 (complaints): R22_AVG_TME_RES_COM
+					 * - Table 4 (retailproducts): R22_AVG_TME_LWRSK, R22_AVG_NO_LOAN, R22_AVG_NO_LWRSK_SME,
+					 *   R22_AVG_NO_DYS_SME, R22_AVG_TME_REPAY, R22_AVG_TME_CLSACC, R22_AVG_DAY_NLL,
+					 *   R22_AVG_NOD_LOWRSK, R22_NO_LANG_VOICE
+					 * - Table 6 (trainings): R12_NO_TRA_SNR_SPT, R12_NO_CON_MRK_FRD
+					 * - Table 7 (additionalinformation): R23_PER_COMPDIGI_WEB, R23_PER_COM_TRADCALL,
+					 *   R23_PROF_MARG_PORTFOLIO, R23_TOT_RET_ASET_PREV, R23_TOT_BRAN_PREV, R23_TOT_WEB_MOB_VIRT
 					 * =========================================================================================
 					 */
-					const totalCellId = (totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id || '').toUpperCase();
-					if (formMode === 'complaints' && (totalCellId === 'R23_AVG_TME_RES_COM' || totalCellId.includes('AVG_TME_RES_COM'))) {
-						return; // Disabled calculation for Average time taken to resolve complaints
+					if (isNoCalcColumn(totalCellName, formMode)) {
+						totalInput.value = "0";
+						return;
 					}
-					// =========================================================================================
 
+					/*
+					 * =========================================================================================
+					 * 2. MAXIMUM VALUE CALCULATION COLUMN:
+					 * Table 4 (retailproducts): R22_HIG_PER_PROD_CAT
+					 * Analyzes the entire column and displays the MAXIMUM value instead of SUM.
+					 * =========================================================================================
+					 */
+					if (isMaxCalcColumn(totalCellName, formMode)) {
+						let maxVal = null;
+						let allNA = true;
+						let hasPercent = false;
+
+						totalInput._childInputs.forEach(child => {
+							const rawVal = (child.value || '').trim();
+							if (rawVal !== '' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
+								allNA = false;
+								if (rawVal.includes('%')) hasPercent = true;
+								const cleanVal = rawVal.replace(/,/g, '').replace(/%/g, '').trim();
+								const num = parseFloat(cleanVal);
+								if (!isNaN(num)) {
+									if (maxVal === null || num > maxVal) {
+										maxVal = num;
+									}
+								}
+							} else if (rawVal === '') {
+								allNA = false;
+							}
+						});
+
+						let formattedMax = "0";
+						if (maxVal !== null) {
+							const rounded = Number(maxVal.toFixed(2));
+							formattedMax = Number.isInteger(rounded) ? String(rounded) : maxVal.toFixed(2);
+							if (hasPercent) {
+								formattedMax += "%";
+							}
+						} else if (allNA && totalInput._childInputs.length > 0) {
+							formattedMax = "Not Applicable";
+						}
+						totalInput.value = formattedMax;
+						return;
+					}
+
+					/*
+					 * =========================================================================================
+					 * 3. DEFAULT SUM CALCULATION:
+					 * Standard sum calculation across all child inputs.
+					 * =========================================================================================
+					 */
 					let sum = 0;
 					let hasNumeric = false;
 					let allNA = true;
@@ -19544,6 +19646,11 @@
 					if (!totalInput || isChecker || isManager) return;
 					const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
 					if (!totalCellName) return;
+
+					// Do not auto-sync disabled non-calculated total columns
+					if (isNoCalcColumn(totalCellName, formMode)) {
+						return;
+					}
 
 					const fd = new FormData();
 					fd.append("formMode", formMode);
@@ -19613,43 +19720,15 @@
 									inp.dataset.isTotalCell = "true";
 									if (childInputsInCol.length > 0 && !processedTotals.has(inp)) {
 										processedTotals.add(inp);
+										inp.dataset.autoTotal = "true";
+										inp._childInputs = [...childInputsInCol];
 
-										/*
-										 * =========================================================================================
-										 * Column Total Auto-Calculation Configuration:
-										 * In Market Conduct Complaints table, the column "Average time taken to resolve complaints
-										 * during the specified time period" (R23_AVG_TME_RES_COM) does not need to calculate total.
-										 *
-										 * TO RE-ENABLE CALCULATION IN THE FUTURE:
-										 * 1. Comment out the 'if (isComplaintsAvgTimeCol) { ... }' branch or set isComplaintsAvgTimeCol = false.
-										 * 2. Or uncomment the calculation code inside the if-block.
-										 * =========================================================================================
-										 */
-										const cellNameUpper = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
-										const isComplaintsAvgTimeCol = (formMode === 'complaints' && (cellNameUpper === 'R23_AVG_TME_RES_COM' || cellNameUpper.includes('AVG_TME_RES_COM')));
+										const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
 
-										if (isComplaintsAvgTimeCol) {
-											// Total calculation DISABLED for Average time taken to resolve complaints
-											/*
-											// --- UNCOMMENT BELOW TO ENABLE CALCULATION ---
-											inp.dataset.autoTotal = "true";
-											inp._childInputs = [...childInputsInCol];
-		
-											inp._childInputs.forEach(child => {
-												child._totalInputs = child._totalInputs || [];
-												if (!child._totalInputs.includes(inp)) {
-													child._totalInputs.push(inp);
-												}
-												child.addEventListener('input', () => calculateColumnTotal(inp));
-												child.addEventListener('change', () => calculateColumnTotal(inp));
-											});
-											calculateColumnTotal(inp);
-											// ---------------------------------------------
-											*/
+										if (isNoCalcColumn(totalCellName, formMode)) {
+											// Column calculation disabled: show disabled with "0" value and do not attach calculation listeners
+											inp.value = "0";
 										} else {
-											inp.dataset.autoTotal = "true";
-											inp._childInputs = [...childInputsInCol];
-
 											inp._childInputs.forEach(child => {
 												child._totalInputs = child._totalInputs || [];
 												if (!child._totalInputs.includes(inp)) {
