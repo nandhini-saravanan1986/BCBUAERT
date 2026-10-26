@@ -6971,7 +6971,26 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(500).body("Error verifying data");
 		}
 	}
-	
+	@PostMapping("/recalculateQuarterValues")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> recalculateQuarterValues(
+			@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String reportDate,
+			@RequestParam(required = false) String timeperiod) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			int updatedCount = rT_MC_TABLE_Service.recalculateQuarters(formmode, timeperiod);
+			response.put("success", true);
+			response.put("updatedCount", updatedCount);
+			response.put("message", "Successfully recalculated and saved " + updatedCount + " quarter records into the database.");
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("success", false);
+			response.put("message", "Recalculation error: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
 
 	@PostMapping("/saveMcReport_complaints")
 	@ResponseBody
@@ -7950,7 +7969,27 @@ System.out.println("sixe==="+excelData.length);
 			record.setReportDate(contextDate);
 			record.setSource(source);
 			record.setFormMode(formMode);
-			record.setColumnHeader(columnHeader);
+			record.setColumnHeader(columnHeader); // comment for foreign key
+//			String resolvedColumnId = columnHeader;
+//			try {
+//				if (formMode != null && columnHeader != null && !columnHeader.trim().isEmpty()) {
+//					String cleanHeader = columnHeader.replace('\u00A0', ' ').trim();
+//					RT_MC_Description_Entity descEntity = RT_MC_Description_Repo
+//							.findTopBySectionAndDescOrElementNative(formMode, cleanHeader);
+//					if (descEntity == null && cellName != null && !cellName.trim().isEmpty()) {
+//						String cellSuffix = cellName.replaceFirst("^R[0-9]+(_[0-9]+)?_", "");
+//						descEntity = RT_MC_Description_Repo.findTopBySectionAndCellNameNative(formMode, cellSuffix);
+//					}
+//					if (descEntity != null && descEntity.getColumnId() != null
+//							&& !descEntity.getColumnId().trim().isEmpty()) {
+//						resolvedColumnId = descEntity.getColumnId().trim();
+//					}
+//				}
+//			} catch (Exception e) {
+//				System.err.println("Error resolving columnId for saveRecord: " + e.getMessage());
+//			}
+//
+//			record.setColumnHeader(resolvedColumnId);
 			record.setRowCol2Value(rowCol2Value);
 			record.setCellName(cellName);
 			record.setCellId(cellId);

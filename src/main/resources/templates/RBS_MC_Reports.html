@@ -2304,12 +2304,17 @@
 		<div id="pageHeader" class="role-page-header d-flex justify-content-between align-items-center"
 			style="padding-bottom: 0px; margin-bottom: 0px;"
 			th:if="${formmode == 'bankinformation' or formmode == 'bankconsumers' or formmode =='complaints' or formmode =='retailproducts' or formmode=='bankemployee' or  formmode=='trainings' or  formmode=='additionalinformation' or formmode == 'islamicbanking' or formmode == 'conductcultureassessment' }">
-			<div class="d-flex align-items-center">
+			<div class="d-flex align-items-center" style="flex-shrink: 0;">
 				<button class="static-back-btn" onclick="goBack()" title="Go Back">
 					<i class="fa fa-arrow-left"></i>
 				</button>
-				<h4 title="Risk-Based Supervision Market Conduct Reports">RBS
+				<h4 class="mb-0 text-nowrap" title="Risk-Based Supervision Market Conduct Reports" style="font-weight: 700; color: #003366; font-size: 20px;">RBS
 					Market Conduct Reports</h4>
+				<button type="button" class="role-btn recalculate-btn-cls" id="recalculateBtn" onclick="recalculateQuarterValues()"
+					title="Recalculate all product totals and save all quarter values into database"
+					style="margin-left: 15px; flex-shrink: 0; white-space: nowrap; border: 2px solid #FF7B00 !important; color: #FF7B00 !important; font-weight: 700 !important; background: #ffffff !important; cursor: pointer; display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 20px; box-shadow: 0 2px 4px rgba(255, 123, 0, 0.2);">
+					<i class="fas fa-sync-alt mr-1"></i> Recalculate
+				</button>
 			</div>
 
 			<div class="d-flex align-items-center gap-2" style="margin-top: 8px;"
@@ -6376,6 +6381,11 @@
 							<button type="button" class="role-btn" style="padding-right: 12px;"
 								th:if="${DEPARTMENTVALIDATION == 'YES'}" onclick="departmentDownloadConsolidatedData()">
 								<i class="fa fa-download"></i> Download
+							</button>
+							<button type="button" class="role-btn recalculate-btn-cls" style="padding-right: 12px; border: 1px solid #E66E00; color: #E66E00;"
+								onclick="recalculateQuarterValues()"
+								title="Recalculate all product totals and save all quarter values into database">
+								<i class="fas fa-sync-alt"></i> Recalculate
 							</button>
 
 						</div>
@@ -17949,6 +17959,78 @@
 			});
 		}
 
+		async function recalculateQuarterValues() {
+			const allRecalcBtns = document.querySelectorAll('.recalculate-btn-cls, #recalculateBtn');
+			const originalHtmls = [];
+			allRecalcBtns.forEach((btn, idx) => {
+				originalHtmls[idx] = btn.innerHTML;
+				btn.disabled = true;
+				btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Recalculating...';
+			});
+			const restoreBtns = () => {
+				allRecalcBtns.forEach((btn, idx) => {
+					btn.disabled = false;
+					btn.innerHTML = originalHtmls[idx] || '<i class="fas fa-sync-alt mr-1"></i> Recalculate';
+				});
+			};
+
+			document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+
+			const params = new URLSearchParams(window.location.search);
+			let formmode = params.get('formmode');
+			if (!formmode) {
+				formmode = /*[[${formmode}]]*/ 'bankinformation';
+			}
+			let reportDate = params.get('reportDate') || /*[[${REPORT_DATE}]]*/ '';
+			let timeperiod = params.get('timeperiod') || /*[[${timeperiod}]]*/ 'QUARTERLY';
+
+			// 1. Recalculate totals in DOM if #usertable is present
+			const usertable = document.getElementById('usertable');
+			if (usertable) {
+				usertable.querySelectorAll('.input-and-select, .table-input').forEach(inp => {
+					if (inp.dataset && inp.dataset.isTotalCell === "true" && typeof calculateColumnTotal === 'function') {
+						calculateColumnTotal(inp);
+					}
+				});
+			}
+
+			// 2. Call backend to recalculate all quarters and load in the database
+			try {
+				const response = await fetch('./recalculateQuarterValues', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: new URLSearchParams({
+						formmode: formmode,
+						reportDate: reportDate,
+						timeperiod: timeperiod
+					})
+				});
+
+				const result = await response.json();
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				restoreBtns();
+
+				if (result.success) {
+					document.getElementById('alertmsg1').innerText = "All quarter values have been recalculated and loaded in the database successfully.";
+					$('#alert1').modal('show');
+					$('#alert1').on('hidden.bs.modal', function () {
+						window.location.reload();
+					});
+				} else {
+					document.getElementById('alertmsg1').innerText = "Recalculation failed: " + (result.message || "Unknown error");
+					$('#alert1').modal('show');
+				}
+			} catch (err) {
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+				restoreBtns();
+				console.error("Recalculate error:", err);
+				document.getElementById('alertmsg1').innerText = "Error while recalculating quarter values. Please try again.";
+				$('#alert1').modal('show');
+			}
+		}
+
 		function downloadData() {
 			const ReportDate = /*[[${REPORT_DATE}]]*/ '';
 			const timeperiod = /*[[${timeperiod}]]*/ '';
@@ -19762,6 +19844,9 @@
 										mgrInp.dataset.autoTotal = "true";
 									}
 									mgrInp._childInputs = counterpart._childInputs;
+									if (counterpart.value && counterpart.value !== "" && (!mgrInp.innerText || mgrInp.innerText.trim() === "-" || mgrInp.innerText.trim() === "0")) {
+										mgrInp.innerText = counterpart.value;
+									}
 								}
 							}
 						});
