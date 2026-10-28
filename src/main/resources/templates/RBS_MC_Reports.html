@@ -19561,7 +19561,6 @@
 					 * =========================================================================================
 					 */
 					if (isNoCalcColumn(totalCellName, formMode)) {
-						totalInput.value = "0";
 						return;
 					}
 
@@ -19578,8 +19577,8 @@
 						let hasPercent = false;
 
 						totalInput._childInputs.forEach(child => {
-							const rawVal = (child.value || '').trim();
-							if (rawVal !== '' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
+							const rawVal = (child.value !== undefined ? child.value : child.innerText || '').trim();
+							if (rawVal !== '' && rawVal !== '-' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
 								allNA = false;
 								if (rawVal.includes('%')) hasPercent = true;
 								const cleanVal = rawVal.replace(/,/g, '').replace(/%/g, '').trim();
@@ -19619,10 +19618,11 @@
 					let allNA = true;
 
 					totalInput._childInputs.forEach(child => {
-						const rawVal = (child.value || '').trim();
-						if (rawVal !== '' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
+						const rawVal = (child.value !== undefined ? child.value : child.innerText || '').trim();
+						if (rawVal !== '' && rawVal !== '-' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
 							allNA = false;
-							const num = parseFloat(rawVal.replace(/,/g, ''));
+							const cleanVal = rawVal.replace(/,/g, '').trim();
+							const num = parseFloat(cleanVal);
 							if (!isNaN(num)) {
 								sum += num;
 								hasNumeric = true;
@@ -19643,40 +19643,95 @@
 				}
 
 				function syncAutoTotalToBackend(totalInput, actionType, modifyFlagVal) {
-					if (!totalInput || isChecker || isManager) return;
-					const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
-					if (!totalCellName) return;
+		            if (!totalInput || isManager) return; 
+		            const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
+		            if (!totalCellName) return;
 
-					// Do not auto-sync disabled non-calculated total columns
-					if (isNoCalcColumn(totalCellName, formMode)) {
-						return;
-					}
+		            if (isNoCalcColumn(totalCellName, formMode)) {
+		                return;
+		            }
 
-					const fd = new FormData();
-					fd.append("formMode", formMode);
-					fd.append("reportDate", contextReportDate);
-					fd.append("source", "");
-					fd.append("columnHeader", totalInput.getAttribute('data-fieldname') || "Total");
-					fd.append("rowCol2Value", "Total");
-					fd.append("cellName", totalCellName);
-					fd.append("cellId", totalInput.id || totalCellName);
-					fd.append("dataValue", totalInput.value);
-					fd.append("justification", "");
-					fd.append("checkerJustification", "");
-					fd.append("productValue", "Total");
+		            let finalActionType = actionType || "";
 
-					fd.append("verifyFlg", actionType || "");
-					fd.append("modifyFlg", modifyFlagVal || "");
+		            if (isChecker) {
+		                if (actionType === 'Y') {
+		                    let allVerified = true;
+		                    if (totalInput._childInputs && totalInput._childInputs.length > 0) {
+		                        totalInput._childInputs.forEach(ci => {
+		                            const titleStr = ci.title || "";
+		                            if (!titleStr.includes("Verified by Checker") && !titleStr.includes("Not Applicable") && !titleStr.includes("Not Available")) {
+		                                allVerified = false;
+		                            }
+		                        });
+		                    } else {
+		                        allVerified = false;
+		                    }
 
-					fd.append("remarks", "");
-					fd.append("timeperiod", timeperiod);
+		                    if (allVerified) {
+		                        finalActionType = 'Y';
+		                    } else {
+		                        return;
+		                    }
+		                } else if (actionType === 'N') {
+		                    finalActionType = 'N';
+		                } else {
+		                    return;
+		                }
+		            }
 
-					fetch('./savedatarecord', { method: 'POST', body: fd })
-						.then(res => {
-							if (!res.ok) console.error("Total cell save failed with status:", res.status);
-						})
-						.catch(err => console.error("Could not auto-sync total cell:", err));
-				}
+		            const fd = new FormData();
+		            fd.append("formMode", formMode);
+		            fd.append("reportDate", contextReportDate);
+		            fd.append("source", "");
+		            fd.append("columnHeader", totalInput.getAttribute('data-fieldname') || "Total");
+		            fd.append("rowCol2Value", "Total");
+		            fd.append("cellName", totalCellName);
+		            fd.append("cellId", totalInput.id || totalCellName);
+		            fd.append("dataValue", totalInput.value);
+		            fd.append("justification", "");
+		            fd.append("checkerJustification", "");
+		            fd.append("productValue", "Total");
+
+		            fd.append("verifyFlg", finalActionType); 
+		            fd.append("modifyFlg", modifyFlagVal || "");
+		            fd.append("remarks", "");
+		            fd.append("timeperiod", timeperiod);
+
+		            fetch('./savedatarecord', { method: 'POST', body: fd })
+		                .then(res => {
+		                    if (!res.ok) {
+		                        console.error("Total cell save failed with status:", res.status);
+		                    } else if (isChecker) {
+		                        const applyInstantStyle = (bgColor, borderColor, textColor, titleTxt) => {
+		                            totalInput.title = titleTxt;
+		                            totalInput.style.color = textColor;
+		                            const wrapper = totalInput.closest('.dynamic-input-wrapper');
+		                            const icon = wrapper ? wrapper.querySelector('.dynamic-edit-icon') : null;
+		                            
+		                            if (wrapper) {
+		                                wrapper.style.backgroundColor = bgColor;
+		                                wrapper.style.border = `1px solid ${borderColor}`;
+		                                totalInput.style.backgroundColor = 'transparent';
+		                                totalInput.style.border = 'none';
+		                            } else {
+		                                totalInput.style.backgroundColor = bgColor;
+		                                totalInput.style.border = `1px solid ${borderColor}`;
+		                            }
+		                            if (icon) {
+		                                icon.style.color = textColor;
+		                                icon.style.opacity = '1';
+		                            }
+		                        };
+
+		                        if (finalActionType === 'Y') {
+		                            applyInstantStyle('#5cb85c', '#4cae4c', '#ffffff', "Verified by Checker");
+		                        } else if (finalActionType === 'N') {
+		                            applyInstantStyle('#d9534f', '#d43f3a', '#ffffff', "Reverted by Checker");
+		                        }
+		                    }
+		                })
+		                .catch(err => console.error("Could not auto-sync total cell:", err));
+		        }
 
 				if (formMode !== 'conductcultureassessment') {
 					document.querySelectorAll('#usertable').forEach(table => {
@@ -19726,8 +19781,9 @@
 										const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
 
 										if (isNoCalcColumn(totalCellName, formMode)) {
-											// Column calculation disabled: show disabled with "0" value and do not attach calculation listeners
-											inp.value = "0";
+											if (!inp.value || inp.value.trim() === '') {
+												inp.value = "0";
+											}
 										} else {
 											inp._childInputs.forEach(child => {
 												child._totalInputs = child._totalInputs || [];
@@ -19737,7 +19793,10 @@
 												child.addEventListener('input', () => calculateColumnTotal(inp));
 												child.addEventListener('change', () => calculateColumnTotal(inp));
 											});
-											calculateColumnTotal(inp);
+											
+											if (!inp.value || inp.value.trim() === '') {
+												calculateColumnTotal(inp);
+											}
 										}
 									}
 									childInputsInCol = [];
@@ -21091,6 +21150,80 @@
 
 
 				}
+				
+                if (!isChecker && !isManager && !isCRO && !isCCO) {
+                    const recalcBtn = document.createElement('button');
+                    recalcBtn.type = 'button';
+                    recalcBtn.className = 'role-btn';
+                    recalcBtn.style.marginLeft = '10px';
+                    recalcBtn.innerHTML = 'Recalculate Totals';
+                    recalcBtn.title = 'Recalculate and save total rows for previously entered data';
+                    
+                    const toggleBtn = document.getElementById('toggleTableBtn');
+                    if (toggleBtn && toggleBtn.parentNode) {
+                        toggleBtn.parentNode.insertBefore(recalcBtn, toggleBtn.nextSibling);
+                    } else {
+                        const tableContainer = document.querySelector('.table-responsive') || document.getElementById('usertable');
+                        if (tableContainer && tableContainer.parentNode) {
+                            tableContainer.parentNode.insertBefore(recalcBtn, tableContainer);
+                        }
+                    }
+
+                    recalcBtn.addEventListener('click', function() {
+                        const totalInputs = document.querySelectorAll('input[data-auto-total="true"]');
+                        if (totalInputs.length === 0) {
+                            alert("No auto-calculating total rows found on this page.");
+                            return;
+                        }
+
+                        if (!confirm("This will recalculate and save all total rows on this page based on the data currently shown. Do you want to proceed?")) {
+                            return;
+                        }
+
+                        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+                        let promises = [];
+                        let savedCount = 0;
+
+                        totalInputs.forEach(inp => {
+                            const totalCellName = inp.getAttribute('data-cellname') || inp.name || inp.id;
+                            
+                            if (!totalCellName || isNoCalcColumn(totalCellName, formMode)) return;
+
+                            calculateColumnTotal(inp);
+
+                            const fd = new FormData();
+                            fd.append("formMode", formMode);
+                            fd.append("reportDate", contextReportDate);
+                            fd.append("source", "Legacy Recalculation");
+                            fd.append("columnHeader", inp.getAttribute('data-fieldname') || "Total");
+                            fd.append("rowCol2Value", "Total");
+                            fd.append("cellName", totalCellName);
+                            fd.append("cellId", inp.id || totalCellName);
+                            fd.append("dataValue", inp.value);
+                            fd.append("justification", "Auto-calculated legacy sum");
+                            fd.append("checkerJustification", "");
+                            fd.append("productValue", "Total");
+                            fd.append("verifyFlg", "");
+                            fd.append("modifyFlg", "C");
+                            fd.append("remarks", "");
+                            fd.append("timeperiod", timeperiod);
+
+                            let p = fetch('./savedatarecord', { method: 'POST', body: fd })
+                                .then(res => { if (res.ok) savedCount++; })
+                                .catch(err => console.error("Error saving total:", err));
+                            
+                            promises.push(p);
+                        });
+
+                        Promise.all(promises).then(() => {
+                            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+                            alert(`Recalculation complete! Successfully saved ${savedCount} total cells.`);
+                            window.location.reload();
+                        });
+                    });
+                }
+				
+				
 				function executeDatabaseAction(actionType, modifyFlagVal, btnClicked) {
 					if (!currentEditingInput) return;
 
