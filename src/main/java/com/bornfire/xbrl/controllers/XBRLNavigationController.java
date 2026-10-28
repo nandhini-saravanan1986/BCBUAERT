@@ -7969,7 +7969,13 @@ System.out.println("sixe==="+excelData.length);
 					record.setCcoRemarks(execRemarks);
 				}
 
-				record.setVerifyFlg((verifyFlg != null && !verifyFlg.trim().isEmpty()) ? verifyFlg : null);
+				if ("N".equals(execAction)) {
+					record.setVerifyFlg("N");
+				} else if (verifyFlg != null && !verifyFlg.trim().isEmpty()) {
+					record.setVerifyFlg(verifyFlg);
+				} else if (record.getVerifyFlg() == null) {
+					record.setVerifyFlg(null);
+				}
 				record.setModifyFlg(modifyFlg);
 				record.setRemarks(execRemarks);
 
@@ -8281,7 +8287,8 @@ System.out.println("sixe==="+excelData.length);
 					String croFlg = row[3] != null ? row[3].toString().trim().toUpperCase() : "";
 					String ccoFlg = row[4] != null ? row[4].toString().trim().toUpperCase() : "";
 
-					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*");
+					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*")
+							|| cellName.toUpperCase().matches("^R(22|12|23)_.*");
 
 					if (isTotalCell) {
 						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {

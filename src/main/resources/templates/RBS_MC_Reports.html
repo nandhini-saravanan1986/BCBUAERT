@@ -19772,19 +19772,23 @@
 								seenInputs.add(inp);
 
 								if (r === rows.length - 1) {
+									const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
+									const isNoCalc = isNoCalcColumn(totalCellName, formMode);
+
 									inp.dataset.isTotalCell = "true";
+									inp.dataset.autoTotal = isNoCalc ? "false" : "true";
+
+									if (isNoCalc) {
+										if (!inp.value || inp.value.trim() === '') {
+											inp.value = "0";
+										}
+									}
+
 									if (childInputsInCol.length > 0 && !processedTotals.has(inp)) {
 										processedTotals.add(inp);
-										inp.dataset.autoTotal = "true";
 										inp._childInputs = [...childInputsInCol];
 
-										const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
-
-										if (isNoCalcColumn(totalCellName, formMode)) {
-											if (!inp.value || inp.value.trim() === '') {
-												inp.value = "0";
-											}
-										} else {
+										if (!isNoCalc) {
 											inp._childInputs.forEach(child => {
 												child._totalInputs = child._totalInputs || [];
 												if (!child._totalInputs.includes(inp)) {
@@ -19835,7 +19839,7 @@
 					const isRemarksField = input.classList.contains('remarks-input');
 					const isAutoTotal = input.dataset.autoTotal === "true";
 
-					const hasAuthorizedChild = isAutoTotal && input._childInputs && input._childInputs.some(ci => {
+					const hasAuthorizedChild = input._childInputs && input._childInputs.some(ci => {
 						const ciName = ci.getAttribute('data-cellname') || ci.name || ci.id;
 						return isAllowed(ptReportData1, ciName) || isAllowed(ptReportData2, ciName);
 					});
@@ -20760,8 +20764,8 @@
 												if (defaultStatusMsg) {
 													if (!readyForExec) {
 														defaultStatusMsg.style.display = 'inline-block';
-														if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = `Checker must fully verify this column before ${activeRole} review.`;
-														else defaultStatusMsg.innerText = `Checker must fully verify this column before ${activeRole} review.`;
+														if (defaultStatusMsg.tagName === 'INPUT') defaultStatusMsg.value = `Checker must fully verify this record before ${activeRole} review.`;
+														else defaultStatusMsg.innerText = `Checker must fully verify this record before ${activeRole} review.`;
 														defaultStatusMsg.style.color = '#dc3545';
 													} else {
 														defaultStatusMsg.style.display = 'none';
