@@ -19643,97 +19643,97 @@
 				}
 
 				function syncAutoTotalToBackend(totalInput, actionType, modifyFlagVal) {
-		            if (!totalInput || isManager) return; 
-		            const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
-		            if (!totalCellName) return;
+					if (!totalInput || isManager) return;
+					const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
+					if (!totalCellName) return;
 
-		            if (isNoCalcColumn(totalCellName, formMode)) {
-		                return;
-		            }
+					if (isNoCalcColumn(totalCellName, formMode)) {
+						return;
+					}
 
-		            let finalActionType = actionType || "";
+					let finalActionType = actionType || "";
 
-		            if (isChecker) {
-		                if (actionType === 'Y') {
-		                    let allVerified = true;
-		                    if (totalInput._childInputs && totalInput._childInputs.length > 0) {
-		                        totalInput._childInputs.forEach(ci => {
-		                            const titleStr = ci.title || "";
-		                            if (!titleStr.includes("Verified by Checker") && !titleStr.includes("Not Applicable") && !titleStr.includes("Not Available")) {
-		                                allVerified = false;
-		                            }
-		                        });
-		                    } else {
-		                        allVerified = false;
-		                    }
+					if (isChecker) {
+						if (actionType === 'Y') {
+							let allVerified = true;
+							if (totalInput._childInputs && totalInput._childInputs.length > 0) {
+								totalInput._childInputs.forEach(ci => {
+									const titleStr = ci.title || "";
+									if (!titleStr.includes("Verified by Checker") && !titleStr.includes("Not Applicable") && !titleStr.includes("Not Available")) {
+										allVerified = false;
+									}
+								});
+							} else {
+								allVerified = false;
+							}
 
-		                    if (allVerified) {
-		                        finalActionType = 'Y';
-		                    } else {
-		                        return;
-		                    }
-		                } else if (actionType === 'N') {
-		                    finalActionType = 'N';
-		                } else {
-		                    return;
-		                }
-		            }
+							if (allVerified) {
+								finalActionType = 'Y';
+							} else {
+								return;
+							}
+						} else if (actionType === 'N') {
+							finalActionType = 'N';
+						} else {
+							return;
+						}
+					}
 
-		            const fd = new FormData();
-		            fd.append("formMode", formMode);
-		            fd.append("reportDate", contextReportDate);
-		            fd.append("source", "");
-		            fd.append("columnHeader", totalInput.getAttribute('data-fieldname') || "Total");
-		            fd.append("rowCol2Value", "Total");
-		            fd.append("cellName", totalCellName);
-		            fd.append("cellId", totalInput.id || totalCellName);
-		            fd.append("dataValue", totalInput.value);
-		            fd.append("justification", "");
-		            fd.append("checkerJustification", "");
-		            fd.append("productValue", "Total");
+					const fd = new FormData();
+					fd.append("formMode", formMode);
+					fd.append("reportDate", contextReportDate);
+					fd.append("source", "");
+					fd.append("columnHeader", totalInput.getAttribute('data-fieldname') || "Total");
+					fd.append("rowCol2Value", "Total");
+					fd.append("cellName", totalCellName);
+					fd.append("cellId", totalInput.id || totalCellName);
+					fd.append("dataValue", totalInput.value);
+					fd.append("justification", "");
+					fd.append("checkerJustification", "");
+					fd.append("productValue", "Total");
 
-		            fd.append("verifyFlg", finalActionType); 
-		            fd.append("modifyFlg", modifyFlagVal || "");
-		            fd.append("remarks", "");
-		            fd.append("timeperiod", timeperiod);
+					fd.append("verifyFlg", finalActionType);
+					fd.append("modifyFlg", modifyFlagVal || "");
+					fd.append("remarks", "");
+					fd.append("timeperiod", timeperiod);
 
-		            fetch('./savedatarecord', { method: 'POST', body: fd })
-		                .then(res => {
-		                    if (!res.ok) {
-		                        console.error("Total cell save failed with status:", res.status);
-		                    } else if (isChecker) {
-		                        const applyInstantStyle = (bgColor, borderColor, textColor, titleTxt) => {
-		                            totalInput.title = titleTxt;
-		                            totalInput.style.color = textColor;
-		                            const wrapper = totalInput.closest('.dynamic-input-wrapper');
-		                            const icon = wrapper ? wrapper.querySelector('.dynamic-edit-icon') : null;
-		                            
-		                            if (wrapper) {
-		                                wrapper.style.backgroundColor = bgColor;
-		                                wrapper.style.border = `1px solid ${borderColor}`;
-		                                totalInput.style.backgroundColor = 'transparent';
-		                                totalInput.style.border = 'none';
-		                            } else {
-		                                totalInput.style.backgroundColor = bgColor;
-		                                totalInput.style.border = `1px solid ${borderColor}`;
-		                            }
-		                            if (icon) {
-		                                icon.style.color = textColor;
-		                                icon.style.opacity = '1';
-		                            }
-		                        };
+					fetch('./savedatarecord', { method: 'POST', body: fd })
+						.then(res => {
+							if (!res.ok) {
+								console.error("Total cell save failed with status:", res.status);
+							} else if (isChecker) {
+								const applyInstantStyle = (bgColor, borderColor, textColor, titleTxt) => {
+									totalInput.title = titleTxt;
+									totalInput.style.color = textColor;
+									const wrapper = totalInput.closest('.dynamic-input-wrapper');
+									const icon = wrapper ? wrapper.querySelector('.dynamic-edit-icon') : null;
 
-		                        if (finalActionType === 'Y') {
-		                            applyInstantStyle('#5cb85c', '#4cae4c', '#ffffff', "Verified by Checker");
-		                        } else if (finalActionType === 'N') {
-		                            applyInstantStyle('#d9534f', '#d43f3a', '#ffffff', "Reverted by Checker");
-		                        }
-		                    }
-		                })
-		                .catch(err => console.error("Could not auto-sync total cell:", err));
-		        }
+									if (wrapper) {
+										wrapper.style.backgroundColor = bgColor;
+										wrapper.style.border = `1px solid ${borderColor}`;
+										totalInput.style.backgroundColor = 'transparent';
+										totalInput.style.border = 'none';
+									} else {
+										totalInput.style.backgroundColor = bgColor;
+										totalInput.style.border = `1px solid ${borderColor}`;
+									}
+									if (icon) {
+										icon.style.color = textColor;
+										icon.style.opacity = '1';
+									}
+								};
 
-				if (formMode !== 'conductcultureassessment') {
+								if (finalActionType === 'Y') {
+									applyInstantStyle('#5cb85c', '#4cae4c', '#ffffff', "Verified by Checker");
+								} else if (finalActionType === 'N') {
+									applyInstantStyle('#d9534f', '#d43f3a', '#ffffff', "Reverted by Checker");
+								}
+							}
+						})
+						.catch(err => console.error("Could not auto-sync total cell:", err));
+				}
+
+				if (formMode !== 'conductcultureassessment' && formMode !== 'bankinformation') {
 					document.querySelectorAll('#usertable').forEach(table => {
 						const rows = Array.from(table.rows);
 						const matrix = [];
@@ -19771,7 +19771,7 @@
 								if (!inp || seenInputs.has(inp)) continue;
 								seenInputs.add(inp);
 
-								if (r === rows.length - 1) {
+								if (r === rows.length - 1 && childInputsInCol.length > 0) {
 									const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
 									const isNoCalc = isNoCalcColumn(totalCellName, formMode);
 
@@ -19797,7 +19797,7 @@
 												child.addEventListener('input', () => calculateColumnTotal(inp));
 												child.addEventListener('change', () => calculateColumnTotal(inp));
 											});
-											
+
 											if (!inp.value || inp.value.trim() === '') {
 												calculateColumnTotal(inp);
 											}
@@ -21030,9 +21030,9 @@
 							inputsInCell.forEach(input => {
 								const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
 								const isAutoTotal = input.dataset.autoTotal === "true";
-								const isAuthorized = isManager || (isAutoTotal
+								const isAuthorized = isManager || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || (isAutoTotal
 									? (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.getAttribute('data-cellname') || ci.name || ci.id) || isAllowed(ptReportData2, ci.getAttribute('data-cellname') || ci.name || ci.id)))
-									: (isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName)));
+									: false);
 								if (isAuthorized) {
 									cellHasAuth = true;
 									// console.warn(`KEEPING COLUMN ${info.startCol} ALIVE: Department is authorized for field [${fieldName}]`);
@@ -21154,80 +21154,80 @@
 
 
 				}
-				
-                if (!isChecker && !isManager && !isCRO && !isCCO) {
-                    const recalcBtn = document.createElement('button');
-                    recalcBtn.type = 'button';
-                    recalcBtn.className = 'role-btn';
-                    recalcBtn.style.marginLeft = '10px';
-                    recalcBtn.innerHTML = 'Recalculate Totals';
-                    recalcBtn.title = 'Recalculate and save total rows for previously entered data';
-                    
-                    const toggleBtn = document.getElementById('toggleTableBtn');
-                    if (toggleBtn && toggleBtn.parentNode) {
-                        toggleBtn.parentNode.insertBefore(recalcBtn, toggleBtn.nextSibling);
-                    } else {
-                        const tableContainer = document.querySelector('.table-responsive') || document.getElementById('usertable');
-                        if (tableContainer && tableContainer.parentNode) {
-                            tableContainer.parentNode.insertBefore(recalcBtn, tableContainer);
-                        }
-                    }
 
-                    recalcBtn.addEventListener('click', function() {
-                        const totalInputs = document.querySelectorAll('input[data-auto-total="true"]');
-                        if (totalInputs.length === 0) {
-                            alert("No auto-calculating total rows found on this page.");
-                            return;
-                        }
+				if (!isChecker && !isManager && !isCRO && !isCCO && formMode !== 'bankinformation') {
+					const recalcBtn = document.createElement('button');
+					recalcBtn.type = 'button';
+					recalcBtn.className = 'role-btn';
+					recalcBtn.style.marginLeft = '10px';
+					recalcBtn.innerHTML = 'Recalculate Totals';
+					recalcBtn.title = 'Recalculate and save total rows for previously entered data';
 
-                        if (!confirm("This will recalculate and save all total rows on this page based on the data currently shown. Do you want to proceed?")) {
-                            return;
-                        }
+					const toggleBtn = document.getElementById('toggleTableBtn');
+					if (toggleBtn && toggleBtn.parentNode) {
+						toggleBtn.parentNode.insertBefore(recalcBtn, toggleBtn.nextSibling);
+					} else {
+						const tableContainer = document.querySelector('.table-responsive') || document.getElementById('usertable');
+						if (tableContainer && tableContainer.parentNode) {
+							tableContainer.parentNode.insertBefore(recalcBtn, tableContainer);
+						}
+					}
 
-                        document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-                        let promises = [];
-                        let savedCount = 0;
+					recalcBtn.addEventListener('click', function () {
+						const totalInputs = document.querySelectorAll('input[data-auto-total="true"]');
+						if (totalInputs.length === 0) {
+							alert("No auto-calculating total rows found on this page.");
+							return;
+						}
 
-                        totalInputs.forEach(inp => {
-                            const totalCellName = inp.getAttribute('data-cellname') || inp.name || inp.id;
-                            
-                            if (!totalCellName || isNoCalcColumn(totalCellName, formMode)) return;
+						if (!confirm("This will recalculate and save all total rows on this page based on the data currently shown. Do you want to proceed?")) {
+							return;
+						}
 
-                            calculateColumnTotal(inp);
+						document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+						let promises = [];
+						let savedCount = 0;
 
-                            const fd = new FormData();
-                            fd.append("formMode", formMode);
-                            fd.append("reportDate", contextReportDate);
-                            fd.append("source", "Legacy Recalculation");
-                            fd.append("columnHeader", inp.getAttribute('data-fieldname') || "Total");
-                            fd.append("rowCol2Value", "Total");
-                            fd.append("cellName", totalCellName);
-                            fd.append("cellId", inp.id || totalCellName);
-                            fd.append("dataValue", inp.value);
-                            fd.append("justification", "Auto-calculated legacy sum");
-                            fd.append("checkerJustification", "");
-                            fd.append("productValue", "Total");
-                            fd.append("verifyFlg", "");
-                            fd.append("modifyFlg", "C");
-                            fd.append("remarks", "");
-                            fd.append("timeperiod", timeperiod);
+						totalInputs.forEach(inp => {
+							const totalCellName = inp.getAttribute('data-cellname') || inp.name || inp.id;
 
-                            let p = fetch('./savedatarecord', { method: 'POST', body: fd })
-                                .then(res => { if (res.ok) savedCount++; })
-                                .catch(err => console.error("Error saving total:", err));
-                            
-                            promises.push(p);
-                        });
+							if (!totalCellName || isNoCalcColumn(totalCellName, formMode)) return;
 
-                        Promise.all(promises).then(() => {
-                            document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-                            alert(`Recalculation complete! Successfully saved ${savedCount} total cells.`);
-                            window.location.reload();
-                        });
-                    });
-                }
-				
-				
+							calculateColumnTotal(inp);
+
+							const fd = new FormData();
+							fd.append("formMode", formMode);
+							fd.append("reportDate", contextReportDate);
+							fd.append("source", "Legacy Recalculation");
+							fd.append("columnHeader", inp.getAttribute('data-fieldname') || "Total");
+							fd.append("rowCol2Value", "Total");
+							fd.append("cellName", totalCellName);
+							fd.append("cellId", inp.id || totalCellName);
+							fd.append("dataValue", inp.value);
+							fd.append("justification", "Auto-calculated legacy sum");
+							fd.append("checkerJustification", "");
+							fd.append("productValue", "Total");
+							fd.append("verifyFlg", "");
+							fd.append("modifyFlg", "C");
+							fd.append("remarks", "");
+							fd.append("timeperiod", timeperiod);
+
+							let p = fetch('./savedatarecord', { method: 'POST', body: fd })
+								.then(res => { if (res.ok) savedCount++; })
+								.catch(err => console.error("Error saving total:", err));
+
+							promises.push(p);
+						});
+
+						Promise.all(promises).then(() => {
+							document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+							alert(`Recalculation complete! Successfully saved ${savedCount} total cells.`);
+							window.location.reload();
+						});
+					});
+				}
+
+
 				function executeDatabaseAction(actionType, modifyFlagVal, btnClicked) {
 					if (!currentEditingInput) return;
 
@@ -22280,154 +22280,154 @@
 
 		});
 	</script>
-<script th:inline="javascript">
-    const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
-    var currentYear = new Date().getFullYear();
-    let pendingDisplayString = null;
-    let reportDateParam = null;
-    let timeperiodParam = null;
+	<script th:inline="javascript">
+		const currentDepartment = /*[[${DEPARTMENT}]]*/ 'UNKNOWN';
+		var currentYear = new Date().getFullYear();
+		let pendingDisplayString = null;
+		let reportDateParam = null;
+		let timeperiodParam = null;
 
-    const monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+		const monthNames = [
+			'January', 'February', 'March', 'April', 'May', 'June',
+			'July', 'August', 'September', 'October', 'November', 'December'
+		];
 
-    const pickerWrapper = document.getElementById('pickerWrapper');
-    const dateInput = document.getElementById('dateInput');
-    const dropdownContent = document.getElementById('dropdownContent');
-    const yearDisplay = document.getElementById('yearDisplay');
-    const prevYearBtn = document.getElementById('prevYear');
-    const nextYearBtn = document.getElementById('nextYear');
-    const quarterBtns = document.querySelectorAll('.quarter-btn');
-    const yearlyBtn = document.getElementById('yearlyBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
+		const pickerWrapper = document.getElementById('pickerWrapper');
+		const dateInput = document.getElementById('dateInput');
+		const dropdownContent = document.getElementById('dropdownContent');
+		const yearDisplay = document.getElementById('yearDisplay');
+		const prevYearBtn = document.getElementById('prevYear');
+		const nextYearBtn = document.getElementById('nextYear');
+		const quarterBtns = document.querySelectorAll('.quarter-btn');
+		const yearlyBtn = document.getElementById('yearlyBtn');
+		const confirmBtn = document.getElementById('confirmBtn');
 
-    const padNum = (num) => String(num).padStart(2, '0');
+		const padNum = (num) => String(num).padStart(2, '0');
 
-    const getLastDayOfMonth = (year, monthIndex) => {
-        return new Date(year, monthIndex + 1, 0).getDate();
-    };
+		const getLastDayOfMonth = (year, monthIndex) => {
+			return new Date(year, monthIndex + 1, 0).getDate();
+		};
 
-    dateInput.addEventListener('click', () => {
-        dropdownContent.classList.toggle('active');
-        if(dropdownContent.classList.contains('active')) {
-        	syncPickerToInput();
-            updateYearDisplay();
-        }
-    });
+		dateInput.addEventListener('click', () => {
+			dropdownContent.classList.toggle('active');
+			if (dropdownContent.classList.contains('active')) {
+				syncPickerToInput();
+				updateYearDisplay();
+			}
+		});
 
-    document.addEventListener('click', (e) => {
-        if (!pickerWrapper.contains(e.target)) {
-            dropdownContent.classList.remove('active');
-        }
-    });
+		document.addEventListener('click', (e) => {
+			if (!pickerWrapper.contains(e.target)) {
+				dropdownContent.classList.remove('active');
+			}
+		});
 
-    function updateYearDisplay() {
-        yearDisplay.textContent = currentYear;
-    }
+		function updateYearDisplay() {
+			yearDisplay.textContent = currentYear;
+		}
 
-    function clearSelection() {
-        quarterBtns.forEach(b => b.classList.remove('active'));
-        yearlyBtn.classList.remove('active');
-        pendingDisplayString = null;
-        reportDateParam = null;
-        timeperiodParam = null;
-        confirmBtn.disabled = true;
-    }
+		function clearSelection() {
+			quarterBtns.forEach(b => b.classList.remove('active'));
+			yearlyBtn.classList.remove('active');
+			pendingDisplayString = null;
+			reportDateParam = null;
+			timeperiodParam = null;
+			confirmBtn.disabled = true;
+		}
 
-    [prevYearBtn, nextYearBtn].forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentYear = (btn.id === 'prevYear') ? currentYear - 1 : currentYear + 1;
-            updateYearDisplay();
-            clearSelection();
-        });
-    });
+		[prevYearBtn, nextYearBtn].forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.preventDefault();
+				currentYear = (btn.id === 'prevYear') ? currentYear - 1 : currentYear + 1;
+				updateYearDisplay();
+				clearSelection();
+			});
+		});
 
-    quarterBtns.forEach((btn, index) => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            clearSelection();
-            btn.classList.add('active');
-            
-            const monthMap = [2, 5, 8, 11]; 
-            const targetMonthIndex = monthMap[index];
-            
-            pendingDisplayString = `${monthNames[targetMonthIndex]} ${currentYear} - Q${index + 1}`;
-            timeperiodParam = 'QUARTERLY';
-            
-            const lastDay = getLastDayOfMonth(currentYear, targetMonthIndex);
-            reportDateParam = `${padNum(lastDay)}-${padNum(targetMonthIndex + 1)}-${currentYear}`;
-            
-            confirmBtn.disabled = false;
-        });
-    });
+		quarterBtns.forEach((btn, index) => {
+			btn.addEventListener('click', (e) => {
+				e.preventDefault();
+				clearSelection();
+				btn.classList.add('active');
 
-    yearlyBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        clearSelection();
-        yearlyBtn.classList.add('active');
-        
-        pendingDisplayString = `December ${currentYear} - Yearly`;
-        timeperiodParam = 'YEARLY';
-        reportDateParam = `31-12-${currentYear}`; 
-        
-        confirmBtn.disabled = false;
-    });
+				const monthMap = [2, 5, 8, 11];
+				const targetMonthIndex = monthMap[index];
 
-    
-	var originalDateValue = "";
-	confirmBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        
-        if (reportDateParam && timeperiodParam) {
-            originalDateValue = dateInput.value; 
-            dateInput.value = pendingDisplayString;
-            dropdownContent.classList.remove('active');
+				pendingDisplayString = `${monthNames[targetMonthIndex]} ${currentYear} - Q${index + 1}`;
+				timeperiodParam = 'QUARTERLY';
 
-            const baseUrl = "/Riskinsights/RT_MC_Reports";
-            const originalText = confirmBtn.innerHTML;
-            
-            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
-            confirmBtn.disabled = true;
+				const lastDay = getLastDayOfMonth(currentYear, targetMonthIndex);
+				reportDateParam = `${padNum(lastDay)}-${padNum(targetMonthIndex + 1)}-${currentYear}`;
 
-    		document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
-            try {
-                const checkUrl = `./checkDataAvailability?reportDate=${encodeURIComponent(reportDateParam)}&timeperiod=${encodeURIComponent(timeperiodParam)}`;
-                const response = await fetch(checkUrl);
-                document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-                if (!response.ok) throw new Error("Server error during availability check.");
-                const data = await response.json();
-                if (data.exists) {
-                	window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}&dept=${encodeURIComponent(currentDepartment)}`;
-                } else {
-                    showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
-                }
+				confirmBtn.disabled = false;
+			});
+		});
 
-            } catch (error) {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-                console.error(error);
-                alert("Failed to connect to the server to verify report availability.");
-            } finally {
-            	document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
-                confirmBtn.innerHTML = originalText;
-                confirmBtn.disabled = false;
-            }
-        }
-    });
+		yearlyBtn.addEventListener('click', (e) => {
+			e.preventDefault();
+			clearSelection();
+			yearlyBtn.classList.add('active');
 
-    function showGenerationModal(canGenerate, missingMessage, reportDate, timeperiod, baseUrl) {
-        const modalBody = document.getElementById('gen-modal-body');
-        const generateBtn = document.getElementById('btn-gen-report');
-        const errorMsg = document.getElementById('gen-error-msg');
+			pendingDisplayString = `December ${currentYear} - Yearly`;
+			timeperiodParam = 'YEARLY';
+			reportDateParam = `31-12-${currentYear}`;
 
-        errorMsg.style.display = 'none';
-        generateBtn.disabled = false;
-        generateBtn.className = 'btn btn-primary';
-        generateBtn.innerText = 'Generate Report';
+			confirmBtn.disabled = false;
+		});
 
-        if (canGenerate) {
-            modalBody.innerHTML = `
+
+		var originalDateValue = "";
+		confirmBtn.addEventListener('click', async (e) => {
+			e.preventDefault();
+
+			if (reportDateParam && timeperiodParam) {
+				originalDateValue = dateInput.value;
+				dateInput.value = pendingDisplayString;
+				dropdownContent.classList.remove('active');
+
+				const baseUrl = "/Riskinsights/RT_MC_Reports";
+				const originalText = confirmBtn.innerHTML;
+
+				confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
+				confirmBtn.disabled = true;
+
+				document.getElementById("bob-loader").setAttribute("aria-hidden", "false");
+				try {
+					const checkUrl = `./checkDataAvailability?reportDate=${encodeURIComponent(reportDateParam)}&timeperiod=${encodeURIComponent(timeperiodParam)}`;
+					const response = await fetch(checkUrl);
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					if (!response.ok) throw new Error("Server error during availability check.");
+					const data = await response.json();
+					if (data.exists) {
+						window.location.href = `${baseUrl}?reportDate=${reportDateParam}&timeperiod=${timeperiodParam}&dept=${encodeURIComponent(currentDepartment)}`;
+					} else {
+						showGenerationModal(data.canGenerate, data.missingMessage, reportDateParam, timeperiodParam, baseUrl);
+					}
+
+				} catch (error) {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					console.error(error);
+					alert("Failed to connect to the server to verify report availability.");
+				} finally {
+					document.getElementById("bob-loader").setAttribute("aria-hidden", "true");
+					confirmBtn.innerHTML = originalText;
+					confirmBtn.disabled = false;
+				}
+			}
+		});
+
+		function showGenerationModal(canGenerate, missingMessage, reportDate, timeperiod, baseUrl) {
+			const modalBody = document.getElementById('gen-modal-body');
+			const generateBtn = document.getElementById('btn-gen-report');
+			const errorMsg = document.getElementById('gen-error-msg');
+
+			errorMsg.style.display = 'none';
+			generateBtn.disabled = false;
+			generateBtn.className = 'btn btn-primary';
+			generateBtn.innerText = 'Generate Report';
+
+			if (canGenerate) {
+				modalBody.innerHTML = `
                 <p style="color: #333; margin-bottom: 0;">
                     Data for ${timeperiod} (${reportDate}) does not exist yet.<br><br>
                     All prerequisite data is available. Would you like to generate this report now?

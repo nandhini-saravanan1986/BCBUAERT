@@ -8288,7 +8288,7 @@ System.out.println("sixe==="+excelData.length);
 					String ccoFlg = row[4] != null ? row[4].toString().trim().toUpperCase() : "";
 
 					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*")
-							|| cellName.toUpperCase().matches("^R(22|12|23)_.*");
+							|| (!"bankinformation".equalsIgnoreCase(formMode) && cellName.toUpperCase().matches("^R(22|12|23)_.*"));
 
 					if (isTotalCell) {
 						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {
