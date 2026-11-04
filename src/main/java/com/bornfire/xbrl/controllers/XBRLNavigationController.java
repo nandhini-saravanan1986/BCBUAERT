@@ -8278,6 +8278,14 @@ System.out.println("sixe==="+excelData.length);
 					.setParameter("reportDate", reportDateStr).setParameter("timeperiod", timeperiod).getResultList();
 
 			Map<String, String> flags = new HashMap<>();
+			Map<String, Integer> columnCount = new HashMap<>();
+			for (Object[] r : results) {
+			    if (r[0] != null) {
+			        String col = r[0].toString().trim().toUpperCase().replaceFirst("^R\\d+_", "");
+			        columnCount.merge(col, 1, Integer::sum);
+			    }
+			}
+			int totalRow = getTotalRowNumber(formMode);
 
 			for (Object[] row : results) {
 				if (row[0] != null) {
@@ -8287,8 +8295,10 @@ System.out.println("sixe==="+excelData.length);
 					String croFlg = row[3] != null ? row[3].toString().trim().toUpperCase() : "";
 					String ccoFlg = row[4] != null ? row[4].toString().trim().toUpperCase() : "";
 
-					boolean isTotalCell = cellName.toLowerCase().matches(".*(^|_)(tot|total)($|_|\\d).*")
-							|| (!"bankinformation".equalsIgnoreCase(formMode) && cellName.toUpperCase().matches("^R(22|12|23)_.*"));
+					String columnKey = cellName.toUpperCase().replaceFirst("^R\\d+_", "");
+					boolean isTotalCell = totalRow > 0
+					        && cellName.toUpperCase().startsWith("R" + totalRow + "_")
+					        && columnCount.getOrDefault(columnKey, 0) > 1;
 
 					if (isTotalCell) {
 						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {
@@ -8315,6 +8325,20 @@ System.out.println("sixe==="+excelData.length);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	private int getTotalRowNumber(String formMode) {
+	    if (formMode == null) return -1;
+	    switch (formMode.toLowerCase()) {
+	        case "bankconsumers":
+	        case "complaints":
+	        case "retailproducts":         return 22;
+	        case "bankemployee":
+	        case "trainings":              return 12;
+	        case "additionalinformation":  return 23;
+	        case "islamicbanking":         return 24;
+	        default:                       return -1;
+	    }
+	}
+	
 	@PostMapping("/managerVerifyAction")
 	@Transactional
 	public ResponseEntity<String> managerVerifyAction(@RequestParam("formMode") String formMode,
