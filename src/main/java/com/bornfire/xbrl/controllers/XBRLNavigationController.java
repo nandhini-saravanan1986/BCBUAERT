@@ -8261,6 +8261,56 @@ System.out.println("sixe==="+excelData.length);
 		}
 	}
 
+	@GetMapping("/downloadpreview")
+	public ResponseEntity<byte[]> downloadPreview(@RequestParam(value = "id", required = false) BigDecimal id,
+			@RequestParam(value = "fileIndex", required = false, defaultValue = "1") int fileIndex) {
+		try {
+			if (id == null || fileIndex < 1 || fileIndex > 10) {
+				return ResponseEntity.badRequest().build();
+			}
+
+			String hql = "SELECT r.fileName" + fileIndex + ", r.fileData" + fileIndex
+					+ " FROM RT_MC_DATA_RECORD_ENTITY r WHERE r.id = :id";
+
+			Object[] result;
+			try {
+				result = (Object[]) entityManager.createQuery(hql)
+						.setParameter("id", id)
+						.getSingleResult();
+			} catch (NoResultException e) {
+				return ResponseEntity.notFound().build();
+			}
+
+			if (result == null || result[0] == null || result[1] == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			String fileName = (String) result[0];
+			byte[] fileData = (byte[]) result[1];
+
+			String contentType = "application/octet-stream";
+			String lowerName = fileName.toLowerCase();
+			if (lowerName.endsWith(".pdf"))
+				contentType = "application/pdf";
+			else if (lowerName.endsWith(".png"))
+				contentType = "image/png";
+			else if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg"))
+				contentType = "image/jpeg";
+			else if (lowerName.endsWith(".txt") || lowerName.endsWith(".csv"))
+				contentType = "text/plain";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", contentType);
+			headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+			return ResponseEntity.ok().headers(headers).body(fileData);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@GetMapping("/fetchallverifyflags")
 	public ResponseEntity<Map<String, String>> fetchAllVerifyFlags(@RequestParam("formMode") String formMode,
 			@RequestParam("reportDate") String reportDateStr, @RequestParam("timeperiod") String timeperiod) {

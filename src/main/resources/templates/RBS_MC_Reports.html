@@ -16886,6 +16886,10 @@
 										style="border-left: 1px solid #ccc; height: 20px; margin: 0 5px;"></span>
 								</span>
 
+								<button type="button" id="download-preview-btn" class="preview-btn"
+									style="padding: 2px 8px; font-size: 14px;" title="Download Document"
+									onclick="downloadPreview()"><i class="fa fa-download"></i></button>
+
 								<button type="button" id="close-preview-btn"
 									style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
 							</div>
@@ -18699,6 +18703,9 @@
 			const MAX_FILES = 10;
 			let currentFileCount = 0;
 			let currentlyPreviewedInput = null;
+			let currentPreviewId = null;
+			let currentPreviewFileIndex = 1;
+			let currentPreviewFileName = '';
 			let lastMonthValueForVariance = null;
 
 			const fileWrapper = document.getElementById('dynamic-file-wrapper');
@@ -19043,6 +19050,66 @@
 			}
 
 			if (closePreviewBtn) closePreviewBtn.addEventListener('click', closePreview);
+
+			let isPreviewDownloading = false;
+			function downloadPreview() {
+				if (isPreviewDownloading) return;
+				if (currentlyPreviewedInput && currentlyPreviewedInput.files && currentlyPreviewedInput.files.length > 0) {
+					const localFile = currentlyPreviewedInput.files[0];
+					const blobUrl = URL.createObjectURL(localFile);
+					const a = document.createElement('a');
+					a.href = blobUrl;
+					a.download = localFile.name || "document";
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+					return;
+				}
+
+				const exactId = currentPreviewId;
+				const fileIndex = currentPreviewFileIndex || 1;
+				const fileName = currentPreviewFileName || "document";
+
+				if (!exactId) {
+					alert("No document is available to download.");
+					return;
+				}
+
+				isPreviewDownloading = true;
+				fetch(`./downloadpreview?id=${encodeURIComponent(exactId)}&fileIndex=${encodeURIComponent(fileIndex)}`)
+					.then(res => {
+						if (!res.ok) throw new Error("Download failed");
+						const disposition = res.headers.get('content-disposition');
+						let downloadName = fileName;
+						if (disposition && disposition.indexOf('filename=') !== -1) {
+							const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+							if (matches != null && matches[1]) {
+								downloadName = matches[1].replace(/['"]/g, '');
+							}
+						}
+						return res.blob().then(blob => ({ blob, downloadName }));
+					})
+					.then(({ blob, downloadName }) => {
+						const blobUrl = URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						a.href = blobUrl;
+						a.download = downloadName;
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+					})
+					.catch(err => {
+						console.error("Error downloading document:", err);
+						alert("Failed to download document. Please try again.");
+					})
+				.finally(() => {
+					isPreviewDownloading = false;
+				});
+			}
+
+			window.downloadPreview = downloadPreview;
 
 			function applyZoom() {
 				if (zoomLevelTxt) zoomLevelTxt.innerText = Math.round(currentZoom * 100) + '%';
@@ -20445,6 +20512,9 @@
 								.then(data => {
 									if (data) {
 										const cur = data.currentRecord;
+										currentPreviewId = (cur && cur.id) ? cur.id : (data && data.id ? data.id : null);
+										currentPreviewFileIndex = 1;
+										currentPreviewFileName = cur ? (cur.fileName1 || '') : '';
 										const modFlg = cur ? (cur.modifyFlg || '') : '';
 										const verFlg = cur ? (cur.verifyFlg || '') : '';
 
@@ -20870,6 +20940,10 @@
 
 													previewBtn.onclick = function (e) {
 														e.preventDefault();
+														currentlyPreviewedInput = null;
+														currentPreviewId = fileSource.id;
+														currentPreviewFileIndex = fileMeta.index;
+														currentPreviewFileName = fileMeta.name;
 														modalDialog.classList.add('preview-active');
 														previewWindow.style.alignItems = 'center';
 														previewWindow.style.justifyContent = 'center';
@@ -22738,6 +22812,10 @@
 
 									previewBtn.onclick = function (e) {
 										e.preventDefault();
+										currentlyPreviewedInput = null;
+										currentPreviewId = fileSource.id;
+										currentPreviewFileIndex = fileMeta.index;
+										currentPreviewFileName = fileMeta.name;
 										const modalDialog = document.getElementById('main-modal-dialog');
 										const previewWindow = document.getElementById('preview-window');
 										if (modalDialog) modalDialog.classList.add('preview-active');
