@@ -21,6 +21,8 @@ public class RT_MC_Manager_DTO {
 	private Double q3VsQ2;
 	private Double q4VsQ3;
 	
+	private String q1Raw, q2Raw, q3Raw, q4Raw, currentYearRaw, lastYearRaw;
+	
 	public RT_MC_Manager_DTO(String description, Object q1, Object q2, Object q3, Object q4, Object currentYear,
 			Object lastYear, Object makerRemarks, Object checkerRemarks, String cellName) {
 
@@ -32,6 +34,14 @@ public class RT_MC_Manager_DTO {
 		this.q4Value = parseFlexibleNumber(q4);
 		this.currentYearValue = parseFlexibleNumber(currentYear);
 		this.lastYearValue = parseFlexibleNumber(lastYear);
+		
+		this.q1Raw = rawOf(q1, this.q1Value);
+		this.q2Raw = rawOf(q2, this.q2Value);
+		this.q3Raw = rawOf(q3, this.q3Value);
+		this.q4Raw = rawOf(q4, this.q4Value);
+		this.currentYearRaw = rawOf(currentYear, this.currentYearValue);
+		this.lastYearRaw = rawOf(lastYear, this.lastYearValue);
+		
 		double valQ1 = (this.q1Value != null) ? this.q1Value : 0.0;
 		double valQ2 = (this.q2Value != null) ? this.q2Value : 0.0;
 		double valQ3 = (this.q3Value != null) ? this.q3Value : 0.0;
@@ -83,6 +93,19 @@ public class RT_MC_Manager_DTO {
 		}
 		return null;
 	}
+	
+	private String rawOf(Object original, Double parsed) {
+	    if (parsed == null) return " - ";
+	    if (original instanceof String) return ((String) original).trim();
+	    return java.math.BigDecimal.valueOf(parsed).stripTrailingZeros().toPlainString();
+	}
+
+	public String getQ1ValueDisplay()          { return q1Raw; }
+	public String getQ2ValueDisplay()          { return q2Raw; }
+	public String getQ3ValueDisplay()          { return q3Raw; }
+	public String getQ4ValueDisplay()          { return q4Raw; }
+	public String getLastYearValueDisplay()    { return lastYearRaw; }
+	public String getCurrentYearValueDisplay() { return currentYearRaw; }
 
 	public String getDescription() {
 		return description;
