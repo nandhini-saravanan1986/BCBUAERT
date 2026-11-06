@@ -19753,13 +19753,23 @@
 					 */
 					if (isMaxCalcColumn(totalCellName, formMode)) {
 						let maxVal = null;
-						let allNA = true;
 						let hasPercent = false;
+						let naCount = 0;
+						let navCount = 0;
+						let dashCount = 0;
+						const totalChildren = totalInput._childInputs.length;
 
 						totalInput._childInputs.forEach(child => {
 							const rawVal = (child.value !== undefined ? child.value : child.innerText || '').trim();
-							if (rawVal !== '' && rawVal !== '-' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
-								allNA = false;
+							const lowerVal = rawVal.toLowerCase();
+
+							if (lowerVal === 'not applicable') {
+								naCount++;
+							} else if (lowerVal === 'not available') {
+								navCount++;
+							} else if (rawVal === '-') {
+								dashCount++;
+							} else if (rawVal !== '') {
 								if (rawVal.includes('%')) hasPercent = true;
 								const cleanVal = rawVal.replace(/,/g, '').replace(/%/g, '').trim();
 								const num = parseFloat(cleanVal);
@@ -19768,8 +19778,6 @@
 										maxVal = num;
 									}
 								}
-							} else if (rawVal === '') {
-								allNA = false;
 							}
 						});
 
@@ -19780,8 +19788,12 @@
 							if (hasPercent) {
 								formattedMax += "%";
 							}
-						} else if (allNA && totalInput._childInputs.length > 0) {
-							formattedMax = "Not Applicable";
+						} else if (totalChildren > 0) {
+							if (navCount > 0) {
+								formattedMax = "Not Available";
+							} else if (naCount > 0 && (naCount + dashCount === totalChildren)) {
+								formattedMax = "Not Applicable";
+							}
 						}
 						totalInput.value = formattedMax;
 						return;
@@ -19791,24 +19803,37 @@
 					 * =========================================================================================
 					 * 3. DEFAULT SUM CALCULATION:
 					 * Standard sum calculation across all child inputs.
+					 * - If numbers exist: sum all numbers (treating NA, NAV, and blanks as 0).
+					 * - If NO numbers exist:
+					 *   * If even one "Not Available" exists (all NAV, or mixed NA + NAV): "Not Available"
+					 *   * If completely "Not Applicable" (100% NA): "Not Applicable"
+					 *   * Otherwise: "0"
 					 * =========================================================================================
 					 */
 					let sum = 0;
 					let hasNumeric = false;
-					let allNA = true;
+					let naCount = 0;
+					let navCount = 0;
+					let dashCount = 0;
+					const totalChildren = totalInput._childInputs.length;
 
 					totalInput._childInputs.forEach(child => {
 						const rawVal = (child.value !== undefined ? child.value : child.innerText || '').trim();
-						if (rawVal !== '' && rawVal !== '-' && rawVal.toLowerCase() !== 'not applicable' && rawVal.toLowerCase() !== 'not available') {
-							allNA = false;
+						const lowerVal = rawVal.toLowerCase();
+
+						if (lowerVal === 'not applicable') {
+							naCount++;
+						} else if (lowerVal === 'not available') {
+							navCount++;
+						} else if (rawVal === '-') {
+							dashCount++;
+						} else if (rawVal !== '') {
 							const cleanVal = rawVal.replace(/,/g, '').trim();
 							const num = parseFloat(cleanVal);
 							if (!isNaN(num)) {
 								sum += num;
 								hasNumeric = true;
 							}
-						} else if (rawVal === '') {
-							allNA = false;
 						}
 					});
 
@@ -19816,8 +19841,12 @@
 					if (hasNumeric) {
 						const rounded = Number(sum.toFixed(2));
 						formattedSum = Number.isInteger(rounded) ? String(rounded) : sum.toFixed(2);
-					} else if (allNA && totalInput._childInputs.length > 0) {
-						formattedSum = "Not Applicable";
+					} else if (totalChildren > 0) {
+						if (navCount > 0) {
+							formattedSum = "Not Available";
+						} else if (naCount > 0 && (naCount + dashCount === totalChildren)) {
+							formattedSum = "Not Applicable";
+						}
 					}
 					totalInput.value = formattedSum;
 				}
@@ -20009,6 +20038,18 @@
 							}
 						});
 					}
+				}
+
+				if (formMode === 'bankinformation') {
+					document.querySelectorAll('#usertable, #regularReportTable, #mgrReportTable').forEach(table => {
+						table.querySelectorAll('.input-and-select:not(.remarks-input), .manager-verify-cell').forEach(inp => {
+							const cellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
+							if (!cellName.includes('BANK') && !cellName.includes('PRODUCT')) {
+								inp.dataset.isTotalCell = "true";
+								inp.dataset.autoTotal = "false";
+							}
+						});
+					});
 				}
 				const inputs = document.querySelectorAll('.input-and-select, .remarks-input, .manager-verify-cell');
 
@@ -20459,7 +20500,6 @@
 														statusBanner.innerText = 'Manager Approved. Record is Locked.';
 													} else {
 														statusBanner.innerText = 'You have Verified this record.';
-														createBtn('Revoke', 'role-btn', 'REVOKE_CHECKER', 'C');
 													}
 													statusBanner.style.color = '#28a745';
 												} else if (verFlg === 'N') {
@@ -20719,11 +20759,10 @@
 													} else if (verFlg === 'Y') {
 														if (verifyBtn) verifyBtn.style.display = 'none';
 														if (revertBtn) revertBtn.style.display = 'none';
+														if (revokeBtn) revokeBtn.style.display = 'none';
 														if (globalVerifyFlg === 'Y') {
-															if (revokeBtn) revokeBtn.style.display = 'none';
 															statusMsg.innerText = 'Manager Approved. Record is Locked.';
 														} else {
-															if (revokeBtn) revokeBtn.style.display = 'inline-block';
 															statusMsg.innerText = 'You have Verified this record.';
 														}
 
@@ -21237,7 +21276,7 @@
 							inputsInCell.forEach(input => {
 								const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
 								const isAutoTotal = input.dataset.autoTotal === "true";
-								const isAuthorized = isManager || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || (isAutoTotal
+								const isAuthorized = isManager || (input.dataset.isTotalCell === "true" && (isCRO || isCCO)) || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || (isAutoTotal
 									? (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.getAttribute('data-cellname') || ci.name || ci.id) || isAllowed(ptReportData2, ci.getAttribute('data-cellname') || ci.name || ci.id)))
 									: false);
 								if (isAuthorized) {

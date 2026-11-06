@@ -8348,7 +8348,7 @@ System.out.println("sixe==="+excelData.length);
 					String columnKey = cellName.toUpperCase().replaceFirst("^R\\d+_", "");
 					boolean isTotalCell = totalRow > 0
 					        && cellName.toUpperCase().startsWith("R" + totalRow + "_")
-					        && columnCount.getOrDefault(columnKey, 0) > 1;
+					        && (columnCount.getOrDefault(columnKey, 0) > 1 || "bankinformation".equalsIgnoreCase(formMode));
 
 					if (isTotalCell) {
 						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {
@@ -8378,6 +8378,7 @@ System.out.println("sixe==="+excelData.length);
 	private int getTotalRowNumber(String formMode) {
 	    if (formMode == null) return -1;
 	    switch (formMode.toLowerCase()) {
+	        case "bankinformation":
 	        case "bankconsumers":
 	        case "complaints":
 	        case "retailproducts":         return 22;
