@@ -1269,7 +1269,9 @@
 				}
 			}
 
-			location.href = "counterparty_list?formmode=" + formmode + '&Exposurebillid=' + Exposurebillid;
+			var Exposurereport_date = a.getAttribute("data-report_date");
+			location.href = "counterparty_list?formmode=" + formmode + '&Exposurebillid=' + Exposurebillid
+				+ (Exposurereport_date ? '&Report_date=' + encodeURIComponent(Exposurereport_date) : '');
 		}
 
 		function confirmSubmit(button) {
@@ -1718,11 +1720,11 @@
 					<tbody id="tableBody">
 						<tr th:each="billdata : ${Activebilldetails}" style="font-size: x-small;font-family: Verdana, Geneva, Tahoma, sans-serif;">
 							<td><button class="btn btn-warning btn-sm"
-									th:attr="formmode=Editbilldetail, data-billid=${billdata.srl_no}, data-report_date=${billdata.report_date}"
+									th:attr="formmode=Editbilldetail, data-billid=${billdata.srl_no}, data-report_date=${#dates.format(billdata.report_date,'yyyy-MM-dd')}"
 									onclick="modifyRow(this)">
 									<i class="fa fa-pen"></i></button></td>
 							<td><button class="btn btn-danger btn-sm"
-									th:attr="formmode=Deletebilldetail, data-billid=${billdata.srl_no}"
+									th:attr="formmode=Deletebilldetail, data-billid=${billdata.srl_no}, data-report_date=${#dates.format(billdata.report_date,'yyyy-MM-dd')}"
 									onclick="deleteRow(this)">
 									<i class="fa fa-trash"></i></button></td>
 							<td th:text="${billdata.srl_no}"></td>
@@ -1755,7 +1757,7 @@
 																							                     (billdata.entry_flg == 'Y' and billdata.modify_flg == 'Y' and billdata.verify_flg == 'N' ? 'bg-warning text-dark' : 
 																							                     (billdata.entry_flg == 'Y' and billdata.modify_flg == 'N' and billdata.verify_flg == 'Y' ? 'bg-success text-white' : 'bg-info text-dark')) }"
 								class="rounded border text-center" style="font-weight: bold; border-radius: 10px;"
-								th:attr="formmode=Verifybilldetail, data-billid=${billdata.srl_no}"
+								th:attr="formmode=Verifybilldetail, data-billid=${billdata.srl_no}, data-report_date=${#dates.format(billdata.report_date,'yyyy-MM-dd')}"
 								onclick="deleteRow(this)">
 							</td>
 						</tr>

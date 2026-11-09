@@ -2647,10 +2647,11 @@ public class XBRLNavigationController {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Edit");
-			md.addAttribute("Todateselected", Report_date);
+			java.sql.Date reportSqlDate = toReportSqlDate(Report_date);
+			md.addAttribute("Todateselected", reportSqlDate);
 			System.out.println("Edit Exposure Menu Received bill detail is : " + Exposurebillid);
-			System.out.println("Report date for bill : " + Report_date);
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
+			System.out.println("Report date for bill : " + reportSqlDate);
+			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, reportSqlDate));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 
 		} else if ("Deletebilldetail".equalsIgnoreCase(formmode)) {
@@ -2658,13 +2659,15 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", formmode);
 
 			md.addAttribute("menuname", "Bill detail operation - Delete");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
+			md.addAttribute("billdata",
+					Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, toReportSqlDate(Report_date)));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else if ("Verifybilldetail".equalsIgnoreCase(formmode)) {
 
 			md.addAttribute("formmode", formmode);
 			md.addAttribute("menuname", "Bill detail operation - Verify");
-			md.addAttribute("billdata", Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, Report_date));
+			md.addAttribute("billdata",
+					Mis_exposure_bill_detail_rep.getbilldetail(Exposurebillid, toReportSqlDate(Report_date)));
 			md.addAttribute("Counterpartynamelist", Counterparty_Reps.Getcounterpartyname());
 		} else {
 			logger.info("Opening file upload mode for counterparty. User: '{}', Branch: '{}'", userid, BRANCHNAME);
@@ -5481,6 +5484,16 @@ System.out.println("sixe==="+excelData.length);
 		}
 
 		return "RT/RT_Cust_group_exposure.html";
+	}
+
+	private static java.sql.Date toReportSqlDate(Date reportDate) {
+		if (reportDate == null) {
+			return null;
+		}
+		if (reportDate instanceof java.sql.Date) {
+			return (java.sql.Date) reportDate;
+		}
+		return java.sql.Date.valueOf(normalizeDate(reportDate.toString()));
 	}
 
 	public static String normalizeDate(String input) {
