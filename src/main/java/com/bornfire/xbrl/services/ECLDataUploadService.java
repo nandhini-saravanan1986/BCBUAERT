@@ -1,267 +1,406 @@
 package com.bornfire.xbrl.services;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Types;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javax.sql.DataSource;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import com.bornfire.xbrl.util.ExcelUploadHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bornfire.xbrl.entities.Eod_acct_balance_pojo;
 import com.bornfire.xbrl.entities.RT_Ecl_upload_Entity;
-import com.bornfire.xbrl.entities.RtInvestmentDealDataDump;
-
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
-import oracle.sql.STRUCT;
-import oracle.sql.StructDescriptor;
+import com.bornfire.xbrl.util.ExcelUploadHelper;
 
 @Service
 public class ECLDataUploadService {
-	
-	@Autowired
-	private DataSource srcdataSource;
-	
+
+	private static final DateTimeFormatter DISPLAY_DATE = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
 
 	public String uploadECLdata(MultipartFile file, Date toDate, boolean forceUpload) throws Exception {
 
-	   
-	    String checkSql = "SELECT COUNT(*) FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)";
+		String checkSql = "SELECT COUNT(*) FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)";
 
-	    Integer count = jdbcTemplate.queryForObject(
-	            checkSql,
-	            Integer.class,
-	            new java.sql.Date(toDate.getTime())
-	    );
+		Integer count = jdbcTemplate.queryForObject(
+				checkSql,
+				Integer.class,
+				new java.sql.Date(toDate.getTime()));
 
-	    if (count != null && count > 0 && !forceUpload) {
-	        throw new RuntimeException("already uploaded");
-	    }
+		if (count != null && count > 0 && !forceUpload) {
+			throw new RuntimeException("already uploaded");
+		}
 
-	    if (count != null && count > 0 && forceUpload) {
-	        jdbcTemplate.update(
-	                "DELETE FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
-	                new java.sql.Date(toDate.getTime())
-	        );
-	    }
+		List<RT_Ecl_upload_Entity> list = readExcel(file);
 
-	    List<RT_Ecl_upload_Entity> list = readExcel(file);
+		if (list == null || list.isEmpty()) {
+			throw new RuntimeException("Uploaded file is empty");
+		}
 
-	    if (list == null || list.isEmpty()) {
-	        throw new RuntimeException("Uploaded file is empty");
-	    }
+		LocalDate selectedDate = toLocalDate(toDate);
 
-	    Date excelDate = list.get(0).getReport_date();
+		for (RT_Ecl_upload_Entity row : list) {
+			LocalDate rowDate = toLocalDate(row.getReport_date());
+			if (rowDate == null) {
+				throw new RuntimeException(
+						"Report date is missing in (K column blank). Sample: 30/09/2026, 30-09-2026 or 30-Sep-2026");
+			}
+			if (!rowDate.equals(selectedDate)) {
+				throw new RuntimeException(
+						"Report Date Mismatched with the Selected Report Date. File date: "
+								+ rowDate.format(DISPLAY_DATE)
+								+ ", selected date: "
+								+ selectedDate.format(DISPLAY_DATE));
+			}
+		}
 
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		if (count != null && count > 0 && forceUpload) {
+			jdbcTemplate.update(
+					"DELETE FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
+					new java.sql.Date(toDate.getTime()));
+		}
 
-	    if (excelDate == null || !sdf.format(excelDate).equals(sdf.format(toDate))) {
-	        throw new RuntimeException("Report Date Mismatched with the Selected Report Date");
-	    }
-
-	  
-	    int inserted = saveECLBatch(list);
-
-	    return "Upload Complete. Rows Inserted: " + inserted;
+		int inserted = saveECLBatch(list);
+		return "Upload Complete. Rows Inserted: " + inserted;
 	}
 
 	public void deleteByReportDate(Date reportDate) {
-	    if (reportDate == null) {
-	        throw new RuntimeException("Report date is required.");
-	    }
-	    jdbcTemplate.update(
-	            "DELETE FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
-	            new java.sql.Date(reportDate.getTime()));
+		if (reportDate == null) {
+			throw new RuntimeException("Report date is required.");
+		}
+		jdbcTemplate.update(
+				"DELETE FROM ECL_REPORT_TABLE WHERE TRUNC(REPORT_DATE)=TRUNC(?)",
+				new java.sql.Date(reportDate.getTime()));
 	}
-	
-	
+
 	private List<RT_Ecl_upload_Entity> readExcel(MultipartFile file) throws Exception {
 
-	    List<RT_Ecl_upload_Entity> list = new ArrayList<>();
+		List<RT_Ecl_upload_Entity> list = new ArrayList<>();
 
-	    try (Workbook workbook = ExcelUploadHelper.openExcelWorkbook(file)) {
+		try (Workbook workbook = ExcelUploadHelper.openExcelWorkbook(file)) {
 
-	        DataFormatter formatter = new DataFormatter();
-	        Sheet sheet = workbook.getSheetAt(0);
+			DataFormatter formatter = new DataFormatter();
+			Sheet sheet = workbook.getSheetAt(0);
 
-	        for (Row row : sheet) {
+			for (Row row : sheet) {
 
-	            if (row.getRowNum() == 0) continue;
-	            if (isRowEmpty(row)) continue;
+				if (row.getRowNum() == 0) {
+					continue;
+				}
+				if (isRowEmpty(row)) {
+					continue;
+				}
 
-	            RT_Ecl_upload_Entity e = new RT_Ecl_upload_Entity();
-	            
-	            e.setFacilityid(getString(row.getCell(0), formatter));
-	            e.setCustomerid(getString(row.getCell(1), formatter));
-	            e.setCust_name(getString(row.getCell(2), formatter));
-	            e.setCurrency(getString(row.getCell(3), formatter));
-	            e.setDrawnamount(getBigDecimal(row.getCell(4), formatter));
-	            e.setUndrawnamount(getBigDecimal(row.getCell(5), formatter));
-	            e.setEad(getBigDecimal(row.getCell(6), formatter));
-	            e.setReport_date(getDate(row.getCell(7)));
-	            e.setStage(getString(row.getCell(8), formatter));
-	            e.setEcl_mgmt_overlay(getBigDecimal(row.getCell(9), formatter));
-	            e.setSpecific_provision(getBigDecimal(row.getCell(10), formatter));
-	            e.setInterest_suspense(getBigDecimal(row.getCell(11), formatter));
-	            e.setCountry(getString(row.getCell(12), formatter));
-	            e.setTransfer_stage(getString(row.getCell(13), formatter));
-	            e.setBrf_1_classification(getString(row.getCell(14), formatter));
-	            e.setBrf_106(getString(row.getCell(15), formatter));
-	            e.setBrf_107(getString(row.getCell(16), formatter));
-	            e.setBasel_2_category(getString(row.getCell(17), formatter));
-	            e.setWait_pd(getString(row.getCell(18), formatter));
-	            
-	            
-	            
-	            list.add(e);
-	        }
-	    }
+				RT_Ecl_upload_Entity e = new RT_Ecl_upload_Entity();
 
-	    return list;
+				e.setFacilityid(getString(row.getCell(0), formatter));
+				e.setCustomerid(getString(row.getCell(1), formatter));
+				e.setCust_name(getString(row.getCell(2), formatter));
+				e.setBranch_name(getString(row.getCell(3), formatter));
+				e.setProductname(getString(row.getCell(4), formatter));
+				e.setLimit(getBigDecimal(row.getCell(5), formatter));
+				e.setDrawnamount(getBigDecimal(row.getCell(6), formatter));
+				e.setUndrawnamount(getBigDecimal(row.getCell(7), formatter));
+				e.setCcf(getBigDecimal(row.getCell(8), formatter));
+				e.setEad(getBigDecimal(row.getCell(9), formatter));
+				e.setReport_date(getDate(row.getCell(10), row.getRowNum() + 1));
+				e.setBasepd(getBigDecimal(row.getCell(11), formatter));
+				e.setPositivepd(getBigDecimal(row.getCell(12), formatter));
+				e.setNegativepd(getBigDecimal(row.getCell(13), formatter));
+				e.setWeighted_pd(getString(row.getCell(14), formatter));
+				e.setUnsecuredlgdrate(getBigDecimal(row.getCell(15), formatter));
+				e.setLgdrate(getBigDecimal(row.getCell(16), formatter));
+				e.setStage(getString(row.getCell(17), formatter));
+				e.setFinalweightedecl(getBigDecimal(row.getCell(18), formatter));
+				e.setEcl_mgmt_overlay(getBigDecimal(row.getCell(19), formatter));
+				e.setSpecific_provision(getBigDecimal(row.getCell(20), formatter));
+				e.setInterest_suspense(getBigDecimal(row.getCell(21), formatter));
+				e.setInfoflag(getBigDecimal(row.getCell(22), formatter));
+				e.setCountry(getString(row.getCell(23), formatter));
+				e.setTransfer_stage(getString(row.getCell(24), formatter));
+				e.setBrf_1_classification(getString(row.getCell(25), formatter));
+				e.setBrf_107(getString(row.getCell(26), formatter));
+				e.setBrf_106(getString(row.getCell(27), formatter));
+				e.setBasel_2_category(getString(row.getCell(28), formatter));
+				e.setTotal_rwa(getBigDecimal(row.getCell(29), formatter));
+				e.setFree_text_1(getString(row.getCell(30), formatter));
+				e.setFree_text_2(getString(row.getCell(31), formatter));
+				e.setFree_text_3(getString(row.getCell(32), formatter));
+				e.setFree_text_4(getString(row.getCell(33), formatter));
+				e.setFree_text_5(getString(row.getCell(34), formatter));
+				e.setTtc_pd(getBigDecimal(row.getCell(35), formatter));
+				e.setPit_pd(getBigDecimal(row.getCell(36), formatter));
+
+				list.add(e);
+			}
+		}
+
+		return list;
 	}
-	
-	private int saveECLBatch(List<RT_Ecl_upload_Entity> list) throws Exception {
 
-	    int totalInserted = 0;
-	   
+	private int saveECLBatch(List<RT_Ecl_upload_Entity> list) {
 
-	    try (Connection conn = srcdataSource.getConnection()) {
-	    	
+		String sql = "INSERT INTO ECL_REPORT_TABLE ("
+				+ "FACILITYID, CUSTOMERID, CUST_NAME, BRANCH_NAME, PRODUCTNAME, "
+				+ "LIMIT, DRAWNAMOUNT, UNDRAWNAMOUNT, CCF, EAD, REPORT_DATE, "
+				+ "BASEPD, POSITIVEPD, NEGATIVEPD, WEIGHTED_PD, UNSECUREDLGDRATE, LGDRATE, "
+				+ "STAGE, FINALWEIGHTEDECL, ECL_MGMT_OVERLAY, SPECIFIC_PROVISION, INTEREST_SUSPENSE, "
+				+ "INFOFLAG, COUNTRY, TRANSFER_STAGE, BRF_1_CLASSIFICATION, BRF_107, BRF_106, "
+				+ "BASEL_2_CATEGORY, TOTAL_RWA, FREE_TEXT_1, FREE_TEXT_2, FREE_TEXT_3, "
+				+ "FREE_TEXT_4, FREE_TEXT_5, TTC_PD, PIT_PD) "
+				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	        conn.setAutoCommit(false);
+		int inserted = 0;
 
-	        oracle.jdbc.OracleConnection oracleConn = (oracle.jdbc.OracleConnection) conn;
+		for (RT_Ecl_upload_Entity e : list) {
+			jdbcTemplate.update(sql,
+					e.getFacilityid(),
+					e.getCustomerid(),
+					e.getCust_name(),
+					e.getBranch_name(),
+					e.getProductname(),
+					e.getLimit(),
+					e.getDrawnamount(),
+					e.getUndrawnamount(),
+					e.getCcf(),
+					e.getEad(),
+					e.getReport_date(),
+					e.getBasepd(),
+					e.getPositivepd(),
+					e.getNegativepd(),
+					e.getWeighted_pd(),
+					e.getUnsecuredlgdrate(),
+					e.getLgdrate(),
+					e.getStage(),
+					e.getFinalweightedecl(),
+					e.getEcl_mgmt_overlay(),
+					e.getSpecific_provision(),
+					e.getInterest_suspense(),
+					e.getInfoflag(),
+					e.getCountry(),
+					e.getTransfer_stage(),
+					e.getBrf_1_classification(),
+					e.getBrf_107(),
+					e.getBrf_106(),
+					e.getBasel_2_category(),
+					e.getTotal_rwa(),
+					e.getFree_text_1(),
+					e.getFree_text_2(),
+					e.getFree_text_3(),
+					e.getFree_text_4(),
+					e.getFree_text_5(),
+					e.getTtc_pd(),
+					e.getPit_pd());
+			inserted++;
+		}
 
-	        StructDescriptor structDesc = StructDescriptor.createDescriptor("ECL_UPLOAD_OBJECT", oracleConn);
-	        ArrayDescriptor arrayDesc = ArrayDescriptor.createDescriptor("ECL_UPLOAD_TABLE", oracleConn);
-
-	        STRUCT[] structArray = new STRUCT[list.size()];
-	        int i = 0;
-
-	        for (RT_Ecl_upload_Entity e : list) {
-
-	            Object[] attr = {
-	                e.getFacilityid(), e.getCustomerid(), e.getCust_name(), e.getCurrency(),
-	                e.getDrawnamount(), e.getUndrawnamount(), e.getEad(),
-	                e.getReport_date(), e.getStage(), e.getEcl_mgmt_overlay(),
-	                e.getSpecific_provision(), e.getInterest_suspense(),
-	                e.getCountry(), e.getTransfer_stage(),
-	                e.getBrf_1_classification(),e.getBrf_106(), e.getBrf_107(), e.getBasel_2_category(),
-	                e.getWait_pd()
-	            };
-
-	            structArray[i++] = new STRUCT(structDesc, oracleConn, attr);
-	        }
-
-	        ARRAY array = new ARRAY(arrayDesc, oracleConn, structArray);
-
-	        CallableStatement cs = conn.prepareCall("{ ? = call SAVE_ECL_UPLOAD_FN(?) }");
-	        
-	        cs.registerOutParameter(1, Types.NUMERIC); 
-	        cs.setArray(2, array);              
-	        cs.execute();
-
-	        totalInserted = cs.getInt(1);
-
-	        conn.commit();
-	    }
-
-	    return totalInserted;
+		return inserted;
 	}
-	
+
 	private boolean isRowEmpty(Row row) {
-	    if (row == null) return true;
+		if (row == null) {
+			return true;
+		}
 
-	    DataFormatter formatter = new DataFormatter();
+		DataFormatter formatter = new DataFormatter();
 
-	    for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
-	        Cell cell = row.getCell(i);
-
-	        if (cell != null) {
-	            String value = formatter.formatCellValue(cell).trim();
-	            if (!value.isEmpty()) {
-	                return false;
-	            }
-	        }
-	    }
-	    return true;
+		for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
+			Cell cell = row.getCell(i);
+			if (cell != null) {
+				String value = formatter.formatCellValue(cell).trim();
+				if (!value.isEmpty()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
-	
-	private LocalDate getLocalDateFromCell(Cell cell) {
-	    if (cell == null) return null;
 
-	    if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-	        if (DateUtil.isCellDateFormatted(cell)) {
-	            Date date = cell.getDateCellValue();
-	            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	        }
-	    }
-	    return null;
-	}
-	
 	private String getString(Cell cell, DataFormatter formatter) {
-	    if (cell == null) return null;
-	    String value = formatter.formatCellValue(cell);
-	    return value != null && !value.trim().isEmpty() ? value.trim() : null;
+		if (cell == null) {
+			return null;
+		}
+		String value = formatter.formatCellValue(cell);
+		if (value != null && !value.trim().isEmpty()) {
+			return value.trim();
+		}
+		return null;
 	}
 
 	private BigDecimal getBigDecimal(Cell cell, DataFormatter formatter) {
 
-	    if (cell == null)
-	        return BigDecimal.ZERO;
+		if (cell == null) {
+			return BigDecimal.ZERO;
+		}
 
-	    String value = formatter.formatCellValue(cell);
+		String value = formatter.formatCellValue(cell);
 
-	    if (value == null || value.trim().isEmpty())
-	        return BigDecimal.ZERO;
+		if (value == null || value.trim().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 
-	    try {
-	        // Remove comma separators
-	        value = value.replace(",", "").trim();
-
-	        return new BigDecimal(value);
-
-	    } catch (Exception e) {
-	        throw new RuntimeException(
-	                "Invalid numeric value: " + value
-	        );
-	    }
+		try {
+			value = value.replace(",", "").trim();
+			return new BigDecimal(value);
+		} catch (Exception e) {
+			throw new RuntimeException("Invalid numeric value: " + value);
+		}
 	}
 
-	private Date getDate(Cell cell) {
-	    if (cell == null) return null;
+	private Date getDate(Cell cell, int excelRow) {
 
-	    try {
-	        LocalDate localDate = getLocalDateFromCell(cell);
-	        return (localDate != null) ? java.sql.Date.valueOf(localDate) : null;
-	    } catch (Exception e) {
-	        throw new RuntimeException("Invalid date format in Excel");
-	    }
+		if (cell == null) {
+			throw new RuntimeException(missingReportDate("blank", excelRow));
+		}
+
+		try {
+			int cellType = cell.getCellType();
+			if (cellType == Cell.CELL_TYPE_FORMULA) {
+				cellType = cell.getCachedFormulaResultType();
+			}
+
+			if (cellType == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+				Calendar cal = DateUtil.getJavaCalendar(cell.getNumericCellValue(), false);
+				if (cal != null) {
+					LocalDate localDate = LocalDate.of(
+							cal.get(Calendar.YEAR),
+							cal.get(Calendar.MONTH) + 1,
+							cal.get(Calendar.DAY_OF_MONTH));
+					return java.sql.Date.valueOf(localDate);
+				}
+			}
+
+			String text = "";
+			if (cellType == Cell.CELL_TYPE_STRING) {
+				text = cell.getStringCellValue();
+			} else {
+				text = new DataFormatter(Locale.UK).formatCellValue(cell);
+			}
+
+			LocalDate localDate = parseReportDate(text);
+			if (localDate == null) {
+				throw new RuntimeException(missingReportDate(text, excelRow));
+			}
+			return java.sql.Date.valueOf(localDate);
+
+		} catch (RuntimeException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			throw new RuntimeException(missingReportDate("blank", excelRow));
+		}
 	}
-	
-	
 
+	private LocalDate parseReportDate(String text) {
+
+		if (text == null) {
+			return null;
+		}
+
+		text = text.trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+
+		if (text.contains(" ")) {
+			text = text.substring(0, text.indexOf(' ')).trim();
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		} catch (Exception ex) {
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("d/M/yyyy"));
+		} catch (Exception ex) {
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		} catch (Exception ex) {
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("d-M-yyyy"));
+		} catch (Exception ex) {
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH));
+		} catch (Exception ex) {
+		}
+
+		try {
+			return LocalDate.parse(text, DateTimeFormatter.ofPattern("d-MMM-yyyy", Locale.ENGLISH));
+		} catch (Exception ex) {
+		}
+
+		String fixedMonth = fixMonthText(text);
+		if (fixedMonth != null) {
+			try {
+				return LocalDate.parse(fixedMonth, DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH));
+			} catch (Exception ex) {
+			}
+			try {
+				return LocalDate.parse(fixedMonth, DateTimeFormatter.ofPattern("d-MMM-yyyy", Locale.ENGLISH));
+			} catch (Exception ex) {
+			}
+		}
+
+		return null;
+	}
+
+	private String fixMonthText(String text) {
+		if (text == null || !text.contains("-")) {
+			return null;
+		}
+		String[] parts = text.split("-");
+		if (parts.length != 3) {
+			return null;
+		}
+		String month = parts[1];
+		if (month.length() < 3) {
+			return null;
+		}
+		month = month.substring(0, 1).toUpperCase() + month.substring(1).toLowerCase();
+		return parts[0] + "-" + month + "-" + parts[2];
+	}
+
+	private String missingReportDate(String sample, int excelRow) {
+		if (sample == null || sample.trim().isEmpty()) {
+			sample = "blank";
+		} else {
+			sample = sample.trim();
+		}
+		return "Report date is missing in (K column " + sample + ") at row " + excelRow
+				+ ". Sample: 30/09/2026, 30-09-2026 or 30-Sep-2026";
+	}
+
+	private LocalDate toLocalDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		if (date instanceof java.sql.Date) {
+			return ((java.sql.Date) date).toLocalDate();
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return LocalDate.of(
+				cal.get(Calendar.YEAR),
+				cal.get(Calendar.MONTH) + 1,
+				cal.get(Calendar.DAY_OF_MONTH));
+	}
 }

@@ -32,7 +32,7 @@ public class RT_Ecl_upload_Entity {
 	private BigDecimal	ead;
 	private String	interestaccrued;
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date	report_date;
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
@@ -84,6 +84,13 @@ public class RT_Ecl_upload_Entity {
 	private String	mgmtoverlay;
 	private BigDecimal	total_rwa;
 	private String wait_pd;
+	private String free_text_1;
+	private String free_text_2;
+	private String free_text_3;
+	private String free_text_4;
+	private String free_text_5;
+	private BigDecimal ttc_pd;
+	private BigDecimal pit_pd;
 	
 	public String getFacilityid() {
 		return facilityid;
@@ -480,6 +487,48 @@ public class RT_Ecl_upload_Entity {
 	}
 	public void setWait_pd(String wait_pd) {
 		this.wait_pd = wait_pd;
+	}
+	public String getFree_text_1() {
+		return free_text_1;
+	}
+	public void setFree_text_1(String free_text_1) {
+		this.free_text_1 = free_text_1;
+	}
+	public String getFree_text_2() {
+		return free_text_2;
+	}
+	public void setFree_text_2(String free_text_2) {
+		this.free_text_2 = free_text_2;
+	}
+	public String getFree_text_3() {
+		return free_text_3;
+	}
+	public void setFree_text_3(String free_text_3) {
+		this.free_text_3 = free_text_3;
+	}
+	public String getFree_text_4() {
+		return free_text_4;
+	}
+	public void setFree_text_4(String free_text_4) {
+		this.free_text_4 = free_text_4;
+	}
+	public String getFree_text_5() {
+		return free_text_5;
+	}
+	public void setFree_text_5(String free_text_5) {
+		this.free_text_5 = free_text_5;
+	}
+	public BigDecimal getTtc_pd() {
+		return ttc_pd;
+	}
+	public void setTtc_pd(BigDecimal ttc_pd) {
+		this.ttc_pd = ttc_pd;
+	}
+	public BigDecimal getPit_pd() {
+		return pit_pd;
+	}
+	public void setPit_pd(BigDecimal pit_pd) {
+		this.pit_pd = pit_pd;
 	}
 	public RT_Ecl_upload_Entity(String facilityid, String customerid, String cust_name, String branch_name,
 			String portfoliotype, String portfolioname, String subportfolioname, String productname, String rating,
