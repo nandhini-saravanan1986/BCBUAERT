@@ -154,6 +154,7 @@ import com.bornfire.xbrl.services.RwaDataUploadService;
 import com.bornfire.xbrl.services.UploadMonitorService;
 import com.bornfire.xbrl.services.DaylightDataUploadService;
 import com.bornfire.xbrl.services.ECLDataUploadService;
+import com.bornfire.xbrl.services.StageClassificationBrf40UploadService;
 import com.bornfire.xbrl.services.OvernightForeignCcyUploadService;
 import com.bornfire.xbrl.services.VarPortfolioUploadService;
 import com.bornfire.xbrl.services.SMAFileUploadService;
@@ -184,6 +185,9 @@ public class XBRLNavigationController {
 	
 	@Autowired
 	ECLDataUploadService ecldatauploadservice;
+
+	@Autowired
+	StageClassificationBrf40UploadService stageClassificationBrf40UploadService;
 	
 	@Autowired
 	RtVarReportLimits_Rep rtvarreportlimits_rep;
@@ -5578,6 +5582,8 @@ System.out.println("sixe==="+excelData.length);
 	        return rtFxPositionService.getUploadedDates();
 	    } else if ("ONFC".equals(reportType)) {
 	        return overnightForeignCcyUploadService.getUploadedDates();
+	    } else if ("STAGE_CLASS_BRF40".equals(reportType)) {
+	        return uploadMonitorService.getSuccessfulUploadDatesForReportType(reportType);
 	    } else if ("TR_PLC".equals(reportType)) {
 	        return rtmidFxDealservice.getTreasuryPlacementUploadedDates();
 	    } else if ("TR_TB".equals(reportType)) {
@@ -5710,6 +5716,10 @@ System.out.println("sixe==="+excelData.length);
 	        	resultMsg = daylightDataUploadService.UploadDaylight(file, reportType, toDate, forceUpload);
 	        } else if ("ONFC".equals(reportType)) {
 	        	resultMsg = overnightForeignCcyUploadService.uploadOvernightForeignCcy(file, toDate, forceUpload);
+	        }
+	        // Stage Classification BRF40 - weekly ECL stage file
+	        else if ("STAGE_CLASS_BRF40".equals(reportType)) {
+	        	resultMsg = stageClassificationBrf40UploadService.uploadStageClassification(file, toDate, forceUpload);
 	        }
 	        else {
 	        	uploadMonitorService.completeFailure(uploadId, "Unsupported Report Type: " + reportType);

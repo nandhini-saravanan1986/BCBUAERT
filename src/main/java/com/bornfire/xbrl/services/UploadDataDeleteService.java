@@ -62,6 +62,8 @@ public class UploadDataDeleteService {
     @Autowired
     private ECLDataUploadService eclDataUploadService;
     @Autowired
+    private StageClassificationBrf40UploadService stageClassificationBrf40UploadService;
+    @Autowired
     private SMAFileUploadService smaFileUploadService;
     @Autowired
     private ProvisioningFileUploadService provisioningFileUploadService;
@@ -131,6 +133,9 @@ public class UploadDataDeleteService {
                 break;
             case "ECL":
                 eclDataUploadService.deleteByReportDate(reportDate);
+                break;
+            case "STAGE_CLASS_BRF40":
+                stageClassificationBrf40UploadService.deleteByReportDate(reportDate);
                 break;
             case "SMA":
                 smaFileUploadService.deleteByReportDate(reportDate);

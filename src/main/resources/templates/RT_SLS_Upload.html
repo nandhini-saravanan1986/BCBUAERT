@@ -329,6 +329,8 @@
 										<option value="VARFILE">VAR</option>
 										<option value="DAY_LIGHT">Day light data</option>
 										<option value="ONFC">ONFC - Overnight Foreign Currency</option>
+										<!-- Stage Classification BRF40: weekly ECL stage Excel into BRF_STAGE_CLASSIFICATION_DETAIL -->
+										<option value="STAGE_CLASS_BRF40">Stage Classification BRF40</option>
 									</select>
 								</div>
 							</div>
@@ -651,18 +653,25 @@
 				syncFormatFromFileName(fileName);
 			});
 
-			// Datepicker
+			// Datepicker. Reference date starts on today's date (sysdate).
 			$("#fromDate").datepicker({
 				dateFormat: "dd-mm-yy",
 				changeMonth: true,
-				changeYear: true
+				changeYear: true,
+				defaultDate: new Date(),
+				yearRange: reportYearRange()
 			});
 
 			$("#toDate").datepicker({
 				dateFormat: "dd-mm-yy",
 				changeMonth: true,
-				changeYear: true
+				changeYear: true,
+				defaultDate: new Date(),
+				yearRange: reportYearRange()
 			});
+			if (!$("#toDate").val()) {
+				$("#toDate").datepicker("setDate", new Date());
+			}
 			$("#successOkBtn").click(function () {
 				$("#successModal").modal("hide");
 				refreshUploadMonitor();
@@ -752,7 +761,7 @@
 			else if (report === "FXP" || report === "TR_PLC" || report === "TR_INV" || report === "TR_TB"
 				|| report === "TR_SWD" || report === "FWD_RVL" || report === "TR_INV_DEAL_DUMP"
 				|| report === "plcdealdump" || report === "DAY_LIGHT" || report === "MFD" || report === "ECL"
-				|| report === "ONFC") {
+				|| report === "ONFC" || report === "STAGE_CLASS_BRF40") {
 				appendExcelFormatOptions(formatSelect, true);
 			}
 			else if (report === "VARFILE") {
@@ -841,15 +850,47 @@
 
 		});
 
+		// Year list stays around the current year. A new calendar otherwise starts at year 0, which is 1900.
+		function reportYearRange() {
+			var year = new Date().getFullYear();
+			return (year - 10) + ":" + (year + 5);
+		}
+
+		// Keep a date the user already picked. Empty or 1900 goes back to sysdate.
+		function reportDateToKeep(value) {
+			if (!value) {
+				return new Date();
+			}
+			try {
+				var parsed = $.datepicker.parseDate("dd-mm-yy", value);
+				if (!parsed || parsed.getFullYear() < 1990) {
+					return new Date();
+				}
+				return parsed;
+			} catch (ignore) {
+				return new Date();
+			}
+		}
+
 		function getUploadedDates(reportType) {
 
 			function bindReferenceDatePicker(datesList) {
 				uploadedDates = datesList || [];
-				$("#toDate").datepicker("destroy");
-				$("#toDate").datepicker({
+				var $toDate = $("#toDate");
+				var keptDate = reportDateToKeep($toDate.val());
+
+				// Close the open calendar before rebuilding it, so it cannot stay on year 1900.
+				if ($toDate.hasClass("hasDatepicker")) {
+					$toDate.datepicker("hide");
+					$toDate.datepicker("destroy");
+				}
+
+				$toDate.datepicker({
 					dateFormat: "dd-mm-yy",
 					changeMonth: true,
 					changeYear: true,
+					defaultDate: new Date(),
+					yearRange: reportYearRange(),
 					beforeShowDay: function (date) {
 						var d = $.datepicker.formatDate("dd-mm-yy", date);
 						var today = $.datepicker.formatDate("dd-mm-yy", new Date());
@@ -859,6 +900,7 @@
 						return [true, ""];
 					}
 				});
+				$toDate.datepicker("setDate", keptDate);
 			}
 
 			// No return selected: do not call server; reset picker without blocking dates
