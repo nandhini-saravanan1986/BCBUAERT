@@ -634,57 +634,31 @@
 
 	<script>
 		$(document).ready(function () {
-			$('#usertable').DataTable({
+			var tableEl = $('#usertable');
+			if (!tableEl.length) {
+				return;
+			}
+
+			// Use only columns that exist. Asking for a missing column shows the DataTables alert.
+			var colCount = tableEl.find('thead th').length;
+			var rightCols = [1, 6, 14].filter(function (index) {
+				return index < colCount;
+			});
+
+			tableEl.DataTable({
 				paging: true,
 				searching: true,
 				ordering: false,
 				lengthChange: false,
 				pageLength: 100,
-				fixedHeader: true,
-
+				autoWidth: false,
 				dom: '<"d-flex justify-content-between align-items-center mb-2"f p>t',
-
-				columnDefs: [
-					{targets: [1, 6, 14], className: 'text-end'}
-				]
+				columnDefs: rightCols.length ? [{ targets: rightCols, className: 'text-end' }] : []
 			});
 		});
 
-
-		$(document).ready(function () {
-			$('#Report_date').on('change', function () {
-				const reportDate = this.value;
-
-				$.ajax({
-					type: 'GET',
-					url: './getTre_limit_Datas',
-					data: {reportDate: reportDate},
-					success: function (data) {
-						const table = $('#usertable').DataTable();
-						table.clear();
-
-						data.forEach(row => {
-							table.row.add([
-								`<div style="text-align:center;">${row.formattedDate}</div>`,  // Centered date
-								row.bankName || '',
-								row.counterparty || '',
-								row.amtAed || '0.00',
-								row.amtGbp || '0.00',
-								row.amtUsd || '0.00',
-								row.amtEur || '0.00',
-								row.inUsdMn || '0.00'
-							]);
-						});
-
-						table.draw();
-					},
-					error: function (xhr, status, error) {
-						console.error('AJAX error:', status, error);
-						//alert('Error fetching data!');
-					}
-				});
-			});
-		});
+		// Report date already reloads the page in Trasury_Limits().
+		// Do not add rows here — that data has 8 cells and this table has more, which causes the column 8 alert.
 
 
 

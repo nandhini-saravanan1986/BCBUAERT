@@ -455,31 +455,15 @@
 			width: 100%;
 		}
 
-		#usertable_wrapper .dataTables_scroll {
-			width: 100% !important;
-		}
-
-		#usertable_wrapper .dataTables_scrollHead {
-			overflow: visible !important;
-		}
-
-		#usertable_wrapper .dataTables_scrollBody {
-			border: 1px solid #e8e8e8;
-			border-top: none;
-		}
-
-		/* DataTables scrollX clones headers into scroll body — hide that duplicate row */
-		.dataTables_scrollBody thead {
-			display: none !important;
-		}
-
-		.dataTables_scrollHead thead th {
-			background-color: var(--table-header-blue, #FF7B00) !important;
-			color: #fff !important;
+		/* Rows scroll inside this box. Header and data stay in the same table, so widths match. */
+		.asl-scroll {
+			overflow: auto;
+			max-height: calc(100vh - 280px);
 		}
 
 		#usertable {
 			border-collapse: collapse !important;
+			border-spacing: 0 !important;
 			font-family: Arial, sans-serif !important;
 			font-size: 12px !important;
 			width: 100% !important;
@@ -496,6 +480,10 @@
 			padding: 10px 8px !important;
 			line-height: 1.1 !important;
 			border: 1px solid rgba(0, 0, 0, 0.08);
+			/* Same table as the data, so this header cell is the width of the cells under it */
+			position: sticky;
+			top: 0;
+			z-index: 2;
 		}
 
 		#usertable td {
@@ -708,47 +696,27 @@
 
 			}
 		}
-		function getAslTableScrollHeight() {
-			var tableArea = document.querySelector('.asl-table-area');
-			if (!tableArea) {
-				return Math.max(220, window.innerHeight - 330);
-			}
-			var top = tableArea.getBoundingClientRect().top;
-			var reserved = 112;
-			return Math.max(220, Math.floor(window.innerHeight - top - reserved));
-		}
-
 		function initAslUserTable() {
 			if (!$('#usertable').length) {
 				return;
 			}
-			var tableHeight = getAslTableScrollHeight();
-			var table = $('#usertable').DataTable({
+			// Do not use scrollX or scrollY. Those split the header and the data into two tables,
+			// and then S.No and every other column get a different width.
+			$('#usertable').DataTable({
 				destroy: true,
-				scrollY: tableHeight + 'px',
-				scrollCollapse: true,
-				scrollX: true,
 				paging: true,
-				autoWidth: false,
 				ordering: false,
 				searching: true,
 				pageLength: 25,
 				lengthChange: false,
 				dom: '<"d-flex justify-content-between align-items-center mb-2"fp>rt'
 			});
-			table.columns.adjust();
-		}
 
-		var aslTableResizeTimer;
-		$(window).on('resize', function () {
-			clearTimeout(aslTableResizeTimer);
-			aslTableResizeTimer = setTimeout(function () {
-				if ($.fn.DataTable.isDataTable('#usertable')) {
-					$('#usertable').DataTable().destroy();
-					initAslUserTable();
-				}
-			}, 150);
-		});
+			// Scroll the rows under the header. Header and body stay one table.
+			if (!$('#usertable').parent().hasClass('asl-scroll')) {
+				$('#usertable').wrap('<div class="asl-scroll"></div>');
+			}
+		}
 
 		$(document).ready(function () {
 			initAslUserTable();
