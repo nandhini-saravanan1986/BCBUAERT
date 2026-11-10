@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -39,6 +40,16 @@ public class MC_Service_audit_entity {
 	private String auth_user_name;
 	private String FIELD_HEADER;
 	private String ISMODIFIED;
+	
+	@Transient
+	public String getQuarter() {
+		if (domain_id == null) return "";
+		java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d{2})-(\\d{2})-(\\d{4})").matcher(domain_id);
+		if (!m.find()) return "";
+		int month = Integer.parseInt(m.group(2));
+		if (month < 1 || month > 12) return "";
+		return "Q" + ((month - 1) / 3 + 1) + " " + m.group(3);
+	}
 
 	public String getISMODIFIED() {
 		return ISMODIFIED;

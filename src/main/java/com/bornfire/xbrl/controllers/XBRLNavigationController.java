@@ -8550,10 +8550,11 @@ System.out.println("sixe==="+excelData.length);
 			sheet.setColumnWidth(5, 3000);
 			sheet.setColumnWidth(6, 2500);
 			sheet.setColumnWidth(7, 2500);
+			sheet.setColumnWidth(8, 3000);
 
 			Row headerRow = sheet.createRow(0);
 			String[] columns = { "Screen Name", "Function Code", "Field Name", "Old Value", "New Value", "User", "Date",
-					"Time" };
+					"Time", "Quarter"  };
 
 			CellStyle headerStyle = workbook.createCellStyle();
 			Font headerFont = workbook.createFont();
@@ -8603,6 +8604,7 @@ System.out.println("sixe==="+excelData.length);
 
 				String dateStr = log.getEntry_time() != null ? sdf.format(log.getEntry_time()) : "";
 				String timeStr = log.getEntry_time() != null ? timeFormat.format(log.getEntry_time()) : "";
+				String quarterStr = log.getQuarter();
 				String screenName = log.getAudit_screen() != null ? log.getAudit_screen() : "";
 				String userName = log.getEntry_user() != null ? log.getEntry_user() : "";
 
@@ -8615,7 +8617,7 @@ System.out.println("sixe==="+excelData.length);
 
 					if (hasHeader) {
 						Row fieldHeaderRow = sheet.createRow(rowNum);
-						for (int c = 0; c < 8; c++) {
+						for (int c = 0; c < 9; c++) {
 							Cell cell = fieldHeaderRow.createCell(c);
 							cell.setCellStyle(fieldHeaderStyle);
 						}
@@ -8625,6 +8627,7 @@ System.out.println("sixe==="+excelData.length);
 						fieldHeaderRow.getCell(5).setCellValue(userName);
 						fieldHeaderRow.getCell(6).setCellValue(dateStr);
 						fieldHeaderRow.getCell(7).setCellValue(timeStr);
+						fieldHeaderRow.getCell(8).setCellValue(quarterStr);
 
 						fieldHeaderRow.getCell(2).setCellValue(fieldHeader);
 						sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 2, 4));
@@ -8636,7 +8639,7 @@ System.out.println("sixe==="+excelData.length);
 						Matcher matcher = pattern.matcher(change);
 						Row dataRow = sheet.createRow(rowNum);
 
-						for (int c = 0; c < 8; c++) {
+						for (int c = 0; c < 9; c++) {
 							Cell cell = dataRow.createCell(c);
 							cell.setCellStyle(dataCellStyle);
 						}
@@ -8646,6 +8649,7 @@ System.out.println("sixe==="+excelData.length);
 						dataRow.getCell(5).setCellValue(userName);
 						dataRow.getCell(6).setCellValue(dateStr);
 						dataRow.getCell(7).setCellValue(timeStr);
+						dataRow.getCell(8).setCellValue(quarterStr);
 
 						if (matcher.find()) {
 							String fieldName = matcher.group(1).trim();
@@ -8668,7 +8672,7 @@ System.out.println("sixe==="+excelData.length);
 				} else {
 					Row singleRow = sheet.createRow(rowNum);
 
-					for (int c = 0; c < 8; c++) {
+					for (int c = 0; c < 9; c++) {
 						Cell cell = singleRow.createCell(c);
 						cell.setCellStyle(dataCellStyle);
 					}
@@ -8678,6 +8682,7 @@ System.out.println("sixe==="+excelData.length);
 					singleRow.getCell(5).setCellValue(userName);
 					singleRow.getCell(6).setCellValue(dateStr);
 					singleRow.getCell(7).setCellValue(timeStr);
+					singleRow.getCell(8).setCellValue(quarterStr);
 
 					String centerText = "";
 					if (hasHeader) {
@@ -8699,11 +8704,12 @@ System.out.println("sixe==="+excelData.length);
 					sheet.addMergedRegion(new CellRangeAddress(startRowForLog, rowNum - 1, 5, 5));
 					sheet.addMergedRegion(new CellRangeAddress(startRowForLog, rowNum - 1, 6, 6));
 					sheet.addMergedRegion(new CellRangeAddress(startRowForLog, rowNum - 1, 7, 7));
+					sheet.addMergedRegion(new CellRangeAddress(startRowForLog, rowNum - 1, 8, 8));
 
 					for (int rowIdx = startRowForLog; rowIdx < rowNum; rowIdx++) {
 						Row r = sheet.getRow(rowIdx);
 						if (r != null) {
-							int[] colsToCenter = { 0, 1, 5, 6, 7 };
+							int[] colsToCenter = { 0, 1, 5, 6, 7, 8};
 							for (int c : colsToCenter) {
 								if (r.getCell(c) != null) {
 									r.getCell(c).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
