@@ -7943,12 +7943,14 @@ System.out.println("sixe==="+excelData.length);
 						remarks, timeperiod, checkerJustification);
 
 				System.out.println("Fast Verification Update. Rows affected: " + rowsUpdated);
-				String changedDetails = changesJoiner.toString();
-				System.out.println("Changed Details : " + changedDetails);
-				auditService.auditMCEntitymanual(auditType, reportDateStr, rT_MC_TABLE_Service.screenName(formMode),
-						rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
-						productValue + " - " + columnHeader, audittext, changedDetails);
-				return ResponseEntity.ok("Verification status updated.");
+				if (rowsUpdated > 0) {
+					String changedDetails = changesJoiner.toString();
+					System.out.println("Changed Details : " + changedDetails);
+					auditService.auditMCEntitymanual(auditType, reportDateStr, rT_MC_TABLE_Service.screenName(formMode),
+							rT_MC_TABLE_Service.getMainTableName(formMode, cellName) + " & RT_MC_DATA_RECORD",
+							productValue + " - " + columnHeader, audittext, changedDetails);
+					return ResponseEntity.ok("Verification status updated.");
+				}
 			}
 
 			RT_MC_DATA_RECORD_ENTITY record = null;
@@ -8376,9 +8378,11 @@ System.out.println("sixe==="+excelData.length);
 					if (isTotalCell) {
 						if ("N".equals(croFlg) || "N".equals(ccoFlg) || "N".equals(verifyFlg)) {
 							flags.put(cellName, "N");
+						} else if ("Y".equals(verifyFlg)) {
+							flags.put(cellName, "Y");
 						} else if ("Y".equals(croFlg) && "Y".equals(ccoFlg)) {
 							flags.put(cellName, "Y");
-						} else if (!verifyFlg.isEmpty() || "C".equalsIgnoreCase(modifyFlg)) {
+						} else if ("C".equalsIgnoreCase(modifyFlg)) {
 							flags.put(cellName, "C");
 						}
 					} else {

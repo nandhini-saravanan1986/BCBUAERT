@@ -19651,6 +19651,31 @@
 					return checkCfg(ptReportData1) || checkCfg(ptReportData2);
 				};
 
+				const isCellNameAllocatedToDepartment = (cellName) => {
+					if (!cellName) return false;
+					const clean = cellName.trim().toLowerCase();
+					const checkCfg = (cfg) => {
+						if (!cfg) return false;
+						const actualKey = Object.keys(cfg).find(key => key.trim().toLowerCase() === clean);
+						if (actualKey && cfg[actualKey]) {
+							const rawVal = String(cfg[actualKey]).trim().toLowerCase();
+							return rawVal !== '' && rawVal !== '-' && !rawVal.includes('not applicable') && rawVal !== 'na' && rawVal !== 'n/a';
+						}
+						return false;
+					};
+					return checkCfg(ptReportData1) || checkCfg(ptReportData2);
+				};
+
+				const isCellAllocatedToDepartment = (element) => {
+					if (!element) return false;
+					const keysToTest = [
+						element.getAttribute ? element.getAttribute('data-cellname') : null,
+						element.name,
+						element.id
+					].filter(Boolean);
+					return keysToTest.some(k => isCellNameAllocatedToDepartment(k));
+				};
+
 				function isNoCalcColumn(cellName, mode) {
 					if (!cellName) return false;
 					const name = cellName.toUpperCase();
@@ -19705,6 +19730,14 @@
 					if (!totalInput || !totalInput._childInputs) return;
 
 					const totalCellName = (totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id || '').toUpperCase();
+
+					/*
+					 * If the total cell is allocated to any department, it is treated as a normal non-calculated cell.
+					 * Auto-calculation is skipped to preserve manual user inputs.
+					 */
+					if (totalInput.dataset.deptAllocated === "true" || isCellAllocatedToDepartment(totalInput) || isCellNameAllocatedToDepartment(totalCellName)) {
+						return;
+					}
 
 					/*
 					 * =========================================================================================
@@ -19835,6 +19868,14 @@
 					const totalCellName = totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id;
 					if (!totalCellName) return;
 
+					/*
+					 * If the total cell is allocated to any department, it is treated as a normal non-calculated cell.
+					 * Auto-syncing from child rows is skipped to avoid overwriting department maker/checker entries.
+					 */
+					if (totalInput.dataset.deptAllocated === "true" || isCellAllocatedToDepartment(totalInput) || isCellNameAllocatedToDepartment(totalCellName)) {
+						return;
+					}
+
 					if (isNoCalcColumn(totalCellName, formMode)) {
 						return;
 					}
@@ -19961,12 +20002,14 @@
 
 								if (r === rows.length - 1 && childInputsInCol.length > 0) {
 									const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
-									const isNoCalc = isNoCalcColumn(totalCellName, formMode);
+									const isAllocated = isCellAllocatedToDepartment(inp) || isCellNameAllocatedToDepartment(totalCellName);
+									const isNoCalc = isNoCalcColumn(totalCellName, formMode) || isAllocated;
 
 									inp.dataset.isTotalCell = "true";
 									inp.dataset.autoTotal = isNoCalc ? "false" : "true";
+									inp.dataset.deptAllocated = isAllocated ? "true" : "false";
 
-									if (isNoCalc) {
+									if (isNoCalc && !isAllocated) {
 										if (!inp.value || inp.value.trim() === '') {
 											inp.value = "0";
 										}
@@ -20012,6 +20055,9 @@
 									if (counterpart.dataset.autoTotal === "true") {
 										mgrInp.dataset.autoTotal = "true";
 									}
+									if (counterpart.dataset.deptAllocated === "true") {
+										mgrInp.dataset.deptAllocated = "true";
+									}
 									mgrInp._childInputs = counterpart._childInputs;
 								}
 							}
@@ -20026,6 +20072,7 @@
 							if (!cellName.includes('BANK') && !cellName.includes('PRODUCT')) {
 								inp.dataset.isTotalCell = "true";
 								inp.dataset.autoTotal = "false";
+								inp.dataset.deptAllocated = isCellAllocatedToDepartment(inp) ? "true" : "false";
 							}
 						});
 					});
@@ -20038,6 +20085,7 @@
 					const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
 					const isRemarksField = input.classList.contains('remarks-input');
 					const isAutoTotal = input.dataset.autoTotal === "true";
+					const isAllocatedTotal = input.dataset.deptAllocated === "true" || (input.dataset.isTotalCell === "true" && (isCellAllocatedToDepartment(input) || isCellNameAllocatedToDepartment(fieldName)));
 
 					const hasAuthorizedChild = input._childInputs && input._childInputs.some(ci => {
 						const ciName = ci.getAttribute('data-cellname') || ci.name || ci.id;
@@ -20045,7 +20093,9 @@
 					});
 
 					const isTotalCell = input.dataset.isTotalCell === "true";
-					const isAuthorized = isManager || (isTotalCell && (isCRO || isCCO)) || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || hasAuthorizedChild;
+					const isUserAllowedDept = isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+					const canAccessViaChild = !isAllocatedTotal && isAutoTotal && hasAuthorizedChild;
+					const isAuthorized = isManager || (isTotalCell && (isCRO || isCCO)) || isUserAllowedDept || canAccessViaChild;
 
 					if (isAuthorized) {
 						if (isAutoTotal) {
@@ -21259,9 +21309,10 @@
 							inputsInCell.forEach(input => {
 								const fieldName = input.getAttribute('data-cellname') || input.name || input.id;
 								const isAutoTotal = input.dataset.autoTotal === "true";
-								const isAuthorized = isManager || (input.dataset.isTotalCell === "true" && (isCRO || isCCO)) || isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName) || (isAutoTotal
-									? (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.getAttribute('data-cellname') || ci.name || ci.id) || isAllowed(ptReportData2, ci.getAttribute('data-cellname') || ci.name || ci.id)))
-									: false);
+								const isAllocatedTotal = input.dataset.deptAllocated === "true" || (input.dataset.isTotalCell === "true" && (isCellAllocatedToDepartment(input) || isCellNameAllocatedToDepartment(fieldName)));
+								const isUserAllowedDept = isAllowed(ptReportData1, fieldName) || isAllowed(ptReportData2, fieldName);
+								const canAccessViaChild = !isAllocatedTotal && isAutoTotal && (input._childInputs && input._childInputs.some(ci => isAllowed(ptReportData1, ci.getAttribute('data-cellname') || ci.name || ci.id) || isAllowed(ptReportData2, ci.getAttribute('data-cellname') || ci.name || ci.id)));
+								const isAuthorized = isManager || (input.dataset.isTotalCell === "true" && (isCRO || isCCO)) || isUserAllowedDept || canAccessViaChild;
 								if (isAuthorized) {
 									cellHasAuth = true;
 									// console.warn(`KEEPING COLUMN ${info.startCol} ALIVE: Department is authorized for field [${fieldName}]`);
