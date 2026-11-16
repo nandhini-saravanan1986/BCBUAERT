@@ -373,13 +373,14 @@ public class RT_MC_TABLE_ALL_Service {
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE2_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE2_2_ENTITY> dataList2 = new ArrayList<>();
+	    List<RT_MC_TABLE2_2_ENTITY> deptData2 = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE2_1_ENTITY> numData1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 	        List<RT_MC_TABLE2_1_ENTITY> deptData1 = RT_MC_TABLE2_1_REPO.findBybranchcode("DEPT");
 	        List<RT_MC_TABLE2_2_ENTITY> numData2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE2_2_ENTITY> deptData2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+	        deptData2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
 	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE2_1_ENTITY.class);
 	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE2_2_ENTITY.class);
 	        
@@ -390,6 +391,16 @@ public class RT_MC_TABLE_ALL_Service {
 	        } else {
 	        	dataList1 = RT_MC_TABLE2_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 				dataList2 = RT_MC_TABLE2_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE2_2_ENTITY deptRecord2 = null;
+	    if (deptData2 != null && !deptData2.isEmpty()) {
+	        deptRecord2 = deptData2.get(0);
+	    } else {
+	        List<RT_MC_TABLE2_2_ENTITY> dl2 = RT_MC_TABLE2_2_REPO.findBybranchcode("DEPT");
+	        if (dl2 != null && !dl2.isEmpty()) {
+	            deptRecord2 = dl2.get(0);
 	        }
 	    }
 
@@ -1385,63 +1396,66 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 60, record2.getR21_NO_CON_END(), null, createHelper);
 
 					setMcProgress(progressMap, jobId, 85);
-//					row = sheet.getRow(21);
-//					updateCellPreserveStyle(row, 5, record2.getR22_NO_WO_SD(), null, createHelper);
-//					updateCellPreserveStyle(row, 6, record2.getR22_NO_CON_POD_SD(), null, createHelper);
-//					updateCellPreserveStyle(row, 7, record2.getR22_NO_CON_UNAU_SP_TP(), null, createHelper);
-//					updateCellPreserveStyle(row, 8, record2.getR22_NO_CON_45_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record2.getR22_NO_CON_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record2.getR22_NO_OF_LES_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 11, record2.getR22_NO_OF_BNK_18(), null, createHelper);
-//					updateCellPreserveStyle(row, 12, record2.getR22_NO_OF_BNK_18_25(), null, createHelper);
-//					updateCellPreserveStyle(row, 13, record2.getR22_NO_OF_BNK_26_35(), null, createHelper);
-//					updateCellPreserveStyle(row, 14, record2.getR22_NO_OF_BNK_36_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 15, record2.getR22_NO_CON_BNK_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 16, record2.getR22_NO_CON_SAL_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 17, record2.getR22_NO_CON_BUS_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 18, record2.getR22_NO_CON_PRO_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 19, record2.getR22_NO_CON_INC_5K(), null, createHelper);
-//					updateCellPreserveStyle(row, 20, record2.getR22_NO_CON_INC_5K_10K(), null, createHelper);
-//					updateCellPreserveStyle(row, 21, record2.getR22_NO_CON_INC_10K_20K(), null, createHelper);
-//					updateCellPreserveStyle(row, 22, record2.getR22_NO_CON_INC_20K_35K(), null, createHelper);
-//					updateCellPreserveStyle(row, 23, record2.getR22_NO_CON_INC_35K(), null, createHelper);
-//					updateCellPreserveStyle(row, 24, record2.getR22_NO_CON_BEL_SCL(), null, createHelper);
-//					updateCellPreserveStyle(row, 25, record2.getR22_NO_CON_BAC(), null, createHelper);
-//					updateCellPreserveStyle(row, 26, record2.getR22_NO_CON_ABV_MAS(), null, createHelper);
-//					updateCellPreserveStyle(row, 27, record2.getR22_NO_CON_ABU_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 28, record2.getR22_NO_CON_DUB_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 29, record2.getR22_NO_CON_SHJ_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 30, record2.getR22_NO_CON_AJM_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 31, record2.getR22_NO_CON_FUJ_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 32, record2.getR22_NO_CON_RAK_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 33, record2.getR22_NO_CON_UAQ_KYC(), null, createHelper);
-//					updateCellPreserveStyle(row, 34, record2.getR22_NO_CON_RET(), null, createHelper);
-//					updateCellPreserveStyle(row, 35, record2.getR22_NO_CON_DBR_LIM(), null, createHelper);
-//					updateCellPreserveStyle(row, 36, record2.getR22_NO_UAE_CON_SPC_TP(), null, createHelper);
-//					updateCellPreserveStyle(row, 37, record2.getR22_NO_UAE_CON_NLS(), null, createHelper);
-//					updateCellPreserveStyle(row, 38, record2.getR22_VAL_LOS_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 39, record2.getR22_NO_CON_ONB_90(), null, createHelper);
-//					updateCellPreserveStyle(row, 40, record2.getR22_NO_CON_BAL_PAY(), null, createHelper);
-//					updateCellPreserveStyle(row, 41, record2.getR22_NO_CON_BAL_SPC_TP(), null, createHelper);
-//					updateCellPreserveStyle(row, 42, record2.getR22_NO_CON_DEBT(), null, createHelper);
-//					updateCellPreserveStyle(row, 43, record2.getR22_NO_CON_ONB_REF(), null, createHelper);
-//					updateCellPreserveStyle(row, 44, record2.getR22_NO_CON_ONB_AGE(), null, createHelper);
-//					updateCellPreserveStyle(row, 45, record2.getR22_NO_CON_AFF_UNAU(), null, createHelper);
-//					updateCellPreserveStyle(row, 46, record2.getR22_NO_OF_ACCS_POD(), null, createHelper);
-//					updateCellPreserveStyle(row, 47, record2.getR22_NO_DEL_CON(), null, createHelper);
-//					updateCellPreserveStyle(row, 48, record2.getR22_NO_INS_FUN_LFI(), null, createHelper);
-//					updateCellPreserveStyle(row, 49, record2.getR22_NO_CON_COL_FIN(), null, createHelper);
-//					updateCellPreserveStyle(row, 50, record2.getR22_TOT_NO_NEW_FIN(), null, createHelper);
-//					updateCellPreserveStyle(row, 51, record2.getR22_TOT_NO_NEW_NOSGN(), null, createHelper);
-//					updateCellPreserveStyle(row, 52, record2.getR22_NO_CON_START(), null, createHelper);
-//					updateCellPreserveStyle(row, 53, record2.getR22_NO_NEW_CON_ONBO(), null, createHelper);
-//					updateCellPreserveStyle(row, 54, record2.getR22_NO_CON_DEBT_COUN(), null, createHelper);
-//					updateCellPreserveStyle(row, 55, record2.getR22_NO_CON_DEL_NPA(), null, createHelper);
-//					updateCellPreserveStyle(row, 56, record2.getR22_NO_CON_GOV_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 57, record2.getR22_NO_SME_SOLE(), null, createHelper);
-//					updateCellPreserveStyle(row, 58, record2.getR22_NO_CON_TAG_VUL(), null, createHelper);
-//					updateCellPreserveStyle(row, 59, record2.getR22_NO_NEW_CON_ONB_GNP(), null, createHelper);
-//					updateCellPreserveStyle(row, 60, record2.getR22_NO_CON_END(), null, createHelper);
+					row = sheet.getRow(21);
+					if (row == null) {
+						row = sheet.createRow(21);
+					}
+					writeTotalCellIfAllocated(row, 5, record2.getR22_NO_WO_SD(), deptRecord2 != null ? deptRecord2.getR22_NO_WO_SD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 6, record2.getR22_NO_CON_POD_SD(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_POD_SD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 7, record2.getR22_NO_CON_UNAU_SP_TP(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_UNAU_SP_TP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 8, record2.getR22_NO_CON_45_50(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_45_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record2.getR22_NO_CON_50(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record2.getR22_NO_OF_LES_50(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_LES_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record2.getR22_NO_OF_BNK_18(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_BNK_18() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record2.getR22_NO_OF_BNK_18_25(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_BNK_18_25() : null, createHelper);
+					writeTotalCellIfAllocated(row, 13, record2.getR22_NO_OF_BNK_26_35(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_BNK_26_35() : null, createHelper);
+					writeTotalCellIfAllocated(row, 14, record2.getR22_NO_OF_BNK_36_50(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_BNK_36_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 15, record2.getR22_NO_CON_BNK_50(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BNK_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 16, record2.getR22_NO_CON_SAL_SPD(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_SAL_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 17, record2.getR22_NO_CON_BUS_SPD(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BUS_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 18, record2.getR22_NO_CON_PRO_SPD(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_PRO_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 19, record2.getR22_NO_CON_INC_5K(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_INC_5K() : null, createHelper);
+					writeTotalCellIfAllocated(row, 20, record2.getR22_NO_CON_INC_5K_10K(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_INC_5K_10K() : null, createHelper);
+					writeTotalCellIfAllocated(row, 21, record2.getR22_NO_CON_INC_10K_20K(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_INC_10K_20K() : null, createHelper);
+					writeTotalCellIfAllocated(row, 22, record2.getR22_NO_CON_INC_20K_35K(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_INC_20K_35K() : null, createHelper);
+					writeTotalCellIfAllocated(row, 23, record2.getR22_NO_CON_INC_35K(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_INC_35K() : null, createHelper);
+					writeTotalCellIfAllocated(row, 24, record2.getR22_NO_CON_BEL_SCL(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BEL_SCL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 25, record2.getR22_NO_CON_BAC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BAC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 26, record2.getR22_NO_CON_ABV_MAS(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_ABV_MAS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 27, record2.getR22_NO_CON_ABU_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_ABU_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 28, record2.getR22_NO_CON_DUB_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_DUB_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 29, record2.getR22_NO_CON_SHJ_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_SHJ_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 30, record2.getR22_NO_CON_AJM_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_AJM_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 31, record2.getR22_NO_CON_FUJ_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_FUJ_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 32, record2.getR22_NO_CON_RAK_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_RAK_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 33, record2.getR22_NO_CON_UAQ_KYC(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_UAQ_KYC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 34, record2.getR22_NO_CON_RET(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_RET() : null, createHelper);
+					writeTotalCellIfAllocated(row, 35, record2.getR22_NO_CON_DBR_LIM(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_DBR_LIM() : null, createHelper);
+					writeTotalCellIfAllocated(row, 36, record2.getR22_NO_UAE_CON_SPC_TP(), deptRecord2 != null ? deptRecord2.getR22_NO_UAE_CON_SPC_TP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 37, record2.getR22_NO_UAE_CON_NLS(), deptRecord2 != null ? deptRecord2.getR22_NO_UAE_CON_NLS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 38, record2.getR22_VAL_LOS_AED(), deptRecord2 != null ? deptRecord2.getR22_VAL_LOS_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 39, record2.getR22_NO_CON_ONB_90(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_ONB_90() : null, createHelper);
+					writeTotalCellIfAllocated(row, 40, record2.getR22_NO_CON_BAL_PAY(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BAL_PAY() : null, createHelper);
+					writeTotalCellIfAllocated(row, 41, record2.getR22_NO_CON_BAL_SPC_TP(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_BAL_SPC_TP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 42, record2.getR22_NO_CON_DEBT(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_DEBT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 43, record2.getR22_NO_CON_ONB_REF(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_ONB_REF() : null, createHelper);
+					writeTotalCellIfAllocated(row, 44, record2.getR22_NO_CON_ONB_AGE(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_ONB_AGE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 45, record2.getR22_NO_CON_AFF_UNAU(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_AFF_UNAU() : null, createHelper);
+					writeTotalCellIfAllocated(row, 46, record2.getR22_NO_OF_ACCS_POD(), deptRecord2 != null ? deptRecord2.getR22_NO_OF_ACCS_POD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 47, record2.getR22_NO_DEL_CON(), deptRecord2 != null ? deptRecord2.getR22_NO_DEL_CON() : null, createHelper);
+					writeTotalCellIfAllocated(row, 48, record2.getR22_NO_INS_FUN_LFI(), deptRecord2 != null ? deptRecord2.getR22_NO_INS_FUN_LFI() : null, createHelper);
+					writeTotalCellIfAllocated(row, 49, record2.getR22_NO_CON_COL_FIN(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_COL_FIN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 50, record2.getR22_TOT_NO_NEW_FIN(), deptRecord2 != null ? deptRecord2.getR22_TOT_NO_NEW_FIN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 51, record2.getR22_TOT_NO_NEW_NOSGN(), deptRecord2 != null ? deptRecord2.getR22_TOT_NO_NEW_NOSGN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 52, record2.getR22_NO_CON_START(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_START() : null, createHelper);
+					writeTotalCellIfAllocated(row, 53, record2.getR22_NO_NEW_CON_ONBO(), deptRecord2 != null ? deptRecord2.getR22_NO_NEW_CON_ONBO() : null, createHelper);
+					writeTotalCellIfAllocated(row, 54, record2.getR22_NO_CON_DEBT_COUN(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_DEBT_COUN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 55, record2.getR22_NO_CON_DEL_NPA(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_DEL_NPA() : null, createHelper);
+					writeTotalCellIfAllocated(row, 56, record2.getR22_NO_CON_GOV_50(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_GOV_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 57, record2.getR22_NO_SME_SOLE(), deptRecord2 != null ? deptRecord2.getR22_NO_SME_SOLE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 58, record2.getR22_NO_CON_TAG_VUL(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_TAG_VUL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 59, record2.getR22_NO_NEW_CON_ONB_GNP(), deptRecord2 != null ? deptRecord2.getR22_NO_NEW_CON_ONB_GNP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 60, record2.getR22_NO_CON_END(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_END() : null, createHelper);
 
 
 				}
@@ -1478,11 +1492,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE3_ENTITY> dataList = new ArrayList<>();
+	    List<RT_MC_TABLE3_ENTITY> deptData = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE3_ENTITY> numData = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE3_ENTITY> deptData = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+	        deptData = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
 	        
 	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE3_ENTITY.class);
 	        
@@ -1491,6 +1506,16 @@ public class RT_MC_TABLE_ALL_Service {
 	            dataList = RT_MC_TABLE3_REPO.findBybranchcode(branch);
 	        } else {
 	            dataList = RT_MC_TABLE3_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE3_ENTITY deptRecord = null;
+	    if (deptData != null && !deptData.isEmpty()) {
+	        deptRecord = deptData.get(0);
+	    } else {
+	        List<RT_MC_TABLE3_ENTITY> dList = RT_MC_TABLE3_REPO.findBybranchcode("DEPT");
+	        if (dList != null && !dList.isEmpty()) {
+	            deptRecord = dList.get(0);
 	        }
 	    }
 
@@ -2231,46 +2256,49 @@ public class RT_MC_TABLE_ALL_Service {
 					setMcProgress(progressMap, jobId, 85);
 					
 					row = sheet.getRow(21);
-//					updateCellPreserveStyle(row, 5, record.getR22_NO_COM_SPC_TP(), null, createHelper);
-//					updateCellPreserveStyle(row, 6, record.getR22_NO_COM_PEN(), null, createHelper);
-//					updateCellPreserveStyle(row, 7, record.getR22_AMT_FIN_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 8, record.getR22_NO_COM_ADV_FEES(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record.getR22_NO_COM_DET_SPC_PT(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record.getR22_NO_COM_DEBT(), null, createHelper);
-//					updateCellPreserveStyle(row, 11, record.getR22_NO_COM_AGNT(), null, createHelper);
-//					updateCellPreserveStyle(row, 12, record.getR22_NO_COM_MISSEL(), null, createHelper);
-//					updateCellPreserveStyle(row, 13, record.getR22_NO_COM_FILCOM(), null, createHelper);
-//					updateCellPreserveStyle(row, 14, record.getR22_NO_COM_PRO_SER(), null, createHelper);
-//					updateCellPreserveStyle(row, 15, record.getR22_NO_ASO_PROD(), null, createHelper);
-//					updateCellPreserveStyle(row, 16, record.getR22_NO_CON_PHN(), null, createHelper);
-//					updateCellPreserveStyle(row, 17, record.getR22_NO_CON_WEB(), null, createHelper);
-//					updateCellPreserveStyle(row, 18, record.getR22_NO_CON_BNK(), null, createHelper);
-//					updateCellPreserveStyle(row, 19, record.getR22_NO_OUT_UNRES(), null, createHelper);
-//					updateCellPreserveStyle(row, 20, record.getR22_NO_COM_RES_CON(), null, createHelper);
-//					updateCellPreserveStyle(row, 21, record.getR22_NO_RES_30_COM(), null, createHelper);
+					if (row == null) {
+						row = sheet.createRow(21);
+					}
+					writeTotalCellIfAllocated(row, 5, record.getR22_NO_COM_SPC_TP(), deptRecord != null ? deptRecord.getR22_NO_COM_SPC_TP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 6, record.getR22_NO_COM_PEN(), deptRecord != null ? deptRecord.getR22_NO_COM_PEN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 7, record.getR22_AMT_FIN_AED(), deptRecord != null ? deptRecord.getR22_AMT_FIN_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 8, record.getR22_NO_COM_ADV_FEES(), deptRecord != null ? deptRecord.getR22_NO_COM_ADV_FEES() : null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record.getR22_NO_COM_DET_SPC_PT(), deptRecord != null ? deptRecord.getR22_NO_COM_DET_SPC_PT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record.getR22_NO_COM_DEBT(), deptRecord != null ? deptRecord.getR22_NO_COM_DEBT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record.getR22_NO_COM_AGNT(), deptRecord != null ? deptRecord.getR22_NO_COM_AGNT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record.getR22_NO_COM_MISSEL(), deptRecord != null ? deptRecord.getR22_NO_COM_MISSEL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 13, record.getR22_NO_COM_FILCOM(), deptRecord != null ? deptRecord.getR22_NO_COM_FILCOM() : null, createHelper);
+					writeTotalCellIfAllocated(row, 14, record.getR22_NO_COM_PRO_SER(), deptRecord != null ? deptRecord.getR22_NO_COM_PRO_SER() : null, createHelper);
+					writeTotalCellIfAllocated(row, 15, record.getR22_NO_ASO_PROD(), deptRecord != null ? deptRecord.getR22_NO_ASO_PROD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 16, record.getR22_NO_CON_PHN(), deptRecord != null ? deptRecord.getR22_NO_CON_PHN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 17, record.getR22_NO_CON_WEB(), deptRecord != null ? deptRecord.getR22_NO_CON_WEB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 18, record.getR22_NO_CON_BNK(), deptRecord != null ? deptRecord.getR22_NO_CON_BNK() : null, createHelper);
+					writeTotalCellIfAllocated(row, 19, record.getR22_NO_OUT_UNRES(), deptRecord != null ? deptRecord.getR22_NO_OUT_UNRES() : null, createHelper);
+					writeTotalCellIfAllocated(row, 20, record.getR22_NO_COM_RES_CON(), deptRecord != null ? deptRecord.getR22_NO_COM_RES_CON() : null, createHelper);
+					writeTotalCellIfAllocated(row, 21, record.getR22_NO_RES_30_COM(), deptRecord != null ? deptRecord.getR22_NO_RES_30_COM() : null, createHelper);
 					updateCellPreserveStyle(row, 22, record.getR22_AVG_TME_RES_COM(), null, createHelper);
-//					updateCellPreserveStyle(row, 23, record.getR22_NO_COM_STF_MIS(), null, createHelper);
-//					updateCellPreserveStyle(row, 24, record.getR22_NO_COM_ATM_WEB(), null, createHelper);
-//					updateCellPreserveStyle(row, 25, record.getR22_NO_COM_FIN_LOS(), null, createHelper);
-//					updateCellPreserveStyle(row, 26, record.getR22_NO_COM_FAV_LOS(), null, createHelper);
-//					updateCellPreserveStyle(row, 27, record.getR22_NO_COM_PRV_PER(), null, createHelper);
-//					updateCellPreserveStyle(row, 28, record.getR22_NO_RES_COM(), null, createHelper);
-//					updateCellPreserveStyle(row, 29, record.getR22_NO_STEP_LOS(), null, createHelper);
-//					updateCellPreserveStyle(row, 30, record.getR22_NO_CUST_LEGAL(), null, createHelper);
-//					updateCellPreserveStyle(row, 31, record.getR22_NO_COM_FAIL(), null, createHelper);
-//					updateCellPreserveStyle(row, 32, record.getR22_NO_COM_EXP_CON(), null, createHelper);
-//					updateCellPreserveStyle(row, 33, record.getR22_NO_COM_SANA(), null, createHelper);
-//					updateCellPreserveStyle(row, 34, record.getR22_NO_COM_CBUAE_SD(), null, createHelper);
-//					updateCellPreserveStyle(row, 35, record.getR22_NO_RES_COM_7(), null, createHelper);
-//					updateCellPreserveStyle(row, 36, record.getR22_NO_RES_COM_15(), null, createHelper);
-//					updateCellPreserveStyle(row, 37, record.getR22_NO_COM_UPHEL(), null, createHelper);
-//					updateCellPreserveStyle(row, 38, record.getR22_NO_COM_BNK_STF(), null, createHelper);
-//					updateCellPreserveStyle(row, 39, record.getR22_NO_COM_INHOU(), null, createHelper);
-//					updateCellPreserveStyle(row, 40, record.getR22_NO_COM_ACK_TT(), null, createHelper);
-//					updateCellPreserveStyle(row, 41, record.getR22_NO_COM_DEBT_COLL(), null, createHelper);
-//					updateCellPreserveStyle(row, 42, record.getR22_NO_INST_CRE_RATE(), null, createHelper);
-//					updateCellPreserveStyle(row, 43, record.getR22_NO_CON_DELAY(), null, createHelper);
-//					updateCellPreserveStyle(row, 44, record.getR22_NO_COM_REP_DTE(), null, createHelper);
+					writeTotalCellIfAllocated(row, 23, record.getR22_NO_COM_STF_MIS(), deptRecord != null ? deptRecord.getR22_NO_COM_STF_MIS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 24, record.getR22_NO_COM_ATM_WEB(), deptRecord != null ? deptRecord.getR22_NO_COM_ATM_WEB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 25, record.getR22_NO_COM_FIN_LOS(), deptRecord != null ? deptRecord.getR22_NO_COM_FIN_LOS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 26, record.getR22_NO_COM_FAV_LOS(), deptRecord != null ? deptRecord.getR22_NO_COM_FAV_LOS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 27, record.getR22_NO_COM_PRV_PER(), deptRecord != null ? deptRecord.getR22_NO_COM_PRV_PER() : null, createHelper);
+					writeTotalCellIfAllocated(row, 28, record.getR22_NO_RES_COM(), deptRecord != null ? deptRecord.getR22_NO_RES_COM() : null, createHelper);
+					writeTotalCellIfAllocated(row, 29, record.getR22_NO_STEP_LOS(), deptRecord != null ? deptRecord.getR22_NO_STEP_LOS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 30, record.getR22_NO_CUST_LEGAL(), deptRecord != null ? deptRecord.getR22_NO_CUST_LEGAL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 31, record.getR22_NO_COM_FAIL(), deptRecord != null ? deptRecord.getR22_NO_COM_FAIL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 32, record.getR22_NO_COM_EXP_CON(), deptRecord != null ? deptRecord.getR22_NO_COM_EXP_CON() : null, createHelper);
+					writeTotalCellIfAllocated(row, 33, record.getR22_NO_COM_SANA(), deptRecord != null ? deptRecord.getR22_NO_COM_SANA() : null, createHelper);
+					writeTotalCellIfAllocated(row, 34, record.getR22_NO_COM_CBUAE_SD(), deptRecord != null ? deptRecord.getR22_NO_COM_CBUAE_SD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 35, record.getR22_NO_RES_COM_7(), deptRecord != null ? deptRecord.getR22_NO_RES_COM_7() : null, createHelper);
+					writeTotalCellIfAllocated(row, 36, record.getR22_NO_RES_COM_15(), deptRecord != null ? deptRecord.getR22_NO_RES_COM_15() : null, createHelper);
+					writeTotalCellIfAllocated(row, 37, record.getR22_NO_COM_UPHEL(), deptRecord != null ? deptRecord.getR22_NO_COM_UPHEL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 38, record.getR22_NO_COM_BNK_STF(), deptRecord != null ? deptRecord.getR22_NO_COM_BNK_STF() : null, createHelper);
+					writeTotalCellIfAllocated(row, 39, record.getR22_NO_COM_INHOU(), deptRecord != null ? deptRecord.getR22_NO_COM_INHOU() : null, createHelper);
+					writeTotalCellIfAllocated(row, 40, record.getR22_NO_COM_ACK_TT(), deptRecord != null ? deptRecord.getR22_NO_COM_ACK_TT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 41, record.getR22_NO_COM_DEBT_COLL(), deptRecord != null ? deptRecord.getR22_NO_COM_DEBT_COLL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 42, record.getR22_NO_INST_CRE_RATE(), deptRecord != null ? deptRecord.getR22_NO_INST_CRE_RATE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 43, record.getR22_NO_CON_DELAY(), deptRecord != null ? deptRecord.getR22_NO_CON_DELAY() : null, createHelper);
+					writeTotalCellIfAllocated(row, 44, record.getR22_NO_COM_REP_DTE(), deptRecord != null ? deptRecord.getR22_NO_COM_REP_DTE() : null, createHelper);
 
 				}
 				evaluateMcFormulas(workbook, jobId);
@@ -2305,13 +2333,14 @@ public class RT_MC_TABLE_ALL_Service {
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE4_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE4_2_ENTITY> dataList2 = new ArrayList<>();
+	    List<RT_MC_TABLE4_2_ENTITY> deptData2 = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE4_1_ENTITY> numData1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 	        List<RT_MC_TABLE4_1_ENTITY> deptData1 = RT_MC_TABLE4_1_REPO.findBybranchcode("DEPT");
 	        List<RT_MC_TABLE4_2_ENTITY> numData2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE4_2_ENTITY> deptData2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+	        deptData2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
 	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE4_1_ENTITY.class);
 	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE4_2_ENTITY.class);
 	        
@@ -2322,6 +2351,16 @@ public class RT_MC_TABLE_ALL_Service {
 	        } else {
 	        	dataList1 = RT_MC_TABLE4_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 				dataList2 = RT_MC_TABLE4_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE4_2_ENTITY deptRecord2 = null;
+	    if (deptData2 != null && !deptData2.isEmpty()) {
+	        deptRecord2 = deptData2.get(0);
+	    } else {
+	        List<RT_MC_TABLE4_2_ENTITY> dl2 = RT_MC_TABLE4_2_REPO.findBybranchcode("DEPT");
+	        if (dl2 != null && !dl2.isEmpty()) {
+	            deptRecord2 = dl2.get(0);
 	        }
 	    }
 
@@ -3476,31 +3515,34 @@ public class RT_MC_TABLE_ALL_Service {
 
 					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(21);
+					if (row == null) {
+						row = sheet.createRow(21);
+					}
 					updateCellPreserveStyle(row, 5, record2.getR22_AVG_TME_LWRSK(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR22_AVG_NO_LOAN(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record2.getR22_AVG_NO_LWRSK_SME(), null, createHelper);
 					updateCellPreserveStyle(row, 8, record2.getR22_AVG_NO_DYS_SME(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record2.getR22_NO_REQ_CLO(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record2.getR22_NO_PRD_VAR_SPC_TP(), null, createHelper);
-//					updateCellPreserveStyle(row, 11, record2.getR22_NO_REQ_RES_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 12, record2.getR22_NO_REQ_PAYDEF(), null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record2.getR22_NO_REQ_CLO(), deptRecord2 != null ? deptRecord2.getR22_NO_REQ_CLO() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record2.getR22_NO_PRD_VAR_SPC_TP(), deptRecord2 != null ? deptRecord2.getR22_NO_PRD_VAR_SPC_TP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record2.getR22_NO_REQ_RES_SPT(), deptRecord2 != null ? deptRecord2.getR22_NO_REQ_RES_SPT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record2.getR22_NO_REQ_PAYDEF(), deptRecord2 != null ? deptRecord2.getR22_NO_REQ_PAYDEF() : null, createHelper);
 					updateCellPreserveStyle(row, 13, record2.getR22_AVG_TME_REPAY(), null, createHelper);
-//					updateCellPreserveStyle(row, 14, record2.getR22_NO_INST_BAL(), null, createHelper);
-//					updateCellPreserveStyle(row, 15, record2.getR22_NET_FEE_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 16, record2.getR22_NET_PROF_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 17, record2.getR22_TOT_NO_ACC_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 18, record2.getR22_TOT_ACCS_DOR(), null, createHelper);
-//					updateCellPreserveStyle(row, 19, record2.getR22_TOT_NEW_LOAN(), null, createHelper);
-//					updateCellPreserveStyle(row, 20, record2.getR22_TOT_VAL_NEWACCS_AED(), null, createHelper);
-//					updateCellPreserveStyle(row, 21, record2.getR22_TOT_NO_LOAN_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 22, record2.getR22_TOT_REQ_OTBNK(), null, createHelper);
-//					updateCellPreserveStyle(row, 23, record2.getR22_TOT_LOAN_OTBNK(), null, createHelper);
-//					updateCellPreserveStyle(row, 24, record2.getR22_NO_CRACC_MIN(), null, createHelper);
+					writeTotalCellIfAllocated(row, 14, record2.getR22_NO_INST_BAL(), deptRecord2 != null ? deptRecord2.getR22_NO_INST_BAL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 15, record2.getR22_NET_FEE_AED(), deptRecord2 != null ? deptRecord2.getR22_NET_FEE_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 16, record2.getR22_NET_PROF_AED(), deptRecord2 != null ? deptRecord2.getR22_NET_PROF_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 17, record2.getR22_TOT_NO_ACC_SPD(), deptRecord2 != null ? deptRecord2.getR22_TOT_NO_ACC_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 18, record2.getR22_TOT_ACCS_DOR(), deptRecord2 != null ? deptRecord2.getR22_TOT_ACCS_DOR() : null, createHelper);
+					writeTotalCellIfAllocated(row, 19, record2.getR22_TOT_NEW_LOAN(), deptRecord2 != null ? deptRecord2.getR22_TOT_NEW_LOAN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 20, record2.getR22_TOT_VAL_NEWACCS_AED(), deptRecord2 != null ? deptRecord2.getR22_TOT_VAL_NEWACCS_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 21, record2.getR22_TOT_NO_LOAN_SPD(), deptRecord2 != null ? deptRecord2.getR22_TOT_NO_LOAN_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 22, record2.getR22_TOT_REQ_OTBNK(), deptRecord2 != null ? deptRecord2.getR22_TOT_REQ_OTBNK() : null, createHelper);
+					writeTotalCellIfAllocated(row, 23, record2.getR22_TOT_LOAN_OTBNK(), deptRecord2 != null ? deptRecord2.getR22_TOT_LOAN_OTBNK() : null, createHelper);
+					writeTotalCellIfAllocated(row, 24, record2.getR22_NO_CRACC_MIN(), deptRecord2 != null ? deptRecord2.getR22_NO_CRACC_MIN() : null, createHelper);
 					updateCellPreserveStyle(row, 25, record2.getR22_AVG_TME_CLSACC(), null, createHelper);
-//					updateCellPreserveStyle(row, 26, record2.getR22_N0_CON_MORE1_LOAN(), null, createHelper);
-//					updateCellPreserveStyle(row, 27, record2.getR22_NO_INST_WITH90(), null, createHelper);
-//					updateCellPreserveStyle(row, 28, record2.getR22_TOT_GROSS_ASET(), null, createHelper);
-//					updateCellPreserveStyle(row, 29, record2.getR22_RET_LIAB_AED(), null, createHelper);
+					writeTotalCellIfAllocated(row, 26, record2.getR22_N0_CON_MORE1_LOAN(), deptRecord2 != null ? deptRecord2.getR22_N0_CON_MORE1_LOAN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 27, record2.getR22_NO_INST_WITH90(), deptRecord2 != null ? deptRecord2.getR22_NO_INST_WITH90() : null, createHelper);
+					writeTotalCellIfAllocated(row, 28, record2.getR22_TOT_GROSS_ASET(), deptRecord2 != null ? deptRecord2.getR22_TOT_GROSS_ASET() : null, createHelper);
+					writeTotalCellIfAllocated(row, 29, record2.getR22_RET_LIAB_AED(), deptRecord2 != null ? deptRecord2.getR22_RET_LIAB_AED() : null, createHelper);
 					String maxRate = record2.getR22_HIG_PER_PROD_CAT();
 					if (maxRate == null || maxRate.trim().isEmpty() || "0".equals(maxRate.trim())) {
 						String[] childRates = {
@@ -3530,41 +3572,41 @@ public class RT_MC_TABLE_ALL_Service {
 						}
 					}
 					updateCellPreserveStyle(row, 30, maxRate, null, createHelper);
-//					updateCellPreserveStyle(row, 31, record2.getR22_NO_ACCS_TAG_NPA(), null, createHelper);
-//					updateCellPreserveStyle(row, 32, record2.getR22_NO_CHG_FEE_GRT5(), null, createHelper);
-//					updateCellPreserveStyle(row, 33, record2.getR22_NO_CON_FLEX_INT(), null, createHelper);
-//					updateCellPreserveStyle(row, 34, record2.getR22_NO_CON_FIXED_INT(), null, createHelper);
-//					updateCellPreserveStyle(row, 35, record2.getR22_NO_LOAN_MAY_2011(), null, createHelper);
-//					updateCellPreserveStyle(row, 36, record2.getR22_VAL_LEGA_MAY_AED(), null, createHelper);
+					writeTotalCellIfAllocated(row, 31, record2.getR22_NO_ACCS_TAG_NPA(), deptRecord2 != null ? deptRecord2.getR22_NO_ACCS_TAG_NPA() : null, createHelper);
+					writeTotalCellIfAllocated(row, 32, record2.getR22_NO_CHG_FEE_GRT5(), deptRecord2 != null ? deptRecord2.getR22_NO_CHG_FEE_GRT5() : null, createHelper);
+					writeTotalCellIfAllocated(row, 33, record2.getR22_NO_CON_FLEX_INT(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_FLEX_INT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 34, record2.getR22_NO_CON_FIXED_INT(), deptRecord2 != null ? deptRecord2.getR22_NO_CON_FIXED_INT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 35, record2.getR22_NO_LOAN_MAY_2011(), deptRecord2 != null ? deptRecord2.getR22_NO_LOAN_MAY_2011() : null, createHelper);
+					writeTotalCellIfAllocated(row, 36, record2.getR22_VAL_LEGA_MAY_AED(), deptRecord2 != null ? deptRecord2.getR22_VAL_LEGA_MAY_AED() : null, createHelper);
 					updateCellPreserveStyle(row, 37, record2.getR22_AVG_DAY_NLL(), null, createHelper);
-//					updateCellPreserveStyle(row, 38, record2.getR22_PER_DOR_ACCS(), null, createHelper);
-//					updateCellPreserveStyle(row, 39, record2.getR22_INT_RET_PROF(), null, createHelper);
-//					updateCellPreserveStyle(row, 40, record2.getR22_FEE_COMM_PROF(), null, createHelper);
-//					updateCellPreserveStyle(row, 41, record2.getR22_TOT_UNCLM_90(), null, createHelper);
-//					updateCellPreserveStyle(row, 42, record2.getR22_TOT_VAL_UNBAL(), null, createHelper);
-//					updateCellPreserveStyle(row, 43, record2.getR22_NO_INST_CONTRACT(), null, createHelper);
-//					updateCellPreserveStyle(row, 44, record2.getR22_TOT_DORACC_NOTICE(), null, createHelper);
-//					updateCellPreserveStyle(row, 45, record2.getR22_NO_CONS_LIAB_7DAY(), null, createHelper);
-//					updateCellPreserveStyle(row, 46, record2.getR22_TOT_REQ_LIAB_NONLIA(), null, createHelper);
-//					updateCellPreserveStyle(row, 47, record2.getR22_NO_RESTU_ONBO(), null, createHelper);
-//					updateCellPreserveStyle(row, 48, record2.getR22_TOT_DELAY_TAT(), null, createHelper);
-//					updateCellPreserveStyle(row, 49, record2.getR22_TOT_FND_TRAN(), null, createHelper);
-//					updateCellPreserveStyle(row, 50, record2.getR22_NO_FUND_RET24(), null, createHelper);
-//					updateCellPreserveStyle(row, 51, record2.getR22_NO_FAIL_TRAN(), null, createHelper);
-//					updateCellPreserveStyle(row, 52, record2.getR22_CUS_FND_SVF_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 53, record2.getR22_CUS_FND_SVF_PRE(), null, createHelper);
-//					updateCellPreserveStyle(row, 54, record2.getR22_TOT_CRDR_UND_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 55, record2.getR22_TOT_CRD_ISU_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 56, record2.getR22_NO_ACC_BLK_FIN(), null, createHelper);
-//					updateCellPreserveStyle(row, 57, record2.getR22_NO_INQ_AVL_BAL(), null, createHelper);
-//					updateCellPreserveStyle(row, 58, record2.getR22_TOT_PRE_EXP_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 59, record2.getR22_TOT_PRE_POS_EXP(), null, createHelper);
-//					updateCellPreserveStyle(row, 60, record2.getR22_TOT_PRE_CARD_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 61, record2.getR22_TOT_ACCS_SPD(), null, createHelper);
+					writeTotalCellIfAllocated(row, 38, record2.getR22_PER_DOR_ACCS(), deptRecord2 != null ? deptRecord2.getR22_PER_DOR_ACCS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 39, record2.getR22_INT_RET_PROF(), deptRecord2 != null ? deptRecord2.getR22_INT_RET_PROF() : null, createHelper);
+					writeTotalCellIfAllocated(row, 40, record2.getR22_FEE_COMM_PROF(), deptRecord2 != null ? deptRecord2.getR22_FEE_COMM_PROF() : null, createHelper);
+					writeTotalCellIfAllocated(row, 41, record2.getR22_TOT_UNCLM_90(), deptRecord2 != null ? deptRecord2.getR22_TOT_UNCLM_90() : null, createHelper);
+					writeTotalCellIfAllocated(row, 42, record2.getR22_TOT_VAL_UNBAL(), deptRecord2 != null ? deptRecord2.getR22_TOT_VAL_UNBAL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 43, record2.getR22_NO_INST_CONTRACT(), deptRecord2 != null ? deptRecord2.getR22_NO_INST_CONTRACT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 44, record2.getR22_TOT_DORACC_NOTICE(), deptRecord2 != null ? deptRecord2.getR22_TOT_DORACC_NOTICE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 45, record2.getR22_NO_CONS_LIAB_7DAY(), deptRecord2 != null ? deptRecord2.getR22_NO_CONS_LIAB_7DAY() : null, createHelper);
+					writeTotalCellIfAllocated(row, 46, record2.getR22_TOT_REQ_LIAB_NONLIA(), deptRecord2 != null ? deptRecord2.getR22_TOT_REQ_LIAB_NONLIA() : null, createHelper);
+					writeTotalCellIfAllocated(row, 47, record2.getR22_NO_RESTU_ONBO(), deptRecord2 != null ? deptRecord2.getR22_NO_RESTU_ONBO() : null, createHelper);
+					writeTotalCellIfAllocated(row, 48, record2.getR22_TOT_DELAY_TAT(), deptRecord2 != null ? deptRecord2.getR22_TOT_DELAY_TAT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 49, record2.getR22_TOT_FND_TRAN(), deptRecord2 != null ? deptRecord2.getR22_TOT_FND_TRAN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 50, record2.getR22_NO_FUND_RET24(), deptRecord2 != null ? deptRecord2.getR22_NO_FUND_RET24() : null, createHelper);
+					writeTotalCellIfAllocated(row, 51, record2.getR22_NO_FAIL_TRAN(), deptRecord2 != null ? deptRecord2.getR22_NO_FAIL_TRAN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 52, record2.getR22_CUS_FND_SVF_SPT(), deptRecord2 != null ? deptRecord2.getR22_CUS_FND_SVF_SPT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 53, record2.getR22_CUS_FND_SVF_PRE(), deptRecord2 != null ? deptRecord2.getR22_CUS_FND_SVF_PRE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 54, record2.getR22_TOT_CRDR_UND_SPT(), deptRecord2 != null ? deptRecord2.getR22_TOT_CRDR_UND_SPT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 55, record2.getR22_TOT_CRD_ISU_SPT(), deptRecord2 != null ? deptRecord2.getR22_TOT_CRD_ISU_SPT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 56, record2.getR22_NO_ACC_BLK_FIN(), deptRecord2 != null ? deptRecord2.getR22_NO_ACC_BLK_FIN() : null, createHelper);
+					writeTotalCellIfAllocated(row, 57, record2.getR22_NO_INQ_AVL_BAL(), deptRecord2 != null ? deptRecord2.getR22_NO_INQ_AVL_BAL() : null, createHelper);
+					writeTotalCellIfAllocated(row, 58, record2.getR22_TOT_PRE_EXP_SPT(), deptRecord2 != null ? deptRecord2.getR22_TOT_PRE_EXP_SPT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 59, record2.getR22_TOT_PRE_POS_EXP(), deptRecord2 != null ? deptRecord2.getR22_TOT_PRE_POS_EXP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 60, record2.getR22_TOT_PRE_CARD_SPD(), deptRecord2 != null ? deptRecord2.getR22_TOT_PRE_CARD_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 61, record2.getR22_TOT_ACCS_SPD(), deptRecord2 != null ? deptRecord2.getR22_TOT_ACCS_SPD() : null, createHelper);
 					updateCellPreserveStyle(row, 62, record2.getR22_NO_LANG_VOICE(), null, createHelper);
 					updateCellPreserveStyle(row, 63, record2.getR22_AVG_NOD_LOWRSK(), null, createHelper);
-//					updateCellPreserveStyle(row, 64, record2.getR22_NO_CUST_REISS_LIA(), null, createHelper);
-//					updateCellPreserveStyle(row, 65, record2.getR22_NO_INS_CRRATE_CON(), null, createHelper);
+					writeTotalCellIfAllocated(row, 64, record2.getR22_NO_CUST_REISS_LIA(), deptRecord2 != null ? deptRecord2.getR22_NO_CUST_REISS_LIA() : null, createHelper);
+					writeTotalCellIfAllocated(row, 65, record2.getR22_NO_INS_CRRATE_CON(), deptRecord2 != null ? deptRecord2.getR22_NO_INS_CRRATE_CON() : null, createHelper);
 
 				}
 				evaluateMcFormulas(workbook, jobId);
@@ -3601,11 +3643,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE5_ENTITY> dataList = new ArrayList<>();
+	    List<RT_MC_TABLE5_ENTITY> deptData = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE5_ENTITY> numData = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE5_ENTITY> deptData = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+	        deptData = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
 	        
 	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE5_ENTITY.class);
 	        
@@ -3614,6 +3657,16 @@ public class RT_MC_TABLE_ALL_Service {
 	            dataList = RT_MC_TABLE5_REPO.findBybranchcode(branch);
 	        } else {
 	            dataList = RT_MC_TABLE5_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE5_ENTITY deptRecord = null;
+	    if (deptData != null && !deptData.isEmpty()) {
+	        deptRecord = deptData.get(0);
+	    } else {
+	        List<RT_MC_TABLE5_ENTITY> dList = RT_MC_TABLE5_REPO.findBybranchcode("DEPT");
+	        if (dList != null && !dList.isEmpty()) {
+	            deptRecord = dList.get(0);
 	        }
 	    }
 
@@ -3735,19 +3788,22 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 15, record.getR11_NO_INS_COC_PT(), null, createHelper);
 					updateCellPreserveStyle(row, 16, record.getR11_NO_WSTLE_RSK(), null, createHelper);
 					setMcProgress(progressMap, jobId, 85);
-//					row = sheet.getRow(11);
-//					updateCellPreserveStyle(row, 5, record.getR12_NO_CON_EMP_SPCD(), null, createHelper);
-//					updateCellPreserveStyle(row, 6, record.getR12_NO_EMP_LFI(), null, createHelper);
-//					updateCellPreserveStyle(row, 7, record.getR12_NO_DIS_POOR(), null, createHelper);
-//					updateCellPreserveStyle(row, 8, record.getR12_NO_CON_AGS(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record.getR12_NO_SAL_STF_EMP(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record.getR12_NO_FXD_RENUM(), null, createHelper);
-//					updateCellPreserveStyle(row, 11, record.getR12_NO_SAL_REN_50(), null, createHelper);
-//					updateCellPreserveStyle(row, 12, record.getR12_AVG_BON_CON(), null, createHelper);
-//					updateCellPreserveStyle(row, 13, record.getR12_NO_EMP_DIS_ACT(), null, createHelper);
-//					updateCellPreserveStyle(row, 14, record.getR12_NO_COM_SPC_PT(), null, createHelper);
-//					updateCellPreserveStyle(row, 15, record.getR12_NO_INS_COC_PT(), null, createHelper);s
-//					updateCellPreserveStyle(row, 16, record.getR12_NO_WSTLE_RSK(), null, createHelper);
+					row = sheet.getRow(11);
+					if (row == null) {
+						row = sheet.createRow(11);
+					}
+					writeTotalCellIfAllocated(row, 5, record.getR12_NO_CON_EMP_SPCD(), deptRecord != null ? deptRecord.getR12_NO_CON_EMP_SPCD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 6, record.getR12_NO_EMP_LFI(), deptRecord != null ? deptRecord.getR12_NO_EMP_LFI() : null, createHelper);
+					writeTotalCellIfAllocated(row, 7, record.getR12_NO_DIS_POOR(), deptRecord != null ? deptRecord.getR12_NO_DIS_POOR() : null, createHelper);
+					writeTotalCellIfAllocated(row, 8, record.getR12_NO_CON_AGS(), deptRecord != null ? deptRecord.getR12_NO_CON_AGS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record.getR12_NO_SAL_STF_EMP(), deptRecord != null ? deptRecord.getR12_NO_SAL_STF_EMP() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record.getR12_NO_FXD_RENUM(), deptRecord != null ? deptRecord.getR12_NO_FXD_RENUM() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record.getR12_NO_SAL_REN_50(), deptRecord != null ? deptRecord.getR12_NO_SAL_REN_50() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record.getR12_AVG_BON_CON(), deptRecord != null ? deptRecord.getR12_AVG_BON_CON() : null, createHelper);
+					writeTotalCellIfAllocated(row, 13, record.getR12_NO_EMP_DIS_ACT(), deptRecord != null ? deptRecord.getR12_NO_EMP_DIS_ACT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 14, record.getR12_NO_COM_SPC_PT(), deptRecord != null ? deptRecord.getR12_NO_COM_SPC_PT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 15, record.getR12_NO_INS_COC_PT(), deptRecord != null ? deptRecord.getR12_NO_INS_COC_PT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 16, record.getR12_NO_WSTLE_RSK(), deptRecord != null ? deptRecord.getR12_NO_WSTLE_RSK() : null, createHelper);
 
 				}
 				evaluateMcFormulas(workbook, jobId);
@@ -3781,11 +3837,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE6_ENTITY> dataList = new ArrayList<>();
+	    List<RT_MC_TABLE6_ENTITY> deptData = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE6_ENTITY> numData = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE6_ENTITY> deptData = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+	        deptData = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
 	        
 	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE6_ENTITY.class);
 	        
@@ -3794,6 +3851,16 @@ public class RT_MC_TABLE_ALL_Service {
 	            dataList = RT_MC_TABLE6_REPO.findBybranchcode(branch);
 	        } else {
 	            dataList = RT_MC_TABLE6_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE6_ENTITY deptRecord = null;
+	    if (deptData != null && !deptData.isEmpty()) {
+	        deptRecord = deptData.get(0);
+	    } else {
+	        List<RT_MC_TABLE6_ENTITY> dList = RT_MC_TABLE6_REPO.findBybranchcode("DEPT");
+	        if (dList != null && !dList.isEmpty()) {
+	            deptRecord = dList.get(0);
 	        }
 	    }
 
@@ -3914,12 +3981,15 @@ public class RT_MC_TABLE_ALL_Service {
 
 					setMcProgress(progressMap, jobId, 85);
 					row = sheet.getRow(11);
-//					updateCellPreserveStyle(row, 5, record.getR12_NO_PRO_SNR(), null, createHelper);
+					if (row == null) {
+						row = sheet.createRow(11);
+					}
+					writeTotalCellIfAllocated(row, 5, record.getR12_NO_PRO_SNR(), deptRecord != null ? deptRecord.getR12_NO_PRO_SNR() : null, createHelper);
 					updateCellPreserveStyle(row, 6, record.getR12_NO_TRA_SNR_SPT(), null, createHelper);
-//					updateCellPreserveStyle(row, 7, record.getR12_NO_CONS_VC(), null, createHelper);
+					writeTotalCellIfAllocated(row, 7, record.getR12_NO_CONS_VC(), deptRecord != null ? deptRecord.getR12_NO_CONS_VC() : null, createHelper);
 					updateCellPreserveStyle(row, 8, record.getR12_NO_CON_FRA(), null, createHelper);
 					updateCellPreserveStyle(row, 9, record.getR12_NO_CON_MRK_FRD(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record.getR12_TOT_CON_PRO_CBUAE(), null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record.getR12_TOT_CON_PRO_CBUAE(), deptRecord != null ? deptRecord.getR12_TOT_CON_PRO_CBUAE() : null, createHelper);
 					updateCellPreserveStyle(row, 11, record.getR12_TOT_TRA_CBUAE(), null, createHelper);
 
 				}
@@ -3956,13 +4026,14 @@ public class RT_MC_TABLE_ALL_Service {
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE7_1_ENTITY> dataList1 = new ArrayList<>();
 	    List<RT_MC_TABLE7_2_ENTITY> dataList2 = new ArrayList<>();
+	    List<RT_MC_TABLE7_2_ENTITY> deptData2 = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE7_1_ENTITY> numData1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 	        List<RT_MC_TABLE7_1_ENTITY> deptData1 = RT_MC_TABLE7_1_REPO.findBybranchcode("DEPT");
 	        List<RT_MC_TABLE7_2_ENTITY> numData2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE7_2_ENTITY> deptData2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+	        deptData2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
 	        dataList1 = mergeReportData(numData1, deptData1, reportOption, selectedDepartments, RT_MC_TABLE7_1_ENTITY.class);
 	        dataList2 = mergeReportData(numData2, deptData2, reportOption, selectedDepartments, RT_MC_TABLE7_2_ENTITY.class);
 	        
@@ -3973,6 +4044,16 @@ public class RT_MC_TABLE_ALL_Service {
 	        } else {
 	        	dataList1 = RT_MC_TABLE7_1_REPO.findByReportDateAndBranchCode(reportDate, branch);
 				dataList2 = RT_MC_TABLE7_2_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE7_2_ENTITY deptRecord2 = null;
+	    if (deptData2 != null && !deptData2.isEmpty()) {
+	        deptRecord2 = deptData2.get(0);
+	    } else {
+	        List<RT_MC_TABLE7_2_ENTITY> dl2 = RT_MC_TABLE7_2_REPO.findBybranchcode("DEPT");
+	        if (dl2 != null && !dl2.isEmpty()) {
+	            deptRecord2 = dl2.get(0);
 	        }
 	    }
 
@@ -4634,24 +4715,27 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 66, record2.getR22_NO_CON_LOW_RSK(), null, createHelper);
 					updateCellPreserveStyle(row, 67, record2.getR22_NO_CON_HIGH_RSK(), null, createHelper);
 					row = sheet.getRow(22);
+					if (row == null) {
+						row = sheet.createRow(22);
+					}
 
 					updateCellPreserveStyle(row, 5, record2.getR23_RET_ASET_LTS(), null, createHelper);
 					updateCellPreserveStyle(row, 6, record2.getR23_RET_ASET_LTSME(), null, createHelper);
 					updateCellPreserveStyle(row, 7, record2.getR23_RET_ASET_SME_GUR(), null, createHelper);
-//					updateCellPreserveStyle(row, 8, record2.getR23_RET_LOAN_DIS(), null, createHelper);
-//					updateCellPreserveStyle(row, 9, record2.getR23_RET_ASET_LOAN_SME(), null, createHelper);
-//					updateCellPreserveStyle(row, 10, record2.getR23_PER_LOAN_WEB(), null, createHelper);
-//					updateCellPreserveStyle(row, 11, record2.getR23_LOAN_SME_WEB_MOB(), null, createHelper);
-//					updateCellPreserveStyle(row, 12, record2.getR23_NO_COMPDIGI_MOB(), null, createHelper);
-//					updateCellPreserveStyle(row, 13, record2.getR23_NO_COMP_TRADCALL(), null, createHelper);
+					writeTotalCellIfAllocated(row, 8, record2.getR23_RET_LOAN_DIS(), deptRecord2 != null ? deptRecord2.getR23_RET_LOAN_DIS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record2.getR23_RET_ASET_LOAN_SME(), deptRecord2 != null ? deptRecord2.getR23_RET_ASET_LOAN_SME() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record2.getR23_PER_LOAN_WEB(), deptRecord2 != null ? deptRecord2.getR23_PER_LOAN_WEB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record2.getR23_LOAN_SME_WEB_MOB(), deptRecord2 != null ? deptRecord2.getR23_LOAN_SME_WEB_MOB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record2.getR23_NO_COMPDIGI_MOB(), deptRecord2 != null ? deptRecord2.getR23_NO_COMPDIGI_MOB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 13, record2.getR23_NO_COMP_TRADCALL(), deptRecord2 != null ? deptRecord2.getR23_NO_COMP_TRADCALL() : null, createHelper);
 					updateCellPreserveStyle(row, 14, record2.getR23_PER_COMPDIGI_WEB(), null, createHelper);
 					updateCellPreserveStyle(row, 15, record2.getR23_PER_COM_TRADCALL(), null, createHelper);
-//					updateCellPreserveStyle(row, 16, record2.getR23_TOT_REV_PREV(), null, createHelper);
-//					updateCellPreserveStyle(row, 17, record2.getR23_PROF_LOSS_PREV(), null, createHelper);
+					writeTotalCellIfAllocated(row, 16, record2.getR23_TOT_REV_PREV(), deptRecord2 != null ? deptRecord2.getR23_TOT_REV_PREV() : null, createHelper);
+					writeTotalCellIfAllocated(row, 17, record2.getR23_PROF_LOSS_PREV(), deptRecord2 != null ? deptRecord2.getR23_PROF_LOSS_PREV() : null, createHelper);
 					updateCellPreserveStyle(row, 18, record2.getR23_PROF_MARG_PORTFOLIO(), null, createHelper);
 					updateCellPreserveStyle(row, 19, record2.getR23_TOT_RET_ASET_PREV(), null, createHelper);
-//					updateCellPreserveStyle(row, 20, record2.getR23_NP_LOAN_PREV(), null, createHelper);
-//					updateCellPreserveStyle(row, 21, record2.getR23_NON_CON_ONLAST_PREV(), null, createHelper);
+					writeTotalCellIfAllocated(row, 20, record2.getR23_NP_LOAN_PREV(), deptRecord2 != null ? deptRecord2.getR23_NP_LOAN_PREV() : null, createHelper);
+					writeTotalCellIfAllocated(row, 21, record2.getR23_NON_CON_ONLAST_PREV(), deptRecord2 != null ? deptRecord2.getR23_NON_CON_ONLAST_PREV() : null, createHelper);
 					updateCellPreserveStyle(row, 22, record2.getR23_TOT_BRAN_PREV(), null, createHelper);
 					updateCellPreserveStyle(row, 23, record2.getR23_TOT_REV_RET_CUR(), null, createHelper);
 					updateCellPreserveStyle(row, 24, record2.getR23_PROF_LOS_PORT_CUR(), null, createHelper);
@@ -4681,23 +4765,23 @@ public class RT_MC_TABLE_ALL_Service {
 					updateCellPreserveStyle(row, 48, record2.getR23_NON_PERF_PORT_T3(), null, createHelper);
 					updateCellPreserveStyle(row, 49, record2.getR23_NO_CON_LAST_T3(), null, createHelper);
 					updateCellPreserveStyle(row, 50, record2.getR23_TOT_BRANCH_T3(), null, createHelper);
-//					updateCellPreserveStyle(row, 51, record2.getR23_NPL_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 52, record2.getR23_RECO_NPL_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 53, record2.getR23_NO_CON_ONBO_DIGI(), null, createHelper);
-//					updateCellPreserveStyle(row, 54, record2.getR23_NO_ACCS_AML(), null, createHelper);
-//					updateCellPreserveStyle(row, 55, record2.getR23_TOT_ACC_LOAN_AML(), null, createHelper);
-//					updateCellPreserveStyle(row, 56, record2.getR23_TOT_NEW_ACCS_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 57, record2.getR23_TOT_VALS_LOANS_SPD(), null, createHelper);
-//					updateCellPreserveStyle(row, 58, record2.getR23_NO_INQ_WEBMOB(), null, createHelper);
-//					updateCellPreserveStyle(row, 59, record2.getR23_NO_INQ_TRAD(), null, createHelper);
-//					updateCellPreserveStyle(row, 60, record2.getR23_NO_RET_POS(), null, createHelper);
-//					updateCellPreserveStyle(row, 61, record2.getR23_AMT_POS_GATE(), null, createHelper);
-//					updateCellPreserveStyle(row, 62, record2.getR23_NO_TRAN_SVF_BNK(), null, createHelper);
-//					updateCellPreserveStyle(row, 63, record2.getR23_AMT_RET_SVF_BNK(), null, createHelper);
+					writeTotalCellIfAllocated(row, 51, record2.getR23_NPL_SPD(), deptRecord2 != null ? deptRecord2.getR23_NPL_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 52, record2.getR23_RECO_NPL_SPD(), deptRecord2 != null ? deptRecord2.getR23_RECO_NPL_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 53, record2.getR23_NO_CON_ONBO_DIGI(), deptRecord2 != null ? deptRecord2.getR23_NO_CON_ONBO_DIGI() : null, createHelper);
+					writeTotalCellIfAllocated(row, 54, record2.getR23_NO_ACCS_AML(), deptRecord2 != null ? deptRecord2.getR23_NO_ACCS_AML() : null, createHelper);
+					writeTotalCellIfAllocated(row, 55, record2.getR23_TOT_ACC_LOAN_AML(), deptRecord2 != null ? deptRecord2.getR23_TOT_ACC_LOAN_AML() : null, createHelper);
+					writeTotalCellIfAllocated(row, 56, record2.getR23_TOT_NEW_ACCS_SPD(), deptRecord2 != null ? deptRecord2.getR23_TOT_NEW_ACCS_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 57, record2.getR23_TOT_VALS_LOANS_SPD(), deptRecord2 != null ? deptRecord2.getR23_TOT_VALS_LOANS_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 58, record2.getR23_NO_INQ_WEBMOB(), deptRecord2 != null ? deptRecord2.getR23_NO_INQ_WEBMOB() : null, createHelper);
+					writeTotalCellIfAllocated(row, 59, record2.getR23_NO_INQ_TRAD(), deptRecord2 != null ? deptRecord2.getR23_NO_INQ_TRAD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 60, record2.getR23_NO_RET_POS(), deptRecord2 != null ? deptRecord2.getR23_NO_RET_POS() : null, createHelper);
+					writeTotalCellIfAllocated(row, 61, record2.getR23_AMT_POS_GATE(), deptRecord2 != null ? deptRecord2.getR23_AMT_POS_GATE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 62, record2.getR23_NO_TRAN_SVF_BNK(), deptRecord2 != null ? deptRecord2.getR23_NO_TRAN_SVF_BNK() : null, createHelper);
+					writeTotalCellIfAllocated(row, 63, record2.getR23_AMT_RET_SVF_BNK(), deptRecord2 != null ? deptRecord2.getR23_AMT_RET_SVF_BNK() : null, createHelper);
 					updateCellPreserveStyle(row, 64, record2.getR23_TOT_WEB_MOB_VIRT(), null, createHelper);
-//					updateCellPreserveStyle(row, 65, record2.getR23_VAL_UNCL_SVF(), null, createHelper);
-//					updateCellPreserveStyle(row, 66, record2.getR23_NO_CON_LOW_RSK(), null, createHelper);
-//					updateCellPreserveStyle(row, 67, record2.getR23_NO_CON_HIGH_RSK(), null, createHelper);
+					writeTotalCellIfAllocated(row, 65, record2.getR23_VAL_UNCL_SVF(), deptRecord2 != null ? deptRecord2.getR23_VAL_UNCL_SVF() : null, createHelper);
+					writeTotalCellIfAllocated(row, 66, record2.getR23_NO_CON_LOW_RSK(), deptRecord2 != null ? deptRecord2.getR23_NO_CON_LOW_RSK() : null, createHelper);
+					writeTotalCellIfAllocated(row, 67, record2.getR23_NO_CON_HIGH_RSK(), deptRecord2 != null ? deptRecord2.getR23_NO_CON_HIGH_RSK() : null, createHelper);
 
 				}
 				evaluateMcFormulas(workbook, jobId);
@@ -4733,11 +4817,12 @@ public class RT_MC_TABLE_ALL_Service {
 
 		logMcDownload(jobId, "fetching database rows", reportDate, branch, isConsolidated, formmode);
 	    List<RT_MC_TABLE8_ENTITY> dataList = new ArrayList<>();
+	    List<RT_MC_TABLE8_ENTITY> deptData = null;
 
 	    if ("YES".equalsIgnoreCase(isConsolidated)) {
 	        
 	        List<RT_MC_TABLE8_ENTITY> numData = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
-	        List<RT_MC_TABLE8_ENTITY> deptData = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+	        deptData = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
 	        
 	        dataList = mergeReportData(numData, deptData, reportOption, selectedDepartments, RT_MC_TABLE8_ENTITY.class);
 	        
@@ -4746,6 +4831,16 @@ public class RT_MC_TABLE_ALL_Service {
 	            dataList = RT_MC_TABLE8_REPO.findBybranchcode(branch);
 	        } else {
 	            dataList = RT_MC_TABLE8_REPO.findByReportDateAndBranchCode(reportDate, branch);
+	        }
+	    }
+
+	    RT_MC_TABLE8_ENTITY deptRecord = null;
+	    if (deptData != null && !deptData.isEmpty()) {
+	        deptRecord = deptData.get(0);
+	    } else {
+	        List<RT_MC_TABLE8_ENTITY> dList = RT_MC_TABLE8_REPO.findBybranchcode("DEPT");
+	        if (dList != null && !dList.isEmpty()) {
+	            deptRecord = dList.get(0);
 	        }
 	    }
 
@@ -5018,17 +5113,20 @@ public class RT_MC_TABLE_ALL_Service {
 
 					setMcProgress(progressMap, jobId, 96);
 					row = sheet.getRow(23);
-					updateCellPreserveStyle(row, 5, record.getR24_NO_RET_CON_SPD(), null, createHelper);
-					updateCellPreserveStyle(row, 6, record.getR24_NO_ISC_SPD(), null, createHelper);
-					updateCellPreserveStyle(row, 7, record.getR24_NO_SME_CON_ISC(), null, createHelper);
-					updateCellPreserveStyle(row, 8, record.getR24_NO_SME_ISC(), null, createHelper);
-					updateCellPreserveStyle(row, 9, record.getR24_TOT_AGE_OUT(), null, createHelper);
-					updateCellPreserveStyle(row, 10, record.getR24_TOT_PONT_SALE(), null, createHelper);
-					updateCellPreserveStyle(row, 11, record.getR24_TOT_MER_SPD(), null, createHelper);
-					updateCellPreserveStyle(row, 12, record.getR24_RET_SIZE_ISC_AED(), null, createHelper);
-					updateCellPreserveStyle(row, 13, record.getR24_RET_ASSE_LON_RET(), null, createHelper);
-					updateCellPreserveStyle(row, 14, record.getR24_RET_ASSE_LOAN_SME(), null, createHelper);
-					updateCellPreserveStyle(row, 15, record.getR24_NO_COMP_ISLAMIC(), null, createHelper);
+					if (row == null) {
+						row = sheet.createRow(23);
+					}
+					writeTotalCellIfAllocated(row, 5, record.getR24_NO_RET_CON_SPD(), deptRecord != null ? deptRecord.getR24_NO_RET_CON_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 6, record.getR24_NO_ISC_SPD(), deptRecord != null ? deptRecord.getR24_NO_ISC_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 7, record.getR24_NO_SME_CON_ISC(), deptRecord != null ? deptRecord.getR24_NO_SME_CON_ISC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 8, record.getR24_NO_SME_ISC(), deptRecord != null ? deptRecord.getR24_NO_SME_ISC() : null, createHelper);
+					writeTotalCellIfAllocated(row, 9, record.getR24_TOT_AGE_OUT(), deptRecord != null ? deptRecord.getR24_TOT_AGE_OUT() : null, createHelper);
+					writeTotalCellIfAllocated(row, 10, record.getR24_TOT_PONT_SALE(), deptRecord != null ? deptRecord.getR24_TOT_PONT_SALE() : null, createHelper);
+					writeTotalCellIfAllocated(row, 11, record.getR24_TOT_MER_SPD(), deptRecord != null ? deptRecord.getR24_TOT_MER_SPD() : null, createHelper);
+					writeTotalCellIfAllocated(row, 12, record.getR24_RET_SIZE_ISC_AED(), deptRecord != null ? deptRecord.getR24_RET_SIZE_ISC_AED() : null, createHelper);
+					writeTotalCellIfAllocated(row, 13, record.getR24_RET_ASSE_LON_RET(), deptRecord != null ? deptRecord.getR24_RET_ASSE_LON_RET() : null, createHelper);
+					writeTotalCellIfAllocated(row, 14, record.getR24_RET_ASSE_LOAN_SME(), deptRecord != null ? deptRecord.getR24_RET_ASSE_LOAN_SME() : null, createHelper);
+					writeTotalCellIfAllocated(row, 15, record.getR24_NO_COMP_ISLAMIC(), deptRecord != null ? deptRecord.getR24_NO_COMP_ISLAMIC() : null, createHelper);
 
 				}
 				evaluateMcFormulas(workbook, jobId);
@@ -5387,8 +5485,24 @@ public class RT_MC_TABLE_ALL_Service {
 		logger.info("MC download jobId={} formula evaluation END elapsedMs={}", jobId,
 				System.currentTimeMillis() - started);
 	}
-	
 
+	private boolean isDeptAllocated(Object deptValue) {
+		if (deptValue == null) {
+			return false;
+		}
+		String dVal = deptValue.toString().trim();
+		if (dVal.isEmpty() || "-".equals(dVal)) {
+			return false;
+		}
+		String lower = dVal.toLowerCase();
+		return !("na".equals(lower) || "n/a".equals(lower) || lower.contains("not applicable"));
+	}
+
+	private void writeTotalCellIfAllocated(Row row, int colIndex, Object dataValue, Object deptValue, CreationHelper helper) {
+		if (isDeptAllocated(deptValue)) {
+			updateCellPreserveStyle(row, colIndex, dataValue, null, helper);
+		}
+	}
 
 	private void updateCellPreserveStyle(Row row, int colIndex, Object value, String formatStr, CreationHelper helper) {
 	    Cell cell = (row.getCell(colIndex) != null) ? row.getCell(colIndex) : row.createCell(colIndex);

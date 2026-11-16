@@ -18679,6 +18679,7 @@
 			const isCRO = designation.trim().toUpperCase() === 'CRO';
 			const isCCO = designation.trim().toUpperCase() === 'CCO';
 			const isChecker = (roleId && (roleId.toUpperCase() === 'ADM-C' || roleId.toUpperCase() === 'USR-C'));
+			const isUserChecker = (roleId && roleId.toUpperCase() === 'USR-C');
 			const isManager = (roleId && (roleId.toUpperCase() === 'MGR' || roleId.toUpperCase() === 'SUP-ADM'));
 			const globalVerifyFlg = /*[[${reportlist != null && !reportlist.isEmpty() ? reportlist[0].VERIFY_FLG : (reportlist1 != null && !reportlist1.isEmpty() ? reportlist1[0].VERIFY_FLG : '')}]]*/ '';
 			let currentEditingInput = null;
@@ -20530,7 +20531,9 @@
 													} else {
 														statusBanner.innerText = 'You have Verified this record.';
 														// Feature disable for remove checker revoke
-														createBtn('Revoke', 'role-btn', 'REVOKE_CHECKER', 'C');
+														if (!isUserChecker) {
+															createBtn('Revoke', 'role-btn', 'REVOKE_CHECKER', 'C');
+														}
 													}
 													statusBanner.style.color = '#28a745';
 												} else if (verFlg === 'N') {
@@ -20795,7 +20798,7 @@
 															statusMsg.innerText = 'Manager Approved. Record is Locked.';
 															if (revokeBtn) revokeBtn.style.display = 'none';
 														} else {
-															if (revokeBtn) revokeBtn.style.display = 'inline-block';
+															if (revokeBtn) revokeBtn.style.display = isUserChecker ? 'none' : 'inline-block';
 															statusMsg.innerText = 'You have Verified this record.';
 														}
 
