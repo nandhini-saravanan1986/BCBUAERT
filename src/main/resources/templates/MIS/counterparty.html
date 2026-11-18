@@ -2253,6 +2253,11 @@
 
 
 											<div class="card-footer text-center">
+												<!--<p style="color:#555; font-size:13px; margin-bottom:8px;">
+													Submit updates every other record with this exact bank name
+													(for example Regular Limit). A different name such as
+													Bank of Baroda(Kenya) is not changed. Country of Incorporation stays on each row.
+												</p>-->
 												<button type="button" class="role-btn" id="generatebtn">Submit</button>
 											</div>
 										</div>
@@ -2815,6 +2820,19 @@
 							if (!validateCounterpartyForm()) {
 								console.log("Submit blocked by form validation");
 								return;
+							}
+
+							if (formmode === "edit") {
+								var bankName = $("#counterPartyBank").val();
+								if (bankName == null) {
+									bankName = "";
+								}
+								bankName = String(bankName).replace(/^\s+|\s+$/g, "");
+								var ok = confirm("Update every CounterParty whose bank name is exactly \"" + bankName
+									+ "\"?\nNames that are not exactly the same will not change.");
+								if (!ok) {
+									return;
+								}
 							}
 
 							var formData = $("#counterpartys").serialize();

@@ -183,7 +183,16 @@ public class counter_services {
 					System.out.println("as.getEarmarkinglimit=" + as.getEarmarkinglimit());
 
 					hs.update(old);
-					msg = "CounterParty Bank Updated Successfully";
+
+					// Same exact bank name (example: Bank of Baroda) gets the same limits.
+					// Bank of Baroda(Kenya) is a different name, so it is not updated.
+					int sameNameCount = updateSameBankNameRecords(old, userid, hs);
+					if (sameNameCount > 0) {
+						msg = "CounterParty Bank Updated Successfully. " + sameNameCount
+								+ " other record(s) with the same bank name were also updated.";
+					} else {
+						msg = "CounterParty Bank Updated Successfully";
+					}
 					}
 				} else {
 					msg = "Record not found for update";
@@ -293,6 +302,67 @@ public class counter_services {
 
 	private boolean isDeletePending(Counterparty_Entity existing) {
 		return existing != null && "PENDING".equalsIgnoreCase(existing.getDeleteRequestStatus());
+	}
+
+	// Copy the saved limits to every other active row with the exact same bank name.
+	private int updateSameBankNameRecords(Counterparty_Entity source, String userid, Session hs) {
+		int updatedCount = 0;
+		if (source == null || source.getCounterPartyBank() == null) {
+			return updatedCount;
+		}
+
+		String bankName = source.getCounterPartyBank().trim();
+		if (bankName.length() == 0) {
+			return updatedCount;
+		}
+
+		List<Counterparty_Entity> sameNameList = Counterparty_Reps.Checkbanknameisexist(bankName);
+		if (sameNameList == null) {
+			return updatedCount;
+		}
+
+		for (int i = 0; i < sameNameList.size(); i++) {
+			Counterparty_Entity other = sameNameList.get(i);
+			if (other == null || other.getId() == null) {
+				continue;
+			}
+			if (other.getId().equals(source.getId())) {
+				continue;
+			}
+
+			String otherName = other.getCounterPartyBank();
+			if (otherName == null || !bankName.equals(otherName.trim())) {
+				continue;
+			}
+			if (isDeletePending(other)) {
+				continue;
+			}
+
+			other.setRating(source.getRating());
+			other.setCountryRating(source.getCountryRating());
+			other.setRegularLimit(source.getRegularLimit());
+			other.setAdhocLimit(source.getAdhocLimit());
+			other.setCreditLimit(source.getCreditLimit());
+			other.setSettlementLimit(source.getSettlementLimit());
+			other.setMoneyMarketLimit(source.getMoneyMarketLimit());
+			other.setTradeFinanceLimit(source.getTradeFinanceLimit());
+			other.setAdhoc_Limit_exp_date(source.getAdhoc_Limit_exp_date());
+			other.setEarmarkinglimit(source.getEarmarkinglimit());
+			other.setEarmarkingdate(source.getEarmarkingdate());
+			other.setModifyUser(userid);
+			hs.update(other);
+			updatedCount++;
+		}
+
+		if (updatedCount > 0) {
+			Map<String, String> changes = new LinkedHashMap<>();
+			changes.put("counterPartyBank", bankName);
+			changes.put("sameNameUpdatedCount", String.valueOf(updatedCount));
+			changes.put("regularLimit", String.valueOf(source.getRegularLimit()));
+			auditservice.createBusinessAudit(userid, "MODIFY", "CounterParty Bank-Same Name Update", changes,
+					"MIS_COUNTER_PARTY_TABLE");
+		}
+		return updatedCount;
 	}
 
 	private String requestCounterpartyDelete(Counterparty_Entity as, String userid, String roleId, String remarks,

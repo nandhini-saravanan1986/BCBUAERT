@@ -5953,6 +5953,62 @@ System.out.println("sixe==="+excelData.length);
 					misCounterPartyLimitDetailsRepo.save(detail);
 				}
 			}
+
+			// Copy the same adhoc lines to other rows with the exact same bank name.
+			String bankNameTrim = bankName == null ? "" : bankName.trim();
+			if (bankNameTrim.length() > 0) {
+				List<Counterparty_Entity> sameBanks = Counterparty_Reps.Checkbanknameisexist(bankNameTrim);
+				if (sameBanks != null) {
+					for (int i = 0; i < sameBanks.size(); i++) {
+						Counterparty_Entity other = sameBanks.get(i);
+						if (other == null || other.getSrlNo() == null) {
+							continue;
+						}
+						if (other.getSrlNo().equals(srlNo)) {
+							continue;
+						}
+						String otherName = other.getCounterPartyBank() == null ? "" : other.getCounterPartyBank().trim();
+						if (!bankNameTrim.equals(otherName)) {
+							continue;
+						}
+						if ("PENDING".equalsIgnoreCase(other.getDeleteRequestStatus())) {
+							continue;
+						}
+
+						List<MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY> otherExisting = misCounterPartyLimitDetailsRepo
+								.findBySrlNo(other.getSrlNo());
+						if (otherExisting != null && !otherExisting.isEmpty()) {
+							misCounterPartyLimitDetailsRepo.deleteAll(otherExisting);
+						}
+
+						if (details != null) {
+							for (int j = 0; j < details.size(); j++) {
+								MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY src = details.get(j);
+								if (src.getAdhocLimit() == null) {
+									continue;
+								}
+								MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY copy = new MIS_COUNTER_PARTY_LIMIT_DETAILS_ENTITY();
+								copy.setSrlNo(other.getSrlNo());
+								copy.setCounterPartyBank(otherName);
+								copy.setLimit_type(src.getLimit_type());
+								copy.setAdhocLimit(src.getAdhocLimit());
+								copy.setAdhocLimitDate(src.getAdhocLimitDate());
+								copy.setAdhocLimitExpDate(src.getAdhocLimitExpDate());
+								copy.setEarMarkingLimit(src.getEarMarkingLimit());
+								copy.setEarMarkingDate(src.getEarMarkingDate());
+								copy.setReferenceNo(src.getReferenceNo());
+								copy.setRollOver(src.getRollOver());
+								copy.setCreateUser(userId);
+								copy.setCreateTime(new Date());
+								copy.setEntityFlg("N");
+								copy.setModifyFlg("N");
+								copy.setDelFlg("N");
+								misCounterPartyLimitDetailsRepo.save(copy);
+							}
+						}
+					}
+				}
+			}
 			return "SUCCESS";
 		} catch (Exception e) {
 			return "ERROR: " + e.getMessage();
