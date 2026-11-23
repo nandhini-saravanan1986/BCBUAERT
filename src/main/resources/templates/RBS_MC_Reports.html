@@ -23464,7 +23464,207 @@
 			window.location.href = 'RT_MC_Reports?formmode=' + formmode + '&dept=' + encodeURIComponent(selecteddeptvalue) + '&reportDate=' + contextReportDate + '&timeperiod=' + timeperiod;
 		}
 	</script>
+	
+				<!-- ===================== Market Conduct per-table Sign Off (checker) ===================== -->
+	<style>
+		#mcSignOffTable th, #mcSignOffTable td { white-space: normal; word-break: break-word; vertical-align: middle; padding: 6px; font-size: 12px; }
+		#mcSignOffTable th { text-align: center; }
+		#mcEvidence { border: 2px solid #ff7a00; border-radius: 4px; background: #fff; color: #212529; font-weight: 500; }
+		#mcEvidence:focus { border-color: #e06a00; box-shadow: 0 0 0 0.15rem rgba(255, 122, 0, 0.25); }
+		#mcEvidence.mc-ev-missing { border: 2px solid #dc3545; background: #fff5f5; }
+		#mcSignOffTable { table-layout: fixed; }
+		#mcSignOffTable th:nth-child(1) { width: 5%; }
+		#mcSignOffTable th:nth-child(2) { width: 8%; }
+		#mcSignOffTable th:nth-child(3) { width: 7%; }
+		#mcSignOffTable th:nth-child(4) { width: 12%; }
+		#mcSignOffTable th:nth-child(5) { width: 11%; }
+		#mcSignOffTable th:nth-child(6) { width: 12%; }
+		#mcSignOffTable th:nth-child(7) { width: 11%; }
+		#mcSignOffTable th:nth-child(8) { width: 13%; }
+		#mcSignOffTable th:nth-child(9) { width: 11%; }
+		#mcSignOffTable th:nth-child(10) { width: 10%; }
+	</style>
+	<div class="modal fade" id="mcSignOffModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 96vw; width: 1250px;">
+			<div class="modal-content" style="border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+				<div class="modal-header" style="background: #ff7a00; color: #fff;">
+					<h5 class="modal-title" style="font-weight: bold;">Sign Off</h5>
+				</div>
+				<div class="modal-body">
+					<div style="font-weight: bold; font-size: 16px;" id="mcSignOffTableName"></div>
+					<div style="margin-bottom: 12px;" id="mcSignOffPeriod"></div>
+					<div style="overflow-x: auto;">
+						<table class="table table-bordered table-sm" id="mcSignOffTable" style="width: 100%;">
+							<thead id="mcSignOffHead" style="background: #ff7a00; color: #fff;"></thead>
+							<tbody id="mcSignOffBody"></tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="role-btn" id="mcSignOffSubmit">Submit</button>
+					<button type="button" class="role-btn" id="mcSignOffClose">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		document.addEventListener("DOMContentLoaded", function () {
+			const roleId = ((/*[[${ROLEID}]]*/ '') || '').toUpperCase();
+			if (roleId !== 'USR-C') return;      // only USR-C logins get the sign off button; the server picks their department
 
+			const signOffFormMode = ((/*[[${formmode}]]*/ '') || 'bankinformation').toLowerCase();
+			const signOffReportDate = /*[[${REPORT_DATE}]]*/ '';
+			const signOffPeriod = ((/*[[${timeperiod}]]*/ '') || 'QUARTERLY').toUpperCase();
+
+			// the cells of the table this login can see and verify
+			const CELL_SELECTOR = '#usertable .input-and-select, #usertable .remarks-input';
+
+			let signOffBtn = null;
+
+			function collectCells() {
+				const names = [];
+				document.querySelectorAll(CELL_SELECTOR).forEach(function (el) {
+					if (!(el.offsetParent !== null || el.getClientRects().length)) return;   // hidden column / cell: not this login's
+					if (el.dataset && el.dataset.autoTotal === 'true') return;               // auto-calculated total: the checker cannot verify it
+					const n = el.getAttribute('data-cellname') || el.name || el.id;
+					if (n && names.indexOf(n) === -1) names.push(n);
+				});
+				return names;
+			}
+
+			function esc(s) {
+				return String(s === null || s === undefined ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+			}
+
+			// name on one line, id on the line below
+			function person(name, id) {
+				name = name || ''; id = id || '';
+				if (name && id) return esc(name) + '<br>(' + esc(id) + ')';
+				return id ? '(' + esc(id) + ')' : esc(name);
+			}
+
+			function ensureButton() {
+				if (signOffBtn) return signOffBtn;
+				const holder = (document.getElementById('downloadBtn') && document.getElementById('downloadBtn').parentElement)
+					|| document.querySelector('.text-right.ml-auto > div')
+					|| document.querySelector('.text-right.ml-auto');
+				if (!holder) return null;
+				signOffBtn = document.createElement('button');
+				signOffBtn.type = 'button';
+				signOffBtn.id = 'mcSignOffBtn';
+				signOffBtn.className = 'role-btn';
+				signOffBtn.innerText = 'SignOff';
+				signOffBtn.style.display = 'none';
+				signOffBtn.addEventListener('click', openSignOff);
+				holder.appendChild(signOffBtn);
+				return signOffBtn;
+			}
+
+			function postJson(url, body) {
+				return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+			}
+
+			function payload(extra) {
+				return Object.assign({ formMode: signOffFormMode, reportDate: signOffReportDate, timeperiod: signOffPeriod, cells: collectCells() }, extra || {});
+			}
+
+			function refreshButton() {
+				const btn = ensureButton();
+				if (!btn) return;
+				postJson('./mcsignoff/status', payload())
+					.then(function (r) { return r.ok ? r.json() : { show: false }; })
+					.then(function (d) {
+						btn.style.display = d.show ? 'inline-block' : 'none';
+						if (!d.show && d.total !== undefined) {
+							console.log('Sign Off hidden: ' + d.done + ' of ' + d.total + ' cells verified. Not verified yet: ' + (d.missing || []).join(', '));
+						} else if (!d.show && d.reason) {
+							console.log('Sign Off hidden: ' + d.reason);
+						}
+					})
+					.catch(function () { btn.style.display = 'none'; });
+			}
+
+			function openSignOff() {
+				const url = './mcsignoff/data?formMode=' + encodeURIComponent(signOffFormMode)
+					+ '&reportDate=' + encodeURIComponent(signOffReportDate) + '&timeperiod=' + encodeURIComponent(signOffPeriod)
+					+ '&cells=' + encodeURIComponent(collectCells().join(','));
+				fetch(url)
+					.then(function (r) { if (!r.ok) throw new Error('data'); return r.json(); })
+					.then(renderModal)
+					.catch(function () { alert('Unable to load the sign off details.'); });
+			}
+
+			function renderModal(d) {
+				document.getElementById('mcSignOffTableName').innerText = 'Table: ' + d.tableName;
+				document.getElementById('mcSignOffPeriod').innerText = d.periodLabel;
+
+				const heads = ['S.No', 'Department', 'Data Points', 'Maker', 'Maker Date and Time', 'Checker', 'Checker Date and Time',
+					'Department Head', 'Department Head Date and Time', 'Evidence Uploaded'];
+				document.getElementById('mcSignOffHead').innerHTML = '<tr>' + heads.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr>';
+
+				let html = '';
+				d.rows.forEach(function (r) {
+					html += '<tr><td>' + esc(r.sno) + '</td><td>' + esc(r.department) + '</td><td></td>'
+						+ '<td>' + person(r.makerName, r.makerId) + '</td><td>' + esc(r.makerDateTime) + '</td>'
+						+ '<td>' + person(r.checkerName, r.checkerId) + '</td><td>' + esc(r.checkerDateTime) + '</td>'
+						+ '<td><label style="margin:0; font-weight:normal;"><input type="checkbox" id="mcIsDeptHead"> Checker is also the Department Head</label></td>'
+						+ '<td id="mcDeptHeadTime"></td>'
+						+ '<td><select id="mcEvidence" class="form-control form-control-sm"><option value="">Select</option><option value="Y">Yes</option><option value="N">No</option></select></td></tr>';
+				});
+				document.getElementById('mcSignOffBody').innerHTML = html;
+
+				document.getElementById('mcIsDeptHead').addEventListener('change', function () {
+					document.getElementById('mcDeptHeadTime').innerText = this.checked ? (d.now || '') : '';
+				});
+				document.getElementById('mcSignOffSubmit').disabled = false;
+				document.getElementById('mcEvidence').addEventListener('change', function () { this.classList.remove('mc-ev-missing'); });
+				$('#mcSignOffModal').modal('show');
+			}
+
+			document.getElementById('mcSignOffClose').addEventListener('click', function () { $('#mcSignOffModal').modal('hide'); });
+
+			document.getElementById('mcSignOffSubmit').addEventListener('click', function () {
+				const submit = this;
+				const isDeptHead = !!(document.getElementById('mcIsDeptHead') && document.getElementById('mcIsDeptHead').checked);
+				const evidence = document.getElementById('mcEvidence').value;
+				if (!evidence) {
+					document.getElementById('mcEvidence').classList.add('mc-ev-missing');
+					return;
+				}
+
+				submit.disabled = true;
+				postJson('./mcsignoff/submit', payload({ isDeptHead: isDeptHead, evidence: evidence }))
+					.then(function (r) {
+						if (r.ok) {
+							const cd = r.headers.get('Content-Disposition') || '';
+							const m = /filename="?([^";]+)"?/.exec(cd);
+							return r.blob().then(function (blob) { return { blob: blob, name: m ? m[1] : 'SignOff.pdf' }; });
+						}
+						if (r.status === 409) throw new Error('Sign off is not possible right now: every cell of this table must be verified.');
+						if (r.status === 400) throw new Error('Select Yes or No for Evidence Uploaded.');
+						if (r.status === 403) throw new Error('Sign off is not available for this login / department.');
+						throw new Error('Sign off failed.');
+					})
+					.then(function (f) {
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(f.blob);
+						a.download = f.name;
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						$('#mcSignOffModal').modal('hide');
+						refreshButton();
+					})
+					.catch(function (e) { alert(e.message); submit.disabled = false; });
+			});
+
+			// check after the page has finished building its cells (auto-total flags are set by the page's own script)
+			window.addEventListener('load', function () { setTimeout(refreshButton, 800); });
+			if (window.jQuery) {
+				$('#editRecordModal').on('hidden.bs.modal', function () { setTimeout(refreshButton, 600); });   // cell saved / verified -> re-check
+			}
+		});
+	</script>
 </body>
 
 </html>
