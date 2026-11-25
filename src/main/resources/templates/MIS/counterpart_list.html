@@ -1275,9 +1275,6 @@
 		}
 
 		function confirmSubmit(button) {
-			// Get the form element
-			const form = document.getElementById("billdataForm");
-
 			// Get the formmode from the button's data attribute
 			const formmode = button.getAttribute("data-formmode");
 			const Report_date = button.getAttribute("data-report_date");
@@ -1294,30 +1291,54 @@
 				}
 
 			}
-			if ($("#billdataForm").valid()) {
-				showLoader();
-				// Create FormData object
-				const formData = new FormData(form);
-
-				$.ajax({
-					url: "./Exposurebillservice?formmode=" + formmode,
-					type: "POST",
-					data: formData,
-					processData: false,
-					contentType: false,
-					dataType: "text",
-					success: function (response) {
-						hideLoader();
-						alert(response);
-						location.href = "counterparty_list?formmode=Billdetaillist&Report_date="+Report_date;
-					},
-					error: function (xhr, status, error) {
-						hideLoader();
-						alert(status + error);
-
-					}
-				});
+			if (!$("#billdataForm").valid()) {
+				return;
 			}
+
+			// What: Edit saves this bill on the opened date and on every later date through today.
+			// Why: The same bill id is stored again on each later report date and must stay the same.
+			// How: Send updateAllDates as Y. No date list and no extra question is shown.
+			var updateAllDates = "N";
+			if (formmode == 'Editbilldetail') {
+				updateAllDates = "Y";
+			}
+			sendBillUpdate(formmode, Report_date, updateAllDates);
+		}
+
+		// What: Post the bill form to the existing save service.
+		// Why: Add, delete, verify, and the confirmed edit all use this same save call.
+		// How: Put the form fields in FormData and add the all-dates choice for edit.
+		function sendBillUpdate(formmode, Report_date, updateAllDates) {
+			var form = document.getElementById("billdataForm");
+			var formData = new FormData(form);
+			var originalBill = document.getElementById("original_bill_id");
+			var selectedDate = document.getElementById("selected_report_date");
+			if (originalBill) {
+				formData.append("originalBillId", originalBill.value);
+			}
+			if (selectedDate) {
+				formData.append("selectedReportDate", selectedDate.value);
+			}
+			formData.append("updateAllDates", updateAllDates);
+
+			showLoader();
+			$.ajax({
+				url: "./Exposurebillservice?formmode=" + formmode,
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				dataType: "text",
+				success: function (response) {
+					hideLoader();
+					alert(response);
+					location.href = "counterparty_list?formmode=Billdetaillist&Report_date=" + Report_date;
+				},
+				error: function (xhr, status, error) {
+					hideLoader();
+					alert(status + error);
+				}
+			});
 		}
 
 		// Function to show alert when user focuses on bank select
@@ -2006,6 +2027,13 @@
 
 									<input type="hidden" id="original_name_of_the_bank" th:if="${formmode}=='Editbilldetail'"
 										th:value="${billdata?.name_of_the_bank}" />
+									<!-- What: The bill id and report date that were opened, kept even if the user types a new bill id. -->
+									<!-- Why: Later dates are found with the original bill id, starting after this report date. -->
+									<!-- How: These hidden values are sent when Update Data is clicked. -->
+									<input type="hidden" id="original_bill_id" th:if="${formmode}=='Editbilldetail'"
+										th:value="${billdata?.bill_id}" />
+									<input type="hidden" id="selected_report_date" th:if="${formmode}=='Editbilldetail'"
+										th:value="${#dates.format(billdata.report_date, 'yyyy-MM-dd')}" />
 
 									<div th:if="${formmode}=='Editbilldetail'" id="bankChangeNotice"
 										class="alert alert-info small mt-1 mb-0" role="alert" style="display: none;">

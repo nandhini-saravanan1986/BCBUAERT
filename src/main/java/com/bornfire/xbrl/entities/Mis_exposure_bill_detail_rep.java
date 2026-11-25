@@ -29,6 +29,17 @@ public interface Mis_exposure_bill_detail_rep extends JpaRepository<Mis_exposure
 	
 	@Query(value="Select * from MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE where del_flg = 'N' and srl_no = ?1 and report_date = ?2",nativeQuery = true)
 	Mis_exposure_bill_detail_entity getbilldetail(String Srl_no, java.sql.Date Report_date);
+
+	// What: Same bill id on report dates after the date opened on the edit page, up to today.
+	// Why: One bill is stored again on each later report date, and those copies must be found before update.
+	// How: Match the bill id, keep active rows, and keep dates strictly after the selected date and on or before today.
+	@Query(value = "SELECT * FROM MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE "
+			+ "WHERE DEL_FLG = 'N' "
+			+ "AND UPPER(TRIM(BILL_ID)) = UPPER(TRIM(?1)) "
+			+ "AND TRUNC(REPORT_DATE) > TRUNC(?2) "
+			+ "AND TRUNC(REPORT_DATE) <= TRUNC(SYSDATE) "
+			+ "ORDER BY REPORT_DATE", nativeQuery = true)
+	List<Mis_exposure_bill_detail_entity> findSameBillAfterSelectedDate(String billId, java.sql.Date reportDate);
 	
 	@Query(value="Select * from MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE where srl_no = ?1",nativeQuery = true)
 	Optional<Mis_exposure_bill_detail_entity> checkvalueispresent(String Srl_no);

@@ -570,12 +570,16 @@ public class MIS_Rest_Controller {
 	@ResponseBody
 	public String Exposurebillservice(@ModelAttribute Mis_exposure_bill_detail_entity Mis_exposure_bill_detail_entity,
 			Model md, HttpServletResponse response, HttpServletRequest rq,
-			@RequestParam(required = false) String formmode) {
+			@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String updateAllDates,
+			@RequestParam(required = false) String selectedReportDate,
+			@RequestParam(required = false) String originalBillId) {
 		logger.info("==> Entered Exposure bill service api controller");
 
 		try {
 
-			String msg = counter_services.Exposurebillservice(Mis_exposure_bill_detail_entity, formmode, rq);
+			String msg = counter_services.Exposurebillservice(Mis_exposure_bill_detail_entity, formmode, rq,
+					updateAllDates, selectedReportDate, originalBillId);
 			logger.info("✅ Returning message to UI: {}", msg);
 			return msg;
 		} catch (Exception e) {

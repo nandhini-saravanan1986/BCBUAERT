@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -2726,23 +2727,56 @@ public class XBRLNavigationController {
 	public ResponseEntity<?> CallmanualReconprocedurerun(
 			@RequestParam("report_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date reportDate) {
 
-		String msg = "";
 		System.out.println("Reconciliation Started");
 
-		// Format the date to '27-MAY-2025'
+		// What: The report date passed into the final risk procedure.
+		// Why: The procedure checks this date and stops when Exposure Data still has a bank name issue.
+		// How: Send the date as DD-MMM-YYYY, the same format the procedure already expects.
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 		String formattedDate = sdf.format(reportDate).toUpperCase();
 
-		// Call stored procedure with 1 VARCHAR2 parameter
+		try {
+			StoredProcedureQuery query = entityManager
+					.createStoredProcedureQuery("RT_ASL_FINAL_STATEMENT_GENERATE_PROCEDURE");
+			query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+			query.setParameter(1, formattedDate);
+			query.execute();
+			return ResponseEntity.ok("Reconciliation completed for " + formattedDate);
+		} catch (Exception ex) {
+			// What: The short sentence shown on the Calculate button.
+			// Why: Oracle wraps the procedure message inside a long server error, and the screen was showing that whole error.
+			// How: Read the raised procedure text and return only the sentence the user should see.
+			String screenMessage = readFinalRiskProcedureMessage(ex, formattedDate);
+			logger.error("Final risk calculate stopped for {}: {}", formattedDate, screenMessage);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(screenMessage);
+		}
+	}
 
-		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("RT_ASL_FINAL_STATEMENT_GENERATE_PROCEDURE");
-		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		query.setParameter(1, formattedDate);
-		query.execute();
-
-		msg = "Reconciliation completed for " + formattedDate;
-
-		return ResponseEntity.ok(msg);
+	// What: The one line that Calculate should show when the procedure stops.
+	// Why: Raise_application_error puts the real reason in ORA-20001, and the rest of the error is technical.
+	// How: Walk down to the database error, keep the text after ORA-20001, and use a clear Exposure Data sentence for the bank name check.
+	private String readFinalRiskProcedureMessage(Throwable error, String reportDate) {
+		Throwable current = error;
+		while (current != null) {
+			if (current instanceof SQLException && current.getMessage() != null) {
+				String text = current.getMessage();
+				String marker = "ORA-20001:";
+				int start = text.indexOf(marker);
+				if (start >= 0) {
+					String raisedMessage = text.substring(start + marker.length()).trim();
+					int nextCode = raisedMessage.indexOf("ORA-");
+					if (nextCode >= 0) {
+						raisedMessage = raisedMessage.substring(0, nextCode).trim();
+					}
+					if (raisedMessage.toLowerCase().indexOf("bank name") >= 0) {
+						return "Clear the issues in Exposure Data for " + reportDate + ".";
+					}
+					return raisedMessage;
+				}
+			}
+			current = current.getCause();
+		}
+		return "Calculate could not be completed. Please try again.";
 	}
 
 	@RequestMapping(value = "Add_ASL", method = { RequestMethod.POST })

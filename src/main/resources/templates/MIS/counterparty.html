@@ -2136,7 +2136,7 @@
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="regularLimit" id="regularLimit"
-														th:value="${list.regularLimit}"
+														th:value="${list.regularLimit}" step="any"
 														class="two-decimal form-control form-control-sm"
 														autocomplete="new-text" required />
 												</div>
@@ -2147,7 +2147,7 @@
 												<div class="col-sm-3">
 													<div class="input-group">
 														<input type="number" name="adhocLimit" id="adhocLimit"
-															th:value="${list.adhocLimit}"
+															th:value="${list.adhocLimit}" step="any"
 															class="form-control form-control-sm" readonly />
 														<div class="input-group-append">
 															<button class="btn btn-primary btn-sm" type="button"
@@ -2169,7 +2169,7 @@
 												<div class="col-sm-3">
 													<input type="number" name="settlementLimit" id="settlementLimit"
 														class="form-control form-control-sm" autocomplete="new-text"
-														required th:value="${list.settlementLimit}" />
+														step="any" required th:value="${list.settlementLimit}" />
 												</div>
 
 												<div class="col-sm-2">
@@ -2196,7 +2196,7 @@
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="creditLimit" id="creditLimit"
-														class="form-control form-control-sm" required
+														class="form-control form-control-sm" step="any" required
 														th:value="${list.creditLimit}" />
 												</div>
 												<div class="col-sm-2">
@@ -2206,7 +2206,7 @@
 												<div class="col-sm-3">
 													<input type="number" name="moneyMarketLimit" id="moneyMarketLimit"
 														class="form-control form-control-sm" autocomplete="new-text"
-														required th:value="${list.moneyMarketLimit}" />
+														step="any" required th:value="${list.moneyMarketLimit}" />
 												</div>
 
 
@@ -2230,7 +2230,7 @@
 												<div class="col-sm-3">
 													<input type="number" name="earmarkinglimit" id="earmarkinglimit"
 														class="form-control form-control-sm" autocomplete="new-text"
-														required th:value="${list.earmarkinglimit}" />
+														step="any" required th:value="${list.earmarkinglimit}" />
 												</div>
 
 
@@ -2245,7 +2245,7 @@
 												</div>
 												<div class="col-sm-3">
 													<input type="number" name="tradeFinanceLimit" id="tradeFinanceLimit"
-														class="form-control form-control-sm" required
+														class="form-control form-control-sm" step="any" required
 														th:value="${list.tradeFinanceLimit}" />
 												</div>
 											</div>
@@ -2794,12 +2794,70 @@
 													return true;
 												}
 
+						// What: Edit allows Settlement Limit plus Credit Limit only up to Regular Limit plus Adhoc Limit.
+						// Why: Settlement and Credit together must stay inside Regular Limit plus Adhoc Limit.
+						// How: Add each pair and stop the save when Settlement + Credit is above Regular + Adhoc.
+						function validateSettlementAndCreditWithinRegular() {
+							var regularLimit = parseLimitAmount("#regularLimit");
+							var adhocLimit = parseLimitAmount("#adhocLimit");
+							var creditLimit = parseLimitAmount("#creditLimit");
+							var settlementLimit = parseLimitAmount("#settlementLimit");
+							var allowedLimit = regularLimit + adhocLimit;
+
+							if ((settlementLimit + creditLimit) > allowedLimit) {
+								highlightLimitFields("#settlementLimit, #creditLimit, #regularLimit, #adhocLimit");
+								alert("Settlement Limit + Credit Limit should not be greater than Regular Limit + Adhoc Limit.");
+								$("#settlementLimit").focus();
+								return false;
+							}
+
+							return true;
+						}
+
+						// What: Edit allows Money Market Limit plus Trade Finance Limit only up to Credit Limit.
+						// Why: Those two limits are parts of the Credit Limit and must not go above it.
+						// How: Add the two limits and stop the save when the total is above Credit Limit.
+						function validateMoneyMarketAndTradeWithinCredit() {
+							var moneyMarketLimit = parseLimitAmount("#moneyMarketLimit");
+							var tradeFinanceLimit = parseLimitAmount("#tradeFinanceLimit");
+							var creditLimit = parseLimitAmount("#creditLimit");
+							var usedLimit = moneyMarketLimit + tradeFinanceLimit;
+
+							if (usedLimit > creditLimit) {
+								highlightLimitFields("#moneyMarketLimit, #tradeFinanceLimit, #creditLimit");
+								alert("Money Market Limit + Trade Finance Limit should not be greater than Credit Limit.");
+								$("#moneyMarketLimit").focus();
+								return false;
+							}
+
+							return true;
+						}
+
 						function validateCounterpartyForm() {
 							var form = document.getElementById("counterpartys");
+							var mode = fieldVal("#pageFormmode") || "add";
 							if (!form) {
 								alert("Form not found.");
 								return false;
 							}
+
+							// What: Stop the browser number-step message on edit.
+							// Why: Decimal limits were showing "Please enter a valid value. The two nearest valid values are...".
+							// How: Accept any decimal, then check Settlement + Credit and Money Market + Trade Finance.
+							if (mode === "edit") {
+								var numberFields = form.querySelectorAll("input[type='number']");
+								var fieldIndex = 0;
+								while (fieldIndex < numberFields.length) {
+									numberFields[fieldIndex].step = "any";
+									fieldIndex = fieldIndex + 1;
+								}
+								clearLimitMismatchHighlight();
+								if (!validateSettlementAndCreditWithinRegular()) {
+									return false;
+								}
+								return validateMoneyMarketAndTradeWithinCredit();
+							}
+
 							if (!form.checkValidity()) {
 								form.reportValidity();
 								return false;

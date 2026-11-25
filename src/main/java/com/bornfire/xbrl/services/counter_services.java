@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -819,69 +820,79 @@ public class counter_services {
 	}
 
 	public String Exposurebillservice(Mis_exposure_bill_detail_entity incomingEntity, String formMode,
-			HttpServletRequest request) {
+			HttpServletRequest request, String updateAllDates, String selectedReportDate, String originalBillId) {
 
 		incomingEntity.setDel_flg("N");
 		String responseMsg = "";
 
 		if ("Editbilldetail".equalsIgnoreCase(formMode)) {
 
-			
+			// What: The one bill row opened from the selected report date.
+			// Why: That row must always be updated, even when later dates are left unchanged.
+			// How: Read it by serial number, the same way this screen already saved one date.
 			Optional<Mis_exposure_bill_detail_entity> optionalExisting = Mis_exposure_bill_detail_rep
 					.checkvalueispresent(incomingEntity.getSrl_no());
 
 			if (optionalExisting.isPresent()) {
-				Mis_exposure_bill_detail_entity existingEntity = optionalExisting.get();
+				List<Mis_exposure_bill_detail_entity> rowsToUpdate = new ArrayList<Mis_exposure_bill_detail_entity>();
+				rowsToUpdate.add(optionalExisting.get());
 
-				incomingEntity.setModify_flg("Y");
-				incomingEntity.setVerify_flg("N");
-				incomingEntity.setModify_user((String) request.getSession().getAttribute("USERID"));
-				incomingEntity.setModify_time(new Date());
-				
-				Map<String, String> auditMap = Auditservice(existingEntity, incomingEntity);
-				
-				auditservice.createBusinessAudit((String) request.getSession().getAttribute("USERID"), "Modify", "Bill Entry Modify", auditMap,
-						"MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE");
+				// What: Later copies of this bill id, from the day after the selected date through today.
+				// Why: Update Data must write the same change on every later date without asking.
+				// How: Search by the bill id that was already on the page, then add each different row.
+				if (selectedReportDate != null && !selectedReportDate.trim().equals("")) {
+					String billIdToSearch = originalBillId;
+					if (billIdToSearch == null || billIdToSearch.trim().equals("")) {
+						billIdToSearch = incomingEntity.getBill_id();
+					}
+					java.sql.Date selectedDate = java.sql.Date.valueOf(selectedReportDate.trim());
+					List<Mis_exposure_bill_detail_entity> laterRows = Mis_exposure_bill_detail_rep
+							.findSameBillAfterSelectedDate(billIdToSearch, selectedDate);
+					int laterIndex = 0;
+					while (laterIndex < laterRows.size()) {
+						Mis_exposure_bill_detail_entity laterRow = laterRows.get(laterIndex);
+						boolean alreadyAdded = false;
+						int addedIndex = 0;
+						while (addedIndex < rowsToUpdate.size()) {
+							if (laterRow.getSrl_no() != null
+									&& laterRow.getSrl_no().equals(rowsToUpdate.get(addedIndex).getSrl_no())) {
+								alreadyAdded = true;
+							}
+							addedIndex = addedIndex + 1;
+						}
+						if (!alreadyAdded) {
+							rowsToUpdate.add(laterRow);
+						}
+						laterIndex = laterIndex + 1;
+					}
+				}
 
-				
-				existingEntity.setBranch_name(incomingEntity.getBranch_name());
-				existingEntity.setCountry(incomingEntity.getCountry());
-				existingEntity.setDate_of_loan(incomingEntity.getDate_of_loan());
-				existingEntity.setTrade_loan_amt_usd(incomingEntity.getTrade_loan_amt_usd());
-				existingEntity.setTrade_loan_amt_eq_aed(incomingEntity.getTrade_loan_amt_eq_aed());
-				existingEntity.setInterest_rate(incomingEntity.getInterest_rate());
-				existingEntity.setDue_date(incomingEntity.getDue_date());
-				String previousBankName = existingEntity.getName_of_the_bank();
-				String updatedBankName = incomingEntity.getName_of_the_bank();
-				existingEntity.setName_of_the_bank(updatedBankName);
-				saveBankNameMappingIfChanged(previousBankName, updatedBankName, incomingEntity.getSrl_no(),
-						(String) request.getSession().getAttribute("USERID"));
-				existingEntity.setBill_id(incomingEntity.getBill_id());
-				existingEntity.setCustomer_name(incomingEntity.getCustomer_name());
-				existingEntity.setAccount_no(incomingEntity.getAccount_no());
-				existingEntity.setDel_flg("N");
-				existingEntity.setEntry_flg("Y");
-				
-				List<Counterparty_Entity> CheckBankName = Counterparty_Reps.Checkbanknameisexist(incomingEntity.getName_of_the_bank());
-				
-				if(CheckBankName.size() > 0) {
-					existingEntity.setCounterparty_status("Y");
-				}else {
-					existingEntity.setCounterparty_status("N");
-				}		
-						
-				existingEntity.setModify_flg(incomingEntity.getModify_flg());
-				existingEntity.setVerify_flg(incomingEntity.getVerify_flg());
-				existingEntity.setModify_user((String) request.getSession().getAttribute("USERID"));
-				
-				existingEntity.setModify_time(new Date());
-				
-				Mis_exposure_bill_detail_rep.save(existingEntity);
-				if (previousBankName != null && updatedBankName != null
-						&& !previousBankName.trim().equalsIgnoreCase(updatedBankName.trim())) {
+				boolean bankNameChanged = false;
+				SimpleDateFormat showDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+				String updatedDateList = "";
+				int rowIndex = 0;
+				while (rowIndex < rowsToUpdate.size()) {
+					Mis_exposure_bill_detail_entity oneRow = rowsToUpdate.get(rowIndex);
+					boolean thisRowBankChanged = updateOneExposureBill(oneRow, incomingEntity, request);
+					if (thisRowBankChanged) {
+						bankNameChanged = true;
+					}
+					if (oneRow.getReport_date() != null) {
+						String oneDate = showDate.format(oneRow.getReport_date()).toUpperCase();
+						updatedDateList = addDateOnce(updatedDateList, oneDate);
+					}
+					rowIndex = rowIndex + 1;
+				}
+
+				if (rowsToUpdate.size() > 1) {
+					responseMsg = "Bill details updated on these dates: " + updatedDateList.replace(",", ", ") + ".";
+				} else if (bankNameChanged) {
 					responseMsg = "Bill details updated successfully. Bank name mapping saved for future use.";
 				} else {
 					responseMsg = "Bill details updated successfully.";
+				}
+				if (rowsToUpdate.size() > 1 && bankNameChanged) {
+					responseMsg = responseMsg + " Bank name mapping saved for future use.";
 				}
 
 			} else {
@@ -997,6 +1008,74 @@ public class counter_services {
 		}
 
 		return responseMsg;
+	}
+
+	// What: Add a report date to the list only when that date is not already written.
+	// Why: The same bill can be stored more than once on one date, and the result message should show the date once.
+	// How: Look for the date between commas, and append it only when it is missing.
+	private String addDateOnce(String dateList, String oneDate) {
+		if (oneDate == null || oneDate.equals("")) {
+			return dateList;
+		}
+		if (dateList == null || dateList.equals("")) {
+			return oneDate;
+		}
+		String wrappedList = "," + dateList + ",";
+		if (wrappedList.indexOf("," + oneDate + ",") >= 0) {
+			return dateList;
+		}
+		return dateList + "," + oneDate;
+	}
+
+	// What: Save the edited bill values onto one existing row.
+	// Why: The selected date and each later date through today must receive the same field changes.
+	// How: Write the audit first, copy the editable fields, then save that row. Report date and serial number stay as they are.
+	private boolean updateOneExposureBill(Mis_exposure_bill_detail_entity existingEntity,
+			Mis_exposure_bill_detail_entity incomingEntity, HttpServletRequest request) {
+		String userId = (String) request.getSession().getAttribute("USERID");
+		String previousBankName = existingEntity.getName_of_the_bank();
+		String updatedBankName = incomingEntity.getName_of_the_bank();
+		boolean bankNameChanged = previousBankName != null && updatedBankName != null
+				&& !previousBankName.trim().equalsIgnoreCase(updatedBankName.trim());
+
+		incomingEntity.setModify_flg("Y");
+		incomingEntity.setVerify_flg("N");
+		incomingEntity.setModify_user(userId);
+		incomingEntity.setModify_time(new Date());
+
+		Map<String, String> auditMap = Auditservice(existingEntity, incomingEntity);
+		auditservice.createBusinessAudit(userId, "Modify", "Bill Entry Modify", auditMap,
+				"MIS_ASL_EXPOSURE_BILL_DETAIL_TABLE");
+
+		existingEntity.setBranch_name(incomingEntity.getBranch_name());
+		existingEntity.setCountry(incomingEntity.getCountry());
+		existingEntity.setDate_of_loan(incomingEntity.getDate_of_loan());
+		existingEntity.setTrade_loan_amt_usd(incomingEntity.getTrade_loan_amt_usd());
+		existingEntity.setTrade_loan_amt_eq_aed(incomingEntity.getTrade_loan_amt_eq_aed());
+		existingEntity.setInterest_rate(incomingEntity.getInterest_rate());
+		existingEntity.setDue_date(incomingEntity.getDue_date());
+		existingEntity.setName_of_the_bank(updatedBankName);
+		saveBankNameMappingIfChanged(previousBankName, updatedBankName, existingEntity.getSrl_no(), userId);
+		existingEntity.setBill_id(incomingEntity.getBill_id());
+		existingEntity.setCustomer_name(incomingEntity.getCustomer_name());
+		existingEntity.setAccount_no(incomingEntity.getAccount_no());
+		existingEntity.setDel_flg("N");
+		existingEntity.setEntry_flg("Y");
+
+		List<Counterparty_Entity> CheckBankName = Counterparty_Reps
+				.Checkbanknameisexist(incomingEntity.getName_of_the_bank());
+		if (CheckBankName.size() > 0) {
+			existingEntity.setCounterparty_status("Y");
+		} else {
+			existingEntity.setCounterparty_status("N");
+		}
+
+		existingEntity.setModify_flg("Y");
+		existingEntity.setVerify_flg("N");
+		existingEntity.setModify_user(userId);
+		existingEntity.setModify_time(new Date());
+		Mis_exposure_bill_detail_rep.save(existingEntity);
+		return bankNameChanged;
 	}
 
 	public Map<String, String> Auditservice(Object existingEntity, Object incomingEntity) {
