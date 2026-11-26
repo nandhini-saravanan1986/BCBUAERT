@@ -153,6 +153,8 @@ public class RT_MC_NavigationController {
 	AuditService auditService;
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	RT_MC_ALLOCATIONS_REPO rtMcAllocationsRepo;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -196,8 +198,22 @@ public class RT_MC_NavigationController {
 		} else {
 			md.addAttribute("BRANCHCODE", branch);
 		}
-		List<String> dropdownOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing","IA","Compliance");
-		md.addAttribute("md", dropdownOptions);
+		List<String> deptOptions = null;
+		List<String> funcOptions = null;
+		try {
+			deptOptions = rtMcAllocationsRepo.findDepartments();
+			funcOptions = rtMcAllocationsRepo.findFunctions();
+		} catch (Exception e) {
+			logger.warn("Could not load allocations from RT_MC_ALLOCATIONS table: {}", e.getMessage());
+		}
+		if (deptOptions == null || deptOptions.isEmpty()) {
+			deptOptions = Arrays.asList("IT", "Risk", "HR", "Operations","CFO","CED","Digital","FRM","Retail-CASA","ISO","Retail/SME","Recovery","Marketing","IA","Compliance");
+		}
+		if (funcOptions == null || funcOptions.isEmpty()) {
+			funcOptions = Arrays.asList("SUM", "MAX", "AVG", "MIN");
+		}
+		md.addAttribute("md", deptOptions);
+		md.addAttribute("funcList", funcOptions);
 		System.out.println("branch : " + branch);
 		
 		if (reportDate == null || reportDate.isEmpty()) {
@@ -1057,8 +1073,7 @@ public class RT_MC_NavigationController {
 		newTaskProgress.put(jobId, 0);
 		logger.info(
 				"MC download accepted jobId={} formmode={} reportDate={} branch={} consolidated={} reportOption={} departments={} specialValues={} tables={}",
-				jobId, formmode, reportDate, branch, isConsolidated, reportOption, selectedDepartments, specialValues,
-				tableNames);
+				new Object[] { jobId, formmode, reportDate, branch, isConsolidated, reportOption, selectedDepartments, specialValues, tableNames });
 		String userid = (String) req.getSession().getAttribute("USERID");
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		new Thread(() -> {
@@ -1066,13 +1081,12 @@ public class RT_MC_NavigationController {
 				logger.info("MC download thread started jobId={}", jobId);
 				byte[] fileData = rT_MC_TABLE_Service.generateReportFile(branch, jobId, newTaskProgress, formmode,
 						reportDate, userid, attr, isConsolidated, reportOption, selectedDepartments, specialValues, tableNames);
-				logger.info("MC download thread finished jobId={} formmode={} bytes={}", jobId, formmode,
-						fileData == null ? 0 : fileData.length);
+				logger.info("MC download thread finished jobId={} formmode={} bytes={}",
+						new Object[] { jobId, formmode, fileData == null ? 0 : fileData.length });
 				newTaskFileStore.put(jobId, fileData);
 				newTaskProgress.put(jobId, 100);
 			} catch (Exception e) {
-				logger.error("MC download thread failed jobId={} formmode={} reportDate={} branch={}", jobId, formmode,
-						reportDate, branch, e);
+				logger.error("MC download thread failed jobId=" + jobId + " formmode=" + formmode + " reportDate=" + reportDate + " branch=" + branch, e);
 				String reason = e.getMessage();
 				if (reason == null || reason.trim().length() == 0) {
 					if (e.getCause() != null && e.getCause().getMessage() != null
@@ -2498,11 +2512,51 @@ public class RT_MC_NavigationController {
 	}
 	@Autowired
 	RT_MC_DEPARTMENT_SIGNOFF_REPO mcSignOffRepo;
-	private static final String[][] MCSO_DEPARTMENTS = { { "Retail/SME", "2, 4, 7" }, { "CED", "1, 3, 4, 6, 7, 9" },
-				{ "Operations", "1, 2, 4, 7, 9" }, { "CFO", "1, 4, 7, 9" }, { "HR", "1, 5, 9" },
-				{ "Recovery", "2, 4, 7" }, { "Digital", "1, 4, 7" }, { "FRM", "1, 2" }, { "ISO", "1, 2, 4" },
-				{ "IT", "1, 4" }, { "Marketing", "7, 9" }, { "Compliance", "7, 9" }, { "Risk", "9" },
-				{ "Retail CASA", "2" } };
+	private final Iterable<String[]> MCSO_DEPARTMENTS = () -> {
+		Map<String, Set<Integer>> deptTables = new LinkedHashMap<>();
+		String[] formModes = RT_MC_NavigationController.MCSO_FORM_MODES;           // position + 1 = table number
+		for (int i = 0; i < formModes.length; i++) {
+
+			// the DB table(s) of this form: tables 2, 4 and 7 are split in two parts, so ask the service for both
+			Set<String> dbTables = new LinkedHashSet<>();
+			dbTables.add(rT_MC_TABLE_Service.getMainTableName(formModes[i], "R7_X"));
+			dbTables.add(rT_MC_TABLE_Service.getMainTableName(formModes[i], "R99_X"));
+
+			for (String t : dbTables) {
+				if (t == null || t.trim().isEmpty()) continue;
+				List<Map<String, Object>> rows;
+				try {
+					rows = jdbcTemplate.queryForList("SELECT * FROM " + t
+							+ " WHERE BRANCH_CODE = 'DEPT'");
+				} catch (Exception ex) {
+					continue;
+				}
+				if (rows.isEmpty()) continue;
+
+				for (Map.Entry<String, Object> c : rows.get(0).entrySet()) {
+					String col = c.getKey().toUpperCase();
+					// only the cell columns (R<row>_...); skip label columns and empty cells
+					if (!col.matches("R\\d+_.*") || c.getValue() == null) continue;
+					if (col.endsWith("_BANK") || col.endsWith("_PRODUCT") || col.endsWith("_EMP_TYPE")
+							|| col.endsWith("_SR_NO") || col.endsWith("_ASES_CLASS")) continue;
+
+					for (String d : c.getValue().toString().split(",")) {
+						String dept = d.trim();
+						if (dept.isEmpty() || "all".equalsIgnoreCase(dept)) continue;   // "all" = every department
+						deptTables.computeIfAbsent(dept, x -> new java.util.TreeSet<Integer>()).add(i + 1);
+					}
+				}
+			}
+		}
+
+		List<String[]> out = new ArrayList<>();
+		for (Map.Entry<String, Set<Integer>> e : deptTables.entrySet()) {
+			java.util.StringJoiner nos = new java.util.StringJoiner(", ");
+			for (Integer n : e.getValue()) nos.add(String.valueOf(n));
+			out.add(new String[] { e.getKey(), nos.toString() });                  // { "CFO", "1, 4, 7, 9" }
+		}
+		return out.iterator();
+	};
 
 		/** Table number (1-9) = position + 1. */
 		private static final String[] MCSO_FORM_MODES = { "bankinformation", "bankconsumers", "complaints", "retailproducts",
@@ -2582,6 +2636,11 @@ public class RT_MC_NavigationController {
 
 		private String mcsoFmt(Date d) {
 			return d == null ? "" : new SimpleDateFormat("dd.MM.yyyy HH:mm").format(d);
+		}
+
+		/** The same time without the milliseconds, so the DB shows 6:27:22 PM and not 6:27:22.326000000 PM. */
+		private Date mcsoSec(Date d) {
+			return d == null ? null : new Date((d.getTime() / 1000) * 1000);
 		}
 
 		private String mcsoYesNo(String flag) {
@@ -2781,7 +2840,7 @@ public class RT_MC_NavigationController {
 				String evidence = evRaw.toUpperCase();
 
 				String screen = rT_MC_TABLE_Service.screenName(formMode);
-				Date now = new Date();
+				Date now = mcsoSec(new Date());                            // time only up to the second (no .326000000)
 				String checkerName = mcSignOffRepo.findUserNameByUserId(user);
 
 				// last data entry (any maker, including ADM-M) in this department's column(s) of this table
@@ -2791,30 +2850,16 @@ public class RT_MC_NavigationController {
 				if (last != null) {
 					makerName = last.getEntry_user_name();
 					makerId = last.getEntry_user();
-					makerTime = last.getEntry_time();
+					makerTime = mcsoSec(last.getEntry_time());
 				}
 
-				// this department's row for this table / report date / period (update it, or create it)
-				RT_MC_DEPARTMENT_SIGNOFF_ENTITY e = null;
-				for (RT_MC_DEPARTMENT_SIGNOFF_ENTITY x : mcSignOffRepo
-						.findByFormModeAndReportDateAndTimeperiodAndDelFlgOrderBySnoAsc(formMode, reportDate, timeperiod,
-								"N")) {
-					if (dept.equalsIgnoreCase(x.getDepartment())) {
-						e = x;
-						break;
-					}
-				}
-				if (e == null) {
-					e = new RT_MC_DEPARTMENT_SIGNOFF_ENTITY();
-					e.setId(mcSignOffRepo.findMaxId().add(BigDecimal.ONE));
-					e.setFormMode(formMode);
-					e.setReportDate(reportDate);
-					e.setTimeperiod(timeperiod);
-					e.setDelFlg("N");
-				} else {
-					e.setModifyUser(user);
-					e.setModifyTime(now);
-				}
+				// every click on Submit adds a NEW row; earlier sign-off rows of this department are kept as they are
+				RT_MC_DEPARTMENT_SIGNOFF_ENTITY e = new RT_MC_DEPARTMENT_SIGNOFF_ENTITY();
+				e.setId(mcSignOffRepo.findMaxId().add(BigDecimal.ONE));
+				e.setFormMode(formMode);
+				e.setReportDate(reportDate);
+				e.setTimeperiod(timeperiod);
+				e.setDelFlg("N");
 				int snoPos = mcsoDepartmentsFor(idx).indexOf(dept);
 				e.setSno(snoPos < 0 ? 1 : snoPos + 1);
 				e.setDepartment(dept);

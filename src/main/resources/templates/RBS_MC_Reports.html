@@ -17651,6 +17651,7 @@
 		document.addEventListener("DOMContentLoaded", function () {
 
 			const dataType = /*[[${DEPARTMENTVALIDATION}]]*/ null;
+			const DB_CALC_OPERATIONS = /*[[${funcList}]]*/['SUM', 'MAX', 'AVG', 'MIN'];
 
 			if (dataType && dataType.trim().toUpperCase() === 'YES') {
 				console.log("Loading DEPARTMENTVALIDATION Functions");
@@ -17671,7 +17672,7 @@
 					if (commonDropdown) {
 						commonDropdown.querySelectorAll('.select-content label').forEach(label => {
 							const input = label.querySelector('input');
-							if (!input || input.classList.contains('select-all-cb') || input.classList.contains('select-na-cb')) return;
+							if (!input || input.classList.contains('select-all-cb') || input.classList.contains('select-na-cb') || input.classList.contains('select-calc-cb')) return;
 							const span = label.querySelector('span');
 							if (!span) return;
 							if (input.value !== 'ALL') {
@@ -17687,6 +17688,13 @@
 							const naLabel = document.createElement('label');
 							naLabel.innerHTML = `<input type="checkbox" value="Not Applicable" class="select-na-cb" style="background-color: initial;"> Not Applicable`;
 							commonContent.insertBefore(naLabel, commonContent.children[1]);
+
+							const calcOps = (DB_CALC_OPERATIONS && DB_CALC_OPERATIONS.length > 0) ? DB_CALC_OPERATIONS : ['SUM', 'MAX', 'AVG', 'MIN'];
+							calcOps.forEach((op, idx) => {
+								const calcLabel = document.createElement('label');
+								calcLabel.innerHTML = `<input type="checkbox" value="${op}" class="select-calc-cb" style="background-color: initial;"> <span>${op}</span>`;
+								commonContent.insertBefore(calcLabel, commonContent.children[2 + idx]);
+							});
 						}
 					}
 
@@ -17715,6 +17723,13 @@
 						naLabel.innerHTML = `<input type="checkbox" value="Not Applicable" class="select-na-cb" style="accent-color: #E67E00;">Not Applicable`;
 						content.appendChild(naLabel);
 
+						const calcOps = (DB_CALC_OPERATIONS && DB_CALC_OPERATIONS.length > 0) ? DB_CALC_OPERATIONS : ['SUM', 'MAX', 'AVG', 'MIN'];
+						calcOps.forEach(op => {
+							const calcLabel = document.createElement('label');
+							calcLabel.innerHTML = `<input type="checkbox" value="${op}" class="select-calc-cb" style="accent-color: #E67E00;"> <span>${op}</span>`;
+							content.appendChild(calcLabel);
+						});
+
 						backendOptions.forEach(opt => {
 							const label = document.createElement('label');
 							label.innerHTML = `<input type="checkbox" value="${opt.value}"> <span>${opt.text}</span>`;
@@ -17727,8 +17742,9 @@
 						const savedValues = input.value.split(',').map(v => v.trim());
 						let checkCount = 0;
 						let hasNA = false;
+						let selectedCalc = null;
 
-						content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => {
+						content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb)').forEach(cb => {
 							if (savedValues.includes(cb.value)) {
 								cb.checked = true;
 								checkCount++;
@@ -17741,16 +17757,26 @@
 							hasNA = true;
 						}
 
-						if (checkCount === backendOptions.length && checkCount > 0 && !hasNA) {
+						content.querySelectorAll('.select-calc-cb').forEach(cb => {
+							if (savedValues.some(v => v.toUpperCase() === cb.value.toUpperCase())) {
+								cb.checked = true;
+								selectedCalc = cb.value;
+							}
+						});
+
+						if (checkCount === backendOptions.length && checkCount > 0 && !hasNA && !selectedCalc) {
 							content.querySelector('.select-all-cb').checked = true;
 						}
 
-						const dataBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):checked'));
+						const dataBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb):checked'));
 						const vals = dataBoxes.map(cb => cb.value);
 
 						if (hasNA) {
 							btn.innerHTML = "Not Applicable";
 							btn.title = "Not Applicable";
+						} else if (selectedCalc) {
+							btn.innerHTML = selectedCalc;
+							btn.title = selectedCalc;
 						} else if (vals.length === 0) {
 							btn.innerHTML = " --- Select --- ";
 							btn.title = "Select";
@@ -17841,7 +17867,7 @@
 
 					const commonDropdown = document.getElementById('common-dropdown');
 					if (commonDropdown) {
-						commonDropdown.querySelectorAll('.select-all-cb, .select-na-cb').forEach(cb => {
+						commonDropdown.querySelectorAll('.select-all-cb, .select-na-cb, .select-calc-cb').forEach(cb => {
 							cb.closest('label')?.remove();
 						});
 					}
@@ -18364,11 +18390,15 @@
 					if (!content) content = document.querySelector(`.select-content[data-owner="${dropdown.id}"]`);
 
 					if (content) {
-						const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):checked'));
-						const totalBoxes = content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').length;
+						const checkedBoxes = Array.from(content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb):checked'));
+						const totalBoxes = content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb)').length;
 
 						const naCb = content.querySelector('.select-na-cb');
 						const isNaChecked = naCb && naCb.checked;
+
+						const checkedCalcs = Array.from(content.querySelectorAll('.select-calc-cb:checked'));
+						const calcValuesArray = checkedCalcs.map(cb => cb.value);
+						const calcCommaString = calcValuesArray.join(', ');
 
 						const selectedValuesArray = checkedBoxes.map(cb => cb.value);
 						const commaSeparatedString = selectedValuesArray.join(', ');
@@ -18381,6 +18411,11 @@
 							btn.innerText = "Not Applicable";
 							btn.title = "Not Applicable";
 							if (hiddenInput) hiddenInput.value = "Not Applicable";
+							if (allCb) allCb.checked = false;
+						} else if (calcValuesArray.length > 0) {
+							btn.innerText = calcCommaString;
+							btn.title = calcCommaString;
+							if (hiddenInput) hiddenInput.value = (calcValuesArray.length === 1) ? calcValuesArray[0] : calcCommaString;
 							if (allCb) allCb.checked = false;
 						} else if (selectedValuesArray.length === 0) {
 							btn.innerText = " --- Select --- ";
@@ -18414,27 +18449,42 @@
 
 						const isAllCb = e.target.classList.contains('select-all-cb');
 						const isNaCb = e.target.classList.contains('select-na-cb');
+						const isCalcCb = e.target.classList.contains('select-calc-cb');
 						const isChecked = e.target.checked;
 
 						if (isAllCb && isChecked) {
 							content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
-								if (cb.classList.contains('select-na-cb')) {
+								if (cb.classList.contains('select-na-cb') || cb.classList.contains('select-calc-cb')) {
 									cb.checked = false;
 								} else {
 									cb.checked = true;
 								}
 							});
 						} else if (isAllCb && !isChecked) {
-							content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => {
+							content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb)').forEach(cb => {
 								cb.checked = false;
 							});
 						} else if (isNaCb && isChecked) {
 							content.querySelectorAll('input[type="checkbox"]:not(.select-na-cb)').forEach(cb => {
 								cb.checked = false;
 							});
-						} else if (!isAllCb && !isNaCb && isChecked) {
+						} else if (isCalcCb && isChecked) {
+							content.querySelectorAll('.select-calc-cb').forEach(cb => {
+								if (cb !== e.target) cb.checked = false;
+							});
 							const naCb = content.querySelector('.select-na-cb');
 							if (naCb) naCb.checked = false;
+							const allCb = content.querySelector('.select-all-cb');
+							if (allCb) allCb.checked = false;
+							content.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb)').forEach(cb => {
+								cb.checked = false;
+							});
+						} else if (!isAllCb && !isNaCb && !isCalcCb && isChecked) {
+							const naCb = content.querySelector('.select-na-cb');
+							if (naCb) naCb.checked = false;
+							content.querySelectorAll('.select-calc-cb').forEach(cb => {
+								cb.checked = false;
+							});
 						}
 
 						if (dropdown.id === 'common-dropdown') {
@@ -18450,11 +18500,11 @@
 									if (cellContent) {
 										if (isAllCb && isChecked) {
 											cellContent.querySelectorAll('input[type="checkbox"]:not(.select-all-cb)').forEach(cb => {
-												if (cb.classList.contains('select-na-cb')) cb.checked = false;
+												if (cb.classList.contains('select-na-cb') || cb.classList.contains('select-calc-cb')) cb.checked = false;
 												else cb.checked = true;
 											});
 										} else if (isAllCb && !isChecked) {
-											cellContent.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb)').forEach(cb => cb.checked = false);
+											cellContent.querySelectorAll('input[type="checkbox"]:not(.select-all-cb):not(.select-na-cb):not(.select-calc-cb)').forEach(cb => cb.checked = false);
 										} else if (isNaCb && isChecked) {
 											cellContent.querySelectorAll('input[type="checkbox"]:not(.select-na-cb)').forEach(cb => cb.checked = false);
 											const cellNaCb = cellContent.querySelector('.select-na-cb');
@@ -18462,6 +18512,14 @@
 										} else if (isNaCb && !isChecked) {
 											const cellNaCb = cellContent.querySelector('.select-na-cb');
 											if (cellNaCb) cellNaCb.checked = false;
+										} else if (isCalcCb && isChecked) {
+											cellContent.querySelectorAll('input[type="checkbox"]:not(.select-calc-cb)').forEach(cb => cb.checked = false);
+											cellContent.querySelectorAll('.select-calc-cb').forEach(cb => {
+												cb.checked = (cb.value === valueChanged);
+											});
+										} else if (isCalcCb && !isChecked) {
+											const cellCalcCb = cellContent.querySelector(`.select-calc-cb[value="${valueChanged}"]`);
+											if (cellCalcCb) cellCalcCb.checked = false;
 										} else {
 											const cellCheckbox = cellContent.querySelector(`input[value="${valueChanged}"]`);
 											if (cellCheckbox) cellCheckbox.checked = isChecked;
@@ -18469,6 +18527,7 @@
 											if (isChecked) {
 												const cellNaCb = cellContent.querySelector('.select-na-cb');
 												if (cellNaCb) cellNaCb.checked = false;
+												cellContent.querySelectorAll('.select-calc-cb').forEach(cb => cb.checked = false);
 											}
 										}
 										updateDropdownUI(cellDropdown);
@@ -18644,6 +18703,8 @@
 					if (Array.isArray(ptReportData2) && ptReportData2.length > 0) ptReportData2 = ptReportData2[0];
 
 					const isAllowed = (configData, fieldName) => {
+						/* <!-- DEMO: Always allow Column G (NO_CON_SPC_TP) in MC View --> */
+						if (fieldName && fieldName.toUpperCase().includes('NO_CON_SPC_TP')) return true;
 						if (configData && configData.hasOwnProperty(fieldName)) {
 							const fieldConfig = configData[fieldName];
 							if (fieldConfig) {
@@ -19507,6 +19568,8 @@
 				const userDepts = (currentDepartment || '').toLowerCase().split(',').map(d => d.trim());
 
 				const isAllowed = (configData, fieldName) => {
+					/* <!-- DEMO: Always allow Column G (NO_CON_SPC_TP) in MC View --> */
+					if (fieldName && fieldName.toUpperCase().includes('NO_CON_SPC_TP')) return true;
 					if (!configData || !fieldName) return false;
 					const actualKey = Object.keys(configData).find(key => key.toLowerCase() === fieldName.toLowerCase());
 					if (actualKey && configData[actualKey]) {
@@ -19652,15 +19715,53 @@
 					return checkCfg(ptReportData1) || checkCfg(ptReportData2);
 				};
 
-				const isCellNameAllocatedToDepartment = (cellName) => {
-					if (!cellName) return false;
-					const clean = cellName.trim().toLowerCase();
+				const DB_CALC_OPERATIONS = /*[[${funcList}]]*/['SUM', 'MAX', 'AVG', 'MIN'];
+				const CALC_OPERATIONS = (DB_CALC_OPERATIONS && DB_CALC_OPERATIONS.length > 0) ? DB_CALC_OPERATIONS : ['SUM', 'MAX', 'AVG', 'MIN'];
+
+				const getCellConfiguredOperation = (cellOrName) => {
+					if (!cellOrName) return null;
+					const keysToTest = (typeof cellOrName === 'string')
+						? [cellOrName]
+						: [cellOrName.getAttribute ? cellOrName.getAttribute('data-cellname') : null, cellOrName.name, cellOrName.id].filter(Boolean);
+
+					const checkCfg = (cfg) => {
+						if (!cfg) return null;
+						for (const key of keysToTest) {
+							const clean = key.trim().toLowerCase();
+							const actualKey = Object.keys(cfg).find(k => k.trim().toLowerCase() === clean);
+							if (actualKey && cfg[actualKey]) {
+								const rawVal = String(cfg[actualKey]).trim().toUpperCase();
+								const parts = rawVal.split(',').map(s => s.trim().toUpperCase());
+								const matchedOp = CALC_OPERATIONS.find(op => parts.includes(op));
+								if (matchedOp) {
+									return matchedOp;
+								}
+							}
+						}
+						return null;
+					};
+					return checkCfg(ptReportData1) || checkCfg(ptReportData2);
+				};
+
+				const isCellNameAllocatedToDepartment = (cellOrName) => {
+					if (!cellOrName) return false;
+					const keysToTest = (typeof cellOrName === 'string')
+						? [cellOrName]
+						: [cellOrName.getAttribute ? cellOrName.getAttribute('data-cellname') : null, cellOrName.name, cellOrName.id].filter(Boolean);
+
 					const checkCfg = (cfg) => {
 						if (!cfg) return false;
-						const actualKey = Object.keys(cfg).find(key => key.trim().toLowerCase() === clean);
-						if (actualKey && cfg[actualKey]) {
-							const rawVal = String(cfg[actualKey]).trim().toLowerCase();
-							return rawVal !== '' && rawVal !== '-' && !rawVal.includes('not applicable') && rawVal !== 'na' && rawVal !== 'n/a';
+						for (const key of keysToTest) {
+							const clean = key.trim().toLowerCase();
+							const actualKey = Object.keys(cfg).find(k => k.trim().toLowerCase() === clean);
+							if (actualKey && cfg[actualKey]) {
+								const rawVal = String(cfg[actualKey]).trim().toUpperCase();
+								const tokens = rawVal.split(',').map(s => s.trim().toUpperCase());
+								const hasDept = tokens.some(t => t !== '' && t !== '-' && !t.includes('NOT APPLICABLE') && t !== 'NA' && t !== 'N/A' && !CALC_OPERATIONS.includes(t));
+								if (hasDept) {
+									return true;
+								}
+							}
 						}
 						return false;
 					};
@@ -19677,60 +19778,19 @@
 					return keysToTest.some(k => isCellNameAllocatedToDepartment(k));
 				};
 
-				function isNoCalcColumn(cellName, mode) {
-					if (!cellName) return false;
-					const name = cellName.toUpperCase();
-					if (mode === 'complaints') {
-						return name === 'R22_AVG_TME_RES_COM' || name.endsWith('AVG_TME_RES_COM') || name.includes('AVG_TME_RES_COM');
-					}
-					if (mode === 'retailproducts') {
-						const disabledSuffixes = [
-							'AVG_TME_LWRSK',
-							'AVG_NO_LOAN',
-							'AVG_NO_LWRSK_SME',
-							'AVG_NO_DYS_SME',
-							'AVG_TME_REPAY',
-							'AVG_TME_CLSACC',
-							'AVG_DAY_NLL',
-							'AVG_NOD_LOWRSK',
-							'NO_LANG_VOICE'
-						];
-						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
-					}
-					if (mode === 'trainings') {
-						const disabledSuffixes = [
-							'NO_TRA_SNR_SPT',
-							'NO_CON_MRK_FRD'
-						];
-						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
-					}
-					if (mode === 'additionalinformation') {
-						const disabledSuffixes = [
-							'PER_COMPDIGI_WEB',
-							'PER_COM_TRADCALL',
-							'PROF_MARG_PORTFOLIO',
-							'TOT_RET_ASET_PREV',
-							'TOT_BRAN_PREV',
-							'TOT_WEB_MOB_VIRT'
-						];
-						return disabledSuffixes.some(s => name === s || name.endsWith('_' + s) || name.includes(s));
-					}
-					return false;
-				}
-
-				function isMaxCalcColumn(cellName, mode) {
-					if (!cellName) return false;
-					const name = cellName.toUpperCase();
-					if (mode === 'retailproducts') {
-						return name === 'R22_HIG_PER_PROD_CAT' || name.endsWith('HIG_PER_PROD_CAT') || name.includes('HIG_PER_PROD_CAT');
-					}
-					return false;
-				}
-
 				function calculateColumnTotal(totalInput) {
 					if (!totalInput || !totalInput._childInputs) return;
 
 					const totalCellName = (totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id || '').toUpperCase();
+
+					/*
+					 * If the total cell is configured as Not Applicable, keep "Not Applicable" and skip calculation.
+					 */
+					if (isCellConfiguredNA(totalInput)) {
+						totalInput.value = "Not Applicable";
+						totalInput.dataset.autoTotal = "false";
+						return;
+					}
 
 					/*
 					 * If the total cell is allocated to any department, it is treated as a normal non-calculated cell.
@@ -19740,91 +19800,14 @@
 						return;
 					}
 
-					/*
-					 * =========================================================================================
-					 * 1. DISABLED TOTAL CALCULATION COLUMNS:
-					 * For specific tables/columns, total calculation is disabled and forced to show "0".
-					 * - Table 3 (complaints): R22_AVG_TME_RES_COM
-					 * - Table 4 (retailproducts): R22_AVG_TME_LWRSK, R22_AVG_NO_LOAN, R22_AVG_NO_LWRSK_SME,
-					 *   R22_AVG_NO_DYS_SME, R22_AVG_TME_REPAY, R22_AVG_TME_CLSACC, R22_AVG_DAY_NLL,
-					 *   R22_AVG_NOD_LOWRSK, R22_NO_LANG_VOICE
-					 * - Table 6 (trainings): R12_NO_TRA_SNR_SPT, R12_NO_CON_MRK_FRD
-					 * - Table 7 (additionalinformation): R23_PER_COMPDIGI_WEB, R23_PER_COM_TRADCALL,
-					 *   R23_PROF_MARG_PORTFOLIO, R23_TOT_RET_ASET_PREV, R23_TOT_BRAN_PREV, R23_TOT_WEB_MOB_VIRT
-					 * =========================================================================================
-					 */
-					if (isNoCalcColumn(totalCellName, formMode)) {
-						return;
-					}
+					const op = getCellConfiguredOperation(totalInput) || 'SUM';
 
-					/*
-					 * =========================================================================================
-					 * 2. MAXIMUM VALUE CALCULATION COLUMN:
-					 * Table 4 (retailproducts): R22_HIG_PER_PROD_CAT
-					 * Analyzes the entire column and displays the MAXIMUM value instead of SUM.
-					 * =========================================================================================
-					 */
-					if (isMaxCalcColumn(totalCellName, formMode)) {
-						let maxVal = null;
-						let hasPercent = false;
-						let naCount = 0;
-						let navCount = 0;
-						let dashCount = 0;
-						const totalChildren = totalInput._childInputs.length;
-
-						totalInput._childInputs.forEach(child => {
-							const rawVal = (child.value !== undefined ? child.value : child.innerText || '').trim();
-							const lowerVal = rawVal.toLowerCase();
-
-							if (lowerVal === 'not applicable') {
-								naCount++;
-							} else if (lowerVal === 'not available') {
-								navCount++;
-							} else if (rawVal === '-') {
-								dashCount++;
-							} else if (rawVal !== '') {
-								if (rawVal.includes('%')) hasPercent = true;
-								const cleanVal = rawVal.replace(/,/g, '').replace(/%/g, '').trim();
-								const num = parseFloat(cleanVal);
-								if (!isNaN(num)) {
-									if (maxVal === null || num > maxVal) {
-										maxVal = num;
-									}
-								}
-							}
-						});
-
-						let formattedMax = "0";
-						if (maxVal !== null) {
-							const rounded = Number(maxVal.toFixed(2));
-							formattedMax = Number.isInteger(rounded) ? String(rounded) : maxVal.toFixed(2);
-							if (hasPercent) {
-								formattedMax += "%";
-							}
-						} else if (totalChildren > 0) {
-							if (navCount > 0) {
-								formattedMax = "Not Available";
-							} else if (naCount > 0 && (naCount + dashCount === totalChildren)) {
-								formattedMax = "Not Applicable";
-							}
-						}
-						totalInput.value = formattedMax;
-						return;
-					}
-
-					/*
-					 * =========================================================================================
-					 * 3. DEFAULT SUM CALCULATION:
-					 * Standard sum calculation across all child inputs.
-					 * - If numbers exist: sum all numbers (treating NA, NAV, and blanks as 0).
-					 * - If NO numbers exist:
-					 *   * If even one "Not Available" exists (all NAV, or mixed NA + NAV): "Not Available"
-					 *   * If completely "Not Applicable" (100% NA): "Not Applicable"
-					 *   * Otherwise: "0"
-					 * =========================================================================================
-					 */
 					let sum = 0;
-					let hasNumeric = false;
+					let count = 0;
+					let maxVal = null;
+					let minVal = null;
+					let numbers = [];
+					let hasPercent = false;
 					let naCount = 0;
 					let navCount = 0;
 					let dashCount = 0;
@@ -19841,27 +19824,65 @@
 						} else if (rawVal === '-') {
 							dashCount++;
 						} else if (rawVal !== '') {
-							const cleanVal = rawVal.replace(/,/g, '').trim();
+							if (rawVal.includes('%')) hasPercent = true;
+							const cleanVal = rawVal.replace(/,/g, '').replace(/%/g, '').trim();
 							const num = parseFloat(cleanVal);
 							if (!isNaN(num)) {
+								numbers.push(num);
 								sum += num;
-								hasNumeric = true;
+								count++;
+								if (maxVal === null || num > maxVal) {
+									maxVal = num;
+								}
+								if (minVal === null || num < minVal) {
+									minVal = num;
+								}
 							}
 						}
 					});
 
-					let formattedSum = "0";
-					if (hasNumeric) {
-						const rounded = Number(sum.toFixed(2));
-						formattedSum = Number.isInteger(rounded) ? String(rounded) : sum.toFixed(2);
+					let formattedVal = "0";
+					if (count > 0) {
+						let resultNum = 0;
+						if (op === 'MAX') {
+							resultNum = maxVal;
+						} else if (op === 'MIN') {
+							resultNum = minVal;
+						} else if (op === 'AVG') {
+							resultNum = sum / count;
+						} else if (op === 'COUNT') {
+							resultNum = count;
+						} else if (op === 'MEDIAN') {
+							if (numbers.length > 0) {
+								numbers.sort((a, b) => a - b);
+								const mid = Math.floor(numbers.length / 2);
+								resultNum = (numbers.length % 2 !== 0) ? numbers[mid] : (numbers[mid - 1] + numbers[mid]) / 2;
+							} else {
+								resultNum = 0;
+							}
+						} else {
+							resultNum = sum;
+						}
+						const rounded = Number(resultNum.toFixed(2));
+						formattedVal = Number.isInteger(rounded) ? String(rounded) : resultNum.toFixed(2);
+						if (hasPercent) {
+							formattedVal += "%";
+						}
 					} else if (totalChildren > 0) {
 						if (navCount > 0) {
-							formattedSum = "Not Available";
+							formattedVal = "Not Available";
 						} else if (naCount > 0 && (naCount + dashCount === totalChildren)) {
-							formattedSum = "Not Applicable";
+							formattedVal = "Not Applicable";
 						}
 					}
-					totalInput.value = formattedSum;
+					totalInput.value = formattedVal;
+					const cellId = (totalInput.getAttribute('data-cellname') || totalInput.name || totalInput.id || '').toUpperCase();
+					if (cellId) {
+						const counterpart = document.querySelector(`#mgrReportTable [name="${cellId}"], #mgrReportTable [id="${cellId}"], #mgrReportTable [data-cellname="${cellId}"]`);
+						if (counterpart && counterpart !== totalInput) {
+							counterpart.value = formattedVal;
+						}
+					}
 				}
 
 				function syncAutoTotalToBackend(totalInput, actionType, modifyFlagVal) {
@@ -19870,14 +19891,17 @@
 					if (!totalCellName) return;
 
 					/*
+					 * If the total cell is configured as Not Applicable, skip auto-syncing.
+					 */
+					if (isCellConfiguredNA(totalInput)) {
+						return;
+					}
+
+					/*
 					 * If the total cell is allocated to any department, it is treated as a normal non-calculated cell.
 					 * Auto-syncing from child rows is skipped to avoid overwriting department maker/checker entries.
 					 */
 					if (totalInput.dataset.deptAllocated === "true" || isCellAllocatedToDepartment(totalInput) || isCellNameAllocatedToDepartment(totalCellName)) {
-						return;
-					}
-
-					if (isNoCalcColumn(totalCellName, formMode)) {
 						return;
 					}
 
@@ -20003,24 +20027,22 @@
 
 								if (r === rows.length - 1 && childInputsInCol.length > 0) {
 									const totalCellName = (inp.getAttribute('data-cellname') || inp.name || inp.id || '').toUpperCase();
+									const isNA = isCellConfiguredNA(inp);
 									const isAllocated = isCellAllocatedToDepartment(inp) || isCellNameAllocatedToDepartment(totalCellName);
-									const isNoCalc = isNoCalcColumn(totalCellName, formMode) || isAllocated;
 
 									inp.dataset.isTotalCell = "true";
-									inp.dataset.autoTotal = isNoCalc ? "false" : "true";
+									inp.dataset.autoTotal = (isAllocated || isNA) ? "false" : "true";
 									inp.dataset.deptAllocated = isAllocated ? "true" : "false";
 
-									if (isNoCalc && !isAllocated) {
-										if (!inp.value || inp.value.trim() === '') {
-											inp.value = "0";
-										}
+									if (isNA) {
+										inp.value = "Not Applicable";
 									}
 
 									if (childInputsInCol.length > 0 && !processedTotals.has(inp)) {
 										processedTotals.add(inp);
 										inp._childInputs = [...childInputsInCol];
 
-										if (!isNoCalc) {
+										if (!isAllocated && !isNA) {
 											inp._childInputs.forEach(child => {
 												child._totalInputs = child._totalInputs || [];
 												if (!child._totalInputs.includes(inp)) {
@@ -20030,13 +20052,11 @@
 												child.addEventListener('change', () => calculateColumnTotal(inp));
 											});
 
-											if (!inp.value || inp.value.trim() === '') {
-												calculateColumnTotal(inp);
-											}
+											calculateColumnTotal(inp);
 										}
 									}
 									childInputsInCol = [];
-								} else if (!isCellConfiguredNA(inp)) {
+								} else {
 									childInputsInCol.push(inp);
 								}
 							}
@@ -21474,7 +21494,7 @@
 						totalInputs.forEach(inp => {
 							const totalCellName = inp.getAttribute('data-cellname') || inp.name || inp.id;
 
-							if (!totalCellName || isNoCalcColumn(totalCellName, formMode)) return;
+							if (!totalCellName) return;
 
 							calculateColumnTotal(inp);
 
@@ -23464,25 +23484,83 @@
 			window.location.href = 'RT_MC_Reports?formmode=' + formmode + '&dept=' + encodeURIComponent(selecteddeptvalue) + '&reportDate=' + contextReportDate + '&timeperiod=' + timeperiod;
 		}
 	</script>
-	
-				<!-- ===================== Market Conduct per-table Sign Off (checker) ===================== -->
+
+	<!-- ===================== Market Conduct per-table Sign Off (checker) ===================== -->
 	<style>
-		#mcSignOffTable th, #mcSignOffTable td { white-space: normal; word-break: break-word; vertical-align: middle; padding: 6px; font-size: 12px; }
-		#mcSignOffTable th { text-align: center; }
-		#mcEvidence { border: 2px solid #ff7a00; border-radius: 4px; background: #fff; color: #212529; font-weight: 500; }
-		#mcEvidence:focus { border-color: #e06a00; box-shadow: 0 0 0 0.15rem rgba(255, 122, 0, 0.25); }
-		#mcEvidence.mc-ev-missing { border: 2px solid #dc3545; background: #fff5f5; }
-		#mcSignOffTable { table-layout: fixed; }
-		#mcSignOffTable th:nth-child(1) { width: 5%; }
-		#mcSignOffTable th:nth-child(2) { width: 8%; }
-		#mcSignOffTable th:nth-child(3) { width: 7%; }
-		#mcSignOffTable th:nth-child(4) { width: 12%; }
-		#mcSignOffTable th:nth-child(5) { width: 11%; }
-		#mcSignOffTable th:nth-child(6) { width: 12%; }
-		#mcSignOffTable th:nth-child(7) { width: 11%; }
-		#mcSignOffTable th:nth-child(8) { width: 13%; }
-		#mcSignOffTable th:nth-child(9) { width: 11%; }
-		#mcSignOffTable th:nth-child(10) { width: 10%; }
+		#mcSignOffTable th,
+		#mcSignOffTable td {
+			white-space: normal;
+			word-break: break-word;
+			vertical-align: middle;
+			padding: 6px;
+			font-size: 12px;
+		}
+
+		#mcSignOffTable th {
+			text-align: center;
+		}
+
+		#mcEvidence {
+			border: 2px solid #ff7a00;
+			border-radius: 4px;
+			background: #fff;
+			color: #212529;
+			font-weight: 500;
+		}
+
+		#mcEvidence:focus {
+			border-color: #e06a00;
+			box-shadow: 0 0 0 0.15rem rgba(255, 122, 0, 0.25);
+		}
+
+		#mcEvidence.mc-ev-missing {
+			border: 2px solid #dc3545;
+			background: #fff5f5;
+		}
+
+		#mcSignOffTable {
+			table-layout: fixed;
+		}
+
+		#mcSignOffTable th:nth-child(1) {
+			width: 5%;
+		}
+
+		#mcSignOffTable th:nth-child(2) {
+			width: 8%;
+		}
+
+		#mcSignOffTable th:nth-child(3) {
+			width: 7%;
+		}
+
+		#mcSignOffTable th:nth-child(4) {
+			width: 12%;
+		}
+
+		#mcSignOffTable th:nth-child(5) {
+			width: 11%;
+		}
+
+		#mcSignOffTable th:nth-child(6) {
+			width: 12%;
+		}
+
+		#mcSignOffTable th:nth-child(7) {
+			width: 11%;
+		}
+
+		#mcSignOffTable th:nth-child(8) {
+			width: 13%;
+		}
+
+		#mcSignOffTable th:nth-child(9) {
+			width: 11%;
+		}
+
+		#mcSignOffTable th:nth-child(10) {
+			width: 10%;
+		}
 	</style>
 	<div class="modal fade" id="mcSignOffModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
 		<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 96vw; width: 1250px;">
@@ -23665,6 +23743,635 @@
 			}
 		});
 	</script>
+
+	<!-- ================================================================================= -->
+	<!-- ==================== DEMO IMPLEMENTATION START ================================== -->
+	<!-- 
+	     PURPOSE: CLIENT DEMO FEATURES (Market Conduct Module)
+	     =============================================================================
+	     1. Feature 1: Cross-Table Mapping
+	        - Table 1, Column G (R22_NO_CON_SPC_TP) = Table 2, BA (R22_NO_CON_START) + BH (R22_NO_NEW_CON_ONB_GNP)
+	        - When values in BA or BH column change, the column total changes, and Table 1's
+	          R22_NO_CON_SPC_TP updates automatically in frontend, localStorage, and DB.
+	     2. Feature 2: Negative Value Validation Check
+	        - Disallows negative values in any cell across all tables and modals.
+	        - Intercepts typing/pasting '-' and alerts the user immediately.
+	     3. Feature 3: Pop-up Alerts for '000 and Percentage
+	        - Entire column VAL_LOS_AED (R6 to R22)  -> Pop-up alert: Values in '000 AED
+	        - Entire column PER_DOR_ACCS (R6 to R22) -> Pop-up alert: Values as Percentage (%)
+	        - Appears directly on top of the edit popup (#editRecordModal).
+	        - Hides when user presses 'Enter' key or clicks 'OK' button, returning focus to the input.
+	     =============================================================================
+	     HOW TO SAFELY DISCARD / REVERT AFTER DEMO:
+	     Simply delete or comment out the entire block between "DEMO IMPLEMENTATION START"
+	     and "DEMO IMPLEMENTATION END" below. No Java backend code was touched.
+	-->
+
+	<!-- Demo CSS Styles -->
+	<style id="demoCustomStyles">
+		@keyframes demoFadeIn {
+			from { opacity: 0; transform: scale(0.95); }
+			to { opacity: 1; transform: scale(1); }
+		}
+		.demo-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(0, 0, 0, 0.55);
+			z-index: 106000 !important;
+			display: none;
+			justify-content: center;
+			align-items: center;
+		}
+		.demo-modal-box {
+			background: #ffffff;
+			border-radius: 8px;
+			width: 440px;
+			max-width: 90%;
+			box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+			border: 1px solid #ced4da;
+			overflow: hidden;
+			animation: demoFadeIn 0.2s ease-out;
+		}
+		.demo-modal-header {
+			background: #f8f9fa;
+			border-bottom: 1px solid #e9ecef;
+			padding: 14px 18px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.demo-modal-title {
+			font-weight: 700;
+			font-size: 15px;
+			color: #212529;
+		}
+		.demo-modal-body {
+			padding: 20px 18px;
+			font-size: 14px;
+			color: #495057;
+			line-height: 1.55;
+		}
+		.demo-modal-footer {
+			background: #f8f9fa;
+			border-top: 1px solid #e9ecef;
+			padding: 12px 18px;
+			text-align: right;
+		}
+		.demo-mapped-cell {
+			background-color: #e8f4fd !important;
+			border: 1px solid #339af0 !important;
+			cursor: pointer;
+		}
+		.demo-mapped-cell:hover {
+			background-color: #d0ebff !important;
+		}
+	</style>
+
+	<!-- Demo Pop-up Alert Modal (Values in '000 or Percentage) -->
+	<div id="demoFormatAlertModal" class="demo-modal-overlay" role="dialog" aria-modal="true">
+		<div class="demo-modal-box">
+			<div class="demo-modal-header">
+				<span id="demoFormatAlertIconWrapper" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #e7f1ff; color: #0d6efd;">
+					<i id="demoFormatAlertIcon" class="fa fa-info-circle"></i>
+				</span>
+				<span id="demoFormatAlertTitle" class="demo-modal-title">Format Notice</span>
+			</div>
+			<div class="demo-modal-body" id="demoFormatAlertMessage">
+				Please enter the required value.
+			</div>
+			<div class="demo-modal-footer">
+				<button type="button" id="demoFormatAlertOkBtn" class="btn btn-primary btn-sm" style="min-width: 85px; font-weight: 600; padding: 6px 20px;">
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Demo Negative Value Validation Alert Modal -->
+	<div id="demoNegativeValidationModal" class="demo-modal-overlay" role="dialog" aria-modal="true">
+		<div class="demo-modal-box">
+			<div class="demo-modal-header" style="background: #fff5f5; border-bottom: 1px solid #fed7d7;">
+				<span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #fed7d7; color: #e53e3e;">
+					<i class="fa fa-exclamation-triangle"></i>
+				</span>
+				<span class="demo-modal-title" style="color: #c53030;">Validation Warning</span>
+			</div>
+			<div class="demo-modal-body" id="demoNegativeValidationMsg">
+				Negative values are not allowed in any cell. Please enter a valid non-negative number.
+			</div>
+			<div class="demo-modal-footer">
+				<button type="button" id="demoNegativeValidationOkBtn" class="btn btn-danger btn-sm" style="min-width: 85px; font-weight: 600; padding: 6px 20px;">
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Demo JavaScript Logic -->
+	<script th:inline="javascript">
+		(function () {
+			/* =========================================================================
+			 * DEMO IMPLEMENTATION LOGIC
+			 * ========================================================================= */
+
+			const demoReportDate = /*[[${REPORT_DATE}]]*/ '';
+			const demoTimePeriod = /*[[${timeperiod}]]*/ 'QUARTERLY';
+			const demoCurrentForm = /*[[${formmode}]]*/ '';
+
+			// *** KEY GUARD: detect dept validation mode via Thymeleaf ***
+			// In dept validation mode ALL DOM writes for the mapping are disabled to prevent
+			// the interval from overwriting the dept allocation dropdown row.
+			const demoIsDeptValidationMode = (/*[[${DEPARTMENTVALIDATION}]]*/ '') === 'YES';
+
+			// Helper: parse clean number
+			function demoCleanNumber(val) {
+				if (val === null || val === undefined) return 0;
+				const str = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+				const num = parseFloat(str);
+				return isNaN(num) ? 0 : num;
+			}
+
+			// Helper: format number
+			function demoFormatNumber(num) {
+				const rounded = Number(num.toFixed(2));
+				return Number.isInteger(rounded) ? String(rounded) : num.toFixed(2);
+			}
+
+			/* -------------------------------------------------------------------------
+			 * FEATURE 1: CROSS-TABLE MAPPING
+			 * Table 1 Column G (R22_NO_CON_SPC_TP) = Table 2 BA (R22_NO_CON_START) + BH (R22_NO_NEW_CON_ONB_GNP)
+			 * NOTE: All DOM writes are suppressed in dept validation mode.
+			 * ------------------------------------------------------------------------- */
+			const MAP_STORAGE_KEY = 'DEMO_MAPPING_R22_NO_CON_SPC_TP';
+			let lastBroadcastTotal = null;
+
+			// Helper: get the Table 1 target input using ID (more precise than name selector)
+			// Falls back to name selector only as last resort.
+			// NEVER touches inputs inside dept-allocation containers.
+			function getDemoT1TargetInput() {
+				// Prefer ID — the real Table 1 cell has id="R22_NO_CON_SPC_TP"
+				const byId = document.getElementById('R22_NO_CON_SPC_TP');
+				if (byId) return byId;
+				// Fallback: name selector but EXCLUDE any input whose current value looks like a dept name
+				const byName = document.querySelector('input[name="R22_NO_CON_SPC_TP"]');
+				return byName || null;
+			}
+
+			// Computes live total for Column BA (NO_CON_START) in Table 2
+			function computeColumnBATotal() {
+				const r22 = document.getElementById('R22_NO_CON_START') || document.querySelector('input[name="R22_NO_CON_START"]');
+				const r22Val = r22 ? demoCleanNumber(r22.value) : 0;
+
+				let rowSum = 0;
+				let foundChildRows = false;
+				document.querySelectorAll('input[name*="_NO_CON_START"]').forEach(el => {
+					const name = (el.name || el.id || '').toUpperCase();
+					if (name !== 'R22_NO_CON_START') {
+						foundChildRows = true;
+						rowSum += demoCleanNumber(el.value);
+					}
+				});
+
+				// If R22 has calculated total use it; otherwise use the sum of data rows
+				if (r22Val > 0) return r22Val;
+				if (foundChildRows && rowSum > 0) return rowSum;
+				return r22Val;
+			}
+
+			// Computes live total for Column BH (NO_NEW_CON_ONB_GNP) in Table 2
+			function computeColumnBHTotal() {
+				const r22 = document.getElementById('R22_NO_NEW_CON_ONB_GNP') || document.querySelector('input[name="R22_NO_NEW_CON_ONB_GNP"]');
+				const r22Val = r22 ? demoCleanNumber(r22.value) : 0;
+
+				let rowSum = 0;
+				let foundChildRows = false;
+				document.querySelectorAll('input[name*="_NO_NEW_CON_ONB_GNP"]').forEach(el => {
+					const name = (el.name || el.id || '').toUpperCase();
+					if (name !== 'R22_NO_NEW_CON_ONB_GNP') {
+						foundChildRows = true;
+						rowSum += demoCleanNumber(el.value);
+					}
+				});
+
+				if (r22Val > 0) return r22Val;
+				if (foundChildRows && rowSum > 0) return rowSum;
+				return r22Val;
+			}
+
+			// Recalculates mapping and synchronizes across Table 1, Storage, and Database
+			function syncTable2Mapping() {
+				const totalBA = computeColumnBATotal();
+				const totalBH = computeColumnBHTotal();
+				const total = totalBA + totalBH;
+
+				if (total !== 0 || lastBroadcastTotal === null) {
+					lastBroadcastTotal = total;
+					localStorage.setItem(MAP_STORAGE_KEY, total);
+					localStorage.setItem('DEMO_MAP_BA', totalBA);
+					localStorage.setItem('DEMO_MAP_BH', totalBH);
+					sessionStorage.setItem(MAP_STORAGE_KEY, total);
+
+					// *** GUARD: skip ALL DOM writes in dept validation mode ***
+					if (!demoIsDeptValidationMode) {
+						const targetT1 = getDemoT1TargetInput();
+						if (targetT1) {
+							targetT1.value = demoFormatNumber(total);
+							targetT1.classList.add('demo-mapped-cell');
+							targetT1.title = "Mapped from Table 2: BA (" + totalBA + ") + BH (" + totalBH + ") = " + total;
+						}
+					}
+
+					// Sync to backend DB so Table 1 database record is updated for this date
+					// Only fire when NOT in dept validation mode (avoid spurious DB writes)
+					if (demoReportDate && !demoIsDeptValidationMode) {
+						const fd = new FormData();
+						fd.append("formMode", "bankinformation");
+						fd.append("reportDate", demoReportDate);
+						fd.append("source", "Cross Table Mapping");
+						fd.append("columnHeader", "Number of Consumers at Specific Time Period");
+						fd.append("rowCol2Value", "Total");
+						fd.append("cellName", "R22_NO_CON_SPC_TP");
+						fd.append("cellId", "R22_NO_CON_SPC_TP");
+						fd.append("dataValue", String(total));
+						fd.append("justification", "Auto-mapped from Table 2: BA (" + totalBA + ") + BH (" + totalBH + ")");
+						fd.append("checkerJustification", "");
+						fd.append("productValue", "Total");
+						fd.append("timeperiod", demoTimePeriod);
+						fetch('./savedatarecord', { method: 'POST', body: fd }).catch(() => {});
+					}
+				}
+			}
+
+			// Ensures Table 1 Column G always displays the mapped value
+			// *** GUARD: entirely skipped in dept validation mode ***
+			function applyTable1Mapping() {
+				if (demoIsDeptValidationMode) return; // <-- hard stop in dept view
+
+				const targetT1 = getDemoT1TargetInput();
+				if (!targetT1) return;
+
+				// Safety: if the current value is a department name (non-numeric text), do NOT overwrite it.
+				// This handles the case where the dept has been manually reassigned.
+				const currentVal = (targetT1.value || '').trim();
+				if (currentVal !== '' && isNaN(parseFloat(currentVal))) {
+					// value is non-numeric (dept name like "HR"), leave it alone
+					return;
+				}
+
+				targetT1.classList.add('demo-mapped-cell');
+
+				const storedVal = localStorage.getItem(MAP_STORAGE_KEY) || sessionStorage.getItem(MAP_STORAGE_KEY);
+				if (storedVal !== null && storedVal !== undefined && storedVal !== '') {
+					const num = parseFloat(storedVal);
+					if (!isNaN(num)) {
+						const formatted = demoFormatNumber(num);
+						if (targetT1.value !== formatted) {
+							targetT1.value = formatted;
+						}
+						targetT1.title = "Mapped from Table 2: BA + BH = " + formatted;
+					}
+				} else {
+					// If not yet cached, fetch Table 2 values from DB
+					if (demoReportDate) {
+						Promise.all([
+							fetch(`./fetchdatarecord?formMode=bankconsumers&reportDate=${encodeURIComponent(demoReportDate)}&cellName=R22_NO_CON_START&timeperiod=${encodeURIComponent(demoTimePeriod)}`).then(r => r.ok ? r.json() : null).catch(() => null),
+							fetch(`./fetchdatarecord?formMode=bankconsumers&reportDate=${encodeURIComponent(demoReportDate)}&cellName=R22_NO_NEW_CON_ONB_GNP&timeperiod=${encodeURIComponent(demoTimePeriod)}`).then(r => r.ok ? r.json() : null).catch(() => null)
+						]).then(([recBA, recBH]) => {
+							const valBA = demoCleanNumber(recBA ? recBA.dataValue : 0);
+							const valBH = demoCleanNumber(recBH ? recBH.dataValue : 0);
+							const total = valBA + valBH;
+							localStorage.setItem(MAP_STORAGE_KEY, total);
+							sessionStorage.setItem(MAP_STORAGE_KEY, total);
+							if (targetT1 && !demoIsDeptValidationMode) {
+								targetT1.value = demoFormatNumber(total);
+								targetT1.title = "Mapped from Table 2: BA (" + valBA + ") + BH (" + valBH + ") = " + total;
+							}
+						}).catch(() => {});
+					}
+				}
+			}
+
+			// Main initialization
+			function initDemoFeatures() {
+				// *** GUARD: in dept validation mode, skip ALL interval and DOM mapping setup ***
+				if (demoIsDeptValidationMode) return;
+
+				// Table 2 mapping listeners
+				const hasTable2Inputs = document.querySelector('input[name*="_NO_CON_START"], input[name*="_NO_NEW_CON_ONB_GNP"]');
+				if (hasTable2Inputs) {
+					syncTable2Mapping();
+					document.querySelectorAll('input[name*="_NO_CON_START"], input[name*="_NO_NEW_CON_ONB_GNP"]').forEach(input => {
+						input.addEventListener('input', () => setTimeout(syncTable2Mapping, 100));
+						input.addEventListener('change', () => setTimeout(syncTable2Mapping, 100));
+					});
+					// Continuous background sync in Table 2 for calculation engine updates
+					setInterval(syncTable2Mapping, 300);
+				}
+
+				// Table 1 mapping enforcement
+				const hasTable1Target = getDemoT1TargetInput();
+				if (hasTable1Target) {
+					applyTable1Mapping();
+					// Continually verify mapped value remains firmly displayed in Table 1
+					setInterval(applyTable1Mapping, 300);
+				}
+			}
+
+			// Run immediately and on ready
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', initDemoFeatures);
+			} else {
+				initDemoFeatures();
+			}
+			window.addEventListener('load', initDemoFeatures);
+
+			// When #editRecordModal closes (after maker saves any cell), immediately recalculate mapping
+			if (window.jQuery && !demoIsDeptValidationMode) {
+				$('#editRecordModal').on('hidden.bs.modal', function () {
+					setTimeout(syncTable2Mapping, 100);
+					setTimeout(syncTable2Mapping, 600);
+					setTimeout(syncTable2Mapping, 1300);
+				});
+
+				// When #editRecordModal opens for Table 1 mapped cell R22_NO_CON_SPC_TP, show mapped total
+				$('#editRecordModal').on('shown.bs.modal', function () {
+					const modalInput = document.getElementById('modal-input-val');
+					let cellId = '';
+					if (typeof currentEditingInput !== 'undefined' && currentEditingInput) {
+						cellId = (currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id || '').toUpperCase();
+					}
+					if (!cellId) {
+						const hdr = document.getElementById('modal-header-val');
+						if (hdr && hdr.innerText) cellId = hdr.innerText.trim().toUpperCase();
+					}
+
+					if (cellId === 'R22_NO_CON_SPC_TP') {
+						const storedTotal = localStorage.getItem(MAP_STORAGE_KEY) || sessionStorage.getItem(MAP_STORAGE_KEY);
+						if (storedTotal !== null && modalInput) {
+							modalInput.value = demoFormatNumber(parseFloat(storedTotal));
+						}
+					}
+				});
+			}
+
+			/* -------------------------------------------------------------------------
+			 * FEATURE 2: NEGATIVE VALUE VALIDATION CHECK
+			 * Disallow negative numbers in any cell across all tables and modals
+			 * ------------------------------------------------------------------------- */
+			const demoNegModal = document.getElementById('demoNegativeValidationModal');
+			const demoNegOkBtn = document.getElementById('demoNegativeValidationOkBtn');
+			let isNegAlertOpen = false;
+			let lastNegativeActiveElement = null;
+
+			function showDemoNegativeAlert(message) {
+				if (isNegAlertOpen) return;
+				isNegAlertOpen = true;
+				lastNegativeActiveElement = document.activeElement;
+
+				if (message && document.getElementById('demoNegativeValidationMsg')) {
+					document.getElementById('demoNegativeValidationMsg').innerText = message;
+				}
+				if (demoNegModal) {
+					demoNegModal.style.display = 'flex';
+					if (demoNegOkBtn) demoNegOkBtn.focus();
+				}
+			}
+
+			function hideDemoNegativeAlert() {
+				if (!isNegAlertOpen) return;
+				isNegAlertOpen = false;
+				if (demoNegModal) demoNegModal.style.display = 'none';
+				if (lastNegativeActiveElement && typeof lastNegativeActiveElement.focus === 'function') {
+					lastNegativeActiveElement.focus();
+				}
+			}
+
+			if (demoNegOkBtn) {
+				demoNegOkBtn.addEventListener('click', hideDemoNegativeAlert);
+			}
+
+			// Intercept '-' key on numeric / table cells
+			document.addEventListener('keydown', function (e) {
+				if (isNegAlertOpen) {
+					if (e.key === 'Enter' || e.keyCode === 13 || e.key === 'Escape') {
+						e.preventDefault();
+						e.stopPropagation();
+						hideDemoNegativeAlert();
+						return;
+					}
+				}
+
+				const target = e.target;
+				if (!target || !target.tagName || target.tagName.toUpperCase() !== 'INPUT') return;
+
+				const isTableCell = target.classList.contains('table-input') ||
+				                    target.classList.contains('input-and-select') ||
+				                    target.classList.contains('remarks-input') ||
+				                    target.id === 'modal-input-val' ||
+				                    target.closest('#usertable') ||
+				                    target.closest('#editRecordModal');
+
+				if (isTableCell && (e.key === '-' || e.key === 'Subtract')) {
+					e.preventDefault();
+					showDemoNegativeAlert("Negative values are not allowed in any cell. Please enter a positive value.");
+				}
+			}, true);
+
+			// Sanitize input if negative value is pasted or entered
+			document.addEventListener('input', function (e) {
+				const target = e.target;
+				if (!target || target.tagName !== 'INPUT') return;
+
+				const isTableCell = target.classList.contains('table-input') ||
+				                    target.classList.contains('input-and-select') ||
+				                    target.id === 'modal-input-val' ||
+				                    target.closest('#usertable') ||
+				                    target.closest('#editRecordModal');
+
+				if (isTableCell && typeof target.value === 'string' && target.value.includes('-')) {
+					target.value = target.value.replace(/-/g, '');
+					showDemoNegativeAlert("Negative values are not allowed in any cell. Negative sign has been removed.");
+				}
+			}, true);
+
+			// On blur or change validation
+			document.addEventListener('change', function (e) {
+				const target = e.target;
+				if (!target || target.tagName !== 'INPUT') return;
+
+				const isTableCell = target.classList.contains('table-input') ||
+				                    target.classList.contains('input-and-select') ||
+				                    target.id === 'modal-input-val' ||
+				                    target.closest('#usertable') ||
+				                    target.closest('#editRecordModal');
+
+				if (isTableCell && target.value) {
+					const clean = demoCleanNumber(target.value);
+					if (clean < 0) {
+						target.value = Math.abs(clean);
+						showDemoNegativeAlert("Negative values are not allowed. Value has been reset to positive.");
+					}
+				}
+			}, true);
+
+			/* -------------------------------------------------------------------------
+			 * FEATURE 3: POP-UP ALERTS FOR ENTIRE COLUMNS '000 AND PERCENTAGE
+			 * Any cell in column VAL_LOS_AED (R6 to R22)  -> '000 Pop-up alert
+			 * Any cell in column PER_DOR_ACCS (R6 to R22) -> Percentage Pop-up alert
+			 * Appears ON TOP OF the edit popup (#editRecordModal).
+			 * Hides on Enter key or OK button, returning focus to modal-input-val.
+			 * ------------------------------------------------------------------------- */
+			const demoFormatModal = document.getElementById('demoFormatAlertModal');
+			const demoFormatOkBtn = document.getElementById('demoFormatAlertOkBtn');
+			const demoFormatTitle = document.getElementById('demoFormatAlertTitle');
+			const demoFormatMsg = document.getElementById('demoFormatAlertMessage');
+			const demoFormatIcon = document.getElementById('demoFormatAlertIcon');
+			const demoFormatIconWrapper = document.getElementById('demoFormatAlertIconWrapper');
+
+			let isFormatAlertOpen = false;
+			let activeFormatTargetInput = null;
+			let lastAlertedCellName = null;
+
+			// Checks whether a given cell name belongs to the '000 or Percentage columns
+			function getDemoFormatConfigForCell(cellName) {
+				if (!cellName) return null;
+				const upper = String(cellName).toUpperCase().trim();
+
+				// Entire VAL_LOS_AED column (R6 to R22)
+				if (upper.endsWith('VAL_LOS_AED') || upper.includes('VAL_LOS_AED')) {
+					return {
+						type: '000',
+						cellName: cellName,
+						title: "Values in '000 Required",
+						message: "Please note: Values for this column must be entered in Thousands ('000 AED).",
+						icon: "fa-building",
+						iconBg: "#e7f1ff",
+						iconColor: "#0d6efd"
+					};
+				}
+
+				// Entire PER_DOR_ACCS column (R6 to R22)
+				if (upper.endsWith('PER_DOR_ACCS') || upper.includes('PER_DOR_ACCS')) {
+					return {
+						type: 'percent',
+						cellName: cellName,
+						title: "Percentage Value Required",
+						message: "Please note: Values for this column must be entered as a Percentage (%).",
+						icon: "fa-percent",
+						iconBg: "#e2f9f3",
+						iconColor: "#0cbc87"
+					};
+				}
+
+				return null;
+			}
+
+			function showDemoFormatAlert(config, targetInput) {
+				if (!config) return;
+
+				isFormatAlertOpen = true;
+				activeFormatTargetInput = targetInput;
+				lastAlertedCellName = config.cellName;
+
+				if (demoFormatTitle) demoFormatTitle.innerText = config.title;
+				if (demoFormatMsg) demoFormatMsg.innerText = config.message;
+				if (demoFormatIcon) demoFormatIcon.className = 'fa ' + config.icon;
+				if (demoFormatIconWrapper) {
+					demoFormatIconWrapper.style.backgroundColor = config.iconBg;
+					demoFormatIconWrapper.style.color = config.iconColor;
+				}
+
+				if (demoFormatModal) {
+					demoFormatModal.style.display = 'flex';
+					setTimeout(() => {
+						if (demoFormatOkBtn) demoFormatOkBtn.focus();
+					}, 50);
+				}
+			}
+
+			function hideDemoFormatAlert() {
+				if (!isFormatAlertOpen) return;
+				isFormatAlertOpen = false;
+				if (demoFormatModal) demoFormatModal.style.display = 'none';
+
+				// Return focus to modal-input-val in editRecordModal smoothly
+				const inputToFocus = document.getElementById('modal-input-val') || activeFormatTargetInput;
+				if (inputToFocus && typeof inputToFocus.focus === 'function') {
+					setTimeout(() => {
+						inputToFocus.focus();
+						if (typeof inputToFocus.select === 'function') {
+							inputToFocus.select();
+						}
+					}, 60);
+				}
+			}
+
+			if (demoFormatOkBtn) {
+				demoFormatOkBtn.addEventListener('click', hideDemoFormatAlert);
+			}
+
+			// Dismiss on Enter key or Escape key
+			document.addEventListener('keydown', function (e) {
+				if (isFormatAlertOpen) {
+					if (e.key === 'Enter' || e.keyCode === 13 || e.key === 'Escape') {
+						e.preventDefault();
+						e.stopPropagation();
+						hideDemoFormatAlert();
+					}
+				}
+			}, true);
+
+			// Trigger when editRecordModal opens for any cell in VAL_LOS_AED or PER_DOR_ACCS columns
+			if (window.jQuery) {
+				$('#editRecordModal').on('shown.bs.modal', function () {
+					let cellName = '';
+					if (currentEditingInput) {
+						cellName = (currentEditingInput.getAttribute('data-cellname') || currentEditingInput.name || currentEditingInput.id || '').toUpperCase();
+					}
+					if (!cellName) {
+						const hdr = document.getElementById('modal-header-val');
+						if (hdr && hdr.innerText) cellName = hdr.innerText.trim().toUpperCase();
+					}
+
+					const config = getDemoFormatConfigForCell(cellName);
+					if (config) {
+						showDemoFormatAlert(config, document.getElementById('modal-input-val'));
+					}
+				});
+			}
+
+			// Also trigger if maker clicks any cell in those columns on the table
+			document.addEventListener('click', function (e) {
+				const target = e.target.closest('input, td');
+				if (!target) return;
+
+				const inputEl = target.tagName === 'INPUT' ? target : target.querySelector('input');
+				if (!inputEl) return;
+
+				const cellName = (inputEl.getAttribute('data-cellname') || inputEl.name || inputEl.id || '').toUpperCase();
+				const config = getDemoFormatConfigForCell(cellName);
+				if (config && (!window.jQuery || !$('#editRecordModal').hasClass('show'))) {
+					showDemoFormatAlert(config, inputEl);
+				}
+			}, true);
+
+			// Reset lastAlertedCellName on blur so user can trigger again if reopened
+			document.addEventListener('focusout', function (e) {
+				setTimeout(() => {
+					if (!isFormatAlertOpen) {
+						lastAlertedCellName = null;
+					}
+				}, 400);
+			}, true);
+
+		})();
+	</script>
+	<!-- ==================== DEMO IMPLEMENTATION END ==================================== -->
+	<!-- ================================================================================= -->
+
 </body>
 
 </html>
